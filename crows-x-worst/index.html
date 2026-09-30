@@ -196,7 +196,7 @@ main{padding-block:10px 40px}
 
 /* ---------- Recherche ---------- */
 [hidden],.lightbox[hidden],.search-panel[hidden]{display:none!important}
-.search-btn{position:fixed;z-index:30;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.search-btn{position:absolute;z-index:30;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 .search-btn:hover{border-color:var(--red)}
 @media (max-width:960px){.bar .wrap{padding-right:64px}.eras-nav,.filters{margin-right:0}}
 .search-panel{position:fixed;inset:0;z-index:40;background:var(--scrim);display:flex;justify-content:center;align-items:flex-start;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 12px}
@@ -349,6 +349,16 @@ body{font-weight:500}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--ink-3);border-radius:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5;margin-right:56px}
 .seg button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font-weight:600;font-size:13px;white-space:nowrap;padding:0 6px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
+
+/* ---------- Onglets pleine largeur, fiches aérées ---------- */
+.seg{margin-right:0!important}
+.home-seg{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5;padding-top:14px}
+.home-seg .seg{position:static}
+.flat{padding-top:14px}
+.flat-intro{margin:0 0 12px;color:var(--paper-2)}
+.flat .work::after{display:none}
+.facts{gap:8px!important}
+.fact{padding:10px 12px}
 </style>
 </head>
 <body>
@@ -409,20 +419,6 @@ body{font-weight:500}
   </div>
 </section>
 
-<nav class="bar" aria-label="Époques et filtres">
-  <div class="wrap">
-    <div class="eras-nav" id="erasNav"></div>
-    <div class="filters" role="group" aria-label="Filtrer">
-      <button class="chip" data-f="all" aria-pressed="true">Tout</button>
-      <button class="chip" data-f="main" aria-pressed="false">Séries et suites</button>
-      <button class="chip" data-f="spin" aria-pressed="false">Spin-offs et préquelles</button>
-      <button class="chip" data-f="film" aria-pressed="false">Univers des films</button>
-      <button class="chip" data-f="short" aria-pressed="false">Histoires courtes</button>
-      <button class="chip toggle" id="fLive" aria-pressed="false">En cours au Japon</button>
-      <button class="chip toggle" id="fFr" aria-pressed="false">Dispo en français</button>
-    </div>
-  </div>
-</nav>
 
 <p class="wrap result mono" id="result" hidden></p>
 <main class="wrap" id="timeline"></main>
@@ -557,6 +553,10 @@ function featureHTML(w, pos){
     <div class="facts">${facts}</div>
   </article>`;
 }
+function segHTML(){ return `<div class="seg" role="group" aria-label="Ordre d'affichage">
+      <button data-order="story" aria-pressed="${state.order === "story"}">Ordre chronologique</button>
+      <button data-order="release" aria-pressed="${state.order === "release"}">Ordre de sortie</button>
+    </div>`; }
 function renderUniverse(ws, pos, tl){
   const list = ws.filter(match);
   const main = MAIN_OF[state.line] ? list.find(w => w.t === MAIN_OF[state.line]) : null;
@@ -567,10 +567,7 @@ function renderUniverse(ws, pos, tl){
     <button class="back" data-reset>← Toute la chronologie</button>
     <div class="uni-head"><h2>${esc(title)}</h2><p>${esc(LINE_INTRO[state.line])} <b>${list.length}</b> œuvre${list.length > 1 ? "s" : ""}.</p></div>
     ${main ? featureHTML(main, pos[main.id]) : ""}
-    <div class="seg" role="group" aria-label="Ordre d'affichage">
-      <button data-order="story" aria-pressed="${state.order === "story"}">Ordre chronologique</button>
-      <button data-order="release" aria-pressed="${state.order === "release"}">Ordre de sortie</button>
-    </div>
+    ${segHTML()}
     <div class="list">${rest.map(w => workHTML(w, pos[w.id], true)).join("")}</div>
   </section>`;
 }
@@ -600,7 +597,13 @@ function render(){
     document.querySelectorAll(".line-btn").forEach(b => b.setAttribute("aria-pressed", b.dataset.line === state.line));
     return;
   }
-  tl.innerHTML = DATA.eras.map((e, i) => {
+  if (state.order === "release") {
+    const list = ws.filter(match).slice().sort((a, b) => yearOf(a) - yearOf(b) || a.o - b.o);
+    tl.innerHTML = `<div class="home-seg">${segHTML()}</div><section class="flat"><p class="flat-intro">Toutes les œuvres dans l'ordre où elles sont sorties au Japon.</p><div class="list">${list.map(w => workHTML(w, pos[w.id], true)).join("")}</div></section>`;
+    document.getElementById("result").hidden = true;
+    return;
+  }
+  tl.innerHTML = `<div class="home-seg">${segHTML()}</div>` + DATA.eras.map((e, i) => {
     const list = ws.filter(w => w.era === i);
     if (!list.length) return "";
     const shown = list.filter(match);
@@ -625,12 +628,12 @@ function render(){
   document.querySelectorAll(".era-link").forEach(l => l.hidden = filtering() && !document.getElementById(l.dataset.k));
 }
 function jumpToList(){
-  const top = document.getElementById("timeline").getBoundingClientRect().top + scrollY - document.querySelector(".bar").offsetHeight - 8;
-  if (scrollY > top || filtering()) scrollTo({ top, behavior: "auto" });
+  const top = document.getElementById("timeline").getBoundingClientRect().top + scrollY - 8;
+  if (scrollY > top || filtering() || state.order === "release") scrollTo({ top, behavior: "auto" });
 }
 
 function initNav(){
-  const nav = document.getElementById("erasNav");
+  const nav = document.getElementById("erasNav"); if (!nav) return;
   nav.innerHTML = DATA.eras.filter((e, i) => DATA.works.some(w => w.era === i))
     .map(e => `<a class="era-link" href="#${e.k}" style="--era:${eraColor(e.k)}" data-k="${e.k}"><span class="kj" lang="ja">${e.kanji}</span>${esc(e.name)}</a>`).join("");
 }
@@ -660,7 +663,7 @@ function resetAll(){
 function openCard(id){
   const card = document.querySelector(`.work[data-id="${id}"]`); if (!card) return;
   card.dataset.open = "true"; card.querySelector(".work-btn").setAttribute("aria-expanded", "true");
-  const top = card.getBoundingClientRect().top + scrollY - document.querySelector(".bar").offsetHeight - 12;
+  const top = card.getBoundingClientRect().top + scrollY - 12;
   scrollTo({ top, behavior: "auto" });
 }
 
@@ -741,7 +744,7 @@ document.addEventListener("click", e => {
   if (z && !z.closest(".lightbox")) { e.preventDefault(); openZoom(z.dataset.zoom); return; }
   if (e.target.closest(".lb-close") || e.target === lb || e.target.closest(".lb-cover")) { closeZoom(); return; }
   if (e.target.closest("#resetAll, [data-reset]")) { resetAll(); render(); observe(); jumpToList(); return; }
-  const ord = e.target.closest("[data-order]"); if (ord) { state.order = ord.dataset.order; render(); return; }
+  const ord = e.target.closest("[data-order]"); if (ord) { state.order = ord.dataset.order; render(); observe(); jumpToList(); return; }
   const lineBtn = e.target.closest(".line-btn");
   if (lineBtn) { const l = lineBtn.dataset.line; const next = state.line === l ? null : l; resetAll(); state.line = next; state.order = "story"; render(); observe(); jumpToList(); return; }
   const btn = e.target.closest(".work-btn");
