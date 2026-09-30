@@ -389,6 +389,12 @@ body{font-weight:500}
 .bchar{position:absolute;z-index:-1;right:-4px;top:-6px;height:132%;width:auto;max-width:58%;object-fit:contain;object-position:right top;opacity:.5;pointer-events:none}
 .blocks .blogo{max-width:60%}
 :root[data-theme="light"] .bchar{opacity:.45}
+
+/* ---------- Sans bandeau : les 4 blocs juste sous l'accroche ---------- */
+.start .wrap::before{display:none!important}
+.start .wrap{padding-top:10px!important}
+.start{padding-bottom:6px!important}
+.start ol.blocks{margin-top:0!important}
 </style>
 </head>
 <body>
@@ -438,7 +444,6 @@ body{font-weight:500}
 
 <section class="start">
   <div class="wrap">
-    <span class="mono" style="color:var(--paper-3)">Par où commencer</span>
     <ol class="blocks">
       <li><button class="line-btn has-logo" data-line="crows"><img class="bchar" src="img/char-boya.png" alt="" aria-hidden="true"><img class="blogo" src="img/crows-logo.png" alt=""><strong class="vh">CROWS</strong><span class="d">La série fondatrice</span></button></li>
       <li><button class="line-btn has-logo" data-line="worst"><img class="bchar" src="img/char-hana.png" alt="" aria-hidden="true"><img class="blogo" src="img/worst-logo.png" alt=""><strong class="vh">WORST</strong><span class="d">La suite, avec Hana</span></button></li>
