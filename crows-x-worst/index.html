@@ -383,6 +383,12 @@ body{font-weight:500}
 .start .wrap::before{content:"";position:absolute;z-index:-1;left:0;right:0;top:-8px;height:min(56vw,300px);background:linear-gradient(180deg,var(--ink) 0%,transparent 22%,transparent 55%,var(--ink) 100%),linear-gradient(90deg,var(--ink) 0%,transparent 45%),linear-gradient(270deg,var(--ink) 0%,transparent 12%),url(img/crows-banner.jpg) right center/cover no-repeat;opacity:.6;pointer-events:none}
 :root[data-theme="light"] .start .wrap::before{opacity:.35}
 @media (min-width:700px){.start .wrap::before{height:280px}.start .wrap{padding-top:200px}}
+
+/* ---------- Personnages dans les blocs ---------- */
+.blocks .line-btn{isolation:isolate}
+.bchar{position:absolute;z-index:-1;right:-4px;top:-6px;height:132%;width:auto;max-width:58%;object-fit:contain;object-position:right top;opacity:.5;pointer-events:none}
+.blocks .blogo{max-width:60%}
+:root[data-theme="light"] .bchar{opacity:.45}
 </style>
 </head>
 <body>
@@ -434,9 +440,9 @@ body{font-weight:500}
   <div class="wrap">
     <span class="mono" style="color:var(--paper-3)">Par où commencer</span>
     <ol class="blocks">
-      <li><button class="line-btn has-logo" data-line="crows"><img class="blogo" src="img/crows-logo.png" alt=""><strong class="vh">CROWS</strong><span class="d">La série fondatrice</span></button></li>
-      <li><button class="line-btn has-logo" data-line="worst"><img class="blogo" src="img/worst-logo.png" alt=""><strong class="vh">WORST</strong><span class="d">La suite, avec Hana</span></button></li>
-      <li><button class="line-btn has-logo" data-line="qp"><img class="blogo" src="img/qp-logo.png" alt=""><strong class="vh">QP</strong><span class="d">Même ville, autre histoire</span></button></li>
+      <li><button class="line-btn has-logo" data-line="crows"><img class="bchar" src="img/char-boya.png" alt="" aria-hidden="true"><img class="blogo" src="img/crows-logo.png" alt=""><strong class="vh">CROWS</strong><span class="d">La série fondatrice</span></button></li>
+      <li><button class="line-btn has-logo" data-line="worst"><img class="bchar" src="img/char-hana.png" alt="" aria-hidden="true"><img class="blogo" src="img/worst-logo.png" alt=""><strong class="vh">WORST</strong><span class="d">La suite, avec Hana</span></button></li>
+      <li><button class="line-btn has-logo" data-line="qp"><img class="bchar" src="img/char-ishida.png" alt="" aria-hidden="true"><img class="blogo" src="img/qp-logo.png" alt=""><strong class="vh">QP</strong><span class="d">Même ville, autre histoire</span></button></li>
       <li><button class="line-btn" data-line="gaiden"><span class="bk" aria-hidden="true" lang="ja">外伝</span><strong>Les Spin-off</strong><span class="d">Préquelles, gaiden, films</span></button></li>
     </ol>
   </div>
@@ -769,7 +775,13 @@ document.addEventListener("click", e => {
   if (z && !z.closest(".lightbox")) { e.preventDefault(); openZoom(z.dataset.zoom); return; }
   if (e.target.closest(".lb-close") || e.target === lb || e.target.closest(".lb-cover")) { closeZoom(); return; }
   if (e.target.closest("#resetAll, [data-reset]")) { resetAll(); render(); observe(); jumpToList(); return; }
-  const ord = e.target.closest("[data-order]"); if (ord) { state.order = ord.dataset.order; render(); observe(); jumpToList(); return; }
+  const ord = e.target.closest("[data-order]"); if (ord) {
+    state.order = ord.dataset.order; render(); observe();
+    // Rester sur les onglets : la liste commence juste en dessous
+    const seg = document.querySelector("#timeline .seg");
+    if (seg) { const holder = seg.closest(".home-seg") || seg; holder.style.position = "static"; const top = holder.getBoundingClientRect().top + scrollY - 8; holder.style.position = ""; scrollTo({ top, behavior: "auto" }); }
+    return;
+  }
   const lineBtn = e.target.closest(".line-btn");
   if (lineBtn) { const l = lineBtn.dataset.line; const next = state.line === l ? null : l; resetAll(); state.line = next; state.order = "story"; render(); observe(); jumpToList(); return; }
   const btn = e.target.closest(".work-btn");
