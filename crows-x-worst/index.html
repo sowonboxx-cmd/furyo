@@ -320,6 +320,35 @@ footer strong{color:var(--paper-2)}
 .blocks .line-btn .d{font-size:12.5px;color:var(--paper-2);position:relative}
 .blocks .bk{position:absolute;right:-4px;top:-10px;font-family:var(--f-body);font-weight:900;font-size:54px;line-height:1;color:transparent;-webkit-text-stroke:1.2px var(--ink-3);white-space:nowrap;pointer-events:none}
 .blocks .line-btn[aria-pressed="true"] .bk{-webkit-text-stroke-color:color-mix(in srgb,var(--red) 55%,transparent)}
+
+/* ---------- Chiffres, dates, vue univers ---------- */
+body{font-weight:500}
+.syn,.lede{font-weight:500}
+.stat.live .n{color:var(--ok)}
+.stat-btn .l{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--paper-3) 60%,transparent);text-underline-offset:3px}
+.hero .wrap{gap:14px}
+.w-years{font-size:12.5px;font-weight:600;color:var(--paper-2);margin-top:2px}
+.pos-era{color:var(--era)}
+.uni-mode .bar{display:none}
+.uni{display:flex;flex-direction:column;gap:14px;padding-top:18px}
+.uni .work::after{display:none}
+.back{align-self:flex-start;height:36px;padding:0 14px;border:0;border-radius:999px;background:var(--ink-3);color:var(--paper);font-weight:600;font-size:13px;cursor:pointer}
+.uni-head h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(34px,9vw,54px);line-height:1;letter-spacing:.01em}
+.uni-head p{margin:6px 0 0;color:var(--paper-2);max-width:40em}
+.uni-head b{color:var(--paper)}
+.feature{padding:16px;display:flex;flex-direction:column;gap:14px}
+.feature .f-top{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:end}
+.feature .cover{width:150px}
+.feature .cover .cj{font-size:20px}
+.feature .f-main{display:flex;flex-direction:column;gap:6px;min-width:0}
+.feature h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(34px,8vw,52px);line-height:.95;letter-spacing:.01em;text-transform:uppercase}
+.feature .f-nums{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px;color:var(--paper-2)}
+.feature .f-nums b{font-family:var(--f-display);font-weight:700;font-size:22px;color:var(--paper);margin-right:3px}
+.feature .syn{margin:0}
+@media (max-width:560px){.feature .f-top{grid-template-columns:120px minmax(0,1fr);gap:14px}.feature .cover{width:120px}}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--ink-3);border-radius:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5;margin-right:56px}
+.seg button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font-weight:600;font-size:13px;white-space:nowrap;padding:0 6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
 </style>
 </head>
 <body>
@@ -363,8 +392,8 @@ footer strong{color:var(--paper-2)}
   <div class="hero-kanji" aria-hidden="true">鈴蘭</div>
   <div class="wrap">
     <h1>CROWS<span class="x">×</span>WORST</h1>
-    <p class="lede">Guide de lecture de toutes les œuvres de l'univers de Hiroshi Takahashi.</p>
     <div class="stats" id="stats"></div>
+    <p class="lede">Guide de lecture de toutes les œuvres de l'univers de Hiroshi Takahashi.</p>
   </div>
 </header>
 
@@ -423,6 +452,13 @@ const hasFr = w => !!w.frPub;
 const FR_STATUS = { "Stoppé": "arrêt de publication", "Arrêté": "arrêt de publication", "En cours": "en cours", "Terminé": "terminée", "Annoncé": "annoncée" };
 const frLabel = w => hasFr(w) ? [w.frPub, w.volFr != null ? w.volFr + (w.volFr > 1 ? " tomes" : " tome") : "", FR_STATUS[w.stFR] || ""].filter(Boolean).join(" · ") : "Non licencié en France";
 const frStopped = w => /Stopp|Arrêt/i.test(w.stFR || "");
+function yearsShort(w){
+  const y = String(w.years || "");
+  const m = y.match(/((?:19|20)\d{2})\s*[–-]\s*((?:19|20)\d{2})?/);
+  if (m) return m[2] ? (m[1] === m[2] ? m[1] : `${m[1]} – ${m[2]}`) : (isLive(w) ? `depuis ${m[1]}` : m[1]);
+  const all = y.match(/(19|20)\d{2}/g);
+  return all ? (all.length > 1 && all[all.length - 1] !== all[0] ? `${all[0]} · réédition ${all[all.length - 1]}` : all[0]) : "";
+}
 const yearOf = w => { const m = String(w.years || "").match(/(19|20)\d{2}/); return m ? +m[0] : 9999; };
 const pad = n => String(n).padStart(2, "0");
 
@@ -444,7 +480,7 @@ function statsHTML(ws){
   const vols = series.reduce((a, w) => a + (w.vol || 0), 0);
   const live = series.filter(isLive).length;
   const fr = series.filter(hasFr).length;
-  const s = (n, l, k) => k ? `<button class="stat stat-btn" data-stat="${k}"><span class="n">${n}</span><span class="mono l">${l}<b class="arr" aria-hidden="true">›</b></span></button>` : `<div class="stat" aria-label="${n} tomes parus au Japon"><span class="n">${n}</span><span class="mono l">${l}</span></div>`;
+  const s = (n, l, k) => k ? `<button class="stat stat-btn${k === "live" ? " live" : ""}" data-stat="${k}"><span class="n">${n}</span><span class="mono l">${l}</span></button>` : `<div class="stat" aria-label="${n} tomes parus au Japon"><span class="n">${n}</span><span class="mono l">${l}</span></div>`;
   return s(series.length, "œuvres", "all") + s(vols, "tomes") + s(live, "en cours", "live") + s(fr, "en français", "fr");
 }
 
@@ -453,7 +489,7 @@ function volHTML(w){
   return `<span class="n small">${esc(w.volText)}</span>`;
 }
 
-function workHTML(w, pos){
+function workHTML(w, pos, showEra){
   const era = DATA.eras[w.era];
   const live = isLive(w), fr = hasFr(w);
   const pills = [`<span class="pill type">${esc(w.type)}</span>`];
@@ -461,7 +497,7 @@ function workHTML(w, pos){
   else if (w.stJP) pills.push(`<span class="pill">${esc(w.stJP)}</span>`);
   if (w.conf === "basse") pills.push(`<span class="pill warn">À vérifier</span>`);
   const authors = w.story === w.art ? `<span>Auteur</span> ${esc(w.story)}` : `<span>Histoire</span> ${esc(w.story)} · <span>Dessin</span> ${esc(w.art)}`;
-  const posTxt = pos ? `<span class="pos">#<b>${pos}</b></span>` : `<span class="pos">HORS CHRONO</span>`;
+  const posTxt = (pos ? `<span class="pos">#<b>${pos}</b>` : `<span class="pos">HORS CHRONO`) + (showEra ? ` · <span class="pos-era">${esc(era.name)}</span>` : "") + `</span>`;
   const facts = [
     ...(w.story === w.art ? [["Auteur", w.story]] : [["Histoire", w.story], ["Dessin", w.art]]),
     ["Magazine", w.mag], ["Parution", w.years], ["Tomes (Japon)", w.volText],
@@ -480,6 +516,7 @@ function workHTML(w, pos){
         ${w.jp && w.jp !== w.t ? `<span class="w-jp" lang="ja">${esc(w.jp)}</span>` : ""}
         <span class="w-auth">${authors}</span>
         <div class="pills">${pills.join("")}</div>
+        ${yearsShort(w) ? `<span class="w-years">Parution ${esc(yearsShort(w))}</span>` : ""}
       </div>
       <div class="w-vol">${volHTML(w)}<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
     </button>
@@ -491,7 +528,52 @@ function workHTML(w, pos){
   </article>`;
 }
 
-const state = { f: "all", live: false, fr: false, line: null };
+const state = { f: "all", live: false, fr: false, line: null, order: "story" };
+const MAIN_OF = { crows: "Crows", worst: "WORST", qp: "QP" };
+const LINE_INTRO = {
+  crows: "La série fondatrice de Hiroshi Takahashi, puis tout ce qui en découle.",
+  worst: "La suite de Crows avec Hana, puis ses gaiden.",
+  qp: "Une série à part, dans la même ville que Crows et WORST.",
+  gaiden: "Préquelles, gaiden, mangas des films et histoires courtes."
+};
+function featureHTML(w, pos){
+  const era = DATA.eras[w.era];
+  let jpShort = (w.jp || "").replace(/[\x00-\x7F]+/g, "").slice(0, 9) || era.kanji;
+  const facts = [
+    ...(w.story === w.art ? [["Auteur", w.story]] : [["Histoire", w.story], ["Dessin", w.art]]),
+    ["Magazine", w.mag], ["Parution", yearsShort(w) || w.years], ["Tomes (Japon)", w.volText], ["Édition française", frLabel(w)]
+  ].filter(f => f[1]).map(f => `<div class="fact"><span class="mono">${f[0]}</span><span>${esc(f[1])}</span></div>`).join("");
+  return `<article class="work feature" style="--era:${eraColor(era.k)}" data-id="${w.id}">
+    <div class="f-top">
+      <div class="cover" data-zoom="${w.id}" title="Agrandir la couverture"><span class="cj">${esc(jpShort)}</span><span class="cv">${w.vol != null ? w.vol + " T." : ""}</span>${w.img ? `<img src="${esc(w.img)}" alt="" referrerpolicy="no-referrer" onload="this.parentNode.classList.add('has-img')" onerror="this.remove()">` : ""}</div>
+      <div class="f-main">
+        <span class="pos">Série mère${pos ? ` · #<b>${pos}</b>` : ""} · <span class="pos-era">${esc(era.name)}</span></span>
+        <h3>${esc(w.t)}</h3>
+        ${w.jp && w.jp !== w.t ? `<span class="w-jp" lang="ja">${esc(w.jp)}</span>` : ""}
+        <div class="f-nums"><span><b>${w.vol != null ? w.vol : "?"}</b> tomes</span>${yearsShort(w) ? `<span><b>${esc(yearsShort(w))}</b></span>` : ""}${isLive(w) ? `<span class="pill live">En cours</span>` : ""}</div>
+      </div>
+    </div>
+    ${w.syn ? `<p class="syn">${esc(w.syn)}</p>` : ""}
+    <div class="facts">${facts}</div>
+  </article>`;
+}
+function renderUniverse(ws, pos, tl){
+  const list = ws.filter(match);
+  const main = MAIN_OF[state.line] ? list.find(w => w.t === MAIN_OF[state.line]) : null;
+  let rest = list.filter(w => w !== main);
+  rest = state.order === "release" ? rest.slice().sort((a, b) => yearOf(a) - yearOf(b) || a.o - b.o) : rest.slice().sort((a, b) => a.o - b.o || a.id - b.id);
+  const title = state.line === "gaiden" ? "Les Spin-off" : "Univers " + LINE_NAMES[state.line];
+  tl.innerHTML = `<section class="uni">
+    <button class="back" data-reset>← Toute la chronologie</button>
+    <div class="uni-head"><h2>${esc(title)}</h2><p>${esc(LINE_INTRO[state.line])} <b>${list.length}</b> œuvre${list.length > 1 ? "s" : ""}.</p></div>
+    ${main ? featureHTML(main, pos[main.id]) : ""}
+    <div class="seg" role="group" aria-label="Ordre d'affichage">
+      <button data-order="story" aria-pressed="${state.order === "story"}">Ordre chronologique</button>
+      <button data-order="release" aria-pressed="${state.order === "release"}">Ordre de sortie</button>
+    </div>
+    <div class="list">${rest.map(w => workHTML(w, pos[w.id], true)).join("")}</div>
+  </section>`;
+}
 const LINE_NAMES = { crows: "CROWS", worst: "WORST", qp: "QP", gaiden: "les Spin-off" };
 const filtering = () => state.f !== "all" || state.live || state.fr || !!state.line;
 function match(w){
@@ -511,6 +593,13 @@ function match(w){
 function render(){
   const ws = DATA.works, pos = positions(ws);
   const tl = document.getElementById("timeline");
+  document.body.classList.toggle("uni-mode", !!state.line);
+  if (state.line) {
+    renderUniverse(ws, pos, tl);
+    document.getElementById("result").hidden = true;
+    document.querySelectorAll(".line-btn").forEach(b => b.setAttribute("aria-pressed", b.dataset.line === state.line));
+    return;
+  }
   tl.innerHTML = DATA.eras.map((e, i) => {
     const list = ws.filter(w => w.era === i);
     if (!list.length) return "";
@@ -564,7 +653,7 @@ function observe(){
 }
 
 function resetAll(){
-  state.f = "all"; state.live = false; state.fr = false; state.line = null;
+  state.f = "all"; state.live = false; state.fr = false; state.line = null; state.order = "story";
   document.querySelectorAll(".chip[data-f]").forEach(c => c.setAttribute("aria-pressed", c.dataset.f === "all"));
   document.querySelectorAll("#fLive, #fFr").forEach(c => c.setAttribute("aria-pressed", "false"));
 }
@@ -651,9 +740,10 @@ document.addEventListener("click", e => {
   const z = e.target.closest("[data-zoom]");
   if (z && !z.closest(".lightbox")) { e.preventDefault(); openZoom(z.dataset.zoom); return; }
   if (e.target.closest(".lb-close") || e.target === lb || e.target.closest(".lb-cover")) { closeZoom(); return; }
-  if (e.target.closest("#resetAll")) { resetAll(); render(); observe(); jumpToList(); return; }
+  if (e.target.closest("#resetAll, [data-reset]")) { resetAll(); render(); observe(); jumpToList(); return; }
+  const ord = e.target.closest("[data-order]"); if (ord) { state.order = ord.dataset.order; render(); return; }
   const lineBtn = e.target.closest(".line-btn");
-  if (lineBtn) { const l = lineBtn.dataset.line; state.line = state.line === l ? null : l; render(); observe(); jumpToList(); return; }
+  if (lineBtn) { const l = lineBtn.dataset.line; const next = state.line === l ? null : l; resetAll(); state.line = next; state.order = "story"; render(); observe(); jumpToList(); return; }
   const btn = e.target.closest(".work-btn");
   if (btn) {
     const card = btn.closest(".work");
