@@ -32,7 +32,7 @@
   --scrim-strong:rgba(35,35,37,.96);
   --on-red:#FFFFFF;
 }
-:root[data-theme="light"]{
+:root[data-fyg-light]{
   color-scheme: light;
   --ink:#F5F5F7; --ink-2:#FFFFFF; --ink-3:#E8E8ED; --line:#DCDCE1;
   --paper:#1D1D1F; --paper-2:#424245; --paper-3:#6E6E73;
@@ -67,8 +67,8 @@ button{font:inherit;color:inherit}
 .theme-btn{position:absolute;z-index:2;top:12px;right:64px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--ink-2);color:var(--paper);display:grid;place-items:center;cursor:pointer}
 .theme-btn:hover{border-color:var(--red)}
 .theme-btn .i-moon{display:none}
-:root[data-theme="light"] .theme-btn .i-sun{display:none}
-:root[data-theme="light"] .theme-btn .i-moon{display:block}
+:root[data-fyg-light] .theme-btn .i-sun{display:none}
+:root[data-fyg-light] .theme-btn .i-moon{display:block}
 .stat .n{font-family:var(--f-display);font-weight:600;font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
 .stat .l{color:var(--paper-3)}
 
@@ -366,7 +366,7 @@ body{font-weight:500}
 .hero{padding-bottom:6px!important}
 .start{position:relative;padding-top:0!important;isolation:isolate}
 .start::before{content:"";position:absolute;z-index:-1;left:0;right:0;top:-8px;height:min(56vw,300px);background:linear-gradient(180deg,var(--ink) 0%,transparent 22%,transparent 55%,var(--ink) 100%),linear-gradient(90deg,var(--ink) 0%,transparent 45%),url(img/crows-banner.jpg) right center/cover no-repeat;opacity:.6;pointer-events:none}
-:root[data-theme="light"] .start::before{opacity:.35}
+:root[data-fyg-light] .start::before{opacity:.35}
 .start .wrap{padding-top:min(40vw,210px)}
 .vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .blocks .has-logo{justify-content:space-between!important}
@@ -377,24 +377,39 @@ body{font-weight:500}
 .top-btns{position:absolute;z-index:3;top:0;right:16px;display:flex;gap:8px}
 .top-btns .theme-btn,.top-btns .search-btn{position:static}
 .hero{padding-top:14px!important}
-.hero h1{padding-right:104px}
+.hero h1{padding-right:56px}
 .start::before{display:none}
 .start .wrap{position:relative;isolation:isolate}
 .start .wrap::before{content:"";position:absolute;z-index:-1;left:0;right:0;top:-8px;height:min(56vw,300px);background:linear-gradient(180deg,var(--ink) 0%,transparent 22%,transparent 55%,var(--ink) 100%),linear-gradient(90deg,var(--ink) 0%,transparent 45%),linear-gradient(270deg,var(--ink) 0%,transparent 12%),url(img/crows-banner.jpg) right center/cover no-repeat;opacity:.6;pointer-events:none}
-:root[data-theme="light"] .start .wrap::before{opacity:.35}
+:root[data-fyg-light] .start .wrap::before{opacity:.35}
 @media (min-width:700px){.start .wrap::before{height:280px}.start .wrap{padding-top:200px}}
 
 /* ---------- Personnages dans les blocs ---------- */
 .blocks .line-btn{isolation:isolate}
 .bchar{position:absolute;z-index:-1;right:-4px;top:-6px;height:132%;width:auto;max-width:58%;object-fit:contain;object-position:right top;opacity:.5;pointer-events:none}
 .blocks .blogo{max-width:60%}
-:root[data-theme="light"] .bchar{opacity:.45}
+:root[data-fyg-light] .bchar{opacity:.45}
 
 /* ---------- Sans bandeau : les 4 blocs juste sous l'accroche ---------- */
 .start .wrap::before{display:none!important}
 .start .wrap{padding-top:10px!important}
 .start{padding-bottom:6px!important}
 .start ol.blocks{margin-top:0!important}
+
+/* ---------- Accroche centrée, liste, retour en haut, personnages univers ---------- */
+.lede{text-align:center;max-width:none!important}
+.l-head2{position:relative;display:flex;align-items:center;justify-content:center;min-height:56px;padding:10px 56px}
+.l-head2 .l-title{flex:none;text-align:center;font-size:22px}
+.round-close{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;background:var(--ink-3);color:var(--paper);cursor:pointer;padding:0;flex:none}
+.round-close:hover{background:color-mix(in srgb,var(--paper) 16%,var(--ink-3))}
+.l-head2 .round-close{position:absolute;right:10px;top:50%;transform:translateY(-50%)}
+.s-head .round-close{width:34px;height:34px}
+.l-seg{position:static!important;margin:0 10px 8px!important}
+.to-top{position:fixed;z-index:25;right:max(16px,calc((100vw - 880px) / 2 + 16px));bottom:calc(env(safe-area-inset-bottom,0px) + 18px);width:48px;height:48px;border-radius:50%;border:0;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.to-top:hover{background:color-mix(in srgb,var(--paper) 16%,var(--ink-3))}
+.uni-head{position:relative;isolation:isolate;min-height:120px}
+.uni-char{position:absolute;z-index:-1;right:-8px;top:-54px;height:230px;width:auto;max-width:55%;object-fit:contain;object-position:right top;opacity:.5;pointer-events:none}
+@media (min-width:700px){.uni-char{height:300px;top:-70px}}
 </style>
 </head>
 <body>
@@ -406,7 +421,7 @@ body{font-weight:500}
     <div class="s-head">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="sq" type="search" placeholder="Titre, titre japonais, auteur, personnage…" autocomplete="off" aria-label="Rechercher">
-      <button class="s-close" aria-label="Fermer">Fermer</button>
+      <button class="round-close s-close" aria-label="Fermer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
     <ul class="s-res" id="sres"></ul>
   </div>
@@ -414,13 +429,13 @@ body{font-weight:500}
 
 <div class="search-panel" id="listPanel" hidden role="dialog" aria-modal="true" aria-labelledby="listTitle">
   <div class="s-box">
-    <div class="s-head l-head">
+    <div class="l-head2">
       <strong id="listTitle" class="l-title"></strong>
-      <div class="l-sort" role="group" aria-label="Trier">
-        <button class="chip" data-sort="story" aria-pressed="true">Histoire</button>
-        <button class="chip" data-sort="release" aria-pressed="false">Sortie</button>
-      </div>
-      <button class="s-close l-close" aria-label="Fermer">Fermer</button>
+      <button class="round-close l-close" aria-label="Fermer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="seg l-seg" role="group" aria-label="Ordre d'affichage">
+      <button data-sort="story" aria-pressed="true">Ordre chronologique</button>
+      <button data-sort="release" aria-pressed="false">Ordre de sortie</button>
     </div>
     <ul class="s-res" id="listRes"></ul>
   </div>
@@ -435,7 +450,8 @@ body{font-weight:500}
 <header class="hero">
   <div class="hero-kanji" aria-hidden="true">鈴蘭</div>
   <div class="wrap">
-    <div class="top-btns"><button class="theme-btn" id="themeBtn" aria-label="Passer en thème clair"><svg class="i-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button><button class="search-btn" id="searchBtn" aria-label="Rechercher une œuvre"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button></div>
+    <div class="top-btns"><button class="search-btn" id="searchBtn" aria-label="Rechercher une œuvre"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button></div>
+    
     <h1><a href="#" class="home-link" data-home aria-label="Retour à l'accueil de la chronologie">CROWS<span class="x">×</span>WORST</a></h1>
     <div class="stats" id="stats"></div>
     <p class="lede">Guide de lecture de l'univers de Hiroshi Takahashi</p>
@@ -456,6 +472,7 @@ body{font-weight:500}
 
 <p class="wrap result mono" id="result" hidden></p>
 <main class="wrap" id="timeline"></main>
+<button class="to-top" id="toTop" aria-label="Revenir en haut" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 
 <footer>
   <div class="wrap">
@@ -474,7 +491,7 @@ const DATA = {"skip": ["3ebb5e1a-634f-8037-a14a-ff12b93136a3", "3ebb5e1a-634f-80
 
 const ERA_COLORS = {origines:"#F2B33D",anciens:"#D9CBA3",genji:"#7FA7C9",harumichi:"#E5483A",transition:"#9C978A",hana:"#E58FA8",apres:"#6FC1B0",hors:"#A48CD6",artbooks:"#E0955F",qp:"#B8B05C"};
 const ERA_COLORS_LIGHT = {origines:"#A8740C",anciens:"#86764A",genji:"#3A6A93",harumichi:"#C7372A",transition:"#6B675C",hana:"#BA4F74",apres:"#2A8472",hors:"#7153B4",artbooks:"#A85C2A",qp:"#77712B"};
-const eraColor = k => (document.documentElement.dataset.theme === "light" ? ERA_COLORS_LIGHT : ERA_COLORS)[k];
+const eraColor = k => ERA_COLORS[k];
 const FILM = /Adaptation/i, SPIN = /Spin-off|Préquelle/i, MAIN = /Série principale|Suite/i, SHORT = /Recueil/i;
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const isLive = w => /En cours/i.test(w.stJP);
@@ -559,6 +576,7 @@ function workHTML(w, pos, showEra){
 }
 
 const state = { f: "all", live: false, fr: false, line: null, order: "story" };
+const CHARS = { crows: "img/char-boya.png", worst: "img/char-hana.png", qp: "img/char-ishida.png" };
 const LOGOS = { crows: "img/crows-logo.png", worst: "img/worst-logo.png", qp: "img/qp-logo.png" };
 const MAIN_OF = { crows: "Crows", worst: "WORST", qp: "QP" };
 const LINE_INTRO = {
@@ -600,7 +618,7 @@ function renderUniverse(ws, pos, tl){
   const title = state.line === "gaiden" ? "Les Spin-off" : "Univers " + LINE_NAMES[state.line];
   tl.innerHTML = `<section class="uni">
     <button class="back" data-reset>← Toute la chronologie</button>
-    <div class="uni-head">${LOGOS[state.line] ? `<img class="uni-logo" src="${LOGOS[state.line]}" alt="">` : ""}<h2>${esc(title)}</h2><p>${esc(LINE_INTRO[state.line])} <b>${list.length}</b> œuvre${list.length > 1 ? "s" : ""}.</p></div>
+    <div class="uni-head">${CHARS[state.line] ? `<img class="uni-char" src="${CHARS[state.line]}" alt="" aria-hidden="true">` : ""}${LOGOS[state.line] ? `<img class="uni-logo" src="${LOGOS[state.line]}" alt="">` : ""}<h2>${esc(title)}</h2><p>${esc(LINE_INTRO[state.line])} <b>${list.length}</b> œuvre${list.length > 1 ? "s" : ""}.</p></div>
     ${main ? featureHTML(main, pos[main.id]) : ""}
     ${segHTML()}
     <div class="list">${rest.map(w => workHTML(w, pos[w.id], true)).join("")}</div>
@@ -630,6 +648,7 @@ function render(){
     renderUniverse(ws, pos, tl);
     document.getElementById("result").hidden = true;
     document.querySelectorAll(".line-btn").forEach(b => b.setAttribute("aria-pressed", b.dataset.line === state.line));
+    syncHash();
     return;
   }
   if (state.order === "release") {
@@ -662,6 +681,8 @@ function render(){
   document.querySelectorAll(".line-btn").forEach(b => b.setAttribute("aria-pressed", b.dataset.line === state.line));
   document.querySelectorAll(".era-link").forEach(l => l.hidden = filtering() && !document.getElementById(l.dataset.k));
 }
+const _render = render;
+render = function(){ _render(); syncHash(); };
 function jumpToList(){
   const top = document.getElementById("timeline").getBoundingClientRect().top + scrollY - 8;
   if (scrollY > top || filtering() || state.order === "release") scrollTo({ top, behavior: "auto" });
@@ -750,8 +771,8 @@ function renderList(){
     return rowHTML(w, pos, extra, listKey === "fr" && frStopped(w));
   }).join("");
 }
-function openList(k){ listKey = k; listSort = "story"; renderList(); lp.hidden = false; document.body.style.overflow = "hidden"; lp.querySelector(".l-close").focus(); }
-function closeList(){ lp.hidden = true; document.body.style.overflow = ""; }
+function openList(k){ listKey = k; listSort = "story"; renderList(); lp.hidden = false; document.body.style.overflow = "hidden"; syncHash(); lp.querySelector(".l-close").focus(); }
+function closeList(){ if (lp.hidden) return; lp.hidden = true; document.body.style.overflow = ""; syncHash(); }
 
 // Recherche
 const sp = document.getElementById("searchPanel"), sq = document.getElementById("sq"), sr = document.getElementById("sres");
@@ -771,7 +792,7 @@ document.addEventListener("click", e => {
   if (e.target.closest("[data-home]")) { e.preventDefault(); resetAll(); render(); observe(); scrollTo({ top: 0, behavior: "auto" }); return; }
   if (e.target.closest("#searchBtn")) { openSearch(); return; }
   const st = e.target.closest("[data-stat]"); if (st) { openList(st.dataset.stat); return; }
-  const so = e.target.closest("[data-sort]"); if (so) { listSort = so.dataset.sort; renderList(); return; }
+  const so = e.target.closest("[data-sort]"); if (so) { listSort = so.dataset.sort; renderList(); syncHash(); lr.scrollTop = 0; return; }
   if (e.target.closest(".l-close") || e.target === lp) { closeList(); return; }
   if (e.target.closest(".s-close") || e.target === sp) { closeSearch(); return; }
   const go = e.target.closest("[data-go]");
@@ -819,15 +840,35 @@ function applyTheme(t){
   const b = document.getElementById("themeBtn"); if (b) b.setAttribute("aria-label", t === "light" ? "Passer en thème sombre" : "Passer en thème clair");
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = t === "light" ? "#F5F5F7" : "#232325";
 }
-let savedTheme = null; try { savedTheme = localStorage.getItem("fyg-theme"); } catch (e) {}
-applyTheme(savedTheme || document.documentElement.dataset.theme || "dark");
-document.getElementById("themeBtn").addEventListener("click", () => {
-  const t = document.documentElement.dataset.theme === "light" ? "dark" : "light";
-  applyTheme(t); try { localStorage.setItem("fyg-theme", t); } catch (e) {}
-  initNav(); render(); observe();
-});
+// Thème sombre uniquement
 
+// Retour en haut
+const toTop = document.getElementById("toTop");
+addEventListener("scroll", () => { toTop.hidden = scrollY < 700; }, { passive: true });
+toTop.addEventListener("click", () => scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+
+// Vue mémorisée dans l'adresse : #crows, #worst-sortie, #liste-fr, #sortie…
+let restoring = true;
+function syncHash(){
+  if (restoring) return;
+  let h = "";
+  if (!lp.hidden) h = "liste-" + listKey + (listSort === "release" ? "-sortie" : "");
+  else if (state.line) h = state.line + (state.order === "release" ? "-sortie" : "");
+  else if (state.order === "release") h = "sortie";
+  try { history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); } catch (e) {}
+}
+function restoreFromHash(){
+  const h = (location.hash || "").slice(1);
+  if (!h) return;
+  const release = /-?sortie$/.test(h), base = h.replace(/-?sortie$/, "");
+  if (base.startsWith("liste-")) { const k = base.slice(6); if (LISTS[k]) { listKey = k; listSort = release ? "release" : "story"; renderList(); lp.hidden = false; document.body.style.overflow = "hidden"; } return; }
+  if (["crows", "worst", "qp", "gaiden"].includes(base)) state.line = base;
+  if (release) state.order = "release";
+}
+
+restoreFromHash();
 initNav(); render(); observe();
+restoring = false;
 
 // Synchronisation avec Notion (sur le site : /api/crows, fonction Cloudflare Pages)
 async function syncNotion(){
