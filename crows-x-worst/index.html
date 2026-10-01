@@ -447,6 +447,13 @@ body{font-weight:500}
   .era{padding-left:0!important}
   .era::before,.era-node{display:none!important}
 }
+
+/* ---------- Textes en blanc, kanji d'époque à gauche (mobile) ---------- */
+.lede,.blocks .line-btn .d,.blocks .line-btn strong{color:var(--paper)!important}
+@media (max-width:560px){
+  .era-node{display:grid!important;position:absolute!important;left:0;top:5px;width:26px;height:26px;font-size:12px}
+  .era-num{padding-left:36px;line-height:16px}
+}
 </style>
 </head>
 <body>
