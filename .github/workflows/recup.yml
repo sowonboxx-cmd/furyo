@@ -1,0 +1,24 @@
+name: recup-couvertures
+on:
+  push:
+    branches: [recup-couvertures]
+    paths: [recup/liste.txt]
+permissions:
+  contents: write
+jobs:
+  recup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Télécharger
+        run: |
+          mkdir -p recup/out
+          while read -r nom url; do
+            [ -z "$nom" ] && continue
+            curl -sSL -A "Mozilla/5.0" -o "recup/out/$nom" "$url" || echo "échec $nom" >> recup/out/erreurs.txt
+          done < recup/liste.txt
+          curl -sSL -A "Mozilla/5.0" https://www.kana.fr/series/crows/ | grep -oE 'https://bdi\.dlpdomain\.com/album/[0-9]+-couv-M[0-9x]+\.jpg|/produit/crows[^"]*' | sort -u > recup/out/kana-crows.txt || true
+      - name: Commit
+        run: |
+          git config user.name "recup-bot"; git config user.email "bot@users.noreply.github.com"
+          git add recup/out; git commit -m "Couvertures récupérées" || exit 0; git push
