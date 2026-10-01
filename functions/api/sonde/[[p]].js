@@ -1,7 +1,10 @@
 // TEMPORAIRE : teste si une source de couvertures répond depuis Cloudflare. À supprimer après les tests.
 const HOSTS = ["ndlsearch.ndl.go.jp","api.openbd.jp","cover.openbd.jp","bookwalker.jp","www.googleapis.com","www.pika.fr","pika.fr","www.kana.fr","kana.fr","www.akata.fr","akata.fr","books.rakuten.co.jp","www.fnac.com","www.decitre.fr","www.ki-oon.com","ki-oon.com","www.meian.fr","www.glenat.com","catalogue.bnf.fr","www.akitashoten.co.jp","www.shogakukan.co.jp","kc.kodansha.co.jp","www.hakusensha.co.jp","www.nihonbungeisha.co.jp","www.kadokawa.co.jp","www.shueisha.co.jp","www.manga-news.com"];
 export async function onRequestGet({ request }) {
-  const u = new URL(request.url);
+  // Paramètres passés dans le chemin (base64url d'un JSON {u,q,n,o}) pour éviter les caches qui ignorent la query.
+  const seg = new URL(request.url).pathname.split("/").pop();
+  let P = {}; try { P = JSON.parse(decodeURIComponent(escape(atob(seg.replace(/-/g, "+").replace(/_/g, "/"))))); } catch (e) {}
+  const u = { searchParams: { get: k => P[k] == null ? null : String(P[k]) } };
   let t; try { t = new URL(u.searchParams.get("u")); } catch (e) { return new Response("u invalide", { status: 400 }); }
   if (!HOSTS.includes(t.hostname)) return new Response("hôte non autorisé", { status: 403 });
   const r = await fetch(t, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang couvertures)", "accept-language": "fr,ja;q=0.8" }, redirect: "follow" });
