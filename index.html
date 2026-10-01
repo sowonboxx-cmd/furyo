@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Japanese Outlaw Manga</title>
+<title>FuryoGang</title>
 <meta name="description" content="Au cœur des mangas les plus sombres du Japon. Furyō, bōsōzoku, yakuza, crime, violence.">
 <meta name="theme-color" content="#232325">
 <style>html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
@@ -192,19 +192,20 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .masthead .brand .bt{color:var(--paper)}
 .masthead .brand{min-height:44px;display:flex;align-items:center;justify-content:center}
 .masthead .brand .x{color:var(--red);margin:0 .12em;font-weight:600}
-.masthead .search{position:absolute;right:0;top:0}
+.masthead .search{position:absolute;right:0;top:0;height:44px;width:44px;background:none!important;border-radius:0;display:grid;place-items:center end;color:var(--paper)}
 .masthead .lede{margin:8px 0 0;font-size:clamp(13px,3.7vw,16px);text-wrap:balance}
 .masthead .themes{margin:4px 0 0;font-size:clamp(11px,3.1vw,13px);font-weight:600;letter-spacing:.04em;color:var(--paper-3);white-space:nowrap}
 .masthead{overflow:hidden}
+.main-foot{margin:24px 0 0;text-align:center}
 </style>
 
 </head>
 <body>
 <div class="page">
   <header class="masthead">
-    <h1 class="brand"><span class="bt">Japanese<span class="x">×</span>Outlaw<span class="x">×</span>Manga</span></h1>
+    <h1 class="brand"><span class="bt">Furyo<span class="x">·</span>Gang</span></h1>
     <button class="round search" aria-label="Rechercher"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
-    <p class="lede">Au cœur des mangas les plus sombres du Japon.</p>
+    <p class="lede">Au cœur des mangas les plus sombres du Japon</p>
     <p class="themes">Furyō • Bōsōzoku • Yakuza • Crime • Violence</p>
   </header>
 
@@ -328,6 +329,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
         </li>
       </ul>
       <p class="empty" id="empty" hidden>Aucune actu de ce type pour l'instant.</p>
+      <p class="side-foot main-foot">Par Sowon, créateur et boss du <a href="https://x.com/FuryoGang">FuryoGang</a>.</p>
     </main>
 
     <aside class="side" id="side">
@@ -420,8 +422,6 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
           <a href="#" class="good"><img src="/crows-x-worst/img/char-ishida.png" alt=""><span>Figurine Ishida<small>Exemple · bientôt</small></span></a>
         </div>
       </section>
-
-      <p class="side-foot">Par Sowon, créateur et boss du <a href="https://x.com/FuryoGang">FuryoGang</a>.</p>
     </aside>
   </div>
 </div>
@@ -468,7 +468,7 @@ function place(){
     const items = [...feed.querySelectorAll(".post")];
     mods.forEach((m, i) => { const anchor = items[Math.min(items.length - 1, i * 2 + 1)]; anchor.after(m); });
   } else {
-    const foot = side.querySelector(".side-foot");
+    const foot = null;
     mods.forEach(m => side.insertBefore(m, foot));
   }
 }
