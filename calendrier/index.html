@@ -33,7 +33,7 @@ button{font:inherit;color:inherit}
 .brand span{color:var(--red)}
 h1{margin:18px 0 2px;font-family:var(--f-display);font-weight:700;font-size:clamp(44px,12vw,72px);line-height:.95;text-transform:uppercase;letter-spacing:.01em}
 .sub{margin:0;color:var(--paper-2)}
-.bar{display:flex;gap:8px;align-items:center;margin-top:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5}
+.bar{display:flex;gap:8px;align-items:center;margin-top:8px;padding:calc(env(safe-area-inset-top,0px) + 8px) 0 8px;position:sticky;top:0;z-index:5;background:var(--ink)}
 .seg{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--ink-3);border-radius:14px}
 .seg button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font-weight:600;font-size:14px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
@@ -72,6 +72,10 @@ h1{margin:18px 0 2px;font-family:var(--f-display);font-weight:700;font-size:clam
 @media (min-width:640px){.c-t{font-size:17px}.cv{border-radius:14px}}
 .flag{width:22px;height:15px;border-radius:3px;flex:none;display:block;overflow:hidden}
 .empty{color:var(--paper-3);text-align:center;padding:40px 0}
+.was{opacity:.62}
+.now{list-style:none;display:flex;align-items:center;gap:10px;color:var(--red);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:6px 0 2px}
+.now::before,.now::after{content:"";flex:1;height:2px;background:var(--red);border-radius:2px;opacity:.7}
+.grid .now{grid-column:1/-1}
 .past{margin-top:40px;padding-top:18px;border-top:1px solid var(--ink-3)}
 .past-h{margin:0;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3)}
 .past .month{margin-top:10px}
@@ -133,14 +137,16 @@ function dateTxt(it){ const d = d0(it.date); return it.prec === "Mois" ? `${MOIS
 function rowHTML(it){
   const past = it.date < today;
   const thumb = it.cover || it.visual ? `<span class="thumb">${img(it).replace("<img ", '<img style="width:100%;height:100%;object-fit:cover" ')}</span>` : `<span class="thumb" lang="ja">${esc((it.jp || "").slice(0, 5))}</span>`;
-  return `<li><div class="row">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
+  return `<li${past ? ' class="was"' : ""}><div class="row">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
     <div class="r-meta">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : (!it.cover ? `<span class="pill wait">Couverture à venir</span>` : "")}</div></div></div></li>`;
 }
 function cardHTML(it){
   const past = it.date < today;
-  return `<li><div class="card"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span>${!past && !it.cover ? `<span class="wait">Couverture à venir</span>` : ""}</div>
+  return `<li${past ? ' class="was"' : ""}><div class="card"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span>${!past && !it.cover ? `<span class="wait">Couverture à venir</span>` : ""}</div>
     <div class="c-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div></div></li>`;
 }
+let NEXT_ID = null;
+const NOW_DIV = () => { const d = new Date(); return `<li class="now" id="now"><span>Aujourd'hui · ${d.getDate()} ${MCOURT[d.getMonth()]}</span></li>`; };
 function group(list, cls, desc){
   const by = {};
   list.forEach(it => { const d = d0(it.date); const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; (by[k] = by[k] || []).push(it); });
@@ -148,7 +154,8 @@ function group(list, cls, desc){
   return keys.map(k => {
     const [y, m] = k.split("-");
     const items = by[k];
-    const inner = state.view === "grid" ? `<ul class="grid">${items.map(cardHTML).join("")}</ul>` : `<ul class="list">${items.map(rowHTML).join("")}</ul>`;
+    const one = it => (it.id === NEXT_ID ? NOW_DIV() : "") + (state.view === "grid" ? cardHTML(it) : rowHTML(it));
+    const inner = `<ul class="${state.view === "grid" ? "grid" : "list"}">${items.map(one).join("")}</ul>`;
     return `<section class="${cls || ""}"><h2 class="month">${MOIS[+m - 1]} ${y}<small>${items.length} sortie${items.length > 1 ? "s" : ""}</small></h2>${inner}</section>`;
   }).join("");
 }
@@ -156,9 +163,18 @@ function render(){
   document.querySelectorAll("[data-pays]").forEach(b => b.setAttribute("aria-pressed", b.dataset.pays === state.pays));
   document.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === state.view));
   const l = ITEMS.filter(it => state.pays === "all" || it.pays === state.pays);
-  const next = l.filter(it => it.date >= today), past = l.filter(it => it.date < today).reverse();
-  app.innerHTML = (next.length ? group(next) : `<p class="empty">Aucune sortie annoncée pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.</p>`)
-    + (past.length ? `<div class="past"><p class="past-h">Déjà sortis</p>${group(past, "", true)}</div>` : "");
+  // Une seule frise chronologique (mois passés puis à venir) ; la page s'ouvre sur la prochaine sortie.
+  const nextItem = l.find(it => it.date >= today);
+  NEXT_ID = nextItem ? nextItem.id : null;
+  app.innerHTML = l.length ? group(l) + (nextItem ? "" : `<p class="empty">Aucune sortie annoncée pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.</p>`)
+    : `<p class="empty">Aucune sortie pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.</p>`;
+  goToday();
+}
+function goToday(){
+  const el = document.getElementById("now"); if (!el) return;
+  const bar = document.querySelector(".bar");
+  const y = el.getBoundingClientRect().top + scrollY - (bar ? bar.offsetHeight : 0) - 70;
+  scrollTo({ top: Math.max(0, y), behavior: "instant" });
 }
 document.addEventListener("click", e => {
   const p = e.target.closest("[data-pays]"); if (p) { state.pays = p.dataset.pays; history.replaceState(null, "", state.pays === "all" ? location.pathname : "#" + state.pays.toLowerCase()); render(); return; }
