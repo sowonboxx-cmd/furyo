@@ -1,9 +1,6 @@
-akita-nine21.jpg https://www.akitashoten.co.jp/comics/4253020054/cover
-akita-sabu14.jpg https://www.akitashoten.co.jp/comics/4253020429/cover
-akita-dokuro23.jpg https://www.akitashoten.co.jp/comics/4253020402/cover
-akita-guriko40.jpg https://www.akitashoten.co.jp/comics/4253020399/cover
-akita-demekin40.jpg https://www.akitashoten.co.jp/comics/4253020283/cover
-akita-zetton19.jpg https://www.akitashoten.co.jp/comics/4253020410/cover
-akita-gaia12.jpg https://www.akitashoten.co.jp/comics/4253020151/cover
-akita-shonan7.jpg https://www.akitashoten.co.jp/comics/4253020909/cover
-
+pg-saigo11.html https://www.shueisha.co.jp/books/items/contents.html?isbn=978-4-08-894424-1
+pg-ushi8.html https://www.shogakukan.co.jp/books/09854847
+pg-jumbo17.html https://www.shogakukan.co.jp/books/09864155
+pg-ushi8-tameshi.html https://shogakukan.tameshiyo.me/9784098548477
+pg-kenka2.html https://www.hakusensha.co.jp/search/?q=9784592160991
+pg-golden15.html https://www.nihonbungeisha.co.jp/search?q=9784537174427
