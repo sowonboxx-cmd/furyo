@@ -465,6 +465,18 @@ body{font-weight:500}
 .credit a:hover{text-decoration:underline}
 
 @media (min-width:700px){.bchar{opacity:1!important}}
+
+/* ---------- Listes en pages, crédit, chiffres ---------- */
+body.list-mode .hero,body.list-mode .start,body.list-mode #result,body.list-mode #timeline,body.list-mode .to-top,body.list-mode .search-btn{display:none!important}
+.list-page{position:static!important;inset:auto;background:transparent!important;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 24px!important;display:block}
+.list-page[hidden]{display:none!important}
+.list-page .s-box{max-width:1048px;margin:0 auto;max-height:none!important;overflow:visible;background:transparent!important}
+.list-page .s-res{overflow:visible;max-height:none}
+.list-page .l-head2 .round-close{right:auto;left:0}
+.list-page .l-head2{padding:10px 52px}
+.credit{white-space:nowrap;font-size:clamp(10.5px,3vw,14px)!important}
+.stat .l{margin-top:6px}
+@media (max-width:699px){.bchar{opacity:.65!important}}
 </style>
 </head>
 <body>
@@ -482,11 +494,11 @@ body{font-weight:500}
   </div>
 </div>
 
-<div class="search-panel" id="listPanel" hidden role="dialog" aria-modal="true" aria-labelledby="listTitle">
+<div class="search-panel list-page" id="listPanel" hidden aria-labelledby="listTitle">
   <div class="s-box">
     <div class="l-head2">
       <strong id="listTitle" class="l-title"></strong>
-      <button class="round-close l-close" aria-label="Fermer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <button class="round-close l-close" aria-label="Retour à la chronologie"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
     </div>
     <div class="seg l-seg" role="group" aria-label="Ordre d'affichage">
       <button data-sort="story" aria-pressed="true">Ordre chronologique</button>
@@ -531,7 +543,7 @@ body{font-weight:500}
 
 <footer>
   <div class="wrap">
-    <p class="credit">Créé par Sowon, fondateur du <a href="https://x.com/FuryoSquad" target="_blank" rel="noopener">@FuryoSquad</a> et du <a href="https://x.com/FuryoGang" target="_blank" rel="noopener">@FuryoGang</a></p>
+    <p class="credit">Créé par Sowon. Founder : <a href="https://x.com/FuryoSquad" target="_blank" rel="noopener">FuryoSquad</a> &amp; <a href="https://x.com/FuryoGang" target="_blank" rel="noopener">FuryoGang</a></p>
   </div>
 </footer>
 
@@ -831,8 +843,32 @@ function renderList(){
     return rowHTML(w, pos, extra, listKey === "fr" && frStopped(w));
   }).join("");
 }
-function openList(k){ listKey = k; listSort = "story"; renderList(); lp.hidden = false; document.body.style.overflow = "hidden"; syncHash(); lp.querySelector(".l-close").focus(); }
-function closeList(){ if (lp.hidden) return; lp.hidden = true; document.body.style.overflow = ""; syncHash(); }
+// Chaque liste a sa propre adresse (…/crows-x-worst/oeuvres, /en-cours, /en-francais) : le bouton retour du navigateur fonctionne
+const PATH_BASE = (location.pathname.match(/^(.*?\/crows-x-worst)(?:\/|$)/) || [])[1] || null;
+const SLUG = { all: "oeuvres", live: "en-cours", fr: "en-francais" };
+const SLUG_K = { oeuvres: "all", "en-cours": "live", "en-francais": "fr" };
+const listUrl = k => PATH_BASE ? PATH_BASE + "/" + SLUG[k] : location.pathname + "#liste-" + k;
+const mainUrl = () => PATH_BASE ? PATH_BASE + "/" : location.pathname;
+let mainScroll = 0;
+function showList(k, sort){ listKey = k; listSort = sort || "story"; renderList(); lp.hidden = false; document.body.classList.add("list-mode"); scrollTo(0, 0); }
+function hideList(){ lp.hidden = true; document.body.classList.remove("list-mode"); }
+function openList(k){
+  mainScroll = scrollY;
+  try { history.pushState({ list: k, pushed: true }, "", listUrl(k)); } catch (e) {}
+  showList(k);
+}
+function closeList(){
+  if (lp.hidden) return;
+  if (history.state && history.state.pushed) { history.back(); return; }
+  hideList(); try { history.replaceState(null, "", mainUrl()); } catch (e) {} scrollTo(0, mainScroll);
+}
+// Quitter la liste pour aller sur une fiche : nouvelle entrée d'historique (le retour ramène à la liste)
+function leaveListTo(){ if (lp.hidden) return; hideList(); try { history.pushState(null, "", mainUrl()); } catch (e) {} }
+addEventListener("popstate", e => {
+  const st = e.state;
+  if (st && st.list) { showList(st.list, st.sort); return; }
+  if (!lp.hidden) { hideList(); requestAnimationFrame(() => scrollTo(0, mainScroll)); }
+});
 
 // Recherche
 const sp = document.getElementById("searchPanel"), sq = document.getElementById("sq"), sr = document.getElementById("sres");
@@ -853,10 +889,10 @@ document.addEventListener("click", e => {
   if (e.target.closest("#searchBtn")) { openSearch(); return; }
   const st = e.target.closest("[data-stat]"); if (st) { openList(st.dataset.stat); return; }
   const so = e.target.closest("[data-sort]"); if (so) { listSort = so.dataset.sort; renderList(); syncHash(); lr.scrollTop = 0; return; }
-  if (e.target.closest(".l-close") || e.target === lp) { closeList(); return; }
+  if (e.target.closest(".l-close")) { closeList(); return; }
   if (e.target.closest(".s-close") || e.target === sp) { closeSearch(); return; }
   const go = e.target.closest("[data-go]");
-  if (go) { closeSearch(); closeList(); resetAll(); render(); observe(); openCard(go.dataset.go); return; }
+  if (go) { closeSearch(); leaveListTo(); resetAll(); render(); observe(); openCard(go.dataset.go); return; }
   const z = e.target.closest("[data-zoom]");
   if (z && !z.closest(".lightbox")) { e.preventDefault(); openZoom(z.dataset.zoom); return; }
   if (e.target.closest(".lb-close") || e.target === lb || e.target.closest(".lb-cover")) { closeZoom(); return; }
@@ -912,16 +948,24 @@ let restoring = true;
 function syncHash(){
   if (restoring) return;
   let h = "";
-  if (!lp.hidden) h = "liste-" + listKey + (listSort === "release" ? "-sortie" : "");
-  else if (state.line) h = state.line + (state.order === "release" ? "-sortie" : "");
+  if (!lp.hidden) {
+    const st = Object.assign({}, history.state || {}, { list: listKey, sort: listSort });
+    try { history.replaceState(st, "", listUrl(listKey) + (listSort === "release" ? (PATH_BASE ? "#sortie" : "-sortie") : "")); } catch (e) {}
+    return;
+  }
+  if (state.line) h = state.line + (state.order === "release" ? "-sortie" : "");
   else if (state.order === "release") h = "sortie";
-  try { history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); } catch (e) {}
+  try { history.replaceState(history.state && history.state.list ? null : history.state, "", (PATH_BASE ? mainUrl() : location.pathname) + (h ? "#" + h : "")); } catch (e) {}
 }
 function restoreFromHash(){
   const h = (location.hash || "").slice(1);
+  if (PATH_BASE) {
+    const slug = location.pathname.slice(PATH_BASE.length).replace(/^\/|\/$/g, "");
+    if (SLUG_K[slug]) { const k = SLUG_K[slug]; showList(k, h === "sortie" ? "release" : "story"); try { history.replaceState({ list: k, sort: listSort }, "", location.href); } catch (e) {} return; }
+  }
   if (!h) return;
   const release = /-?sortie$/.test(h), base = h.replace(/-?sortie$/, "");
-  if (base.startsWith("liste-")) { const k = base.slice(6); if (LISTS[k]) { listKey = k; listSort = release ? "release" : "story"; renderList(); lp.hidden = false; document.body.style.overflow = "hidden"; } return; }
+  if (base.startsWith("liste-")) { const k = base.slice(6); if (LISTS[k]) { showList(k, release ? "release" : "story"); try { history.replaceState({ list: k, sort: listSort }, "", location.href); } catch (e) {} } return; }
   if (["crows", "worst", "qp", "gaiden"].includes(base)) state.line = base;
   if (release) state.order = "release";
 }
