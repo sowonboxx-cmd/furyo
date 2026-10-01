@@ -4,7 +4,8 @@ export async function onRequestGet({ request }) {
   // Paramètres passés dans le chemin (base64url d'un JSON {u,q,n,o}) pour éviter les caches qui ignorent la query.
   const seg = new URL(request.url).pathname.split("/").pop();
   let P = {}; try { P = JSON.parse(decodeURIComponent(escape(atob(seg.replace(/-/g, "+").replace(/_/g, "/"))))); } catch (e) {}
-  const u = { searchParams: { get: k => P[k] == null ? null : String(P[k]) } };
+  const real = new URL(request.url);
+  const u = Object.keys(P).length ? { searchParams: { get: k => P[k] == null ? null : String(P[k]) } } : real;
   let t; try { t = new URL(u.searchParams.get("u")); } catch (e) { return new Response("u invalide", { status: 400 }); }
   if (!HOSTS.includes(t.hostname)) return new Response("hôte non autorisé", { status: 403 });
   const r = await fetch(t, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang couvertures)", "accept-language": "fr,ja;q=0.8" }, redirect: "follow" });
