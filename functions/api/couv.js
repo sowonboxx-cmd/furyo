@@ -7,6 +7,7 @@ const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","k
 const PLACEHOLDERS = new Set([
   "517f458418f9ecf80b1c12449843a6584db25f398a70f00080d972fcdc9dc82a", // BookWalker NOW PRINTING
   "a71f701008ab37a643e1808c62ef2f16d89c5018de36ddc9e267150ba856b4ce", // Akita Shoten NOW PRINTING
+  "573b17de6e70a52373f5b5d2a7ee2b6633fc970d8796f5940f2c6ac0b8924cd5", // Shogakukan Now Printing
 ]);
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 
