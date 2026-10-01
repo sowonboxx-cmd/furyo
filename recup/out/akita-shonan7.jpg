@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta content="秋田書店,少年チャンピオン,ヤングチャンピオン,チャンピオン,Akita,秋田" name="keywords" />
+  <meta content="総合出版社 秋田書店の公式ウェブサイト。秋田書店刊行のコミック、漫画雑誌、コミックの最新刊情報をお探しの方はこちら" name="description" />
+  <title>秋田書店</title>
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link href="/assets/reset-37ac1370cc06fde9055c93d4957c4845.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="/assets/index-5e381726899d38a0577e364c0f5f9aee.css" media="screen" rel="stylesheet" type="text/css" />
+  <!--[if lt IE 8]><link href="/assets/noncompliant-308c11bb1195139ed89002c1fad9f902.css" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
+  <script src="/assets/jquery-1.9.1.min-8da380348c2b951ea2dbc683ba3b2f84.js" type="text/javascript"></script>
+<script src="/assets/modernizr.custom.50222-f20bbde2d063081a7fb2894b28fc687e.js" type="text/javascript"></script>
+<script src="/assets/common-050ba80ae563d96a24bfd0bf93631838.js" type="text/javascript"></script>
+  <meta content="authenticity_token" name="csrf-param" />
+<meta content="iWKbzfTzn+lEUQni53IGYP/eO5ky4owZDMfjAcg+JwY=" name="csrf-token" />
+    <script src="/assets/searchbox-a4e8309bfad36bb1ca23a5eeac7ce6bd.js" type="text/javascript"></script>
+
+  <meta property="fb:app_id" content="399588876815179" />
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5G237N4');</script>
+<!-- End Google Tag Manager -->
+
+</head>
+<body id="subPage">
+<!-- Page hiding snippet (recommended) -->
+<style>.async-hide { opacity: 0 !important} </style>
+<script>
+  (function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;
+  h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
+  (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);
+  })(window,document.documentElement,'async-hide','dataLayer',4000,{'GTM-W2QFVSK':true});
+</script>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5G237N4"
+		  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5G237N4"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+  <a id="pageTop"></a>
+  <div class="wrapper">
+    
+    <header>
+  <div id="gnavi">
+    <hgroup>
+      <h1><a href="/">秋田書店</a></h1>
+      <h2 class="outlineTitle">AKITA SHOTEN since 1948 マンガで最高の出会い</h2>
+    </hgroup>
+    <nav>
+      <h1 class="outlineTitle">グローバルナビゲーション</h1>
+      <ul class="clear">
+        <li class="comics"><a href="/comics">コミックス</a></li>
+        <li class="magazine"><a href="/magazine">雑誌</a></li>
+        <li class="news"><a href="/news">お知らせ</a></li>
+        <li class="shop"><a href="https://shop.akitashoten.co.jp/" target="_blank">オンラインショップ</a></li>
+      </ul>
+    </nav>
+    <a href="/" class="toTopPage">TOPへ戻る</a>
+  </div>
+  <div id="info">
+    <div>
+      <p class="copy">コミック・フロンティアの秋田書店</p>
+      <ul id="link">
+        <li><a href="/company">企業情報</a></li>
+        <li><a href="/recruit">採用情報</a></li>
+        <li><a href="https://akitashoten.jp/" target="_blank">まんが賞</a></li>
+        <li><a href="https://mochikomi.akitashoten.jp/" target="_blank">持ち込み窓口</a></li>	
+      </ul>
+    </div>
+  </div>
+</header>
+
+<section id="mainSlide" class="errorPage">
+  <header>
+    <h1>404 NOT FOUND</h1>
+  </header>
+  <div class="searchArea">
+  <form accept-charset="UTF-8" action="/comics/search" class="searchBox" method="get"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+    <input id="q" maxlength="50" name="q" type="text" />
+    <button>検索</button>
+</form>  </div>
+</section>
+
+    
+    <div id="page">
+  <div class="clear">
+    <div id="mainColumn" class="error">
+      <!--/ 関連リンクページ /-->
+      <section>
+        <header>
+          <h1>
+            <div class="icon"></div>
+            <span>ページが見つかりません</span>
+          </h1>
+          <div>
+            <button>
+              <a href="/">TOPへ戻る</a>
+            </button>
+          </div>
+        </header>
+      <!--/ 関連リンクページ /--></section>
+    <!-- / #mainColumn --></div>
+  <!-- / .clear --></div>
+<!-- / #page --></div>
+
+    
+  </div>
+    
+  <footer>
+  <div id="footer" data-nosnippet>
+    <div class="menu clear">
+      <div class="box">
+        <ul class="boys">
+          <li>
+            <a href="/magazine/man">少年・青年向け雑誌</a>
+            <ul>
+                <li><a href="/w-champion">週刊少年チャンピオン</a></li>
+                <li><a href="/w-championbuzz">チャンピオンBUZZ</a></li>
+                <li><a href="/g-champion">グラビアチャンピオン</a></li>
+                <li><a href="/m-champion">月刊少年チャンピオン</a></li>
+                <li><a href="/b-champion">別冊少年チャンピオン</a></li>
+                <li><a href="/youngchampion">ヤングチャンピオン</a></li>
+                <li><a href="/yc-retsu">ヤングチャンピオン烈</a></li>
+                <li><a href="/bessatsu-yc">別冊ヤングチャンピオン</a></li>
+                <li><a href="/dyc">どこでもヤングチャンピオン</a></li>
+                <li><a href="/red">チャンピオンRED</a></li>
+                <li><a href="https://youngchampion.jp/" target="_blank">ヤンチャンWeb</a></li>
+                <li><a href="https://championcross.jp/" target="_blank">チャンピオンクロス</a></li>
+            </ul>
+          </li>
+        </ul>
+      <!--/ .box /--></div>
+      <div class="box">
+        <ul class="girls">
+          <li>
+            <a href="/magazine/woman">少女・女性向け雑誌</a>
+            <ul>
+                <li><a href="/princess">プリンセス</a></li>
+                <li><a href="/petitprincess">プチプリンセス</a></li>
+                <li><a href="/bonita">ミステリーボニータ</a></li>
+                <li><a href="http://www.kachicomi.jp/" target="_blank">カチCOMI</a></li>
+                <li><a href="/eleganceeve">Eleganceイブ</a></li>
+                <li><a href="/formrs">フォアミセス</a></li>
+                <li><a href="/lovemax">恋愛LoveMAX</a></li>
+                <li><a href="/cherrypink">恋愛チェリーピンク</a></li>
+                <li><a href="https://souffle.life/" target="_blank">Souffle</a></li>
+                <li><a href="https://balmy-comic.jp/" target="_blank">BaLmy</a></li>
+            </ul>
+          </li>
+        </ul>
+      <!--/ .box /--></div>
+      <div class="box">
+        <ul class="listYellow">
+          <li><a href="/comics">コミックス</a></li>
+          <li><a href="/news">お知らせ</a></li>
+        </ul>
+        <ul class="listGreen">
+          <li><a href="/company">企業情報</a></li>
+          <li><a href="/recruit" target="_blank">採用情報</a></li>
+		  
+          <li><a href="/for_book_store">書店様向け</a></li>
+        </ul>
+      <!--/ .box /--></div>
+      <div class="box">
+        <ul class="listBlack">
+          <li><a href="/sitepolicy">サイトポリシー</a></li>
+          <li><a href="/privacypolicy">プライバシーポリシー</a></li>
+          <li><a href="/inquiry" target="_blank">お問い合わせ</a></li>
+        </ul>
+        <div id="pagetopC">
+          <a href="#pageTop">先頭へ戻る</a>
+        </div>
+      <!--/ .box /--></div>
+      <!--/ .menu /--></div>
+        <div class="license__area">
+          <dl class="license__box license__box--abj">
+            <dt>
+	      <img alt="Abj_akita-corp" src="/assets/common/abj_akita-corp-e9d53a6c37a818ab3e963ec267bce340.svg" />
+            </dt>
+            <dd>
+              ＡＢＪマークは、この電子書店・電子書籍配信サービスが、著作権者からコンテンツ使用許諾を得た正規版配信サービスであることを示す登録商標（登録番号 第６０９１７１３号）です。<br>
+              ＡＢＪマークの詳細、ＡＢＪマークを掲示しているサービスの一覧はこちら。
+              <a href="https://aebs.or.jp/" target="_blank">https://aebs.or.jp/</a>
+            </dd>
+          </dl>
+          <div class="copy">
+            <small>copyright&copy;AKITA PUBLISHING CO.,LTD.</small>
+          </div>
+        </div>
+  <!--/ #footer /--></div>
+
+
+</footer>
+
+<noscript>
+  <div class="noScript">
+    <div class="attention">
+      ブラウザのJavaScriptの設定が無効です。JavaScriptの設定をONにして、もう一度画面を表示してください。
+    </div>
+  </div>
+</noscript>
+
+
+
+
+
+  <div class="nonCompliant">
+    <div class="attention">
+      あなたは旧式ブラウザをご利用中です。このWEBサイトを快適に閲覧するにはブラウザをアップグレードしてください。
+    </div>
+  </div>
+
+</body>
+</html>

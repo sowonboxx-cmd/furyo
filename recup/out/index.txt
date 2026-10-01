@@ -1,0 +1,14 @@
+total 172
+drwxr-xr-x 2 runner runner  4096 Oct  1 18:50 .
+drwxr-xr-x 3 runner runner  4096 Oct  1 18:50 ..
+-rw-r--r-- 1 runner runner 14513 Oct  1 18:50 akita-demekin40.jpg
+-rw-r--r-- 1 runner runner 14513 Oct  1 18:50 akita-dokuro23.jpg
+-rw-r--r-- 1 runner runner  9706 Oct  1 18:50 akita-gaia12.jpg
+-rw-r--r-- 1 runner runner 35724 Oct  1 18:50 akita-guriko40.jpg
+-rw-r--r-- 1 runner runner 23309 Oct  1 18:50 akita-nine21.jpg
+-rw-r--r-- 1 runner runner 14513 Oct  1 18:50 akita-sabu14.jpg
+-rw-r--r-- 1 runner runner  9706 Oct  1 18:50 akita-shonan7.jpg
+-rw-r--r-- 1 runner runner 14513 Oct  1 18:50 akita-zetton19.jpg
+-rw-r--r-- 1 runner runner     0 Oct  1 18:50 index.txt
+-rw-r--r-- 1 runner runner  9500 Oct  1 18:50 openbd.json
+-rw-r--r-- 1 runner runner   112 Oct  1 18:50 openbd.txt
