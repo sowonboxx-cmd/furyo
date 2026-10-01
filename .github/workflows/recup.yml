@@ -17,6 +17,7 @@ jobs:
             [ -z "$nom" ] && continue
             curl -sSL -A "Mozilla/5.0" -o "recup/out/$nom" "$url" || echo "échec $nom" >> recup/out/erreurs.txt
           done < recup/liste.txt
+          curl -sSL -A "Mozilla/5.0" https://www.kana.fr/produit/crows-t8/ | grep -oE '97[89][0-9]{10}|bdi\.dlpdomain\.com/album/[0-9]+-couv-M[0-9x]+\.jpg|[0-9]{2}/[0-9]{2}/20[0-9]{2}' | sort | uniq -c > recup/out/kana-crows8.txt || true
           curl -sSL -A "Mozilla/5.0" https://www.kana.fr/series/crows/ | grep -oE 'https://bdi\.dlpdomain\.com/album/[0-9]+-couv-M[0-9x]+\.jpg|/produit/crows[^"]*' | sort -u > recup/out/kana-crows.txt || true
       - name: Commit
         run: |
