@@ -459,6 +459,10 @@ body{font-weight:500}
   .era-node{border:0!important;background:none!important;width:auto!important;height:16px!important;top:10px!important;font-size:15px!important;line-height:16px;place-items:center start}
   .era-num{padding-left:22px!important}
 }
+
+.credit{margin:0;text-align:center;color:var(--paper-2);font-size:14px}
+.credit a{color:var(--paper);font-weight:600;text-decoration:none}
+.credit a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -525,13 +529,7 @@ body{font-weight:500}
 
 <footer>
   <div class="wrap">
-    <div class="legend">
-      <span><span class="pill live">En cours</span>Toujours publiée au Japon</span>
-      <span><span class="pill warn">À vérifier</span>Place ou infos encore discutées</span>
-    </div>
-    <p><strong>Comment lire le numéro #</strong> : c'est la position dans l'histoire. Deux fiches avec le même numéro (09a, 09b…) se déroulent à la même époque.</p>
-    <p>Données issues de la base FuryoGang, vérifiées sur les sources officielles (éditeurs, magazines) et MangaUpdates. Le nombre de tomes affiché sur chaque fiche est celui de l'édition japonaise originale ; l'édition française est détaillée dans la fiche. Couvertures : tome 1 japonais fourni par l'éditeur quand il est disponible, sinon illustration maison. Touchez une couverture pour l'agrandir.</p>
-    <p class="mono" id="updated"></p>
+    <p class="credit">Créé par Sowon, fondateur du <a href="https://x.com/FuryoSquad" target="_blank" rel="noopener">@FuryoSquad</a> et du <a href="https://x.com/FuryoGang" target="_blank" rel="noopener">@FuryoGang</a></p>
   </div>
 </footer>
 
@@ -893,7 +891,7 @@ document.addEventListener("click", e => {
 
 document.getElementById("stats").innerHTML = statsHTML(DATA.works);
 const d = new Date(DATA.updated + "T12:00:00");
-document.getElementById("updated").textContent = "Mis à jour le " + d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+(document.getElementById("updated") || {}).textContent = "Mis à jour le " + d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 // Thème : sombre par défaut, clair au choix (mémorisé sur cet appareil)
 function applyTheme(t){
   if (t === "light") document.documentElement.dataset.theme = "light"; else document.documentElement.dataset.theme = "dark";
@@ -962,7 +960,7 @@ async function syncNotion(){
   }
   DATA.works.sort((a, b) => a.o - b.o || a.id - b.id);
   const d2 = new Date(j.synced);
-  document.getElementById("updated").textContent = "Synchronisé avec la base FuryoGang le " + d2.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  (document.getElementById("updated") || {}).textContent = "Synchronisé avec la base FuryoGang le " + d2.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
   if (changed) { document.getElementById("stats").innerHTML = statsHTML(DATA.works); render(); observe(); }
 }
 syncNotion();
