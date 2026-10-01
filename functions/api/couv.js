@@ -6,6 +6,7 @@ const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","k
 // Images « NOW PRINTING » / « 画像準備中 » connues (empreinte SHA-256) : ce ne sont pas des couvertures.
 const PLACEHOLDERS = new Set([
   "517f458418f9ecf80b1c12449843a6584db25f398a70f00080d972fcdc9dc82a", // BookWalker NOW PRINTING
+  "a71f701008ab37a643e1808c62ef2f16d89c5018de36ddc9e267150ba856b4ce", // Akita Shoten NOW PRINTING
 ]);
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 
@@ -18,7 +19,7 @@ export async function onRequestGet({ request, waitUntil }) {
     const ct = r.headers.get("content-type") || "";
     if (!r.ok || !ct.startsWith("image/")) return Response.json({ ok: false, status: r.status, type: ct, verdict: "pas une image" });
     const buf = await r.arrayBuffer(), sha = hex(await crypto.subtle.digest("SHA-256", buf));
-    const ph = PLACEHOLDERS.has(sha) || buf.byteLength < 3000;
+    const ph = PLACEHOLDERS.has(sha) || buf.byteLength < 3000 || !ct.startsWith("image/");
     return Response.json({ ok: !ph, placeholder: ph, bytes: buf.byteLength, type: ct, sha256: sha, verdict: ph ? "image provisoire (NOW PRINTING ou vide) : refuser" : "image valide" });
   }
   let t; try { t = new URL(self.searchParams.get("u")); } catch (e) { return new Response("u invalide", { status: 400 }); }
