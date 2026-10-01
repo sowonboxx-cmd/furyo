@@ -765,8 +765,17 @@ function resetAll(){
 function openCard(id){
   const card = document.querySelector(`.work[data-id="${id}"]`); if (!card) return;
   card.dataset.open = "true"; card.querySelector(".work-btn").setAttribute("aria-expanded", "true");
-  const top = card.getBoundingClientRect().top + scrollY - 12;
-  scrollTo({ top, behavior: "auto" });
+  scrollTo({ top: card.getBoundingClientRect().top + scrollY - stickyOffset(card) - 12, behavior: "auto" });
+}
+// Hauteur des éléments collés en haut (onglets + en-tête d'époque) au-dessus d'une carte
+function stickyOffset(card){
+  let h = 0;
+  const hs = document.querySelector(".home-seg");
+  if (hs) h += hs.offsetHeight;
+  else { const sg = document.querySelector("#timeline .seg"); if (sg) h += sg.offsetHeight + 8; }
+  const head = card.closest(".era") && card.closest(".era").querySelector(".era-head");
+  if (head) h += head.offsetHeight;
+  return h;
 }
 
 // Zoom couverture
