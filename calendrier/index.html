@@ -114,7 +114,7 @@ const JOURS = ["dim.","lun.","mar.","mer.","jeu.","ven.","sam."];
 const d0 = s => new Date(s + "T12:00:00");
 const title = it => it.pays === "France" && it.fr ? it.fr : (it.series || it.tome);
 function img(it){
-  if (it.cover) return `<img src="${esc(it.cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">`;
+  if (it.cover) return `<img src="/api/couv?u=${encodeURIComponent(it.cover)}" alt="" loading="lazy">`;
   if (it.visual) return `<img src="/api/visuel?s=${it.seriesId}&p=main" alt="" loading="lazy">`;
   return `<span class="ph" lang="ja">${esc((it.jp || it.series || "").slice(0, 6))}</span>`;
 }
