@@ -97,6 +97,7 @@ h1{margin:18px 0 2px;font-family:var(--f-display);font-weight:700;font-size:clam
   <p class="foot">Par Sowon, créateur et boss du <a href="https://x.com/FuryoGang">FuryoGang</a>.</p>
 </div>
 <script>
+const tn = n => (Number.isInteger(n) && n >= 0 && n < 10) ? "0" + n : String(n);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const app = document.getElementById("app");
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} } };
@@ -121,13 +122,13 @@ function dateTxt(it){ const d = d0(it.date); return it.prec === "Mois" ? `${MOIS
 function rowHTML(it){
   const past = it.date < today;
   const thumb = it.cover || it.visual ? `<span class="thumb">${img(it).replace("<img ", '<img style="width:100%;height:100%;object-fit:cover" ')}</span>` : `<span class="thumb" lang="ja">${esc((it.jp || "").slice(0, 5))}</span>`;
-  return `<li><div class="row">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${it.n}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
+  return `<li><div class="row">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
     <div class="r-meta"><span class="pill ${it.pays === "Japon" ? "jp" : "fr"}">${esc(it.pays || "?")}</span>${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${it.format && it.format !== "Tankōbon" ? `<span class="pill">${esc(it.format)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : (!it.cover ? `<span class="pill wait">Couverture à venir</span>` : "")}</div></div></div></li>`;
 }
 function cardHTML(it){
   const past = it.date < today;
   return `<li><div class="card"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span>${!past && !it.cover ? `<span class="wait">Couverture à venir</span>` : ""}</div>
-    <div class="c-t">${esc(title(it))}${it.n != null ? ` T.${it.n}` : ""}</div><div class="c-s">${esc([it.pays, it.pub].filter(Boolean).join(" · "))}</div></div></li>`;
+    <div class="c-t">${esc(title(it))}${it.n != null ? ` T.${tn(it.n)}` : ""}</div><div class="c-s">${esc([it.pays, it.pub].filter(Boolean).join(" · "))}</div></div></li>`;
 }
 function group(list, cls){
   const by = {};
