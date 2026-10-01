@@ -44,13 +44,14 @@ button.main{background:var(--red)}
 .card.a .num{position:absolute;left:34px;top:620px;font-family:"Antonio",sans-serif;font-weight:700;font-size:210px;line-height:.8;color:transparent;-webkit-text-stroke:4px var(--fg);letter-spacing:-.02em}
 .card.a .num small{display:block;font-size:46px;-webkit-text-stroke:0;color:var(--fg);letter-spacing:.1em;margin-bottom:10px}
 .card.a .jp{position:absolute;right:58px;top:200px;writing-mode:vertical-rl;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:var(--js,58px);line-height:1.05;letter-spacing:.06em;color:var(--fg);max-height:700px;overflow:hidden}
-.card.a .info{position:absolute;left:64px;right:64px;top:968px;text-align:center}
-.card.a .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:118px;line-height:.92;text-transform:uppercase;letter-spacing:.005em;margin:0}
+.card.a .info{position:absolute;left:64px;right:64px;top:958px;text-align:center}
+.card.a .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:104px;line-height:.92;text-transform:uppercase;letter-spacing:.005em;margin:0}
 .card.a .title.s{font-size:92px}.card.a .title.xs{font-size:70px}
-.card.a .meta{margin-top:20px;display:flex;justify-content:center;align-items:center;gap:18px;font-family:"Antonio",sans-serif;font-weight:700;font-size:40px;letter-spacing:.06em;text-transform:uppercase}
+.card.a .meta{margin-top:14px;display:flex;justify-content:center;align-items:center;gap:18px;font-family:"Antonio",sans-serif;font-weight:700;font-size:40px;letter-spacing:.06em;text-transform:uppercase}
 .card.a .meta .date{background:var(--red);color:#fff;padding:6px 20px;border-radius:6px}
 .card.a .meta .sep{width:10px;height:10px;border-radius:50%;background:var(--fg);opacity:.5}
-.card.a .logo{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);width:440px}
+.card.a .logo{position:absolute;left:50%;bottom:42px;transform:translateX(-50%);width:380px}
+.card.a .who{margin-top:10px}
 
 /* ---------- Commun ---------- */
 .card .who{margin-top:14px;font-family:"Antonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -74,20 +75,20 @@ button.main{background:var(--red)}
 .card.b .logo{position:absolute;right:56px;bottom:52px;width:300px}
 
 /* ---------- C · Titre géant ---------- */
-.card.c .giant{position:absolute;left:18px;top:0;height:1350px;writing-mode:vertical-rl;transform:rotate(180deg);font-family:"Antonio",sans-serif;font-weight:700;font-size:var(--gs,230px);line-height:1;text-transform:uppercase;white-space:nowrap;text-align:center;color:transparent;-webkit-text-stroke:3px var(--red)}
+.card.c .giant{position:absolute;left:18px;top:0;height:950px;writing-mode:vertical-rl;transform:rotate(180deg);font-family:"Antonio",sans-serif;font-weight:700;font-size:var(--gs,230px);line-height:1;text-transform:uppercase;white-space:nowrap;text-align:center;color:transparent;-webkit-text-stroke:3px var(--red)}
 .card.c .giant.r{left:auto;right:18px;transform:none}
 .card.c .head{position:absolute;left:56px;right:56px;top:50px;display:flex;justify-content:center;align-items:center}
 .card.c .head .logo{width:360px}
 .card.c .cv{position:absolute;left:50%;top:200px;width:520px;height:728px;object-fit:cover;transform:translateX(-50%) rotate(-3deg);border:14px solid var(--fg);box-shadow:0 40px 80px rgba(0,0,0,.5)}
 .card.c .sticker{position:absolute;left:calc(50% + 190px);top:150px;width:210px;height:210px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;text-align:center;font-family:"Antonio",sans-serif;font-weight:700;font-size:74px;line-height:.86;transform:rotate(9deg);box-shadow:0 14px 30px rgba(0,0,0,.35)}
 .card.c .sticker small{display:block;font-size:34px;letter-spacing:.08em}
-.card.c .bottom{position:absolute;left:150px;right:150px;top:985px;text-align:center}
+.card.c .bottom{position:absolute;left:56px;right:56px;top:985px;text-align:center}
 .card.c .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:92px;line-height:.95;text-transform:uppercase}
 .card.c .title.s{font-size:72px}.card.c .title.xs{font-size:56px}
 .card.c .title em{font-style:normal;color:var(--red)}
 .card.c .jpl{margin-top:10px;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:44px;letter-spacing:.08em}
 .card.c .who{margin-top:16px}
-.card.c .foot{position:absolute;left:150px;right:150px;bottom:50px;display:flex;justify-content:center;gap:16px;align-items:center;font-family:"Antonio",sans-serif;font-weight:700;font-size:32px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card.c .foot{position:absolute;left:40px;right:40px;bottom:50px;display:flex;justify-content:center;gap:14px;align-items:center;white-space:nowrap;font-family:"Antonio",sans-serif;font-weight:700;font-size:28px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .card.c .foot svg{width:44px;height:30px;border-radius:4px}
 </style>
 </head>
@@ -144,7 +145,7 @@ const LAYOUTS = {
     const t = titleOf(it), j = jpOf(it);
     return `<div class="card b ${theme}">
       ${it.cover ? `<img class="cv" src="${cov(it)}" alt="">` : ""}
-      <div class="side"><div class="pub">${esc(it.pub || "")}</div><div class="jp" lang="ja" style="--js:${jsz(j, 84, 600)}">${esc(j)}</div>${it.n != null ? `<div class="tn"><small>Tome</small>${tn(it.n)}</div>` : ""}</div>
+      <div class="side"><div class="pub">${esc(it.pub || "")}</div><div class="jp" lang="ja" style="--js:${jsz(j, 84, 520)}">${esc(j)}</div>${it.n != null ? `<div class="tn"><small>Tome</small>${tn(it.n)}</div>` : ""}</div>
       <div class="foot"><div class="title ${size(t, 16, 22)}">${esc(t)}</div>
         <div class="row">${FLAG[it.pays] || ""}<span class="date">${esc(dateLong(it))}</span></div>
         ${who(it) ? `<div class="who">${who(it)}</div>` : ""}</div>
