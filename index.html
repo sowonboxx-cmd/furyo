@@ -178,7 +178,7 @@ button{font:inherit;color:inherit}
 .st.ok{color:#7BC67E;background:color-mix(in srgb,#7BC67E 18%,var(--ink-3))}
 .st.off{color:var(--paper-3);background:var(--ink-3)}
 .m-note a{color:var(--paper-2)}
-.jp .hl{grid-column:1 / -1;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#F2B33D}
+.hlp{display:inline-block;vertical-align:2px;margin-left:6px;padding:2px 6px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#F2B33D;background:color-mix(in srgb,#F2B33D 18%,var(--ink-3));white-space:nowrap}
 
 .authors{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .authors li + li{border-top:1px solid var(--ink-3)}
@@ -473,7 +473,7 @@ if (/^https?:$/.test(location.protocol)) {
   fetch("/api/prepub").then(r => r.ok ? r.json() : null).then(j => {
     if (!j || j.error || !j.items) return;
     const ul = document.querySelector("#m-jp .jp"); if (!ul) return;
-    ul.innerHTML = j.items.slice(0, 8).map(it => `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${esc2(it.entry.split(" · ")[0])}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span>${(it.hl || []).length ? `<span class="hl">${it.hl.map(esc2).join(" · ")}</span>` : ""}</li>`).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
+    ul.innerHTML = j.items.slice(0, 8).map(it => `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${esc2(it.entry.split(" · ")[0])}${(it.hl || []).map(h => `<span class="hlp">${esc2(h)}</span>`).join("")}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
     const note = document.querySelector("#m-jp .m-note"); if (note) note.hidden = true;
   }).catch(() => {});
   fetch("/api/auteurs").then(r => r.ok ? r.json() : null).then(j => {
