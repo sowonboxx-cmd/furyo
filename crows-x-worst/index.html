@@ -543,7 +543,7 @@ body.list-mode .hero,body.list-mode .start,body.list-mode #result,body.list-mode
 
 <footer>
   <div class="wrap">
-    <p class="credit">Créé par Sowon. Founder : <a href="https://x.com/FuryoSquad" target="_blank" rel="noopener">FuryoSquad</a> &amp; <a href="https://x.com/FuryoGang" target="_blank" rel="noopener">FuryoGang</a></p>
+    <p class="credit">Par Sowon, créateur et boss du <a href="https://x.com/FuryoGang" target="_blank" rel="noopener">FuryoGang</a></p>
   </div>
 </footer>
 
@@ -927,7 +927,34 @@ document.addEventListener("click", e => {
   }
 });
 
-document.getElementById("stats").innerHTML = statsHTML(DATA.works);
+// Compteur qui défile puis ralentit jusqu'au nombre réel
+const statsCur = {}, statsTarget = {}; let statsRaf = 0;
+function paintStats(){
+  const box = document.getElementById("stats");
+  const tmp = document.createElement("div"); tmp.innerHTML = statsHTML(DATA.works);
+  const targets = [...tmp.querySelectorAll(".n")].map(e => parseInt(e.textContent, 10));
+  if (box.children.length && targets.every((v, i) => statsTarget[i] === v)) return; // rien n'a changé : on laisse l'animation finir
+  box.innerHTML = tmp.innerHTML;
+  const nums = [...box.querySelectorAll(".n")];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const from = targets.map((v, i) => statsCur[i] != null ? statsCur[i] : 0);
+  targets.forEach((v, i) => statsTarget[i] = v);
+  if (reduce) { nums.forEach((el, i) => { el.textContent = targets[i]; statsCur[i] = targets[i]; }); return; }
+  cancelAnimationFrame(statsRaf);
+  const t0 = performance.now(), ease = t => 1 - Math.pow(1 - t, 4);
+  (function tick(now){
+    let done = true;
+    nums.forEach((el, i) => {
+      if (isNaN(targets[i])) return;
+      const dur = 1500 + i * 150, t = Math.max(0, Math.min(1, (now - t0) / dur));
+      statsCur[i] = Math.round(from[i] + (targets[i] - from[i]) * ease(t));
+      el.textContent = statsCur[i];
+      if (t < 1) done = false;
+    });
+    if (!done) statsRaf = requestAnimationFrame(tick);
+  })(t0);
+}
+paintStats();
 const d = new Date(DATA.updated + "T12:00:00");
 (document.getElementById("updated") || {}).textContent = "Mis à jour le " + d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 // Thème : sombre par défaut, clair au choix (mémorisé sur cet appareil)
@@ -1007,7 +1034,7 @@ async function syncNotion(){
   DATA.works.sort((a, b) => a.o - b.o || a.id - b.id);
   const d2 = new Date(j.synced);
   (document.getElementById("updated") || {}).textContent = "Synchronisé avec la base FuryoGang le " + d2.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
-  if (changed) { document.getElementById("stats").innerHTML = statsHTML(DATA.works); render(); observe(); }
+  if (changed) { paintStats(); render(); observe(); }
 }
 syncNotion();
 </script>
