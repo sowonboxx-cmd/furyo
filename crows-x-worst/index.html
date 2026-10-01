@@ -680,7 +680,7 @@ function segHTML(){ return `<div class="seg" role="group" aria-label="Ordre d'af
     </div>`; }
 function renderUniverse(ws, pos, tl){
   const list = ws.filter(match);
-  const main = MAIN_OF[state.line] ? list.find(w => w.t === MAIN_OF[state.line]) : null;
+  const main = MAIN_OF[state.line] ? list.find(w => String(w.t).toUpperCase() === MAIN_OF[state.line].toUpperCase()) : null;
   let rest = list.filter(w => w !== main);
   rest = state.order === "release" ? rest.slice().sort((a, b) => yearOf(a) - yearOf(b) || a.o - b.o) : rest.slice().sort((a, b) => a.o - b.o || a.id - b.id);
   const title = state.line === "gaiden" ? "Les Spin-off" : "Univers " + LINE_NAMES[state.line];
