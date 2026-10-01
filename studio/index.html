@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Studio réseaux · FuryoGang</title>
+<style>
+/* Studio : génère les visuels réseaux sociaux (4:5, 1080×1350) d'un tome, à partir des données du calendrier. */
+@font-face{font-family:"Antonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:"Inter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:"Noto Sans JP";src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+:root{--ink:#232325;--ink-2:#000;--ink-3:#38383B;--paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;--red:#BC002D;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:"Inter",system-ui,sans-serif;font-weight:500}
+.page{max-width:1200px;margin:0 auto;padding:20px 16px 60px}
+h1{font-family:"Antonio",sans-serif;font-weight:700;font-size:44px;text-transform:uppercase;margin:0 0 4px}
+.sub{margin:0 0 16px;color:var(--paper-2)}
+.pick{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+select,button{font:inherit;height:42px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);padding:0 14px}
+button{font-weight:700;cursor:pointer}
+button.main{background:var(--red)}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.slot h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.frame{width:100%;aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:10px}
+.frame>.card{position:absolute;left:0;top:0;transform-origin:0 0}
+.caption{margin-top:24px}
+.caption textarea{width:100%;min-height:190px;border:0;border-radius:14px;background:var(--ink-2);color:var(--paper);font:inherit;font-size:14px;line-height:1.5;padding:14px}
+
+/* ---------- La carte 1080×1350 ---------- */
+.card{width:1080px;height:1350px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;--fg:#fff;--bg:#0c0c0e;--muted:rgba(255,255,255,.62);background:var(--bg);color:var(--fg)}
+.card.light{--fg:#0c0c0e;--bg:#F2EFE9;--muted:rgba(12,12,14,.6)}
+.card .blur{position:absolute;inset:-80px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}
+.card.light .blur{opacity:.28}
+.card .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 35%,transparent) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 74%)}
+.card .sun{position:absolute;width:820px;height:820px;border-radius:50%;background:var(--red);left:50%;top:150px;transform:translateX(-50%);opacity:.92}
+.card.light .sun{opacity:1}
+.card .top{position:absolute;left:64px;right:64px;top:54px;display:flex;justify-content:space-between;align-items:center}
+.card .tag{height:56px;padding:0 24px;border-radius:999px;background:var(--fg);color:var(--bg);display:inline-flex;align-items:center;gap:14px;font-family:"Antonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase}
+.card .tag svg{width:38px;height:26px;border-radius:4px}
+.card .pub{font-family:"Antonio",sans-serif;font-weight:700;font-size:34px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg)}
+.card .cover{position:absolute;left:50%;top:170px;width:540px;height:756px;transform:translateX(-50%);object-fit:cover;border-radius:8px;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 2px rgba(255,255,255,.08)}
+.card .num{position:absolute;left:44px;top:600px;font-family:"Antonio",sans-serif;font-weight:700;font-size:250px;line-height:.8;color:transparent;-webkit-text-stroke:4px var(--fg);letter-spacing:-.02em}
+.card .num small{display:block;font-size:46px;-webkit-text-stroke:0;color:var(--fg);letter-spacing:.1em;margin-bottom:10px}
+.card .jp{position:absolute;right:58px;top:200px;writing-mode:vertical-rl;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:58px;line-height:1.05;letter-spacing:.06em;color:var(--fg);max-height:700px;overflow:hidden}
+.card .info{position:absolute;left:64px;right:64px;top:968px;text-align:center}
+.card .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:118px;line-height:.92;text-transform:uppercase;letter-spacing:.005em;margin:0}
+.card .title.s{font-size:92px}.card .title.xs{font-size:70px}
+.card .meta{margin-top:20px;display:flex;justify-content:center;align-items:center;gap:18px;font-family:"Antonio",sans-serif;font-weight:700;font-size:40px;letter-spacing:.06em;text-transform:uppercase}
+.card .meta .date{background:var(--red);color:#fff;padding:6px 20px;border-radius:6px}
+.card .meta .sep{width:10px;height:10px;border-radius:50%;background:var(--fg);opacity:.5}
+.card .logo{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);width:440px}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Studio réseaux</h1>
+  <p class="sub">Visuel 4:5 (1080 × 1350) prêt pour Instagram et X, en version sombre et claire.</p>
+  <div class="pick"><select id="sel" aria-label="Tome"></select><button class="main" id="dlAll">Télécharger les 2 PNG</button></div>
+  <div class="pair">
+    <div class="slot"><h2>Sombre <button data-dl="dark">PNG</button></h2><div class="frame" id="fDark"></div></div>
+    <div class="slot"><h2>Clair <button data-dl="light">PNG</button></h2><div class="frame" id="fLight"></div></div>
+  </div>
+  <div class="caption"><h2 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px">Texte du post</h2><textarea id="cap"></textarea></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const tn = n => (Number.isInteger(n) && n < 10) ? "0" + n : String(n);
+const FLAG = {
+  Japon: '<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#fff"/><circle cx="11" cy="7.5" r="4.4" fill="#BC002D"/></svg>',
+  France: '<svg viewBox="0 0 22 15"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#fff"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>'
+};
+let ITEMS = [], cur = null;
+const cov = it => it.cover ? "/api/couv?u=" + encodeURIComponent(it.cover) : "";
+const titleOf = it => it.pays === "France" && it.fr ? it.fr : (it.series || it.tome);
+function dateLong(it){ const d = new Date(it.date + "T12:00:00"); return it.prec === "Mois" ? `${MOIS[d.getMonth()]} ${d.getFullYear()}` : `${d.getDate()} ${MOIS[d.getMonth()]} ${d.getFullYear()}`; }
+// Titre japonais vertical : si le titre original est en lettres latines, on prend la lecture entre parenthèses (ex. JUMBO MAX（ジャンボマックス）).
+const CJK = /[\u3040-\u30ff\u3400-\u9fff]/;
+function jpOf(it){ const j = it.jp || ""; const out = j.replace(/[（(].*?[)）]/g, "").trim(); if (CJK.test(out)) return out; const m = j.match(/[（(](.*?)[)）]/); return m && CJK.test(m[1]) ? m[1] : ""; }
+function cardHTML(it, theme){
+  const t = titleOf(it), cls = t.length > 26 ? "xs" : t.length > 16 ? "s" : "";
+  return `<div class="card ${theme}">
+    ${it.cover ? `<div class="blur" style="background-image:url('${cov(it)}')"></div>` : ""}<div class="shade"></div><div class="sun"></div>
+    <div class="top"><span class="tag">${FLAG[it.pays] || ""}${it.date >= new Date().toISOString().slice(0,10) ? "Sortie" : "Disponible"}</span><span class="pub">${esc(it.pub || "")}</span></div>
+    ${it.cover ? `<img class="cover" src="${cov(it)}" alt="" crossorigin="anonymous">` : ""}
+    ${it.n != null ? `<div class="num"><small>Tome</small>${tn(it.n)}</div>` : ""}
+    ${jpOf(it) ? `<div class="jp" lang="ja">${esc(jpOf(it))}</div>` : ""}
+    <div class="info"><div class="title ${cls}">${esc(t)}</div>
+      <div class="meta"><span class="date">${esc(dateLong(it))}</span>${it.auteurs ? `<span class="sep"></span><span>${esc(it.auteurs)}</span>` : ""}</div></div>
+    <img class="logo" src="/img/social/logo-${theme === "light" ? "noir" : "blanc"}.png" alt="FuryoGang">
+  </div>`;
+}
+function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".card"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
+function caption(it){
+  const t = titleOf(it), when = dateLong(it);
+  const tags = ["#manga", "#FuryoGang", "#" + t.replace(/[^A-Za-z0-9À-ÿ]/g, ""), it.pub ? "#" + it.pub.replace(/[^A-Za-z0-9À-ÿ]/g, "") : ""].filter(Boolean).join(" ");
+  return `${t} tome ${it.n ?? ""} ${it.date >= new Date().toISOString().slice(0,10) ? "sort le" : "est sorti le"} ${when} chez ${it.pub || "?"}${it.pays === "Japon" ? " au Japon" : ""} 🔥\n\n${it.resume || ""}\n\n${tags}`;
+}
+function show(id){
+  cur = ITEMS.find(x => x.id === id) || ITEMS[0]; if (!cur) return;
+  document.getElementById("fDark").innerHTML = cardHTML(cur, "dark");
+  document.getElementById("fLight").innerHTML = cardHTML(cur, "light");
+  document.getElementById("cap").value = caption(cur);
+  history.replaceState(null, "", "?id=" + cur.id); fit();
+}
+async function dl(theme){
+  const node = document.querySelector(`#${theme === "light" ? "fLight" : "fDark"} .card`);
+  const keep = node.style.transform; node.style.transform = "none";
+  try {
+    const url = await htmlToImage.toPng(node, { width: 1080, height: 1350, pixelRatio: 1, cacheBust: false });
+    const a = document.createElement("a"); a.href = url; a.download = `${titleOf(cur).replace(/\W+/g, "-")}-T${tn(cur.n)}-${theme === "light" ? "clair" : "sombre"}.png`; a.click();
+  } finally { node.style.transform = keep; fit(); }
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-dl]"); if (b) dl(b.dataset.dl); });
+document.getElementById("dlAll").onclick = async () => { await dl("dark"); await dl("light"); };
+document.getElementById("sel").onchange = e => show(e.target.value);
+addEventListener("resize", fit);
+fetch("/api/calendrier").then(r => r.json()).then(j => {
+  ITEMS = (j.items || []).filter(it => it.cover);
+  const sel = document.getElementById("sel");
+  sel.innerHTML = ITEMS.map(it => `<option value="${it.id}">${esc(it.date)} · ${esc(titleOf(it))} T.${tn(it.n)} (${esc(it.pays)})</option>`).join("");
+  const want = new URLSearchParams(location.search).get("id");
+  const today = new Date().toISOString().slice(0, 10);
+  const def = (ITEMS.find(x => x.id === want) || ITEMS.find(x => x.date >= today) || ITEMS[0]);
+  if (def) { sel.value = def.id; show(def.id); }
+});
+</script>
+</body>
+</html>
