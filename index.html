@@ -197,6 +197,16 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .masthead .themes{margin:4px 0 0;font-size:clamp(11px,3.1vw,13px);font-weight:600;letter-spacing:.04em;color:var(--paper-3);white-space:nowrap}
 .masthead{overflow:hidden}
 .main-foot{margin:24px 0 0;text-align:center}
+/* Barre de stats d'une news : likes, vues (une par session), favoris */
+.p-acts{display:flex;align-items:center;gap:4px;margin:2px -8px -6px;padding-top:8px;border-top:1px solid var(--ink-3)}
+.p-acts button,.p-acts span{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--paper-3);font:inherit;font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.p-acts button{cursor:pointer}
+.p-acts button:hover{background:var(--ink-3);color:var(--paper)}
+.p-acts .a-like:hover{color:var(--red)}
+.p-acts .a-views{margin:0 auto}
+.p-acts svg{width:19px;height:19px;flex:none}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--paper);color:var(--ink);border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;transition:.25s;z-index:50;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 </style>
 
 </head>
@@ -500,6 +510,51 @@ function fitBrand(){
 }
 fitBrand(); addEventListener("resize", fitBrand);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitBrand);
+
+/* Stats des news. Vues : comptées quand la news est vue, une seule fois par session.
+   Likes et favoris : réservés aux membres connectés (l'inscription arrive). */
+(() => {
+  const posts = [...document.querySelectorAll("#feed > .post")];
+  const slug = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70);
+  const fmt = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(".0", "") + " M" : n >= 1e4 ? Math.round(n / 1e3) + " k" : n >= 1e3 ? (n / 1e3).toFixed(1).replace(".0", "") + " k" : String(n);
+  const I = {
+    like: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 3.9 4 7.4 4c2 0 3.5 1.1 4.6 2.7C13.1 5.1 14.6 4 16.6 4c3.5 0 5.8 3.6 4.6 7.1-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>',
+    views: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M10 20V5M15 20v-9M20 20v-5"/></svg>',
+    bm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12v17l-6-4.2-6 4.2z"/></svg>'
+  };
+  posts.forEach(p => {
+    if (!p.dataset.id) p.dataset.id = slug(p.querySelector(".p-title")?.firstChild?.textContent || p.textContent);
+    p.insertAdjacentHTML("beforeend", `<div class="p-acts"><button class="a-like" type="button" aria-label="J'aime">${I.like}<b>0</b></button><span class="a-views" title="Vues">${I.views}<b>0</b></span><button class="a-bm" type="button" aria-label="Garder en favori">${I.bm}<b>0</b></button></div>`);
+  });
+  const paint = (id, st) => { const p = document.querySelector(`.post[data-id="${id}"]`); if (!p || !st) return;
+    const b = p.querySelectorAll(".p-acts b"); b[0].textContent = fmt(st.l); b[1].textContent = fmt(st.v); b[2].textContent = fmt(st.b); };
+  fetch("/api/stats?ids=" + posts.map(p => p.dataset.id).join(",")).then(r => r.json()).then(j => Object.entries(j.stats || {}).forEach(([id, st]) => paint(id, st))).catch(() => {});
+
+  const seen = (() => { try { return new Set(JSON.parse(sessionStorage.getItem("fg-vues") || "[]")); } catch (e) { return new Set(); } })();
+  const save = () => { try { sessionStorage.setItem("fg-vues", JSON.stringify([...seen])); } catch (e) {} };
+  const timers = new Map();
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    const id = e.target.dataset.id;
+    if (seen.has(id)) return io.unobserve(e.target);
+    if (e.isIntersecting) timers.set(id, setTimeout(() => {
+      seen.add(id); save(); io.unobserve(e.target);
+      const b = e.target.querySelectorAll(".p-acts b")[1];
+      fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, act: "view" }) })
+        .then(r => r.json()).then(j => { if (j.stored) b.textContent = fmt(j.v); }).catch(() => {});
+    }, 1000));
+    else clearTimeout(timers.get(id));
+  }), { threshold: .6 });
+  posts.forEach(p => io.observe(p));
+
+  const toast = Object.assign(document.createElement("div"), { className: "toast", role: "status" });
+  document.body.append(toast);
+  let tt;
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".a-like, .a-bm"); if (!b) return;
+    toast.textContent = b.classList.contains("a-like") ? "Connecte-toi pour liker les news." : "Connecte-toi pour garder les news en favori.";
+    toast.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove("on"), 2600);
+  });
+})();
 </script>
 </body>
 </html>
