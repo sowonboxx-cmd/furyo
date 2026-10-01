@@ -1,4 +1,8 @@
-demekin40.jpg https://c.bookwalker.jp/e1f8eeee4dcac09e334e3d230080adf/t_700x780.jpg
-goldenguy15.jpg https://c.bookwalker.jp/93bd9af08e8eb5a27d421173afece8a/t_700x780.jpg
-jingi7.jpg https://c.bookwalker.jp/80edda77107e4e8e13442c85bacf8b8/t_700x780.jpg
-hangure16.jpg https://c.bookwalker.jp/ab0040443531d0a7cf4bbcc0015cfa8/t_700x780.jpg
+akita-nine21.jpg https://www.akitashoten.co.jp/comics/4253020054/cover
+akita-sabu14.jpg https://www.akitashoten.co.jp/comics/4253020429/cover
+akita-dokuro23.jpg https://www.akitashoten.co.jp/comics/4253020402/cover
+akita-guriko40.jpg https://www.akitashoten.co.jp/comics/4253020399/cover
+akita-demekin40.jpg https://www.akitashoten.co.jp/comics/4253020283/cover
+akita-zetton19.jpg https://www.akitashoten.co.jp/comics/4253020410/cover
+akita-gaia12.jpg https://www.akitashoten.co.jp/comics/4253020151/cover
+akita-shonan7.jpg https://www.akitashoten.co.jp/comics/4253020909/cover

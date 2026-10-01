@@ -2,7 +2,7 @@ name: recup-couvertures
 on:
   push:
     branches: [recup-couvertures]
-    paths: [recup/liste.txt]
+    paths: [recup/liste.txt, recup/isbn.txt]
 permissions:
   contents: write
 jobs:
@@ -17,6 +17,9 @@ jobs:
             [ -z "$nom" ] && continue
             curl -sSL -A "Mozilla/5.0" -o "recup/out/$nom" "$url" || echo "échec $nom" >> recup/out/erreurs.txt
           done < recup/liste.txt
+          curl -sSL "https://api.openbd.jp/v1/get?isbn=$(cat recup/isbn.txt)" -o recup/out/openbd.json || true
+          python3 -c "import json;d=json.load(open('recup/out/openbd.json'));print('\n'.join(f\"{x['summary']['isbn']} {x['summary'].get('cover','')} {x['summary'].get('pubdate','')}\" for x in d if x))" > recup/out/openbd.txt || true
+          while read -r isbn url rest; do [ -n "$url" ] && curl -sSL -o "recup/out/openbd-$isbn.jpg" "$url"; done < recup/out/openbd.txt
       - name: Commit
         run: |
           git config user.name "recup-bot"; git config user.email "bot@users.noreply.github.com"
