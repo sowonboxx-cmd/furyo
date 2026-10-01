@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Télécharger
         run: |
+          set +e
           mkdir -p recup/out
           while read -r nom url; do
             [ -z "$nom" ] && continue
@@ -20,6 +21,7 @@ jobs:
           curl -sSL "https://api.openbd.jp/v1/get?isbn=$(cat recup/isbn.txt)" -o recup/out/openbd.json || true
           python3 -c "import json;d=json.load(open('recup/out/openbd.json'));print('\n'.join(f\"{x['summary']['isbn']} {x['summary'].get('cover','')} {x['summary'].get('pubdate','')}\" for x in d if x))" > recup/out/openbd.txt || true
           while read -r isbn url rest; do [ -n "$url" ] && curl -sSL -o "recup/out/openbd-$isbn.jpg" "$url"; done < recup/out/openbd.txt
+          ls -la recup/out > recup/out/index.txt; exit 0
       - name: Commit
         run: |
           git config user.name "recup-bot"; git config user.email "bot@users.noreply.github.com"
