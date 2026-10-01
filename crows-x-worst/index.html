@@ -410,6 +410,30 @@ body{font-weight:500}
 .uni-head{position:relative;isolation:isolate;min-height:120px}
 .uni-char{position:absolute;z-index:-1;right:-8px;top:-54px;height:230px;width:auto;max-width:55%;object-fit:contain;object-position:right top;opacity:.5;pointer-events:none}
 @media (min-width:700px){.uni-char{height:300px;top:-70px}}
+
+/* ---------- Couvertures : sans liseré ni ombre, +20 % ---------- */
+.cover,.s-res .cover,.feature .cover,.lb-cover .cover.big{box-shadow:none!important}
+.cover::before{display:none!important}
+.s-res button{border-left:0!important}
+.work-btn{grid-template-columns:142px minmax(0,1fr) auto!important}
+.work-btn .cover{width:142px!important}
+.d-in{padding-left:172px!important}
+.s-res button{grid-template-columns:55px minmax(0,1fr)!important}
+.s-res .cover{width:55px!important}
+.feature .f-top{grid-template-columns:180px minmax(0,1fr)!important}
+.feature .cover{width:180px!important}
+@media (max-width:560px){
+  .work-btn{grid-template-columns:125px minmax(0,1fr) auto!important}
+  .work-btn .cover{width:125px!important}
+  .d-in{padding-left:12px!important}
+  .feature .f-top{grid-template-columns:144px minmax(0,1fr)!important}
+  .feature .cover{width:144px!important}
+  .work.story .work-btn{grid-template-columns:minmax(0,1fr) auto!important}
+}
+
+.pills{min-width:0}
+.pills .pill{max-width:100%;white-space:normal;line-height:1.3}
+.w-main{min-width:0}
 </style>
 </head>
 <body>
@@ -749,7 +773,7 @@ function miniCover(w){
 function flagsLine(w){
   const jp = w.vol != null ? `<i class="flag jp"></i>${w.vol} T.` : "";
   const fr = hasFr(w) ? `<i class="flag fr"></i>${w.volFr != null ? w.volFr + " T." : "VF"}${frStopped(w) ? " arrêté" : ""}` : "";
-  return [w.years ? esc(w.years) : "", jp, fr, isLive(w) ? "en cours" : ""].filter(Boolean).join(" · ");
+  return [yearsShort(w) ? esc(yearsShort(w)) : "", jp, fr, isLive(w) ? "en cours" : ""].filter(Boolean).join(" · ");
 }
 function rowHTML(w, pos, extraHTML, stop){
   const era = DATA.eras[w.era];
