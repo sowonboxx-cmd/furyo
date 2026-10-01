@@ -124,7 +124,7 @@ function who(it){
   const one = s || d || it.auteurs; return one ? `<b>${esc(one)}</b>` : "";
 }
 const jsz = (txt, max, room) => Math.min(max, Math.floor(room / Math.max(1, [...txt].length) * 1.02)) + "px";
-const gsz = t => Math.min(260, Math.floor(1300 / Math.max(1, t.length) * 1.7)) + "px";
+const gsz = t => Math.min(260, Math.floor(1850 / Math.max(1, t.length))) + "px";
 const size = (t, a, b) => t.length > b ? "xs" : t.length > a ? "s" : "";
 const LOGO = theme => `/img/social/logo-${theme === "light" ? "noir" : "blanc"}.png`;
 const LAYOUTS = {
