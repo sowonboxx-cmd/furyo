@@ -26,7 +26,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const p = r.properties || {};
       series[r.id.replace(/-/g, "")] = {
         id: r.id.replace(/-/g, ""), t: text(p["SERIES"]), jp: text(p["Titre Original"]), fr: text(p["Titre FR"]),
-        cover1: text(p["Couverture T1"]), resume: text(p["Résumé"]), auteurs: [text(p["Scénariste"]), text(p["Dessinateur"])].filter((v, i, a) => v && a.indexOf(v) === i).join(" & "), hasVisual: ((p["Visuel principal"] || {}).files || []).length > 0,
+        cover1: text(p["Couverture T1"]), resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), auteurs: [text(p["Scénariste"]), text(p["Dessinateur"])].filter((v, i, a) => v && a.indexOf(v) === i).join(" & "), hasVisual: ((p["Visuel principal"] || {}).files || []).length > 0,
       };
     }
     const eds = {};
@@ -43,7 +43,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
         date: date(p["Date de sortie"]), prec: text(p["Précision date"]) || "Jour", status: text(p["Statut"]),
         cover: text(p["Couverture"]), isbn: text(p["ISBN"]), source: text(p["Source"]),
         pays: ed.pays || "", pub: ed.pub || "", format: ed.format || "",
-        series: s.t || "", seriesId: s.id || "", jp: s.jp || "", fr: s.fr || "", visual: !!s.hasVisual, cover1: s.cover1 || "", resume: s.resume || "", auteurs: s.auteurs || "",
+        series: s.t || "", seriesId: s.id || "", jp: s.jp || "", fr: s.fr || "", visual: !!s.hasVisual, cover1: s.cover1 || "", resume: s.resume || "", scen: s.scen || "", dess: s.dess || "", auteurs: s.auteurs || "",
       };
     }).filter(it => it.date);
     return { items };

@@ -31,37 +31,72 @@ button.main{background:var(--red)}
 /* ---------- La carte 1080×1350 ---------- */
 .card{width:1080px;height:1350px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;--fg:#fff;--bg:#0c0c0e;--muted:rgba(255,255,255,.62);background:var(--bg);color:var(--fg)}
 .card.light{--fg:#0c0c0e;--bg:#F2EFE9;--muted:rgba(12,12,14,.6)}
-.card .blur{position:absolute;inset:-80px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}
-.card.light .blur{opacity:.28}
-.card .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 35%,transparent) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 74%)}
-.card .sun{position:absolute;width:820px;height:820px;border-radius:50%;background:var(--red);left:50%;top:150px;transform:translateX(-50%);opacity:.92}
-.card.light .sun{opacity:1}
-.card .top{position:absolute;left:64px;right:64px;top:54px;display:flex;justify-content:space-between;align-items:center}
-.card .tag{height:56px;padding:0 24px;border-radius:999px;background:var(--fg);color:var(--bg);display:inline-flex;align-items:center;gap:14px;font-family:"Antonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase}
-.card .tag svg{width:38px;height:26px;border-radius:4px}
-.card .pub{font-family:"Antonio",sans-serif;font-weight:700;font-size:34px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg)}
-.card .cover{position:absolute;left:50%;top:170px;width:540px;height:756px;transform:translateX(-50%);object-fit:cover;border-radius:8px;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 2px rgba(255,255,255,.08)}
-.card .num{position:absolute;left:44px;top:600px;font-family:"Antonio",sans-serif;font-weight:700;font-size:250px;line-height:.8;color:transparent;-webkit-text-stroke:4px var(--fg);letter-spacing:-.02em}
-.card .num small{display:block;font-size:46px;-webkit-text-stroke:0;color:var(--fg);letter-spacing:.1em;margin-bottom:10px}
-.card .jp{position:absolute;right:58px;top:200px;writing-mode:vertical-rl;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:58px;line-height:1.05;letter-spacing:.06em;color:var(--fg);max-height:700px;overflow:hidden}
-.card .info{position:absolute;left:64px;right:64px;top:968px;text-align:center}
-.card .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:118px;line-height:.92;text-transform:uppercase;letter-spacing:.005em;margin:0}
-.card .title.s{font-size:92px}.card .title.xs{font-size:70px}
-.card .meta{margin-top:20px;display:flex;justify-content:center;align-items:center;gap:18px;font-family:"Antonio",sans-serif;font-weight:700;font-size:40px;letter-spacing:.06em;text-transform:uppercase}
-.card .meta .date{background:var(--red);color:#fff;padding:6px 20px;border-radius:6px}
-.card .meta .sep{width:10px;height:10px;border-radius:50%;background:var(--fg);opacity:.5}
-.card .logo{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);width:440px}
+.card.a .blur{position:absolute;inset:-80px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}
+.card.a.light .blur{opacity:.28}
+.card.a .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 35%,transparent) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 74%)}
+.card.a .sun{position:absolute;width:820px;height:820px;border-radius:50%;background:var(--red);left:50%;top:150px;transform:translateX(-50%);opacity:.92}
+.card.a.light .sun{opacity:1}
+.card.a .top{position:absolute;left:64px;right:64px;top:54px;display:flex;justify-content:space-between;align-items:center}
+.card.a .tag{height:56px;padding:0 24px;border-radius:999px;background:var(--fg);color:var(--bg);display:inline-flex;align-items:center;gap:14px;font-family:"Antonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase}
+.card.a .tag svg{width:38px;height:26px;border-radius:4px}
+.card.a .pub{font-family:"Antonio",sans-serif;font-weight:700;font-size:34px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg)}
+.card.a .cover{position:absolute;left:50%;top:170px;width:540px;height:756px;transform:translateX(-50%);object-fit:cover;border-radius:8px;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 2px rgba(255,255,255,.08)}
+.card.a .num{position:absolute;left:34px;top:620px;font-family:"Antonio",sans-serif;font-weight:700;font-size:210px;line-height:.8;color:transparent;-webkit-text-stroke:4px var(--fg);letter-spacing:-.02em}
+.card.a .num small{display:block;font-size:46px;-webkit-text-stroke:0;color:var(--fg);letter-spacing:.1em;margin-bottom:10px}
+.card.a .jp{position:absolute;right:58px;top:200px;writing-mode:vertical-rl;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:var(--js,58px);line-height:1.05;letter-spacing:.06em;color:var(--fg);max-height:700px;overflow:hidden}
+.card.a .info{position:absolute;left:64px;right:64px;top:968px;text-align:center}
+.card.a .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:118px;line-height:.92;text-transform:uppercase;letter-spacing:.005em;margin:0}
+.card.a .title.s{font-size:92px}.card.a .title.xs{font-size:70px}
+.card.a .meta{margin-top:20px;display:flex;justify-content:center;align-items:center;gap:18px;font-family:"Antonio",sans-serif;font-weight:700;font-size:40px;letter-spacing:.06em;text-transform:uppercase}
+.card.a .meta .date{background:var(--red);color:#fff;padding:6px 20px;border-radius:6px}
+.card.a .meta .sep{width:10px;height:10px;border-radius:50%;background:var(--fg);opacity:.5}
+.card.a .logo{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);width:440px}
+
+/* ---------- Commun ---------- */
+.card .who{margin-top:14px;font-family:"Antonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.card .who b{color:var(--fg);font-weight:700}
+.card .who i{font-style:normal;margin:0 14px;opacity:.5}
+
+/* ---------- B · Affiche ---------- */
+.card.b .cv{position:absolute;left:0;top:0;width:700px;height:980px;object-fit:cover}
+.card.b .side{position:absolute;left:700px;top:0;width:380px;height:980px;background:var(--red);color:#fff;display:flex;flex-direction:column;align-items:center;padding:46px 0 40px}
+.card.b .side .pub{font-family:"Antonio",sans-serif;font-weight:700;font-size:32px;letter-spacing:.12em;text-transform:uppercase}
+.card.b .side .jp{flex:1;writing-mode:vertical-rl;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:var(--js,84px);line-height:1.05;letter-spacing:.04em;margin:36px 0;overflow:hidden;max-height:620px}
+.card.b .side .tn{font-family:"Antonio",sans-serif;font-weight:700;font-size:150px;line-height:.85;text-align:center}
+.card.b .side .tn small{display:block;font-size:36px;letter-spacing:.14em;margin-bottom:6px}
+.card.b .foot{position:absolute;left:64px;right:64px;top:1012px}
+.card.b .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:96px;line-height:.92;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.card.b .title.s{font-size:76px}.card.b .title.xs{font-size:58px}
+.card.b .who{max-width:620px;line-height:1.25}
+.card.b .row{margin-top:18px;display:flex;align-items:center;gap:16px;font-family:"Antonio",sans-serif;font-weight:700;font-size:38px;letter-spacing:.06em;text-transform:uppercase}
+.card.b .row svg{width:48px;height:33px;border-radius:5px}
+.card.b .row .date{background:var(--red);color:#fff;padding:4px 18px;border-radius:6px}
+.card.b .logo{position:absolute;right:56px;bottom:52px;width:300px}
+
+/* ---------- C · Titre géant ---------- */
+.card.c .giant{position:absolute;left:18px;top:0;height:1350px;writing-mode:vertical-rl;transform:rotate(180deg);font-family:"Antonio",sans-serif;font-weight:700;font-size:var(--gs,230px);line-height:1;text-transform:uppercase;white-space:nowrap;text-align:center;color:transparent;-webkit-text-stroke:3px var(--red)}
+.card.c .giant.r{left:auto;right:18px;transform:none}
+.card.c .head{position:absolute;left:56px;right:56px;top:50px;display:flex;justify-content:center;align-items:center}
+.card.c .head .logo{width:360px}
+.card.c .cv{position:absolute;left:50%;top:200px;width:520px;height:728px;object-fit:cover;transform:translateX(-50%) rotate(-3deg);border:14px solid var(--fg);box-shadow:0 40px 80px rgba(0,0,0,.5)}
+.card.c .sticker{position:absolute;left:calc(50% + 190px);top:150px;width:210px;height:210px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;text-align:center;font-family:"Antonio",sans-serif;font-weight:700;font-size:74px;line-height:.86;transform:rotate(9deg);box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.card.c .sticker small{display:block;font-size:34px;letter-spacing:.08em}
+.card.c .bottom{position:absolute;left:150px;right:150px;top:985px;text-align:center}
+.card.c .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:92px;line-height:.95;text-transform:uppercase}
+.card.c .title.s{font-size:72px}.card.c .title.xs{font-size:56px}
+.card.c .title em{font-style:normal;color:var(--red)}
+.card.c .jpl{margin-top:10px;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:44px;letter-spacing:.08em}
+.card.c .who{margin-top:16px}
+.card.c .foot{position:absolute;left:150px;right:150px;bottom:50px;display:flex;justify-content:center;gap:16px;align-items:center;font-family:"Antonio",sans-serif;font-weight:700;font-size:32px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card.c .foot svg{width:44px;height:30px;border-radius:4px}
 </style>
 </head>
 <body>
 <div class="page">
   <h1>Studio réseaux</h1>
   <p class="sub">Visuel 4:5 (1080 × 1350) prêt pour Instagram et X, en version sombre et claire.</p>
-  <div class="pick"><select id="sel" aria-label="Tome"></select><button class="main" id="dlAll">Télécharger les 2 PNG</button></div>
-  <div class="pair">
-    <div class="slot"><h2>Sombre <button data-dl="dark">PNG</button></h2><div class="frame" id="fDark"></div></div>
-    <div class="slot"><h2>Clair <button data-dl="light">PNG</button></h2><div class="frame" id="fLight"></div></div>
-  </div>
+  <div class="pick"><select id="sel" aria-label="Tome"></select><button class="main" id="dlAll">Télécharger tous les PNG</button></div>
+  <div class="pair" id="pair"></div>
   <div class="caption"><h2 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px">Texte du post</h2><textarea id="cap"></textarea></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
@@ -80,19 +115,54 @@ function dateLong(it){ const d = new Date(it.date + "T12:00:00"); return it.prec
 // Titre japonais vertical : si le titre original est en lettres latines, on prend la lecture entre parenthèses (ex. JUMBO MAX（ジャンボマックス）).
 const CJK = /[\u3040-\u30ff\u3400-\u9fff]/;
 function jpOf(it){ const j = it.jp || ""; const out = j.replace(/[（(].*?[)）]/g, "").trim(); if (CJK.test(out)) return out; const m = j.match(/[（(](.*?)[)）]/); return m && CJK.test(m[1]) ? m[1] : ""; }
-function cardHTML(it, theme){
-  const t = titleOf(it), cls = t.length > 26 ? "xs" : t.length > 16 ? "s" : "";
-  return `<div class="card ${theme}">
-    ${it.cover ? `<div class="blur" style="background-image:url('${cov(it)}')"></div>` : ""}<div class="shade"></div><div class="sun"></div>
-    <div class="top"><span class="tag">${FLAG[it.pays] || ""}${it.date >= new Date().toISOString().slice(0,10) ? "Sortie" : "Disponible"}</span><span class="pub">${esc(it.pub || "")}</span></div>
-    ${it.cover ? `<img class="cover" src="${cov(it)}" alt="" crossorigin="anonymous">` : ""}
-    ${it.n != null ? `<div class="num"><small>Tome</small>${tn(it.n)}</div>` : ""}
-    ${jpOf(it) ? `<div class="jp" lang="ja">${esc(jpOf(it))}</div>` : ""}
-    <div class="info"><div class="title ${cls}">${esc(t)}</div>
-      <div class="meta"><span class="date">${esc(dateLong(it))}</span>${it.auteurs ? `<span class="sep"></span><span>${esc(it.auteurs)}</span>` : ""}</div></div>
-    <img class="logo" src="/img/social/logo-${theme === "light" ? "noir" : "blanc"}.png" alt="FuryoGang">
-  </div>`;
+const isNext = it => it.date >= new Date().toISOString().slice(0, 10);
+const MCOURT = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+function who(it){
+  const s = it.scen, d = it.dess;
+  if (s && d && s !== d) return `Histoire <b>${esc(s)}</b><i>·</i>Dessin <b>${esc(d)}</b>`;
+  const one = s || d || it.auteurs; return one ? `<b>${esc(one)}</b>` : "";
 }
+const jsz = (txt, max, room) => Math.min(max, Math.floor(room / Math.max(1, [...txt].length) * 1.02)) + "px";
+const gsz = t => Math.min(260, Math.floor(1300 / Math.max(1, t.length) * 1.7)) + "px";
+const size = (t, a, b) => t.length > b ? "xs" : t.length > a ? "s" : "";
+const LOGO = theme => `/img/social/logo-${theme === "light" ? "noir" : "blanc"}.png`;
+const LAYOUTS = {
+  a: { nom: "Soleil", html(it, theme){
+    const t = titleOf(it), j = jpOf(it);
+    return `<div class="card a ${theme}">
+      ${it.cover ? `<div class="blur" style="background-image:url('${cov(it)}')"></div>` : ""}<div class="shade"></div><div class="sun"></div>
+      <div class="top"><span class="tag">${FLAG[it.pays] || ""}${isNext(it) ? "Sortie" : "Disponible"}</span><span class="pub">${esc(it.pub || "")}</span></div>
+      ${it.cover ? `<img class="cover" src="${cov(it)}" alt="">` : ""}
+      ${it.n != null ? `<div class="num"><small>Tome</small>${tn(it.n)}</div>` : ""}
+      ${j ? `<div class="jp" lang="ja" style="--js:${jsz(j, 58, 700)}">${esc(j)}</div>` : ""}
+      <div class="info"><div class="title ${size(t, 16, 26)}">${esc(t)}</div>
+        <div class="meta"><span class="date">${esc(dateLong(it))}</span></div>
+        ${who(it) ? `<div class="who">${who(it)}</div>` : ""}</div>
+      <img class="logo" src="${LOGO(theme)}" alt="FuryoGang">
+    </div>`; } },
+  b: { nom: "Affiche", html(it, theme){
+    const t = titleOf(it), j = jpOf(it);
+    return `<div class="card b ${theme}">
+      ${it.cover ? `<img class="cv" src="${cov(it)}" alt="">` : ""}
+      <div class="side"><div class="pub">${esc(it.pub || "")}</div><div class="jp" lang="ja" style="--js:${jsz(j, 84, 600)}">${esc(j)}</div>${it.n != null ? `<div class="tn"><small>Tome</small>${tn(it.n)}</div>` : ""}</div>
+      <div class="foot"><div class="title ${size(t, 16, 22)}">${esc(t)}</div>
+        <div class="row">${FLAG[it.pays] || ""}<span class="date">${esc(dateLong(it))}</span></div>
+        ${who(it) ? `<div class="who">${who(it)}</div>` : ""}</div>
+      <img class="logo" src="${LOGO(theme)}" alt="FuryoGang">
+    </div>`; } },
+  c: { nom: "Titre géant", html(it, theme){
+    const t = titleOf(it), d = new Date(it.date + "T12:00:00"), j = jpOf(it);
+    return `<div class="card c ${theme}">
+      <div class="giant" style="--gs:${gsz(t)}">${esc(t)}</div><div class="giant r" style="--gs:${gsz(t)}">${esc(t)}</div>
+      <div class="head"><img class="logo" src="${LOGO(theme)}" alt="FuryoGang"></div>
+      ${it.cover ? `<img class="cv" src="${cov(it)}" alt="">` : ""}
+      <div class="sticker">${it.prec === "Mois" ? `<span><small>${esc(MOIS[d.getMonth()])}</small></span>` : `<span>${d.getDate()}<small>${MCOURT[d.getMonth()]}</small></span>`}</div>
+      <div class="bottom"><div class="title ${size(t, 16, 24)}">${esc(t)}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>
+        ${j ? `<div class="jpl" lang="ja">${esc(j)}</div>` : ""}
+        ${who(it) ? `<div class="who">${who(it)}</div>` : ""}</div>
+      <div class="foot">${FLAG[it.pays] || ""}<span>${isNext(it) ? "Sortie" : "Disponible"} · ${esc(dateLong(it))}</span><span>·</span><span>${esc(it.pub || "")}</span></div>
+    </div>`; } },
+};
 function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".card"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
 function caption(it){
   const t = titleOf(it), when = dateLong(it);
@@ -101,21 +171,21 @@ function caption(it){
 }
 function show(id){
   cur = ITEMS.find(x => x.id === id) || ITEMS[0]; if (!cur) return;
-  document.getElementById("fDark").innerHTML = cardHTML(cur, "dark");
-  document.getElementById("fLight").innerHTML = cardHTML(cur, "light");
+  document.getElementById("pair").innerHTML = Object.entries(LAYOUTS).flatMap(([k, L]) => ["dark", "light"].map(th =>
+    `<div class="slot"><h2>${L.nom} · ${th === "light" ? "clair" : "sombre"} <button data-dl="${k}-${th}">PNG</button></h2><div class="frame" id="f-${k}-${th}">${L.html(cur, th)}</div></div>`)).join("");
   document.getElementById("cap").value = caption(cur);
   history.replaceState(null, "", "?id=" + cur.id); fit();
 }
-async function dl(theme){
-  const node = document.querySelector(`#${theme === "light" ? "fLight" : "fDark"} .card`);
+async function dl(key){
+  const node = document.querySelector(`#f-${key} .card`);
   const keep = node.style.transform; node.style.transform = "none";
   try {
-    const url = await htmlToImage.toPng(node, { width: 1080, height: 1350, pixelRatio: 1, cacheBust: false });
-    const a = document.createElement("a"); a.href = url; a.download = `${titleOf(cur).replace(/\W+/g, "-")}-T${tn(cur.n)}-${theme === "light" ? "clair" : "sombre"}.png`; a.click();
+    const url = await htmlToImage.toPng(node, { width: 1080, height: 1350, pixelRatio: 1 });
+    const a = document.createElement("a"); a.href = url; a.download = `${titleOf(cur).replace(/\W+/g, "-")}-T${tn(cur.n)}-${key}.png`; a.click();
   } finally { node.style.transform = keep; fit(); }
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-dl]"); if (b) dl(b.dataset.dl); });
-document.getElementById("dlAll").onclick = async () => { await dl("dark"); await dl("light"); };
+document.getElementById("dlAll").onclick = async () => { for (const b of document.querySelectorAll("[data-dl]")) await dl(b.dataset.dl); };
 document.getElementById("sel").onchange = e => show(e.target.value);
 addEventListener("resize", fit);
 fetch("/api/calendrier").then(r => r.json()).then(j => {
