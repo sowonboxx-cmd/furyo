@@ -38,7 +38,7 @@ button{font:inherit;color:inherit}
 .main-cv{width:100%;aspect-ratio:5/7;border-radius:12px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
 .main-cv img{width:100%;height:100%;object-fit:cover;display:block}
 .ph{writing-mode:vertical-rl;text-orientation:upright;font-weight:700;font-size:14px;color:var(--paper-3);letter-spacing:.08em}
-h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(30px,8vw,64px);line-height:.95;text-transform:uppercase;letter-spacing:.01em;overflow-wrap:anywhere}
+h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(30px,8vw,64px);line-height:.95;text-transform:uppercase;letter-spacing:.01em;overflow-wrap:break-word;hyphens:auto}
 .jp{margin:6px 0 0;font-family:"Noto Sans JP",var(--f-body);font-weight:700;font-size:15px;color:var(--paper-2)}
 @media (min-width:720px){.jp{font-size:18px}}
 .credits{margin:12px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px}
@@ -60,6 +60,8 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(30px,8v
 .credit{margin:10px 0 0;font-size:12px;color:var(--paper-3)}
 .facts{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:13px;color:var(--paper-3)}
 .facts b{color:var(--paper);font-weight:600}
+.adapt{margin:8px 0 0;font-size:13px;color:var(--paper-2)}
+.adapt b{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:5px;background:var(--red);color:#fff;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
 
 /* Tomes */
 .sec{margin-top:28px}
@@ -145,7 +147,8 @@ function render(){
     </div>
   </div>
   ${s.resume ? `<section class="box"><h2>Résumé</h2><p class="resume">${esc(s.resume)}</p>
-    <div class="facts">${s.type ? `<span>Type <b>${esc(s.type)}</b></span>` : ""}${s.mag ? `<span>Magazine <b>${esc(s.mag)}</b></span>` : ""}${s.y1 ? `<span>Depuis <b>${s.y1}</b></span>` : ""}${s.tomesJP ? `<span>Tomes JP <b>${s.tomesJP}</b></span>` : ""}${s.tomesFR ? `<span>Tomes FR <b>${s.tomesFR}</b></span>` : ""}</div></section>` : ""}
+    <div class="facts">${s.type ? `<span>Type <b>${esc(s.type)}</b></span>` : ""}${s.mag ? `<span>Magazine <b>${esc(s.mag)}</b></span>` : ""}${s.y1 ? `<span>Depuis <b>${s.y1}</b></span>` : ""}${s.tomesJP ? `<span>Tomes JP <b>${s.tomesJP}</b></span>` : ""}${s.tomesFR ? `<span>Tomes FR <b>${s.tomesFR}</b></span>` : ""}</div>
+    ${[["Anime", s.anime], ["Drama", s.drama], ["Film", s.film]].filter(([, v]) => v && !/^aucun/i.test(v)).map(([k, v]) => `<p class="adapt"><b>${k}</b> ${esc(v)}</p>`).join("")}</section>` : ""}
   <section class="sec">
     <div class="sec-h"><h2>Tomes</h2>
       ${pays.length > 1 ? `<div class="seg" role="group" aria-label="Pays">${pays.map(p => `<button data-p="${p}" aria-pressed="${p === PAYS}">${FLAGS[p] || ""}${p} <small>${eds.filter(e => e.pays === p).reduce((n, e) => n + e.tomes.length, 0)}</small></button>`).join("")}</div>` : ""}
