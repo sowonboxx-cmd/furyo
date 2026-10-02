@@ -28,45 +28,60 @@ button{font:inherit;color:inherit}
 [hidden]{display:none!important}
 .page{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:calc(env(safe-area-inset-top,0px) + 14px) 48px}
 .top{display:flex;align-items:center;gap:12px}
-.round{width:44px;height:44px;border-radius:50%;background:var(--ink-3);display:grid;place-items:center;text-decoration:none;flex:none}
+.round{width:44px;height:44px;margin-left:-10px;display:grid;place-items:center;text-decoration:none;flex:none;color:var(--paper)}
+@media (min-width:980px){.top{display:none}}
 .brand{font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:.02em;text-decoration:none;text-transform:uppercase}
 .brand span{color:var(--red)}
 
-/* En-tête : couverture du tome 1 + infos */
-.head{display:grid;grid-template-columns:132px minmax(0,1fr);gap:16px;margin-top:20px;align-items:start}
-@media (min-width:720px){.head{grid-template-columns:230px minmax(0,1fr);gap:28px}}
-.main-cv{width:100%;aspect-ratio:5/7;border-radius:12px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
+/* En-tête : petite couverture à gauche, infos à droite */
+.head{display:grid;grid-template-columns:104px minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}
+@media (min-width:720px){.head{grid-template-columns:210px minmax(0,1fr);gap:28px;margin-top:28px}}
+.main-cv{width:100%;aspect-ratio:5/7;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
+@media (min-width:720px){.main-cv{border-radius:14px}}
 .main-cv img{width:100%;height:100%;object-fit:cover;display:block}
 .ph{writing-mode:vertical-rl;text-orientation:upright;font-weight:700;font-size:14px;color:var(--paper-3);letter-spacing:.08em}
-h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(30px,8vw,64px);line-height:.95;text-transform:uppercase;letter-spacing:.01em;overflow-wrap:break-word;hyphens:auto}
-.jp{margin:6px 0 0;font-family:"Noto Sans JP",var(--f-body);font-weight:700;font-size:15px;color:var(--paper-2)}
+h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(26px,7vw,60px);line-height:.95;text-transform:uppercase;letter-spacing:.01em;overflow-wrap:break-word;hyphens:auto}
+.jp{margin:4px 0 0;font-family:"Noto Sans JP",var(--f-body);font-weight:700;font-size:14px;color:var(--paper-2)}
 @media (min-width:720px){.jp{font-size:18px}}
-.credits{margin:12px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px}
+.credits{margin:10px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px}
 .credits dt{color:var(--paper-3)}
 .credits dd{margin:0;font-weight:600}
-.credits a{text-decoration:none;border-bottom:1px solid var(--ink-3)}
-.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.pill{height:26px;padding:0 10px;border-radius:7px;background:var(--ink-3);display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--paper-2)}
+.credits a{text-decoration:none}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pill{height:24px;padding:0 9px;border-radius:7px;background:var(--ink-3);display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--paper-2);white-space:nowrap}
+.pill .flag{width:16px;height:11px;border-radius:2px}
 .pill.on{color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--ink-3))}
-.pill.end{color:var(--paper);background:var(--ink-2)}
-.pill.pub{color:var(--fr);background:color-mix(in srgb,var(--fr) 16%,var(--ink-3))}
-.pill.pubjp{color:var(--jp);background:color-mix(in srgb,var(--jp) 16%,var(--ink-3))}
-.flag{width:20px;height:14px;border-radius:3px;flex:none;display:block;overflow:hidden}
+.pill.end{color:var(--paper);background:color-mix(in srgb,var(--paper) 12%,var(--ink-3))}
+.pill.pause{color:var(--amber);background:color-mix(in srgb,var(--amber) 16%,var(--ink-3))}
+.pill.stop{color:var(--red);background:color-mix(in srgb,var(--red) 18%,var(--ink-3))}
+.pill.soon{color:var(--fr);background:color-mix(in srgb,var(--fr) 16%,var(--ink-3))}
+.pill.pub{color:var(--paper);background:var(--ink-2)}
 
-/* Résumé */
-.box{background:var(--ink-2);border-radius:18px;padding:16px 18px;margin-top:18px}
-.box h2,.sec h2{margin:0 0 8px;font-family:var(--f-display);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.01em}
+/* Onglets Synopsis / Infos / Adaptations */
+.box{background:var(--ink-2);border-radius:18px;margin-top:18px;overflow:hidden}
+.tabs{display:flex;gap:4px;padding:6px;border-bottom:1px solid var(--ink-3);overflow-x:auto}
+.tabs button{height:38px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--paper-3);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--ink-3);color:var(--paper)}
+.panel{padding:14px 18px 18px}
+.sec h2{margin:0 0 8px;font-family:var(--f-display);font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.01em}
 .resume{margin:0;color:var(--paper-2);font-size:15.5px;line-height:1.6}
 .credit{margin:10px 0 0;font-size:12px;color:var(--paper-3)}
-.facts{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:13px;color:var(--paper-3)}
-.facts b{color:var(--paper);font-weight:600}
-.adapt{margin:8px 0 0;font-size:13px;color:var(--paper-2)}
-.adapt b{display:inline-block;margin-right:6px;padding:1px 7px;border-radius:5px;background:var(--red);color:#fff;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+.info{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:9px 16px;font-size:14px}
+.info dt{color:var(--paper-3)}
+.info dd{margin:0;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.info .flag{width:16px;height:11px;border-radius:2px}
+.info .sub{grid-column:1/-1;margin-top:6px;font-family:var(--f-display);font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.02em;display:flex;align-items:center;gap:8px}
+.ad{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.ad li{display:flex;gap:10px;align-items:baseline;font-size:14.5px;color:var(--paper-2)}
+.ad b{flex:none;padding:1px 8px;border-radius:5px;background:var(--red);color:#fff;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
 
 /* Tomes */
 .sec{margin-top:28px}
 .sec-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:var(--ink);padding:calc(env(safe-area-inset-top,0px) + 8px) 0 10px}
 .sec-h h2{margin:0}
+.sec-tools{display:flex;gap:8px;align-items:center}
+.sort{width:48px;height:48px;border:0;border-radius:14px;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer}
+.sort svg{width:20px;height:20px}
 .seg{display:flex;gap:4px;padding:4px;background:var(--ink-3);border-radius:14px}
 .seg button{height:40px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
 .seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
@@ -95,8 +110,7 @@ a.t{text-decoration:none}
 <body>
 <div class="page">
   <div class="top">
-    <a class="round" href="/" aria-label="Retour au fil"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
-    <a class="brand" href="/">Furyo<span>·</span>Gang</a>
+    <a class="round" href="/" aria-label="Retour" onclick="if(document.referrer.startsWith(location.origin)&&history.length>1){history.back();return false}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
   </div>
   <div id="app"><p class="empty">Chargement…</p></div>
   <p class="foot">Par Sowon, créateur et boss du <a href="https://x.com/FuryoGang">FuryoGang</a>.</p>
@@ -126,7 +140,15 @@ function mainCover(s, eds){
   const c = (t1("France") || t1("Japon"))?.cover || s.cover1 || any?.cover;
   return c ? `<img src="${couv(c)}" alt="Couverture de ${esc(s.fr || s.t)}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`;
 }
-function statut(label, st){ if (!st) return ""; const cls = /cours/i.test(st) ? "on" : /termin/i.test(st) ? "end" : ""; return `<span class="pill ${cls}">${label} · ${esc(st)}</span>`; }
+// Statut par pays : En cours, Terminé, En pause, Abandonné, Annoncé.
+function statut(pays, st){
+  if (!st) return "";
+  const cls = /cours/i.test(st) ? "on" : /termin/i.test(st) ? "end" : /pause/i.test(st) ? "pause" : /abandon|arr[êe]t/i.test(st) ? "stop" : /annonc/i.test(st) ? "soon" : "";
+  return `<span class="pill ${cls}">${FLAGS[pays] || ""}${pays} · ${esc(st)}</span>`;
+}
+const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
+const ADAPT = s => [["Anime", s.anime], ["Drama", s.drama], ["Film", s.film], ["OAV", s.oav], ["Jeu vidéo", s.jeux]].filter(([, v]) => v && !/^(aucun|non|-)/i.test(v.trim()));
+let TAB = "syn", ASC = true;
 
 function render(){
   const { serie: s, editions: eds } = DATA;
@@ -134,9 +156,12 @@ function render(){
   document.title = `${titre} · FuryoGang`;
   const pays = [...new Set(eds.map(e => e.pays))].filter(Boolean);
   if (!pays.includes(PAYS)) PAYS = pays[0] || "France";
-  const pubFR = eds.filter(e => e.pays === "France").map(e => e.label && e.label !== e.pub ? `${e.pub} · ${e.label}` : e.pub);
-  const pubJP = eds.filter(e => e.pays === "Japon").map(e => e.pub);
+  const pubFR = [...new Set(eds.filter(e => e.pays === "France").map(e => e.pub))];
+  const pubJP = [...new Set(eds.filter(e => e.pays === "Japon").map(e => e.pub))];
+  if (!pubJP.length && s.pubJP) pubJP.push(s.pubJP);
   const same = s.scen && s.scen === s.dess;
+  const ad = ADAPT(s);
+  if (TAB === "ad" && !ad.length) TAB = "syn";
   document.getElementById("app").innerHTML = `
   <div class="head">
     <div class="main-cv">${mainCover(s, eds)}</div>
@@ -144,23 +169,49 @@ function render(){
       <h1>${esc(titre)}</h1>
       ${s.jp ? `<p class="jp" lang="ja">${esc(s.jp)}</p>` : ""}
       <dl class="credits">${same ? `<dt>Auteur</dt><dd>${authorLink(s.scen)}</dd>` : `${s.scen ? `<dt>Scénario</dt><dd>${authorLink(s.scen)}</dd>` : ""}${s.dess ? `<dt>Dessin</dt><dd>${authorLink(s.dess)}</dd>` : ""}`}</dl>
-      <div class="pills">
-        ${[...new Set(pubFR)].map(p => `<span class="pill pub">${FLAGS.France}${esc(p)}</span>`).join("")}
-        ${[...new Set(pubJP.length ? pubJP : (s.pubJP ? [s.pubJP] : []))].map(p => `<span class="pill pubjp">${FLAGS.Japon}${esc(p)}</span>`).join("")}
-        ${statut("France", s.stFR)}${statut("Japon", s.stJP)}
-      </div>
+      <div class="pills">${statut("France", s.stFR)}${statut("Japon", s.stJP)}${pubFR.map(p => `<span class="pill pub">${esc(p)}</span>`).join("")}</div>
     </div>
   </div>
-  ${s.resume ? `<section class="box"><h2>Résumé</h2><p class="resume">${esc(s.resume)}</p>
-    <div class="facts">${s.type ? `<span>Type <b>${esc(s.type)}</b></span>` : ""}${s.mag ? `<span>Magazine <b>${esc(s.mag)}</b></span>` : ""}${s.y1 ? `<span>Depuis <b>${s.y1}</b></span>` : ""}${s.tomesJP ? `<span>Tomes JP <b>${s.tomesJP}</b></span>` : ""}${s.tomesFR ? `<span>Tomes FR <b>${s.tomesFR}</b></span>` : ""}</div>
-    ${[["Anime", s.anime], ["Drama", s.drama], ["Film", s.film]].filter(([, v]) => v && !/^aucun/i.test(v)).map(([k, v]) => `<p class="adapt"><b>${k}</b> ${esc(v)}</p>`).join("")}</section>` : ""}
+  <section class="box">
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="syn" aria-selected="${TAB === "syn"}">Synopsis</button>
+      <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Infos</button>
+      ${ad.length ? `<button role="tab" data-tab="ad" aria-selected="${TAB === "ad"}">Adaptations</button>` : ""}
+    </div>
+    <div class="panel">${panel(s, pubFR, pubJP, eds, ad)}</div>
+  </section>
   <section class="sec">
     <div class="sec-h"><h2>Tomes</h2>
-      ${pays.length > 1 ? `<div class="seg" role="group" aria-label="Pays">${pays.map(p => `<button data-p="${p}" aria-pressed="${p === PAYS}">${FLAGS[p] || ""}${p} <small>${eds.filter(e => e.pays === p).reduce((n, e) => n + e.tomes.length, 0)}</small></button>`).join("")}</div>` : ""}
+      <div class="sec-tools">
+        ${pays.length > 1 ? `<div class="seg" role="group" aria-label="Pays">${pays.map(p => `<button data-p="${p}" aria-pressed="${p === PAYS}">${FLAGS[p] || ""}${p} <small>${eds.filter(e => e.pays === p).reduce((n, e) => n + e.tomes.length, 0)}</small></button>`).join("")}</div>` : ""}
+        <button class="sort" id="sort" aria-label="${ASC ? "Afficher le dernier tome en premier" : "Afficher le premier tome en premier"}" title="Ordre de sortie">${ASC
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20V4M3 8l4-4 4 4M17 4v16M13 16l4 4 4-4"/></svg>'}</button>
+      </div>
     </div>
     <div id="tomes"></div>
   </section>`;
   renderTomes();
+}
+function panel(s, pubFR, pubJP, eds, ad){
+  if (TAB === "ad") return `<ul class="ad">${ad.map(([k, v]) => `<li><b>${k}</b><span>${esc(v)}</span></li>`).join("")}</ul>`;
+  if (TAB === "info") {
+    const nJP = s.tomesJP || eds.filter(e => e.pays === "Japon").reduce((n, e) => Math.max(n, e.tomes.length), 0) || "";
+    const nFR = s.tomesFR || eds.filter(e => e.pays === "France").reduce((n, e) => Math.max(n, ...e.tomes.filter(t => t.date && t.date <= new Date().toISOString().slice(0, 10)).map(t => t.n || 0), 0), 0) || "";
+    const labels = eds.filter(e => e.pays === "France" && e.label && e.label !== e.pub).map(e => e.label);
+    const row = (k, v) => v ? `<dt>${k}</dt><dd>${v}</dd>` : "";
+    return `<dl class="info">
+      ${row("Type", esc(s.type))}${row("Genres", esc((s.genres || []).join(", ")))}
+      <div class="sub">${FLAGS.Japon}Japon</div>
+      ${row("Éditeur", esc(pubJP.join(", ")))}${row("Magazine", esc(s.mag))}
+      ${row("Prépublication", esc(dLong(s.prepub) || (s.y1 ? String(s.y1) : "")) + (s.prepubFin ? " → " + esc(dLong(s.prepubFin)) : ""))}
+      ${row("Tome 1", esc(dLong(s.t1JP)))}${row("Tomes", nJP ? `${nJP}${s.stJP ? " · " + esc(s.stJP.toLowerCase()) : ""}` : "")}
+      ${pubFR.length || s.t1FR || s.stFR ? `<div class="sub">${FLAGS.France}France</div>
+      ${row("Éditeur", esc(pubFR.join(", ")) + (labels.length ? ` · ${esc([...new Set(labels)].join(", "))}` : ""))}
+      ${row("Tome 1", esc(dLong(s.t1FR)))}${row("Tomes", nFR ? `${nFR}${s.stFR ? " · " + esc(s.stFR.toLowerCase()) : ""}` : (s.stFR ? esc(s.stFR) : ""))}` : ""}
+    </dl>`;
+  }
+  return s.resume ? `<p class="resume">${esc(s.resume)}</p>` : `<p class="resume">Synopsis à venir.</p>`;
 }
 function renderTomes(){
   const { serie: s, editions: eds } = DATA;
@@ -169,13 +220,19 @@ function renderTomes(){
   const list = eds.filter(e => e.pays === PAYS);
   document.getElementById("tomes").innerHTML = list.map(e => `
     ${list.length > 1 ? `<p class="ed-info">${esc(e.nom)}</p>` : `<p class="ed-info">${esc([e.pub, e.label, e.format].filter(Boolean).join(" · "))}</p>`}
-    ${e.tomes.length ? `<ul class="grid">${e.tomes.map(t => {
+    ${e.tomes.length ? `<ul class="grid">${(ASC ? e.tomes : [...e.tomes].reverse()).map(t => {
       const o = otherByN[t.n];
       return `<li class="t"><div class="cv">${t.cover ? `<img src="${couv(t.cover)}" alt="Tome ${tn(t.n)}" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
         <span class="t-n">Tome ${tn(t.n)}</span><span class="t-d">${esc(dTxt(t))}</span>
         ${o && o.date ? `<span class="t-o">${FLAGS[other]}${esc(dTxt(o))}</span>` : ""}</li>`; }).join("")}</ul>` : `<p class="empty">Aucun tome renseigné pour l'instant.</p>`}`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
 }
 document.addEventListener("click", e => {
+  const tb = e.target.closest(".tabs button");
+  if (tb) { TAB = tb.dataset.tab; const { serie: s, editions: eds } = DATA; document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === tb));
+    const pubFR = [...new Set(eds.filter(x => x.pays === "France").map(x => x.pub))], pubJP = [...new Set(eds.filter(x => x.pays === "Japon").map(x => x.pub))];
+    if (!pubJP.length && s.pubJP) pubJP.push(s.pubJP);
+    document.querySelector(".panel").innerHTML = panel(s, pubFR, pubJP, eds, ADAPT(s)); return; }
+  if (e.target.closest("#sort")) { ASC = !ASC; const y = scrollY; render(); scrollTo(0, y); return; }
   const b = e.target.closest(".seg button"); if (!b) return;
   PAYS = b.dataset.p; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b)); renderTomes();
 });
@@ -189,14 +246,21 @@ function renderList(items){
   const draw = q => {
     const n = slugify(q);
     const list = items.filter(s => !n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q));
-    document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+    document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
       <span class="t-n">${esc(s.fr || s.t)}</span>${s.jp ? `<span class="t-d" lang="ja">${esc(s.jp)}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   draw(""); document.getElementById("q").addEventListener("input", e => draw(e.target.value.trim()));
 }
 if (!slug) {
   fetch("/api/series").then(r => r.json()).then(j => renderList((j && j.items) || [])).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger les séries.</p>`; });
-} else fetch("/api/serie?s=" + encodeURIComponent(slug)).then(r => r.json()).then(j => {
+} else {
+  // Aperçu immédiat (titre et couverture connus depuis la liste) pendant le chargement de la fiche.
+  try { const pre = JSON.parse(sessionStorage.getItem("fg-pre-" + slug) || "null");
+    if (pre) document.getElementById("app").innerHTML = `<div class="head"><div class="main-cv">${pre.c ? `<img src="${couv(pre.c)}" alt="">` : ""}</div><div><h1>${esc(pre.t)}</h1>${pre.jp ? `<p class="jp" lang="ja">${esc(pre.jp)}</p>` : ""}<p class="credit">Chargement…</p></div></div>`;
+  } catch (e) {}
+}
+document.addEventListener("click", e => { const a = e.target.closest("a[data-pre]"); if (a) try { sessionStorage.setItem("fg-pre-" + a.getAttribute("href").split("/").pop(), a.dataset.pre); } catch (er) {} });
+if (slug) fetch("/api/serie?s=" + encodeURIComponent(slug)).then(r => r.json()).then(j => {
   if (!j || j.error || !j.serie) { document.getElementById("app").innerHTML = `<p class="empty">Série introuvable. <a href="/series/">Voir toutes les séries</a></p>`; return; }
   DATA = j; render();
 }).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger la série.</p>`; });
