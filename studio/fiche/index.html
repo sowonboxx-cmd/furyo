@@ -6,7 +6,8 @@
 <meta name="robots" content="noindex">
 <title>Studio · Nouvelle fiche · FuryoGang</title>
 <style>
-/* Studio « Nouvelle fiche » : visuel 4:5 (1080×1350) pour annoncer une fiche série mise en ligne, avec l'avancement de la base. */
+/* Studio « Nouvelle fiche » : design « Dossier » choisi par Will, en crème et en sombre,
+   au format post (4:5, 1080×1350) et story (9:16, 1080×1920, avec marges pour l'encoche et les boutons d'Instagram). */
 @font-face{font-family:"Antonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
 @font-face{font-family:"Inter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
 @font-face{font-family:"Noto Sans JP";src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
@@ -23,109 +24,75 @@ input{width:110px}
 label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--paper-2)}
 button{font-weight:700;cursor:pointer}
 button.main{background:var(--red)}
-.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.pair{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;align-items:start}
 .slot h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
 .slot h2 button{height:32px;font-size:12px}
-.frame{width:100%;aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:10px}
+.frame{width:100%;position:relative;overflow:hidden;border-radius:10px}
+.frame.post{aspect-ratio:4/5}.frame.story{aspect-ratio:9/16}
 .frame>.card{position:absolute;left:0;top:0;transform-origin:0 0}
+.frame .safe{position:absolute;left:0;right:0;pointer-events:none;background:repeating-linear-gradient(45deg,rgba(255,80,80,.18) 0 6px,transparent 6px 12px);display:none}
+.show-safe .frame .safe{display:block}
 
-/* ---------- Carte 1080×1350, commun ---------- */
-.card{width:1080px;height:1350px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;background:#0c0c0e;color:#fff;--muted:rgba(255,255,255,.62);--track:rgba(255,255,255,.14)}
+/* ---------- Carte « Dossier » ---------- */
+.card{width:1080px;height:1350px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;display:flex;flex-direction:column;
+  --bg:#F2EFE9;--fg:#0c0c0e;--muted:rgba(12,12,14,.58);--track:rgba(12,12,14,.12);--on:#0c0c0e;--res:#26262a;--bar:#0c0c0e;
+  --safe-top:0px;--safe-bot:0px;background:var(--bg);color:var(--fg)}
+.card.dark{--bg:#121214;--fg:#F5F5F7;--muted:rgba(245,245,247,.58);--track:rgba(245,245,247,.13);--on:#F5F5F7;--res:#D9D9DE;--bar:#000}
+.card.story{height:1920px;--safe-top:200px;--safe-bot:250px}
 .card .A{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase}
-.card .jp{font-family:"Noto Sans JP",sans-serif;font-weight:700}
-.card .kick{display:inline-block;font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--red);color:#fff;font-size:34px;padding:6px 20px;border-radius:6px}
-.card .who{font-family:"Antonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.card .who b{color:#fff}
-.card .who i{font-style:normal;margin:0 12px;opacity:.5}
-.card .bar{height:22px;border-radius:11px;background:var(--track);overflow:hidden}
-.card .bar i{display:block;height:100%;border-radius:11px;background:var(--red);min-width:22px}
-.card .blur{position:absolute;inset:-90px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}
-
-/* ---------- 1 · Soleil compteur ---------- */
-.card.s1 .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.35) 0%,rgba(12,12,14,.7) 45%,#0c0c0e 70%)}
-.card.s1 .sun{position:absolute;width:720px;height:720px;border-radius:50%;background:var(--red);left:50%;top:150px;transform:translateX(-50%)}
-.card.s1 .logo{position:absolute;left:50%;top:44px;transform:translateX(-50%);width:270px}
-.card.s1 .cover{position:absolute;left:50%;top:184px;width:450px;height:630px;transform:translateX(-50%);object-fit:cover;border:12px solid #fff;box-shadow:0 40px 90px rgba(0,0,0,.55)}
-.card.s1 .kick{position:absolute;left:50%;top:850px;transform:translateX(-50%);white-space:nowrap}
-.card.s1 .info{position:absolute;left:70px;right:70px;top:928px;text-align:center}
-.card.s1 .t{font-size:var(--ts,96px);line-height:.92;margin:0}
-.card.s1 .jp{margin-top:12px;font-size:30px;color:var(--muted)}
-.card.s1 .prog{position:absolute;left:80px;right:80px;bottom:70px}
-.card.s1 .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
-.card.s1 .row .A{font-size:42px;letter-spacing:.03em}
-.card.s1 .row .A span{color:var(--muted)}
-
-/* ---------- 2 · Compteur géant ---------- */
-.card.s2 .shade{position:absolute;inset:0;background:linear-gradient(90deg,#0c0c0e 0%,rgba(12,12,14,.92) 46%,rgba(12,12,14,.55) 100%)}
-.card.s2 .logo{position:absolute;left:70px;top:60px;width:230px}
-.card.s2 .kick{position:absolute;left:70px;top:190px}
-.card.s2 .num{position:absolute;left:58px;top:250px;font-size:430px;line-height:.86;letter-spacing:-.02em}
-.card.s2 .of{position:absolute;left:72px;top:640px;font-size:84px;color:var(--muted);letter-spacing:.02em}
-.card.s2 .cover{position:absolute;right:70px;top:170px;width:440px;height:616px;object-fit:cover;border:12px solid #fff;box-shadow:0 40px 90px rgba(0,0,0,.6)}
-.card.s2 .info{position:absolute;left:70px;right:70px;top:850px}
-.card.s2 .t{font-size:var(--ts,104px);line-height:.92;margin:0}
-.card.s2 .jp{margin-top:12px;font-size:30px;color:var(--muted)}
-.card.s2 .who{margin-top:16px}
-.card.s2 .prog{position:absolute;left:70px;right:70px;bottom:64px}
-.card.s2 .bar{height:56px;border-radius:12px;position:relative}
-.card.s2 .bar i{border-radius:12px}
-.card.s2 .bar span{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:34px;letter-spacing:.04em}
-.card.s2 .cap{margin-top:12px;font-size:26px;color:var(--muted);font-weight:600}
-
-/* ---------- 3 · Mosaïque ---------- */
-.card.s3{background:#0c0c0e}
-.card.s3 .logo{position:absolute;left:50%;top:48px;transform:translateX(-50%);width:250px}
-.card.s3 .cover{position:absolute;left:70px;top:170px;width:360px;height:504px;object-fit:cover;border:10px solid #fff}
-.card.s3 .info{position:absolute;left:480px;right:70px;top:170px;height:504px;display:flex;flex-direction:column;justify-content:center}
-.card.s3 .t{font-size:var(--ts,92px);line-height:.92;margin:18px 0 0}
-.card.s3 .jp{margin-top:12px;font-size:28px;color:var(--muted)}
-.card.s3 .who{margin-top:18px;font-size:25px;line-height:1.3}
-.card.s3 .tags{margin-top:18px;font-size:24px;color:var(--muted);font-weight:600}
-.card.s3 .mos{position:absolute;left:70px;right:70px;top:730px;display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:4px}
-.card.s3 .mos i{aspect-ratio:1;border-radius:3px;background:rgba(255,255,255,.1)}
-.card.s3 .mos i.on{background:rgba(255,255,255,.82)}
-.card.s3 .mos i.new{background:var(--red);box-shadow:0 0 0 3px #fff}
-.card.s3 .foot{position:absolute;left:70px;right:70px;bottom:56px;display:flex;justify-content:space-between;align-items:baseline}
-.card.s3 .foot .A{font-size:44px;letter-spacing:.03em}
-.card.s3 .foot .A span{color:var(--muted)}
-
-/* ---------- 4 · Dossier (clair) ---------- */
-.card.s4{background:#F2EFE9;color:#0c0c0e;--muted:rgba(12,12,14,.58);--track:rgba(12,12,14,.12)}
-.card.s4 .who b{color:#0c0c0e}
-.card.s4 .top{position:absolute;left:0;right:0;top:0;height:150px;background:#0c0c0e;display:flex;align-items:center;justify-content:space-between;padding:0 70px}
-.card.s4 .top img{width:230px}
-.card.s4 .top .A{color:#fff;font-size:46px;letter-spacing:.06em}
-.card.s4 .top .A span{color:var(--red)}
-.card.s4 .cover{position:absolute;left:70px;top:220px;width:400px;height:560px;object-fit:cover;border:10px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.25)}
-.card.s4 .info{position:absolute;left:520px;right:70px;top:220px}
-.card.s4 .kick{font-size:28px}
-.card.s4 .t{font-size:var(--ts,84px);line-height:.92;margin:20px 0 0}
-.card.s4 .jp{margin-top:10px;font-size:26px;color:var(--muted)}
-.card.s4 dl{margin:26px 0 0;display:grid;grid-template-columns:auto 1fr;gap:10px 20px;font-size:25px}
-.card.s4 dt{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.card.s4 dd{margin:0;font-weight:700}
-.card.s4 .res{position:absolute;left:70px;right:70px;top:830px;font-size:27px;line-height:1.45;color:#2a2a2d;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
-.card.s4 .res b{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-right:10px}
-.card.s4 .stamp{position:absolute;right:90px;top:690px;transform:rotate(-8deg);border:6px solid var(--red);color:var(--red);font-size:44px;letter-spacing:.08em;padding:4px 18px;border-radius:8px}
-.card.s4 .prog{position:absolute;left:70px;right:70px;bottom:70px}
-.card.s4 .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
-.card.s4 .row .A{font-size:40px;letter-spacing:.03em}
-.card.s4 .row .A span{color:var(--muted)}
-.card.s4 .seg{display:grid;grid-template-columns:repeat(20,1fr);gap:6px}
-.card.s4 .seg i{height:34px;border-radius:4px;background:var(--track)}
-.card.s4 .seg i.on{background:#0c0c0e}
-.card.s4 .seg i.part{background:linear-gradient(90deg,var(--red) var(--p),var(--track) var(--p))}
-.card.s4 .cap{margin-top:14px;font-size:24px;color:var(--muted);font-weight:600}
+.card .top{flex:none;background:var(--bar);padding:calc(var(--safe-top) + 36px) 64px 36px;display:flex;align-items:center;justify-content:space-between}
+.card.dark .top{border-bottom:1px solid rgba(255,255,255,.08)}
+.card .top img{width:250px;display:block}
+.card .top .A{color:#fff;font-size:52px;letter-spacing:.06em;line-height:1}
+.card .top .A span{color:#E0123F}
+.card .main{flex:1;min-height:0;display:flex;flex-direction:column;padding:56px 64px calc(var(--safe-bot) + 60px)}
+.card .hero{display:flex;gap:46px;align-items:flex-start;flex:none}
+.card .cover{flex:none;width:400px;height:560px;object-fit:cover;border:10px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);background:#222}
+.card.story .cover{width:410px;height:574px}
+/* Story : plus de hauteur, donc tout un peu plus grand */
+.card.story .main{padding-top:64px}
+.card.story .t{font-size:108px}
+.card.story .jp{font-size:32px}
+.card.story dt,.card.story dd{font-size:32px}
+.card.story dl{gap:16px 20px;margin-top:30px}
+.card.story .res{margin-top:56px}
+.card.story .res p{font-size:39px}
+.card.story .row .A{font-size:50px}
+.card.story .seg i{height:40px}
+.card.story .cap{font-size:32px}
+.card .info{flex:1;min-width:0;position:relative}
+.card .kick{display:inline-flex;align-items:center;height:56px;padding:0 22px;border-radius:6px;background:var(--red);color:#fff;font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:34px;line-height:1}
+.card .kick span{display:block;transform:translateY(-1px)}
+.card .t{margin:20px 0 0;font-size:96px;line-height:.92;overflow-wrap:anywhere}
+.card .jp{margin-top:12px;font-family:"Noto Sans JP",sans-serif;font-weight:700;font-size:30px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card dl{margin:26px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 20px;align-items:baseline}
+.card dt{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-size:30px;line-height:1.15;white-space:nowrap}
+.card dd{margin:0;font-weight:700;font-size:30px;line-height:1.15;white-space:nowrap;overflow:hidden}
+.card .cv{position:relative;flex:none}
+.card .stamp{position:absolute;right:-34px;bottom:34px;transform:rotate(-8deg);background:var(--bg);border:6px solid var(--red);color:var(--red);font-size:46px;letter-spacing:.08em;padding:4px 18px;border-radius:8px;line-height:1.1}
+.card .res{flex:1;min-height:0;margin:52px 0 0;overflow:hidden}
+.card .res p{margin:0;font-size:36px;line-height:1.42;color:var(--res);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lines,5);overflow:hidden}
+.card .res b{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-right:12px}
+.card .prog{flex:none;margin-top:24px}
+.card .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.card .row .A{font-size:46px;letter-spacing:.03em;line-height:1}
+.card .row .A span{color:var(--muted)}
+.card .seg{display:grid;grid-template-columns:repeat(20,1fr);gap:6px}
+.card .seg i{height:36px;border-radius:4px;background:var(--track)}
+.card .seg i.on{background:var(--on)}
+.card .seg i.part{background:linear-gradient(90deg,var(--red) var(--p),var(--track) var(--p))}
+.card .cap{margin-top:16px;font-size:30px;color:var(--muted);font-weight:700}
 </style>
 </head>
 <body>
 <div class="page">
   <h1>Nouvelle fiche</h1>
-  <p class="sub">Visuel 4:5 (1080 × 1350) pour annoncer une fiche série mise en ligne, avec l'avancement de la base. 4 propositions.</p>
+  <p class="sub">Design « Dossier », en crème et en sombre, pour le post (4:5) et la story (9:16).</p>
   <div class="pick">
     <select id="sel" aria-label="Série"></select>
     <label>N° <input id="n" type="number" min="1"></label>
     <label>sur <input id="tot" type="number" min="1"></label>
+    <label><input id="safe" type="checkbox" style="width:auto;height:auto"> Montrer les zones cachées (story)</label>
     <button class="main" id="dlAll">Télécharger les 4 PNG</button>
   </div>
   <div class="pair" id="pair"></div>
@@ -134,80 +101,89 @@ button.main{background:var(--red)}
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const LOGO_B = "/img/social/logo-blanc.png";
+const VARIANTS = [["creme", "post", "Crème · post 4:5"], ["dark", "post", "Sombre · post 4:5"], ["creme", "story", "Crème · story 9:16"], ["dark", "story", "Sombre · story 9:16"]];
+const SIZE = { post: [1080, 1350], story: [1080, 1920] };
 let LIST = [], AV = null, cur = null;
 const couv = u => u ? "/api/couv?u=" + encodeURIComponent(u) : "";
-// Même règle que le site : garder les titres tout en capitales (CROWS, WORST), sinon le titre français.
 const shown = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
-const pad = n => String(n).padStart(String(cur.tot).length, "0");
+const pad = d => String(d.n).padStart(Math.max(3, String(d.tot).length), "0");
 const pctTxt = d => (Math.round(d.n / d.tot * 1000) / 10).toLocaleString("fr-FR") + " %";
-const ts = (t, big, room) => Math.max(54, Math.min(big, Math.floor(room / Math.max(6, t.length) * 1.9))) + "px";
-function who(d){
-  const s = d.scen, x = d.dess;
-  if (s && x && s !== x) return `Histoire <b>${esc(s)}</b><i>·</i>Dessin <b>${esc(x)}</b>`;
-  return (s || x) ? `<b>${esc(s || x)}</b>` : "";
-}
-const D = {
-  s1: { nom: "1 · Soleil compteur", html: d => `<div class="card s1">
-      ${d.cover ? `<div class="blur" style="background-image:url('${couv(d.cover)}')"></div>` : ""}<div class="shade"></div><div class="sun"></div>
-      <img class="logo" src="${LOGO_B}" alt="">
-      ${d.cover ? `<img class="cover" src="${couv(d.cover)}" alt="">` : ""}
-      <span class="kick">Nouvelle fiche</span>
-      <div class="info"><p class="t A" style="--ts:${ts(d.t, 96, 900)}">${esc(d.t)}</p>${d.jp ? `<div class="jp" lang="ja">${esc(d.jp)}</div>` : ""}${who(d) ? `<div class="who" style="margin-top:16px">${who(d)}</div>` : ""}</div>
-      <div class="prog"><div class="row"><span class="A">Série n°${d.n} <span>/ ${d.tot}</span></span><span class="A">${pctTxt(d)}</span></div><div class="bar"><i style="width:${d.n / d.tot * 100}%"></i></div></div>
-    </div>` },
-  s2: { nom: "2 · Compteur géant", html: d => `<div class="card s2">
-      ${d.cover ? `<div class="blur" style="background-image:url('${couv(d.cover)}')"></div>` : ""}<div class="shade"></div>
-      <img class="logo" src="${LOGO_B}" alt="">
-      <span class="kick">Nouvelle fiche</span>
-      <div class="num A">${d.n}</div><div class="of A">/ ${d.tot}</div>
-      ${d.cover ? `<img class="cover" src="${couv(d.cover)}" alt="">` : ""}
-      <div class="info"><p class="t A" style="--ts:${ts(d.t, 104, 940)}">${esc(d.t)}</p>${d.jp ? `<div class="jp" lang="ja">${esc(d.jp)}</div>` : ""}${who(d) ? `<div class="who">${who(d)}</div>` : ""}</div>
-      <div class="prog"><div class="bar"><i style="width:${d.n / d.tot * 100}%"></i><span class="A">${pctTxt(d)}</span></div><div class="cap">${d.tot - d.n} séries encore à venir sur le site</div></div>
-    </div>` },
-  s3: { nom: "3 · Mosaïque", html: d => { const cols = 36; return `<div class="card s3">
-      <img class="logo" src="${LOGO_B}" alt="">
-      ${d.cover ? `<img class="cover" src="${couv(d.cover)}" alt="">` : ""}
-      <div class="info"><span><span class="kick">Nouvelle fiche</span></span><p class="t A" style="--ts:${ts(d.t, 92, 560)}">${esc(d.t)}</p>${d.jp ? `<div class="jp" lang="ja">${esc(d.jp)}</div>` : ""}${who(d) ? `<div class="who">${who(d)}</div>` : ""}${d.tags ? `<div class="tags">${esc(d.tags)}</div>` : ""}</div>
-      <div class="mos" style="--cols:${cols}">${Array.from({ length: d.tot }, (_, i) => `<i${i + 1 < d.n ? ' class="on"' : i + 1 === d.n ? ' class="new"' : ""}></i>`).join("")}</div>
-      <div class="foot"><span class="A">${d.n} <span>/ ${d.tot} séries en ligne</span></span><span class="A">${pctTxt(d)}</span></div>
-    </div>`; } },
-  s4: { nom: "4 · Dossier (clair)", html: d => { const p = d.n / d.tot * 20; return `<div class="card s4">
-      <div class="top"><img src="${LOGO_B}" alt=""><span class="A">Fiche <span>n°${pad(d.n)}</span></span></div>
-      ${d.cover ? `<img class="cover" src="${couv(d.cover)}" alt="">` : ""}
-      <div class="info"><span class="kick">Nouvelle fiche</span><p class="t A" style="--ts:${ts(d.t, 84, 470)}">${esc(d.t)}</p>${d.jp ? `<div class="jp" lang="ja">${esc(d.jp)}</div>` : ""}
-        <dl>${d.scen ? `<dt>Histoire</dt><dd>${esc(d.scen)}</dd>` : ""}${d.dess && d.dess !== d.scen ? `<dt>Dessin</dt><dd>${esc(d.dess)}</dd>` : ""}${d.type ? `<dt>Type</dt><dd>${esc(d.type)}</dd>` : ""}${d.genres ? `<dt>Genres</dt><dd>${esc(d.genres)}</dd>` : ""}${d.y1 ? `<dt>Début</dt><dd>${d.y1}</dd>` : ""}${d.pub ? `<dt>En France</dt><dd>${esc(d.pub)}</dd>` : ""}</dl></div>
-      ${d.resume ? `<p class="res"><b>Résumé</b>${esc(d.resume)}</p>` : ""}
-      <span class="stamp A">En ligne</span>
+const parts = s => String(s || "").split(/\s*[,&/]\s*|\s+et\s+/).map(x => x.trim()).filter(Boolean);
+
+function card(d, theme, fmt){
+  const p = d.n / d.tot * 20;
+  const rows = [
+    ["Histoire", d.scen ? parts(d.scen) : []],
+    ["Dessin", d.dess && d.dess !== d.scen ? parts(d.dess) : []],
+    ["Type", d.type ? [d.type] : []],
+    ["Genres", d.genres || []],
+    ["Début", d.y1 ? [String(d.y1)] : []],
+    ["En France", d.pubs || []],
+  ].filter(r => r[1].length);
+  return `<div class="card ${theme} ${fmt}">
+    <div class="top"><img src="${LOGO_B}" alt=""><span class="A">Fiche <span>n°${pad(d)}</span></span></div>
+    <div class="main">
+      <div class="hero">
+        <div class="cv">${d.cover ? `<img class="cover" src="${couv(d.cover)}" alt="">` : `<div class="cover"></div>`}<span class="stamp A">En ligne</span></div>
+        <div class="info"><span class="kick"><span>Nouvelle fiche</span></span>
+          <p class="t A">${esc(d.t)}</p>${d.jp ? `<div class="jp" lang="ja">${esc(d.jp)}</div>` : ""}
+          <dl>${rows.map(r => `<dt>${r[0]}</dt><dd data-items="${esc(JSON.stringify(r[1]))}">${esc(r[1].join(", "))}</dd>`).join("")}</dl>
+        </div>
+      </div>
+      <div class="res">${d.resume ? `<p><b>Résumé</b>${esc(d.resume)}</p>` : ""}</div>
       <div class="prog"><div class="row"><span class="A">La base FuryoGang · ${d.n} <span>/ ${d.tot}</span></span><span class="A">${pctTxt(d)}</span></div>
         <div class="seg">${Array.from({ length: 20 }, (_, i) => i + 1 <= Math.floor(p) ? '<i class="on"></i>' : i < p ? `<i class="part" style="--p:${Math.round((p - i) * 100)}%"></i>` : "<i></i>").join("")}</div>
         <div class="cap">Une nouvelle fiche chaque jour, du lundi au vendredi</div></div>
-    </div>`; } },
-};
+    </div></div>`;
+}
+// Mise en page fine, une fois les polices chargées : titre sur 2 lignes maximum, chaque info sur une seule ligne
+// (on garde autant de noms ou de genres que la place permet), résumé coupé à la dernière ligne entière.
+function polish(c){
+  const t = c.querySelector(".t");
+  const big = c.classList.contains("story") ? 108 : 96;
+  for (let s = big; s >= 52; s -= 4) { t.style.fontSize = s + "px"; if (t.offsetHeight <= s * 0.92 * 2 + 4) break; }
+  c.querySelectorAll("dd[data-items]").forEach(dd => {
+    const items = JSON.parse(dd.dataset.items);
+    for (let k = items.length; k >= 1; k--) {
+      dd.textContent = items.slice(0, k).join(", ");
+      if (dd.scrollWidth <= dd.clientWidth + 1) break;
+      if (k === 1) dd.style.textOverflow = "ellipsis";
+    }
+  });
+  const res = c.querySelector(".res"), p = res.querySelector("p");
+  if (p) { const lh = parseFloat(getComputedStyle(p).lineHeight); p.style.setProperty("--lines", Math.max(2, Math.floor(res.clientHeight / lh))); }
+}
 function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".card"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
 function draw(){
   if (!cur) return;
-  document.getElementById("pair").innerHTML = Object.entries(D).map(([k, L]) => `<div class="slot"><h2>${L.nom} <button data-dl="${k}">PNG</button></h2><div class="frame" id="f-${k}">${L.html(cur)}</div></div>`).join("");
+  document.getElementById("pair").innerHTML = VARIANTS.map(([th, fm, nom]) => `<div class="slot"><h2>${nom} <button data-dl="${th}-${fm}">PNG</button></h2>
+    <div class="frame ${fm}" id="f-${th}-${fm}">${card(cur, th, fm)}${fm === "story" ? `<div class="safe" style="top:0;height:${200 / 19.2}%"></div><div class="safe" style="bottom:0;height:${250 / 19.2}%"></div>` : ""}</div></div>`).join("");
   fit();
+  const go = () => document.querySelectorAll(".frame .card").forEach(polish);
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(go);
 }
 async function pick(slug){
   const s = LIST.find(x => x.slug === slug) || LIST[0]; if (!s) return;
   const rang = AV && (AV.series || []).find(x => x.slug === s.slug);
-  cur = { slug: s.slug, t: shown(s), jp: s.jp, cover: s.cover, type: s.type, genres: (s.genres || []).slice(0, 3).join(", "), tags: [s.type, ...(s.genres || []).slice(0, 3)].filter(Boolean).join(" · "), y1: s.y1, pub: (s.pubFR || "").replace(/\s*\(.*$/, ""),
+  cur = { slug: s.slug, t: shown(s), jp: s.jp, cover: s.cover, type: s.type, genres: s.genres || [], y1: s.y1,
+    pubs: parts((s.pubFR || "").replace(/\s*\([^)]*\)/g, "")),
     n: rang ? rang.rang : (AV ? AV.enLigne : 1), tot: AV ? AV.total : 600, scen: "", dess: "", resume: "" };
   document.getElementById("n").value = cur.n; document.getElementById("tot").value = cur.tot;
   history.replaceState(null, "", "?s=" + s.slug); draw();
   try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resume || ""; draw(); } } catch (e) {}
 }
-async function dl(k){
-  const node = document.querySelector(`#f-${k} .card`), keep = node.style.transform; node.style.transform = "none";
-  try { const url = await htmlToImage.toPng(node, { width: 1080, height: 1350, pixelRatio: 1 }); const a = document.createElement("a"); a.href = url; a.download = `nouvelle-fiche-${cur.slug}-${k}.png`; a.click(); }
+async function dl(key){
+  const [th, fm] = key.split("-"), [w, h] = SIZE[fm];
+  const node = document.querySelector(`#f-${key} .card`), keep = node.style.transform; node.style.transform = "none";
+  try { const url = await htmlToImage.toPng(node, { width: w, height: h, pixelRatio: 1 }); const a = document.createElement("a"); a.href = url; a.download = `nouvelle-fiche-${cur.slug}-${th}-${fm}.png`; a.click(); }
   finally { node.style.transform = keep; fit(); }
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-dl]"); if (b) dl(b.dataset.dl); });
-document.getElementById("dlAll").onclick = async () => { for (const k of Object.keys(D)) await dl(k); };
+document.getElementById("dlAll").onclick = async () => { for (const [th, fm] of VARIANTS) await dl(th + "-" + fm); };
 document.getElementById("sel").onchange = e => pick(e.target.value);
 document.getElementById("n").oninput = e => { cur.n = Math.max(1, +e.target.value || 1); draw(); };
 document.getElementById("tot").oninput = e => { cur.tot = Math.max(cur.n, +e.target.value || cur.n); draw(); };
+document.getElementById("safe").onchange = e => document.body.classList.toggle("show-safe", e.target.checked);
 addEventListener("resize", fit);
 Promise.all([fetch("/api/series").then(r => r.json()), fetch("/api/avancement").then(r => r.json()).catch(() => null)]).then(([l, a]) => {
   LIST = (l.items || []).slice().sort((x, y) => shown(x).localeCompare(shown(y), "fr")); AV = a && !a.error ? a : null;
