@@ -1,4 +1,4 @@
-/* En-tête commun à tout le site (style Le Monde) : logo centré + menu Actualité / Séries / Calendrier, collé en haut de l'écran.
+/* En-tête commun à tout le site (style Le Monde) : logo centré + menu Actualités / Séries / Calendrier, collé en haut de l'écran.
    À inclure juste après <body> : <script src="/site/header.js"></script> (le CSS est injecté ici aussi).
    La hauteur de l'en-tête est exposée en --sh-h pour que les barres collantes de chaque page se placent dessous. */
 (function () {
@@ -21,7 +21,7 @@
   var html = '<header class="sh" id="sh">' +
     '<div class="sh-top"><a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
     '<a class="sh-search" href="/series/" aria-label="Chercher une série"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></a></div>' +
-    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/", "Actualité") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") + "</nav></header>";
+    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/", "Actualités") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") + "</nav></header>";
   var me = document.currentScript;
   me.insertAdjacentHTML("beforebegin", html);
   var set = function () { var h = document.getElementById("sh"); if (h) document.documentElement.style.setProperty("--sh-h", h.offsetHeight + "px"); };

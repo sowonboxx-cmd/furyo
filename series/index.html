@@ -245,14 +245,14 @@ let TAB = "syn", ASC = true;
 
 // Titre affiché : le titre FR, sauf quand le titre de la série s'écrit en capitales (CROWS, WORST…).
 const shown = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
-// Fil d'Ariane : page d'où l'on vient (Calendrier, Actualité, Séries par défaut) / titre de la série.
+// Fil d'Ariane : page d'où l'on vient (Calendrier, Actualités, Séries par défaut) / titre de la série.
 function crumb(titre){
   let from = { href: "/series/", label: "Séries" };
   try {
     const r = document.referrer ? new URL(document.referrer) : null;
     if (r && r.origin === location.origin) {
       if (r.pathname.startsWith("/calendrier")) from = { href: "/calendrier/", label: "Calendrier" };
-      else if (r.pathname === "/" || r.pathname === "/index.html") from = { href: "/", label: "Actualité" };
+      else if (r.pathname === "/" || r.pathname === "/index.html") from = { href: "/", label: "Actualités" };
       else if (r.pathname.startsWith("/auteurs")) from = { href: r.pathname, label: "Mangakas" };
     }
   } catch (e) {}
