@@ -134,16 +134,17 @@ function dayBox(it){
 }
 const MCOURT = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 function dateTxt(it){ const d = d0(it.date); return it.prec === "Mois" ? `${MOIS[d.getMonth()]}` : `${d.getDate()} ${MCOURT[d.getMonth()]}`; }
+const sref = it => "/series/" + String(it.series || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 function rowHTML(it){
   const past = it.date < today;
   const thumb = it.cover || it.visual ? `<span class="thumb">${img(it).replace("<img ", '<img style="width:100%;height:100%;object-fit:cover" ')}</span>` : `<span class="thumb" lang="ja">${esc((it.jp || "").slice(0, 5))}</span>`;
-  return `<li${past ? ' class="was"' : ""}><div class="row">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
-    <div class="r-meta">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : (!it.cover ? `<span class="pill wait">Couverture à venir</span>` : "")}</div></div></div></li>`;
+  return `<li${past ? ' class="was"' : ""}><a class="row" href="${sref(it)}">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
+    <div class="r-meta">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : (!it.cover ? `<span class="pill wait">Couverture à venir</span>` : "")}</div></div></a></li>`;
 }
 function cardHTML(it){
   const past = it.date < today;
-  return `<li${past ? ' class="was"' : ""}><div class="card"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span>${!past && !it.cover ? `<span class="wait">Couverture à venir</span>` : ""}</div>
-    <div class="c-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div></div></li>`;
+  return `<li${past ? ' class="was"' : ""}><a class="card" href="${sref(it)}"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span>${!past && !it.cover ? `<span class="wait">Couverture à venir</span>` : ""}</div>
+    <div class="c-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div></a></li>`;
 }
 let NEXT_ID = null;
 const NOW_DIV = () => { const d = new Date(); return `<li class="now" id="now"><span>Aujourd'hui · ${d.getDate()} ${MCOURT[d.getMonth()]}</span></li>`; };
