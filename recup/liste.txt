@@ -1,2 +1,4 @@
-login2.json https://furyo.pages.dev/api/admin/login
-series3.json https://furyo.pages.dev/api/admin/series
+n.json https://furyo.pages.dev/api/news?refresh=1
+c.json https://furyo.pages.dev/api/calendrier?refresh=1
+s.json https://furyo.pages.dev/api/series?refresh=1
+hd.json https://furyo.pages.dev/api/serie?s=hell-dogs&refresh=1
