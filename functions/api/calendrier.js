@@ -26,13 +26,13 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const p = r.properties || {};
       series[r.id.replace(/-/g, "")] = {
         id: r.id.replace(/-/g, ""), t: text(p["SERIES"]), jp: text(p["Titre Original"]), fr: text(p["Titre FR"]),
-        cover1: text(p["Couverture T1"]), resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), auteurs: [text(p["Scénariste"]), text(p["Dessinateur"])].filter((v, i, a) => v && a.indexOf(v) === i).join(" & "), hasVisual: ((p["Visuel principal"] || {}).files || []).length > 0,
+        cover1: text(p["Couverture T1"]), resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), auteurs: [text(p["Scénariste"]), text(p["Dessinateur"])].filter((v, i, a) => v && a.indexOf(v) === i).join(" & "), hasVisual: ((p["Visuel principal"] || {}).files || []).length > 0, finiJP: text(p["Statut Japon"]) === "Terminé", tomesJP: num(p["Tomes JP"]),
       };
     }
     const eds = {};
     for (const r of eRows) {
       const p = r.properties || {};
-      eds[r.id.replace(/-/g, "")] = { pays: text(p["Pays"]), pub: text(p["Éditeur"]), name: text(p["Édition"]), format: text(p["Format"]), series: rel(p["Série"]) };
+      eds[r.id.replace(/-/g, "")] = { pays: text(p["Pays"]), pub: text(p["Éditeur"]), name: text(p["Édition"]), format: text(p["Format"]), nb: num(p["Nb tomes"]), series: rel(p["Série"]) };
     }
     const items = tRows.map(r => {
       const p = r.properties || {};
@@ -43,6 +43,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         date: date(p["Date de sortie"]), prec: text(p["Précision date"]) || "Jour", status: text(p["Statut"]),
         cover: text(p["Couverture"]), isbn: text(p["ISBN"]), source: text(p["Source"]),
         pays: ed.pays || "", pub: ed.pub || "", format: ed.format || "",
+        // Nombre de tomes connu : celui de l'édition, sinon (Japon) celui de la série si elle est terminée.
+        nb: ed.nb || (ed.pays === "Japon" && s.finiJP ? s.tomesJP : null),
         series: s.t || "", seriesId: s.id || "", jp: s.jp || "", fr: s.fr || "", visual: !!s.hasVisual, cover1: s.cover1 || "", resume: s.resume || "", scen: s.scen || "", dess: s.dess || "", auteurs: s.auteurs || "",
       };
     }).filter(it => it.date);
