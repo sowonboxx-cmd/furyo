@@ -1,8 +1,0 @@
-total 7412
-drwxr-xr-x 2 runner runner    4096 Oct  2 04:09 .
-drwxr-xr-x 3 runner runner    4096 Oct  2 04:09 ..
--rw-r--r-- 1 runner runner       0 Oct  2 04:09 index.txt
--rw-r--r-- 1 runner runner 1075081 Oct  2 04:09 kinoko4.jpg
--rw-r--r-- 1 runner runner    9500 Oct  2 04:09 openbd.json
--rw-r--r-- 1 runner runner     112 Oct  2 04:09 openbd.txt
--rw-r--r-- 1 runner runner 6484357 Oct  2 04:09 saru10.png

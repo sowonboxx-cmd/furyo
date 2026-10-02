@@ -1,2 +1,1 @@
-kinoko4.jpg https://hondana-image.s3.amazonaws.com/book/image/10169693/af023636-a3e1-4caf-b677-fb6ac4c3bca8.jpeg
-saru10.png https://www.shonengahosha.co.jp/images/Book/Book_0qFEB79ngfPzrSZQqEuiaJ0N03WhGV2Z_1.png
+news.json https://furyo.pages.dev/api/news?refresh=22057
