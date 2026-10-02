@@ -7,7 +7,7 @@
 <title>Studio · Nouvelle fiche · FuryoGang</title>
 <style>
 /* Studio « Nouvelle fiche » : design « Dossier » choisi par Will, en crème et en sombre,
-   au format post (4:5, 1080×1350) et story (9:16, 1080×1920, avec marges pour l'encoche et les boutons d'Instagram). */
+   au format post (3:4, 1080×1440) et story (9:16, 1080×1920, avec marges pour l'encoche et les boutons d'Instagram). */
 @font-face{font-family:"Antonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
 @font-face{font-family:"Inter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
 @font-face{font-family:"Noto Sans JP";src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
@@ -28,13 +28,13 @@ button.main{background:var(--red)}
 .slot h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
 .slot h2 button{height:32px;font-size:12px}
 .frame{width:100%;position:relative;overflow:hidden;border-radius:10px}
-.frame.post{aspect-ratio:4/5}.frame.story{aspect-ratio:9/16}
+.frame.post{aspect-ratio:3/4}.frame.story{aspect-ratio:9/16}
 .frame>.card{position:absolute;left:0;top:0;transform-origin:0 0}
 .frame .safe{position:absolute;left:0;right:0;pointer-events:none;background:repeating-linear-gradient(45deg,rgba(255,80,80,.18) 0 6px,transparent 6px 12px);display:none}
 .show-safe .frame .safe{display:block}
 
 /* ---------- Carte « Dossier » ---------- */
-.card{width:1080px;height:1350px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;display:flex;flex-direction:column;
+.card{width:1080px;height:1440px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;display:flex;flex-direction:column;
   --bg:#F2EFE9;--fg:#0c0c0e;--muted:rgba(12,12,14,.58);--track:rgba(12,12,14,.12);--on:#0c0c0e;--res:#26262a;--bar:#0c0c0e;
   --safe-top:0px;--safe-bot:0px;background:var(--bg);color:var(--fg)}
 .card.dark{--bg:#121214;--fg:#F5F5F7;--muted:rgba(245,245,247,.58);--track:rgba(245,245,247,.13);--on:#F5F5F7;--res:#D9D9DE;--bar:#000}
@@ -49,6 +49,12 @@ button.main{background:var(--red)}
 .card .hero{display:flex;gap:46px;align-items:flex-start;flex:none}
 .card .cover{flex:none;width:400px;height:560px;object-fit:cover;border:10px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);background:#222}
 .card.story .cover{width:410px;height:574px}
+/* Post 3:4 : la hauteur en plus sert à grossir la couverture et les textes */
+.card.post .cover{width:420px;height:588px}
+.card.post dt,.card.post dd{font-size:31px}
+.card.post dl{gap:14px 20px}
+.card.post .res{margin-top:56px}
+.card.post .res p{font-size:38px}
 /* Story : plus de hauteur, donc tout un peu plus grand */
 .card.story .main{padding-top:64px}
 .card.story .t{font-size:108px}
@@ -87,7 +93,7 @@ button.main{background:var(--red)}
 <body>
 <div class="page">
   <h1>Nouvelle fiche</h1>
-  <p class="sub">Design « Dossier », en crème et en sombre, pour le post (4:5) et la story (9:16).</p>
+  <p class="sub">Design « Dossier », en crème et en sombre, pour le post Instagram (3:4) et la story (9:16).</p>
   <div class="pick">
     <select id="sel" aria-label="Série"></select>
     <label>N° <input id="n" type="number" min="1"></label>
@@ -101,8 +107,8 @@ button.main{background:var(--red)}
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const LOGO_B = "/img/social/logo-blanc.png";
-const VARIANTS = [["creme", "post", "Crème · post 4:5"], ["dark", "post", "Sombre · post 4:5"], ["creme", "story", "Crème · story 9:16"], ["dark", "story", "Sombre · story 9:16"]];
-const SIZE = { post: [1080, 1350], story: [1080, 1920] };
+const VARIANTS = [["creme", "post", "Crème · post 3:4"], ["dark", "post", "Sombre · post 3:4"], ["creme", "story", "Crème · story 9:16"], ["dark", "story", "Sombre · story 9:16"]];
+const SIZE = { post: [1080, 1440], story: [1080, 1920] };
 let LIST = [], AV = null, cur = null;
 const couv = u => u ? "/api/couv?u=" + encodeURIComponent(u) : "";
 const shown = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
