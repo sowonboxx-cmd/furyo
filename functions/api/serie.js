@@ -7,6 +7,7 @@ import { estVisible } from "../../lib/site.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
+const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8" } });
 const nid = id => id.replace(/-/g, "");
@@ -45,12 +46,21 @@ export async function onRequestGet({ env, request, waitUntil }) {
     const p = row.properties || {};
     if (!estVisible(p)) return { error: "introuvable" };
     const edIds = rel(p["Éditions"]);
-    const [eRows, tRows] = await Promise.all([
+    const [eRows, tRows, nRows] = await Promise.all([
       edIds.length ? queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } }) : [],
       edIds.length ? queryAll(env.NOTION_TOKEN, { ...TOMES, body: {
         filter: { or: edIds.map(e => ({ property: "Édition", relation: { contains: e } })) },
         sorts: [{ property: "N°", direction: "ascending" }],
       } }) : [],
+      // News validées de la série (onglet News de la fiche).
+      queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
+        filter: { and: [
+          { property: "Série", relation: { contains: id } },
+          { property: "Type", select: { equals: "News" } },
+          { or: [{ property: "Statut", select: { equals: "Validé" } }, { property: "Statut", select: { equals: "Appliqué" } }] },
+        ] },
+        sorts: [{ property: "Date de la news", direction: "descending" }],
+      } }).catch(() => []),
     ]);
     const serie = {
       id: nid(id), slug, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]),
@@ -79,6 +89,10 @@ export async function onRequestGet({ env, request, waitUntil }) {
     }
     editions.forEach(e => e.tomes.sort((a, b) => (a.n ?? 999) - (b.n ?? 999)));
     editions.sort((a, b) => (a.pays === b.pays ? b.tomes.length - a.tomes.length : a.pays === "France" ? -1 : 1));
+    serie.news = nRows.map(r => {
+      const q = r.properties || {}, champ = text(q["Champ concerné"]), prop = text(q["Proposition"]);
+      return { id: nid(r.id), cat: /licence/i.test(champ + " " + prop) ? "Licence FR" : "News", date: date(q["Date de la news"]), titre: prop.replace(/^\s*(licence\s*fr|news)\s*:\s*/i, ""), texte: text(q["Résumé FR"]) };
+    });
     return { serie, editions };
   });
 }
