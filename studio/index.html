@@ -56,6 +56,18 @@ button.main{background:var(--red)}
 .card.a .date{margin-top:18px;align-self:center;font-family:"Antonio",sans-serif;font-weight:700;font-size:40px;letter-spacing:.06em;text-transform:uppercase;background:var(--red);color:#fff;padding:6px 22px;border-radius:6px}
 .card.a .who{margin-top:16px}
 
+/* Numéro du tome : soit dans la bande rouge entre le bord du cercle et la couverture (couleur du fond), soit à gauche du cercle (couleur du texte) */
+.card.a .num2{position:absolute;top:var(--cy);transform:translate(-50%,-50%);font-family:"Antonio",sans-serif;font-weight:700;line-height:.8;letter-spacing:-.02em}
+.card.a.n-in .num2{left:206px;font-size:118px;color:var(--bg)}
+.card.a.light.n-in .num2{color:var(--cream)}
+.card.a.n-out .num2{left:72px;font-size:124px;color:var(--fg)}
+/* Infos : pastille de date juste sous la couverture, puis titre et auteurs ; drapeau du pays en bas, au centre */
+.card.a .info{top:calc(var(--cy) + 380px + 26px) !important}
+.card.a .info .date{margin-top:0 !important;font-size:32px !important;padding:5px 18px !important}
+.card.a .info .title{margin-top:18px}
+.card.a .flagb{position:absolute;left:50%;bottom:46px;transform:translateX(-50%);width:60px;height:41px;border-radius:5px;overflow:hidden;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.card.a .flagb svg{display:block;width:100%;height:100%}
+.card.a.light .flagb{box-shadow:0 0 0 2px rgba(0,0,0,.18)}
 /* ---------- Commun ---------- */
 .card .who{margin-top:14px;font-family:"Antonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .card .who b{color:var(--fg);font-weight:700}
@@ -98,19 +110,24 @@ const jsz = (txt, max, room) => Math.min(max, Math.floor(room / (Math.max(1, [..
 const gsz = t => Math.min(260, Math.floor(1850 / Math.max(1, t.length))) + "px";
 const size = (t, a, b) => t.length > b ? "xs" : t.length > a ? "s" : "";
 const LOGO = theme => `/img/social/logo-${theme === "light" ? "noir" : "blanc"}.png`;
+// Deux variantes à comparer : numéro du tome dans le cercle (couleur du fond) ou hors du cercle (couleur du texte).
+function soleil(it, theme, place){
+  const t = titleOf(it), j = jpOf(it), n = it.n != null ? tn(it.n) : "";
+  return `<div class="card a ${theme} n-${place}">
+    ${it.cover ? `<div class="blur" style="background-image:url('${cov(it)}')"></div>` : ""}<div class="shade"></div><div class="sun"></div>
+    <img class="logo" src="${LOGO(theme)}" alt="FuryoGang">
+    ${it.cover ? `<img class="cover" src="${cov(it)}" alt="">` : ""}
+    ${n ? `<div class="num2">${n}</div>` : ""}
+    ${j ? `<div class="jpw"><div class="jp" lang="ja" style="--js:${jsz(j, 56, 640)}">${esc(j)}</div></div>` : ""}
+    <div class="info"><span class="date">${esc(dateLong(it))}</span>
+      <div class="title ${size(t, 16, 26)}">${esc(t)}</div>
+      ${who(it) ? `<div class="who">${who(it)}</div>` : ""}</div>
+    ${FLAG[it.pays] ? `<div class="flagb">${FLAG[it.pays]}</div>` : ""}
+  </div>`;
+}
 const LAYOUTS = {
-  a: { nom: "Soleil", html(it, theme){
-    const t = titleOf(it), j = jpOf(it), n = it.n != null ? tn(it.n) : "";
-    return `<div class="card a ${theme}">
-      ${it.cover ? `<div class="blur" style="background-image:url('${cov(it)}')"></div>` : ""}<div class="shade"></div><div class="sun"></div>
-      <img class="logo" src="${LOGO(theme)}" alt="FuryoGang">
-      ${it.cover ? `<img class="cover" src="${cov(it)}" alt="">` : ""}
-      ${n ? `<div class="numw"><div class="num">${n}</div></div><div class="numw in"><div class="num">${n}</div></div>` : ""}
-      ${j ? `<div class="jpw"><div class="jp" lang="ja" style="--js:${jsz(j, 56, 640)}">${esc(j)}</div></div>` : ""}
-      <div class="info"><div class="title ${size(t, 16, 26)}">${esc(t)}</div>
-        <span class="date">${esc(dateLong(it))}</span>
-        ${who(it) ? `<div class="who">${who(it)}</div>` : ""}</div>
-    </div>`; } },
+  in: { nom: "Numéro dans le cercle", html: (it, th) => soleil(it, th, "in") },
+  out: { nom: "Numéro hors du cercle", html: (it, th) => soleil(it, th, "out") },
 };
 function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".card"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
 function caption(it){
