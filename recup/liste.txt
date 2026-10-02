@@ -1,8 +1,1 @@
-sg-ushi8.jpg https://www.shogakukan.co.jp/thumbnail/snsbooks/09854847
-sg-jumbo17.jpg https://www.shogakukan.co.jp/thumbnail/snsbooks/09864155
-sg-ushi8b.jpg https://www.shogakukan.co.jp/thumbnail/books/09854847
-pg-golden-serie.html https://www.nihonbungeisha.co.jp/search/s105274.html
-pg-kenka-book.html https://www.hakusensha.co.jp/book/9784592160991/
-hk-kenka2-10.jpg https://www.hakusensha.co.jp/wp_hakusensha/postimage/2026/10/9784592160991.jpg
-hk-kenka2-11.jpg https://www.hakusensha.co.jp/wp_hakusensha/postimage/2026/11/9784592160991.jpg
-hk-kenka2-09.jpg https://www.hakusensha.co.jp/wp_hakusensha/postimage/2026/09/9784592160991.jpg
+cal.json https://furyo.pages.dev/api/calendrier?refresh=12076
