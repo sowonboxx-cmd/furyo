@@ -44,7 +44,7 @@ a{color:inherit}
 .chip small{font-size:11px;opacity:.75}
 main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.it{background:var(--ink-2);border-radius:16px;padding:10px 12px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+.it{cursor:pointer;background:var(--ink-2);border-radius:16px;padding:10px 12px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:4px 12px;align-items:center}
 .th{width:44px;aspect-ratio:5/7;border-radius:6px;background:var(--ink-3);overflow:hidden;display:grid;place-items:center;font-size:10px;color:var(--paper-3);grid-row:span 2}
 .th img{width:100%;height:100%;object-fit:cover}
 .nm{min-width:0}
@@ -170,7 +170,6 @@ function row(s){
       <span class="ob ${s.manque.length ? "" : "full"}">★ ${s.oblig.length - s.manque.length}/${s.oblig.length}</span>
       ${s.manque.length ? `<span class="miss">Manque : ${esc(s.manque.slice(0, 3).join(", "))}${s.manque.length > 3 ? "…" : ""}</span>` : `<span class="done">Obligatoires faits · à toi de valider</span>`}
       ${s.trouver ? `<span class="miss">· À trouver : ${esc(s.trouver.slice(0, 60))}${s.trouver.length > 60 ? "…" : ""}</span>` : ""}
-      <button class="tog" data-more>Détails</button>
     </div>
     <div class="more">
       <label>★ Éléments obligatoires</label>
@@ -197,7 +196,8 @@ document.addEventListener("click", e => {
   const c = e.target.closest(".chip[data-f]"); if (c) { F = c.dataset.f; Q = ""; const q = document.getElementById("q"); if (q) q.value = ""; draw(); return; }
   const li = e.target.closest(".it"); if (!li) return;
   const s = ITEMS.find(x => x.id === li.dataset.id);
-  if (e.target.closest("[data-more]")) { li.classList.toggle("open"); return; }
+  // Un appui n'importe où sur la carte (hors boutons et champs) la déplie ou la replie.
+  if (!e.target.closest("button, select, input, textarea, label, a, .more")) { li.classList.toggle("open"); return; }
   if (e.target.closest("[data-coeur]")) { send(s, { coeur: !s.coeur }); return; }
   if (e.target.closest("[data-save]")) { send(s, { lot: li.querySelector("[data-lot]").value.trim(), trouver: li.querySelector("[data-trouver]").value.trim() }); }
 });

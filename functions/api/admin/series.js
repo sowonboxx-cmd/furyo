@@ -7,15 +7,20 @@ import { estVisible } from "../../../lib/site.js";
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
+const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 const nid = id => id.replace(/-/g, "");
 
 export async function onRequestGet({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
-  const [rows, eRows, tRows] = await Promise.all([
+  const [rows, eRows, tRows, aRows] = await Promise.all([
     queryAll(env.NOTION_TOKEN, { ...SERIES }),
     queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
     queryAll(env.NOTION_TOKEN, { ...TOMES }),
+    queryAll(env.NOTION_TOKEN, { ...AUTEURS }),
   ]);
+  // Auteurs dont les réseaux ont été cherchés (date remplie, même si aucun compte n'existe).
+  const auteurOk = {};
+  for (const a of aRows) auteurOk[nid(a.id)] = !!date(a.properties["Réseaux vérifiés le"]);
   const today = new Date().toISOString().slice(0, 10);
   // Tomes parus par série et par pays : numéros distincts, et ceux sans couverture.
   const eds = {};
@@ -43,15 +48,17 @@ export async function onRequestGet({ request, env }) {
       ["Magazine", !!text(p["Magazine"])],
       ["Statut Japon", !!text(p["Statut Japon"])],
       ["Extrait JP", !!text(p["Lecture essai (試し読み)"]) || check(p["Pas d'extrait JP"])],
-      [tJP ? `Tomes JP ${jp.n.size}/${tJP}` : "Tomes JP (nombre total à remplir)", !!tJP && jp.n.size >= tJP],
-      [`Couvertures JP${jp.sansCouv.size ? " (" + jp.sansCouv.size + (jp.sansCouv.size > 1 ? " manquantes)" : " manquante)") : ""}`, jp.n.size > 0 && jp.sansCouv.size === 0],
+      [tJP ? `Tomes JP dans Notion : ${jp.n.size} sur ${tJP} parus` : "Tomes JP : nombre total à remplir", !!tJP && jp.n.size >= tJP],
+      [jp.sansCouv.size ? `Couvertures JP : ${jp.sansCouv.size} tome${jp.sansCouv.size > 1 ? "s" : ""} sans couverture` : "Couvertures JP des tomes saisis", jp.n.size > 0 && jp.sansCouv.size === 0],
     ];
+    const aut = rel(p["Auteurs"]);
+    oblig.push([aut.length ? `Réseaux des auteurs cherchés (${aut.filter(a => auteurOk[a]).length}/${aut.length})` : "Auteurs reliés à la base Auteurs", aut.length > 0 && aut.every(a => auteurOk[a])]);
     // Légendes des réseaux pour le post « Nouvelle fiche » (X facultatif tant que le compte n'est pas lancé).
     oblig.push(["Légende Instagram", !!text(p["Légende Instagram"])], ["Légende TikTok", !!text(p["Légende TikTok"])]);
     if (enFrance) oblig.push(
       ["Extrait FR", !!text(p["Extrait FR"]) || check(p["Pas d'extrait FR"])],
-      [tFR ? `Tomes FR ${fr.n.size}/${tFR}` : "Tomes FR (nombre total à remplir)", !!tFR && fr.n.size >= tFR],
-      [`Couvertures FR${fr.sansCouv.size ? " (" + fr.sansCouv.size + (fr.sansCouv.size > 1 ? " manquantes)" : " manquante)") : ""}`, fr.n.size > 0 && fr.sansCouv.size === 0],
+      [tFR ? `Tomes FR dans Notion : ${fr.n.size} sur ${tFR} parus` : "Tomes FR : nombre total à remplir", !!tFR && fr.n.size >= tFR],
+      [fr.sansCouv.size ? `Couvertures FR : ${fr.sansCouv.size} tome${fr.sansCouv.size > 1 ? "s" : ""} sans couverture` : "Couvertures FR des tomes saisis", fr.n.size > 0 && fr.sansCouv.size === 0],
     );
     return {
       id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugify(t),

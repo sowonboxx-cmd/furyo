@@ -185,6 +185,11 @@ const SITE = "furyo.pages.dev";
 const TAGS = { "Furyō": ["furyo", "yankee"], "Furyō Old School": ["furyo"], "Yakuza": ["yakuza"], "Bōsōzoku": ["bosozoku"], "Crime": ["crime"], "Underground": ["underground"], "Gang": ["gang"], "Arts Martiaux": ["artsmartiaux"], "Combat de rue": ["streetfight"], "Thriller": ["thriller"], "Policier": ["polar"], "Drogue": ["drogue"], "Prison": ["prison"], "Lycée": ["lycee"], "Moto": ["moto"] };
 const tagOf = t => "#" + String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]/g, "");
 const phrases = (txt, n) => (String(txt || "").match(/[^.!?…]+[.!?…]+(\s|$)/g) || [txt || ""]).slice(0, n).join("").trim();
+// @mentions des comptes officiels (auteurs d'abord, puis éditeurs, magazine, plateforme), réseau par réseau.
+function mentions(d, net){
+  const h = d.handles; if (!h) return "";
+  return [...new Set([...(h.auteurs || []), ...(h.editeurs || [])].map(x => x[net]).filter(Boolean))].map(x => "@" + x).join(" ");
+}
 function caps(d){
   const url = `${SITE}/series/${d.slug}`;
   const auteurs = d.scen && d.dess && d.scen !== d.dess ? `Histoire ${d.scen} · Dessin ${d.dess}` : (d.scen || d.dess || "");
@@ -201,7 +206,7 @@ ${phrases(d.resume, 2)}
 ${pays}
 
 📖 La fiche complète (tous les tomes, extraits, adaptations) est sur le site : lien en bio.${membre}
-
+${mentions(d, "ig") ? "\n📣 " + mentions(d, "ig") + "\n" : ""}
 Fiche n°${d.n} sur ${d.tot} · de nouvelles fiches chaque semaine.
 
 ${tags.concat(["#mangafr"]).slice(0, 12).join(" ")}`;
@@ -211,10 +216,10 @@ ${phrases(d.resume, 1)}
 
 ${auteurs}
 Tout sur la série : lien en bio 📖${membre}
-
+${mentions(d, "tt") ? "\n📣 " + mentions(d, "tt") + "\n" : ""}
 ${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf(v) === i).slice(0, 8).join(" ")}`;
   // X : 280 caractères, un lien compte pour 23. On raccourcit le résumé jamais le reste.
-  const xBase = r => `🆕 Nouvelle fiche : ${d.t}${infos ? ` (${[d.type, d.y1].filter(Boolean).join(", ")})` : ""}\n\n${r}${r ? "\n\n" : ""}Tout sur la série 👉 ${url}\n${tags.slice(0, 3).join(" ")}`;
+  const xBase = r => `🆕 Nouvelle fiche : ${d.t}${infos ? ` (${[d.type, d.y1].filter(Boolean).join(", ")})` : ""}\n\n${r}${r ? "\n\n" : ""}Tout sur la série 👉 ${url}\n${mentions(d, "x") ? mentions(d, "x") + "\n" : ""}${tags.slice(0, 3).join(" ")}`;
   const xLen = t => t.replace(url, "x".repeat(23)).length;
   let r = phrases(d.resume, 1), x = xBase(r);
   while (xLen(x) > 280 && r) { r = r.split(" ").slice(0, -1).join(" "); x = xBase(r ? r.replace(/[,;:]?$/, "…") : ""); }
@@ -253,7 +258,11 @@ async function pick(slug){
     n: rang ? rang.rang : (AV ? AV.enLigne : 1), tot: AV ? AV.total : 600, scen: "", dess: "", resume: "" };
   document.getElementById("n").value = cur.n; document.getElementById("tot").value = cur.tot;
   history.replaceState(null, "", "?s=" + s.slug); draw(); drawCaps();
-  try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resume || ""; cur.pubJP = j.serie.pubJP || ""; cur.tomesJP = j.serie.tomesJP; draw(); drawCaps(); } } catch (e) {}
+  try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resume || ""; cur.pubJP = j.serie.pubJP || ""; cur.tomesJP = j.serie.tomesJP; draw(); drawCaps(); }
+    // Comptes officiels pour les @mentions (seulement si connecté au back-office).
+    if (cur.id) { const r = await fetch("/api/admin/handles?id=" + cur.id); const m = document.getElementById("capMsg");
+      if (r.ok) { const h = await r.json(); if (cur.slug === s.slug) { cur.handles = h; drawCaps(); } }
+      else if (r.status === 401 && m) m.textContent = "Connecte-toi au back-office (/admin/) pour ajouter automatiquement les @ des auteurs et éditeurs."; } } catch (e) {}
 }
 async function dl(key){
   const [th, fm] = key.split("-"), [w, h] = SIZE[fm];

@@ -101,6 +101,7 @@ h1.cut{cursor:pointer}
 .cmp .no{color:var(--paper-3);font-weight:500}
 /* Extraits (bas de l'onglet Info / Extrait) */
 .ext{margin-top:20px}
+.ext.info-h{margin-top:4px}
 .ext h3{margin:0 0 8px;font-size:15px;font-weight:700}
 .ex{display:flex;align-items:center;gap:10px;padding:12px 2px;border-top:1px solid var(--ink-3);font-size:14px;font-weight:600;text-decoration:none}
 .ex .flag{width:18px;height:12px;border-radius:2px}
@@ -327,7 +328,7 @@ function panel(s, pubFR, pubJP, eds, ad){
       ["Prépublication", prepub, ""],
       ["Tomes", tomes(nJP, s.stJP), tomes(nFR, s.stFR)],
     ].filter(r => r[1] || (hasFR && r[2]));
-    return `<table class="cmp"><thead><tr><th></th>${hasFR ? `<th><span>${FLAGS.France}France</span></th>` : ""}<th><span>${FLAGS.Japon}Japon</span></th></tr></thead>
+    return `<div class="ext info-h"><h3>Informations</h3></div><table class="cmp"><thead><tr><th></th>${hasFR ? `<th><span>${FLAGS.France}France</span></th>` : ""}<th><span>${FLAGS.Japon}Japon</span></th></tr></thead>
     <tbody>${rows.map(([k, jp, fr]) => `<tr><th>${k}</th>${hasFR ? cell(fr) : ""}${cell(jp)}</tr>`).join("")}</tbody></table>
     <div class="ext"><h3>Extraits</h3>
       ${[["France", s.extraitFR, "Extrait en français"], ["Japon", s.extraitJP, "Extrait japonais"]].map(([p, u, l]) => u
