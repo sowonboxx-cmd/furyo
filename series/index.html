@@ -99,6 +99,25 @@ h1.cut{cursor:pointer}
 .cmp tbody th{color:var(--paper-3);font-weight:500;width:32%}
 .cmp td{font-weight:600}
 .cmp .no{color:var(--paper-3);font-weight:500}
+/* Fenêtre plein écran d'un tome */
+li.t[data-ti]{cursor:pointer}
+.tb{position:fixed;inset:0;z-index:60;background:rgba(8,8,10,.94);touch-action:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 56px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);opacity:0;transition:opacity .18s}
+.tb.on{opacity:1}.tb[hidden]{display:none!important}
+.tb-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;width:44px;height:44px;border:0;border-radius:22px;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer}
+.tb-c{position:absolute;top:calc(env(safe-area-inset-top,0px) + 20px);left:16px;font-size:13px;font-weight:700;color:var(--paper-2)}
+.tb-in{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;min-height:0;flex:1;justify-content:center}
+.tb-cv{height:min(66vh,760px);aspect-ratio:5/7;max-width:100%;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.tb-cv img{width:100%;height:100%;object-fit:cover;display:block}
+.tb-t{margin:14px 0 0;font-family:var(--f-display);font-weight:700;font-size:26px;text-transform:uppercase;text-align:center}
+.tb-t em{font-style:normal;color:var(--paper-2);font-size:18px}
+.tb-ds{display:flex;gap:18px;justify-content:center;margin-top:6px}
+.tb-d{margin:0;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600}
+.tb-d .flag{width:20px;height:14px;border-radius:2px}
+.tb-nav{display:flex;gap:10px;width:100%;max-width:520px;margin-top:14px}
+.tb-nav button{flex:1;height:44px;border:1px solid #2C2C2F;border-radius:14px;background:transparent;color:var(--paper);font:inherit;font-weight:600;font-size:14px;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.tb-nav button:disabled{opacity:.3;cursor:default}
+body.tb-open{overflow:hidden}
+@media (max-height:640px){.tb-cv{height:56vh}}
 /* Onglet News */
 .tabs .nb{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--ink-3);font-size:11px;margin-left:4px;padding:0 5px}
 .nw{list-style:none;margin:0;padding:0}
@@ -384,16 +403,54 @@ document.addEventListener("click", e => {
   if (e.target.id === "tl" || e.target.id === "tl-x") document.getElementById("tl").hidden = true;
 });
 addEventListener("keydown", e => { const tl = document.getElementById("tl"); if (e.key === "Escape" && tl) tl.hidden = true; if (e.key === "Enter" && document.activeElement && document.activeElement.matches("h1.cut")) document.activeElement.click(); });
+// Fenêtre plein écran d'un tome (comme dans le calendrier) : couverture en grand, n° / total, dates FR et JP, précédent / suivant.
+let TL = [], TI = -1;
+function tlShow(i){
+  const x = TL[i]; if (!x) return; TI = i;
+  const { serie: s } = DATA, other = PAYS === "France" ? "Japon" : "France";
+  const date = (pays, t) => t && t.date ? `<p class="tb-d">${FLAGS[pays]}<span>${esc(dTxt(t))}</span></p>` : "";
+  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover)}" alt="Tome ${tn(x.t.n)}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+    <p class="tb-t">Tome ${tn(x.t.n)}${x.t.titre ? ` <em>${esc(x.t.titre)}</em>` : ""}</p>
+    <div class="tb-ds">${date(PAYS, x.t)}${date(other, x.o)}</div>`;
+  document.getElementById("tb-c").textContent = `${i + 1} / ${TL.length}`;
+  document.getElementById("tb-p").disabled = i <= 0; document.getElementById("tb-n").disabled = i >= TL.length - 1;
+  [TL[i - 1], TL[i + 1]].forEach(y => { if (y && y.t.cover) new Image().src = couv(y.t.cover); });
+}
+function tbOpen(i){
+  let tb = document.getElementById("tb");
+  if (!tb) {
+    const arr = d => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="${d}"/></svg>`;
+    document.body.insertAdjacentHTML("beforeend", `<div class="tb" id="tb" hidden role="dialog" aria-modal="true" aria-label="Tome"><span class="tb-c" id="tb-c"></span>
+      <button class="tb-x" id="tb-x" aria-label="Fermer">${arr("M6 6l12 12M18 6 6 18")}</button><div class="tb-in" id="tb-in"></div>
+      <div class="tb-nav"><button id="tb-p">${arr("M15 5l-7 7 7 7")}Précédent</button><button id="tb-n">Suivant${arr("M9 5l7 7-7 7")}</button></div></div>`);
+    tb = document.getElementById("tb");
+    document.getElementById("tb-x").onclick = tbClose;
+    document.getElementById("tb-p").onclick = () => TI > 0 && tlShow(TI - 1);
+    document.getElementById("tb-n").onclick = () => TI < TL.length - 1 && tlShow(TI + 1);
+    tb.addEventListener("click", e => { if (e.target === tb) tbClose(); });
+    ["gesturestart", "gesturechange", "dblclick"].forEach(ev => tb.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+    tb.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    let sx = null, sy = 0;
+    tb.addEventListener("touchstart", e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+    tb.addEventListener("touchend", e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { if (dx < 0 && TI < TL.length - 1) tlShow(TI + 1); else if (dx > 0 && TI > 0) tlShow(TI - 1); } });
+  }
+  tlShow(i); tb.hidden = false; document.body.classList.add("tb-open"); requestAnimationFrame(() => tb.classList.add("on"));
+}
+function tbClose(){ const tb = document.getElementById("tb"); if (!tb) return; tb.classList.remove("on"); document.body.classList.remove("tb-open"); setTimeout(() => { tb.hidden = true; }, 180); TI = -1; }
+document.addEventListener("click", e => { const li = e.target.closest("li.t[data-ti]"); if (li) tbOpen(+li.dataset.ti); });
+addEventListener("keydown", e => { if (TI < 0) return; if (e.key === "Escape") tbClose(); else if (e.key === "ArrowRight" && TI < TL.length - 1) tlShow(TI + 1); else if (e.key === "ArrowLeft" && TI > 0) tlShow(TI - 1); });
 function renderTomes(){
   const { serie: s, editions: eds } = DATA;
   const other = PAYS === "France" ? "Japon" : "France";
   const otherByN = {}; (eds.find(e => e.pays === other)?.tomes || []).forEach(t => { if (t.n != null) otherByN[t.n] = t; });
   const list = eds.filter(e => e.pays === PAYS);
+  TL = []; // tomes affichés, dans l'ordre, pour la fenêtre plein écran
   document.getElementById("tomes").innerHTML = list.map(e => `
     ${list.length > 1 ? `<p class="ed-info">${esc(e.nom)}</p>` : `<p class="ed-info">${esc([e.pub, e.label, e.format].filter(Boolean).join(" · "))}</p>`}
     ${e.tomes.length ? `<ul class="grid">${(ASC ? e.tomes : [...e.tomes].reverse()).map(t => {
-      const o = otherByN[t.n];
-      return `<li class="t"><div class="cv">${t.cover ? `<img src="${couv(t.cover)}" alt="Tome ${tn(t.n)}" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
+      const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub });
+      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover)}" alt="Tome ${tn(t.n)}" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
         <span class="t-n">Tome ${tn(t.n)}</span><span class="t-d">${esc(dTxt(t))}</span>
         ${o && o.date ? `<span class="t-o">${FLAGS[other]}${esc(dTxt(o))}</span>` : ""}</li>`; }).join("")}</ul>` : `<p class="empty">Aucun tome renseigné pour l'instant.</p>`}`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
 }
