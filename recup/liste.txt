@@ -1,1 +1,4 @@
-series.json https://furyo.pages.dev/api/series?refresh=30709
+s1.html https://furyo.pages.dev/series/
+s2.html https://furyo.pages.dev/series/kujou-no-taizai
+s3.html https://furyo.pages.dev/series/index.html
+s4.html https://furyo.pages.dev/series
