@@ -31,11 +31,15 @@ button.main{background:var(--red)}
 /* ---------- La carte 1080×1350 ---------- */
 .card{width:1080px;height:1350px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;--fg:#fff;--bg:#0c0c0e;--muted:rgba(255,255,255,.62);background:var(--bg);color:var(--fg)}
 .card.light{--fg:#0c0c0e;--bg:#F2EFE9;--muted:rgba(12,12,14,.6)}
-/* Design « Soleil », 100 % flat : fond uni, cercle rouge, couverture sans ombre. */
-.card.a{--cy:566px;--r:400px;--cream:#F2EFE9}
+/* Design « Soleil » : fond flouté tiré de la couverture, cercle rouge, couverture encadrée. */
+.card.a{--cy:566px;--r:400px;--cream:#F2EFE9;--frame:#000}
+.card.a.light{--frame:#fff}
+.card.a .blur{position:absolute;inset:-80px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}
+.card.a.light .blur{opacity:.28}
+.card.a .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 35%,transparent) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 76%)}
 .card.a .sun{position:absolute;width:calc(var(--r) * 2);height:calc(var(--r) * 2);border-radius:50%;background:var(--red);left:50%;top:calc(var(--cy) - var(--r));transform:translateX(-50%)}
-.card.a .logo{position:absolute;left:50%;top:46px;transform:translateX(-50%);width:232px}
-.card.a .cover{position:absolute;left:50%;top:calc(var(--cy) - 380px);width:543px;height:760px;transform:translateX(-50%);object-fit:cover}
+.card.a .logo{position:absolute;left:50%;top:46px;transform:translateX(-50%);width:290px}
+.card.a .cover{position:absolute;left:50%;top:calc(var(--cy) - 380px);width:543px;height:760px;transform:translateX(-50%);object-fit:cover;box-sizing:border-box;border:12px solid var(--frame);box-shadow:0 40px 90px rgba(0,0,0,.55)}
 /* Numéro du tome : deux calques identiques. Hors du cercle il prend la couleur du texte, dans le cercle celle du fond. */
 .card.a .numw{position:absolute;inset:0;pointer-events:none}
 .card.a .numw.in{clip-path:circle(var(--r) at 50% var(--cy))}
@@ -98,7 +102,7 @@ const LAYOUTS = {
   a: { nom: "Soleil", html(it, theme){
     const t = titleOf(it), j = jpOf(it), n = it.n != null ? tn(it.n) : "";
     return `<div class="card a ${theme}">
-      <div class="sun"></div>
+      ${it.cover ? `<div class="blur" style="background-image:url('${cov(it)}')"></div>` : ""}<div class="shade"></div><div class="sun"></div>
       <img class="logo" src="${LOGO(theme)}" alt="FuryoGang">
       ${it.cover ? `<img class="cover" src="${cov(it)}" alt="">` : ""}
       ${n ? `<div class="numw"><div class="num">${n}</div></div><div class="numw in"><div class="num">${n}</div></div>` : ""}
