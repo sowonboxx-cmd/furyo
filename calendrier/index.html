@@ -171,15 +171,15 @@ const sref = it => "/series/" + String(it.series || "").normalize("NFD").replace
 function rowHTML(it){
   const past = it.date < today;
   const thumb = it.cover || it.visual ? `<span class="thumb">${img(it).replace("<img ", '<img style="width:100%;height:100%;object-fit:cover" ')}</span>` : `<span class="thumb" lang="ja">${esc((it.jp || "").slice(0, 5))}</span>`;
-  return `<li${past ? ' class="was"' : ""}><a class="row" href="${sref(it)}" data-i="${it._i}">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
+  return `<li${past ? ' class="was"' : ""} data-p="${esc(it.pays)}" data-d="${it.date}" data-k="${it._k}"><a class="row" href="${sref(it)}" data-i="0">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
     <div class="r-meta">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : ""}</div></div></a></li>`;
 }
 function cardHTML(it){
   const past = it.date < today;
-  return `<li${past ? ' class="was"' : ""}><a class="card" href="${sref(it)}" data-i="${it._i}"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span></div>
+  return `<li${past ? ' class="was"' : ""} data-p="${esc(it.pays)}" data-d="${it.date}" data-k="${it._k}"><a class="card" href="${sref(it)}" data-i="0"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span></div>
     <div class="c-t"><span class="ct-n" data-full="${esc(title(it))}">${esc(title(it))}</span>${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div></a></li>`;
 }
-let NEXT_ID = null, SHOWN = [];
+let SHOWN = [];
 const NOW_DIV = () => { const d = new Date(); return `<li class="now" id="now"><span>Aujourd'hui · ${d.getDate()} ${MCOURT[d.getMonth()]}</span></li>`; };
 function group(list, cls, desc){
   const by = {};
@@ -188,21 +188,36 @@ function group(list, cls, desc){
   return keys.map(k => {
     const [y, m] = k.split("-");
     const items = by[k];
-    const one = it => (it.id === NEXT_ID ? NOW_DIV() : "") + (state.view === "grid" ? cardHTML(it) : rowHTML(it));
+    const one = it => state.view === "grid" ? cardHTML(it) : rowHTML(it);
     const inner = `<ul class="${state.view === "grid" ? "grid" : "list"}">${items.map(one).join("")}</ul>`;
-    return `<section class="${cls || ""}"><h2 class="month">${MOIS[+m - 1]} ${y}<small>${items.length} sortie${items.length > 1 ? "s" : ""}</small></h2>${inner}</section>`;
+    return `<section class="${cls || ""}"><h2 class="month">${MOIS[+m - 1]} ${y}<small></small></h2>${inner}</section>`;
   }).join("");
 }
+// La liste complète (tous pays) n'est construite qu'une fois par affichage (liste / grille) ;
+// changer d'onglet Tout / Japon / France masque ou montre les sorties sans rien redessiner : plus de clignotement.
+let ALL = [];
 function render(){
-  document.querySelectorAll("[data-pays]").forEach(b => b.setAttribute("aria-pressed", b.dataset.pays === state.pays));
   document.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === state.view));
-  const l = ITEMS.filter(it => state.pays === "all" || it.pays === state.pays).sort((a, b) => a.date.localeCompare(b.date));
-  l.forEach((it, i) => { it._i = i; }); SHOWN = l;
-  // Une seule frise chronologique (mois passés puis à venir) ; la page s'ouvre sur la prochaine sortie.
-  const nextItem = l.find(it => it.date >= today);
-  NEXT_ID = nextItem ? nextItem.id : null;
-  app.innerHTML = l.length ? group(l) + (nextItem ? "" : `<p class="empty">Aucune sortie annoncée pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.</p>`)
-    : `<p class="empty">Aucune sortie pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.</p>`;
+  ALL = ITEMS.slice().sort((a, b) => a.date.localeCompare(b.date)); ALL.forEach((it, i) => { it._k = i; });
+  app.innerHTML = ALL.length ? group(ALL) + `<p class="empty" id="none" hidden></p>` : `<p class="empty">Aucune sortie pour l'instant.</p>`;
+  applyPays();
+}
+function applyPays(){
+  document.querySelectorAll("[data-pays]").forEach(b => b.setAttribute("aria-pressed", b.dataset.pays === state.pays));
+  const old = document.getElementById("now"); if (old) old.remove();
+  SHOWN = []; let firstNext = null;
+  app.querySelectorAll("li[data-p]").forEach(li => {
+    const on = state.pays === "all" || li.dataset.p === state.pays;
+    li.hidden = !on;
+    if (on) { li.querySelector("a[data-i]").dataset.i = SHOWN.length; SHOWN.push(ALL[+li.dataset.k]); if (!firstNext && li.dataset.d >= today) firstNext = li; }
+  });
+  app.querySelectorAll("section").forEach(sec => {
+    const n = sec.querySelectorAll("li[data-p]:not([hidden])").length;
+    sec.hidden = !n; const sm = sec.querySelector(".month small"); if (sm) sm.textContent = `${n} sortie${n > 1 ? "s" : ""}`;
+  });
+  if (firstNext) firstNext.insertAdjacentHTML("beforebegin", NOW_DIV());
+  const none = document.getElementById("none");
+  if (none) { none.hidden = !!firstNext; none.textContent = !SHOWN.length ? `Aucune sortie pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.` : `Aucune sortie annoncée pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.`; }
   fitAll();
   goToday();
 }
@@ -232,7 +247,7 @@ function goToday(){
   scrollTo({ top: Math.max(0, y), behavior: "instant" });
 }
 document.addEventListener("click", e => {
-  const p = e.target.closest("[data-pays]"); if (p) { state.pays = p.dataset.pays; history.replaceState(null, "", state.pays === "all" ? location.pathname : "#" + state.pays.toLowerCase()); render(); return; }
+  const p = e.target.closest("[data-pays]"); if (p) { state.pays = p.dataset.pays; history.replaceState(null, "", state.pays === "all" ? location.pathname : "#" + state.pays.toLowerCase()); applyPays(); return; }
   const v = e.target.closest("[data-view]"); if (v) { state.view = v.dataset.view; store.set("cal-view", state.view); render(); }
 });
 // Fenêtre d'une sortie : un clic sur un tome montre la couverture en grand ; flèches (ou glisser) pour la sortie d'avant / d'après.
@@ -284,7 +299,7 @@ const ready = () => document.body.classList.add("ready");
 function openFromHash(){
   const m = location.hash.match(/^#t-([0-9a-f]{32})$/); if (!m || LBI >= 0) return;
   const i = SHOWN.findIndex(x => x.id === m[1]);
-  if (i < 0 && state.pays !== "all") { state.pays = "all"; render(); return openFromHash(); }
+  if (i < 0 && state.pays !== "all") { state.pays = "all"; applyPays(); return openFromHash(); }
   if (i >= 0) lbOpen(i);
 }
 addEventListener("hashchange", openFromHash);
