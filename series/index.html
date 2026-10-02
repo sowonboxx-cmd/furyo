@@ -34,13 +34,13 @@ button{font:inherit;color:inherit}
 .brand span{color:var(--red)}
 
 /* En-tête : petite couverture à gauche, infos à droite, fond uni du site */
-.head{display:grid;grid-template-columns:88px minmax(0,1fr);gap:14px;margin-top:10px;align-items:start}
-@media (min-width:720px){.head{grid-template-columns:190px minmax(0,1fr);gap:26px;margin-top:28px}}
+.head{display:grid;grid-template-columns:114px minmax(0,1fr);gap:14px;margin-top:10px;align-items:start}
+@media (min-width:720px){.head{grid-template-columns:246px minmax(0,1fr);gap:28px;margin-top:28px}}
 .main-cv{width:100%;aspect-ratio:5/7;border-radius:8px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
 @media (min-width:720px){.main-cv{border-radius:14px}}
 .main-cv img{width:100%;height:100%;object-fit:cover;display:block}
 .ph{writing-mode:vertical-rl;text-orientation:upright;font-weight:700;font-size:13px;color:var(--paper-3);letter-spacing:.08em}
-h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(20px,5.2vw,46px);line-height:1;text-transform:uppercase;letter-spacing:.01em;overflow-wrap:break-word;hyphens:auto}
+h1{margin:0;font-family:var(--f-body);font-weight:700;font-size:clamp(19px,5vw,34px);line-height:1.15;letter-spacing:-.01em;overflow-wrap:break-word}
 .jp{margin:3px 0 0;font-family:"Noto Sans JP",var(--f-body);font-weight:700;font-size:13px;color:var(--paper-2)}
 @media (min-width:720px){.jp{font-size:16px}}
 .credits{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:1px 8px;font-size:13px}
@@ -51,19 +51,23 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(20px,5.
 /* Statuts : texte simple, intégré (pas de pastille) */
 .tg{margin:6px 0 0;font-size:12.5px;color:var(--paper-3);line-height:1.4}
 .st{margin:8px 0 0;display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--paper-2)}
-.st span{display:inline-flex;align-items:center;gap:6px}
-.st .flag{width:15px;height:10px;border-radius:2px}
+.st span{display:block;line-height:1.35}
+.st .flag{display:inline-block;vertical-align:-1px;width:15px;height:10px;border-radius:2px;margin-right:6px}
 .st .on{color:var(--ok)}.st .end{color:var(--paper)}.st .pause{color:var(--amber)}.st .stop{color:var(--red)}.st .soon{color:var(--fr)}
 .flag{width:20px;height:14px;border-radius:3px;flex:none;display:block;overflow:hidden}
 
+/* Séparation des trois parties (fiche, onglets, tomes) : bande pleine largeur, un ton plus sombre que le fond */
+.band{height:10px;margin:22px -16px 0;background:#1A1A1C;border-top:1px solid #2C2C2F;border-bottom:1px solid #2C2C2F}
+@media (min-width:1112px){.band{margin-inline:calc(50% - 50vw)}}
+.band+.sec{margin-top:18px}
 /* Onglets façon Twitter : un simple trait, contenu directement dessous */
-.tabs{display:flex;margin-top:18px;border-bottom:1px solid var(--ink-3);overflow-x:auto}
+.tabs{display:flex;margin-top:6px;border-bottom:1px solid var(--ink-3);overflow-x:auto}
 .tabs button{position:relative;flex:1;height:44px;padding:0 10px;border:0;background:transparent;color:var(--paper-3);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
 @media (min-width:720px){.tabs button{flex:none;padding:0 22px;font-size:15px}}
 .tabs button[aria-selected="true"]{color:var(--paper)}
 .tabs button[aria-selected="true"]::after{content:"";position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);width:min(64px,80%);height:3px;border-radius:3px;background:var(--red)}
 .panel{padding:14px 0 4px}
-.sec h2{margin:0 0 8px;font-family:var(--f-display);font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.01em}
+.sec h2{margin:0 0 8px;font-family:var(--f-body);font-weight:700;font-size:18px;letter-spacing:-.01em}
 .resume{margin:0;color:var(--paper-2);font-size:14.5px;line-height:1.6}
 .credit{margin:10px 0 0;font-size:12px;color:var(--paper-3)}
 /* Infos : tableau Japon / France côte à côte */
@@ -72,7 +76,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(20px,5.
 .kv dd{margin:0;font-weight:600}
 .cmp{width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed}
 .cmp th,.cmp td{text-align:left;padding:9px 8px 9px 0;border-top:1px solid var(--ink-3);vertical-align:top;overflow-wrap:anywhere}
-.cmp thead th{border-top:0;padding-top:0;font-family:var(--f-display);font-size:15px;text-transform:uppercase;letter-spacing:.02em}
+.cmp thead th{border-top:0;padding-top:0;font-size:13.5px;font-weight:700}
 .cmp thead th span{display:inline-flex;align-items:center;gap:7px}
 .cmp thead .flag{width:16px;height:11px;border-radius:2px}
 .cmp tbody th{color:var(--paper-3);font-weight:500;width:32%}
@@ -81,7 +85,7 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(20px,5.
 /* Adaptations : par catégorie, une ligne par œuvre */
 .ad-cat{margin:0 0 18px}
 .ad-cat:last-child{margin-bottom:4px}
-.ad-cat h3{margin:0 0 8px;font-family:var(--f-display);font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.03em;color:var(--red)}
+.ad-cat h3{margin:0 0 8px;font-size:15px;font-weight:700;color:var(--red)}
 .ad-it{padding:10px 0;border-top:1px solid var(--ink-3)}
 .ad-it b{display:block;font-size:14.5px}
 .ad-it b em{font-style:normal;color:var(--paper-3);font-weight:600;margin-left:6px}
@@ -112,12 +116,12 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(20px,5.
 @media (min-width:640px){.cv{border-radius:14px}}
 .cv img{width:100%;height:100%;object-fit:cover;display:block}
 .cv .wait{position:absolute;left:5px;bottom:5px;right:5px;text-align:center;background:rgba(0,0,0,.8);border-radius:6px;padding:3px 2px;font-size:9.5px;line-height:1.2;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--amber)}
-.t-n{font-family:var(--f-display);font-weight:700;font-size:17px;line-height:1;text-transform:uppercase}
+.t-n{font-family:var(--f-body);font-weight:700;font-size:14px;line-height:1.25}
 .t-d{font-size:12.5px;color:var(--paper-2);line-height:1.3}
 .t-o{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--paper-3);line-height:1.3}
 .t-o .flag{width:14px;height:10px;border-radius:2px}
 .empty{color:var(--paper-3);text-align:center;padding:40px 0}
-.lh{margin:22px 0 12px}
+.lh{margin:14px 0 12px;font-size:26px}
 .search{width:100%;height:46px;border:0;border-radius:14px;background:var(--ink-3);color:var(--paper);font:inherit;font-size:15px;padding:0 16px;margin-bottom:16px}
 .search::placeholder{color:var(--paper-3)}
 a.t{text-decoration:none}
@@ -186,7 +190,7 @@ function ligne(pays, s, eds){
     ans = a && b ? ` (${a === b ? a : a + "-" + b})` : a ? ` (${a})` : "";
   }
   const cls = /cours/i.test(st) ? "on" : /termin/i.test(st) ? "end" : /pause/i.test(st) ? "pause" : /abandon|arr[êe]t|stopp/i.test(st) ? "stop" : /annonc/i.test(st) ? "soon" : "";
-  return `<span>${FLAGS[pays] || ""}${n ? `${n} tome${n > 1 ? "s" : ""} · ` : ""}<b class="${cls}" style="font-weight:600">${esc(st.toLowerCase())}${ans}</b></span>`;
+  return `<span>${FLAGS[pays] || ""}${n ? `${n} tome${n > 1 ? "s" : ""} · ` : ""}<b class="${cls}" style="font-weight:600;white-space:nowrap">${esc(st.toLowerCase())}${ans}</b></span>`;
 }
 const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
 // Adaptations : un champ Notion peut contenir plusieurs œuvres (séparées par « | », « ; » ou un retour à la ligne).
@@ -209,9 +213,11 @@ function ytHTML(t){ const id = ytId(t.url); if (!id) return "";
   return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button>`; }
 let TAB = "syn", ASC = true;
 
+// Titre affiché : le titre FR, sauf quand le titre de la série s'écrit en capitales (CROWS, WORST…).
+const shown = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
 function render(){
   const { serie: s, editions: eds } = DATA;
-  const titre = s.fr || s.t;
+  const titre = shown(s);
   document.title = `${titre} · FuryoGang`;
   const pays = [...new Set(eds.map(e => e.pays))].filter(Boolean);
   if (!pays.includes(PAYS)) PAYS = pays[0] || "France";
@@ -232,13 +238,14 @@ function render(){
       <div class="st">${ligne("France", s, eds)}${ligne("Japon", s, eds)}</div>
     </div>
   </div>
+  <div class="band" aria-hidden="true"></div>
   <div class="tabs" role="tablist">
       <button role="tab" data-tab="syn" aria-selected="${TAB === "syn"}">Synopsis</button>
       <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Statut</button>
       ${ad.length ? `<button role="tab" data-tab="ad" aria-selected="${TAB === "ad"}">Adaptations</button>` : ""}
   </div>
   <div class="panel">${panel(s, pubFR, pubJP, eds, ad)}</div>
-  ${eds.length ? `<section class="sec">
+  ${eds.length ? `<div class="band" aria-hidden="true"></div><section class="sec">
     <div class="sec-h"><h2>Tomes</h2>
       <div class="sec-tools">
         ${pays.length > 1 ? `<div class="seg" role="group" aria-label="Pays">${pays.map(p => `<button data-p="${p}" aria-pressed="${p === PAYS}">${FLAGS[p] || ""}${p} <small>${eds.filter(e => e.pays === p).reduce((n, e) => n + e.tomes.length, 0)}</small></button>`).join("")}</div>` : ""}
@@ -309,7 +316,7 @@ function renderList(items){
     const n = slugify(q);
     const list = items.filter(s => !n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q));
     document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
-      <span class="t-n">${esc(s.fr || s.t)}</span>${s.jp ? `<span class="t-d" lang="ja">${esc(s.jp)}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
+      <span class="t-n">${esc(shown(s))}</span>${s.jp ? `<span class="t-d" lang="ja">${esc(s.jp)}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   draw(""); document.getElementById("q").addEventListener("input", e => draw(e.target.value.trim()));
 }
