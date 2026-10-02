@@ -134,7 +134,7 @@ h1{margin:0;font-family:var(--f-body);font-weight:700;font-size:clamp(19px,5vw,3
 @media (min-width:640px){.cv{border-radius:14px}}
 .cv img{width:100%;height:100%;object-fit:cover;display:block}
 .cv .wait{position:absolute;left:5px;bottom:5px;right:5px;text-align:center;background:rgba(0,0,0,.8);border-radius:6px;padding:3px 2px;font-size:9.5px;line-height:1.2;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--amber)}
-.t-n{font-family:var(--f-body);font-weight:700;font-size:14px;line-height:1.25}
+.t-n{font-family:var(--f-body);font-weight:700;font-size:14px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .t-d{font-size:12.5px;color:var(--paper-2);line-height:1.3}
 .t-o{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--paper-3);line-height:1.3}
 .t-o .flag{width:14px;height:10px;border-radius:2px}
@@ -401,7 +401,7 @@ function renderList(items){
     document.getElementById("fc").textContent = (n || nAct()) ? `${list.length} série${list.length > 1 ? "s" : ""}` : "";
     document.getElementById("fc").hidden = !(n || nAct());
     document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
-      <span class="t-n">${esc(shown(s))}</span>${s.jp ? `<span class="t-d" lang="ja">${esc(s.jp)}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
+      <span class="t-n">${esc(shown(s))}</span></a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   const q = document.getElementById("q");
   drawBar(); draw(""); q.addEventListener("input", e => draw(e.target.value.trim()));
