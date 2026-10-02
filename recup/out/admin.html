@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Back-office · FuryoGang</title>
+<meta name="theme-color" content="#141416">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Back-office : valider et publier les fiches séries, vite, depuis le téléphone. Écrit directement dans Notion. */
+:root{
+  --ink:#232325; --ink-2:#000; --ink-3:#38383B; --line:#2C2C2F;
+  --paper:#F5F5F7; --paper-2:#CFCFD4; --paper-3:#98989D;
+  --blue:#2D74D2; --blue-2:#6FA8F5; --red:#E54839; --ok:#7BC67E; --amber:#F2B33D;
+  --f-display:"Antonio","Arial Narrow",Impact,sans-serif;
+  --f-body:"Inter","Noto Sans JP","Hiragino Sans",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:var(--f-body);font-weight:500;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{font-size:16px!important}
+a{color:inherit}
+.top{position:sticky;top:0;z-index:10;background:#141416;border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px}
+.top-in{max-width:900px;margin:0 auto}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand b{font-family:var(--f-display);font-size:22px;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap}
+.brand b span{color:var(--paper-3);font-size:16px;margin-left:6px}
+.out{border:0;background:transparent;color:var(--paper-3);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.prog{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13px;color:var(--paper-2)}
+.prog .bar{flex:1;height:8px;border-radius:4px;background:var(--ink-3);overflow:hidden}
+.prog .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-2));min-width:4px}
+.prog b{color:var(--paper)}
+.q{width:100%;height:44px;margin-top:10px;border:0;border-radius:12px;background:var(--ink-3);padding:0 14px;outline:none}
+.q::placeholder{color:var(--paper-3)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:10px -16px 0;padding:0 16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:32px;padding:0 12px;border:1px solid var(--line);border-radius:16px;background:transparent;color:var(--paper-2);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip small{font-size:11px;opacity:.75}
+main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.it{background:var(--ink-2);border-radius:16px;padding:10px 12px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+.th{width:44px;aspect-ratio:5/7;border-radius:6px;background:var(--ink-3);overflow:hidden;display:grid;place-items:center;font-size:10px;color:var(--paper-3);grid-row:span 2}
+.th img{width:100%;height:100%;object-fit:cover}
+.nm{min-width:0}
+.nm b{display:block;font-size:15px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{display:block;font-size:12px;color:var(--paper-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{grid-column:2/4;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px}
+.etat{height:26px;border:0;border-radius:7px;padding:0 6px;font-size:12px!important;font-weight:700;cursor:pointer;-webkit-appearance:none;appearance:none}
+.etat[data-e="À faire"]{background:var(--ink-3);color:var(--paper-2)}
+.etat[data-e="En cours"]{background:color-mix(in srgb,var(--amber) 22%,var(--ink-3));color:var(--amber)}
+.etat[data-e="À valider"]{background:color-mix(in srgb,#E0955F 24%,var(--ink-3));color:#F0A870}
+.etat[data-e="Validée"]{background:color-mix(in srgb,var(--ok) 20%,var(--ink-3));color:var(--ok)}
+.miss{color:#F08A7E}
+.done{color:var(--ok)}
+.lot{color:var(--blue-2);font-weight:600}
+.heart{border:0;background:transparent;cursor:pointer;font-size:15px;padding:0 2px;line-height:1;opacity:.35}
+.heart[aria-pressed=true]{opacity:1}
+/* Interrupteur Publier */
+.sw{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--paper-3);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw i{position:relative;width:48px;height:28px;border-radius:14px;background:var(--ink-3);transition:background .15s}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw input:checked + i{background:var(--ok)}
+.sw input:checked + i::after{transform:translateX(20px)}
+.sw input:checked ~ span{color:var(--ok)}
+.sw.busy{opacity:.5;pointer-events:none}
+.more{grid-column:1/4;display:none;margin-top:6px;border-top:1px solid var(--line);padding-top:10px}
+.it.open .more{display:block}
+.more label{display:block;font-size:12px;color:var(--paper-3);margin:8px 0 4px}
+.more input,.more textarea{width:100%;border:0;border-radius:10px;background:var(--ink-3);padding:10px 12px;outline:none}
+.more textarea{min-height:70px;resize:vertical}
+.links{display:flex;gap:14px;margin-top:10px;font-size:13px;font-weight:600}
+.links a{color:var(--blue-2);text-decoration:none}
+.save{margin-top:10px;height:40px;padding:0 18px;border:0;border-radius:20px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
+.tog{border:0;background:transparent;color:var(--paper-3);font-size:12px;font-weight:600;cursor:pointer;padding:0}
+.count{margin:4px 0 10px;font-size:12.5px;color:var(--paper-3)}
+.empty{color:var(--paper-3);text-align:center;padding:40px 0}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);background:#fff;color:#000;font-weight:700;font-size:14px;padding:10px 16px;border-radius:12px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.on{opacity:1}
+/* Connexion */
+.login{max-width:360px;margin:16vh auto 0;padding:0 16px;text-align:center}
+.login h1{font-family:var(--f-display);text-transform:uppercase;font-size:34px;margin:0 0 4px}
+.login p{color:var(--paper-3);margin:0 0 18px;font-size:14px}
+.login input{width:100%;height:48px;border:0;border-radius:14px;background:var(--ink-3);padding:0 16px;outline:none;text-align:center}
+.login button{width:100%;height:48px;margin-top:10px;border:0;border-radius:24px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
+.login .err{color:#F08A7E;margin-top:12px;font-size:14px;min-height:20px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="toast" id="toast"></div>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const root = document.getElementById("root");
+const ETATS = ["À faire", "En cours", "À valider", "Validée"];
+const FILTRES = [
+  ["valider", "À valider", s => s.etat === "À valider"],
+  ["cours", "En cours", s => s.etat === "En cours"],
+  ["socle", "Socle", s => s.editions > 0 && !s.publier],
+  ["coeur", "Coups de cœur", s => s.coeur],
+  ["ligne", "En ligne", s => s.publier],
+  ["faire", "À faire", s => s.etat === "À faire" && !s.publier],
+  ["tout", "Tout", () => true],
+];
+let ITEMS = [], F = "valider", Q = "";
+const slugify = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1800); }
+
+function login(msg){
+  root.innerHTML = `<form class="login" id="lf"><h1>Back-office</h1><p>FuryoGang · accès administrateur</p>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="Mot de passe" required>
+    <button>Se connecter</button><div class="err" id="err">${esc(msg || "")}</div></form>`;
+  document.getElementById("lf").onsubmit = async e => {
+    e.preventDefault();
+    const r = await fetch("/api/admin/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password: document.getElementById("pw").value }) });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) load(); else document.getElementById("err").textContent = j.error || "Connexion impossible.";
+  };
+}
+async function load(){
+  root.innerHTML = `<p class="empty">Chargement des séries…</p>`;
+  const r = await fetch("/api/admin/series");
+  if (r.status === 401) return login();
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { root.innerHTML = `<p class="empty">${esc(j.error || "Impossible de charger.")}</p>`; return; }
+  ITEMS = j.items || [];
+  if (!ITEMS.some(s => s.etat === "À valider")) F = ITEMS.some(s => s.editions && !s.publier) ? "socle" : "tout";
+  shell(); draw();
+}
+function shell(){
+  root.innerHTML = `<header class="top"><div class="top-in">
+      <div class="brand"><b>FuryoGang<span>Back-office</span></b><button class="out" id="out">Déconnexion</button></div>
+      <div class="prog" id="prog"></div>
+      <input class="q" id="q" type="search" placeholder="Chercher une série" autocomplete="off">
+      <div class="chips" id="chips"></div></div></header>
+    <main><p class="count" id="count"></p><ul class="list" id="list"></ul></main>`;
+  document.getElementById("q").oninput = e => { Q = e.target.value.trim(); draw(); };
+  document.getElementById("out").onclick = async () => { await fetch("/api/admin/login", { method: "DELETE" }); login(); };
+}
+function draw(){
+  const on = ITEMS.filter(s => s.publier).length, tot = ITEMS.length;
+  document.getElementById("prog").innerHTML = `<span><b>${on}</b> en ligne / ${tot}</span><span class="bar"><i style="width:${tot ? on / tot * 100 : 0}%"></i></span><span>${tot ? (on / tot * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) : 0} %</span>`;
+  document.getElementById("chips").innerHTML = FILTRES.map(([k, l, f]) => `<button class="chip" data-f="${k}" aria-pressed="${F === k}">${l} <small>${ITEMS.filter(f).length}</small></button>`).join("");
+  const n = slugify(Q), keep = FILTRES.find(x => x[0] === F)[2];
+  const list = ITEMS.filter(s => (n ? slugify([s.t, s.fr, s.jp, s.lot].join(" ")).includes(n) || (s.jp || "").includes(Q) : keep(s)));
+  document.getElementById("count").textContent = `${list.length} série${list.length > 1 ? "s" : ""}${n ? " trouvée" + (list.length > 1 ? "s" : "") : ""}`;
+  document.getElementById("list").innerHTML = list.slice(0, 300).map(row).join("") || `<li class="empty">Rien ici pour l'instant.</li>`;
+}
+function row(s){
+  return `<li class="it" data-id="${s.id}">
+    <span class="th">${s.cover ? `<img src="/api/couv?u=${encodeURIComponent(s.cover)}" alt="" loading="lazy">` : esc((s.jp || "").slice(0, 2))}</span>
+    <span class="nm"><b>${esc(s.fr && s.fr !== s.t ? s.fr : s.t)}</b><small>${esc([s.fr && s.fr !== s.t ? s.t : "", s.jp].filter(Boolean).join(" · "))}</small></span>
+    <label class="sw"><input type="checkbox" data-pub ${s.publier ? "checked" : ""}><i></i><span>${s.publier ? "En ligne" : "Publier"}</span></label>
+    <div class="meta">
+      <select class="etat" data-e="${s.etat}" aria-label="Avancement">${ETATS.map(e => `<option${e === s.etat ? " selected" : ""}>${e}</option>`).join("")}</select>
+      <button class="heart" data-coeur aria-pressed="${s.coeur}" aria-label="Coup de cœur">❤️</button>
+      ${s.lot ? `<span class="lot">${esc(s.lot)}</span>` : ""}
+      ${s.manque.length ? `<span class="miss">Manque : ${esc(s.manque.join(", "))}</span>` : `<span class="done">Fiche complète</span>`}
+      ${s.trouver ? `<span class="miss">· À trouver : ${esc(s.trouver.slice(0, 60))}${s.trouver.length > 60 ? "…" : ""}</span>` : ""}
+      <button class="tog" data-more>Détails</button>
+    </div>
+    <div class="more">
+      <label>Lot</label><input data-lot value="${esc(s.lot)}" placeholder="ex. S41 – Bōsōzoku">
+      <label>À trouver</label><textarea data-trouver placeholder="Liens de lecture, extraits…">${esc(s.trouver)}</textarea>
+      <button class="save" data-save>Enregistrer</button>
+      <div class="links"><a href="${esc(s.notion)}" target="_blank" rel="noopener">Ouvrir dans Notion ↗</a>${s.visible ? `<a href="/series/${esc(s.slug)}" target="_blank" rel="noopener">Voir sur le site ↗</a>` : ""}${s.date ? `<span style="color:var(--paper-3)">Publiée le ${new Date(s.date + "T12:00:00").toLocaleDateString("fr-FR")}</span>` : ""}</div>
+    </div></li>`;
+}
+async function send(s, patch, el){
+  el && el.classList.add("busy");
+  try {
+    const r = await fetch("/api/admin/update", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: s.id, slug: s.slug, date: s.date, ...patch }) });
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401) return login("Session expirée, reconnecte-toi.");
+    if (!r.ok) throw new Error(j.error || "Erreur");
+    Object.assign(s, patch, { etat: j.etat, publier: j.publier, date: j.date || s.date });
+    toast(patch.publier === true ? "En ligne ✓" : patch.publier === false ? "Retirée du site" : "Enregistré ✓");
+  } catch (e) { toast(e.message.slice(0, 80)); }
+  finally { draw(); }
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest(".chip[data-f]"); if (c) { F = c.dataset.f; Q = ""; const q = document.getElementById("q"); if (q) q.value = ""; draw(); return; }
+  const li = e.target.closest(".it"); if (!li) return;
+  const s = ITEMS.find(x => x.id === li.dataset.id);
+  if (e.target.closest("[data-more]")) { li.classList.toggle("open"); return; }
+  if (e.target.closest("[data-coeur]")) { send(s, { coeur: !s.coeur }); return; }
+  if (e.target.closest("[data-save]")) { send(s, { lot: li.querySelector("[data-lot]").value.trim(), trouver: li.querySelector("[data-trouver]").value.trim() }); }
+});
+document.addEventListener("change", e => {
+  const li = e.target.closest(".it"); if (!li) return;
+  const s = ITEMS.find(x => x.id === li.dataset.id);
+  if (e.target.matches("[data-pub]")) send(s, { publier: e.target.checked }, e.target.closest(".sw"));
+  if (e.target.matches(".etat")) send(s, { etat: e.target.value });
+});
+fetch("/api/admin/login").then(r => r.json()).then(j => j.ok ? load() : login(j.configured ? "" : "Mot de passe pas encore défini dans Cloudflare (ADMIN_PASSWORD).")).catch(() => login());
+</script>
+</body>
+</html>
