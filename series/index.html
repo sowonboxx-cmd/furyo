@@ -249,10 +249,12 @@ function mainCover(s, eds){
   return c ? `<img src="${couv(c)}" alt="" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">` : ph;
 }
 // Statut par pays, en texte : drapeau + « en cours », « terminé », « en pause », « abandonné »…
+// Statut avec une majuscule : « En cours », « Terminé », « Annoncé »…
+const cap = v => { const t = String(v || "").toLowerCase(); return t.charAt(0).toUpperCase() + t.slice(1); };
 function statut(pays, st){
   if (!st) return "";
   const cls = /cours/i.test(st) ? "on" : /termin/i.test(st) ? "end" : /pause/i.test(st) ? "pause" : /abandon|arr[êe]t|stopp/i.test(st) ? "stop" : /annonc/i.test(st) ? "soon" : "";
-  return `<span>${FLAGS[pays] || ""}<b class="${cls}" style="font-weight:600">${esc(st.toLowerCase())}</b></span>`;
+  return `<span>${FLAGS[pays] || ""}<b class="${cls}" style="font-weight:600">${esc(cap(st))}</b></span>`;
 }
 // Ligne d'en-tête par pays : « 13 tomes · en cours », ou « 33 tomes · terminé (1990-1998) ».
 // Les années ne s'affichent que pour une série terminée.
@@ -271,7 +273,7 @@ function ligne(pays, s, eds){
     ans = a && b ? ` (${a === b ? a : a + "-" + b})` : a ? ` (${a})` : "";
   }
   const cls = /cours/i.test(st) ? "on" : /termin/i.test(st) ? "end" : /pause/i.test(st) ? "pause" : /abandon|arr[êe]t|stopp/i.test(st) ? "stop" : /annonc/i.test(st) ? "soon" : "";
-  return `<span>${FLAGS[pays] || ""}${n ? `${n} tome${n > 1 ? "s" : ""} · ` : ""}<b class="${cls}" style="font-weight:600;white-space:nowrap">${esc(st.toLowerCase())}${ans}</b></span>`;
+  return `<span>${FLAGS[pays] || ""}${n ? `${n} tome${n > 1 ? "s" : ""} · ` : ""}<b class="${cls}" style="font-weight:600;white-space:nowrap">${esc(cap(st))}${ans}</b></span>`;
 }
 const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
 // Adaptations : un champ Notion peut contenir plusieurs œuvres (séparées par « | », « ; » ou un retour à la ligne).
@@ -328,7 +330,7 @@ function render(){
     <div>
       <h1 id="ttl" data-jp="${esc(s.jp || "")}">${esc(titre)}</h1>
       ${s.jp ? `<p class="jp" lang="ja">${esc(s.jp)}</p>` : ""}
-      <dl class="credits">${same ? `<dt>Auteur</dt><dd>${authorLink(s.scen)}</dd>` : `${s.scen ? `<dt>Scénario</dt><dd>${authorLink(s.scen)}</dd>` : ""}${s.dess ? `<dt>Dessin</dt><dd>${authorLink(s.dess)}</dd>` : ""}`}</dl>
+      <dl class="credits">${same ? `<dt>Auteur :</dt><dd>${authorLink(s.scen)}</dd>` : `${s.scen ? `<dt>Scénario :</dt><dd>${authorLink(s.scen)}</dd>` : ""}${s.dess ? `<dt>Dessin :</dt><dd>${authorLink(s.dess)}</dd>` : ""}`}</dl>
       <div class="st">${ligne("France", s, eds)}${ligne("Japon", s, eds)}</div>
     </div>
   </div>
@@ -372,7 +374,7 @@ function panel(s, pubFR, pubJP, eds, ad){
     const labels = [...new Set(eds.filter(e => e.pays === "France" && e.label && e.label !== e.pub).map(e => e.label))];
     const hasFR = pubFR.length || s.stFR || nFR;
     const prepub = (dLong(s.prepub) || (s.y1 ? String(s.y1) : "")) + (s.prepubFin ? " → " + dLong(s.prepubFin) : "");
-    const tomes = (n, st) => n ? `${n}${st ? " · " + st.toLowerCase() : ""}` : (st ? st.toLowerCase() : "");
+    const tomes = (n, st) => n ? `${n}${st ? " · " + cap(st) : ""}` : (st ? cap(st) : "");
     const cell = v => v ? `<td>${esc(v)}</td>` : `<td class="no">—</td>`;
     const rows = [
       ["Éditeur", pubJP.join(", "), pubFR.join(", ") + (labels.length ? " · " + labels.join(", ") : "")],
