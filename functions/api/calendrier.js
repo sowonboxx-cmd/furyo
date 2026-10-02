@@ -9,7 +9,10 @@ const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   return cached(request, waitUntil, "/api/calendrier", 600, async () => {
-    const since = new Date(Date.now() - 45 * 864e5).toISOString().slice(0, 10);
+    // Fenêtre normale : 45 derniers jours. TEST (oct. 2026) : on affiche aussi depuis le 1er juillet pour vérifier les couvertures ; supprimer SHOW_FROM pour revenir à la normale.
+    const SHOW_FROM = "2026-07-01";
+    const d45 = new Date(Date.now() - 45 * 864e5).toISOString().slice(0, 10);
+    const since = SHOW_FROM < d45 ? SHOW_FROM : d45;
     const [tRows, eRows, sRows] = await Promise.all([
       queryAll(env.NOTION_TOKEN, { ...TOMES, body: {
         filter: { or: [
