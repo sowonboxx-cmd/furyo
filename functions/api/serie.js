@@ -55,7 +55,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
       pubJP: list(p["Éditeur Japonais"]).join(", "), pubFR: list(p["Éditeur Français"]).join(", "),
-      mag: text(p["Magazine"]), genres: list(p["Genre"]), type: text(p["Type"]), y1: num(p["Année Début"]),
+      mag: text(p["Magazine"]), genres: list(p["Genre"]), type: text(p["Type"]), y1: num(p["Année Début"]), y2: num(p["Année Fin"]),
       prepub: date(p["Date début prépub JP"]), prepubFin: date(p["Date fin prépub JP"]), t1JP: date(p["Date tome 1 JP"]), t1FR: date(p["Date tome 1 FR"]),
       cover1: text(p["Couverture T1"]), drama: text(p["Drama"]), film: text(p["Film live"]), anime: text(p["Anime"]), oav: text(p["OAV"]), jeux: text(p["Jeux vidéo"]),
       // « catégorie | libellé | lien » par ligne ; seuls les liens YouTube sont gardés.

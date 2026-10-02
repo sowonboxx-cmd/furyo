@@ -49,7 +49,8 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(20px,5.
 .credits dd{margin:0;font-weight:600}
 .credits a{text-decoration:none}
 /* Statuts : texte simple, intégré (pas de pastille) */
-.st{margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--paper-2)}
+.tg{margin:6px 0 0;font-size:12.5px;color:var(--paper-3);line-height:1.4}
+.st{margin:8px 0 0;display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--paper-2)}
 .st span{display:inline-flex;align-items:center;gap:6px}
 .st .flag{width:15px;height:10px;border-radius:2px}
 .st .on{color:var(--ok)}.st .end{color:var(--paper)}.st .pause{color:var(--amber)}.st .stop{color:var(--red)}.st .soon{color:var(--fr)}
@@ -168,6 +169,25 @@ function statut(pays, st){
   const cls = /cours/i.test(st) ? "on" : /termin/i.test(st) ? "end" : /pause/i.test(st) ? "pause" : /abandon|arr[êe]t|stopp/i.test(st) ? "stop" : /annonc/i.test(st) ? "soon" : "";
   return `<span>${FLAGS[pays] || ""}<b class="${cls}" style="font-weight:600">${esc(st.toLowerCase())}</b></span>`;
 }
+// Ligne d'en-tête par pays : « 13 tomes · en cours », ou « 33 tomes · terminé (1990-1998) ».
+// Les années ne s'affichent que pour une série terminée.
+function ligne(pays, s, eds){
+  const st = pays === "France" ? s.stFR : s.stJP;
+  if (!st || /non licenci/i.test(st)) return "";
+  const today = new Date().toISOString().slice(0, 10);
+  const tomes = eds.filter(e => e.pays === pays).flatMap(e => e.tomes).filter(t => t.date && t.date <= today);
+  const n = (pays === "France" ? s.tomesFR : s.tomesJP) || tomes.reduce((m, t) => Math.max(m, t.n || 0), 0);
+  let ans = "";
+  if (/termin/i.test(st)) {
+    let a = "", b = "";
+    if (pays === "Japon") { a = (s.prepub || "").slice(0, 4) || s.y1 || (s.t1JP || "").slice(0, 4); b = (s.prepubFin || "").slice(0, 4) || s.y2 || ""; }
+    else { const ys = tomes.map(t => t.date.slice(0, 4)).sort(); a = (s.t1FR || "").slice(0, 4) || ys[0] || ""; b = ys[ys.length - 1] || ""; }
+    if (!b && tomes.length) b = tomes.map(t => t.date.slice(0, 4)).sort().pop();
+    ans = a && b ? ` (${a === b ? a : a + "-" + b})` : a ? ` (${a})` : "";
+  }
+  const cls = /cours/i.test(st) ? "on" : /termin/i.test(st) ? "end" : /pause/i.test(st) ? "pause" : /abandon|arr[êe]t|stopp/i.test(st) ? "stop" : /annonc/i.test(st) ? "soon" : "";
+  return `<span>${FLAGS[pays] || ""}${n ? `${n} tome${n > 1 ? "s" : ""} · ` : ""}<b class="${cls}" style="font-weight:600">${esc(st.toLowerCase())}${ans}</b></span>`;
+}
 const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
 // Adaptations : un champ Notion peut contenir plusieurs œuvres (séparées par « | », « ; » ou un retour à la ligne).
 // « Titre (2026, détails) » devient : Titre · 2026 + détails. Les bandes-annonces viennent du champ « Trailers ».
@@ -208,12 +228,13 @@ function render(){
       <h1>${esc(titre)}</h1>
       ${s.jp ? `<p class="jp" lang="ja">${esc(s.jp)}</p>` : ""}
       <dl class="credits">${same ? `<dt>Auteur</dt><dd>${authorLink(s.scen)}</dd>` : `${s.scen ? `<dt>Scénario</dt><dd>${authorLink(s.scen)}</dd>` : ""}${s.dess ? `<dt>Dessin</dt><dd>${authorLink(s.dess)}</dd>` : ""}`}</dl>
-      <p class="st">${statut("France", s.stFR)}${statut("Japon", s.stJP)}</p>
+      ${s.type || (s.genres || []).length ? `<p class="tg">${esc([s.type, (s.genres || []).join(", ")].filter(Boolean).join(" · "))}</p>` : ""}
+      <div class="st">${ligne("France", s, eds)}${ligne("Japon", s, eds)}</div>
     </div>
   </div>
   <div class="tabs" role="tablist">
       <button role="tab" data-tab="syn" aria-selected="${TAB === "syn"}">Synopsis</button>
-      <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Infos</button>
+      <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Statut</button>
       ${ad.length ? `<button role="tab" data-tab="ad" aria-selected="${TAB === "ad"}">Adaptations</button>` : ""}
   </div>
   <div class="panel">${panel(s, pubFR, pubJP, eds, ad)}</div>
@@ -247,9 +268,8 @@ function panel(s, pubFR, pubJP, eds, ad){
       ["Prépublication", prepub, ""],
       ["Tomes", tomes(nJP, s.stJP), tomes(nFR, s.stFR)],
     ].filter(r => r[1] || (hasFR && r[2]));
-    return `${s.type || (s.genres || []).length ? `<dl class="kv">${s.type ? `<dt>Type</dt><dd>${esc(s.type)}</dd>` : ""}${(s.genres || []).length ? `<dt>Genres</dt><dd>${esc(s.genres.join(", "))}</dd>` : ""}</dl>` : ""}
-    <table class="cmp"><thead><tr><th></th><th><span>${FLAGS.Japon}Japon</span></th>${hasFR ? `<th><span>${FLAGS.France}France</span></th>` : ""}</tr></thead>
-    <tbody>${rows.map(([k, jp, fr]) => `<tr><th>${k}</th>${cell(jp)}${hasFR ? cell(fr) : ""}</tr>`).join("")}</tbody></table>`;
+    return `<table class="cmp"><thead><tr><th></th>${hasFR ? `<th><span>${FLAGS.France}France</span></th>` : ""}<th><span>${FLAGS.Japon}Japon</span></th></tr></thead>
+    <tbody>${rows.map(([k, jp, fr]) => `<tr><th>${k}</th>${hasFR ? cell(fr) : ""}${cell(jp)}</tr>`).join("")}</tbody></table>`;
   }
   return s.resume ? `<p class="resume">${esc(s.resume)}</p>` : `<p class="resume">Synopsis à venir.</p>`;
 }
