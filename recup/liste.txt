@@ -1,10 +1,2 @@
-serie-kujo.json https://furyo.pages.dev/api/serie?s=kujou-no-taizai&refresh=1
-serie-worst.json https://furyo.pages.dev/api/serie?s=worst&refresh=1
-c-9782505120414.jpg https://bdi.dlpdomain.com/album/9782505120414-couv-M480x680.jpg
-c-9782505120421.jpg https://bdi.dlpdomain.com/album/9782505120421-couv-M480x680.jpg
-c-9782505120438.jpg https://bdi.dlpdomain.com/album/9782505120438-couv-M480x680.jpg
-c-9782505120445.jpg https://bdi.dlpdomain.com/album/9782505120445-couv-M480x680.jpg
-c-9782505125280.jpg https://bdi.dlpdomain.com/album/9782505125280-couv-M480x680.jpg
-c-9782505125297.jpg https://bdi.dlpdomain.com/album/9782505125297-couv-M480x680.jpg
-yt1.jpg https://i.ytimg.com/vi/CcWpeHWbWJk/hqdefault.jpg
-yt2.jpg https://i.ytimg.com/vi/OGczmgwxbJ4/hqdefault.jpg
+cal.json https://furyo.pages.dev/api/calendrier?refresh=1
+series.json https://furyo.pages.dev/api/series?refresh=1
