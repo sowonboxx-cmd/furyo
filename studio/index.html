@@ -31,26 +31,25 @@ button.main{background:var(--red)}
 /* ---------- La carte 1080×1350 ---------- */
 .card{width:1080px;height:1350px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;--fg:#fff;--bg:#0c0c0e;--muted:rgba(255,255,255,.62);background:var(--bg);color:var(--fg)}
 .card.light{--fg:#0c0c0e;--bg:#F2EFE9;--muted:rgba(12,12,14,.6)}
-.card.a .blur{position:absolute;inset:-80px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}
-.card.a.light .blur{opacity:.28}
-.card.a .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 35%,transparent) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 76%)}
-/* Le soleil : cercle de 904 px, centre à y = 604. Tout ce qui est centré « sur le cercle » utilise --cy. */
-.card.a{--cy:604px;--r:452px}
-.card.a .sun{position:absolute;width:calc(var(--r) * 2);height:calc(var(--r) * 2);border-radius:50%;background:var(--red);left:50%;top:calc(var(--cy) - var(--r));transform:translateX(-50%);opacity:.92}
-.card.a.light .sun{opacity:1}
-.card.a .logo{position:absolute;left:50%;top:44px;transform:translateX(-50%);width:290px}
-.card.a .badge{position:absolute;left:56px;top:50px;height:62px;padding:0 26px;border-radius:999px;background:var(--red);color:#fff;display:inline-flex;align-items:center;font-family:"Antonio",sans-serif;font-weight:700;font-size:32px;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 0 0 4px var(--fg)}
-.card.a .cover{position:absolute;left:50%;top:calc(var(--cy) - 420px);width:600px;height:840px;transform:translateX(-50%);object-fit:cover;border-radius:8px;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 2px rgba(255,255,255,.08)}
-/* Numéro du tome : plein, avec une ombre décalée rouge, centré sur le cercle */
-.card.a .num{position:absolute;left:40px;top:var(--cy);transform:translateY(-50%);text-align:center;font-family:"Antonio",sans-serif;font-weight:700;line-height:.8}
-.card.a .num small{display:inline-block;font-size:40px;letter-spacing:.14em;padding:8px 18px 6px;margin-bottom:16px;border-radius:8px;background:var(--fg);color:var(--bg)}
-.card.a .num b{display:block;font-size:220px;letter-spacing:-.02em;color:var(--fg);-webkit-text-stroke:6px var(--bg);paint-order:stroke fill;text-shadow:10px 10px 0 var(--red),10px 10px 0 var(--bg)}
-.card.a .jp{position:absolute;right:58px;top:var(--cy);transform:translateY(-50%);writing-mode:vertical-rl;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:var(--js,58px);line-height:1.05;letter-spacing:.06em;color:var(--fg);max-height:760px;overflow:hidden;white-space:nowrap}
-/* Infos sous le cercle, avec un espace : rien ne chevauche le soleil */
-.card.a .info{position:absolute;left:56px;right:56px;top:calc(var(--cy) + var(--r) + 30px);display:flex;flex-direction:column;align-items:center;text-align:center}
-.card.a .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:112px;line-height:.92;text-transform:uppercase;letter-spacing:.005em;margin:0}
-.card.a .title.s{font-size:92px}.card.a .title.xs{font-size:72px}
-.card.a .date{margin-top:18px;align-self:center;font-family:"Antonio",sans-serif;font-weight:700;font-size:42px;letter-spacing:.06em;text-transform:uppercase;background:var(--red);color:#fff;padding:6px 22px;border-radius:6px}
+/* Design « Soleil », 100 % flat : fond uni, cercle rouge, couverture sans ombre. */
+.card.a{--cy:566px;--r:400px;--cream:#F2EFE9}
+.card.a .sun{position:absolute;width:calc(var(--r) * 2);height:calc(var(--r) * 2);border-radius:50%;background:var(--red);left:50%;top:calc(var(--cy) - var(--r));transform:translateX(-50%)}
+.card.a .logo{position:absolute;left:50%;top:46px;transform:translateX(-50%);width:232px}
+.card.a .cover{position:absolute;left:50%;top:calc(var(--cy) - 380px);width:543px;height:760px;transform:translateX(-50%);object-fit:cover}
+/* Numéro du tome : deux calques identiques. Hors du cercle il prend la couleur du texte, dans le cercle celle du fond. */
+.card.a .numw{position:absolute;inset:0;pointer-events:none}
+.card.a .numw.in{clip-path:circle(var(--r) at 50% var(--cy))}
+.card.a .num{position:absolute;left:30px;top:var(--cy);transform:translateY(-50%);font-family:"Antonio",sans-serif;font-weight:700;font-size:230px;line-height:.8;letter-spacing:-.02em;color:var(--fg)}
+.card.a .numw.in .num{color:var(--bg)}
+.card.a.light .numw.in .num{color:var(--cream)}
+/* Titre japonais : dans la bande à droite du cercle, jamais dessus, centré sur le cercle */
+.card.a .jpw{position:absolute;left:calc(50% + var(--r));right:0;top:var(--cy);transform:translateY(-50%);display:flex;justify-content:center}
+.card.a .jp{writing-mode:vertical-rl;font-family:"Noto Sans JP",sans-serif;font-weight:900;font-size:var(--js,56px);line-height:1;letter-spacing:.06em;color:var(--fg);max-height:720px;overflow:hidden;white-space:nowrap}
+/* Infos sous le cercle, avec de l'air au-dessus et en dessous */
+.card.a .info{position:absolute;left:64px;right:64px;top:calc(var(--cy) + var(--r) + 34px);display:flex;flex-direction:column;align-items:center;text-align:center}
+.card.a .title{font-family:"Antonio",sans-serif;font-weight:700;font-size:108px;line-height:.92;text-transform:uppercase;letter-spacing:.005em;margin:0}
+.card.a .title.s{font-size:88px}.card.a .title.xs{font-size:68px}
+.card.a .date{margin-top:18px;align-self:center;font-family:"Antonio",sans-serif;font-weight:700;font-size:40px;letter-spacing:.06em;text-transform:uppercase;background:var(--red);color:#fff;padding:6px 22px;border-radius:6px}
 .card.a .who{margin-top:16px}
 
 /* ---------- Commun ---------- */
@@ -95,22 +94,15 @@ const jsz = (txt, max, room) => Math.min(max, Math.floor(room / (Math.max(1, [..
 const gsz = t => Math.min(260, Math.floor(1850 / Math.max(1, t.length))) + "px";
 const size = (t, a, b) => t.length > b ? "xs" : t.length > a ? "s" : "";
 const LOGO = theme => `/img/social/logo-${theme === "light" ? "noir" : "blanc"}.png`;
-// Pastille spéciale : premier tome, ou dernier tome quand le nombre total est connu.
-function badge(it){
-  if (it.n === 1) return "Premier tome";
-  if (it.nb && it.n === it.nb) return "Dernier tome";
-  return "";
-}
 const LAYOUTS = {
   a: { nom: "Soleil", html(it, theme){
-    const t = titleOf(it), j = jpOf(it), bd = badge(it);
+    const t = titleOf(it), j = jpOf(it), n = it.n != null ? tn(it.n) : "";
     return `<div class="card a ${theme}">
-      ${it.cover ? `<div class="blur" style="background-image:url('${cov(it)}')"></div>` : ""}<div class="shade"></div><div class="sun"></div>
+      <div class="sun"></div>
       <img class="logo" src="${LOGO(theme)}" alt="FuryoGang">
-      ${bd ? `<span class="badge">${bd}</span>` : ""}
       ${it.cover ? `<img class="cover" src="${cov(it)}" alt="">` : ""}
-      ${it.n != null ? `<div class="num"><small>Tome</small><b>${tn(it.n)}</b></div>` : ""}
-      ${j ? `<div class="jp" lang="ja" style="--js:${jsz(j, 60, 640)}">${esc(j)}</div>` : ""}
+      ${n ? `<div class="numw"><div class="num">${n}</div></div><div class="numw in"><div class="num">${n}</div></div>` : ""}
+      ${j ? `<div class="jpw"><div class="jp" lang="ja" style="--js:${jsz(j, 56, 640)}">${esc(j)}</div></div>` : ""}
       <div class="info"><div class="title ${size(t, 16, 26)}">${esc(t)}</div>
         <span class="date">${esc(dateLong(it))}</span>
         ${who(it) ? `<div class="who">${who(it)}</div>` : ""}</div>
