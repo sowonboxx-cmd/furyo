@@ -1,2 +1,8 @@
-n2.json https://furyo.pages.dev/api/news?refresh=1
-hd4.json https://furyo.pages.dev/api/serie?s=hell-dogs&refresh=1
+pg-ak1.html https://www.akitashoten.co.jp/search?keyword=%E3%82%AC%E3%82%A4%E3%82%A2%E3%81%A8%E3%82%B7%E3%82%B3%E3%83%AB%E3%82%B9%E3%82%AD%E3%83%BC
+pg-ak2.html https://www.akitashoten.co.jp/comics/4253294171
+pg-ak3.html https://www.akitashoten.co.jp/search?q=%E3%82%AC%E3%82%A4%E3%82%A2%E3%81%A8%E3%82%B7%E3%82%B3%E3%83%AB%E3%82%B9%E3%82%AD%E3%83%BC
+pg-cc1.html https://championcross.jp/search?keyword=%E3%82%AC%E3%82%A4%E3%82%A2%E3%81%A8%E3%82%B7%E3%82%B3%E3%83%AB%E3%82%B9%E3%82%AD%E3%83%BC
+pg-cc2.html https://championcross.jp/search?q=%E3%82%AC%E3%82%A4%E3%82%A2%E3%81%A8%E3%82%B7%E3%82%B3%E3%83%AB%E3%82%B9%E3%82%AD%E3%83%BC
+pg-bw1.html https://bookwalker.jp/series/399498/list/
+pg-mz1.html https://www.maruzenjunkudo.co.jp/products/9784253294171
+pg-mz2.html https://www.maruzenjunkudo.co.jp/products/9784253005524
