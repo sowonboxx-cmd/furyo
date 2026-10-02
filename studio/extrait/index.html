@@ -64,7 +64,7 @@ button.main{background:var(--red)}
     <select id="sel" aria-label="Série"></select>
     
     <select id="vo" aria-label="Version"><option value="jp">Version japonaise</option><option value="fr">Version française</option></select>
-    <select id="th" aria-label="Thème"><option value="creme">Crème</option><option value="dark">Sombre</option></select>
+    <input type="hidden" id="th" value="creme">
     <select id="fm" aria-label="Format"><option value="post">Post 3:4</option><option value="story">Story 9:16</option></select>
     <input class="credit" id="credit" placeholder="© Auteur / Éditeur" aria-label="Crédit">
     <button class="main" id="dlAll">Télécharger tous les PNG</button>
@@ -113,8 +113,8 @@ async function pick(slug){
     }
   } catch (e) {}
 }
-// Enlève les marges blanches de la page, et avec elles le numéro de page imprimé dans la marge :
-// on rogne chaque bord tant que la ligne (ou colonne) est presque vide (moins de 4 % de pixels sombres).
+// Efface le numéro de page imprimé dans la marge, sans recadrer : on repère le dessin (lignes et colonnes
+// avec au moins 4 % de pixels sombres) et on repeint en blanc tout ce qui est autour.
 function trim(url){
   return new Promise(ok => {
     const im = new Image();
@@ -132,12 +132,13 @@ function trim(url){
       let left = 0, right = w - 1;
       while (left < w / 3 && !(full(col(left, top, bot)) && full(col(left + 2, top, bot)))) left++;
       while (right > w * 2 / 3 && !(full(col(right, top, bot)) && full(col(right - 2, top, bot)))) right--;
-      const pad = Math.round(Math.min(w, h) * .025);
-      const cw = right - left + 1, ch = bot - top + 1;
-      if (cw < w * .5 || ch < h * .5) return ok(url); // rognage douteux : on garde l'image telle quelle
-      // Marge blanche neuve tout autour : rien de l'ancienne marge (ni le numéro de page) n'est recopié.
-      const o = document.createElement("canvas"); o.width = cw + pad * 2; o.height = ch + pad * 2;
-      const ox = o.getContext("2d"); ox.fillStyle = "#fff"; ox.fillRect(0, 0, o.width, o.height); ox.drawImage(c, left, top, cw, ch, pad, pad, cw, ch);
+      if (right - left < w * .5 || bot - top < h * .5) return ok(url); // détection douteuse : on garde l'image telle quelle
+      // La page garde son format d'origine : on repeint seulement en blanc les marges, là où est imprimé le numéro de page.
+      const o = document.createElement("canvas"); o.width = w; o.height = h;
+      const ox = o.getContext("2d"); ox.drawImage(c, 0, 0); ox.fillStyle = "#fff";
+      const m = 3; // petite marge de sécurité autour du dessin
+      ox.fillRect(0, 0, w, Math.max(0, top - m)); ox.fillRect(0, bot + m, w, h - bot - m);
+      ox.fillRect(0, 0, Math.max(0, left - m), h); ox.fillRect(right + m, 0, w - right - m, h);
       ok(o.toDataURL("image/jpeg", .93));
     };
     im.onerror = () => ok(url); im.src = url;
@@ -160,7 +161,7 @@ const drop = $("drop");
 ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("on"); }));
 ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("on"); }));
 drop.addEventListener("drop", e => addFiles(e.dataTransfer.files));
-["vo", "th", "fm", "credit"].forEach(id => $(id).addEventListener("input", () => { if (id === "vo") { $("credit").value = ""; pick(cur.slug); } else draw(); }));
+["vo", "fm", "credit"].forEach(id => $(id).addEventListener("input", () => { if (id === "vo") { $("credit").value = ""; pick(cur.slug); } else draw(); }));
 $("sel").onchange = e => pick(e.target.value);
 addEventListener("resize", fit);
 fetch("/api/series").then(r => r.json()).then(l => {
