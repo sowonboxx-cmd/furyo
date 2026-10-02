@@ -186,7 +186,9 @@ if (document.fonts) document.fonts.ready.then(fitAll);
 function goToday(){
   const el = document.getElementById("now"); if (!el) return;
   const bar = document.querySelector(".bar");
-  const y = el.getBoundingClientRect().top + scrollY - (bar ? bar.offsetHeight : 0) - 70;
+  // Sous l'en-tête du site et la barre Tout / Japon / France (toutes deux collées en haut), avec un peu d'air.
+  const sh = document.getElementById("sh");
+  const y = el.getBoundingClientRect().top + scrollY - (sh ? sh.offsetHeight : 0) - (bar ? bar.offsetHeight : 0) - 16;
   scrollTo({ top: Math.max(0, y), behavior: "instant" });
 }
 document.addEventListener("click", e => {
