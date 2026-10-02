@@ -1,0 +1,16 @@
+total 912
+drwxr-xr-x 2 runner runner   4096 Oct  2 15:49 .
+drwxr-xr-x 3 runner runner   4096 Oct  2 15:48 ..
+-rw-r--r-- 1 runner runner 152768 Oct  2 15:48 c-9782505120414.jpg
+-rw-r--r-- 1 runner runner 147637 Oct  2 15:48 c-9782505120421.jpg
+-rw-r--r-- 1 runner runner 127378 Oct  2 15:49 c-9782505120438.jpg
+-rw-r--r-- 1 runner runner 130801 Oct  2 15:49 c-9782505120445.jpg
+-rw-r--r-- 1 runner runner 130810 Oct  2 15:49 c-9782505125280.jpg
+-rw-r--r-- 1 runner runner 131329 Oct  2 15:49 c-9782505125297.jpg
+-rw-r--r-- 1 runner runner      0 Oct  2 15:49 index.txt
+-rw-r--r-- 1 runner runner   9500 Oct  2 15:49 openbd.json
+-rw-r--r-- 1 runner runner    112 Oct  2 15:49 openbd.txt
+-rw-r--r-- 1 runner runner   5562 Oct  2 15:48 serie-kujo.json
+-rw-r--r-- 1 runner runner    950 Oct  2 15:48 serie-worst.json
+-rw-r--r-- 1 runner runner  35084 Oct  2 15:49 yt1.jpg
+-rw-r--r-- 1 runner runner  22553 Oct  2 15:49 yt2.jpg
