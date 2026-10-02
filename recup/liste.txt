@@ -1,9 +1,2 @@
-ak-zange7.jpg https://www.akitashoten.co.jp/comics/4253018300/cover
-ak-jingi6.jpg https://www.akitashoten.co.jp/comics/4253018599/cover
-ak-hakobi16.jpg https://www.akitashoten.co.jp/comics/4253018319/cover
-sg-kujou17.jpg https://www.shogakukan.co.jp/thumbnail/snsbooks/09864060
-sg-niku26.jpg https://www.shogakukan.co.jp/thumbnail/snsbooks/09864056
-pg-kenka1.html https://www.hakusensha.co.jp/comicslist/79258/
-pg-saru10.html https://www.shonengahosha.co.jp/book_Info.php?id=11384
-pg-amavigi8.html https://www.kodansha.co.jp/book/products/9784065438190
-pg-kinoko4.html https://www.nihonbungeisha.co.jp/book/b10169693.html
+kinoko4.jpg https://hondana-image.s3.amazonaws.com/book/image/10169693/af023636-a3e1-4caf-b677-fb6ac4c3bca8.jpeg
+saru10.png https://www.shonengahosha.co.jp/images/Book/Book_0qFEB79ngfPzrSZQqEuiaJ0N03WhGV2Z_1.png
