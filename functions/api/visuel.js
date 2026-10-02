@@ -1,8 +1,8 @@
-// GET /api/visuel?s=<id de la page série>&p=main|news&i=<n>
+// GET /api/visuel?s=<id de la page série>&p=main|news|fond&i=<n>
 // Sert une image déposée dans Notion (colonnes « Visuel principal » / « Visuels news » de la base Séries).
 // Notion garde les fichiers, mais ses liens de téléchargement expirent au bout d'une heure :
 // cette fonction redemande un lien frais à Notion puis met l'image en cache chez Cloudflare (1 jour).
-const PROPS = { main: "Visuel principal", news: "Visuels news" };
+const PROPS = { main: "Visuel principal", news: "Visuels news", fond: "Fond de fiche" };
 
 export async function onRequestGet({ env, request, waitUntil }) {
   const u = new URL(request.url);
