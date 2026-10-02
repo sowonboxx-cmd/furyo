@@ -3,3 +3,9 @@ pg-hd1 https://c.bookwalker.jp/1168983/t_700x780.jpg
 pg-hd1 https://c.bookwalker.jp/1168983/t_700x780.jpg
 pg-hd1 https://c.bookwalker.jp/1168983/t_700x780.jpg
 pg-hd1 https://c.bookwalker.jp/1168983/t_700x780.jpg
+pg-bw1 https://bookwalker.jp/ex/ogp/logo200.png
+pg-cc1 https://cdn-public.comici.jp/content/20/ogpimages/202404150943479104BD077386B3647AD0768DA93E6866047.png
+pg-cc2 https://cdn-public.comici.jp/content/20/ogpimages/202404150943479104BD077386B3647AD0768DA93E6866047.png
+pg-hd1 https://c.bookwalker.jp/1168983/t_700x780.jpg
+pg-mz1 http://www.maruzenjunkudo.co.jp/cdn/shop/files/w1200xh628px_logo_maruzenjunkudo.png?v=1761281971
+pg-mz2 http://www.maruzenjunkudo.co.jp/cdn/shop/files/w1200xh628px_logo_maruzenjunkudo.png?v=1761281971
