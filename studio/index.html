@@ -34,6 +34,8 @@ button.main{background:var(--red)}
 /* Design « Soleil » : fond flouté tiré de la couverture, cercle rouge, couverture encadrée. */
 .card.a{--cy:566px;--r:400px;--cream:#F2EFE9;--frame:#000}
 .card.a.light{--frame:#fff}
+/* Couverture très sombre sur fond sombre : cadre blanc pour qu'on voie ses bords */
+.card.a.dark.dkcov{--frame:#fff}
 .card.a .blur{position:absolute;inset:-80px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}
 .card.a.light .blur{opacity:.28}
 .card.a .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 35%,transparent) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 76%)}
@@ -118,12 +120,26 @@ function caption(it){
   const tags = ["#manga", "#FuryoGang", "#" + t.replace(/[^A-Za-z0-9À-ÿ]/g, ""), it.pub ? "#" + it.pub.replace(/[^A-Za-z0-9À-ÿ]/g, "") : ""].filter(Boolean).join(" ");
   return `${t} tome ${it.n ?? ""} ${it.date >= new Date().toISOString().slice(0,10) ? "sort le" : "est sorti le"} ${when} chez ${it.pub || "?"}${it.pays === "Japon" ? " au Japon" : ""} 🔥\n\n${it.resume || ""}\n\n${tags}`;
 }
+// Bords de la couverture presque noirs ? (moyenne de luminosité sur une bande de 6 % autour de l'image)
+function darkEdges(img){
+  try {
+    const W = 60, H = 84, c = document.createElement("canvas"); c.width = W; c.height = H;
+    const x = c.getContext("2d"); x.drawImage(img, 0, 0, W, H);
+    const d = x.getImageData(0, 0, W, H).data; let sum = 0, n = 0;
+    for (let y = 0; y < H; y++) for (let i = 0; i < W; i++) {
+      if (i > 3 && i < W - 4 && y > 4 && y < H - 5) continue;
+      const k = (y * W + i) * 4; sum += .2126 * d[k] + .7152 * d[k + 1] + .0722 * d[k + 2]; n++;
+    }
+    return sum / n < 45;
+  } catch (e) { return false; }
+}
 function show(id){
   cur = ITEMS.find(x => x.id === id) || ITEMS[0]; if (!cur) return;
   document.getElementById("pair").innerHTML = Object.entries(LAYOUTS).flatMap(([k, L]) => ["dark", "light"].map(th =>
     `<div class="slot"><h2>${L.nom} · ${th === "light" ? "clair" : "sombre"} <button data-dl="${k}-${th}">PNG</button></h2><div class="frame" id="f-${k}-${th}">${L.html(cur, th)}</div></div>`)).join("");
   document.getElementById("cap").value = caption(cur);
   history.replaceState(null, "", "?id=" + cur.id); fit();
+  document.querySelectorAll(".card.a.dark img.cover").forEach(img => { const go = () => { if (darkEdges(img)) img.closest(".card").classList.add("dkcov"); }; img.complete ? go() : img.addEventListener("load", go, { once: true }); });
 }
 async function dl(key){
   const node = document.querySelector(`#f-${key} .card`);
