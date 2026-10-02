@@ -1,3 +1,2 @@
-hmv1.html https://www.hmv.co.jp/product/detail/10995670
-kad.html https://www.kadokawa.co.jp/product/search/?keyword=%E3%83%98%E3%83%AB%E3%83%89%E3%83%83%E3%82%B0%E3%82%B9
-bw.html https://bookwalker.jp/search/?qcat=&word=%E3%83%98%E3%83%AB%E3%83%89%E3%83%83%E3%82%B0%E3%82%B9+%E5%9C%B0%E7%8D%84%E3%81%AE%E7%8A%AC%E3%81%9F%E3%81%A1
+b1.html https://bookwalker.jp/ded23d33e3-cf14-47b8-8034-aeaa514db0f2/
+b2.html https://bookwalker.jp/deb010d146-6d0a-4def-9fac-ff5ca232a94d/
