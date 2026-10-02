@@ -1,0 +1,7 @@
+total 28
+drwxr-xr-x 2 runner runner 4096 Oct  2 04:50 .
+drwxr-xr-x 3 runner runner 4096 Oct  2 04:50 ..
+-rw-r--r-- 1 runner runner    0 Oct  2 04:50 index.txt
+-rw-r--r-- 1 runner runner  718 Oct  2 04:50 news.json
+-rw-r--r-- 1 runner runner 9500 Oct  2 04:50 openbd.json
+-rw-r--r-- 1 runner runner  112 Oct  2 04:50 openbd.txt
