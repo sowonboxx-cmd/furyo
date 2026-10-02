@@ -40,19 +40,20 @@ button.main{background:var(--red)}
 .card.dark{--bg:#121214;--fg:#F5F5F7;--muted:rgba(245,245,247,.58);--bar:#000}
 .card.story{height:1920px;--safe-top:200px;--safe-bot:250px}
 .card .A{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase}
-.card .top{flex:none;background:var(--bar);padding:calc(var(--safe-top) + 36px) 64px 36px;display:flex;align-items:center;justify-content:space-between}
+.card .top{flex:none;background:var(--bar);padding:calc(var(--safe-top) + 36px) 64px 36px;display:flex;align-items:center;justify-content:flex-start;gap:30px}
 .card.dark .top{border-bottom:1px solid rgba(255,255,255,.08)}
 .card .top img{width:250px;display:block}
-.card .top .A{color:#fff;font-size:52px;letter-spacing:.06em;line-height:1}
+.card .top .A{color:#fff;font-size:46px;letter-spacing:.06em;line-height:1;padding-left:30px;border-left:3px solid rgba(255,255,255,.25)}
 .card .top .A span{color:#E0123F}
 .card .main{flex:1;min-height:0;display:flex;flex-direction:column;padding:30px 48px calc(var(--safe-bot) + 30px)}
 .card .t{flex:none;margin:0;text-align:center;font-size:62px;line-height:1.12;padding-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .tj{flex:none;margin:2px 0 0;text-align:center;font-family:"Noto Sans JP",sans-serif;font-weight:700;font-size:28px;letter-spacing:.12em;color:var(--muted);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card .num{flex:none;font-size:34px;color:var(--muted);letter-spacing:.04em;line-height:1}
 .card .pg{flex:1;min-height:0;margin-top:22px;display:flex;align-items:center;justify-content:center}
 .card .pg img{max-width:100%;max-height:100%;object-fit:contain;border:8px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);background:#fff;display:block}
 .card .pg .ph{width:70%;height:90%;border:10px dashed var(--muted);display:grid;place-items:center;color:var(--muted);font-size:34px;font-weight:700;text-align:center;padding:30px}
-.card .foot{flex:none;margin-top:22px;display:flex;justify-content:space-between;align-items:center;gap:24px}
-.card .foot small{font-size:24px;color:var(--muted);font-weight:600;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .foot{flex:none;margin-top:22px;text-align:center}
+.card .foot small{display:block;font-size:24px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -85,9 +86,9 @@ function card(img, i, n){
   return `<div class="card ${$("th").value} ${$("fm").value}">
     <div class="top"><img src="${LOGO_B}" alt=""><span class="A">Extrait <span>${vo ? "VO" : "VF"}</span></span></div>
     <div class="main">
-      <p class="t A">${esc(cur.t)}</p>
+      <p class="t A">${esc(cur.t)}</p>${cur.jp ? `<p class="tj" lang="ja">${esc(cur.jp)}</p>` : ""}
       <div class="pg">${img ? `<img src="${img}" alt="">` : `<div class="ph">Ta capture de page ici</div>`}</div>
-      <div class="foot"><small>${esc($("credit").value || cur.credit || "")}</small><span class="num A">${n > 1 ? `${i + 1} / ${n}` : ""}</span></div>
+      <div class="foot"><small>${esc($("credit").value || cur.credit || "")}</small></div>
     </div></div>`;
 }
 function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".card"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
@@ -99,7 +100,7 @@ function draw(){
 }
 async function pick(slug){
   const s = LIST.find(x => x.slug === slug) || LIST[0]; if (!s) return;
-  cur = { slug: s.slug, t: shown(s), pubFR: (s.pubFR || "").replace(/\s*\([^)]*\)/g, ""), pubJP: "", credit: "" };
+  cur = { slug: s.slug, t: shown(s), jp: s.jp || "", pubFR: (s.pubFR || "").replace(/\s*\([^)]*\)/g, ""), pubJP: "", credit: "" };
   history.replaceState(null, "", "?s=" + s.slug); draw();
   try {
     const j = await (await fetch("/api/serie?s=" + s.slug)).json();
@@ -112,8 +113,39 @@ async function pick(slug){
     }
   } catch (e) {}
 }
-function addFiles(files){
-  [...files].filter(f => /^image\//.test(f.type)).slice(0, 5 - IMGS.length).forEach(f => IMGS.push(URL.createObjectURL(f)));
+// Enlève les marges blanches de la page, et avec elles le numéro de page imprimé dans la marge :
+// on rogne chaque bord tant que la ligne (ou colonne) est presque vide (moins de 4 % de pixels sombres).
+function trim(url){
+  return new Promise(ok => {
+    const im = new Image();
+    im.onload = () => {
+      const w = im.naturalWidth, h = im.naturalHeight, c = document.createElement("canvas"); c.width = w; c.height = h;
+      const x = c.getContext("2d"); x.drawImage(im, 0, 0);
+      const d = x.getImageData(0, 0, w, h).data;
+      const dark = i => (d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11) < 170;
+      const row = y => { let n = 0; for (let i = 0; i < w; i += 2) if (dark((y * w + i) * 4)) n++; return n / (w / 2); };
+      const col = (cx, y0, y1) => { let n = 0; for (let y = y0; y < y1; y += 2) if (dark((y * w + cx) * 4)) n++; return n / ((y1 - y0) / 2); };
+      const full = v => v >= .04;
+      let top = 0, bot = h - 1;
+      while (top < h / 3 && !(full(row(top)) && full(row(top + 2)))) top++;
+      while (bot > h * 2 / 3 && !(full(row(bot)) && full(row(bot - 2)))) bot--;
+      let left = 0, right = w - 1;
+      while (left < w / 3 && !(full(col(left, top, bot)) && full(col(left + 2, top, bot)))) left++;
+      while (right > w * 2 / 3 && !(full(col(right, top, bot)) && full(col(right - 2, top, bot)))) right--;
+      const pad = Math.round(Math.min(w, h) * .025);
+      const cw = right - left + 1, ch = bot - top + 1;
+      if (cw < w * .5 || ch < h * .5) return ok(url); // rognage douteux : on garde l'image telle quelle
+      // Marge blanche neuve tout autour : rien de l'ancienne marge (ni le numéro de page) n'est recopié.
+      const o = document.createElement("canvas"); o.width = cw + pad * 2; o.height = ch + pad * 2;
+      const ox = o.getContext("2d"); ox.fillStyle = "#fff"; ox.fillRect(0, 0, o.width, o.height); ox.drawImage(c, left, top, cw, ch, pad, pad, cw, ch);
+      ok(o.toDataURL("image/jpeg", .93));
+    };
+    im.onerror = () => ok(url); im.src = url;
+  });
+}
+async function addFiles(files){
+  const list = [...files].filter(f => /^image\//.test(f.type)).slice(0, 5 - IMGS.length);
+  for (const f of list) IMGS.push(await trim(URL.createObjectURL(f)));
   draw();
 }
 async function dl(i){
