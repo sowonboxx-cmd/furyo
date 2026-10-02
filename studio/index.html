@@ -101,10 +101,12 @@ const CJK = /[\u3040-\u30ff\u3400-\u9fff]/;
 function jpOf(it){ const j = it.jp || ""; const out = j.replace(/[（(].*?[)）]/g, "").trim(); if (CJK.test(out)) return out; const m = j.match(/[（(](.*?)[)）]/); return m && CJK.test(m[1]) ? m[1] : ""; }
 const isNext = it => it.date >= new Date().toISOString().slice(0, 10);
 const MCOURT = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+// Seulement les noms, en gris : le scénariste d'abord, puis le dessinateur ; deux noms au maximum.
 function who(it){
-  const s = it.scen, d = it.dess;
-  if (s && d && s !== d) return `Histoire <b>${esc(s)}</b><i>·</i>Dessin <b>${esc(d)}</b>`;
-  const one = s || d || it.auteurs; return one ? `<b>${esc(one)}</b>` : "";
+  const clean = v => String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*|\s+&\s+|\s+et\s+/).map(x => x.trim()).filter(Boolean);
+  const names = [...new Set([...clean(it.scen), ...clean(it.dess)])];
+  if (!names.length) names.push(...clean(it.auteurs));
+  return names.slice(0, 2).map(esc).join("<i>·</i>");
 }
 const jsz = (txt, max, room) => Math.min(max, Math.floor(room / (Math.max(1, [...txt].length) * 1.12))) + "px";
 const gsz = t => Math.min(260, Math.floor(1850 / Math.max(1, t.length))) + "px";

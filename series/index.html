@@ -121,8 +121,7 @@ body.tb-open{overflow:hidden}
 /* Onglet News */
 .tabs .nb{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--ink-3);font-size:11px;margin-left:4px;padding:0 5px}
 .nw{list-style:none;margin:0;padding:0}
-.nw li{border-top:1px solid var(--ink-3)}
-.nw li:last-child{border-bottom:1px solid var(--ink-3)}
+.nw li+li{border-top:1px solid var(--ink-3)}
 .nw summary{list-style:none;display:flex;align-items:center;gap:10px;padding:13px 2px;cursor:pointer;min-width:0}
 .nw summary::-webkit-details-marker{display:none}
 .nw summary::after{content:"";flex:none;width:8px;height:8px;border-right:2px solid var(--paper-3);border-bottom:2px solid var(--paper-3);transform:rotate(45deg);margin:0 4px 4px auto;transition:transform .15s}
@@ -131,7 +130,8 @@ body.tb-open{overflow:hidden}
 .nw-c.lic{color:#7BC67E;background:color-mix(in srgb,#7BC67E 18%,var(--ink-3))}
 .nw-t{min-width:0;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nw-b{padding:0 2px 14px;font-size:14px;line-height:1.55;color:var(--paper-2)}
-.nw-b time{display:block;font-size:12px;color:var(--paper-3);margin-bottom:6px}
+.nw-d{flex:none;font-size:12px;font-weight:600;color:var(--paper-3);white-space:nowrap}
+.nw-s{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;color:#6FA8F5;text-decoration:none}
 .nw-b p{margin:0}
 .nw-none{color:var(--paper-3);font-size:14px}
 /* Extraits (bas de l'onglet Info / Extrait) */
@@ -354,9 +354,9 @@ function panel(s, pubFR, pubJP, eds, ad){
     const n = s.news || [];
     if (!n.length) return `<p class="nw-none">Pas encore de news pour cette série.</p>`;
     const MC = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
-    const dd = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return `${x.getDate()} ${MC[x.getMonth()]} ${x.getFullYear()}`; };
-    return `<ul class="nw">${n.map(it => `<li><details><summary><span class="nw-c${it.cat === "Licence FR" ? " lic" : ""}">${esc(it.cat)}</span><span class="nw-t">${esc(it.titre)}</span></summary>
-      <div class="nw-b">${it.date ? `<time>${dd(it.date)}</time>` : ""}${it.texte ? `<p>${esc(it.texte)}</p>` : ""}</div></details></li>`).join("")}</ul>`;
+    const dd = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return `${String(x.getDate()).padStart(2, "0")}/${String(x.getMonth() + 1).padStart(2, "0")}/${String(x.getFullYear()).slice(2)}`; };
+    return `<ul class="nw">${n.map(it => `<li><details><summary>${it.date ? `<time class="nw-d">${dd(it.date)}</time>` : ""}<span class="nw-c${it.cat === "Licence FR" ? " lic" : ""}">${esc(it.cat)}</span><span class="nw-t">${esc(it.titre)}</span></summary>
+      <div class="nw-b">${it.texte ? `<p>${esc(it.texte)}</p>` : ""}${it.src ? `<a class="nw-s" href="${esc(it.src)}" target="_blank" rel="noopener">Source : ${esc(it.srcName || "officielle")} ↗</a>` : ""}</div></details></li>`).join("")}</ul>`;
   }
   if (TAB === "ad") return ad.map(c => `<div class="ad-cat"><h3>${c.label}</h3>${c.items.map((it, i) => `<div class="ad-it"><b>${esc(it.t)}${it.y ? `<em>${it.y}</em>` : ""}</b>${it.d ? `<p>${esc(it.d.charAt(0).toUpperCase() + it.d.slice(1))}</p>` : ""}${c.trailers[i] ? ytHTML(c.trailers[i]) : ""}</div>`).join("")}${c.trailers.slice(c.items.length).map(t => `<div class="ad-it">${ytHTML(t)}</div>`).join("")}</div>`).join("");
   if (TAB === "info") {

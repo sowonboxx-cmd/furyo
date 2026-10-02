@@ -473,7 +473,7 @@ function liveNews(j){
     const head = `<div class="p-head"><span class="tag">${tag}</span><span>${escN(dN(it.date))}</span>${it.pub ? `<span class="p-src">${escN(it.pub)}</span>` : ""}</div>`;
     const body = `${head}<h2 class="p-title">${escN(titre)}${jp}</h2><p class="p-text">${escN(it.texte)}</p>`;
     const inner = it.cover ? `<div class="p-split"><img class="cover" src="/api/couv?u=${encodeURIComponent(it.cover)}" alt="Couverture de ${escN(titre)}" loading="lazy"><div class="p-body">${body}</div></div>` : body;
-    return `<li class="post" id="n-${escN(it.id)}" data-type="${it.type}" data-id="${it.type}-${slugN(titre)}" style="--c:var(${c})">${inner}<div class="p-foot"><a class="series" href="/series/${slugN(it.titre)}">${escN(titre)}</a></div></li>`;
+    return `<li class="post" id="n-${escN(it.id)}" data-type="${it.type}" data-id="${it.type}-${slugN(titre)}" style="--c:var(${c})">${inner}<div class="p-foot"><a class="series" href="/series/${slugN(it.titre)}">${escN(titre)}</a>${it.src ? `<a class="src" href="${escN(it.src)}" target="_blank" rel="noopener">Source : ${escN(it.srcName || "officielle")} ↗</a>` : ""}</div></li>`;
   }).join("");
   feedEl.insertAdjacentHTML("afterbegin", html);
   if (lic.length) {

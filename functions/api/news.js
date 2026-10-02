@@ -1,6 +1,7 @@
 // GET /api/news : news validées par Will dans la base Veille (Statut « Validé » ou « Appliqué », Type « News »).
-// Rien n'apparaît sur le site sans validation. Les sources restent dans Notion : elles ne sont pas renvoyées.
+// Rien n'apparaît sur le site sans validation. Seule la source officielle est publiée (décision de Will, 02/10/2026).
 import { text, date, rel, queryAll, cached } from "../../lib/notion.js";
+import { sourceName } from "../../lib/source.js";
 
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
 
@@ -38,6 +39,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
       return {
         id: r.id.replace(/-/g, ""), type: licence ? "licence" : "news", date: date(p["Date de la news"]),
         titre: s.t || prop, fr: s.fr, jp: s.jp, pub, label, t1, cover, texte: text(p["Résumé FR"]),
+        // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
+        src: text(p["Source officielle"]), srcName: sourceName(text(p["Source officielle"])),
       };
     });
     return { items };
