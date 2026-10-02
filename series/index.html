@@ -33,8 +33,13 @@ button{font:inherit;color:inherit}
 .brand{font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:.02em;text-decoration:none;text-transform:uppercase}
 .brand span{color:var(--red)}
 
+/* Fil d'Ariane */
+.crumb{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--paper-3);white-space:nowrap;overflow:hidden}
+.crumb a{color:var(--paper-2);text-decoration:none;font-weight:600}
+.crumb a:hover{color:var(--paper)}
+.crumb [aria-current]{overflow:hidden;text-overflow:ellipsis;color:var(--paper-3)}
 /* En-tête : petite couverture à gauche, infos à droite, fond uni du site */
-.head{display:grid;grid-template-columns:114px minmax(0,1fr);gap:14px;margin-top:10px;align-items:start}
+.head{display:grid;grid-template-columns:114px minmax(0,1fr);gap:14px;margin-top:12px;align-items:start}
 @media (min-width:720px){.head{grid-template-columns:246px minmax(0,1fr);gap:28px;margin-top:28px}}
 .main-cv{width:100%;aspect-ratio:5/7;border-radius:8px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
 @media (min-width:720px){.main-cv{border-radius:14px}}
@@ -228,6 +233,19 @@ let TAB = "syn", ASC = true;
 
 // Titre affiché : le titre FR, sauf quand le titre de la série s'écrit en capitales (CROWS, WORST…).
 const shown = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
+// Fil d'Ariane : page d'où l'on vient (Calendrier, Actualité, Séries par défaut) / titre de la série.
+function crumb(titre){
+  let from = { href: "/series/", label: "Séries" };
+  try {
+    const r = document.referrer ? new URL(document.referrer) : null;
+    if (r && r.origin === location.origin) {
+      if (r.pathname.startsWith("/calendrier")) from = { href: "/calendrier/", label: "Calendrier" };
+      else if (r.pathname === "/" || r.pathname === "/index.html") from = { href: "/", label: "Actualité" };
+      else if (r.pathname.startsWith("/auteurs")) from = { href: r.pathname, label: "Mangakas" };
+    }
+  } catch (e) {}
+  return `<nav class="crumb" aria-label="Fil d'Ariane"><a href="${from.href}" data-back>${from.label}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(titre)}</span></nav>`;
+}
 function render(){
   const { serie: s, editions: eds } = DATA;
   const titre = shown(s);
@@ -241,6 +259,7 @@ function render(){
   const ad = ADAPT(s);
   if (TAB === "ad" && !ad.length) TAB = "syn";
   document.getElementById("app").innerHTML = `
+  ${crumb(titre)}
   <div class="head">
     <div class="main-cv">${mainCover(s, eds)}</div>
     <div>
@@ -313,6 +332,8 @@ function renderTomes(){
         ${o && o.date ? `<span class="t-o">${FLAGS[other]}${esc(dTxt(o))}</span>` : ""}</li>`; }).join("")}</ul>` : `<p class="empty">Aucun tome renseigné pour l'instant.</p>`}`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
 }
 document.addEventListener("click", e => {
+  const bk = e.target.closest("a[data-back]");
+  if (bk && document.referrer && new URL(document.referrer).pathname === bk.getAttribute("href") && history.length > 1) { e.preventDefault(); history.back(); return; }
   const yt = e.target.closest(".yt[data-yt]");
   if (yt) { yt.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${yt.dataset.yt}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Bande-annonce"></iframe>`; yt.removeAttribute("data-yt"); return; }
   const tb = e.target.closest(".tabs button");
