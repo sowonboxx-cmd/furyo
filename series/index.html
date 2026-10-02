@@ -49,7 +49,11 @@ h1{margin:0;font-family:var(--f-body);font-weight:700;font-size:clamp(19px,5vw,3
 .credits dd{margin:0;font-weight:600}
 .credits a{text-decoration:none}
 /* Statuts : texte simple, intégré (pas de pastille) */
-.tg{margin:6px 0 0;font-size:12.5px;color:var(--paper-3);line-height:1.4}
+.tags{margin-top:14px;display:flex;gap:6px;align-items:center;white-space:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.tags::-webkit-scrollbar{display:none}
+.tags b,.tags span{flex:none;height:24px;padding:0 9px;border-radius:7px;display:inline-flex;align-items:center;font-size:12px;font-weight:600}
+.tags b{background:var(--red);color:#fff;font-weight:700}
+.tags span{background:var(--ink-3);color:var(--paper-2)}
 .st{margin:8px 0 0;display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--paper-2)}
 .st span{display:block;line-height:1.35}
 .st .flag{display:inline-block;vertical-align:-1px;width:15px;height:10px;border-radius:2px;margin-right:6px}
@@ -236,7 +240,6 @@ function render(){
       <h1>${esc(titre)}</h1>
       ${s.jp ? `<p class="jp" lang="ja">${esc(s.jp)}</p>` : ""}
       <dl class="credits">${same ? `<dt>Auteur</dt><dd>${authorLink(s.scen)}</dd>` : `${s.scen ? `<dt>Scénario</dt><dd>${authorLink(s.scen)}</dd>` : ""}${s.dess ? `<dt>Dessin</dt><dd>${authorLink(s.dess)}</dd>` : ""}`}</dl>
-      ${s.type || (s.genres || []).length ? `<p class="tg">${esc([s.type, (s.genres || []).join(", ")].filter(Boolean).join(" · "))}</p>` : ""}
       <div class="st">${ligne("France", s, eds)}${ligne("Japon", s, eds)}</div>
     </div>
   </div>
@@ -280,7 +283,9 @@ function panel(s, pubFR, pubJP, eds, ad){
     return `<table class="cmp"><thead><tr><th></th>${hasFR ? `<th><span>${FLAGS.France}France</span></th>` : ""}<th><span>${FLAGS.Japon}Japon</span></th></tr></thead>
     <tbody>${rows.map(([k, jp, fr]) => `<tr><th>${k}</th>${hasFR ? cell(fr) : ""}${cell(jp)}</tr>`).join("")}</tbody></table>`;
   }
-  return s.resume ? `<p class="resume">${esc(s.resume)}</p>` : `<p class="resume">Synopsis à venir.</p>`;
+  // Sous le synopsis : une seule ligne, le type (Seinen, Shonen…) mis en avant puis les genres (défile si trop long).
+  const tags = s.type || (s.genres || []).length ? `<div class="tags">${s.type ? `<b>${esc(s.type)}</b>` : ""}${(s.genres || []).map(g => `<span>${esc(g)}</span>`).join("")}</div>` : "";
+  return (s.resume ? `<p class="resume">${esc(s.resume)}</p>` : `<p class="resume">Synopsis à venir.</p>`) + tags;
 }
 function renderTomes(){
   const { serie: s, editions: eds } = DATA;
