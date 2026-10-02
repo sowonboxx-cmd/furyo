@@ -35,6 +35,13 @@ export async function onRequestGet({ request, env }) {
     const o = parus[k] = parus[k] || { n: new Set(), sansCouv: new Set() };
     o.n.add(n); if (!text(q["Couverture"])) o.sansCouv.add(n);
   }
+  // Couverture d'illustration : le plus petit tome qui en a une, France avant Japon (parus ou à paraître).
+  const best = {};
+  for (const t of tRows) {
+    const q = t.properties, ed = eds[rel(q["Édition"])[0]], c = text(q["Couverture"]); if (!ed || !ed.serie || !c) continue;
+    const sc = (num(q["N°"]) ?? 999) * 2 + (ed.pays === "France" ? 0 : 1);
+    if (!best[ed.serie] || sc < best[ed.serie].sc) best[ed.serie] = { sc, c };
+  }
   const items = rows.map(r => {
     const p = r.properties || {}, t = text(p["SERIES"]), id = nid(r.id);
     const stFR = text(p["Statut France"]), enFrance = /cours|termin|stopp/i.test(stFR);
@@ -50,17 +57,17 @@ export async function onRequestGet({ request, env }) {
       ["Magazine", !!text(p["Magazine"])],
       ["Statut Japon", !!text(p["Statut Japon"])],
       ["Extrait JP", !!text(p["Lecture essai (試し読み)"]) || check(p["Pas d'extrait JP"])],
-      [tJP ? `Tomes JP dans Notion : ${jp.n.size} sur ${tJP} parus` : "Tomes JP : nombre total à remplir", !!tJP && jp.n.size >= tJP],
-      [jp.sansCouv.size ? `Couvertures JP : ${jp.sansCouv.size} tome${jp.sansCouv.size > 1 ? "s" : ""} sans couverture` : "Couvertures JP des tomes saisis", jp.n.size > 0 && jp.sansCouv.size === 0],
+      [tJP ? `Tomes JP ${jp.n.size}/${tJP}` : "Tomes JP (total ?)", !!tJP && jp.n.size >= tJP],
+      [jp.sansCouv.size ? `Couvertures JP (${jp.sansCouv.size} manq.)` : "Couvertures JP", jp.n.size > 0 && jp.sansCouv.size === 0],
     ];
     const aut = rel(p["Auteurs"]);
-    oblig.push([aut.length ? `Réseaux des auteurs cherchés (${aut.filter(a => auteurOk[a]).length}/${aut.length})` : "Auteurs reliés à la base Auteurs", aut.length > 0 && aut.every(a => auteurOk[a])]);
+    oblig.push([aut.length ? `SNS des auteurs ${aut.filter(a => auteurOk[a]).length}/${aut.length}` : "SNS des auteurs (aucun relié)", aut.length > 0 && aut.every(a => auteurOk[a])]);
     // Légendes des réseaux pour le post « Nouvelle fiche ».
     oblig.push(["Légende Instagram", !!text(p["Légende Instagram"])], ["Légende TikTok", !!text(p["Légende TikTok"])], ["Légende X", !!text(p["Légende X"])]);
     if (enFrance) oblig.push(
       ["Extrait FR", !!text(p["Extrait FR"]) || check(p["Pas d'extrait FR"])],
-      [tFR ? `Tomes FR dans Notion : ${fr.n.size} sur ${tFR} parus` : "Tomes FR : nombre total à remplir", !!tFR && fr.n.size >= tFR],
-      [fr.sansCouv.size ? `Couvertures FR : ${fr.sansCouv.size} tome${fr.sansCouv.size > 1 ? "s" : ""} sans couverture` : "Couvertures FR des tomes saisis", fr.n.size > 0 && fr.sansCouv.size === 0],
+      [tFR ? `Tomes FR ${fr.n.size}/${tFR}` : "Tomes FR (total ?)", !!tFR && fr.n.size >= tFR],
+      [fr.sansCouv.size ? `Couvertures FR (${fr.sansCouv.size} manq.)` : "Couvertures FR", fr.n.size > 0 && fr.sansCouv.size === 0],
     );
     return {
       id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugify(t),
@@ -68,7 +75,7 @@ export async function onRequestGet({ request, env }) {
       leg: { ig: text(p["Légende Instagram"]), tt: text(p["Légende TikTok"]), x: text(p["Légende X"]) },
       lot: text(p["Lot"]), trouver: text(p["À trouver"]), coeur: check(p["Prochaine à traiter"]), editions: rel(p["Éditions"]).length,
       oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),
-      cover: text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), stJP: text(p["Statut Japon"]), stFR,
+      cover: best[id]?.c || text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), stJP: text(p["Statut Japon"]), stFR,
     };
   }).filter(s => s.t).sort((a, b) => a.t.localeCompare(b.t, "fr"));
   return json({ items });

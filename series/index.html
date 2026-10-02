@@ -200,9 +200,10 @@ function coverUrl(s, eds){
   return (t1("France") || t1("Japon"))?.cover || s.cover1 || eds.flatMap(e => e.tomes).find(t => t.cover)?.cover || "";
 }
 function mainCover(s, eds){
-  const t1 = p => (eds.find(e => e.pays === p)?.tomes || []).find(t => t.n === 1 && t.cover);
+  // Couverture de présentation : l'édition française d'abord (son plus petit tome illustré), le Japon seulement s'il n'y a pas de France.
+  const first = p => eds.filter(e => e.pays === p).flatMap(e => e.tomes).filter(t => t.cover).sort((a, b) => (a.n ?? 999) - (b.n ?? 999))[0];
   const any = eds.flatMap(e => e.tomes).find(t => t.cover);
-  const c = (t1("France") || t1("Japon"))?.cover || s.cover1 || any?.cover;
+  const c = (first("France") || first("Japon"))?.cover || s.cover1 || any?.cover;
   const ph = `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`;
   return c ? `<img src="${couv(c)}" alt="" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">` : ph;
 }
