@@ -20,7 +20,9 @@ export async function onRequestGet({ request, env }) {
   ]);
   // Auteurs dont les réseaux ont été cherchés (date remplie, même si aucun compte n'existe).
   const auteurOk = {};
-  for (const a of aRows) auteurOk[nid(a.id)] = !!date(a.properties["Réseaux vérifiés le"]);
+  // Un auteur compte comme fait s'il a au moins un compte, ou si « Pas de réseaux » est coché, ou si la recherche est datée.
+  for (const a of aRows) { const q = a.properties;
+    auteurOk[nid(a.id)] = ["X (Twitter)", "Instagram", "TikTok", "Facebook", "YouTube", "Site officiel"].some(k => !!text(q[k])) || check(q["Pas de réseaux"]) || !!date(q["Réseaux vérifiés le"]); }
   const today = new Date().toISOString().slice(0, 10);
   // Tomes parus par série et par pays : numéros distincts, et ceux sans couverture.
   const eds = {};
@@ -53,8 +55,8 @@ export async function onRequestGet({ request, env }) {
     ];
     const aut = rel(p["Auteurs"]);
     oblig.push([aut.length ? `Réseaux des auteurs cherchés (${aut.filter(a => auteurOk[a]).length}/${aut.length})` : "Auteurs reliés à la base Auteurs", aut.length > 0 && aut.every(a => auteurOk[a])]);
-    // Légendes des réseaux pour le post « Nouvelle fiche » (X facultatif tant que le compte n'est pas lancé).
-    oblig.push(["Légende Instagram", !!text(p["Légende Instagram"])], ["Légende TikTok", !!text(p["Légende TikTok"])]);
+    // Légendes des réseaux pour le post « Nouvelle fiche ».
+    oblig.push(["Légende Instagram", !!text(p["Légende Instagram"])], ["Légende TikTok", !!text(p["Légende TikTok"])], ["Légende X", !!text(p["Légende X"])]);
     if (enFrance) oblig.push(
       ["Extrait FR", !!text(p["Extrait FR"]) || check(p["Pas d'extrait FR"])],
       [tFR ? `Tomes FR dans Notion : ${fr.n.size} sur ${tFR} parus` : "Tomes FR : nombre total à remplir", !!tFR && fr.n.size >= tFR],
