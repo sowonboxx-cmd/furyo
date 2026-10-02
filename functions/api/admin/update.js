@@ -21,6 +21,10 @@ export async function onRequestPost({ request, env }) {
   if (typeof b.lot === "string") props["Lot"] = rt(b.lot);
   if (typeof b.trouver === "string") props["À trouver"] = rt(b.trouver);
   if (typeof b.coeur === "boolean") props["Prochaine à traiter"] = { checkbox: b.coeur };
+  // Légendes des réseaux (depuis le Studio « Nouvelle fiche »).
+  if (typeof b.legIG === "string") props["Légende Instagram"] = rt(b.legIG);
+  if (typeof b.legTT === "string") props["Légende TikTok"] = rt(b.legTT);
+  if (typeof b.legX === "string") props["Légende X"] = rt(b.legX);
   if (!Object.keys(props).length) return json({ error: "rien à changer" }, 400);
   const r = await fetch(`https://api.notion.com/v1/pages/${b.id}`, {
     method: "PATCH",
@@ -30,7 +34,7 @@ export async function onRequestPost({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // Le site se met à jour tout de suite : on jette les versions en cache des listes publiques.
   const c = caches.default;
-  await Promise.all(["/api/series?v=2", "/api/avancement", "/api/calendrier", "/api/serie-index", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/series?v=3", "/api/avancement", "/api/calendrier", "/api/serie-index", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   const p = (await r.json()).properties || {};
   return json({ ok: true, publier: !!(p["Publier"] || {}).checkbox, etat: ((p["Avancement"] || {}).select || {}).name || "À faire", date: ((p["Date de publication"] || {}).date || {}).start || "" });
 }

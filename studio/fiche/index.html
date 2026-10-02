@@ -33,6 +33,15 @@ button.main{background:var(--red)}
 .frame .safe{position:absolute;left:0;right:0;pointer-events:none;background:repeating-linear-gradient(45deg,rgba(255,80,80,.18) 0 6px,transparent 6px 12px);display:none}
 .show-safe .frame .safe{display:block}
 
+/* Légendes réseaux */
+.caps{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.cap-b h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cap-b h2 span{font-weight:600;letter-spacing:0;text-transform:none}
+.cap-b h2 span.over{color:#F08A7E}
+.cap-b textarea{width:100%;min-height:300px;border:0;border-radius:14px;background:var(--ink-2);color:var(--paper);font:inherit;font-size:14px;line-height:1.5;padding:14px;resize:vertical}
+.cap-b button{height:34px;font-size:12px}
+.cap-act{display:flex;gap:8px;align-items:center;margin-top:14px}
+.cap-act small{color:var(--paper-3)}
 /* ---------- Carte « Dossier » ---------- */
 .card{width:1080px;height:1440px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;display:flex;flex-direction:column;
   --bg:#F2EFE9;--fg:#0c0c0e;--muted:rgba(12,12,14,.58);--track:rgba(12,12,14,.12);--on:#0c0c0e;--res:#26262a;--bar:#0c0c0e;
@@ -101,6 +110,8 @@ button.main{background:var(--red)}
     <button class="main" id="dlAll">Télécharger les 4 PNG</button>
   </div>
   <div class="pair" id="pair"></div>
+  <div class="cap-act"><button class="main" id="saveCaps">Enregistrer les légendes dans Notion</button><small id="capMsg">Modifie les textes si besoin avant d'enregistrer (il faut être connecté au back-office).</small></div>
+  <div class="caps" id="caps"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
 <script>
@@ -167,15 +178,82 @@ function draw(){
   const go = () => document.querySelectorAll(".frame .card").forEach(polish);
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(go);
 }
+// ---------- Légendes « Nouvelle fiche » ----------
+// Tant que les comptes membres ne sont pas ouverts, on n'invite pas encore à s'inscrire.
+const MEMBRES_OUVERTS = false;
+const SITE = "furyo.pages.dev";
+const TAGS = { "Furyō": ["furyo", "yankee"], "Furyō Old School": ["furyo"], "Yakuza": ["yakuza"], "Bōsōzoku": ["bosozoku"], "Crime": ["crime"], "Underground": ["underground"], "Gang": ["gang"], "Arts Martiaux": ["artsmartiaux"], "Combat de rue": ["streetfight"], "Thriller": ["thriller"], "Policier": ["polar"], "Drogue": ["drogue"], "Prison": ["prison"], "Lycée": ["lycee"], "Moto": ["moto"] };
+const tagOf = t => "#" + String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]/g, "");
+const phrases = (txt, n) => (String(txt || "").match(/[^.!?…]+[.!?…]+(\s|$)/g) || [txt || ""]).slice(0, n).join("").trim();
+function caps(d){
+  const url = `${SITE}/series/${d.slug}`;
+  const auteurs = d.scen && d.dess && d.scen !== d.dess ? `Histoire ${d.scen} · Dessin ${d.dess}` : (d.scen || d.dess || "");
+  const infos = [d.type, (d.genres || []).slice(0, 3).join(", "), d.y1 ? "depuis " + d.y1 : ""].filter(Boolean).join(" · ");
+  const pays = [d.pubJP ? `🇯🇵 ${d.pubJP}${d.tomesJP ? ` (${d.tomesJP} tomes)` : ""}` : "", (d.pubs || []).length ? `🇫🇷 ${d.pubs.join(", ")}` : "🇫🇷 Pas encore en France"].filter(Boolean).join("\n");
+  const tags = [...new Set([tagOf(d.t), "#manga", ...(d.genres || []).flatMap(g => (TAGS[g] || []).map(x => "#" + x)), d.type ? tagOf(d.type).toLowerCase() : "", "#FuryoGang"].filter(Boolean))];
+  const membre = MEMBRES_OUVERTS ? "\n👉 Crée ton compte gratuit sur le site pour suivre tes séries." : "";
+  const ig = `🆕 NOUVELLE FICHE · ${d.t.toUpperCase()}${d.jp ? ` (${d.jp})` : ""}
+
+${phrases(d.resume, 2)}
+
+✍️ ${auteurs}
+📚 ${infos}
+${pays}
+
+📖 La fiche complète (tous les tomes, extraits, adaptations) est sur le site : lien en bio.${membre}
+
+Fiche n°${d.n} sur ${d.tot} · de nouvelles fiches chaque semaine.
+
+${tags.concat(["#mangafr"]).slice(0, 12).join(" ")}`;
+  const tt = `🆕 Nouvelle fiche : ${d.t}${d.jp ? ` (${d.jp})` : ""}
+
+${phrases(d.resume, 1)}
+
+${auteurs}
+Tout sur la série : lien en bio 📖${membre}
+
+${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf(v) === i).slice(0, 8).join(" ")}`;
+  // X : 280 caractères, un lien compte pour 23. On raccourcit le résumé jamais le reste.
+  const xBase = r => `🆕 Nouvelle fiche : ${d.t}${infos ? ` (${[d.type, d.y1].filter(Boolean).join(", ")})` : ""}\n\n${r}${r ? "\n\n" : ""}Tout sur la série 👉 ${url}\n${tags.slice(0, 3).join(" ")}`;
+  const xLen = t => t.replace(url, "x".repeat(23)).length;
+  let r = phrases(d.resume, 1), x = xBase(r);
+  while (xLen(x) > 280 && r) { r = r.split(" ").slice(0, -1).join(" "); x = xBase(r ? r.replace(/[,;:]?$/, "…") : ""); }
+  return { ig, tt, x, xLen };
+}
+function drawCaps(){
+  if (!cur) return;
+  const c = caps(cur);
+  const box = (k, nom, txt, count) => `<div class="cap-b"><h2>${nom} <span id="n-${k}"></span><button data-copy="${k}">Copier</button></h2><textarea id="c-${k}" data-k="${k}">${esc(txt)}</textarea></div>`;
+  document.getElementById("caps").innerHTML = box("ig", "Instagram", c.ig) + box("tt", "TikTok", c.tt) + box("x", "X (280 max)", c.x);
+  const count = () => {
+    const t = document.getElementById("c-x").value, n = c.xLen(t);
+    const el = document.getElementById("n-x"); el.textContent = n + " / 280"; el.className = n > 280 ? "over" : "";
+    ["ig", "tt"].forEach(k => { document.getElementById("n-" + k).textContent = document.getElementById("c-" + k).value.length + " car."; });
+  };
+  document.getElementById("caps").oninput = count; count();
+}
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-copy]"); if (!b) return;
+  try { await navigator.clipboard.writeText(document.getElementById("c-" + b.dataset.copy).value); b.textContent = "Copié ✓"; setTimeout(() => { b.textContent = "Copier"; }, 1500); } catch (err) {}
+});
+document.getElementById("saveCaps").onclick = async () => {
+  const msg = document.getElementById("capMsg"); if (!cur || !cur.id) { msg.textContent = "Série inconnue."; return; }
+  msg.textContent = "Enregistrement…";
+  try {
+    const r = await fetch("/api/admin/update", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: cur.id, slug: cur.slug, legIG: document.getElementById("c-ig").value, legTT: document.getElementById("c-tt").value, legX: document.getElementById("c-x").value }) });
+    const j = await r.json().catch(() => ({}));
+    msg.textContent = r.status === 401 ? "Connecte-toi d'abord au back-office (/admin/), puis réessaie." : r.ok ? "Légendes enregistrées dans Notion ✓" : (j.error || "Erreur");
+  } catch (err) { msg.textContent = "Erreur réseau."; }
+};
 async function pick(slug){
   const s = LIST.find(x => x.slug === slug) || LIST[0]; if (!s) return;
   const rang = AV && (AV.series || []).find(x => x.slug === s.slug);
-  cur = { slug: s.slug, t: shown(s), jp: s.jp, cover: s.cover, type: s.type, genres: s.genres || [], y1: s.y1,
+  cur = { id: s.id, slug: s.slug, t: shown(s), jp: s.jp, cover: s.cover, type: s.type, genres: s.genres || [], y1: s.y1,
     pubs: parts((s.pubFR || "").replace(/\s*\([^)]*\)/g, "")),
     n: rang ? rang.rang : (AV ? AV.enLigne : 1), tot: AV ? AV.total : 600, scen: "", dess: "", resume: "" };
   document.getElementById("n").value = cur.n; document.getElementById("tot").value = cur.tot;
-  history.replaceState(null, "", "?s=" + s.slug); draw();
-  try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resume || ""; draw(); } } catch (e) {}
+  history.replaceState(null, "", "?s=" + s.slug); draw(); drawCaps();
+  try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resume || ""; cur.pubJP = j.serie.pubJP || ""; cur.tomesJP = j.serie.tomesJP; draw(); drawCaps(); } } catch (e) {}
 }
 async function dl(key){
   const [th, fm] = key.split("-"), [w, h] = SIZE[fm];
@@ -186,8 +264,8 @@ async function dl(key){
 document.addEventListener("click", e => { const b = e.target.closest("[data-dl]"); if (b) dl(b.dataset.dl); });
 document.getElementById("dlAll").onclick = async () => { for (const [th, fm] of VARIANTS) await dl(th + "-" + fm); };
 document.getElementById("sel").onchange = e => pick(e.target.value);
-document.getElementById("n").oninput = e => { cur.n = Math.max(1, +e.target.value || 1); draw(); };
-document.getElementById("tot").oninput = e => { cur.tot = Math.max(cur.n, +e.target.value || cur.n); draw(); };
+document.getElementById("n").oninput = e => { cur.n = Math.max(1, +e.target.value || 1); draw(); drawCaps(); };
+document.getElementById("tot").oninput = e => { cur.tot = Math.max(cur.n, +e.target.value || cur.n); draw(); drawCaps(); };
 document.getElementById("safe").onchange = e => document.body.classList.toggle("show-safe", e.target.checked);
 addEventListener("resize", fit);
 Promise.all([fetch("/api/series").then(r => r.json()), fetch("/api/avancement").then(r => r.json()).catch(() => null)]).then(([l, a]) => {

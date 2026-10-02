@@ -9,7 +9,7 @@ const nid = id => id.replace(/-/g, "");
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
-  return cached(request, waitUntil, "/api/series?v=2", 600, async () => {
+  return cached(request, waitUntil, "/api/series?v=3", 600, async () => {
     const [sRows, eRows, tRows] = await Promise.all([
       queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: filtreVisible() } }),
       queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
@@ -28,7 +28,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     }
     const items = sRows.map(r => {
       const p = r.properties, id = nid(r.id), t = text(p["SERIES"]);
-      return { slug: slugify(t), t, jp: text(p["Titre Original"]), stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]),
+      return { id, slug: slugify(t), t, jp: text(p["Titre Original"]), stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]),
         pubFR: list(p["Éditeur Français"]).join(", "), cover: best[id]?.cover || text(p["Couverture T1"]),
         type: text(p["Type"]), genres: list(p["Genre"]), y1: num(p["Année Début"]),
         // Pays : une édition dans ce pays, ou (France) une licence en cours / terminée / annoncée.
