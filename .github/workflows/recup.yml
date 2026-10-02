@@ -21,6 +21,7 @@ jobs:
           curl -sSL "https://api.openbd.jp/v1/get?isbn=$(cat recup/isbn.txt)" -o recup/out/openbd.json || true
           python3 -c "import json;d=json.load(open('recup/out/openbd.json'));print('\n'.join(f\"{x['summary']['isbn']} {x['summary'].get('cover','')} {x['summary'].get('pubdate','')}\" for x in d if x))" > recup/out/openbd.txt || true
           while read -r isbn url rest; do [ -n "$url" ] && curl -sSL -o "recup/out/openbd-$isbn.jpg" "$url"; done < recup/out/openbd.txt
+          for f in recup/out/pg-*.html; do [ -f "$f" ] || continue; n=$(basename "$f" .html); u=$(grep -oiE 'property="og:image"[^>]*content="[^"]+"|content="[^"]+"[^>]*property="og:image"' "$f" | grep -oE 'https?://[^"]+' | head -1); [ -n "$u" ] && echo "$n $u" >> recup/out/og.txt && curl -sSL -A "Mozilla/5.0" -o "recup/out/og-${n#pg-}.jpg" "$u"; done
           ls -la recup/out > recup/out/index.txt; exit 0
       - name: Commit
         run: |
