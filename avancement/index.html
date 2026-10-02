@@ -89,12 +89,12 @@ function render(a, list){
     <div class="kpi"><div><b>+${a.semaine}</b><span>cette semaine</span></div><div><b>${nf(a.reste)}</b><span>encore à faire</span></div><div><b>${nf(a.enPreparation)}</b><span>en préparation</span></div></div>
   </section>
   <h2>Cette semaine <small>${a.semaine ? `${a.semaine} nouvelle${a.semaine > 1 ? "s" : ""} fiche${a.semaine > 1 ? "s" : ""}` : ""}</small></h2>
-  ${wk.length ? `<ul class="grid">${wk.map(s => card(s, cov, true)).join("")}</ul>` : `<p class="empty">Les prochaines fiches arrivent lundi : une par jour, du lundi au vendredi.</p>`}
+  ${wk.length ? `<ul class="grid">${wk.map(s => card(s, cov, true)).join("")}</ul>` : `<p class="empty">De nouvelles fiches arrivent chaque semaine. Reviens vite !</p>`}
   <h2>Semaine après semaine</h2>
   <div class="chart" role="img" aria-label="Fiches publiées par semaine">${a.parSemaine.map((w, i) => `<div${i === a.parSemaine.length - 1 ? ' class="now"' : ""}><b>${w.n || ""}</b><i style="height:${Math.round(w.n / max * 80)}%"></i><span>${i === a.parSemaine.length - 1 ? "Auj." : (d => d.getDate() + "/" + (d.getMonth() + 1))(new Date(w.du + "T12:00:00"))}</span></div>`).join("")}</div>
   ${a.recentes.length ? `<h2>Dernières fiches</h2><ul class="grid">${a.recentes.map(s => card(s, cov, a.semaineSeries.some(x => x.slug === s.slug))).join("")}</ul>` : ""}
   <h2>Comment ça marche</h2>
-  <div class="how">La base FuryoGang compte <b>${nf(a.total)} séries</b> furyō, yakuza et crime. Chaque fiche est vérifiée sur les sources officielles avant d'être mise en ligne : résumé de l'éditeur, auteurs, tous les tomes avec leurs couvertures, extraits, adaptations. <b>Une nouvelle fiche chaque jour, du lundi au vendredi.</b>
+  <div class="how">La base FuryoGang compte <b>${nf(a.total)} séries</b> furyō, yakuza et crime. Chaque fiche est vérifiée sur les sources officielles avant d'être mise en ligne : résumé de l'éditeur, auteurs, tous les tomes avec leurs couvertures, extraits, adaptations. <b>De nouvelles fiches arrivent chaque semaine.</b>
   <br><a class="cta" href="/series/">Voir les ${nf(a.enLigne)} séries en ligne</a></div>`;
 }
 const keep = (() => { try { return JSON.parse(localStorage.getItem("av-data") || "null"); } catch (e) { return null; } })();

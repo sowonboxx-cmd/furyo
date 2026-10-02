@@ -138,7 +138,7 @@ function card(d, theme, fmt){
       <div class="res">${d.resume ? `<p><b>Résumé</b>${esc(d.resume)}</p>` : ""}</div>
       <div class="prog"><div class="row"><span class="A">La base FuryoGang · ${d.n} <span>/ ${d.tot}</span></span><span class="A">${pctTxt(d)}</span></div>
         <div class="seg">${Array.from({ length: 20 }, (_, i) => i + 1 <= Math.floor(p) ? '<i class="on"></i>' : i < p ? `<i class="part" style="--p:${Math.round((p - i) * 100)}%"></i>` : "<i></i>").join("")}</div>
-        <div class="cap">Une nouvelle fiche chaque jour, du lundi au vendredi</div></div>
+        <div class="cap">De nouvelles fiches chaque semaine</div></div>
     </div></div>`;
 }
 // Mise en page fine, une fois les polices chargées : titre sur 2 lignes maximum, chaque info sur une seule ligne
