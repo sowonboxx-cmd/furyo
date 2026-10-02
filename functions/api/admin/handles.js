@@ -2,13 +2,12 @@
 // pour mettre les @mentions dans les légendes du Studio (connecté au back-office seulement).
 import { text, rel } from "../../../lib/notion.js";
 import { json, isAdmin } from "../../../lib/admin.js";
+import { handle } from "../../../lib/mentions.js";
 
 async function page(token, id) {
   const r = await fetch(`https://api.notion.com/v1/pages/${id}`, { headers: { Authorization: `Bearer ${token}`, "Notion-Version": "2022-06-28" } });
   return r.ok ? r.json() : null;
 }
-// https://x.com/compte → compte (sans @), pareil pour Instagram et TikTok.
-const handle = u => { const m = String(u || "").match(/(?:x|twitter|instagram|tiktok)\.com\/@?([A-Za-z0-9_.]+)/i); return m ? m[1] : ""; };
 
 export async function onRequestGet({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);

@@ -3,21 +3,31 @@
 import { text, num, date, check, rel, list, queryAll, slugify } from "../../../lib/notion.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 import { estVisible } from "../../../lib/site.js";
+import { handle, mentionList, syncMentions } from "../../../lib/mentions.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
+const EDITEURS = { dataSource: "16e967fc-8e7b-4b7c-ab98-6a25cbdcd75a", database: "c9dc1efdf33d4ad09711d20d55860d52" };
+const rt = s => ({ rich_text: s ? [{ type: "text", text: { content: String(s).slice(0, 1900) } }] : [] });
 const nid = id => id.replace(/-/g, "");
 
-export async function onRequestGet({ request, env }) {
+export async function onRequestGet({ request, env, waitUntil }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
-  const [rows, eRows, tRows, aRows] = await Promise.all([
+  const [rows, eRows, tRows, aRows, pRows] = await Promise.all([
     queryAll(env.NOTION_TOKEN, { ...SERIES }),
     queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
     queryAll(env.NOTION_TOKEN, { ...TOMES }),
     queryAll(env.NOTION_TOKEN, { ...AUTEURS }),
+    queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []),
   ]);
+  // Comptes officiels (X, Instagram, TikTok) des auteurs et des éditeurs / magazines, pour les @ des légendes.
+  const acc = q => ({ x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])) });
+  const comptes = {};
+  for (const a of aRows) comptes[nid(a.id)] = acc(a.properties);
+  for (const e of pRows) comptes[nid(e.id)] = acc(e.properties);
+  const aMettreAJour = [];
   // Auteurs dont les réseaux ont été cherchés (date remplie, même si aucun compte n'existe).
   const auteurOk = {};
   // Un auteur compte comme fait s'il a au moins un compte, ou si « Pas de réseaux » est coché, ou si la recherche est datée.
@@ -61,6 +71,13 @@ export async function onRequestGet({ request, env }) {
       [jp.sansCouv.size ? `Couvertures JP (${jp.sansCouv.size} manq.)` : "Couvertures JP", jp.n.size > 0 && jp.sansCouv.size === 0],
     ];
     const aut = rel(p["Auteurs"]);
+    // Légendes : la ligne de @ suit toujours les comptes actuels des auteurs puis des éditeurs.
+    // Si un compte a été ajouté ou changé depuis, la légende est corrigée ici et réenregistrée dans Notion.
+    const cs = [...aut, ...rel(p["Éditeurs (fiches)"])].map(k => comptes[k]).filter(Boolean);
+    const leg = { ig: text(p["Légende Instagram"]), tt: text(p["Légende TikTok"]), x: text(p["Légende X"]) };
+    const NOMS = { ig: "Légende Instagram", tt: "Légende TikTok", x: "Légende X" }, maj = {};
+    for (const k of ["ig", "tt", "x"]) { const n = syncMentions(leg[k], k, mentionList(cs, k)); if (n !== leg[k]) { leg[k] = n; maj[NOMS[k]] = rt(n); } }
+    if (Object.keys(maj).length) aMettreAJour.push([r.id, maj]);
     oblig.push([aut.length ? `SNS des auteurs ${aut.filter(a => auteurOk[a]).length}/${aut.length}` : "SNS des auteurs (aucun relié)", aut.length > 0 && aut.every(a => auteurOk[a])]);
     // Légendes des réseaux pour le post « Nouvelle fiche ».
     oblig.push(["Légende Instagram", !!text(p["Légende Instagram"])], ["Légende TikTok", !!text(p["Légende TikTok"])], ["Légende X", !!text(p["Légende X"])]);
@@ -72,11 +89,17 @@ export async function onRequestGet({ request, env }) {
     return {
       id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugify(t),
       etat: text(p["Avancement"]) || "À faire", publier: check(p["Publier"]), visible: estVisible(p), date: date(p["Date de publication"]),
-      leg: { ig: text(p["Légende Instagram"]), tt: text(p["Légende TikTok"]), x: text(p["Légende X"]) },
+      leg,
       lot: text(p["Lot"]), trouver: text(p["À trouver"]), coeur: check(p["Prochaine à traiter"]), editions: rel(p["Éditions"]).length,
       oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),
       cover: best[id]?.c || text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), stJP: text(p["Statut Japon"]), stFR,
     };
   }).filter(s => s.t).sort((a, b) => a.t.localeCompare(b.t, "fr"));
+  if (aMettreAJour.length) {
+    const save = Promise.all(aMettreAJour.map(([id, properties]) => fetch(`https://api.notion.com/v1/pages/${id}`, {
+      method: "PATCH", headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "content-type": "application/json" },
+      body: JSON.stringify({ properties }) }).catch(() => null)));
+    waitUntil ? waitUntil(save) : await save;
+  }
   return json({ items });
 }

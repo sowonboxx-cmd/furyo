@@ -97,6 +97,11 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .tog{border:0;background:transparent;color:var(--paper-3);font-size:12px;font-weight:600;cursor:pointer;padding:0}
 .count{margin:4px 0 10px;font-size:12.5px;color:var(--paper-3)}
 .empty{color:var(--paper-3);text-align:center;padding:40px 0}
+.tris{display:flex;align-items:center;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none}
+.tris span{font-size:12px;color:var(--paper-3);margin-right:2px;white-space:nowrap}
+.tris button{border:0;background:transparent;color:var(--paper-3);font:inherit;font-size:13px;font-weight:600;padding:5px 10px;border-radius:14px;cursor:pointer;white-space:nowrap}
+.tris button[aria-pressed="true"]{background:var(--ink-3);color:var(--paper)}
+.prog .pr{color:var(--ok);white-space:nowrap}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);background:#fff;color:#000;font-weight:700;font-size:14px;padding:10px 16px;border-radius:12px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
 .toast.on{opacity:1}
 /* Connexion */
@@ -116,13 +121,18 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const root = document.getElementById("root");
 const ETATS = ["À faire", "En cours", "À valider", "Validée"];
 const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>`;
+// Prête = tous les éléments ★ obligatoires sont faits, pas encore publiée : c'est là qu'on pioche chaque semaine.
+const pret = s => !s.publier && s.oblig.length > 0 && s.manque.length === 0;
 const FILTRES = [
-  ["socle", "Socle", s => s.editions > 0 && !s.publier],
+  ["socle", "Socle", s => s.editions > 0 && !s.publier && !pret(s)],
+  ["pretes", "Prêtes à publier", pret],
   ["coeur", HEART.replace("<svg ", '<svg class="hi" ') + "Coups de cœur", s => s.coeur && !s.publier],
   ["ligne", "En ligne", s => s.publier],
   ["tout", "Tout", () => true],
 ];
-let ITEMS = [], F = "socle", Q = "";
+// Tri : A→Z, presque finies d'abord (le moins à faire), ou à travailler d'abord (le plus à faire).
+const TRIS = [["az", "A → Z"], ["peu", "Presque finies"], ["beaucoup", "À travailler"]];
+let ITEMS = [], F = "socle", Q = "", T = "az";
 const slugify = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1800); }
 
@@ -152,17 +162,23 @@ function shell(){
       <div class="brand"><b>FuryoGang<span>Back-office</span></b><button class="out" id="out">Déconnexion</button></div>
       <div class="prog" id="prog"></div>
       <input class="q" id="q" type="search" placeholder="Chercher une série" autocomplete="off">
-      <div class="chips" id="chips"></div></div></header>
+      <div class="chips" id="chips"></div>
+      <div class="tris" id="tris"></div></div></header>
     <main><p class="count" id="count"></p><ul class="list" id="list"></ul></main>`;
   document.getElementById("q").oninput = e => { Q = e.target.value.trim(); draw(); };
   document.getElementById("out").onclick = async () => { await fetch("/api/admin/login", { method: "DELETE" }); login(); };
 }
 function draw(){
   const on = ITEMS.filter(s => s.publier).length, tot = ITEMS.length;
-  document.getElementById("prog").innerHTML = `<span><b>${on}</b> en ligne / ${tot}</span><span class="bar"><i style="width:${tot ? on / tot * 100 : 0}%"></i></span><span>${tot ? (on / tot * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) : 0} %</span>`;
+  const pr = ITEMS.filter(pret).length;
+  document.getElementById("prog").innerHTML = `<span><b>${on}</b> en ligne / ${tot}</span><span class="pr"><b>${pr}</b> prête${pr > 1 ? "s" : ""}</span><span class="bar"><i style="width:${tot ? on / tot * 100 : 0}%"></i></span><span>${tot ? (on / tot * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) : 0} %</span>`;
   document.getElementById("chips").innerHTML = FILTRES.map(([k, l, f]) => `<button class="chip" data-f="${k}" aria-pressed="${F === k}">${l} <small>${ITEMS.filter(f).length}</small></button>`).join("");
   const n = slugify(Q), keep = FILTRES.find(x => x[0] === F)[2];
   const list = ITEMS.filter(s => (n ? slugify([s.t, s.fr, s.jp, s.lot].join(" ")).includes(n) || (s.jp || "").includes(Q) : keep(s)));
+  const reste = s => s.manque.length;
+  if (T === "peu") list.sort((a, b) => reste(a) - reste(b) || a.t.localeCompare(b.t, "fr"));
+  if (T === "beaucoup") list.sort((a, b) => reste(b) - reste(a) || a.t.localeCompare(b.t, "fr"));
+  document.getElementById("tris").innerHTML = `<span>Trier</span>` + TRIS.map(([k, l]) => `<button data-t="${k}" aria-pressed="${T === k}">${l}</button>`).join("");
   document.getElementById("count").textContent = `${list.length} série${list.length > 1 ? "s" : ""}${n ? " trouvée" + (list.length > 1 ? "s" : "") : ""}`;
   document.getElementById("list").innerHTML = list.slice(0, 300).map(row).join("") || `<li class="empty">Rien ici pour l'instant.</li>`;
 }
@@ -201,6 +217,7 @@ async function send(s, patch, el){
   finally { draw(); }
 }
 document.addEventListener("click", e => {
+  const t = e.target.closest("[data-t]"); if (t) { T = t.dataset.t; draw(); return; }
   const c = e.target.closest(".chip[data-f]"); if (c) { F = c.dataset.f; Q = ""; const q = document.getElementById("q"); if (q) q.value = ""; draw(); return; }
   const li = e.target.closest(".it"); if (!li) return;
   const s = ITEMS.find(x => x.id === li.dataset.id);
