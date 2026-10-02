@@ -217,7 +217,7 @@ function render(){
       ${ad.length ? `<button role="tab" data-tab="ad" aria-selected="${TAB === "ad"}">Adaptations</button>` : ""}
   </div>
   <div class="panel">${panel(s, pubFR, pubJP, eds, ad)}</div>
-  <section class="sec">
+  ${eds.length ? `<section class="sec">
     <div class="sec-h"><h2>Tomes</h2>
       <div class="sec-tools">
         ${pays.length > 1 ? `<div class="seg" role="group" aria-label="Pays">${pays.map(p => `<button data-p="${p}" aria-pressed="${p === PAYS}">${FLAGS[p] || ""}${p} <small>${eds.filter(e => e.pays === p).reduce((n, e) => n + e.tomes.length, 0)}</small></button>`).join("")}</div>` : ""}
@@ -227,8 +227,8 @@ function render(){
       </div>
     </div>
     <div id="tomes"></div>
-  </section>`;
-  renderTomes();
+  </section>` : ""}`;
+  if (eds.length) renderTomes();
 }
 function panel(s, pubFR, pubJP, eds, ad){
   if (TAB === "ad") return ad.map(c => `<div class="ad-cat"><h3>${c.label}</h3>${c.items.map((it, i) => `<div class="ad-it"><b>${esc(it.t)}${it.y ? `<em>${it.y}</em>` : ""}</b>${it.d ? `<p>${esc(it.d.charAt(0).toUpperCase() + it.d.slice(1))}</p>` : ""}${c.trailers[i] ? ytHTML(c.trailers[i]) : ""}</div>`).join("")}${c.trailers.slice(c.items.length).map(t => `<div class="ad-it">${ytHTML(t)}</div>`).join("")}</div>`).join("");
