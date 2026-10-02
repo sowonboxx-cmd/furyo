@@ -320,7 +320,11 @@ function renderList(items){
     document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
       <span class="t-n">${esc(shown(s))}</span>${s.jp ? `<span class="t-d" lang="ja">${esc(s.jp)}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
-  draw(""); document.getElementById("q").addEventListener("input", e => draw(e.target.value.trim()));
+  const q = document.getElementById("q");
+  draw(""); q.addEventListener("input", e => draw(e.target.value.trim()));
+  // Au retour sur la liste (bouton précédent), on repart toujours de toutes les séries, recherche vide.
+  const reset = () => { if (q.value) { q.value = ""; draw(""); } };
+  addEventListener("pageshow", reset); setTimeout(reset, 0);
 }
 if (!slug) {
   fetch("/api/series").then(r => r.json()).then(j => renderList((j && j.items) || [])).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger les séries.</p>`; });
