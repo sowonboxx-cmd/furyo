@@ -165,11 +165,11 @@ function rowHTML(it){
   const past = it.date < today;
   const thumb = it.cover || it.visual ? `<span class="thumb">${img(it).replace("<img ", '<img style="width:100%;height:100%;object-fit:cover" ')}</span>` : `<span class="thumb" lang="ja">${esc((it.jp || "").slice(0, 5))}</span>`;
   return `<li${past ? ' class="was"' : ""}><a class="row" href="${sref(it)}" data-i="${it._i}">${dayBox(it)}${thumb}<div><div class="r-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div>${it.jp ? `<span class="r-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</span>` : ""}
-    <div class="r-meta">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : (!it.cover ? `<span class="pill wait">Couverture à venir</span>` : "")}</div></div></a></li>`;
+    <div class="r-meta">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : ""}</div></div></a></li>`;
 }
 function cardHTML(it){
   const past = it.date < today;
-  return `<li${past ? ' class="was"' : ""}><a class="card" href="${sref(it)}" data-i="${it._i}"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span>${!past && !it.cover ? `<span class="wait">Couverture à venir</span>` : ""}</div>
+  return `<li${past ? ' class="was"' : ""}><a class="card" href="${sref(it)}" data-i="${it._i}"><div class="cv">${img(it)}<span class="date">${esc(dateTxt(it))}</span></div>
     <div class="c-t"><span class="ct-n" data-full="${esc(title(it))}">${esc(title(it))}</span>${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</div></a></li>`;
 }
 let NEXT_ID = null, SHOWN = [];
@@ -239,7 +239,7 @@ function lbShow(i){
   document.getElementById("lb-in").innerHTML = `<div class="lb-cv">${cover}</div>
     <h2 class="lb-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</h2>
     ${it.jp ? `<p class="lb-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</p>` : ""}
-    <div class="lb-m">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : (!it.cover ? `<span class="pill wait">Couverture à venir</span>` : "")}</div>
+    <div class="lb-m">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : ""}</div>
     <p class="lb-d">${esc(dateLong(it))}</p>
     <a class="lb-go" href="${sref(it)}">Accéder à la série<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a>`;
   document.getElementById("lb-c").textContent = `${i + 1} / ${SHOWN.length}`;
