@@ -1,3 +1,2 @@
-v3.html https://bookwalker.jp/de33860fba-c6b6-40bf-95a6-11f2c64bb9db/
-v4.html https://bookwalker.jp/ded46e5a97-5fe8-4a33-8586-4150bd32e13e/
-v5.html https://bookwalker.jp/dee2bfae1b-0b1c-467c-9f2e-81989584c4d2/
+hd2.json https://furyo.pages.dev/api/serie?s=hell-dogs&refresh=1
+sx.json https://furyo.pages.dev/api/series?refresh=1
