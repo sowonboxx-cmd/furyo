@@ -34,7 +34,7 @@ button{font:inherit;color:inherit}
 .brand span{color:var(--red)}
 h1{margin:18px 0 2px;font-family:var(--f-display);font-weight:700;font-size:clamp(44px,12vw,72px);line-height:.95;text-transform:uppercase;letter-spacing:.01em}
 .sub{margin:0;color:var(--paper-2)}
-.bar{display:flex;gap:8px;align-items:center;margin-top:8px;padding:calc(env(safe-area-inset-top,0px) + 8px) 0 8px;position:sticky;top:0;z-index:5;background:var(--ink)}
+.bar{display:flex;gap:8px;align-items:center;margin-top:8px;padding:8px 0;position:sticky;top:var(--sh-h,0px);z-index:5;background:var(--ink)}
 .seg{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--ink-3);border-radius:14px}
 .seg button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font-weight:600;font-size:14px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
@@ -87,10 +87,8 @@ input,select,textarea{font-size:16px!important}
 </style>
 </head>
 <body>
+<script src="/site/header.js"></script>
 <div class="page">
-  <div class="top">
-    <a class="round" href="/" aria-label="Retour" onclick="if(document.referrer.startsWith(location.origin)&&history.length>1){history.back();return false}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
-  </div>
   <h1>Calendrier</h1>
   <p class="sub">Les prochaines sorties, au Japon et en France.</p>
   <div class="bar">

@@ -97,7 +97,7 @@ button{font:inherit;color:inherit}
 
 /* Colonne de droite */
 .side{display:flex;flex-direction:column;gap:12px}
-@media (min-width:980px){.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px);align-self:start}}
+@media (min-width:980px){.side{position:sticky;top:calc(var(--sh-h,0px) + 12px);align-self:start}}
 .box{background:var(--ink-2);border-radius:20px;padding:16px}
 .box h3{margin:0 0 10px;font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
 .rel{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
@@ -189,7 +189,8 @@ button{font:inherit;color:inherit}
 a.m-sub{text-decoration:none;color:var(--paper-2)}
 
 /* ---------- En-tête : Japanese × Outlaw × Manga ---------- */
-.masthead{position:relative;text-align:center;padding:6px 0 0}
+.masthead{position:relative;text-align:center;padding:10px 0 0}
+.masthead .lede{margin-top:2px!important}
 .masthead .brand{font-size:clamp(26px,7.4vw,46px);line-height:1;white-space:nowrap;margin:0}
 .masthead .brand .bt{color:var(--paper)}
 .masthead .brand{min-height:44px;display:flex;align-items:center;justify-content:center}
@@ -213,20 +214,13 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 
 </head>
 <body>
+<script src="/site/header.js"></script>
 <div class="page">
   <header class="masthead">
-    <h1 class="brand"><span class="bt">Furyo<span class="x">·</span>Gang</span></h1>
-    <button class="round search" aria-label="Rechercher"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
     <p class="lede">Au cœur des mangas les plus sombres du Japon</p>
     <p class="themes">Furyō • Bōsōzoku • Yakuza • Crime • Violence</p>
   </header>
 
-  <nav class="seg" aria-label="Rubriques">
-    <a href="#fil" aria-current="page">Fil</a>
-    <a href="/calendrier/">Calendrier</a>
-    <a href="/series/">Séries</a>
-    <a href="/crows-x-worst/">Chronos</a>
-  </nav>
 
   <nav class="quick" aria-label="Accès rapide">
     <a href="#m-jp"><span class="qi" style="--c:var(--t-annonce)">日</span>Japon</a>

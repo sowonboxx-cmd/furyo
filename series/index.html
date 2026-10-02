@@ -112,7 +112,7 @@ h1{margin:0;font-family:var(--f-body);font-weight:700;font-size:clamp(19px,5vw,3
 
 /* Tomes */
 .sec{margin-top:28px}
-.sec-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:var(--ink);padding:calc(env(safe-area-inset-top,0px) + 8px) 0 10px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:var(--sh-h,0px);z-index:5;background:var(--ink);padding:8px 0 10px}
 .sec-h h2{margin:0}
 .sec-tools{display:flex;gap:8px;align-items:center}
 .sort{width:48px;height:48px;border:0;border-radius:14px;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer}
@@ -145,10 +145,8 @@ input,select,textarea{font-size:16px!important}
 </style>
 </head>
 <body>
+<script src="/site/header.js"></script>
 <div class="page">
-  <div class="top">
-    <a class="round" href="/" aria-label="Retour" onclick="if(document.referrer.startsWith(location.origin)&&history.length>1){history.back();return false}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
-  </div>
   <div id="app"><p class="empty">Chargement…</p></div>
   <p class="foot">Par Sowon, créateur et boss du <a href="https://x.com/FuryoGang">FuryoGang</a>.</p>
 </div>
