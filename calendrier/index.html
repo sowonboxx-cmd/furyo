@@ -99,6 +99,7 @@ h1{margin:18px 0 2px;font-family:var(--f-display);font-weight:700;font-size:clam
 .lb-d{margin:10px 0 0;font-size:14px;font-weight:600;text-align:center}
 .lb-d::first-letter{text-transform:uppercase}
 .lb-go{margin-top:16px;height:46px;padding:0 22px;border-radius:23px;background:#2D74D2;color:#fff;font-weight:700;font-size:15px;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.lb-soon{margin:16px 0 0;font-size:13px;color:var(--paper-3)}
 .lb-nav{display:flex;gap:10px;width:100%;max-width:420px;margin-top:14px}
 .lb-nav button{flex:1;height:44px;border:1px solid #2C2C2F;border-radius:14px;background:transparent;color:var(--paper);font-weight:600;font-size:14px;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
 .lb-nav button:disabled{opacity:.3;cursor:default}
@@ -245,7 +246,7 @@ function lbShow(i){
     ${it.jp ? `<p class="lb-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</p>` : ""}
     <div class="lb-m">${flag(it.pays)}${it.pub ? `<span class="pill">${esc(it.pub)}</span>` : ""}${past ? `<span class="pill out">Sorti</span>` : ""}</div>
     <p class="lb-d">${esc(dateLong(it))}</p>
-    <a class="lb-go" href="${sref(it)}">Accéder à la série</a>`;
+    ${it.fiche === false ? `<p class="lb-soon">Fiche de la série bientôt en ligne</p>` : `<a class="lb-go" href="${sref(it)}">Accéder à la série</a>`}`;
   document.getElementById("lb-c").textContent = `${i + 1} / ${SHOWN.length}`;
   document.getElementById("lb-p").disabled = i <= 0;
   document.getElementById("lb-n").disabled = i >= SHOWN.length - 1;

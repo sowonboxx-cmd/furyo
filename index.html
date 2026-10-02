@@ -96,6 +96,17 @@ button{font:inherit;color:inherit}
 .big span{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--paper-2)}
 
 /* Colonne de droite */
+/* Module Avancement : où en est le site */
+.av{display:block;text-decoration:none;color:inherit}
+.av-n{display:flex;align-items:baseline;gap:6px}
+.av-n b{font-family:var(--f-display);font-size:40px;line-height:1;font-weight:700}
+.av-n > span{color:var(--paper-2);font-size:14px;font-weight:600}
+.av-n em{margin-left:auto;font-style:normal;font-weight:700;font-size:15px;color:#6FA8F5}
+.av-bar{display:block;height:8px;border-radius:4px;background:var(--ink-3);margin:10px 0 12px;overflow:hidden}
+.av-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#2D74D2,#6FA8F5);min-width:4px}
+.av-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.av-kpi > span{display:flex;flex-direction:column;gap:2px;font-size:11.5px;color:var(--paper-3)}
+.av-kpi b{font-size:18px;color:var(--paper);font-weight:700}
 .side{display:flex;flex-direction:column;gap:12px}
 @media (min-width:980px){.side{position:sticky;top:calc(var(--sh-h,0px) + 12px);align-self:start}}
 .box{background:var(--ink-2);border-radius:20px;padding:16px}
@@ -339,6 +350,15 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
     </main>
 
     <aside class="side" id="side">
+      <section class="box mod" id="m-av" data-slot="0">
+        <div class="m-head"><h3>Avancement</h3><a class="m-sub" href="/avancement/">Tout voir</a></div>
+        <a class="av" href="/avancement/" aria-label="Voir l'avancement du site">
+          <span class="av-n"><b id="av-on">50</b><span>/ <span id="av-tot">603</span> séries</span><em id="av-pct">8,3 %</em></span>
+          <span class="av-bar"><i id="av-bar" style="width:8.3%"></i></span>
+          <span class="av-kpi"><span><b id="av-wk">+0</b>cette semaine</span><span><b id="av-left">553</b>à faire</span><span><b id="av-prep">0</b>en préparation</span></span>
+        </a>
+        <p class="m-note" id="av-last">Une nouvelle fiche chaque jour, du lundi au vendredi.</p>
+      </section>
       <section class="box mod" id="m-jp" data-slot="0">
         <div class="m-head"><h3>Direct Japon</h3><span class="m-sub">Prépublication</span></div>
         <ul class="jp">
@@ -519,6 +539,15 @@ if (/^https?:$/.test(location.protocol)) {
     const ul = document.querySelector("#m-jp .jp"); if (!ul) return;
     ul.innerHTML = j.items.slice(0, 8).map(it => `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${esc2(it.entry.split(" · ")[0])}${(it.hl || []).map(h => `<span class="hlp">${esc2(h)}</span>`).join("")}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
     const note = document.querySelector("#m-jp .m-note"); if (note) note.hidden = true;
+  }).catch(() => {});
+  fetch("/api/avancement").then(r => r.ok ? r.json() : null).then(j => {
+    if (!j || j.error || !j.total) return;
+    const nf = n => n.toLocaleString("fr-FR"), $ = id => document.getElementById(id);
+    $("av-on").textContent = nf(j.enLigne); $("av-tot").textContent = nf(j.total);
+    $("av-pct").textContent = j.pct.toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " %"; $("av-bar").style.width = j.pct + "%";
+    $("av-wk").textContent = "+" + j.semaine; $("av-left").textContent = nf(j.reste); $("av-prep").textContent = nf(j.enPreparation);
+    const last = (j.recentes || [])[0];
+    if (last) $("av-last").innerHTML = `Dernière fiche : <a href="/series/${esc2(last.slug)}">${esc2(last.fr || last.t)}</a> · n°${last.rang}`;
   }).catch(() => {});
   fetch("/api/auteurs").then(r => r.ok ? r.json() : null).then(j => {
     if (!j || j.error || !j.authors || !j.authors.length) return;

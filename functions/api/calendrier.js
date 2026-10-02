@@ -1,6 +1,7 @@
 // GET /api/calendrier : tomes à paraître (et sortis depuis 45 jours) avec pays, éditeur, série et couverture.
 // Sources Notion : Tomes → Édition (pays, éditeur) → Série (titres, visuel).
 import { text, num, date, rel, queryAll, cached } from "../../lib/notion.js";
+import { estVisible } from "../../lib/site.js";
 
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
@@ -29,7 +30,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const p = r.properties || {};
       series[r.id.replace(/-/g, "")] = {
         id: r.id.replace(/-/g, ""), t: text(p["SERIES"]), jp: text(p["Titre Original"]), fr: text(p["Titre FR"]),
-        cover1: text(p["Couverture T1"]), resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), auteurs: [text(p["Scénariste"]), text(p["Dessinateur"])].filter((v, i, a) => v && a.indexOf(v) === i).join(" & "), hasVisual: ((p["Visuel principal"] || {}).files || []).length > 0, finiJP: text(p["Statut Japon"]) === "Terminé", tomesJP: num(p["Tomes JP"]),
+        cover1: text(p["Couverture T1"]), resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), auteurs: [text(p["Scénariste"]), text(p["Dessinateur"])].filter((v, i, a) => v && a.indexOf(v) === i).join(" & "), hasVisual: ((p["Visuel principal"] || {}).files || []).length > 0, finiJP: text(p["Statut Japon"]) === "Terminé", tomesJP: num(p["Tomes JP"]), fiche: estVisible(p),
       };
     }
     const eds = {};
@@ -44,11 +45,11 @@ export async function onRequestGet({ env, request, waitUntil }) {
       return {
         id: r.id.replace(/-/g, ""), tome: text(p["Tome"]), n: num(p["N°"]), vtitle: text(p["Titre du volume"]),
         date: date(p["Date de sortie"]), prec: text(p["Précision date"]) || "Jour", status: text(p["Statut"]),
-        cover: text(p["Couverture"]), isbn: text(p["ISBN"]), source: text(p["Source"]),
+        cover: text(p["Couverture"]), isbn: text(p["ISBN"]),
         pays: ed.pays || "", pub: ed.pub || "", format: ed.format || "",
         // Nombre de tomes connu : celui de l'édition, sinon (Japon) celui de la série si elle est terminée.
         nb: ed.nb || (ed.pays === "Japon" && s.finiJP ? s.tomesJP : null),
-        series: s.t || "", seriesId: s.id || "", jp: s.jp || "", fr: s.fr || "", visual: !!s.hasVisual, cover1: s.cover1 || "", resume: s.resume || "", scen: s.scen || "", dess: s.dess || "", auteurs: s.auteurs || "",
+        series: s.t || "", seriesId: s.id || "", jp: s.jp || "", fr: s.fr || "", visual: !!s.hasVisual, cover1: s.cover1 || "", resume: s.resume || "", scen: s.scen || "", dess: s.dess || "", auteurs: s.auteurs || "", fiche: s.fiche !== false,
       };
     }).filter(it => it.date);
     return { items };

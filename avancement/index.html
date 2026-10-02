@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Avancement · FuryoGang</title>
+<meta name="description" content="Où en est FuryoGang : les fiches séries en ligne, celles de la semaine et tout ce qui reste à faire.">
+<meta name="theme-color" content="#232325">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Avancement du site : fiches en ligne, semaine, reste à faire. */
+:root{
+  --ink:#232325; --ink-2:#000; --ink-3:#38383B;
+  --paper:#F5F5F7; --paper-2:#CFCFD4; --paper-3:#98989D;
+  --red:#E54839; --ok:#7BC67E; --amber:#F2B33D; --jp:#E5483A; --fr:#7FA7C9;
+  --f-display:"Antonio","Arial Narrow",Impact,sans-serif;
+  --f-body:"Inter","Noto Sans JP","Hiragino Sans",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:var(--f-body);font-weight:500;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.page{max-width:820px;margin:0 auto;padding:18px 16px 48px}
+#app{min-height:60vh}
+body:not(.ready) #app{opacity:0}
+body.ready #app{transition:opacity .15s}
+.k{margin:0;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3)}
+.hero{background:var(--ink-2);border-radius:20px;padding:20px}
+.big{display:flex;align-items:baseline;gap:8px;margin-top:6px;flex-wrap:wrap}
+.big b{font-family:var(--f-display);font-size:68px;line-height:.9;font-weight:700}
+.big span{font-size:17px;color:var(--paper-2);font-weight:600}
+.big em{margin-left:auto;font-style:normal;font-family:var(--f-display);font-size:34px;font-weight:700;color:#6FA8F5}
+.bar{height:12px;border-radius:6px;background:var(--ink-3);margin:14px 0 16px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#2D74D2,#6FA8F5);min-width:6px}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi div{background:var(--ink);border-radius:14px;padding:12px}
+.kpi b{display:block;font-family:var(--f-display);font-size:30px;line-height:1;font-weight:700}
+.kpi span{display:block;margin-top:5px;font-size:12px;color:var(--paper-3);line-height:1.3}
+h2{margin:30px 0 12px;font-family:var(--f-display);font-weight:700;font-size:24px;text-transform:uppercase;letter-spacing:.01em;display:flex;align-items:baseline;gap:10px}
+h2 small{font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--paper-3);text-transform:none;letter-spacing:0}
+.chart{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;align-items:end;height:130px;background:var(--ink-2);border-radius:18px;padding:16px 14px 10px}
+.chart div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.chart i{display:block;width:100%;max-width:34px;border-radius:6px 6px 3px 3px;background:#2D74D2;min-height:3px}
+.chart div.now i{background:#6FA8F5}
+.chart b{font-size:12px;font-weight:700}
+.chart span{font-size:10px;color:var(--paper-3);white-space:nowrap;overflow:hidden;max-width:100%}
+.grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px}
+@media (min-width:640px){.grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:18px 12px}}
+.grid a{display:flex;flex-direction:column;gap:6px;text-decoration:none}
+.cv{position:relative;aspect-ratio:5/7;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
+.cv img{width:100%;height:100%;object-fit:cover;display:block}
+.cv .ph{writing-mode:vertical-rl;text-orientation:upright;font-weight:700;font-size:13px;color:var(--paper-3);letter-spacing:.08em}
+.cv .rk{position:absolute;left:5px;top:5px;background:rgba(0,0,0,.82);border-radius:6px;padding:2px 6px;font-size:11px;font-weight:700}
+.cv .nw{position:absolute;right:5px;top:5px;background:#2D74D2;border-radius:6px;padding:2px 6px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.tn{font-weight:700;font-size:13.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.td{font-size:12px;color:var(--paper-3)}
+.empty{background:var(--ink-2);border-radius:16px;padding:18px;color:var(--paper-2);font-size:14px}
+.how{background:var(--ink-2);border-radius:18px;padding:16px 18px;color:var(--paper-2);font-size:14px}
+.how b{color:var(--paper)}
+.cta{display:inline-flex;align-items:center;height:44px;padding:0 18px;border-radius:22px;background:#2D74D2;color:#fff;font-weight:700;text-decoration:none;margin-top:14px}
+</style>
+</head>
+<body>
+<script src="/site/header.js"></script>
+<div class="page"><main id="app"></main></div>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const nf = n => Number(n || 0).toLocaleString("fr-FR");
+const MC = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const dc = s => { const d = new Date(s + "T12:00:00"); return `${d.getDate()} ${MC[d.getMonth()]}`; };
+const couv = u => "/api/couv?u=" + encodeURIComponent(u);
+function card(s, cov, isNew){
+  return `<li><a href="/series/${esc(s.slug)}"><div class="cv">${cov[s.slug] ? `<img src="${couv(cov[s.slug].c)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}<span class="rk">n°${s.rang}</span>${isNew ? `<span class="nw">Nouveau</span>` : ""}</div>
+    <span class="tn">${esc(s.fr || s.t)}</span>${s.date ? `<span class="td">${dc(s.date)}</span>` : ""}</a></li>`;
+}
+function render(a, list){
+  const cov = {}; (list || []).forEach(s => { if (s.cover) cov[s.slug] = { c: s.cover }; });
+  const pct = a.pct.toLocaleString("fr-FR", { maximumFractionDigits: 1 });
+  const max = Math.max(1, ...a.parSemaine.map(w => w.n));
+  const wk = a.semaineSeries.map(s => a.recentes.find(r => r.slug === s.slug) || s);
+  document.getElementById("app").innerHTML = `
+  <section class="hero">
+    <p class="k">Fiches séries en ligne</p>
+    <div class="big"><b>${nf(a.enLigne)}</b><span>sur ${nf(a.total)} séries</span><em>${pct} %</em></div>
+    <div class="bar"><i style="width:${a.pct}%"></i></div>
+    <div class="kpi"><div><b>+${a.semaine}</b><span>cette semaine</span></div><div><b>${nf(a.reste)}</b><span>encore à faire</span></div><div><b>${nf(a.enPreparation)}</b><span>en préparation</span></div></div>
+  </section>
+  <h2>Cette semaine <small>${a.semaine ? `${a.semaine} nouvelle${a.semaine > 1 ? "s" : ""} fiche${a.semaine > 1 ? "s" : ""}` : ""}</small></h2>
+  ${wk.length ? `<ul class="grid">${wk.map(s => card(s, cov, true)).join("")}</ul>` : `<p class="empty">Les prochaines fiches arrivent lundi : une par jour, du lundi au vendredi.</p>`}
+  <h2>Semaine après semaine</h2>
+  <div class="chart" role="img" aria-label="Fiches publiées par semaine">${a.parSemaine.map((w, i) => `<div${i === a.parSemaine.length - 1 ? ' class="now"' : ""}><b>${w.n || ""}</b><i style="height:${Math.round(w.n / max * 80)}%"></i><span>${i === a.parSemaine.length - 1 ? "Auj." : (d => d.getDate() + "/" + (d.getMonth() + 1))(new Date(w.du + "T12:00:00"))}</span></div>`).join("")}</div>
+  ${a.recentes.length ? `<h2>Dernières fiches</h2><ul class="grid">${a.recentes.map(s => card(s, cov, a.semaineSeries.some(x => x.slug === s.slug))).join("")}</ul>` : ""}
+  <h2>Comment ça marche</h2>
+  <div class="how">La base FuryoGang compte <b>${nf(a.total)} séries</b> furyō, yakuza et crime. Chaque fiche est vérifiée sur les sources officielles avant d'être mise en ligne : résumé de l'éditeur, auteurs, tous les tomes avec leurs couvertures, extraits, adaptations. <b>Une nouvelle fiche chaque jour, du lundi au vendredi.</b>
+  <br><a class="cta" href="/series/">Voir les ${nf(a.enLigne)} séries en ligne</a></div>`;
+}
+const keep = (() => { try { return JSON.parse(localStorage.getItem("av-data") || "null"); } catch (e) { return null; } })();
+if (keep) { render(keep.a, keep.l); document.body.classList.add("ready"); }
+Promise.all([fetch("/api/avancement").then(r => r.json()), fetch("/api/series").then(r => r.json()).catch(() => ({}))]).then(([a, l]) => {
+  if (a.error) throw new Error(a.error);
+  render(a, l.items); document.body.classList.add("ready");
+  try { localStorage.setItem("av-data", JSON.stringify({ a, l: (l.items || []).map(s => ({ slug: s.slug, cover: s.cover })) })); } catch (e) {}
+}).catch(() => { if (!keep) { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger l'avancement pour le moment.</p>`; document.body.classList.add("ready"); } });
+</script>
+</body>
+</html>

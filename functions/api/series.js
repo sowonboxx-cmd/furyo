@@ -1,5 +1,6 @@
 // GET /api/series : liste des séries qui ont au moins une édition, avec la couverture de leur tome 1 (France d'abord).
 import { text, num, rel, list, queryAll, cached, slugify } from "../../lib/notion.js";
+import { filtreVisible } from "../../lib/site.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
@@ -10,7 +11,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   return cached(request, waitUntil, "/api/series?v=2", 600, async () => {
     const [sRows, eRows, tRows] = await Promise.all([
-      queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: { property: "Éditions", relation: { is_not_empty: true } } } }),
+      queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: filtreVisible() } }),
       queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
       queryAll(env.NOTION_TOKEN, { ...TOMES, body: { sorts: [{ property: "N°", direction: "ascending" }] } }),
     ]);
