@@ -8,7 +8,7 @@ const nid = id => id.replace(/-/g, "");
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
-  return cached(request, waitUntil, "/api/series", 600, async () => {
+  return cached(request, waitUntil, "/api/series?v=2", 600, async () => {
     const [sRows, eRows, tRows] = await Promise.all([
       queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: { property: "Éditions", relation: { is_not_empty: true } } } }),
       queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
