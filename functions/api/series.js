@@ -17,6 +17,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
     const eds = {};
     for (const e of eRows) eds[nid(e.id)] = { pays: text(e.properties["Pays"]), serie: rel(e.properties["Série"])[0] };
     // Couverture : le plus petit numéro de tome, France avant Japon.
+    const pays = {};
+    for (const e of Object.values(eds)) if (e.serie) (pays[e.serie] = pays[e.serie] || new Set()).add(e.pays);
     const best = {};
     for (const t of tRows) {
       const q = t.properties, ed = eds[rel(q["Édition"])[0]], cov = text(q["Couverture"]); if (!ed || !ed.serie || !cov) continue;
@@ -25,8 +27,13 @@ export async function onRequestGet({ env, request, waitUntil }) {
     }
     const items = sRows.map(r => {
       const p = r.properties, id = nid(r.id), t = text(p["SERIES"]);
-      return { slug: slugify(t), t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]),
-        pubFR: list(p["Éditeur Français"]).join(", "), cover: best[id]?.cover || text(p["Couverture T1"]) };
+      return { slug: slugify(t), t, jp: text(p["Titre Original"]), stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]),
+        pubFR: list(p["Éditeur Français"]).join(", "), cover: best[id]?.cover || text(p["Couverture T1"]),
+        type: text(p["Type"]), genres: list(p["Genre"]), y1: num(p["Année Début"]),
+        // Pays : une édition dans ce pays, ou (France) une licence en cours / terminée / annoncée.
+        inFR: (pays[id]?.has("France") || /cours|termin|stopp|annonc/i.test(text(p["Statut France"]))) ? 1 : 0,
+        inJP: (pays[id]?.has("Japon") || !!text(p["Statut Japon"])) ? 1 : 0,
+        fr: text(p["Titre FR"]) };
     }).filter(s => s.t).sort((a, b) => (a.fr || a.t).localeCompare(b.fr || b.t, "fr"));
     return { items };
   });

@@ -139,9 +139,21 @@ h1{margin:0;font-family:var(--f-body);font-weight:700;font-size:clamp(19px,5vw,3
 .t-o{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--paper-3);line-height:1.3}
 .t-o .flag{width:14px;height:10px;border-radius:2px}
 .empty{color:var(--paper-3);text-align:center;padding:40px 0}
-.lh{margin:14px 0 12px;font-size:26px}
-.search{width:100%;height:46px;border:0;border-radius:14px;background:var(--ink-3);color:var(--paper);font:inherit;font-size:15px;padding:0 16px;margin-bottom:16px}
+.search{width:100%;height:46px;border:0;border-radius:14px;background:var(--ink-3);color:var(--paper);font:inherit;font-size:15px;padding:0 16px;margin:16px 0 10px;outline:none;box-shadow:none;-webkit-appearance:none;appearance:none}
+.search:focus,.search:focus-visible{outline:none;box-shadow:none}
 .search::placeholder{color:var(--paper-3)}
+/* Filtres de la liste : pays en accès direct, type / année / genre dans un panneau */
+.fl{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 14px;padding:0 16px 2px}
+.fl::-webkit-scrollbar{display:none}
+.chip{flex:none;height:34px;padding:0 13px;border:1px solid #2C2C2F;border-radius:17px;background:transparent;color:var(--paper-2);font:inherit;font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip[aria-expanded=true]{border-color:var(--paper-2);color:var(--paper)}
+.chip .n{min-width:18px;height:18px;border-radius:9px;background:var(--blue);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 5px}
+.chip svg{opacity:.7}
+.chip.clear{border-color:transparent;color:var(--blue);padding:0 6px}
+.fp{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 14px}
+.fp[hidden]{display:none}
+.fcount{margin:0 0 12px;font-size:12.5px;color:var(--paper-3)}
 a.t{text-decoration:none}
 .grid .empty{grid-column:1/-1}
 .foot{margin-top:40px;color:var(--paper-3);font-size:13px;text-align:center}
@@ -349,19 +361,60 @@ document.addEventListener("click", e => {
 function renderList(items){
   document.title = "Séries · FuryoGang";
   document.getElementById("app").innerHTML = `
-  <h1 class="lh">Séries</h1>
   <input class="search" id="q" type="search" placeholder="Chercher une série" aria-label="Chercher une série" autocomplete="off">
+  <div class="fl" id="fl"></div>
+  <div class="fp" id="fp" hidden></div>
+  <p class="fcount" id="fc"></p>
   <ul class="grid" id="sl"></ul>`;
+  // Valeurs proposées : seulement celles présentes dans la base (genres du plus fréquent au plus rare).
+  items.forEach(s => { s.type = s.type === "Manwha" ? "Manhwa" : (s.type || ""); s.dec = s.y1 ? Math.floor(s.y1 / 10) * 10 : null; });
+  const count = arr => { const m = {}; arr.forEach(v => { if (v) m[v] = (m[v] || 0) + 1; }); return Object.keys(m).sort((a, b) => m[b] - m[a] || a.localeCompare(b, "fr")); };
+  const OPTS = {
+    type: count(items.map(s => s.type)),
+    dec: [...new Set(items.map(s => s.dec).filter(Boolean))].sort((a, b) => b - a).map(String),
+    genre: count(items.flatMap(s => s.genres || [])),
+  };
+  const decLabel = d => (+d >= 2000 ? "Années " + d : "Années " + String(d).slice(2));
+  const LABEL = { type: "Type", dec: "Année", genre: "Genre" };
+  const F = { pays: "", type: new Set(), dec: new Set(), genre: new Set() };
+  let open = "";
+  const caret = `<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+  const nAct = () => (F.pays ? 1 : 0) + F.type.size + F.dec.size + F.genre.size;
+  const drawBar = () => {
+    const pays = [["France", "France"], ["Japon", "Japon"]].map(([k, l]) => `<button class="chip" data-pays="${k}" aria-pressed="${F.pays === k}">${l}</button>`).join("");
+    const menus = ["type", "dec", "genre"].filter(k => OPTS[k].length).map(k => `<button class="chip" data-open="${k}" aria-expanded="${open === k}">${LABEL[k]}${F[k].size ? `<span class="n">${F[k].size}</span>` : caret}</button>`).join("");
+    document.getElementById("fl").innerHTML = pays + menus + (nAct() ? `<button class="chip clear" data-clear>Effacer</button>` : "");
+    const fp = document.getElementById("fp");
+    fp.hidden = !open;
+    fp.innerHTML = open ? OPTS[open].map(v => `<button class="chip" data-k="${open}" data-v="${esc(v)}" aria-pressed="${F[open].has(v)}">${esc(open === "dec" ? decLabel(v) : v)}</button>`).join("") : "";
+  };
+  // Dans une même catégorie : l'un ou l'autre. Entre catégories : tout doit correspondre.
+  const keep = s => (!F.pays || (F.pays === "France" ? s.inFR : s.inJP))
+    && (!F.type.size || F.type.has(s.type))
+    && (!F.dec.size || F.dec.has(String(s.dec)))
+    && (!F.genre.size || (s.genres || []).some(g => F.genre.has(g)));
+  let cur = "";
   const draw = q => {
+    cur = q;
     const n = slugify(q);
-    const list = items.filter(s => !n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q));
+    const list = items.filter(s => keep(s) && (!n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q)));
+    document.getElementById("fc").textContent = (n || nAct()) ? `${list.length} série${list.length > 1 ? "s" : ""}` : "";
+    document.getElementById("fc").hidden = !(n || nAct());
     document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
       <span class="t-n">${esc(shown(s))}</span>${s.jp ? `<span class="t-d" lang="ja">${esc(s.jp)}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   const q = document.getElementById("q");
-  draw(""); q.addEventListener("input", e => draw(e.target.value.trim()));
-  // Au retour sur la liste (bouton précédent), on repart toujours de toutes les séries, recherche vide.
-  const reset = () => { if (q.value) { q.value = ""; draw(""); } };
+  drawBar(); draw(""); q.addEventListener("input", e => draw(e.target.value.trim()));
+  document.getElementById("app").addEventListener("click", e => {
+    const b = e.target.closest(".fl .chip, .fp .chip"); if (!b) return;
+    if (b.dataset.pays) F.pays = F.pays === b.dataset.pays ? "" : b.dataset.pays;
+    else if (b.dataset.open) open = open === b.dataset.open ? "" : b.dataset.open;
+    else if ("clear" in b.dataset) { F.pays = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; }
+    else if (b.dataset.k) { const set = F[b.dataset.k], v = b.dataset.v; set.has(v) ? set.delete(v) : set.add(v); }
+    drawBar(); draw(cur);
+  });
+  // Au retour sur la liste (bouton précédent), on repart toujours de toutes les séries : recherche vide, aucun filtre.
+  const reset = () => { if (q.value || nAct() || open) { q.value = ""; F.pays = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; drawBar(); draw(""); } };
   addEventListener("pageshow", reset); setTimeout(reset, 0);
 }
 if (!slug) {
