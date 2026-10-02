@@ -84,6 +84,11 @@ h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(30px,8v
 .t-o{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--paper-3);line-height:1.3}
 .t-o .flag{width:14px;height:10px;border-radius:2px}
 .empty{color:var(--paper-3);text-align:center;padding:40px 0}
+.lh{margin:22px 0 12px}
+.search{width:100%;height:46px;border:0;border-radius:14px;background:var(--ink-3);color:var(--paper);font:inherit;font-size:15px;padding:0 16px;margin-bottom:16px}
+.search::placeholder{color:var(--paper-3)}
+a.t{text-decoration:none}
+.grid .empty{grid-column:1/-1}
 .foot{margin-top:40px;color:var(--paper-3);font-size:13px;text-align:center}
 </style>
 </head>
@@ -174,8 +179,25 @@ document.addEventListener("click", e => {
   const b = e.target.closest(".seg button"); if (!b) return;
   PAYS = b.dataset.p; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b)); renderTomes();
 });
-fetch("/api/serie?s=" + encodeURIComponent(slug)).then(r => r.json()).then(j => {
-  if (!j || j.error || !j.serie) { document.getElementById("app").innerHTML = `<p class="empty">Série introuvable.</p>`; return; }
+// Sans nom de série dans l'adresse : liste de toutes les séries.
+function renderList(items){
+  document.title = "Séries · FuryoGang";
+  document.getElementById("app").innerHTML = `
+  <h1 class="lh">Séries</h1>
+  <input class="search" id="q" type="search" placeholder="Chercher une série" aria-label="Chercher une série" autocomplete="off">
+  <ul class="grid" id="sl"></ul>`;
+  const draw = q => {
+    const n = slugify(q);
+    const list = items.filter(s => !n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q));
+    document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+      <span class="t-n">${esc(s.fr || s.t)}</span>${s.jp ? `<span class="t-d" lang="ja">${esc(s.jp)}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
+  };
+  draw(""); document.getElementById("q").addEventListener("input", e => draw(e.target.value.trim()));
+}
+if (!slug) {
+  fetch("/api/series").then(r => r.json()).then(j => renderList((j && j.items) || [])).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger les séries.</p>`; });
+} else fetch("/api/serie?s=" + encodeURIComponent(slug)).then(r => r.json()).then(j => {
+  if (!j || j.error || !j.serie) { document.getElementById("app").innerHTML = `<p class="empty">Série introuvable. <a href="/series/">Voir toutes les séries</a></p>`; return; }
   DATA = j; render();
 }).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger la série.</p>`; });
 </script>

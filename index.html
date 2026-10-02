@@ -222,7 +222,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
   <nav class="seg" aria-label="Rubriques">
     <a href="#fil" aria-current="page">Fil</a>
     <a href="/calendrier/">Calendrier</a>
-    <a href="#series">Séries</a>
+    <a href="/series/">Séries</a>
     <a href="/crows-x-worst/">Chronos</a>
   </nav>
 
@@ -457,7 +457,7 @@ function liveNews(j){
     const head = `<div class="p-head"><span class="tag">${tag}</span><span>${escN(dN(it.date))}</span>${it.pub ? `<span class="p-src">${escN(it.pub)}</span>` : ""}</div>`;
     const body = `${head}<h2 class="p-title">${escN(titre)}${jp}</h2><p class="p-text">${escN(it.texte)}</p>`;
     const inner = it.cover ? `<div class="p-split"><img class="cover" src="/api/couv?u=${encodeURIComponent(it.cover)}" alt="Couverture de ${escN(titre)}" loading="lazy"><div class="p-body">${body}</div></div>` : body;
-    return `<li class="post" data-type="${it.type}" data-id="${it.type}-${slugN(titre)}" style="--c:var(${c})">${inner}<div class="p-foot"><span class="series">${escN(titre)}</span></div></li>`;
+    return `<li class="post" data-type="${it.type}" data-id="${it.type}-${slugN(titre)}" style="--c:var(${c})">${inner}<div class="p-foot"><a class="series" href="/series/${slugN(it.titre)}">${escN(titre)}</a></div></li>`;
   }).join("");
   feedEl.insertAdjacentHTML("afterbegin", html);
   if (lic.length) {
@@ -470,6 +470,8 @@ const newsReady = /^https?:$/.test(location.protocol)
   : Promise.resolve();
 newsReady.finally(init);
 function init(){
+// Les pastilles « série » du fil mènent à la fiche de la série.
+document.querySelectorAll('#feed a.series[href="#"]').forEach(a => { a.href = "/series/" + slugN(a.textContent); });
 const posts = [...document.querySelectorAll(".post")];
 const chips = document.getElementById("chips");
 chips.innerHTML = TYPES.map(([k, l, c]) => {
