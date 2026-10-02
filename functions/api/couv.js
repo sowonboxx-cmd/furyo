@@ -9,6 +9,13 @@ const PLACEHOLDERS = new Set([
   "a71f701008ab37a643e1808c62ef2f16d89c5018de36ddc9e267150ba856b4ce", // Akita Shoten NOW PRINTING
   "573b17de6e70a52373f5b5d2a7ee2b6633fc970d8796f5940f2c6ac0b8924cd5", // Shogakukan Now Printing
 ]);
+// Type réel d'après les premiers octets (certains serveurs annoncent binary/octet-stream).
+const sniff = buf => { const b = new Uint8Array(buf.slice(0, 12));
+  if (b[0] === 0xFF && b[1] === 0xD8) return "image/jpeg";
+  if (b[0] === 0x89 && b[1] === 0x50) return "image/png";
+  if (b[0] === 0x52 && b[1] === 0x49 && b[8] === 0x57 && b[9] === 0x45) return "image/webp";
+  if (b[0] === 0x47 && b[1] === 0x49) return "image/gif";
+  return ""; };
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 
 export async function onRequestGet({ request, waitUntil }) {
@@ -17,10 +24,10 @@ export async function onRequestGet({ request, waitUntil }) {
   if (self.searchParams.has("check")) {
     let t; try { t = new URL(self.searchParams.get("u")); } catch (e) { return Response.json({ ok: false, error: "u invalide" }, { status: 400 }); }
     const r = await fetch(t.href, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" } });
-    const ct = r.headers.get("content-type") || "";
-    if (!r.ok || !ct.startsWith("image/")) return Response.json({ ok: false, status: r.status, type: ct, verdict: "pas une image" });
-    const buf = await r.arrayBuffer(), sha = hex(await crypto.subtle.digest("SHA-256", buf));
-    const ph = PLACEHOLDERS.has(sha) || buf.byteLength < 3000 || !ct.startsWith("image/");
+    const buf = await r.arrayBuffer(), ct = sniff(buf);
+    if (!r.ok || !ct) return Response.json({ ok: false, status: r.status, type: r.headers.get("content-type") || "", verdict: "pas une image" });
+    const sha = hex(await crypto.subtle.digest("SHA-256", buf));
+    const ph = PLACEHOLDERS.has(sha) || buf.byteLength < 3000;
     return Response.json({ ok: !ph, placeholder: ph, bytes: buf.byteLength, type: ct, sha256: sha, verdict: ph ? "image provisoire (NOW PRINTING ou vide) : refuser" : "image valide" });
   }
   let t; try { t = new URL(self.searchParams.get("u")); } catch (e) { return new Response("u invalide", { status: 400 }); }
@@ -29,9 +36,8 @@ export async function onRequestGet({ request, waitUntil }) {
   const cache = caches.default, key = new Request(self.origin + "/api/couv?u=" + encodeURIComponent(t.href));
   const hit = await cache.match(key); if (hit) return hit;
   const r = await fetch(t.href, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" } });
-  const ct = r.headers.get("content-type") || "";
-  if (!r.ok || !ct.startsWith("image/")) return Response.redirect(t.href, 302);
-  const buf = await r.arrayBuffer();
+  const buf = r.ok ? await r.arrayBuffer() : null, ct = buf ? sniff(buf) : "";
+  if (!ct) return Response.redirect(t.href, 302);
   if (PLACEHOLDERS.has(hex(await crypto.subtle.digest("SHA-256", buf)))) return new Response("Couverture provisoire", { status: 404 });
   const out = new Response(buf, { headers: { "content-type": ct, "cache-control": "public, max-age=604800" } });
   waitUntil(cache.put(key, out.clone()));
