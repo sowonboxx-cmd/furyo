@@ -60,6 +60,11 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .done{color:var(--ok)}
 .ob{height:22px;padding:0 7px;border-radius:6px;background:var(--ink-3);color:var(--paper-2);font-weight:700;display:inline-flex;align-items:center}
 .ob.full{background:color-mix(in srgb,var(--ok) 20%,var(--ink-3));color:var(--ok)}
+.leg{background:var(--ink-3);border-radius:12px;padding:10px 12px;margin-top:8px}
+.leg-h{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.leg pre{margin:8px 0 0;white-space:pre-wrap;font:inherit;font-size:13.5px;line-height:1.45;color:var(--paper)}
+.leg-no{margin:6px 0 0;font-size:12.5px;color:var(--paper-3)}
+.cp{height:30px;padding:0 14px;border:0;border-radius:15px;background:var(--blue);color:#fff;font-size:12.5px;font-weight:700;cursor:pointer}
 .chk{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:13px}
 .chk .ok{color:var(--ok)}.chk .ko{color:#F08A7E}
 .lot{color:var(--blue-2);font-weight:600}
@@ -174,6 +179,8 @@ function row(s){
     <div class="more">
       <label>★ Éléments obligatoires</label>
       <ul class="chk">${s.oblig.map(o => `<li class="${o.ok ? "ok" : "ko"}">${o.ok ? "✓" : "✗"} ${esc(o.k)}</li>`).join("")}</ul>
+      <label>Légendes réseaux sociaux</label>
+      ${["ig", "tt", "x"].map(k => `<div class="leg"><div class="leg-h"><b>${{ ig: "Instagram", tt: "TikTok", x: "X" }[k]}</b>${s.leg && s.leg[k] ? `<button class="cp" data-cp="${k}">Copier</button>` : ""}</div>${s.leg && s.leg[k] ? `<pre>${esc(s.leg[k])}</pre>` : `<p class="leg-no">Pas encore de légende (à générer dans le Studio « Nouvelle fiche »).</p>`}</div>`).join("")}
       <label>Lot</label><input data-lot value="${esc(s.lot)}" placeholder="ex. S41 – Bōsōzoku">
       <label>À trouver</label><textarea data-trouver placeholder="Liens de lecture, extraits…">${esc(s.trouver)}</textarea>
       <button class="save" data-save>Enregistrer</button>
@@ -198,6 +205,8 @@ document.addEventListener("click", e => {
   const s = ITEMS.find(x => x.id === li.dataset.id);
   // Un appui n'importe où sur la carte (hors boutons et champs) la déplie ou la replie.
   if (!e.target.closest("button, select, input, textarea, label, a, .more")) { li.classList.toggle("open"); return; }
+  const cp = e.target.closest("[data-cp]");
+  if (cp) { navigator.clipboard.writeText(s.leg[cp.dataset.cp]).then(() => { cp.textContent = "Copié ✓"; setTimeout(() => { cp.textContent = "Copier"; }, 1500); }).catch(() => toast("Copie impossible")); return; }
   if (e.target.closest("[data-coeur]")) { send(s, { coeur: !s.coeur }); return; }
   if (e.target.closest("[data-save]")) { send(s, { lot: li.querySelector("[data-lot]").value.trim(), trouver: li.querySelector("[data-trouver]").value.trim() }); }
 });

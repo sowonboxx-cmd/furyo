@@ -45,35 +45,30 @@ button.main{background:var(--red)}
 .card .top img{width:250px;display:block}
 .card .top .A{color:#fff;font-size:52px;letter-spacing:.06em;line-height:1}
 .card .top .A span{color:#E0123F}
-.card .main{flex:1;min-height:0;display:flex;flex-direction:column;padding:40px 64px calc(var(--safe-bot) + 44px)}
-.card .head{flex:none;display:flex;align-items:baseline;justify-content:space-between;gap:20px}
-.card .t{margin:0;font-size:64px;line-height:.95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.card .num{flex:none;font-size:40px;color:var(--muted);letter-spacing:.04em}
-.card .meta{margin-top:10px;font-size:27px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card .meta b{color:var(--red)}
-.card .pg{flex:1;min-height:0;margin-top:30px;display:flex;align-items:center;justify-content:center}
-.card .pg img{max-width:100%;max-height:100%;object-fit:contain;border:10px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);background:#fff;display:block}
+.card .main{flex:1;min-height:0;display:flex;flex-direction:column;padding:30px 48px calc(var(--safe-bot) + 30px)}
+.card .t{flex:none;margin:0;text-align:center;font-size:62px;line-height:1.12;padding-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .num{flex:none;font-size:34px;color:var(--muted);letter-spacing:.04em;line-height:1}
+.card .pg{flex:1;min-height:0;margin-top:22px;display:flex;align-items:center;justify-content:center}
+.card .pg img{max-width:100%;max-height:100%;object-fit:contain;border:8px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);background:#fff;display:block}
 .card .pg .ph{width:70%;height:90%;border:10px dashed var(--muted);display:grid;place-items:center;color:var(--muted);font-size:34px;font-weight:700;text-align:center;padding:30px}
-.card .foot{flex:none;margin-top:28px;display:flex;justify-content:space-between;align-items:baseline;gap:24px}
-.card .foot .A{white-space:nowrap}
-.card .foot .A{font-size:36px;letter-spacing:.03em;line-height:1}
-.card .foot small{font-size:22px;color:var(--muted);font-weight:600;text-align:right;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .foot{flex:none;margin-top:22px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.card .foot small{font-size:24px;color:var(--muted);font-weight:600;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
 <div class="page">
   <h1>Extraits</h1>
-  <p class="sub">Glisse 1 à 4 captures de pages (tes achats officiels). Elles sont mises en page dans le style des fiches, pour le carrousel après le visuel « Nouvelle fiche ». Les images restent sur ton appareil.</p>
+  <p class="sub">Glisse 1 à 5 pages de pages (tes achats officiels). Elles sont mises en page dans le style des fiches, pour le carrousel après le visuel « Nouvelle fiche ». Les images restent sur ton appareil.</p>
   <div class="pick">
     <select id="sel" aria-label="Série"></select>
-    <label>Tome <input id="tome" type="number" min="1" value="1"></label>
+    
     <select id="vo" aria-label="Version"><option value="jp">Version japonaise</option><option value="fr">Version française</option></select>
     <select id="th" aria-label="Thème"><option value="creme">Crème</option><option value="dark">Sombre</option></select>
     <select id="fm" aria-label="Format"><option value="post">Post 3:4</option><option value="story">Story 9:16</option></select>
     <input class="credit" id="credit" placeholder="© Auteur / Éditeur" aria-label="Crédit">
     <button class="main" id="dlAll">Télécharger tous les PNG</button>
   </div>
-  <label class="drop" id="drop"><input id="files" type="file" accept="image/*" multiple hidden>Clique ou glisse ici tes captures de pages (4 maximum)</label>
+  <label class="drop" id="drop"><input id="files" type="file" accept="image/*" multiple hidden>Clique ou glisse ici tes captures de pages (5 maximum)</label>
   <div class="pair" id="pair"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
@@ -86,15 +81,13 @@ const SIZE = { post: [1080, 1440], story: [1080, 1920] };
 let LIST = [], cur = null, IMGS = [];
 const $ = id => document.getElementById(id);
 function card(img, i, n){
-  const vo = $("vo").value === "jp", tome = +$("tome").value || 1;
-  const pub = vo ? (cur.pubJP || "") : (cur.pubFR || "");
+  const vo = $("vo").value === "jp";
   return `<div class="card ${$("th").value} ${$("fm").value}">
     <div class="top"><img src="${LOGO_B}" alt=""><span class="A">Extrait <span>${vo ? "VO" : "VF"}</span></span></div>
     <div class="main">
-      <div class="head"><p class="t A">${esc(cur.t)}</p><span class="num A">${n > 1 ? `${i + 1} / ${n}` : ""}</span></div>
-      <div class="meta">Tome ${tn(tome)}${pub ? " · " + esc(pub) : ""}${vo ? " · <b>se lit de droite à gauche</b>" : ""}</div>
+      <p class="t A">${esc(cur.t)}</p>
       <div class="pg">${img ? `<img src="${img}" alt="">` : `<div class="ph">Ta capture de page ici</div>`}</div>
-      <div class="foot"><span class="A">${vo ? "La suite en VO officielle" : "La suite en VF officielle"}</span><small>${esc($("credit").value || cur.credit || "")}</small></div>
+      <div class="foot"><small>${esc($("credit").value || cur.credit || "")}</small><span class="num A">${n > 1 ? `${i + 1} / ${n}` : ""}</span></div>
     </div></div>`;
 }
 function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".card"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
@@ -120,7 +113,7 @@ async function pick(slug){
   } catch (e) {}
 }
 function addFiles(files){
-  [...files].filter(f => /^image\//.test(f.type)).slice(0, 4 - IMGS.length).forEach(f => IMGS.push(URL.createObjectURL(f)));
+  [...files].filter(f => /^image\//.test(f.type)).slice(0, 5 - IMGS.length).forEach(f => IMGS.push(URL.createObjectURL(f)));
   draw();
 }
 async function dl(i){
@@ -135,7 +128,7 @@ const drop = $("drop");
 ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("on"); }));
 ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("on"); }));
 drop.addEventListener("drop", e => addFiles(e.dataTransfer.files));
-["tome", "vo", "th", "fm", "credit"].forEach(id => $(id).addEventListener("input", () => { if (id === "vo") { $("credit").value = ""; pick(cur.slug); } else draw(); }));
+["vo", "th", "fm", "credit"].forEach(id => $(id).addEventListener("input", () => { if (id === "vo") { $("credit").value = ""; pick(cur.slug); } else draw(); }));
 $("sel").onchange = e => pick(e.target.value);
 addEventListener("resize", fit);
 fetch("/api/series").then(r => r.json()).then(l => {

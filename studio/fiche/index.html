@@ -201,11 +201,11 @@ function caps(d){
 
 ${phrases(d.resume, 2)}
 
-✍️ ${auteurs}
+✍️ ${auteurs.replace("Histoire ", "Histoire : ").replace("Dessin ", "Dessin : ")}
 📚 ${infos}
 ${pays}
 
-📖 La fiche complète (tous les tomes, extraits, adaptations) est sur le site : lien en bio.${membre}
+📖 Tomes, extraits, adaptations : toutes les infos sur le site FuryoGang.${membre}
 ${mentions(d, "ig") ? "\n📣 " + mentions(d, "ig") + "\n" : ""}
 Fiche n°${d.n} sur ${d.tot} · de nouvelles fiches chaque semaine.
 
@@ -215,11 +215,11 @@ ${tags.concat(["#mangafr"]).slice(0, 12).join(" ")}`;
 ${phrases(d.resume, 1)}
 
 ${auteurs}
-Tout sur la série : lien en bio 📖${membre}
+📖 Toutes les infos sur le site FuryoGang${membre}
 ${mentions(d, "tt") ? "\n📣 " + mentions(d, "tt") + "\n" : ""}
 ${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf(v) === i).slice(0, 8).join(" ")}`;
   // X : 280 caractères, un lien compte pour 23. On raccourcit le résumé jamais le reste.
-  const xBase = r => `🆕 Nouvelle fiche : ${d.t}${infos ? ` (${[d.type, d.y1].filter(Boolean).join(", ")})` : ""}\n\n${r}${r ? "\n\n" : ""}Tout sur la série 👉 ${url}\n${mentions(d, "x") ? mentions(d, "x") + "\n" : ""}${tags.slice(0, 3).join(" ")}`;
+  const xBase = r => `🆕 Nouvelle fiche : ${d.t}${infos ? ` (${[d.type, d.y1].filter(Boolean).join(", ")})` : ""}\n\n${r}${r ? "\n\n" : ""}Toutes les infos 👉 ${url}\n${mentions(d, "x") ? mentions(d, "x") + "\n" : ""}${tags.slice(0, 3).join(" ")}`;
   const xLen = t => t.replace(url, "x".repeat(23)).length;
   let r = phrases(d.resume, 1), x = xBase(r);
   while (xLen(x) > 280 && r) { r = r.split(" ").slice(0, -1).join(" "); x = xBase(r ? r.replace(/[,;:]?$/, "…") : ""); }
