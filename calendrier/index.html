@@ -278,11 +278,19 @@ LB.addEventListener("touchend", e => { if (tx == null) return; const dx = e.chan
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 const KEEP = store.get("cal-data");
 const ready = () => document.body.classList.add("ready");
-if (KEEP) { try { ITEMS = JSON.parse(KEEP).items || []; render(); ready(); } catch (e) {} }
+// Lien direct vers une sortie (depuis la recherche) : /calendrier/#t-<id> ouvre sa fenêtre.
+function openFromHash(){
+  const m = location.hash.match(/^#t-([0-9a-f]{32})$/); if (!m || LBI >= 0) return;
+  const i = SHOWN.findIndex(x => x.id === m[1]);
+  if (i < 0 && state.pays !== "all") { state.pays = "all"; render(); return openFromHash(); }
+  if (i >= 0) lbOpen(i);
+}
+addEventListener("hashchange", openFromHash);
+if (KEEP) { try { ITEMS = JSON.parse(KEEP).items || []; render(); ready(); openFromHash(); } catch (e) {} }
 fetch("/api/calendrier").then(r => r.text()).then(t => {
   const j = JSON.parse(t); if (j.error) throw new Error(j.error);
   if (t !== KEEP) { store.set("cal-data", t); ITEMS = j.items || []; render(); }
-  ready();
+  ready(); openFromHash();
 }).catch(err => { if (!KEEP) app.innerHTML = `<p class="empty">Impossible de charger le calendrier pour le moment.</p>`; ready(); console.error(err); });
 </script>
 </body>
