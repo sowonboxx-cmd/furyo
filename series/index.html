@@ -101,16 +101,18 @@ h1.cut{cursor:pointer}
 .cmp .no{color:var(--paper-3);font-weight:500}
 /* Fenêtre plein écran d'un tome */
 li.t[data-ti]{cursor:pointer}
-.tb{position:fixed;inset:0;z-index:60;background:rgba(8,8,10,.94);touch-action:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 56px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);opacity:0;transition:opacity .18s}
+.tb{position:fixed;inset:0;z-index:60;background:rgba(8,8,10,.95);touch-action:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 56px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);opacity:0;transition:opacity .18s}
 .tb.on{opacity:1}.tb[hidden]{display:none!important}
 .tb-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;width:44px;height:44px;border:0;border-radius:22px;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer}
 .tb-c{position:absolute;top:calc(env(safe-area-inset-top,0px) + 20px);left:16px;font-size:13px;font-weight:700;color:var(--paper-2)}
+/* Ordinateur : compteur centré au-dessus de la couverture, en grand */
+@media (min-width:720px){.tb-c{left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 12px);font-family:var(--f-display);font-size:30px;color:var(--paper);letter-spacing:.04em}}
 .tb-in{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;min-height:0;flex:1;justify-content:center}
 .tb-cv{height:min(66vh,760px);aspect-ratio:5/7;max-width:100%;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center;box-shadow:0 18px 50px rgba(0,0,0,.6)}
 .tb-cv img{width:100%;height:100%;object-fit:cover;display:block}
 .tb-t{margin:14px 0 0;font-family:var(--f-display);font-weight:700;font-size:26px;text-transform:uppercase;text-align:center}
 .tb-t em{font-style:normal;color:var(--paper-2);font-size:18px}
-.tb-ds{display:flex;gap:18px;justify-content:center;margin-top:6px}
+.tb-ds{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:8px}
 .tb-d{margin:0;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600}
 .tb-d .flag{width:20px;height:14px;border-radius:2px}
 .tb-nav{display:flex;gap:10px;width:100%;max-width:520px;margin-top:14px}
