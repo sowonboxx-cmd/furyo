@@ -135,7 +135,7 @@ body.tb-open{overflow:hidden}
 .nw-c.lic{color:#7BC67E;background:color-mix(in srgb,#7BC67E 18%,var(--ink-3))}
 .nw-t{min-width:0;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nw-b{padding:0 2px 14px;font-size:14px;line-height:1.55;color:var(--paper-2)}
-.nw-d{flex:none;font-size:11.5px;font-weight:700;color:#fff;background:#000;border:1px solid #3A3A3E;border-radius:6px;padding:4px 7px;white-space:nowrap}
+.nw-d{flex:none;font-size:11.5px;font-weight:700;color:#fff;background:#000;border-radius:6px;padding:4px 7px;white-space:nowrap}
 .nw-s{display:inline-flex;align-items:center;gap:6px;margin-top:12px;height:32px;padding:0 12px;border-radius:16px;background:var(--ink-3);font-size:13px;font-weight:700;color:#fff;text-decoration:none}
 .nw-s b{color:#6FA8F5}
 .nw-b p{margin:0}
@@ -362,7 +362,7 @@ function panel(s, pubFR, pubJP, eds, ad){
     const n = s.news || [];
     if (!n.length) return `<p class="nw-none">Pas encore de news pour cette série.</p>`;
     const MC = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
-    const dd = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return `${String(x.getDate()).padStart(2, "0")}/${String(x.getMonth() + 1).padStart(2, "0")}/${String(x.getFullYear()).slice(2)}`; };
+    const dd = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return `${x.getDate()} ${MC[x.getMonth()]} ${String(x.getFullYear()).slice(2)}`; }; // ex. « 8 sept. 26 »
     return `<ul class="nw">${n.map(it => `<li><details><summary>${it.date ? `<time class="nw-d">${dd(it.date)}</time>` : ""}<span class="nw-c${it.cat === "Licence FR" ? " lic" : ""}">${esc(it.cat)}</span><span class="nw-t">${esc(it.titre)}</span></summary>
       <div class="nw-b">${it.texte ? `<p>${esc(it.texte)}</p>` : ""}${it.src ? `<a class="nw-s" href="${esc(it.src)}" target="_blank" rel="noopener">Source : <b>${esc(it.srcName || "officielle")}</b> ↗</a>` : ""}</div></details></li>`).join("")}</ul>`;
   }
