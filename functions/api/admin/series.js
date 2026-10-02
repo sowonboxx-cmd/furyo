@@ -46,6 +46,8 @@ export async function onRequestGet({ request, env }) {
       [tJP ? `Tomes JP ${jp.n.size}/${tJP}` : "Tomes JP (nombre total à remplir)", !!tJP && jp.n.size >= tJP],
       [`Couvertures JP${jp.sansCouv.size ? " (" + jp.sansCouv.size + (jp.sansCouv.size > 1 ? " manquantes)" : " manquante)") : ""}`, jp.n.size > 0 && jp.sansCouv.size === 0],
     ];
+    // Légendes des réseaux pour le post « Nouvelle fiche » (X facultatif tant que le compte n'est pas lancé).
+    oblig.push(["Légende Instagram", !!text(p["Légende Instagram"])], ["Légende TikTok", !!text(p["Légende TikTok"])]);
     if (enFrance) oblig.push(
       ["Extrait FR", !!text(p["Extrait FR"]) || check(p["Pas d'extrait FR"])],
       [tFR ? `Tomes FR ${fr.n.size}/${tFR}` : "Tomes FR (nombre total à remplir)", !!tFR && fr.n.size >= tFR],
@@ -54,7 +56,7 @@ export async function onRequestGet({ request, env }) {
     return {
       id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugify(t),
       etat: text(p["Avancement"]) || "À faire", publier: check(p["Publier"]), visible: estVisible(p), date: date(p["Date de publication"]),
-      lot: text(p["Lot"]), trouver: text(p["À trouver"]), coeur: check(p["Coup de cœur"]), editions: rel(p["Éditions"]).length,
+      lot: text(p["Lot"]), trouver: text(p["À trouver"]), coeur: check(p["Prochaine à traiter"]), editions: rel(p["Éditions"]).length,
       oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),
       cover: text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), stJP: text(p["Statut Japon"]), stFR,
     };

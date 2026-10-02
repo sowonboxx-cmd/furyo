@@ -1,4 +1,4 @@
-// POST /api/admin/update {id, publier?, etat?, lot?, trouver?, coeur?} : modifie la série dans Notion (back-office, connecté seulement).
+// POST /api/admin/update {id, publier?, etat?, lot?, trouver?, coeur? (= Prochaine à traiter)} : modifie la série dans Notion (back-office, connecté seulement).
 // Publier coche aussi « Avancement = Validée » et remplit la date de publication si elle est vide. Les caches publics sont vidés.
 import { json, isAdmin } from "../../../lib/admin.js";
 
@@ -20,7 +20,7 @@ export async function onRequestPost({ request, env }) {
   if (b.etat && ETATS.includes(b.etat)) props["Avancement"] = { select: b.etat === "À faire" ? null : { name: b.etat } };
   if (typeof b.lot === "string") props["Lot"] = rt(b.lot);
   if (typeof b.trouver === "string") props["À trouver"] = rt(b.trouver);
-  if (typeof b.coeur === "boolean") props["Coup de cœur"] = { checkbox: b.coeur };
+  if (typeof b.coeur === "boolean") props["Prochaine à traiter"] = { checkbox: b.coeur };
   if (!Object.keys(props).length) return json({ error: "rien à changer" }, 400);
   const r = await fetch(`https://api.notion.com/v1/pages/${b.id}`, {
     method: "PATCH",
