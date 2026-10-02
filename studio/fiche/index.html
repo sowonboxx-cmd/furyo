@@ -75,7 +75,7 @@ button.main{background:var(--red)}
 .card dt{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-size:30px;line-height:1.15;white-space:nowrap}
 .card dd{margin:0;font-weight:700;font-size:30px;line-height:1.15;white-space:nowrap;overflow:hidden}
 .card .cv{position:relative;flex:none}
-.card .stamp{position:absolute;right:-34px;bottom:34px;transform:rotate(-8deg);background:var(--bg);border:6px solid var(--red);color:var(--red);font-size:46px;letter-spacing:.08em;padding:4px 18px;border-radius:8px;line-height:1.1}
+.card .top .stamp{margin-left:auto;margin-right:34px;transform:rotate(-6deg);border:5px solid #E0123F;color:#E0123F;font-size:38px;letter-spacing:.08em;padding:4px 14px 6px;border-radius:8px;line-height:1}
 .card .res{flex:1;min-height:0;margin:52px 0 0;overflow:hidden}
 .card .res p{margin:0;font-size:36px;line-height:1.42;color:var(--res);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lines,5);overflow:hidden}
 .card .res b{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-right:12px}
@@ -127,10 +127,10 @@ function card(d, theme, fmt){
     ["En France", d.pubs || []],
   ].filter(r => r[1].length);
   return `<div class="card ${theme} ${fmt}">
-    <div class="top"><img src="${LOGO_B}" alt=""><span class="A">Fiche <span>n°${pad(d)}</span></span></div>
+    <div class="top"><img src="${LOGO_B}" alt=""><span class="stamp A">En ligne</span><span class="A">Fiche <span>n°${pad(d)}</span></span></div>
     <div class="main">
       <div class="hero">
-        <div class="cv">${d.cover ? `<img class="cover" src="${couv(d.cover)}" alt="">` : `<div class="cover"></div>`}<span class="stamp A">En ligne</span></div>
+        <div class="cv">${d.cover ? `<img class="cover" src="${couv(d.cover)}" alt="">` : `<div class="cover"></div>`}</div>
         <div class="info"><span class="kick"><span>Nouvelle fiche</span></span>
           <p class="t A">${esc(d.t)}</p>${d.jp ? `<div class="jp" lang="ja">${esc(d.jp)}</div>` : ""}
           <dl>${rows.map(r => `<dt>${r[0]}</dt><dd data-items="${esc(JSON.stringify(r[1]))}">${esc(r[1].join(", "))}</dd>`).join("")}</dl>
