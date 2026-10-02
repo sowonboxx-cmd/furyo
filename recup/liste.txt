@@ -1,4 +1,3 @@
-s1.html https://furyo.pages.dev/series/
-s2.html https://furyo.pages.dev/series/kujou-no-taizai
-s3.html https://furyo.pages.dev/series/index.html
-s4.html https://furyo.pages.dev/series
+s2.html https://furyo.pages.dev/series/kujou-no-taizai?v=26144
+s5.html https://furyo.pages.dev/series/hell-dogs
+h.html https://furyo.pages.dev/
