@@ -378,15 +378,28 @@ function renderList(items){
   const LABEL = { type: "Type", dec: "Année", genre: "Genre" };
   const F = { pays: "", type: new Set(), dec: new Set(), genre: new Set() };
   let open = "";
+  // Tri : alphabétique par défaut, ou par année de parution (début de la série au Japon).
+  const SORTS = [["az", "A → Z"], ["za", "Z → A"], ["new", "Plus récentes"], ["old", "Plus anciennes"]];
+  let SORT = "az";
+  const name = s => shown(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const sorter = (a, b) => {
+    if (SORT === "za") return name(b).localeCompare(name(a), "fr");
+    if (SORT === "new" || SORT === "old") {
+      if (!a.y1 !== !b.y1) return a.y1 ? -1 : 1; // sans année : à la fin
+      if (a.y1 !== b.y1) return SORT === "new" ? b.y1 - a.y1 : a.y1 - b.y1;
+    }
+    return name(a).localeCompare(name(b), "fr");
+  };
   const caret = `<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
   const nAct = () => (F.pays ? 1 : 0) + F.type.size + F.dec.size + F.genre.size;
   const drawBar = () => {
     const pays = [["France", "France"], ["Japon", "Japon"]].map(([k, l]) => `<button class="chip" data-pays="${k}" aria-pressed="${F.pays === k}">${l}</button>`).join("");
-    const menus = ["type", "dec", "genre"].filter(k => OPTS[k].length).map(k => `<button class="chip" data-open="${k}" aria-expanded="${open === k}">${LABEL[k]}${F[k].size ? `<span class="n">${F[k].size}</span>` : caret}</button>`).join("");
+    const sortChip = `<button class="chip" data-open="sort" aria-expanded="${open === "sort"}">${SORT === "az" ? "Trier" : SORTS.find(x => x[0] === SORT)[1]}${caret}</button>`;
+    const menus = sortChip + ["type", "dec", "genre"].filter(k => OPTS[k].length).map(k => `<button class="chip" data-open="${k}" aria-expanded="${open === k}">${LABEL[k]}${F[k].size ? `<span class="n">${F[k].size}</span>` : caret}</button>`).join("");
     document.getElementById("fl").innerHTML = pays + menus + (nAct() ? `<button class="chip clear" data-clear>Effacer</button>` : "");
     const fp = document.getElementById("fp");
     fp.hidden = !open;
-    fp.innerHTML = open ? OPTS[open].map(v => `<button class="chip" data-k="${open}" data-v="${esc(v)}" aria-pressed="${F[open].has(v)}">${esc(open === "dec" ? decLabel(v) : v)}</button>`).join("") : "";
+    fp.innerHTML = open === "sort" ? SORTS.map(([k, l]) => `<button class="chip" data-sort="${k}" aria-pressed="${SORT === k}">${l}</button>`).join("") : open ? OPTS[open].map(v => `<button class="chip" data-k="${open}" data-v="${esc(v)}" aria-pressed="${F[open].has(v)}">${esc(open === "dec" ? decLabel(v) : v)}</button>`).join("") : "";
   };
   // Dans une même catégorie : l'un ou l'autre. Entre catégories : tout doit correspondre.
   const keep = s => (!F.pays || (F.pays === "France" ? s.inFR : s.inJP))
@@ -397,24 +410,25 @@ function renderList(items){
   const draw = q => {
     cur = q;
     const n = slugify(q);
-    const list = items.filter(s => keep(s) && (!n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q)));
+    const list = items.filter(s => keep(s) && (!n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q))).sort(sorter);
     document.getElementById("fc").textContent = (n || nAct()) ? `${list.length} série${list.length > 1 ? "s" : ""}` : "";
     document.getElementById("fc").hidden = !(n || nAct());
     document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
-      <span class="t-n">${esc(shown(s))}</span></a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
+      <span class="t-n">${esc(shown(s))}</span>${(SORT === "new" || SORT === "old") && s.y1 ? `<span class="t-d">${s.y1}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   const q = document.getElementById("q");
   drawBar(); draw(""); q.addEventListener("input", e => draw(e.target.value.trim()));
   document.getElementById("app").addEventListener("click", e => {
     const b = e.target.closest(".fl .chip, .fp .chip"); if (!b) return;
-    if (b.dataset.pays) F.pays = F.pays === b.dataset.pays ? "" : b.dataset.pays;
+    if (b.dataset.sort) { SORT = b.dataset.sort; open = ""; }
+    else if (b.dataset.pays) F.pays = F.pays === b.dataset.pays ? "" : b.dataset.pays;
     else if (b.dataset.open) open = open === b.dataset.open ? "" : b.dataset.open;
     else if ("clear" in b.dataset) { F.pays = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; }
     else if (b.dataset.k) { const set = F[b.dataset.k], v = b.dataset.v; set.has(v) ? set.delete(v) : set.add(v); }
     drawBar(); draw(cur);
   });
   // Au retour sur la liste (bouton précédent), on repart toujours de toutes les séries : recherche vide, aucun filtre.
-  const reset = () => { if (q.value || nAct() || open) { q.value = ""; F.pays = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; drawBar(); draw(""); } };
+  const reset = () => { if (q.value || nAct() || open || SORT !== "az") { q.value = ""; SORT = "az"; F.pays = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; drawBar(); draw(""); } };
   addEventListener("pageshow", reset); setTimeout(reset, 0);
 }
 if (!slug) {
