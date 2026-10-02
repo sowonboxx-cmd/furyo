@@ -184,7 +184,11 @@ function fitAll(){ document.querySelectorAll(".c-t").forEach(fit); }
 let fitT; addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fitAll, 120); });
 if (document.fonts) document.fonts.ready.then(fitAll);
 function goToday(){
-  const el = document.getElementById("now"); if (!el) return;
+  const now = document.getElementById("now"); if (!now) return;
+  // On s'arrête sur le titre du mois en cours : mois, nombre de sorties et « Aujourd'hui » visibles d'un coup.
+  const sec = now.closest("section"), mo = sec && sec.querySelector(".month");
+  // Si beaucoup de sorties sont déjà passées ce mois-ci, « Aujourd'hui » passe avant le titre du mois.
+  const el = mo && now.getBoundingClientRect().top - mo.getBoundingClientRect().top < innerHeight * 0.45 ? mo : now;
   const bar = document.querySelector(".bar");
   // Sous l'en-tête du site et la barre Tout / Japon / France (toutes deux collées en haut), avec un peu d'air.
   const sh = document.getElementById("sh");
