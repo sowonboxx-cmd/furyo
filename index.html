@@ -442,6 +442,34 @@ const TYPES = [
   ["licence","Licences FR","--t-licence"],["trailer","Trailers","--t-trailer"],["fin","Fins de série","--t-fin"],
   ["pause","Pauses","--t-pause"],["mag","Magazines","--t-mag"]
 ];
+// News validées dans Notion (base Veille) : ajoutées en tête du fil avant le reste.
+const escN = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dN = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "";
+const slugN = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+function liveNews(j){
+  const items = (j && j.items) || []; if (!items.length) return;
+  const lic = items.filter(it => it.type === "licence");
+  const feedEl = document.getElementById("feed");
+  if (lic.length) feedEl.querySelectorAll('.post[data-type="licence"]').forEach(p => p.remove()); // retire la carte exemple
+  const html = items.map(it => {
+    const titre = it.fr || it.titre, jp = it.jp ? `<span class="p-jp" lang="ja">${escN(it.jp)}</span>` : "";
+    const tag = it.type === "licence" ? "Licence FR" : "News", c = it.type === "licence" ? "--t-licence" : "--t-news";
+    const head = `<div class="p-head"><span class="tag">${tag}</span><span>${escN(dN(it.date))}</span>${it.pub ? `<span class="p-src">${escN(it.pub)}</span>` : ""}</div>`;
+    const body = `${head}<h2 class="p-title">${escN(titre)}${jp}</h2><p class="p-text">${escN(it.texte)}</p>`;
+    const inner = it.cover ? `<div class="p-split"><img class="cover" src="/api/couv?u=${encodeURIComponent(it.cover)}" alt="Couverture de ${escN(titre)}" loading="lazy"><div class="p-body">${body}</div></div>` : body;
+    return `<li class="post" data-type="${it.type}" data-id="${it.type}-${slugN(titre)}" style="--c:var(${c})">${inner}<div class="p-foot"><span class="series">${escN(titre)}</span></div></li>`;
+  }).join("");
+  feedEl.insertAdjacentHTML("afterbegin", html);
+  if (lic.length) {
+    const ul = document.querySelector("#m-lic .lic");
+    if (ul) ul.innerHTML = lic.slice(0, 6).map(it => `<li><span class="pub">${escN(it.pub || "Éditeur")}</span><span class="t">${escN(it.fr || it.titre)}<small>${escN([it.label, it.t1 ? "T.01 le " + it.t1.slice(0, 5) : ""].filter(Boolean).join(" · "))}</small></span></li>`).join("");
+  }
+}
+const newsReady = /^https?:$/.test(location.protocol)
+  ? Promise.race([fetch("/api/news").then(r => r.ok ? r.json() : null).then(liveNews), new Promise(r => setTimeout(r, 2500))]).catch(() => {})
+  : Promise.resolve();
+newsReady.finally(init);
+function init(){
 const posts = [...document.querySelectorAll(".post")];
 const chips = document.getElementById("chips");
 chips.innerHTML = TYPES.map(([k, l, c]) => {
@@ -555,6 +583,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitBrand);
     toast.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove("on"), 2600);
   });
 })();
+}
 </script>
 </body>
 </html>
