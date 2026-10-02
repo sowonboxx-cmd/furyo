@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Studio · Extraits · FuryoGang</title>
+<style>
+/* Studio « Extraits » : met en page 1 à 4 pages de manga (captures de ses achats officiels) dans le style « Dossier »,
+   pour les glisser après le visuel « Nouvelle fiche » dans un carrousel. Les images restent sur l'appareil : rien n'est envoyé au site. */
+@font-face{font-family:"Antonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:"Inter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:"Noto Sans JP";src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+:root{--ink:#232325;--ink-2:#000;--ink-3:#38383B;--paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;--red:#BC002D;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:"Inter",system-ui,sans-serif;font-weight:500}
+.page{max-width:1240px;margin:0 auto;padding:20px 16px 60px}
+h1{font-family:"Antonio",sans-serif;font-weight:700;font-size:44px;text-transform:uppercase;margin:0 0 4px}
+.sub{margin:0 0 16px;color:var(--paper-2)}
+.pick{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+select,button,input{font:inherit;height:42px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);padding:0 14px}
+input[type=number]{width:90px}
+input.credit{width:300px}
+label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--paper-2)}
+button{font-weight:700;cursor:pointer}
+button.main{background:var(--red)}
+.drop{display:flex;align-items:center;justify-content:center;min-height:120px;border:2px dashed #4A4A4E;border-radius:16px;color:var(--paper-3);margin-bottom:18px;cursor:pointer;text-align:center;padding:14px}
+.drop.on{border-color:var(--paper)}
+.pair{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;align-items:start}
+.slot h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.slot h2 button{height:32px;font-size:12px}
+.frame{width:100%;position:relative;overflow:hidden;border-radius:10px}
+.frame.post{aspect-ratio:3/4}.frame.story{aspect-ratio:9/16}
+.frame>.card{position:absolute;left:0;top:0;transform-origin:0 0}
+
+/* ---------- Carte « Extrait » (même famille que « Dossier ») ---------- */
+.card{width:1080px;height:1440px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;display:flex;flex-direction:column;
+  --bg:#F2EFE9;--fg:#0c0c0e;--muted:rgba(12,12,14,.58);--bar:#0c0c0e;--safe-top:0px;--safe-bot:0px;background:var(--bg);color:var(--fg)}
+.card.dark{--bg:#121214;--fg:#F5F5F7;--muted:rgba(245,245,247,.58);--bar:#000}
+.card.story{height:1920px;--safe-top:200px;--safe-bot:250px}
+.card .A{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase}
+.card .top{flex:none;background:var(--bar);padding:calc(var(--safe-top) + 36px) 64px 36px;display:flex;align-items:center;justify-content:space-between}
+.card.dark .top{border-bottom:1px solid rgba(255,255,255,.08)}
+.card .top img{width:250px;display:block}
+.card .top .A{color:#fff;font-size:52px;letter-spacing:.06em;line-height:1}
+.card .top .A span{color:#E0123F}
+.card .main{flex:1;min-height:0;display:flex;flex-direction:column;padding:40px 64px calc(var(--safe-bot) + 44px)}
+.card .head{flex:none;display:flex;align-items:baseline;justify-content:space-between;gap:20px}
+.card .t{margin:0;font-size:64px;line-height:.95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.card .num{flex:none;font-size:40px;color:var(--muted);letter-spacing:.04em}
+.card .meta{margin-top:10px;font-size:27px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .meta b{color:var(--red)}
+.card .pg{flex:1;min-height:0;margin-top:30px;display:flex;align-items:center;justify-content:center}
+.card .pg img{max-width:100%;max-height:100%;object-fit:contain;border:10px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);background:#fff;display:block}
+.card .pg .ph{width:70%;height:90%;border:10px dashed var(--muted);display:grid;place-items:center;color:var(--muted);font-size:34px;font-weight:700;text-align:center;padding:30px}
+.card .foot{flex:none;margin-top:28px;display:flex;justify-content:space-between;align-items:baseline;gap:24px}
+.card .foot .A{white-space:nowrap}
+.card .foot .A{font-size:36px;letter-spacing:.03em;line-height:1}
+.card .foot small{font-size:22px;color:var(--muted);font-weight:600;text-align:right;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Extraits</h1>
+  <p class="sub">Glisse 1 à 4 captures de pages (tes achats officiels). Elles sont mises en page dans le style des fiches, pour le carrousel après le visuel « Nouvelle fiche ». Les images restent sur ton appareil.</p>
+  <div class="pick">
+    <select id="sel" aria-label="Série"></select>
+    <label>Tome <input id="tome" type="number" min="1" value="1"></label>
+    <select id="vo" aria-label="Version"><option value="jp">Version japonaise</option><option value="fr">Version française</option></select>
+    <select id="th" aria-label="Thème"><option value="creme">Crème</option><option value="dark">Sombre</option></select>
+    <select id="fm" aria-label="Format"><option value="post">Post 3:4</option><option value="story">Story 9:16</option></select>
+    <input class="credit" id="credit" placeholder="© Auteur / Éditeur" aria-label="Crédit">
+    <button class="main" id="dlAll">Télécharger tous les PNG</button>
+  </div>
+  <label class="drop" id="drop"><input id="files" type="file" accept="image/*" multiple hidden>Clique ou glisse ici tes captures de pages (4 maximum)</label>
+  <div class="pair" id="pair"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shown = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
+const tn = n => (Number.isInteger(n) && n >= 0 && n < 10) ? "0" + n : String(n);
+const LOGO_B = "/img/social/logo-blanc.png";
+const SIZE = { post: [1080, 1440], story: [1080, 1920] };
+let LIST = [], cur = null, IMGS = [];
+const $ = id => document.getElementById(id);
+function card(img, i, n){
+  const vo = $("vo").value === "jp", tome = +$("tome").value || 1;
+  const pub = vo ? (cur.pubJP || "") : (cur.pubFR || "");
+  return `<div class="card ${$("th").value} ${$("fm").value}">
+    <div class="top"><img src="${LOGO_B}" alt=""><span class="A">Extrait <span>${vo ? "VO" : "VF"}</span></span></div>
+    <div class="main">
+      <div class="head"><p class="t A">${esc(cur.t)}</p><span class="num A">${n > 1 ? `${i + 1} / ${n}` : ""}</span></div>
+      <div class="meta">Tome ${tn(tome)}${pub ? " · " + esc(pub) : ""}${vo ? " · <b>se lit de droite à gauche</b>" : ""}</div>
+      <div class="pg">${img ? `<img src="${img}" alt="">` : `<div class="ph">Ta capture de page ici</div>`}</div>
+      <div class="foot"><span class="A">${vo ? "La suite en VO officielle" : "La suite en VF officielle"}</span><small>${esc($("credit").value || cur.credit || "")}</small></div>
+    </div></div>`;
+}
+function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".card"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
+function draw(){
+  if (!cur) return;
+  const list = IMGS.length ? IMGS : [null], fm = $("fm").value;
+  $("pair").innerHTML = list.map((img, i) => `<div class="slot"><h2>Page ${i + 1} <button data-dl="${i}">PNG</button></h2><div class="frame ${fm}" id="f-${i}">${card(img, i, list.length)}</div></div>`).join("");
+  fit();
+}
+async function pick(slug){
+  const s = LIST.find(x => x.slug === slug) || LIST[0]; if (!s) return;
+  cur = { slug: s.slug, t: shown(s), pubFR: (s.pubFR || "").replace(/\s*\([^)]*\)/g, ""), pubJP: "", credit: "" };
+  history.replaceState(null, "", "?s=" + s.slug); draw();
+  try {
+    const j = await (await fetch("/api/serie?s=" + s.slug)).json();
+    if (j.serie && cur.slug === s.slug) {
+      const a = [j.serie.scen, j.serie.dess].filter((v, i, arr) => v && arr.indexOf(v) === i).join(", ");
+      cur.pubJP = (j.serie.pubJP || "").split(",")[0].trim();
+      cur.credit = "© " + [a, $("vo").value === "jp" ? cur.pubJP : cur.pubFR].filter(Boolean).join(" / ");
+      if (!$("credit").value) $("credit").placeholder = cur.credit;
+      draw();
+    }
+  } catch (e) {}
+}
+function addFiles(files){
+  [...files].filter(f => /^image\//.test(f.type)).slice(0, 4 - IMGS.length).forEach(f => IMGS.push(URL.createObjectURL(f)));
+  draw();
+}
+async function dl(i){
+  const [w, h] = SIZE[$("fm").value], node = document.querySelector(`#f-${i} .card`), keep = node.style.transform; node.style.transform = "none";
+  try { const url = await htmlToImage.toPng(node, { width: w, height: h, pixelRatio: 1 }); const a = document.createElement("a"); a.href = url; a.download = `extrait-${cur.slug}-${+i + 1}-${$("th").value}-${$("fm").value}.png`; a.click(); }
+  finally { node.style.transform = keep; fit(); }
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-dl]"); if (b) dl(b.dataset.dl); });
+$("dlAll").onclick = async () => { for (let i = 0; i < Math.max(1, IMGS.length); i++) await dl(i); };
+$("files").onchange = e => addFiles(e.target.files);
+const drop = $("drop");
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("on"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("on"); }));
+drop.addEventListener("drop", e => addFiles(e.dataTransfer.files));
+["tome", "vo", "th", "fm", "credit"].forEach(id => $(id).addEventListener("input", () => { if (id === "vo") { $("credit").value = ""; pick(cur.slug); } else draw(); }));
+$("sel").onchange = e => pick(e.target.value);
+addEventListener("resize", fit);
+fetch("/api/series").then(r => r.json()).then(l => {
+  LIST = (l.items || []).slice().sort((x, y) => shown(x).localeCompare(shown(y), "fr"));
+  $("sel").innerHTML = LIST.map(s => `<option value="${esc(s.slug)}">${esc(shown(s))}</option>`).join("");
+  const want = new URLSearchParams(location.search).get("s") || "amateur-vigilante";
+  $("sel").value = LIST.some(s => s.slug === want) ? want : LIST[0].slug;
+  pick($("sel").value);
+});
+</script>
+</body>
+</html>
