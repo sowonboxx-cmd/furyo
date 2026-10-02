@@ -1,4 +1,2 @@
-av.json https://furyo.pages.dev/api/avancement?refresh=1
-login.json https://furyo.pages.dev/api/admin/login
-admin.html https://furyo.pages.dev/admin/
-series2.json https://furyo.pages.dev/api/series?refresh=1
+login2.json https://furyo.pages.dev/api/admin/login
+series3.json https://furyo.pages.dev/api/admin/series
