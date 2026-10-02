@@ -101,10 +101,11 @@ h1.cut{cursor:pointer}
 .cmp .no{color:var(--paper-3);font-weight:500}
 /* Fenêtre plein écran d'un tome */
 li.t[data-ti]{cursor:pointer}
-.tb{position:fixed;inset:0;z-index:60;background:rgba(8,8,10,.95);touch-action:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 56px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);opacity:0;transition:opacity .18s}
+.tb{position:fixed;inset:0;z-index:60;background:rgba(35,35,37,.95);touch-action:none;-webkit-user-select:none;user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 56px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);opacity:0;transition:opacity .18s}
 .tb.on{opacity:1}.tb[hidden]{display:none!important}
 .tb-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;width:44px;height:44px;border:0;border-radius:22px;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer}
-.tb-c{position:absolute;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 12px);font-family:var(--f-display);font-weight:700;font-size:28px;color:var(--paper);letter-spacing:.04em}
+/* Compteur aligné sur le bord gauche de la couverture, comme le tome et les dates */
+.tb-c{position:absolute;left:max(16px, calc(50% - min(66vh,760px) * 5 / 14));top:calc(env(safe-area-inset-top,0px) + 12px);font-family:var(--f-display);font-weight:700;font-size:28px;color:var(--paper);letter-spacing:.04em}
 @media (min-width:720px){.tb-c{font-size:30px}}
 /* Ordinateur : compteur centré au-dessus de la couverture, en grand */
 
@@ -121,7 +122,7 @@ li.t[data-ti]{cursor:pointer}
 .tb-nav button{flex:1;height:44px;border:1px solid #2C2C2F;border-radius:14px;background:transparent;color:var(--paper);font:inherit;font-weight:600;font-size:14px;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
 .tb-nav button:disabled{opacity:.3;cursor:default}
 body.tb-open{overflow:hidden}
-@media (max-height:640px){.tb-cv{height:56vh}.tb-t,.tb-ds{width:calc(56vh * 5 / 7)}}
+@media (max-height:640px){.tb-cv{height:56vh}.tb-t,.tb-ds{width:calc(56vh * 5 / 7)}.tb-c{left:max(16px, calc(50% - 56vh * 5 / 14))}}
 /* Onglet News */
 .tabs .nb{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--ink-3);font-size:11px;margin-left:4px;padding:0 5px}
 .nw{list-style:none;margin:0;padding:0}
