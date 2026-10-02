@@ -1,2 +1,1 @@
-hd2.json https://furyo.pages.dev/api/serie?s=hell-dogs&refresh=1
-sx.json https://furyo.pages.dev/api/series?refresh=1
+hd3.json https://furyo.pages.dev/api/serie?s=hell-dogs&refresh=1
