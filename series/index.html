@@ -277,7 +277,7 @@ function dTxt(t){
   return t.prec === "Mois" ? `${MOIS[d.getMonth()]} ${d.getFullYear()}` : d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 const slug = decodeURIComponent(location.pathname.replace(/^\/series\/?/, "").replace(/\/$/, "")) || new URLSearchParams(location.search).get("s") || "";
-let DATA = null, PAYS = "France";
+let DATA = null, PAYS = "France", RENDU = false;
 
 function authorLink(name){ return name ? `<a href="/auteurs/${slugify(name)}">${esc(name)}</a>` : ""; }
 function coverUrl(s, eds){
@@ -414,6 +414,9 @@ function render(){
   document.title = `${titre} (manga) – tomes, sorties, extraits | FuryoGang`;
   const pays = [...new Set(eds.map(e => e.pays))].filter(Boolean);
   if (!pays.includes(PAYS)) PAYS = pays[0] || "France";
+  // France sans aucun tome (prépublication seule) : on ouvre directement sur les tomes japonais.
+  if (PAYS === "France" && !RENDU && pays.includes("Japon") && !eds.some(e => e.pays === "France" && e.tomes.length)) PAYS = "Japon";
+  RENDU = true;
   const pubFR = [...new Set(eds.filter(e => e.pays === "France").map(e => e.pub))];
   const pubJP = [...new Set(eds.filter(e => e.pays === "Japon").map(e => e.pub))];
   if (!pubJP.length && s.pubJP) pubJP.push(s.pubJP);
