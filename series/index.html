@@ -152,23 +152,23 @@ body.tb-open{overflow:hidden}
 .ex.off{color:var(--paper-3)}
 .ex em{font-style:normal;font-size:12.5px;font-weight:500;color:var(--paper-3)}
 /* Adaptations : par catégorie, une ligne par œuvre */
-.ad-cat{margin:0 0 18px}
-.ad-cat:last-child{margin-bottom:4px}
-.ad-cat h3{margin:0 0 8px;font-size:15px;font-weight:700;color:var(--blue)}
-.ad-it{padding:10px 0;border-top:1px solid var(--ink-3)}
-.ad-it b{display:block;font-size:14.5px}
-.ad-it b em{font-style:normal;color:var(--paper-3);font-weight:600;margin-left:6px}
-.ad-it p{margin:3px 0 0;font-size:13px;color:var(--paper-2)}
-.ad-l{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
-.ad-l a{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;background:var(--ink-3);color:var(--paper-2);font-size:12px;font-weight:600;text-decoration:none}
-.ad-l button{display:inline-flex;align-items:center;height:26px;padding:0 10px;border:0;border-radius:13px;background:var(--blue);color:#fff;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.wk-cat{margin:0 0 18px}
+.wk-cat:last-child{margin-bottom:4px}
+.wk-cat h3{margin:0 0 8px;font-size:15px;font-weight:700;color:var(--blue)}
+.wk-it{padding:10px 0;border-top:1px solid var(--ink-3)}
+.wk-it b{display:block;font-size:14.5px}
+.wk-it b em{font-style:normal;color:var(--paper-3);font-weight:600;margin-left:6px}
+.wk-it p{margin:3px 0 0;font-size:13px;color:var(--paper-2)}
+.wk-l{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.wk-l a{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;background:var(--ink-3);color:var(--paper-2);font-size:12px;font-weight:600;text-decoration:none}
+.wk-l button{display:inline-flex;align-items:center;height:26px;padding:0 10px;border:0;border-radius:13px;background:var(--blue);color:#fff;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
 .apercu{margin:0 0 14px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--amber,#F2B33D) 18%,var(--ink-3));color:#F2B33D;font-size:13.5px;font-weight:600}
 .cv .ap{position:absolute;left:6px;top:6px;padding:2px 8px;border-radius:8px;background:#F2B33D;color:#000;font-size:11px;font-weight:800}
-.ad-mere{margin-top:22px;padding-top:14px;border-top:1px solid var(--ink-3)}
-.ad-mere:first-child{margin-top:0;padding-top:0;border-top:0}
-.ad-mh{margin:0 0 10px;font-size:14px;font-weight:700;color:var(--paper-2)}
-.ad-mh a{color:var(--blue);text-decoration:none;font-weight:600;white-space:nowrap}
-.ad-cat h4{margin:6px 0 4px;font-size:13px;font-weight:700;color:var(--blue)}
+.wk-mere{margin-top:22px;padding-top:14px;border-top:1px solid var(--ink-3)}
+.wk-mere:first-child{margin-top:0;padding-top:0;border-top:0}
+.wk-mh{margin:0 0 10px;font-size:14px;font-weight:700;color:var(--paper-2)}
+.wk-mh a{color:var(--blue);text-decoration:none;font-weight:600;white-space:nowrap}
+.wk-cat h4{margin:6px 0 4px;font-size:13px;font-weight:700;color:var(--blue)}
 .vid{position:fixed;inset:0;z-index:90;background:rgba(35,35,37,.95);display:grid;place-items:center;padding:16px}
 .vid-in{width:min(960px,100%)}
 .vid-f{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
@@ -176,7 +176,7 @@ body.tb-open{overflow:hidden}
 .vid-b{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 .vid-b a{color:var(--paper-2);font-weight:600;font-size:14px;text-decoration:none}
 .vid-b button{height:40px;padding:0 18px;border:0;border-radius:20px;background:var(--ink-2);color:var(--paper);font:inherit;font-weight:700;cursor:pointer}
-.ad-l a b{display:inline;font-size:12px;color:var(--paper);margin-left:3px}
+.wk-l a b{display:inline;font-size:12px;color:var(--paper);margin-left:3px}
 .yt{position:relative;margin-top:10px;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;border:0;display:block;cursor:pointer;padding:0}
 .yt img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85}
 .yt span{position:absolute;inset:0;display:grid;place-items:center}
@@ -325,12 +325,12 @@ function ADAPT(s){
 }
 const SRC_NOMS = { "asianwiki.com": "AsianWiki", "myanimelist.net": "MyAnimeList", "anilist.co": "AniList", "mydramalist.com": "MyDramaList", "netflix.com": "Netflix", "wikipedia.org": "Wikipedia", "eiga.com": "Eiga.com", "realsound.jp": "Real Sound", "animenewsnetwork.com": "Anime News Network", "allcinema.net": "allcinema" };
 const srcNom = u => { try { const h = new URL(u).hostname.replace(/^www\./, ""); return SRC_NOMS[h] || SRC_NOMS[h.split(".").slice(-2).join(".")] || h; } catch (e) { return "Source"; } };
-const adLinks = it => it.src || it.yt ? `<div class="ad-l">${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source :<b>${esc(srcNom(it.src))}</b>&nbsp;↗</a>` : ""}${it.yt && ytId(it.yt) ? `<button type="button" data-vid="${ytId(it.yt)}">▶ Bande-annonce</button>` : ""}</div>` : "";
-const adItem = (it, court) => `<div class="ad-it"><b>${esc(it.t)}${it.y ? `<em>${it.y}</em>` : ""}</b>${!court && it.d ? `<p>${esc(it.d.charAt(0).toUpperCase() + it.d.slice(1))}</p>` : ""}${adLinks(it)}</div>`;
+const adLinks = it => it.src || it.yt ? `<div class="wk-l">${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source :<b>${esc(srcNom(it.src))}</b>&nbsp;↗</a>` : ""}${it.yt && ytId(it.yt) ? `<button type="button" data-vid="${ytId(it.yt)}">▶ Bande-annonce</button>` : ""}</div>` : "";
+const adItem = (it, court) => `<div class="wk-it"><b>${esc(it.t)}${it.y ? `<em>${it.y}</em>` : ""}</b>${!court && it.d ? `<p>${esc(it.d.charAt(0).toUpperCase() + it.d.slice(1))}</p>` : ""}${adLinks(it)}</div>`;
 function adHTML(ad){
   return ad.map(c => c.mere
-    ? `<div class="ad-mere"><h3 class="ad-mh">Adaptations de la série d'origine · ${esc(shown(c.mere))}${c.mere.visible ? ` <a href="/series/${esc(c.mere.slug)}">Voir la fiche ↗</a>` : ""}</h3>${c.cats.map(k => `<div class="ad-cat"><h4>${k.label}</h4>${k.items.map(it => adItem(it, true)).join("")}</div>`).join("")}</div>`
-    : `<div class="ad-cat"><h3>${c.label}</h3>${c.items.map(it => adItem(it, false)).join("")}</div>`).join("");
+    ? `<div class="wk-mere"><h3 class="wk-mh">Adaptations de la série d'origine · ${esc(shown(c.mere))}${c.mere.visible ? ` <a href="/series/${esc(c.mere.slug)}">Voir la fiche ↗</a>` : ""}</h3>${c.cats.map(k => `<div class="wk-cat"><h4>${k.label}</h4>${k.items.map(it => adItem(it, true)).join("")}</div>`).join("")}</div>`
+    : `<div class="wk-cat"><h3>${c.label}</h3>${c.items.map(it => adItem(it, false)).join("")}</div>`).join("");
 }
 // Fenêtre vidéo (bande-annonce) : la vidéo ne se charge qu'à l'ouverture.
 function vidOpen(id){
