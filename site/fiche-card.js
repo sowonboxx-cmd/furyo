@@ -178,7 +178,16 @@
     box.innerHTML = card(d, theme, fmt); document.body.appendChild(box);
     var lib = window.htmlToImage ? Promise.resolve() : charger("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js");
     return lib.then(function () { return preparer(box, d); }).then(function (fcss) {
-      return htmlToImage.toPng(box.firstChild, { width: wh[0], height: wh[1], pixelRatio: 1, fontEmbedCSS: fcss, cacheBust: false });
+      // Safari (iPhone) dessine parfois la première image avant d'avoir intégré les polices et les photos :
+      // on recommence jusqu'à ce que le résultat ne change plus (3 à 4 passes au plus).
+      var opts = { width: wh[0], height: wh[1], pixelRatio: 1, fontEmbedCSS: fcss, cacheBust: false };
+      var essai = function (n, prev) {
+        return htmlToImage.toPng(box.firstChild, opts).then(function (u) {
+          if (n >= 4 || (prev && Math.abs(u.length - prev.length) < 200 && n >= 2)) return u;
+          return new Promise(function (ok) { setTimeout(ok, 150); }).then(function () { return essai(n + 1, u); });
+        });
+      };
+      return essai(1, null);
     }).finally(function () { box.remove(); });
   }
   // Nombre de lignes du résumé sur l'image (post et story) et remplissage de la dernière ligne (0 à 1).

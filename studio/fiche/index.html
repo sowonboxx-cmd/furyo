@@ -57,7 +57,7 @@ button.main{background:var(--red)}
   <div class="caps" id="caps"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
-<script src="/site/fiche-card.js?v=2"></script>
+<script src="/site/fiche-card.js?v=3"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const LOGO_B = "/img/social/logo-blanc.png";
@@ -177,7 +177,9 @@ async function pick(slug){
 async function dl(key){
   const [th, fm] = key.split("-"), [w, h] = SIZE[fm];
   const node = document.querySelector(`#f-${key} .fgc`), keep = node.style.transform; node.style.transform = "none";
-  try { const url = await htmlToImage.toPng(node, { width: w, height: h, pixelRatio: 1, fontEmbedCSS: FONTS || undefined }); const a = document.createElement("a"); a.href = url; a.download = `nouvelle-fiche-${cur.slug}-${th}-${fm}.png`; a.click(); }
+  // Plusieurs passes : Safari (iPhone) rate parfois les polices et les photos au premier rendu.
+  try { const o = { width: w, height: h, pixelRatio: 1, fontEmbedCSS: FONTS || undefined }; let url = "", prev = "";
+    for (let i = 1; i <= 4; i++) { prev = url; url = await htmlToImage.toPng(node, o); if (i >= 2 && Math.abs(url.length - prev.length) < 200) break; } const a = document.createElement("a"); a.href = url; a.download = `nouvelle-fiche-${cur.slug}-${th}-${fm}.png`; a.click(); }
   finally { node.style.transform = keep; fit(); }
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-dl]"); if (b) dl(b.dataset.dl); });

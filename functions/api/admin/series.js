@@ -4,7 +4,7 @@ import { text, num, date, check, rel, list, queryAll, slugify, slugSerie } from 
 import { json, isAdmin } from "../../../lib/admin.js";
 import { estVisible } from "../../../lib/site.js";
 import { handle, mentionList, syncMentions } from "../../../lib/mentions.js";
-import { BASES, contexte, obligatoires } from "../../../lib/oblig.js";
+import { BASES, contexte, obligatoires, reseaux } from "../../../lib/oblig.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const { EDITIONS, TOMES, AUTEURS } = BASES;
@@ -54,7 +54,7 @@ export async function onRequestGet({ request, env, waitUntil }) {
       coeur: check(p["Prochaine à traiter"]), editions: rel(p["Éditions"]).length,
       // Pour générer l'image « Nouvelle fiche » depuis le back-office.
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), num: num(p["N° fiche"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), genres: list(p["Genre"]), pubFR: list(p["Éditeur Français"]).join(", "),
-      oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),
+      sns: reseaux(p, ctx), oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),
       cover: best[id]?.c || text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), stJP: text(p["Statut Japon"]), stFR,
     };
   }).filter(s => s.t).sort((a, b) => a.t.localeCompare(b.t, "fr"));
