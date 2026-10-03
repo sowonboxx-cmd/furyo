@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Membres · FuryoGang</title>
+<meta name="description" content="La famille FuryoGang : tous les membres, leurs badges et leur numéro d'inscription.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#232325;--ink-2:#000;--ink-3:#38383B;--paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;--blue:#4C9BFF}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+main{max-width:860px;margin:0 auto;padding:18px 16px 64px}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+h1{font-family:Antonio,sans-serif;text-transform:uppercase;font-size:36px;margin:0}
+.count{color:var(--paper-3);font-size:14px}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:14px 0 16px}
+.chips button{flex:none;height:34px;padding:0 14px;border:0;border-radius:17px;background:var(--ink-3);color:var(--paper-2);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--blue);color:#fff}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+@media (min-width:720px){.list{grid-template-columns:1fr 1fr}}
+.m{display:grid;grid-template-columns:auto 52px 1fr;align-items:center;gap:12px;background:var(--ink-2);border-radius:16px;padding:12px 14px}
+.n{font-family:Antonio,sans-serif;font-size:20px;color:var(--paper-3);min-width:34px;text-align:right}
+.m img,.m .ph{width:52px;height:52px;border-radius:50%;background:var(--ink-3);display:block}
+.m b{display:block;font-size:15.5px}
+.m small{color:var(--paper-3);font-size:12.5px}
+.bs{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.b{height:20px;padding:0 8px;border-radius:10px;font-size:11px;font-weight:700;display:inline-flex;align-items:center}
+.rs{display:flex;gap:8px;margin-top:5px;font-size:12.5px}
+.rs a,.rs span{color:var(--paper-2);text-decoration:none}
+.empty{color:var(--paper-3);text-align:center;margin:12vh 0}
+</style>
+</head>
+<body>
+<script src="/site/header.js?v=5"></script>
+<main>
+  <div class="top"><h1>Membres</h1><span class="count" id="count"></span></div>
+  <div class="chips" id="chips"></div>
+  <ul class="list" id="list"><li class="empty">Chargement…</li></ul>
+</main>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const COUL = { Administrateur: "#4C9BFF", Fondateur: "#F2B33D", Ancien: "#E0955F", Ami: "#F08AC0", Donateur: "#E54839", Contributeur: "#7BC67E", Modérateur: "#B38CFF" };
+// Filtres et tri : ordre d'inscription (par défaut), membres avec badges, admins, amis, anciens, fondateurs.
+const VUES = [
+  ["tous", "Ordre d'inscription", () => true],
+  ["recents", "Plus récents", () => true],
+  ["badges", "Avec badges", m => m.badges.length > 0],
+  ["admins", "Admins", m => m.badges.includes("Administrateur") || m.badges.includes("Modérateur")],
+  ["amis", "Amis", m => m.badges.includes("Ami")],
+  ["anciens", "Anciens", m => m.badges.includes("Ancien")],
+  ["fond", "Fondateurs", m => m.badges.includes("Fondateur")],
+];
+let ITEMS = [], V = "tous";
+const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
+function draw(){
+  document.getElementById("chips").innerHTML = VUES.map(([k, l]) => `<button data-v="${k}" aria-pressed="${V === k}">${l}</button>`).join("");
+  const f = VUES.find(x => x[0] === V)[2];
+  let l = ITEMS.filter(f); if (V === "recents") l = l.slice().reverse();
+  document.getElementById("list").innerHTML = l.map(m => `<li class="m"><span class="n">${m.num ?? ""}</span>${m.photo ? `<img src="${esc(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}
+    <div><b>${esc(m.pseudo || "Membre")}</b><small>Membre n°${m.num ?? "?"} · depuis le ${dl(m.inscrit)}${m.points ? ` · ${m.points} pts` : ""}</small>
+    ${m.badges.length ? `<div class="bs">${m.badges.map(b => `<span class="b" style="background:${(COUL[b] || "#98989D")}26;color:${COUL[b] || "#98989D"}">${esc(b)}</span>`).join("")}</div>` : ""}
+    ${m.reseaux ? `<div class="rs">${m.reseaux.instagram ? `<a href="https://instagram.com/${esc(m.reseaux.instagram)}" target="_blank" rel="noopener">Instagram</a>` : ""}${m.reseaux.x ? `<a href="https://x.com/${esc(m.reseaux.x)}" target="_blank" rel="noopener">X</a>` : ""}${m.reseaux.discord ? `<span>Discord : ${esc(m.reseaux.discord)}</span>` : ""}</div>` : ""}</div></li>`).join("") || `<li class="empty">Personne ici pour l'instant.</li>`;
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-v]"); if (b) { V = b.dataset.v; draw(); } });
+fetch("/api/membres").then(r => r.json()).then(j => { ITEMS = j.items || []; document.getElementById("count").textContent = `${j.total || 0} membre${(j.total || 0) > 1 ? "s" : ""}`; draw(); })
+  .catch(() => { document.getElementById("list").innerHTML = `<li class="empty">Impossible de charger les membres.</li>`; });
+</script>
+</body>
+</html>

@@ -32,11 +32,20 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .acts{display:flex;flex-direction:column;gap:8px;margin-top:28px}
 .acts a,.acts button{height:46px;border-radius:23px;border:0;font:inherit;font-weight:700;display:flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer}
 .acts a{background:var(--blue);color:#fff}.acts button{background:var(--ink-3);color:var(--paper)}
+.since{color:var(--paper-3);font-size:12.5px;margin-top:6px}
+.soc{display:flex;flex-direction:column;gap:10px;background:var(--ink-2);border-radius:16px;padding:14px}
+.soc label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--paper-3)}
+.soc input:not([type=checkbox]){height:44px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);font:inherit;font-size:15px;padding:0 14px;outline:none}
+.soc .sw{flex-direction:row;align-items:center;gap:10px;color:var(--paper-2);font-size:14px}
+.soc .sw input{width:20px;height:20px;accent-color:var(--blue)}
+.soc button{height:44px;border:0;border-radius:22px;background:var(--blue);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.soc .msg{margin:0;font-size:13px;color:var(--ok);min-height:18px}
+.acts a.sec{background:var(--ink-3);color:var(--paper)}
 .empty{color:var(--paper-3);text-align:center;margin-top:18vh}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=4"></script>
+<script src="/site/header.js?v=5"></script>
 <main id="app"><p class="empty">Chargement…</p></main>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -47,28 +56,48 @@ const I = {
   contrib: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>`,
   lecteur: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg>`,
 };
-// Badges (voir badges.md dans le projet). Pour l'instant seul le badge Admin est attribué ; les autres arrivent avec les comptes membres.
-const BADGES = [
-  ["admin", "Administrateur", "Gère FuryoGang", "#4C9BFF"],
-  ["fond", "Membre fondateur", "Parmi les 100 premiers inscrits", "#F2B33D"],
-  ["don", "Donateur", "Soutient le site", "#E54839"],
-  ["contrib", "Contributeur", "Aide à enrichir les fiches", "#7BC67E"],
-  ["lecteur", "Collectionneur", "Séries lues ou possédées", "#B38CFF"],
-];
-fetch("/api/auth/me").then(r => r.json()).then(j => {
+// Badges (voir badges.md). Administrateur et Fondateur (100 premiers) sont automatiques ; Will ajoute les autres dans Notion.
+const BADGES = {
+  "Administrateur": ["admin", "Gère FuryoGang", "#4C9BFF"],
+  "Fondateur": ["fond", "Parmi les 100 premiers inscrits", "#F2B33D"],
+  "Ancien": ["fond", "Là depuis le début", "#E0955F"],
+  "Ami": ["don", "Ami de la maison", "#F08AC0"],
+  "Donateur": ["don", "Soutient le site", "#E54839"],
+  "Contributeur": ["contrib", "Aide à enrichir les fiches", "#7BC67E"],
+  "Modérateur": ["admin", "Veille sur la communauté", "#B38CFF"],
+};
+const badge = (n, on) => { const [ic, d, c] = BADGES[n] || ["fond", "", "#98989D"]; return `<div class="bd ${on ? "" : "off"}"><i style="background:${c}22;color:${c}">${I[ic]}</i><b>${esc(n)}</b><small>${d}${on ? "" : " · pas encore"}</small></div>`; };
+const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+(async () => {
   const app = document.getElementById("app");
-  if (!j.user) { app.innerHTML = `<p class="empty">Connecte-toi avec Google (avatar en haut à gauche) pour voir ton profil.</p>`; return; }
-  const u = j.user, has = { admin: j.admin };
+  const me = await fetch("/api/auth/me").then(r => r.json()).catch(() => ({}));
+  if (!me.user) { app.innerHTML = `<p class="empty">Connecte-toi avec Google (avatar en haut à gauche) pour voir ton profil.<br><br><a href="/membres/" style="color:var(--blue)">Voir les membres</a></p>`; return; }
+  if (!me.user.member) { app.innerHTML = `<p class="empty">Déconnecte-toi puis reconnecte-toi une fois pour créer ta fiche membre.<br><br><button id="out" style="height:44px;padding:0 20px;border:0;border-radius:22px;background:var(--ink-3);color:var(--paper);font:inherit;font-weight:700">Se déconnecter</button></p>`;
+    document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; }); return; }
+  const j = await fetch("/api/profil").then(r => r.json()).catch(() => ({}));
+  const m = j.membre; if (!m) { app.innerHTML = `<p class="empty">Impossible de charger le profil.</p>`; return; }
+  const r = m.reseaux || {};
   app.innerHTML = `
-    <section class="hero">${u.picture ? `<img src="${esc(u.picture)}" alt="" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}
-      <div><h1>${esc(u.name || "Membre")}</h1><span class="role ${j.admin ? "admin" : ""}">${j.admin ? "Administrateur" : "Membre"}</span></div></section>
+    <section class="hero">${m.photo ? `<img src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}
+      <div><h1>${esc(m.pseudo || "Membre")}</h1><span class="role ${me.admin ? "admin" : ""}">${me.admin ? "Administrateur" : "Membre"} · n°${m.num || "?"}</span><div class="since">Inscrit le ${dl(m.inscrit)}</div></div></section>
     <h2>Classement</h2>
-    <div class="stats"><div><b>—</b><span>Rang</span></div><div><b>0</b><span>Points</span></div><div><b>0</b><span>Séries suivies</span></div></div>
+    <div class="stats"><div><b>${m.num || "—"}</b><span>N° de membre</span></div><div><b>${m.points}</b><span>Points</span></div><div><b>0</b><span>Séries suivies</span></div></div>
     <h2>Badges</h2>
-    <div class="badges">${BADGES.map(([k, t, d, c]) => `<div class="bd ${has[k] ? "" : "off"}"><i style="background:${c}22;color:${c}">${I[k]}</i><b>${t}</b><small>${has[k] ? d : d + " · bientôt"}</small></div>`).join("")}</div>
-    <div class="acts">${j.admin ? `<a href="/admin/">Ouvrir le back-office</a>` : ""}<button id="out">Se déconnecter</button></div>`;
+    <div class="badges">${[...new Set([...m.badges, ...Object.keys(BADGES)])].map(n => badge(n, m.badges.includes(n))).join("")}</div>
+    <h2>Mes réseaux</h2>
+    <form class="soc" id="soc">
+      <label>Instagram<input name="instagram" value="${esc(r.instagram)}" placeholder="ton compte, sans @" autocomplete="off"></label>
+      <label>X (Twitter)<input name="x" value="${esc(r.x)}" placeholder="ton compte, sans @" autocomplete="off"></label>
+      <label>Discord<input name="discord" value="${esc(r.discord)}" placeholder="ton pseudo Discord" autocomplete="off"></label>
+      <label class="sw"><input type="checkbox" name="public" ${m.public ? "checked" : ""}><span>Afficher mes réseaux sur la page Membres</span></label>
+      <button>Enregistrer</button><p class="msg" id="msg"></p>
+    </form>
+    <div class="acts"><a href="/membres/" class="sec">Voir tous les membres</a>${me.admin ? `<a href="/admin/">Ouvrir le back-office</a>` : ""}<button id="out">Se déconnecter</button></div>`;
   document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; });
-}).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger le profil.</p>`; });
+  document.getElementById("soc").onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target), msg = document.getElementById("msg"); msg.textContent = "Enregistrement…";
+    const x = await fetch("/api/profil", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ instagram: f.get("instagram"), x: f.get("x"), discord: f.get("discord"), public: f.get("public") === "on" }) });
+    msg.textContent = x.ok ? "Enregistré ✓" : "Erreur, réessaie."; };
+})();
 </script>
 </body>
 </html>

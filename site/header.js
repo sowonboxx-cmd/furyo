@@ -58,6 +58,7 @@
     ".me-u{display:flex;align-items:center;gap:12px;margin:4px 0 14px}.me-u img{width:52px;height:52px;border-radius:50%}.me-u b{display:block;font-size:17px}.me-u small{color:#98989D}" +
     ".me-box a.go2{display:flex;align-items:center;justify-content:center;height:46px;border-radius:23px;background:#2D74D2;color:#fff;font-weight:700;text-decoration:none;margin-bottom:8px}" +
     ".me-box .out{background:#38383B;color:#F5F5F7}" +
+    ".me-mb{display:block;text-align:center;margin-top:12px;color:#4C9BFF;font-weight:600;font-size:14px;text-decoration:none}" +
     ".sh-me img{width:30px;height:30px;border-radius:50%;display:block}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
@@ -171,7 +172,7 @@
     '<div class="me" id="me" hidden role="dialog" aria-modal="true" aria-label="Compte"><div class="me-box"><h3>Ton compte FuryoGang</h3>' +
     "<p>Connecte-toi en un clic avec Google. Ton compte gratuit te permettra bientôt de :</p>" +
     "<ul><li><i>❤️</i>Liker les actus et les séries</li><li><i>🔖</i>Garder tes séries préférées en favoris</li><li><i>⬆️</i>Voter pour les séries populaires</li></ul>" +
-    '<div id="me-g" class="me-g"></div><p class="me-err" id="me-err"></p><button class="no" id="me-x">Fermer</button></div></div>');
+    '<div id="me-g" class="me-g"></div><p class="me-err" id="me-err"></p><a class="me-mb" href="/membres/">Voir les membres</a><button class="no" id="me-x">Fermer</button></div></div>');
   var fs = document.getElementById("fs"), inp = document.getElementById("fs-q"), res = document.getElementById("fs-res"), meBox = document.getElementById("me");
   function open() {
     fs.hidden = false; document.body.classList.add("fs-open"); inp.value = ""; draw(); inp.focus();
