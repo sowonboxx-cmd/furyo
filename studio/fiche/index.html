@@ -100,7 +100,7 @@ function caps(d){
   const membre = MEMBRES_OUVERTS ? "\n👉 Crée ton compte gratuit sur le site pour suivre tes séries." : "";
   const ig = `🆕 NOUVELLE FICHE · ${d.t.toUpperCase()}${d.jp ? ` (${d.jp})` : ""}
 
-${phrases(d.resume, 3)}
+${phrases(d.resumeLong || d.resume, 3)}
 
 ✍️ ${auteurs.replace("Histoire ", "Histoire : ").replace("Dessin ", "Dessin : ")}
 📚 ${infos}
@@ -108,12 +108,10 @@ ${pays}
 
 📖 Tomes, extraits, adaptations : toutes les infos sur le site FuryoGang.${membre}
 ${mentions(d, "ig") ? "\n📣 " + mentions(d, "ig") + "\n" : ""}
-Fiche n°${d.n} sur ${d.tot} · de nouvelles fiches chaque semaine.
-
 ${tags.concat(["#mangafr"]).slice(0, 12).join(" ")}`;
   const tt = `🆕 Nouvelle fiche : ${d.t}${d.jp ? ` (${d.jp})` : ""}
 
-${phrases(d.resume, 3)}
+${phrases(d.resumeLong || d.resume, 3)}
 
 ${auteurs}
 📖 Toutes les infos sur le site FuryoGang${membre}
@@ -122,7 +120,7 @@ ${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf
   // X : règle « Nouvelle fiche » de FuryoGang. 280 caractères (un lien compte pour 23) ; on raccourcit
   // la description, puis on retire le 3e hashtag (2 minimum) ; les comptes les moins pertinents sautent en dernier.
   const hx = [...new Set((d.genres || []).map(g => tagOf(g)).filter(h => h.length > 1))];
-  let hs = hx.slice(0, 3), r = phrases(d.resume, 1);
+  let hs = hx.slice(0, 3), r = phrases(d.resumeLong || d.resume, 1);
   const ats = (mentions(d, "x") || "").split(" ").filter(Boolean);
   const xBase = (r, hs, k) => `Nouvelle fiche : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${k ? "\nX " + ats.slice(0, k).join(" · ") : ""}`;
   const xLen = t => t.replace(url, "x".repeat(23)).length;
@@ -170,7 +168,7 @@ async function pick(slug){
     n: rang ? rang.rang : (AV ? AV.enLigne : 1), tot: AV ? AV.total : 600, scen: "", dess: "", resume: "" };
   document.getElementById("n").value = cur.n; document.getElementById("tot").value = cur.tot;
   history.replaceState(null, "", "?s=" + s.slug); draw(); drawCaps();
-  try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resume || ""; cur.pubJP = j.serie.pubJP || ""; cur.tomesJP = j.serie.tomesJP; draw(); drawCaps(); }
+  try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resumeImg || j.serie.resume || ""; cur.resumeLong = j.serie.resume || ""; cur.pubJP = j.serie.pubJP || ""; cur.tomesJP = j.serie.tomesJP; draw(); drawCaps(); }
     // Comptes officiels pour les @mentions (seulement si connecté au back-office).
     if (cur.id) { const r = await fetch("/api/admin/handles?id=" + cur.id); const m = document.getElementById("capMsg");
       if (r.ok) { const h = await r.json(); if (cur.slug === s.slug) { cur.handles = h; drawCaps(); } }

@@ -75,6 +75,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .leg textarea{width:100%;min-height:120px;margin-top:8px;border:0;border-radius:10px;background:var(--ink-2);padding:10px 12px;font-size:14px!important;line-height:1.45;resize:vertical;outline:none}
 .leg .n{font-size:12px;font-weight:600;color:var(--paper-3);margin-left:auto;margin-right:10px}
 .leg .n.over{color:#F08A7E}
+.lg{font-weight:700;margin-left:6px}.lg.ok{color:var(--ok)}.lg.mid{color:var(--amber)}.lg.ko{color:#F08A7E}
 .dl{display:flex;gap:8px;flex-wrap:wrap}
 .dl button{height:40px;padding:0 14px 0 12px;border:0;border-radius:20px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
 .dl button svg{width:17px;height:17px}
@@ -231,9 +232,13 @@ function row(s){
     <div class="more">
       <label>★ Éléments obligatoires</label>
       <ul class="chk">${s.oblig.map(o => `<li class="${o.ok ? "ok" : "ko"}">${o.ok ? "✓" : "✗"} ${esc(o.k)}</li>`).join("")}</ul>
+      <label>N° de fiche <span class="lg" data-numw></span></label>
+      <input data-f="num" type="number" min="1" inputmode="numeric" value="${s.num || ""}" placeholder="automatique" style="max-width:160px">
       <label>Image de la fiche (crème)</label>
       <div class="dl"><button data-dl="post">${ICO_DL} Post 3:4</button><button data-dl="story">${ICO_DL} Story 9:16</button></div>
-      <label>Résumé (utilisé sur l'image)</label>
+      <label>Résumé de l'image <span class="lg" data-lg></span></label>
+      <textarea data-f="resumeImg" placeholder="${esc(s.resume)}">${esc(s.resumeImg)}</textarea>
+      <label>Résumé du site (peut être long)</label>
       <textarea data-f="resume" placeholder="Résumé de la série">${esc(s.resume)}</textarea>
       <label>Légendes réseaux sociaux</label>
       ${["ig", "tt", "x"].map(k => `<div class="leg"><div class="leg-h"><b>${NOMS[k]}</b><span class="n" data-n="${k}"></span><button class="cp" data-cp="${k}" aria-label="Copier la légende ${NOMS[k]}">${ICO_COPY}</button></div><textarea data-f="${k}" placeholder="Pas encore de légende">${esc(s.leg && s.leg[k])}</textarea></div>`).join("")}
@@ -272,15 +277,24 @@ document.addEventListener("click", e => {
     }); return; }
   if (e.target.closest("[data-coeur]")) { send(s, { coeur: !s.coeur }); return; }
   if (e.target.closest("[data-save]")) { const v = k => li.querySelector(`[data-f="${k}"]`).value;
-    send(s, { resume: v("resume").trim(), legIG: v("ig"), legTT: v("tt"), legX: v("x") }).then(() => { s.resume = v("resume").trim(); s.leg = { ig: v("ig"), tt: v("tt"), x: v("x") }; }); return; }
+    send(s, { num: v("num"), resume: v("resume").trim(), resumeImg: v("resumeImg").trim(), legIG: v("ig"), legTT: v("tt"), legX: v("x") }).then(() => { s.num = +v("num") || null; AV = null; s.resume = v("resume").trim(); s.resumeImg = v("resumeImg").trim(); s.leg = { ig: v("ig"), tt: v("tt"), x: v("x") }; }); return; }
   const dlb = e.target.closest("[data-dl]"); if (dlb) { imageFiche(s, dlb.dataset.dl, li, dlb); }
 });
 // Compteur de la légende X (un lien compte pour 23 caractères sur X).
 const xLen = t => t.replace(/furyogang\.com\/\S*/g, "x".repeat(23)).length;
 function compter(li){ if (!li) return; const n = li.querySelector('[data-n="x"]'), t = li.querySelector('[data-f="x"]'); if (!n || !t) return;
   const l = xLen(t.value); n.textContent = l + " / 280"; n.classList.toggle("over", l > 280);
+  // Résumé de l'image : 5 lignes idéal, 6 si pas le choix (sans remplir la 6e jusqu'au bout), jamais plus.
+  const ri = li.querySelector('[data-f="resumeImg"]'), lg = li.querySelector("[data-lg]");
+  if (ri && lg && window.FG_FICHE) FG_FICHE.pret().then(() => { const txt = ri.value.trim() || li.querySelector('[data-f="resume"]').value.trim();
+    const m = FG_FICHE.lignes(txt), plein = m.n === 6 && m.fill > 0.9;
+    lg.textContent = `${m.n} ligne${m.n > 1 ? "s" : ""}${m.n > 6 ? " · trop long, le texte sera coupé" : plein ? " · 6e ligne pleine, à raccourcir" : m.n === 6 ? " · ok si pas le choix" : " ✓"}`;
+    lg.className = "lg " + (m.n <= 5 ? "ok" : m.n === 6 && !plein ? "mid" : "ko"); });
   ["ig", "tt"].forEach(k => { const m = li.querySelector(`[data-n="${k}"]`), v = li.querySelector(`[data-f="${k}"]`); if (m && v) m.textContent = v.value.length + " car."; }); }
-document.addEventListener("input", e => { if (e.target.matches("[data-f]")) compter(e.target.closest(".it")); });
+document.addEventListener("input", e => {
+  if (e.target.matches('[data-f="num"]')) { const li = e.target.closest(".it"), s = ITEMS.find(x => x.id === li.dataset.id), n = +e.target.value, w = li.querySelector("[data-numw]");
+    const autre = n && ITEMS.find(x => x !== s && x.num === n); w.textContent = autre ? `déjà pris par ${autre.fr || autre.t}` : ""; w.className = "lg ko"; return; }
+  if (e.target.matches("[data-f]")) compter(e.target.closest(".it")); });
 // Image « Nouvelle fiche » (crème), avec le résumé tel qu'il est dans le champ.
 let AV = null;
 const shownT = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
@@ -291,7 +305,7 @@ async function imageFiche(s, fmt, li, btn){
     const rang = (AV.series || []).find(x => x.slug === s.slug);
     const d = { t: shownT(s), jp: s.jp, cover: s.cover, type: s.type, genres: s.genres || [], y1: s.y1,
       pubs: FG_FICHE.parts((s.pubFR || "").replace(/\s*\([^)]*\)/g, "")), scen: s.scen, dess: s.dess,
-      resume: li.querySelector('[data-f="resume"]').value.trim(), n: rang ? rang.rang : (AV.enLigne || 0) + 1, tot: AV.total || ITEMS.length };
+      resume: li.querySelector('[data-f="resumeImg"]').value.trim() || li.querySelector('[data-f="resume"]').value.trim(), n: rang ? rang.rang : (AV.enLigne || 0) + 1, tot: AV.total || ITEMS.length };
     const url = await FG_FICHE.png(d, { theme: "creme", fmt });
     const nom = `nouvelle-fiche-${s.slug}-${fmt}.png`;
     const blob = await (await fetch(url)).blob(), file = new File([blob], nom, { type: "image/png" });

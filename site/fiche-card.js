@@ -181,5 +181,26 @@
       return htmlToImage.toPng(box.firstChild, { width: wh[0], height: wh[1], pixelRatio: 1, fontEmbedCSS: fcss, cacheBust: false });
     }).finally(function () { box.remove(); });
   }
-  window.FG_FICHE = { card: card, polish: polish, preparer: preparer, png: png, SIZE: SIZE, parts: parts };
+  // Nombre de lignes du résumé sur l'image (post et story) et remplissage de la dernière ligne (0 à 1).
+  var mes = null;
+  function lignes(txt) {
+    if (!mes) {
+      mes = document.createElement("div");
+      mes.style.cssText = "position:fixed;left:-20000px;top:0;visibility:hidden;pointer-events:none";
+      mes.innerHTML = '<div class="fgc post" style="height:auto"><div class="fgc-res" style="margin:0;width:952px"><p style="display:block"><b>Résumé</b><span></span></p></div></div>' +
+        '<div class="fgc story" style="height:auto"><div class="fgc-res" style="margin:0;width:952px"><p style="display:block"><b>Résumé</b><span></span></p></div></div>';
+      document.body.appendChild(mes);
+    }
+    var out = {};
+    [].forEach.call(mes.querySelectorAll(".fgc"), function (c) {
+      var p = c.querySelector("p"), sp = p.querySelector("span"); sp.textContent = txt || "";
+      var lh = parseFloat(getComputedStyle(p).lineHeight), n = Math.round(p.offsetHeight / lh);
+      var r = sp.getClientRects(), last = r.length ? r[r.length - 1] : null, box = p.getBoundingClientRect();
+      out[c.classList.contains("post") ? "post" : "story"] = { n: n, fill: last ? (last.right - box.left) / box.width : 0 };
+    });
+    var pire = out.post.n >= out.story.n ? out.post : out.story;
+    return { n: Math.max(out.post.n, out.story.n), fill: pire.fill, post: out.post, story: out.story };
+  }
+  function pret() { return Promise.all(['700 40px "FGAntonio"', '500 40px "FGInter"'].map(function (f) { return document.fonts.load(f); })); }
+  window.FG_FICHE = { lignes: lignes, pret: pret, card: card, polish: polish, preparer: preparer, png: png, SIZE: SIZE, parts: parts };
 })();

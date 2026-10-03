@@ -53,7 +53,7 @@ export async function onRequestGet({ request, env, waitUntil }) {
       leg,
       coeur: check(p["Prochaine à traiter"]), editions: rel(p["Éditions"]).length,
       // Pour générer l'image « Nouvelle fiche » depuis le back-office.
-      resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), genres: list(p["Genre"]), pubFR: list(p["Éditeur Français"]).join(", "),
+      resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), num: num(p["N° fiche"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), genres: list(p["Genre"]), pubFR: list(p["Éditeur Français"]).join(", "),
       oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),
       cover: best[id]?.c || text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), stJP: text(p["Statut Japon"]), stFR,
     };
