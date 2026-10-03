@@ -140,7 +140,7 @@ body.tb-open{overflow:hidden}
 .nw-s b{color:#6FA8F5}
 .nw-b p{margin:0}
 .nw-none{color:var(--paper-3);font-size:14px}
-/* Extraits (bas de l'onglet Info et Extrait) */
+/* Extraits (bas de l'onglet Info & Extrait) */
 .ext{margin-top:20px}
 .ext.info-h{margin-top:4px}
 .ext h3{margin:0 0 8px;font-size:15px;font-weight:700}
@@ -338,7 +338,7 @@ function render(){
   <div class="band" aria-hidden="true"></div>
   <div class="tabs" role="tablist">
       <button role="tab" data-tab="syn" aria-selected="${TAB === "syn"}">Synopsis</button>
-      <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Info et Extrait</button>
+      <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Info &amp; Extrait</button>
       <button role="tab" data-tab="news" aria-selected="${TAB === "news"}">News${(s.news || []).length ? ` <small class="nb">${s.news.length}</small>` : ""}</button>
       ${ad.length ? `<button role="tab" data-tab="ad" aria-selected="${TAB === "ad"}">Adaptations</button>` : ""}
   </div>
