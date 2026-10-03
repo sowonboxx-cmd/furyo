@@ -366,6 +366,7 @@ function vidOpen(spec){
 }
 // Vidéo reconnue : « yt:ID » (YouTube) ou « dm:ID » (Dailymotion), sinon "".
 function vidSpec(u){ const y = ytId(u); if (y) return "yt:" + y; const m = String(u).match(/dailymotion\.com\/(?:embed\/)?video\/([a-z0-9]+)|dai\.ly\/([a-z0-9]+)/i); return m ? "dm:" + (m[1] || m[2]) : ""; }
+function vidClose(){ const d = document.querySelector(".vid"); if (d) d.remove(); document.documentElement.style.overflow = ""; }
 function ytId(u){ const m = String(u).match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
 function ytHTML(t){ const id = ytId(t.url); if (!id) return "";
   return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube ↗</a>`; }
