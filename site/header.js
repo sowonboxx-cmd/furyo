@@ -251,4 +251,42 @@
     b.addEventListener("click", function () { scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", toTop); else toTop();
+
+  /* ---------- Cookies (RGPD) : seuls les cookies nécessaires sont posés d'office ----------
+     Contenus tiers (vidéos YouTube) : seulement après accord. Le choix est gardé 6 mois et modifiable via « Gérer les cookies ». */
+  var CK = "fg_consent";
+  function choix() { try { var v = JSON.parse(localStorage.getItem(CK) || "null"); return v && v.t > Date.now() - 182 * 864e5 ? v.v : null; } catch (e) { return null; } }
+  function garder(v) { try { localStorage.setItem(CK, JSON.stringify({ v: v, t: Date.now() })); } catch (e) {} }
+  window.FG_CONSENT = { video: function () { return choix() === "oui"; }, accepter: function () { garder("oui"); }, ouvrir: function () { banniere(true); } };
+  function ckCss() {
+    var st = document.getElementById("ck-css");
+    if (!st) { st = document.createElement("style"); st.id = "ck-css"; st.textContent =
+      ".ck{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:95;max-width:560px;margin:0 auto;background:#1B1B1D;border:1px solid #2C2C2F;border-radius:18px;padding:16px;box-shadow:0 20px 50px rgba(0,0,0,.55);font-family:Inter,system-ui,sans-serif;color:#F5F5F7}" +
+      ".ck b{display:block;font-size:15px;margin-bottom:4px}.ck p{margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#CFCFD4}.ck p a{color:#4C9BFF}" +
+      ".ck-b{display:flex;gap:8px}.ck-b button{flex:1;height:42px;border:0;border-radius:21px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}" +
+      ".ck-b .y{background:#2D74D2;color:#fff}.ck-b .n{background:#38383B;color:#F5F5F7}" +
+      ".sh-legal{max-width:1080px;margin:28px auto 0;padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 90px);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;border-top:1px solid #2C2C2F;font:500 12.5px Inter,system-ui,sans-serif}" +
+      ".sh-legal a,.sh-legal button{color:#98989D;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer}.sh-legal a:hover,.sh-legal button:hover{color:#F5F5F7}";
+      document.head.appendChild(st); }
+  }
+  function banniere(force) {
+    ckCss();
+    if (!force && choix()) return;
+    var old = document.getElementById("ck"); if (old) old.remove();
+    var d = document.createElement("div"); d.className = "ck"; d.id = "ck"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Cookies");
+    d.innerHTML = "<b>Cookies</b><p>FuryoGang n'utilise aucun cookie publicitaire ni de mesure d'audience. Les bandes-annonces sont hébergées par YouTube, qui dépose ses propres cookies : on ne les charge qu'avec ton accord. <a href=\"/cookies/\">En savoir plus</a></p>" +
+      '<div class="ck-b"><button class="n" data-ck="non">Refuser</button><button class="y" data-ck="oui">Accepter</button></div>';
+    d.addEventListener("click", function (e) { var b = e.target.closest("[data-ck]"); if (b) { garder(b.dataset.ck); d.remove(); } });
+    document.body.appendChild(d);
+  }
+  function pied() {
+    ckCss();
+    if (document.getElementById("sh-legal")) return;
+    var f = document.createElement("nav"); f.className = "sh-legal"; f.id = "sh-legal"; f.setAttribute("aria-label", "Informations légales");
+    f.innerHTML = '<a href="/mentions-legales/">Mentions légales</a><a href="/conditions/">Conditions d\'utilisation</a><a href="/confidentialite/">Confidentialité</a><a href="/cookies/">Cookies</a><button type="button" id="ck-open">Gérer les cookies</button>';
+    document.body.appendChild(f);
+    document.getElementById("ck-open").onclick = function () { banniere(true); };
+  }
+  function legal() { pied(); banniere(false); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", legal); else legal();
 })();

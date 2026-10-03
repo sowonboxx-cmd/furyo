@@ -173,6 +173,10 @@ body.tb-open{overflow:hidden}
 .vid-in{width:min(960px,100%)}
 .vid-f{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
 .vid-f iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid-ask{max-width:420px;background:#1B1B1D;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;text-align:center}
+.vid-ask p{margin:0 0 4px;color:var(--paper-2);font-size:14.5px}
+.vid-ask button,.vid-ask a{height:44px;border:0;border-radius:22px;font:inherit;font-weight:700;display:flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer;background:var(--ink-3);color:var(--paper)}
+.vid-ask .vid-ok{background:#2D74D2;color:#fff}
 .vid-b{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 .vid-b a{color:var(--paper-2);font-weight:600;font-size:14px;text-decoration:none}
 .vid-b button{height:40px;padding:0 18px;border:0;border-radius:20px;background:var(--ink-2);color:var(--paper);font:inherit;font-weight:700;cursor:pointer}
@@ -232,7 +236,7 @@ input,select,textarea{font-size:16px!important}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=5"></script>
+<script src="/site/header.js?v=6"></script>
 <div class="page">
   <div id="app"><p class="empty">Chargement…</p></div>
   <p class="foot">Par Sowon, créateur et boss du <a href="https://x.com/FuryoGang">FuryoGang</a>.</p>
@@ -334,6 +338,13 @@ function adHTML(ad){
 }
 // Fenêtre vidéo (bande-annonce) : la vidéo ne se charge qu'à l'ouverture.
 function vidOpen(id){
+  // Sans accord pour les cookies YouTube : on propose d'accepter ou d'ouvrir la vidéo sur YouTube.
+  if (window.FG_CONSENT && !FG_CONSENT.video()) {
+    const d = document.createElement("div"); d.className = "vid"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Bande-annonce");
+    d.innerHTML = `<div class="vid-in vid-ask"><p>Cette bande-annonce est hébergée par YouTube, qui dépose ses propres cookies.</p>
+      <button type="button" class="vid-ok" data-vok="${id}">Accepter et lire</button><a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Ouvrir sur YouTube ↗</a><button type="button" data-vclose>Fermer</button></div>`;
+    document.body.appendChild(d); document.documentElement.style.overflow = "hidden"; return;
+  }
   const d = document.createElement("div"); d.className = "vid"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Bande-annonce");
   d.innerHTML = `<div class="vid-in"><div class="vid-f"><iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0&origin=${encodeURIComponent(location.origin)}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Bande-annonce"></iframe></div>
     <div class="vid-b"><a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Ouvrir sur YouTube ↗</a><button type="button" data-vclose>Fermer</button></div></div>`;
@@ -517,6 +528,7 @@ document.addEventListener("click", e => {
   const bk = e.target.closest("a[data-back]");
   if (bk && document.referrer && new URL(document.referrer).pathname === bk.getAttribute("href") && history.length > 1) { e.preventDefault(); history.back(); return; }
   const vb = e.target.closest("[data-vid]"); if (vb) { vidOpen(vb.dataset.vid); return; }
+  const vok = e.target.closest("[data-vok]"); if (vok) { FG_CONSENT.accepter(); vidClose(); vidOpen(vok.dataset.vok); return; }
   if (e.target.closest("[data-vclose]") || e.target.classList.contains("vid")) { vidClose(); return; }
   const yt = e.target.closest(".yt[data-yt]");
   // Lecteur YouTube intégré (avec l'adresse du site, que YouTube exige désormais pour lire une vidéo intégrée).
