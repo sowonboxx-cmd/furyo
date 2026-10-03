@@ -181,7 +181,7 @@ function draw(){
 // ---------- Légendes « Nouvelle fiche » ----------
 // Tant que les comptes membres ne sont pas ouverts, on n'invite pas encore à s'inscrire.
 const MEMBRES_OUVERTS = false;
-const SITE = "furyo.pages.dev";
+const SITE = "furyogang.com";
 const TAGS = { "Furyō": ["furyo", "yankee"], "Furyō Old School": ["furyo"], "Yakuza": ["yakuza"], "Bōsōzoku": ["bosozoku"], "Crime": ["crime"], "Underground": ["underground"], "Gang": ["gang"], "Arts Martiaux": ["artsmartiaux"], "Combat de rue": ["streetfight"], "Thriller": ["thriller"], "Policier": ["polar"], "Drogue": ["drogue"], "Prison": ["prison"], "Lycée": ["lycee"], "Moto": ["moto"] };
 const tagOf = t => "#" + String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]/g, "");
 const phrases = (txt, n) => (String(txt || "").match(/[^.!?…]+[.!?…]+(\s|$)/g) || [txt || ""]).slice(0, n).join("").trim();
