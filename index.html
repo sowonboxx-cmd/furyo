@@ -130,6 +130,18 @@ button{font:inherit;color:inherit}
 .empty{color:var(--paper-3);text-align:center;padding:30px 0}
 @media (prefers-reduced-motion:no-preference){.post{animation:in .35s ease both}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
 
+
+/* Derniers membres */
+.mbr{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.mbr li + li{border-top:1px solid var(--ink-3)}
+.mbr a{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;text-decoration:none;color:inherit}
+.mbr img,.mbr .ph{width:40px;height:40px;border-radius:50%;background:var(--ink-3);display:block;object-fit:cover}
+.mbr .t{font-size:14px;font-weight:600;line-height:1.25;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mbr .t small{display:block;font-size:12px;font-weight:500;color:var(--paper-3)}
+.mbr .bs{display:flex;gap:3px}
+.mbr .bs i{width:22px;height:22px;border-radius:7px;display:grid;place-items:center}
+.mbr .bs svg{width:13px;height:13px}
+.mbr-cta{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;margin-top:12px;border-radius:22px;background:var(--blue,#4C9BFF);color:#fff;font-weight:700;font-size:14px;text-decoration:none}
 /* ---------- Colonne de droite : modules ---------- */
 .m-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 10px;margin-bottom:10px}
 .m-head h3{white-space:nowrap}
@@ -226,6 +238,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 </head>
 <body>
 <script src="/site/header.js?v=7"></script>
+<script src="/site/badges.js?v=1"></script>
 <div class="page">
   <header class="masthead">
     <p class="lede">Au cœur des mangas les plus sombres du Japon</p>
@@ -358,6 +371,11 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
           <span class="av-kpi"><span><b id="av-wk">+0</b>cette semaine</span><span><b id="av-left">553</b>à faire</span><span><b id="av-prep">0</b>prêtes à publier</span></span>
         </a>
         <p class="m-note" id="av-last">De nouvelles fiches chaque semaine.</p>
+      </section>
+      <section class="box mod" id="m-membres" data-slot="0">
+        <div class="m-head"><h3>Derniers membres</h3><span class="m-sub" id="mbr-n">Le gang</span></div>
+        <ul class="mbr" id="mbr"><li><span class="m-note">Chargement…</span></li></ul>
+        <a class="mbr-cta" href="/membres/">Voir tous les membres<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </section>
       <section class="box mod" id="m-jp" data-slot="0">
         <div class="m-head"><h3>Direct Japon</h3><span class="m-sub">Prépublication</span></div>
@@ -533,6 +551,19 @@ mq.addEventListener("change", place); place();
 // Données en direct depuis Notion (sur le site seulement)
 const esc2 = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmtD = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "";
+// Derniers membres inscrits (5 plus récents) avec leurs badges.
+{
+  const ago = d => { const m = Math.round((Date.now() - new Date(d)) / 6e4);
+    return m < 60 ? `il y a ${Math.max(1, m)} min` : m < 1440 ? `il y a ${Math.round(m / 60)} h` : m < 2880 ? "hier" : `il y a ${Math.round(m / 1440)} j`; };
+  const ul = document.getElementById("mbr");
+  fetch("/api/membres").then(r => r.ok ? r.json() : null).then(j => {
+    if (!j || !j.items) throw 0;
+    const n = j.total || j.items.length; document.getElementById("mbr-n").textContent = `${n} membre${n > 1 ? "s" : ""}`;
+    const l = j.items.slice().sort((a, b) => new Date(b.inscrit) - new Date(a.inscrit)).slice(0, 5);
+    ul.innerHTML = l.map(m => `<li><a href="${m.slug ? "/membres/" + encodeURIComponent(m.slug) : "/membres/"}">${m.photo ? `<img src="${esc2(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}<span class="t">${esc2(m.pseudo || "Membre")}<small>n°${m.num ?? "?"} · ${ago(m.inscrit)}</small></span><span class="bs">${(m.badges || []).slice(0, 3).map(b => `<i title="${esc2(b.n)}" style="background:${b.c}22;color:${b.c}">${window.FG_BADGES ? FG_BADGES.icone(b) : ""}</i>`).join("")}</span></a></li>`).join("") || `<li><span class="m-note">Sois le premier à rejoindre le gang.</span></li>`;
+  }).catch(() => { ul.innerHTML = `<li><span class="m-note">Rejoins le gang en te connectant avec Google.</span></li>`; });
+}
+
 if (/^https?:$/.test(location.protocol)) {
   fetch("/api/prepub").then(r => r.ok ? r.json() : null).then(j => {
     if (!j || j.error || !j.items) return;
