@@ -11,6 +11,8 @@
     ".sh-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;display:grid;place-items:center;color:#F5F5F7;text-decoration:none;border:0;background:transparent;cursor:pointer;padding:0}" +
     ".sh-search{right:8px}.sh-me{left:8px}" +
     ".sh-bo{position:absolute;top:50%;left:56px;transform:translateY(-50%);height:28px;padding:0 11px;border-radius:14px;background:#4C9BFF;color:#fff;font:600 12.5px Inter,system-ui,sans-serif;text-decoration:none;display:flex;align-items:center}" +
+    ".sh-bo svg{display:none;width:16px;height:16px}" +
+    "@media (max-width:520px){.sh-bo{width:30px;height:30px;padding:0;justify-content:center;border-radius:50%;font-size:0}.sh-bo svg{display:block}}" +
     ".sh-me span{width:30px;height:30px;border-radius:50%;background:#38383B;display:grid;place-items:center;color:#CFCFD4}" +
     ".sh-nav{display:flex;justify-content:center;gap:4px;max-width:1080px;margin:0 auto;border-top:1px solid #2C2C2F;padding:0 8px}" +
     ".sh-nav a{position:relative;padding:0 16px;height:44px;display:flex;align-items:center;text-decoration:none;color:#CFCFD4;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:15px;letter-spacing:-.005em}" +
@@ -204,7 +206,7 @@
     var btn = document.getElementById("sh-me");
     if (ME && ME.user && ME.user.picture) btn.innerHTML = '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">';
     var old = document.querySelector(".sh-bo"); if (old) old.remove();
-    if (ME && ME.admin) { var a = document.createElement("a"); a.className = "sh-bo"; a.href = "/admin/"; a.textContent = "Back-office"; document.querySelector(".sh-top").appendChild(a); }
+    if (ME && ME.admin) { var a = document.createElement("a"); a.className = "sh-bo"; a.href = "/admin/"; a.setAttribute("aria-label", "Back-office"); a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Back-office'; document.querySelector(".sh-top").appendChild(a); }
   }
   function gis(cb) {
     if (window.google && google.accounts && google.accounts.id) return cb();

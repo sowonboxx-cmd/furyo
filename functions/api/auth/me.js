@@ -3,7 +3,7 @@ import { membre } from "../../../lib/auth.js";
 import { isAdmin, json } from "../../../lib/admin.js";
 export async function onRequestGet({ request, env }) {
   const u = await membre(request, env), admin = await isAdmin(request, env);
-  return json({ user: u ? { name: u.n, picture: u.p, num: u.k || null, member: !!u.m } : null, admin });
+  return json({ user: u ? { name: u.n, picture: u.p, num: u.k || null, slug: u.s || null, member: !!u.m } : null, admin });
 }
 export async function onRequestDelete() {
   const h = new Headers({ "content-type": "application/json", "cache-control": "no-store" });

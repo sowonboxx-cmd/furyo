@@ -21,6 +21,7 @@ h1{font-family:Antonio,sans-serif;text-transform:uppercase;font-size:36px;margin
 .chips button[aria-pressed="true"]{background:var(--blue);color:#fff}
 .list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 @media (min-width:720px){.list{grid-template-columns:1fr 1fr}}
+a.m{color:inherit;text-decoration:none}a.m:hover{background:#111}
 .m{display:grid;grid-template-columns:auto 52px 1fr;align-items:center;gap:12px;background:var(--ink-2);border-radius:16px;padding:12px 14px}
 .n{font-family:Antonio,sans-serif;font-size:20px;color:var(--paper-3);min-width:34px;text-align:right}
 .m img,.m .ph{width:52px;height:52px;border-radius:50%;background:var(--ink-3);display:block}
@@ -34,7 +35,7 @@ h1{font-family:Antonio,sans-serif;text-transform:uppercase;font-size:36px;margin
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=6"></script>
+<script src="/site/header.js?v=7"></script>
 <main>
   <div class="top"><h1>Membres</h1><span class="count" id="count"></span></div>
   <div class="chips" id="chips"></div>
@@ -59,10 +60,11 @@ function draw(){
   document.getElementById("chips").innerHTML = VUES.map(([k, l]) => `<button data-v="${k}" aria-pressed="${V === k}">${l}</button>`).join("");
   const f = VUES.find(x => x[0] === V)[2];
   let l = ITEMS.filter(f); if (V === "recents") l = l.slice().reverse();
-  document.getElementById("list").innerHTML = l.map(m => `<li class="m"><span class="n">${m.num ?? ""}</span>${m.photo ? `<img src="${esc(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}
+  document.getElementById("list").innerHTML = l.map(m => { const tag = m.slug ? "a" : "div";
+    return `<li><${tag} class="m"${m.slug ? ` href="/membres/${encodeURIComponent(m.slug)}"` : ""}><span class="n">${m.num ?? ""}</span>${m.photo ? `<img src="${esc(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}
     <div><b>${esc(m.pseudo || "Membre")}</b><small>Membre n°${m.num ?? "?"} · depuis le ${dl(m.inscrit)}${m.points ? ` · ${m.points} pts` : ""}</small>
     ${m.badges.length ? `<div class="bs">${m.badges.map(b => `<span class="b" style="background:${(COUL[b] || "#98989D")}26;color:${COUL[b] || "#98989D"}">${esc(b)}</span>`).join("")}</div>` : ""}
-    ${m.reseaux ? `<div class="rs">${m.reseaux.instagram ? `<a href="https://instagram.com/${esc(m.reseaux.instagram)}" target="_blank" rel="noopener">Instagram</a>` : ""}${m.reseaux.x ? `<a href="https://x.com/${esc(m.reseaux.x)}" target="_blank" rel="noopener">X</a>` : ""}${m.reseaux.discord ? `<span>Discord : ${esc(m.reseaux.discord)}</span>` : ""}</div>` : ""}</div></li>`).join("") || `<li class="empty">Personne ici pour l'instant.</li>`;
+    ${m.reseaux && (m.reseaux.instagram || m.reseaux.x || m.reseaux.discord) ? `<div class="rs">${m.reseaux.instagram ? `<span>Instagram</span>` : ""}${m.reseaux.x ? `<span>X</span>` : ""}${m.reseaux.discord ? `<span>Discord</span>` : ""}</div>` : ""}</div></${tag}></li>`; }).join("") || `<li class="empty">Personne ici pour l'instant.</li>`;
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-v]"); if (b) { V = b.dataset.v; draw(); } });
 fetch("/api/membres").then(r => r.json()).then(j => { ITEMS = j.items || []; document.getElementById("count").textContent = `${j.total || 0} membre${(j.total || 0) > 1 ? "s" : ""}`; draw(); })

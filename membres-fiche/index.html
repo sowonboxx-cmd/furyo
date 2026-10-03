@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mon profil · FuryoGang</title>
-<meta name="robots" content="noindex">
+<title>Membre · FuryoGang</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
@@ -45,6 +44,8 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .soc .hint b{color:var(--paper-2)}
 .acts a.sec{background:var(--ink-3);color:var(--paper)}
 .empty{color:var(--paper-3);text-align:center;margin-top:18vh}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a,.links span{height:40px;padding:0 16px;border-radius:20px;background:var(--ink-2);color:var(--paper);text-decoration:none;font-weight:600;font-size:14px;display:inline-flex;align-items:center}
 </style>
 </head>
 <body>
@@ -69,53 +70,28 @@ const BADGES = {
   "Contributeur": ["contrib", "Aide à enrichir les fiches", "#7BC67E"],
   "Modérateur": ["admin", "Veille sur la communauté", "#B38CFF"],
 };
-const badge = (n, on) => { const [ic, d, c] = BADGES[n] || ["fond", "", "#98989D"]; return `<div class="bd ${on ? "" : "off"}"><i style="background:${c}22;color:${c}">${I[ic]}</i><b>${esc(n)}</b><small>${d}${on ? "" : " · pas encore"}</small></div>`; };
+const badge = (n, on = true) => { const [ic, d, c] = BADGES[n] || ["fond", "", "#98989D"]; return `<div class="bd ${on ? "" : "off"}"><i style="background:${c}22;color:${c}">${I[ic]}</i><b>${esc(n)}</b><small>${d}${on ? "" : " · pas encore"}</small></div>`; };
 const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+// Profil public : seulement les badges obtenus, et les réseaux si le membre les a rendus publics.
 (async () => {
   const app = document.getElementById("app");
-  const me = await fetch("/api/auth/me").then(r => r.json()).catch(() => ({}));
-  if (!me.user) { app.innerHTML = `<p class="empty">Connecte-toi avec Google (avatar en haut à gauche) pour voir ton profil.<br><br><a href="/membres/" style="color:var(--blue)">Voir les membres</a></p>`; return; }
-  if (!me.user.member) { app.innerHTML = `<p class="empty">Déconnecte-toi puis reconnecte-toi une fois pour créer ta fiche membre.<br><br><button id="out" style="height:44px;padding:0 20px;border:0;border-radius:22px;background:var(--ink-3);color:var(--paper);font:inherit;font-weight:700">Se déconnecter</button></p>`;
-    document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; }); return; }
-  const j = await fetch("/api/profil").then(r => r.json()).catch(() => ({}));
-  const m = j.membre; if (!m) { app.innerHTML = `<p class="empty">Impossible de charger le profil.</p>`; return; }
-  const r = m.reseaux || {};
+  const slug = decodeURIComponent(location.pathname.replace(/^\/membres\//, "").replace(/\/$/, ""));
+  const x = await fetch("/api/membres?u=" + encodeURIComponent(slug)).catch(() => null);
+  const j = x && x.ok ? await x.json() : null, m = j && j.membre;
+  if (!m) { document.title = "Membre introuvable · FuryoGang"; app.innerHTML = `<p class="empty">Ce membre n'existe pas (ou a changé de pseudo).<br><br><a href="/membres/" style="color:var(--blue)">Voir tous les membres</a></p>`; return; }
+  document.title = `${m.pseudo} · Membres FuryoGang`;
+  const r = m.reseaux || {}, admin = m.badges.includes("Administrateur");
+  const liens = [r.instagram && `<a href="https://instagram.com/${esc(r.instagram)}" target="_blank" rel="noopener">Instagram · @${esc(r.instagram)}</a>`,
+    r.x && `<a href="https://x.com/${esc(r.x)}" target="_blank" rel="noopener">X · @${esc(r.x)}</a>`,
+    r.discord && `<span>Discord · ${esc(r.discord)}</span>`].filter(Boolean);
   app.innerHTML = `
     <section class="hero">${m.photo ? `<img src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}
-      <div><h1>${esc(m.pseudo || "Membre")}</h1><span class="role ${me.admin ? "admin" : ""}">${me.admin ? "Administrateur" : "Membre"} · n°${m.num || "?"}</span><div class="since">Inscrit le ${dl(m.inscrit)}</div></div></section>
-    <h2>Mon pseudo</h2>
-    <form class="soc" id="ps">
-      <label>Pseudo<input name="pseudo" value="${esc(m.pseudo)}" minlength="3" maxlength="20" placeholder="3 à 20 caractères" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
-      <span class="hint">Ta page publique : <b id="url">furyogang.com/membres/${esc(m.slug || "…")}</b></span>
-      <button>Changer mon pseudo</button><p class="msg" id="pmsg"></p>
-    </form>
+      <div><h1>${esc(m.pseudo || "Membre")}</h1><span class="role ${admin ? "admin" : ""}">${admin ? "Administrateur" : "Membre"} · n°${m.num || "?"}</span><div class="since">Inscrit le ${dl(m.inscrit)}</div></div></section>
     <h2>Classement</h2>
-    <div class="stats"><div><b>${m.num || "—"}</b><span>N° de membre</span></div><div><b>${m.points}</b><span>Points</span></div><div><b>0</b><span>Séries suivies</span></div></div>
-    <h2>Badges</h2>
-    <div class="badges">${[...new Set([...m.badges, ...Object.keys(BADGES)])].map(n => badge(n, m.badges.includes(n))).join("")}</div>
-    <h2>Mes réseaux</h2>
-    <form class="soc" id="soc">
-      <label>Instagram<input name="instagram" value="${esc(r.instagram)}" placeholder="ton compte, sans @" autocomplete="off"></label>
-      <label>X (Twitter)<input name="x" value="${esc(r.x)}" placeholder="ton compte, sans @" autocomplete="off"></label>
-      <label>Discord<input name="discord" value="${esc(r.discord)}" placeholder="ton pseudo Discord" autocomplete="off"></label>
-      <label class="sw"><input type="checkbox" name="public" ${m.public ? "checked" : ""}><span>Afficher mes réseaux sur la page Membres</span></label>
-      <button>Enregistrer</button><p class="msg" id="msg"></p>
-    </form>
-    <div class="acts">${m.slug ? `<a href="/membres/${esc(m.slug)}" class="sec" id="pub">Voir ma page publique</a>` : ""}<a href="/membres/" class="sec">Voir tous les membres</a>${me.admin ? `<a href="/admin/">Ouvrir le back-office</a>` : ""}<button id="out">Se déconnecter</button></div>`;
-  document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; });
-  document.getElementById("soc").onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target), msg = document.getElementById("msg"); msg.textContent = "Enregistrement…";
-    const x = await fetch("/api/profil", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ instagram: f.get("instagram"), x: f.get("x"), discord: f.get("discord"), public: f.get("public") === "on" }) });
-    msg.textContent = x.ok ? "Enregistré ✓" : "Erreur, réessaie."; };
-  // Pseudo : unique ; s'il est déjà pris, le serveur répond 409 et on affiche son message.
-  document.getElementById("ps").onsubmit = async e => { e.preventDefault(); const pseudo = new FormData(e.target).get("pseudo").trim(), msg = document.getElementById("pmsg");
-    msg.className = "msg"; msg.textContent = "Vérification…";
-    const x = await fetch("/api/profil", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ pseudo }) });
-    const k = await x.json().catch(() => ({}));
-    if (!x.ok) { msg.className = "msg err"; msg.textContent = k.error || "Erreur, réessaie."; return; }
-    msg.textContent = "Pseudo enregistré ✓";
-    document.querySelector(".hero h1").textContent = pseudo;
-    document.getElementById("url").textContent = "furyogang.com/membres/" + k.slug;
-    const pub = document.getElementById("pub"); if (pub) pub.href = "/membres/" + k.slug; };
+    <div class="stats"><div><b>${m.num || "—"}</b><span>N° de membre</span></div><div><b>${m.points}</b><span>Points</span></div><div><b>${m.badges.length}</b><span>Badges</span></div></div>
+    ${m.badges.length ? `<h2>Badges</h2><div class="badges">${m.badges.map(n => badge(n)).join("")}</div>` : ""}
+    ${liens.length ? `<h2>Réseaux</h2><div class="links">${liens.join("")}</div>` : ""}
+    <div class="acts"><a href="/membres/" class="sec">Voir tous les membres</a></div>`;
 })();
 </script>
 </body>
