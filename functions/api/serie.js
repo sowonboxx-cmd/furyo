@@ -3,7 +3,8 @@
 // puis la page série, ses éditions et ses tomes sont lus en parallèle.
 // Les sources restent dans Notion : elles ne sont pas renvoyées.
 import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
-import { estVisible } from "../../lib/site.js";
+import { estVisible, FILTRE_PUBLIER } from "../../lib/site.js";
+import { isAdmin } from "../../lib/admin.js";
 import { sourceName } from "../../lib/source.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
@@ -28,6 +29,28 @@ async function index(env, request, waitUntil, force) {
   return (await res.json()).map || {};
 }
 
+// Série d'origine : d'abord le champ « Œuvre mère », sinon la « Série principale » du même « Univers ».
+const souple = t => slugify(t).replace(/ou/g, "o").replace(/uu/g, "u").replace(/oo/g, "o");
+const AD = ["Drama", "Film live", "Anime", "OAV", "Jeux vidéo"];
+async function serieMere(token, p, id, map) {
+  const mere = text(p["Œuvre mère"]), univ = text(p["Univers"]), rela = text(p["Relation"]);
+  if (!mere && !univ) return null;
+  if (/principale/i.test(rela) && !mere) return null;
+  let m = null;
+  // 1) « Œuvre mère » retrouvée dans l'index des séries (titre ou titre français, à l'orthographe près : ō/ou, uu…).
+  if (mere) { const k = Object.keys(map).find(k => souple(k) === souple(mere)); if (k && nid(map[k]) !== nid(id)) m = await page(token, map[k]); }
+  // 2) Sinon la « Série principale » du même univers.
+  if (!m && univ) {
+    const rows = await queryAll(token, { ...SERIES, body: { filter: { and: [{ property: "Univers", rich_text: { equals: univ } }, { property: "Relation", rich_text: { contains: "principale" } }] } } });
+    m = rows.find(r => nid(r.id) !== nid(id)) || null;
+  }
+  if (!m) return null;
+  const q = m.properties;
+  if (!AD.some(k => /\S/.test(text(q[k])) && !/^(aucun|non|-)/i.test(text(q[k]).trim()))) return null;
+  return { t: text(q["SERIES"]), fr: text(q["Titre FR"]), slug: slugSerie(q), visible: estVisible(q),
+    drama: text(q["Drama"]), film: text(q["Film live"]), anime: text(q["Anime"]), oav: text(q["OAV"]), jeux: text(q["Jeux vidéo"]) };
+}
+
 async function page(token, id) {
   const r = await fetch(`https://api.notion.com/v1/pages/${id}`, { headers: { Authorization: `Bearer ${token}`, "Notion-Version": "2022-06-28" } });
   if (!r.ok) throw new Error("page " + r.status);
@@ -38,14 +61,15 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return json({ error: "NOTION_TOKEN manquant" }, 503);
   const slug = slugify(new URL(request.url).searchParams.get("s") || "");
   if (!slug) return json({ error: "série manquante" }, 400);
-  return cached(request, waitUntil, "/api/serie?s=" + slug, 900, async () => {
+  const admin = FILTRE_PUBLIER && await isAdmin(request, env);
+  const build = async () => {
     let map = await index(env, request, waitUntil, false);
     if (!map[slug]) map = await index(env, request, waitUntil, true); // série toute neuve : on relit l'index
     const id = map[slug];
     if (!id) return { error: "introuvable" };
     const row = await page(env.NOTION_TOKEN, id);
     const p = row.properties || {};
-    if (!estVisible(p)) return { error: "introuvable" };
+    if (!estVisible(p) && !(admin && rel(p["Éditions"]).length)) return { error: "introuvable" };
     const edIds = rel(p["Éditions"]);
     const [eRows, tRows, nRows] = await Promise.all([
       edIds.length ? queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } }) : [],
@@ -75,6 +99,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
       trailers: text(p["Trailers"]).split("\n").map(l => l.split("|").map(x => x.trim())).filter(a => a.length >= 2 && /youtu/.test(a[a.length - 1]))
         .map(a => ({ cat: slugify(a[0]).replace(/^jeu.*/, "jeux").replace(/^films?$/, "film"), nom: a.length > 2 ? a[1] : "", url: a[a.length - 1] })),
     };
+    // Adaptations de la série d'origine (suite, préquelle, spin-off) : on les affiche aussi sur la fiche.
+    if (!estVisible(p)) serie.apercu = true;
+    serie.mere = await serieMere(env.NOTION_TOKEN, p, id, map).catch(() => null);
     const editions = eRows.map(e => {
       const q = e.properties;
       return {
@@ -95,5 +122,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
       return { id: nid(r.id), cat: /licence/i.test(champ + " " + prop) ? "Licence FR" : "News", date: date(q["Date de la news"]), titre: prop.replace(/^\s*(licence\s*fr|news)\s*:\s*/i, ""), texte: text(q["Résumé FR"]), src: text(q["Source officielle"]), srcName: sourceName(text(q["Source officielle"])) };
     });
     return { serie, editions };
-  });
+  };
+  // Aperçu admin (après le lancement) : réponse directe, jamais mise dans le cache partagé.
+  if (admin) return new Response(JSON.stringify({ synced: new Date().toISOString(), ...(await build()) }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+  return cached(request, waitUntil, "/api/serie?s=" + slug, 900, build);
 }

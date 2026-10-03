@@ -1,6 +1,7 @@
 // GET /api/series : liste des séries qui ont au moins une édition, avec la couverture de leur tome 1 (France d'abord).
 import { text, num, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
-import { filtreVisible } from "../../lib/site.js";
+import { filtreVisible, filtreApercu, estVisible, FILTRE_PUBLIER } from "../../lib/site.js";
+import { isAdmin, json } from "../../lib/admin.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
@@ -9,9 +10,15 @@ const nid = id => id.replace(/-/g, "");
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
-  return cached(request, waitUntil, "/api/series?v=4", 600, async () => {
+  // Aperçu admin (après le lancement) : toutes les séries, sans cache.
+  if (FILTRE_PUBLIER && await isAdmin(request, env)) return json({ apercu: true, ...(await build(env, true)) });
+  return cached(request, waitUntil, "/api/series?v=4", 600, () => build(env, false));
+}
+
+async function build(env, admin) {
+  {
     const [sRows, eRows, tRows] = await Promise.all([
-      queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: filtreVisible() } }),
+      queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: admin ? filtreApercu() : filtreVisible() } }),
       queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
       queryAll(env.NOTION_TOKEN, { ...TOMES, body: { sorts: [{ property: "N°", direction: "ascending" }] } }),
     ]);
@@ -34,8 +41,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         // Pays : une édition dans ce pays, ou (France) une licence en cours / terminée / annoncée.
         inFR: (pays[id]?.has("France") || /cours|termin|stopp|annonc/i.test(text(p["Statut France"]))) ? 1 : 0,
         inJP: (pays[id]?.has("Japon") || !!text(p["Statut Japon"])) ? 1 : 0,
-        fr: text(p["Titre FR"]) };
+        fr: text(p["Titre FR"]), ...(admin && !estVisible(p) ? { apercu: 1 } : {}) };
     }).filter(s => s.t).sort((a, b) => (a.fr || a.t).localeCompare(b.fr || b.t, "fr"));
     return { items };
-  });
+  }
 }
