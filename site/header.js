@@ -210,7 +210,8 @@
     var sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true; sc.onload = cb; document.head.appendChild(sc);
   }
   function openMe() {
-    if (ME && ME.user) {
+    if (ME && ME.user) { location.href = "/profil/"; return; }
+    if (false) {
       meInner.innerHTML = '<div class="me-u">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "") + '<div><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + "</small></div></div>" +
         (ME.admin ? '<a class="go2" href="/admin/">Ouvrir le back-office</a>' : "") +
         '<button class="out" id="me-out">Se déconnecter</button><button class="no" id="me-x">Fermer</button>';

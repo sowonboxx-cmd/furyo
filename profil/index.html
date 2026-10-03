@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon profil · FuryoGang</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#232325;--ink-2:#000;--ink-3:#38383B;--paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;--blue:#4C9BFF;--gold:#F2B33D;--red:#E54839;--ok:#7BC67E}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+main{max-width:720px;margin:0 auto;padding:22px 16px 64px}
+.hero{display:flex;align-items:center;gap:16px;padding:18px;border-radius:20px;background:var(--ink-2)}
+.hero img,.hero .ph{width:76px;height:76px;border-radius:50%;flex:none;background:var(--ink-3)}
+.hero h1{font-family:Antonio,sans-serif;text-transform:uppercase;font-size:34px;line-height:1;margin:0 0 6px}
+.role{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;font-weight:700;background:var(--ink-3);color:var(--paper-2)}
+.role.admin{background:var(--blue);color:#fff}
+h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:28px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stats div{background:var(--ink-2);border-radius:16px;padding:14px;text-align:center}
+.stats b{display:block;font-family:Antonio,sans-serif;font-size:30px;line-height:1.1}
+.stats span{font-size:12px;color:var(--paper-3)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.bd{background:var(--ink-2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.bd i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-style:normal}
+.bd b{font-size:14px}.bd small{color:var(--paper-3);font-size:12px}
+.bd.off{opacity:.42}
+.bd svg{width:22px;height:22px}
+.acts{display:flex;flex-direction:column;gap:8px;margin-top:28px}
+.acts a,.acts button{height:46px;border-radius:23px;border:0;font:inherit;font-weight:700;display:flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer}
+.acts a{background:var(--blue);color:#fff}.acts button{background:var(--ink-3);color:var(--paper)}
+.empty{color:var(--paper-3);text-align:center;margin-top:18vh}
+</style>
+</head>
+<body>
+<script src="/site/header.js?v=4"></script>
+<main id="app"><p class="empty">Chargement…</p></main>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const I = {
+  admin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/></svg>`,
+  fond: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6-4.5-4.2 6.1-.7z"/></svg>`,
+  don: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>`,
+  contrib: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>`,
+  lecteur: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg>`,
+};
+// Badges (voir badges.md dans le projet). Pour l'instant seul le badge Admin est attribué ; les autres arrivent avec les comptes membres.
+const BADGES = [
+  ["admin", "Administrateur", "Gère FuryoGang", "#4C9BFF"],
+  ["fond", "Membre fondateur", "Parmi les 100 premiers inscrits", "#F2B33D"],
+  ["don", "Donateur", "Soutient le site", "#E54839"],
+  ["contrib", "Contributeur", "Aide à enrichir les fiches", "#7BC67E"],
+  ["lecteur", "Collectionneur", "Séries lues ou possédées", "#B38CFF"],
+];
+fetch("/api/auth/me").then(r => r.json()).then(j => {
+  const app = document.getElementById("app");
+  if (!j.user) { app.innerHTML = `<p class="empty">Connecte-toi avec Google (avatar en haut à gauche) pour voir ton profil.</p>`; return; }
+  const u = j.user, has = { admin: j.admin };
+  app.innerHTML = `
+    <section class="hero">${u.picture ? `<img src="${esc(u.picture)}" alt="" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}
+      <div><h1>${esc(u.name || "Membre")}</h1><span class="role ${j.admin ? "admin" : ""}">${j.admin ? "Administrateur" : "Membre"}</span></div></section>
+    <h2>Classement</h2>
+    <div class="stats"><div><b>—</b><span>Rang</span></div><div><b>0</b><span>Points</span></div><div><b>0</b><span>Séries suivies</span></div></div>
+    <h2>Badges</h2>
+    <div class="badges">${BADGES.map(([k, t, d, c]) => `<div class="bd ${has[k] ? "" : "off"}"><i style="background:${c}22;color:${c}">${I[k]}</i><b>${t}</b><small>${has[k] ? d : d + " · bientôt"}</small></div>`).join("")}</div>
+    <div class="acts">${j.admin ? `<a href="/admin/">Ouvrir le back-office</a>` : ""}<button id="out">Se déconnecter</button></div>`;
+  document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; });
+}).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger le profil.</p>`; });
+</script>
+</body>
+</html>
