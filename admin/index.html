@@ -447,11 +447,14 @@ function vopen(id){
   const i = VITEMS.find(x => x.id === id); if (!i) return;
   const news = i.news;
   const couv = /^couv/.test(i.cat);
-  const img = i.image ? `<img class="cv${couv ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
+  const img = i.image ? `<img class="cv${/^(couv|sortie)/.test(i.cat) ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
   const dt = (k, v) => v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : "";
   const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   // Couverture : seulement la date de sortie. Le reste : ce qui aide à décider (sans le niveau de source).
-  const champs = couv ? dt("Sortie", dLong(i.sortie)) : (/^sortie/.test(i.cat) ? dt("Sortie", dLong(i.sortie)) : "") + dt("Type", i.type) + dt("Concerne", i.champ) + dt("Actuel", i.actuel) + dt("Proposé", i.propose);
+  // Couvertures et sorties : la couverture en grand, la date, puis les légendes. Rien d'autre (Will, 03/10/2026).
+  // Mises à jour de fiche : seulement l'actuel et le proposé.
+  const tomeCat = /^(couv|sortie)/.test(i.cat);
+  const champs = tomeCat ? dt("Sortie", dLong(i.sortie)) : dt("Actuel", i.actuel) + dt("Proposé", i.propose);
   const tomeIt = /^(couv|sortie)/.test(i.cat) && i.serie && i.tome;
   const rs = i.serie ? (i.serie.resumeSortie || (/^(couv|sortie)/.test(i.cat) && i.tome ? resumeAuto(i) : "")) : "";
   const tabs = [...(news ? [["site", "Site"]] : []), ["x", "X"], ["ig", "Instagram"], ["tt", "TikTok"]];

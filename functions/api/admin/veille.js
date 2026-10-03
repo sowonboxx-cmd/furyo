@@ -7,6 +7,9 @@ import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
+const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
+const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
+const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
 const EDITEURS = { dataSource: "16e967fc-8e7b-4b7c-ab98-6a25cbdcd75a", database: "c9dc1efdf33d4ad09711d20d55860d52" };
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
 const STATUTS = ["Validé", "Vu", "Rejeté", "À valider"];
@@ -58,20 +61,20 @@ export async function onRequestGet({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   const rows = await lister(env);
   if (new URL(request.url).searchParams.has("count")) return json({ n: rows.length });
-  // Titre et adresse des séries liées (une lecture par série).
-  const ids = [...new Set(rows.flatMap(r => rel(r.properties["Série"])))];
+  // Séries liées : une seule requête sur la base Séries (pas une lecture par série : Cloudflare limite
+  // le nombre de requêtes par appel, et au-delà les comptes des auteurs / éditeurs sautaient en silence).
+  const ids = new Set(rows.flatMap(r => rel(r.properties["Série"])));
   const series = {};
-  await Promise.all(ids.map(async id => {
-    const r = await fetch(`https://api.notion.com/v1/pages/${id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } }).catch(() => null);
-    if (!r || !r.ok) return;
-    const p = (await r.json()).properties || {};
+  if (ids.size) for (const r of await queryAll(env.NOTION_TOKEN, { ...SERIES }).catch(() => [])) {
+    const id = nid(r.id); if (!ids.has(id)) continue;
+    const p = r.properties || {};
     series[id] = {
       id, t: text(p["Titre FR"]) || text(p["SERIES"]), slug: slugSerie(p), jp: text(p["Titre Original"]), genres: list(p["Genre"]),
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), resumeSortie: text(p["Résumé sortie"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
       editeurs: rel(p["Éditeurs (fiches)"]), auteurs: rel(p["Auteurs"]),
     };
-  }));
+  }
   const items = rows.map(r => {
     const p = r.properties || {};
     const type = text(p["Type"]), champ = text(p["Champ concerné"]), prop = text(p["Proposition"]);
@@ -87,15 +90,18 @@ export async function onRequestGet({ request, env }) {
       serie: s, news: type === "News",
     };
   });
-  // Couvertures et sorties : la couverture et la date viennent de la base Tomes (comme le calendrier),
-  // via la fiche série en cache. Titre court : « Série T.03 ».
+  // Couvertures et sorties : la couverture et la date viennent de la base Tomes (comme le calendrier).
+  // Titre court : « Série T.03 ». Deux requêtes en tout : les éditions des séries concernées, puis leurs tomes.
   const tomeItems = items.filter(i => /^(couv|sortie)/.test(i.cat) && i.serie);
-  const slugs = [...new Set(tomeItems.map(i => i.serie.slug))];
-  const fiches = {};
-  await Promise.all(slugs.map(async sl => {
-    const r = await fetch(new URL("/api/serie?s=" + encodeURIComponent(sl), request.url).toString(), { headers: { cookie: "" } }).catch(() => null);
-    if (r && r.ok) fiches[sl] = await r.json().catch(() => null);
-  }));
+  for (const i of tomeItems) { const m = i.prop.match(/\bT\.?\s?0*(\d+)\b|\btome\s+0*(\d+)/i); i._n = m ? Number(m[1] || m[2]) : null; }
+  const sIds = [...new Set(tomeItems.map(i => i.serie.id))];
+  const eRows = sIds.length ? await queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { or: sIds.slice(0, 100).map(id => ({ property: "Série", relation: { contains: id } })) } } }).catch(() => []) : [];
+  const eds = eRows.map(e => ({ id: nid(e.id), serie: rel(e.properties["Série"])[0], pays: text(e.properties["Pays"]), pub: text(e.properties["Éditeur"]), tomes: [] }));
+  const edById = Object.fromEntries(eds.map(e => [e.id, e]));
+  const besoins = [];
+  for (const i of tomeItems) if (i._n != null) for (const e of eds) if (e.serie === i.serie.id) besoins.push({ e: e.id, n: i._n });
+  const tRows = besoins.length ? await queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { or: besoins.slice(0, 100).map(b => ({ and: [{ property: "Édition", relation: { contains: b.e } }, { property: "N°", number: { equals: b.n } }] })) } } }).catch(() => []) : [];
+  for (const t of tRows) { const q = t.properties || {}, e = edById[rel(q["Édition"])[0]]; if (e) e.tomes.push({ n: num(q["N°"]), date: date(q["Date de sortie"]), cover: text(q["Couverture"]) }); }
   // Comptes des éditeurs (pour la ligne « X @… » et le 📣 d'Instagram / TikTok).
   const [edRows, auRows] = tomeItems.length ? await Promise.all([
     queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []),
@@ -109,13 +115,11 @@ export async function onRequestGet({ request, env }) {
     editeurs[nid(e.id)] = { nom: text(q["Nom"]), type: text(q["Type"]), x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])) }; }
   const norm = v => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
   for (const i of tomeItems) {
-    const m = i.prop.match(/\bT\.?\s?0*(\d+)\b|\btome\s+0*(\d+)/i);
-    const n = m ? Number(m[1] || m[2]) : null;
+    const n = i._n; delete i._n;
     const pays = /FR$/.test(i.cat) ? "France" : "Japon";
     if (n != null) i.titre = `${i.serie.t} T.${String(n).padStart(2, "0")}`;
-    const eds = ((fiches[i.serie.slug] || {}).editions || []).filter(e => e.pays === pays);
     let t = null, pub = "";
-    for (const e of eds) { const x = e.tomes.find(y => y.n === n && y.cover) || e.tomes.find(y => y.n === n); if (x && (!t || (!t.cover && x.cover))) { t = x; pub = e.pub; } }
+    for (const e of eds.filter(e => e.serie === i.serie.id && e.pays === pays)) { const x = e.tomes.find(y => y.n === n && y.cover) || e.tomes.find(y => y.n === n); if (x && (!t || (!t.cover && x.cover))) { t = x; pub = e.pub; } }
     if (t) { if (t.cover) i.image = t.cover; i.sortie = t.date || ""; }
     // Premier ou dernier tome : seules infos ajoutées au post de sortie.
     const total = pays === "France" ? i.serie.tomesFR : i.serie.tomesJP, statut = pays === "France" ? i.serie.stFR : i.serie.stJP;
