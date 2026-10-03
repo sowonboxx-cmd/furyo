@@ -302,9 +302,13 @@ function statut(pays, st){
 }
 // Ligne d'en-tête par pays : « 13 tomes · en cours », ou « 33 tomes · terminé (1990-1998) ».
 // Les années ne s'affichent que pour une série terminée.
+// Sortie en France seulement en prépublication numérique (aucune édition en tomes), ex. chez Piccoma.
+const prepubSeule = (eds, pays) => { const l = eds.filter(e => e.pays === pays); return l.length > 0 && l.every(e => /prépub/i.test(e.format || "") && !e.tomes.length); };
 function ligne(pays, s, eds){
   const st = pays === "France" ? s.stFR : s.stJP;
   if (!st || /non licenci/i.test(st)) return "";
+  if (prepubSeule(eds, pays)) { const stop = /abandon|arr[êe]t|stopp/i.test(st);
+    return `<span>${FLAGS[pays] || ""}<b class="${stop ? "stop" : /termin/i.test(st) ? "end" : "on"}" style="font-weight:600;white-space:nowrap">Prépublication${stop ? " stoppée" : /termin/i.test(st) ? " terminée" : " en cours"}</b></span>`; }
   const today = new Date().toISOString().slice(0, 10);
   const tomes = eds.filter(e => e.pays === pays).flatMap(e => e.tomes).filter(t => t.date && t.date <= today);
   const n = (pays === "France" ? s.tomesFR : s.tomesJP) || tomes.reduce((m, t) => Math.max(m, t.n || 0), 0);
@@ -469,13 +473,15 @@ function panel(s, pubFR, pubJP, eds, ad){
     const labels = [...new Set(eds.filter(e => e.pays === "France" && e.label && e.label !== e.pub).map(e => e.label))];
     const hasFR = pubFR.length || s.stFR || nFR;
     const prepub = (dLong(s.prepub) || (s.y1 ? String(s.y1) : "")) + (s.prepubFin ? " → " + dLong(s.prepubFin) : "");
+    const frPrepub = prepubSeule(eds, "France");
+    const prepubFR = frPrepub ? `Numérique${s.stFR ? " · " + (/stopp|arr[êe]t|abandon/i.test(s.stFR) ? "Stoppée" : cap(s.stFR)) : ""}` : "";
     const tomes = (n, st) => n ? `${n}${st ? " · " + cap(st) : ""}` : (st ? cap(st) : "");
     const cell = v => v ? `<td>${esc(v)}</td>` : `<td class="no">—</td>`;
     const rows = [
       ["Éditeur", pubJP.join(", "), pubFR.join(", ") + (labels.length ? " · " + labels.join(", ") : "")],
       ["Magazine", s.mag, ""],
-      ["Prépublication", prepub, ""],
-      ["Tomes", tomes(nJP, s.stJP), tomes(nFR, s.stFR)],
+      ["Prépublication", prepub, prepubFR],
+      ["Tomes", tomes(nJP, s.stJP), frPrepub ? "Aucun tome" : tomes(nFR, s.stFR)],
     ].filter(r => r[1] || (hasFR && r[2]));
     return `<div class="ext info-h"><h3>Informations</h3></div><table class="cmp"><thead><tr><th></th>${hasFR ? `<th><span>${FLAGS.France}France</span></th>` : ""}<th><span>${FLAGS.Japon}Japon</span></th></tr></thead>
     <tbody>${rows.map(([k, jp, fr]) => `<tr><th>${k}</th>${hasFR ? cell(fr) : ""}${cell(jp)}</tr>`).join("")}</tbody></table>
@@ -566,7 +572,7 @@ function renderTomes(){
     ${e.tomes.length ? `<ul class="grid">${(ASC ? e.tomes : [...e.tomes].reverse()).map(t => {
       const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub });
       return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="Tome ${tn(t.n)}" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
-        <span class="t-n">Tome ${tn(t.n)}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">Aucun tome renseigné pour l'instant.</p>`}`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
+        <span class="t-n">Tome ${tn(t.n)}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
 }
 document.addEventListener("click", e => {
   const bk = e.target.closest("a[data-back]");

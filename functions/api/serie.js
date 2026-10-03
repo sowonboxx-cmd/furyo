@@ -106,7 +106,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const q = e.properties;
       return {
         id: nid(e.id), nom: text(q["Édition"]), pays: text(q["Pays"]), pub: text(q["Éditeur"]), label: text(q["Collection / Label"]),
-        format: text(q["Format"]), statut: text(q["Statut"]), nb: num(q["Nb tomes"]), tomes: [],
+        format: text(q["Format"]), statut: text(q["Statut"]), nb: num(q["Nb tomes"]), part: text(q["Particularités"]), tomes: [],
       };
     });
     const byId = Object.fromEntries(editions.map(e => [e.id, e]));
