@@ -72,7 +72,7 @@ export async function onRequestGet({ request, env }) {
       id, t: text(p["Titre FR"]) || text(p["SERIES"]), slug: slugSerie(p), jp: text(p["Titre Original"]), genres: list(p["Genre"]),
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), resumeSortie: text(p["Résumé sortie"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
-      editeurs: rel(p["Éditeurs (fiches)"]), auteurs: rel(p["Auteurs"]),
+      editeurs: rel(p["Éditeurs (fiches)"]), auteurs: rel(p["Auteurs"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
     };
   }
   const items = rows.map(r => {
@@ -101,7 +101,7 @@ export async function onRequestGet({ request, env }) {
   const besoins = [];
   for (const i of tomeItems) if (i._n != null) for (const e of eds) if (e.serie === i.serie.id) besoins.push({ e: e.id, n: i._n });
   const tRows = besoins.length ? await queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { or: besoins.slice(0, 100).map(b => ({ and: [{ property: "Édition", relation: { contains: b.e } }, { property: "N°", number: { equals: b.n } }] })) } } }).catch(() => []) : [];
-  for (const t of tRows) { const q = t.properties || {}, e = edById[rel(q["Édition"])[0]]; if (e) e.tomes.push({ n: num(q["N°"]), date: date(q["Date de sortie"]), cover: text(q["Couverture"]) }); }
+  for (const t of tRows) { const q = t.properties || {}, e = edById[rel(q["Édition"])[0]]; if (e) e.tomes.push({ n: num(q["N°"]), date: date(q["Date de sortie"]), prec: text(q["Précision date"]) || "Jour", cover: text(q["Couverture"]) }); }
   // Comptes des éditeurs (pour la ligne « X @… » et le 📣 d'Instagram / TikTok).
   const [edRows, auRows] = tomeItems.length ? await Promise.all([
     queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []),
@@ -120,7 +120,7 @@ export async function onRequestGet({ request, env }) {
     if (n != null) i.titre = `${i.serie.t} T.${String(n).padStart(2, "0")}`;
     let t = null, pub = "";
     for (const e of eds.filter(e => e.serie === i.serie.id && e.pays === pays)) { const x = e.tomes.find(y => y.n === n && y.cover) || e.tomes.find(y => y.n === n); if (x && (!t || (!t.cover && x.cover))) { t = x; pub = e.pub; } }
-    if (t) { if (t.cover) i.image = t.cover; i.sortie = t.date || ""; }
+    if (t) { if (t.cover) i.image = t.cover; i.sortie = t.date || ""; i.prec = t.prec; }
     // Premier ou dernier tome : seules infos ajoutées au post de sortie.
     const total = pays === "France" ? i.serie.tomesFR : i.serie.tomesJP, statut = pays === "France" ? i.serie.stFR : i.serie.stJP;
     const fin = /final|dernier|完結|termin/i.test(`${i.prop} ${i.champ} ${i.propose} ${i.texte}`) || (/termin/i.test(statut || "") && n && total && n === total);

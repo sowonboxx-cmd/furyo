@@ -82,7 +82,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .dl button{height:40px;padding:0 14px 0 12px;border:0;border-radius:20px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:13.5px;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
 .dl button svg{width:17px;height:17px}
 .dl button.busy{opacity:.55;pointer-events:none}
-.sheet{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+.sheet{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
 .sheet img{max-width:100%;max-height:70vh;border-radius:10px;-webkit-touch-callout:default}
 .sheet p{margin:0;color:var(--paper-2);font-size:13px;text-align:center}
 .sheet .row{display:flex;gap:10px}
@@ -166,6 +166,13 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm textarea.cap{min-height:280px}
 .vm .cnt{font-size:12px;color:var(--paper-3);margin-left:auto;align-self:center}
 .vm .cnt.ko{color:#F08A7E;font-weight:700}
+.vm .vimg{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.vm .vimg>button{height:38px;padding:0 14px;border:0;border-radius:19px;background:#2E7D4F;color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.vm .vimg>button svg{width:16px;height:16px}
+.vm .vimg>button.busy{opacity:.55;pointer-events:none}
+.vm .seg{display:inline-flex;background:var(--ink-3);border-radius:19px;padding:3px}
+.vm .seg button{height:32px;padding:0 12px;border:0;border-radius:16px;background:none;color:var(--paper-3);font-weight:700;font-size:12.5px;cursor:pointer}
+.vm .seg button[aria-pressed=true]{background:var(--paper);color:var(--ink)}
 .vm .rs{display:flex;gap:8px;align-items:flex-start}
 .vm .rs textarea{min-height:88px;flex:1}
 .vm .rs button{height:38px;padding:0 12px;border:0;border-radius:19px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
@@ -198,6 +205,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 <div id="root"></div>
 <div class="toast" id="toast"></div>
 <script src="/site/fiche-card.js?v=3"></script>
+<script src="/site/tome-card.js?v=1"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const root = document.getElementById("root");
@@ -472,7 +480,9 @@ function vopen(id){
     <div class="tabs">${tabs.map(([k, n], x) => `<button data-vtab="${k}" aria-pressed="${k === act}">${n}</button>`).join("")}</div>
     ${news ? `<textarea id="vtx" class="cap" data-cap="site"${act !== "site" ? " hidden" : ""}>${esc(i.texte)}</textarea>` : ""}
     ${["x", "ig", "tt"].map(k => `<textarea class="cap" data-cap="${k}"${k !== act ? " hidden" : ""}></textarea>`).join("")}
-    <div class="tools"><button data-vcp>${ICO_COPY}Copier</button>${news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}<span class="cnt" id="vcnt"></span></div>
+    <div class="tools"><button data-vcp>${ICO_COPY}Copier</button>${!tomeIt && news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}<span class="cnt" id="vcnt"></span></div>
+    ${tomeIt && i.image ? `<div class="vimg"><div class="seg" role="group" aria-label="Thème"><button data-vth="sombre" aria-pressed="true">Sombre</button><button data-vth="creme" aria-pressed="false">Crème</button></div>
+      <button data-vimg="post">${ICO_DL}Post 3:4</button><button data-vimg="story">${ICO_DL}Story 9:16</button></div>` : ""}
     <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
     <div class="act">
       <button class="go" data-vs="Validé">${news ? "Publier la news" : "Valider"}</button>
@@ -482,6 +492,28 @@ function vopen(id){
   document.body.appendChild(m);
   vcaps(m, i, true);
   vcount(m);
+}
+// Visuel « sortie d'un tome » (design Soleil) : post 3:4 ou story 9:16, sombre ou crème.
+async function imageTome(i, theme, fmt, btn){
+  btn.classList.add("busy"); const lbl = btn.innerHTML; btn.innerHTML = "Génération…";
+  try {
+    const s = i.serie || {}, clean = v => String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*|\s+&\s+|\s+et\s+/).map(x => x.trim()).filter(Boolean);
+    const d = { titre: s.t, n: (i.tome || {}).n, jp: s.jp, date: i.sortie, prec: i.prec, cover: i.image, auteurs: [...new Set([...clean(s.scen), ...clean(s.dess)])], pays: (i.tome || {}).pays };
+    const url = await FG_TOME.png(d, { theme, fmt });
+    const nom = `${s.slug || "tome"}-t${String(d.n ?? "").padStart(2, "0")}-${fmt === "story" ? "story-9x16" : "post-3x4"}-${theme}.png`;
+    const blob = await (await fetch(url)).blob(), file = new File([blob], nom, { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] }) && matchMedia("(pointer:coarse)").matches) {
+      const sh = document.createElement("div"); sh.className = "sheet";
+      sh.innerHTML = `<img src="${url}" alt=""><p>Touche « Enregistrer » puis « Enregistrer l'image », ou appuie longuement sur l'image.</p><div class="row"><button class="go">Enregistrer</button><button class="no">Fermer</button></div>`;
+      document.body.appendChild(sh);
+      sh.querySelector(".no").onclick = () => sh.remove();
+      sh.querySelector(".go").onclick = () => navigator.share({ files: [file] }).then(() => sh.remove()).catch(() => {});
+    } else {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Image téléchargée ✓");
+    }
+  } catch (err) { toast("Impossible de générer l'image"); console.error(err); }
+  finally { btn.classList.remove("busy"); btn.innerHTML = lbl; }
 }
 /* Légendes des réseaux (règle « Sortie d'un tome » : pas de hashtag sur X, éditeur du pays seulement). */
 // Phrases entières d'un texte (jamais de « … » : un résumé s'arrête sur une vraie phrase).
@@ -500,7 +532,8 @@ function choixX(aut, fr, tient){
 }
 function postX(i, rs){
   const s = i.serie || {}, c = i.comptes || {};
-  const base = `${i.titre}\n${ligneSortie(i)}${rs ? `\n\nRésumé : ${rs}` : ""}\n\nFiche complète · Extraits · Couverture\n↗ furyogang.com/series/${s.slug}`;
+  // Règle simplifiée (Will, 03/10/2026) : le résumé directement, sans « Résumé : », et plus de ligne « Fiche complète ».
+  const base = `${i.titre}\n${ligneSortie(i)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
   const hs = choixX(c.x, c.xFR, h => poidsX(base + "\nX " + h.map(x => "@" + x).join(" · ")) <= 280);
   return base + (hs.length ? "\nX " + hs.map(h => "@" + h).join(" · ") : "");
 }
@@ -531,7 +564,7 @@ function captions(i, rs){
   const s = i.serie || {}, c = i.comptes || {}, url = s.slug ? `furyogang.com/series/${s.slug}` : "furyogang.com";
   const tags = [...new Set([tagOf(s.t), ...(s.genres || []).slice(0, 2).map(tagOf), "#manga", "#FuryoGang", ...(/FR$/.test(i.cat) ? ["#mangafr"] : [])])].filter(x => x.length > 1);
   if (/^(couv|sortie)/.test(i.cat) && i.tome) {
-    const res = rs ? `\n\nRésumé : ${rs}` : "";
+    const res = rs ? `\n\n${rs}` : "";
     return {
       x: postX(i, rs),
       ig: `🆕 ${i.titre}${s.jp ? ` (${s.jp})` : ""}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio).${(c.ig || []).length ? `\n📣 ${c.ig.map(h => "@" + h).join(" ")}` : ""}\n\n${tags.join(" ")}`,
@@ -576,6 +609,9 @@ document.addEventListener("click", async e => {
     m.querySelectorAll("[data-vtab]").forEach(b => b.setAttribute("aria-pressed", b === vt));
     m.querySelectorAll(".cap").forEach(t => t.hidden = t.dataset.cap !== vt.dataset.vtab); vcount(m); return; }
   const vcp = e.target.closest("[data-vcp]"); if (vcp) { const ta = [...vcp.closest(".vm").querySelectorAll(".cap")].find(t => !t.hidden); const ok = await copier(ta ? ta.value : ""); toast(ok ? "Copié ✓" : "Copie impossible"); return; }
+  const th = e.target.closest("[data-vth]"); if (th) { th.parentNode.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === th)); return; }
+  const vg = e.target.closest("[data-vimg]"); if (vg) { const m = vg.closest(".vm"), i = VITEMS.find(x => x.id === m.dataset.vid);
+    imageTome(i, (m.querySelector('[data-vth][aria-pressed="true"]') || {}).dataset?.vth || "sombre", vg.dataset.vimg, vg); return; }
   const vr = e.target.closest("[data-vrs]"); if (vr) { const m = vr.closest(".vm"), i = VITEMS.find(x => x.id === m.dataset.vid), v = m.querySelector("#vrs").value.trim();
     vr.classList.add("busy"); vr.disabled = true;
     const r = await fetch("/api/admin/update", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: i.serie.id, resumeSortie: v }) }).catch(() => null);
