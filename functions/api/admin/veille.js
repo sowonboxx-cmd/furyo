@@ -7,6 +7,7 @@ import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
+const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
@@ -56,14 +57,21 @@ async function lister(env) {
     sorts: [{ property: "Date de la news", direction: "descending" }],
   } });
 }
+// Prépublications (sorties en magazine) pas encore validées ni écartées.
+async function listerPrepub(env) {
+  return queryAll(env.NOTION_TOKEN, { ...PREPUB, body: {
+    filter: { and: [{ property: "Validé", checkbox: { equals: false } }, { property: "Écarté", checkbox: { equals: false } }] },
+    sorts: [{ property: "Date de sortie", direction: "descending" }],
+  } }).catch(() => []);
+}
 
 export async function onRequestGet({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
-  const rows = await lister(env);
-  if (new URL(request.url).searchParams.has("count")) return json({ n: rows.length });
+  const [rows, pRows] = await Promise.all([lister(env), listerPrepub(env)]);
+  if (new URL(request.url).searchParams.has("count")) return json({ n: rows.length + pRows.length });
   // Séries liées : une seule requête sur la base Séries (pas une lecture par série : Cloudflare limite
   // le nombre de requêtes par appel, et au-delà les comptes des auteurs / éditeurs sautaient en silence).
-  const ids = new Set(rows.flatMap(r => rel(r.properties["Série"])));
+  const ids = new Set([...rows, ...pRows].flatMap(r => rel(r.properties["Série"])));
   const series = {};
   if (ids.size) for (const r of await queryAll(env.NOTION_TOKEN, { ...SERIES }).catch(() => [])) {
     const id = nid(r.id); if (!ids.has(id)) continue;
@@ -138,6 +146,18 @@ export async function onRequestGet({ request, env }) {
       ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]),
     };
   }
+  // Prépublications : une carte par entrée de magazine (numéro, chapitre, mise en avant).
+  for (const r of pRows) {
+    const p = r.properties || {};
+    items.push({
+      id: nid(r.id), notion: r.url, cat: "prepub", label: CATS.prepub, base: "prepub", type: "Prépublication",
+      titre: text(p["Entrée"]), prop: text(p["Entrée"]), date: date(p["Date de sortie"]), cree: (r.created_time || "").slice(0, 10),
+      texte: text(p["Annonce du magazine"]), tweet: text(p["Tweet"]), src: text(p["Lien du numéro"]), relais: text(p["Page de la série"]),
+      image: text(p["Couverture du numéro"]), serie: series[rel(p["Série"])[0]] || null, news: false,
+      prepub: { mag: text(p["Magazine"]), num: text(p["Numéro"]), statut: text(p["Statut"]), ch: num(p["Chapitre"]), hl: list(p["Mise en avant"]), jp: text(p["Titre au sommaire"]), lire: text(p["Lecture en ligne"]) },
+    });
+  }
+  items.sort((a, b) => String(b.date || b.cree).localeCompare(String(a.date || a.cree)));
   const counts = {};
   items.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
   return json({ items, counts, cats: CATS });
@@ -147,6 +167,20 @@ export async function onRequestPost({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   let b = {}; try { b = await request.json(); } catch (e) {}
   if (!/^[0-9a-f]{32}$/.test(b.id || "")) return json({ error: "élément inconnu" }, 400);
+  // Prépublication : « Validé » coche la case Validé, « Vu » ou « Rejeté » coche Écarté.
+  if (b.base === "prepub") {
+    if (!STATUTS.includes(b.statut)) return json({ error: "statut inconnu" }, 400);
+    const pp = b.statut === "Validé" ? { "Validé": { checkbox: true } } : { "Écarté": { checkbox: true } };
+    if (typeof b.texte === "string") pp["Annonce du magazine"] = rt(b.texte.trim());
+    const r = await fetch(`https://api.notion.com/v1/pages/${b.id}`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" },
+      body: JSON.stringify({ properties: pp }),
+    });
+    if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
+    await caches.default.delete(new Request(new URL("/api/prepub", request.url).toString()));
+    return json({ ok: true });
+  }
   const props = {};
   if (b.statut) {
     if (!STATUTS.includes(b.statut)) return json({ error: "statut inconnu" }, 400);

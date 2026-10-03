@@ -1,6 +1,7 @@
 // GET /api/calendrier : tomes à paraître (et sortis depuis 45 jours) avec pays, éditeur, série et couverture.
 // Sources Notion : Tomes → Édition (pays, éditeur) → Série (titres, visuel).
 import { text, num, date, rel, queryAll, cached } from "../../lib/notion.js";
+import { isAdmin } from "../../lib/admin.js";
 import { estVisible } from "../../lib/site.js";
 
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
@@ -9,6 +10,8 @@ const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
+  // Will connecté : calendrier reconstruit tout de suite (nouvelles couvertures, dates validées).
+  if (await isAdmin(request, env).catch(() => false)) request = new Request(new URL(request.url.replace(/[?&]refresh(=[^&]*)?/, "") + (request.url.includes("?") ? "&" : "?") + "refresh=1"), request);
   return cached(request, waitUntil, "/api/calendrier", 600, async () => {
     // Fenêtre normale : 45 derniers jours. TEST (oct. 2026) : on affiche aussi depuis le 1er juillet pour vérifier les couvertures ; supprimer SHOW_FROM pour revenir à la normale.
     const SHOW_FROM = "2026-07-01";

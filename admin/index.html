@@ -428,7 +428,7 @@ async function hub(){
 }
 
 /* ---------- Validation : la veille à relire ---------- */
-const VCOL = { couvJP: "#F2B33D", couvFR: "#F2B33D", sortieJP: "#6FA8F5", sortieFR: "#6FA8F5", annFR: "#7BC67E", annJP: "#7BC67E", fin: "#F08A7E", serie: "#C49BF0", fiche: "#98989D", news: "#5FD0D0" };
+const VCOL = { couvJP: "#F2B33D", couvFR: "#F2B33D", sortieJP: "#6FA8F5", sortieFR: "#6FA8F5", annFR: "#7BC67E", annJP: "#7BC67E", fin: "#F08A7E", serie: "#C49BF0", fiche: "#98989D", news: "#5FD0D0", prepub: "#E58AD1" };
 let VITEMS = [], VCATS = {}, VF = "tout";
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
 async function veille(){
@@ -453,21 +453,24 @@ function vdraw(){
 }
 function vopen(id){
   const i = VITEMS.find(x => x.id === id); if (!i) return;
-  const news = i.news;
+  const news = i.news, pp = i.cat === "prepub";
+  const site = news || pp; // onglet « Site » : texte de la news, ou annonce du magazine pour une prépublication
   const couv = /^couv/.test(i.cat);
-  const img = i.image ? `<img class="cv${/^(couv|sortie)/.test(i.cat) ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
+  const img = i.image ? `<img class="cv${/^(couv|sortie|prepub)/.test(i.cat) ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
   const dt = (k, v) => v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : "";
   const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   // Couverture : seulement la date de sortie. Le reste : ce qui aide à décider (sans le niveau de source).
   // Couvertures et sorties : la couverture en grand, la date, puis les légendes. Rien d'autre (Will, 03/10/2026).
   // Mises à jour de fiche : seulement l'actuel et le proposé.
   const tomeCat = /^(couv|sortie)/.test(i.cat);
-  const champs = tomeCat ? dt("Sortie", dLong(i.sortie)) : dt("Actuel", i.actuel) + dt("Proposé", i.propose);
+  const P = i.prepub || {};
+  const champs = pp ? dt("Magazine", P.mag) + dt("Numéro", P.num) + dt("Sortie", dLong(i.date)) + dt("Statut", P.statut) + dt("Chapitre", P.ch != null ? String(P.ch) : "") + dt("Mis en avant", (P.hl || []).join(", ")) + dt("Au sommaire", P.jp)
+    : tomeCat ? dt("Sortie", dLong(i.sortie)) : dt("Actuel", i.actuel) + dt("Proposé", i.propose);
   const tomeIt = /^(couv|sortie)/.test(i.cat) && i.serie && i.tome;
   const rs = i.serie ? (i.serie.resumeSortie || (/^(couv|sortie)/.test(i.cat) && i.tome ? resumeAuto(i) : "")) : "";
-  const tabs = [...(news ? [["site", "Site"]] : []), ["x", "X"], ["ig", "Instagram"], ["tt", "TikTok"]];
+  const tabs = [...(site ? [["site", pp ? "Annonce" : "Site"]] : []), ["x", "X"], ["ig", "Instagram"], ["tt", "TikTok"]];
   // Couverture / sortie : on ouvre sur la légende X ; news : sur le texte du site (celui qui est publié).
-  const act = tomeIt || !news ? "x" : "site";
+  const act = tomeIt || !site || (pp && !i.texte) ? "x" : "site";
   const m = document.createElement("div"); m.className = "vm"; m.dataset.vid = id;
   m.innerHTML = `<div class="vm-b" role="dialog" aria-modal="true">
     <div class="vm-h"><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span>${esc(i.date ? new Date(i.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
@@ -478,16 +481,16 @@ function vopen(id){
     ${tomeIt ? `<label for="vrs">Résumé sortie (commun à tous les tomes de la série)</label>
     <div class="rs"><textarea id="vrs" maxlength="300">${esc(rs)}</textarea><button data-vrs>Enregistrer</button></div>` : ""}
     <div class="tabs">${tabs.map(([k, n], x) => `<button data-vtab="${k}" aria-pressed="${k === act}">${n}</button>`).join("")}</div>
-    ${news ? `<textarea id="vtx" class="cap" data-cap="site"${act !== "site" ? " hidden" : ""}>${esc(i.texte)}</textarea>` : ""}
+    ${site ? `<textarea id="vtx" class="cap" data-cap="site"${act !== "site" ? " hidden" : ""}>${esc(i.texte)}</textarea>` : ""}
     ${["x", "ig", "tt"].map(k => `<textarea class="cap" data-cap="${k}"${k !== act ? " hidden" : ""}></textarea>`).join("")}
     <div class="tools"><button data-vcp>${ICO_COPY}Copier</button>${!tomeIt && news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}<span class="cnt" id="vcnt"></span></div>
     ${tomeIt && i.image ? `<div class="vimg"><div class="seg" role="group" aria-label="Thème"><button data-vth="creme" aria-pressed="true">Crème</button><button data-vth="sombre" aria-pressed="false">Sombre</button></div>
       <button data-vimg="post">${ICO_DL}Post 3:4</button><button data-vimg="story">${ICO_DL}Story 9:16</button></div>` : ""}
     <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
     <div class="act">
-      <button class="go" data-vs="Validé">${news ? "Publier la news" : "Valider"}</button>
-      <button data-vs="Vu">${news ? "Vu, pas de news" : "Vu, rien à faire"}</button>
-      <button class="rej" data-vs="Rejeté">Rejeter</button>
+      <button class="go" data-vs="Validé">${news ? "Publier la news" : pp ? "Valider (en ligne sur le site)" : "Valider"}</button>
+      ${pp ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : `<button data-vs="Vu">${news ? "Vu, pas de news" : "Vu, rien à faire"}</button>
+      <button class="rej" data-vs="Rejeté">Rejeter</button>`}
     </div></div>`;
   document.body.appendChild(m);
   vcaps(m, i, true);
@@ -572,6 +575,12 @@ function captions(i, rs){
     };
   }
   const txt = (i.texte || "").trim();
+  // Prépublication : le brouillon de tweet de la base sert de légende X.
+  if (i.cat === "prepub" && i.tweet) return {
+    x: `${i.tweet}${s.slug ? `\n↗ ${url}` : ""}`,
+    ig: `📖 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n${i.tweet}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
+    tt: `📖 ${i.titre}\n\n${i.tweet}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
+  };
   return {
     x: `${i.titre}${txt ? `\n${resumeCourt(txt)}` : ""}\n\n↗ ${url}`,
     ig: `🆕 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
@@ -595,11 +604,11 @@ async function vsend(btn, statut){
   const m = btn.closest(".vm"), id = m.dataset.vid, i = VITEMS.find(x => x.id === id);
   const vtx = m.querySelector("#vtx"), texte = vtx ? vtx.value : i.texte;
   btn.classList.add("busy");
-  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, statut, ...(texte !== i.texte ? { texte } : {}), slug: i.serie && i.serie.slug }) }).catch(() => null);
+  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, statut, ...(texte !== i.texte ? { texte } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
   VITEMS = VITEMS.filter(x => x.id !== id); m.remove(); vdraw();
-  toast(statut === "Validé" ? (i.news ? "News publiée ✓" : "Validé ✓") : statut === "Vu" ? "Marqué comme vu" : "Rejeté");
+  toast(statut === "Validé" ? (i.news ? "News publiée ✓" : i.base === "prepub" ? "Prépublication en ligne ✓" : "Validé ✓") : statut === "Vu" ? "Marqué comme vu" : i.base === "prepub" ? "Écartée" : "Rejeté");
 }
 document.addEventListener("click", async e => {
   const vf = e.target.closest("[data-vf]"); if (vf) { VF = vf.dataset.vf; vdraw(); return; }

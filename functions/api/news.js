@@ -1,5 +1,6 @@
 // GET /api/news : news validées par Will dans la base Veille (Statut « Validé » ou « Appliqué », Type « News »).
 // Rien n'apparaît sur le site sans validation. Seule la source officielle est publiée (décision de Will, 02/10/2026).
+import { isAdmin } from "../../lib/admin.js";
 import { text, date, rel, queryAll, cached } from "../../lib/notion.js";
 import { sourceName } from "../../lib/source.js";
 
@@ -12,6 +13,8 @@ async function page(token, id) {
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
+  // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
+  if (await isAdmin(request, env).catch(() => false)) request = new Request(new URL(request.url.replace(/[?&]refresh(=[^&]*)?/, "") + (request.url.includes("?") ? "&" : "?") + "refresh=1"), request);
   return cached(request, waitUntil, "/api/news", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { and: [
