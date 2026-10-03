@@ -267,6 +267,8 @@
       ".ck b{display:block;font-size:15px;margin-bottom:4px}.ck p{margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#CFCFD4}.ck p a{color:#4C9BFF}" +
       ".ck-b{display:flex;gap:8px}.ck-b button{flex:1;height:42px;border:0;border-radius:21px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}" +
       ".ck-b .y{background:#305887;color:#fff}.ck-b .n{background:#38383B;color:#F5F5F7}" +
+      // Le pied de page n'apparaît qu'une fois la page remplie (sinon il « saute » vers le bas : mauvais pour le score Google).
+      ".sh-legal{visibility:hidden}.sh-legal.on{visibility:visible}#app,body>main{min-height:calc(100vh - 140px)}" +
       ".sh-legal{max-width:1080px;margin:28px auto 0;padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 90px);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;border-top:1px solid #2C2C2F;font:500 12.5px Inter,system-ui,sans-serif}" +
       ".sh-legal .cr{flex-basis:100%;margin:6px 0 0;text-align:center;color:#98989D}.sh-legal .cr a{color:#CFCFD4;font-weight:600}" +
       ".sh-legal a,.sh-legal button{color:#98989D;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer}.sh-legal a:hover,.sh-legal button:hover{color:#F5F5F7}";
@@ -289,6 +291,8 @@
     f.innerHTML = '<a href="/mentions-legales/">Mentions légales</a><a href="/conditions/">Conditions d\'utilisation</a><a href="/confidentialite/">Confidentialité</a><a href="/cookies/">Cookies</a><button type="button" id="ck-open">Gérer les cookies</button>' +
       '<p class="cr">Créé par Sowon, boss du <a href="https://x.com/FuryoSquad" target="_blank" rel="noopener">FuryoSquad</a> et du <a href="https://x.com/FuryoGang" target="_blank" rel="noopener">FuryoGang</a></p>';
     document.body.appendChild(f);
+    var montrer = function () { setTimeout(function () { f.classList.add("on"); }, 1200); };
+    if (document.readyState === "complete") montrer(); else addEventListener("load", montrer);
     document.getElementById("ck-open").onclick = function () { banniere(true); };
   }
   function legal() { pied(); banniere(false); }
