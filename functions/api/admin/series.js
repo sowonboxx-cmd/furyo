@@ -25,7 +25,7 @@ export async function onRequestGet({ request, env, waitUntil }) {
   const acc = q => ({ x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])) });
   const comptes = {};
   for (const a of aRows) comptes[nid(a.id)] = acc(a.properties);
-  for (const e of pRows) comptes[nid(e.id)] = acc(e.properties);
+  for (const e of pRows) comptes[nid(e.id)] = { ...acc(e.properties), fr: text(e.properties["Type"]) === "Éditeur FR" };
   const aMettreAJour = [];
   const ctx = contexte(eRows, tRows, aRows), eds = ctx.eds;
   // Couverture d'illustration : le plus petit tome qui en a une, France avant Japon (parus ou à paraître).
@@ -45,7 +45,10 @@ export async function onRequestGet({ request, env, waitUntil }) {
     const cs = [...aut, ...rel(p["Éditeurs (fiches)"])].map(k => comptes[k]).filter(Boolean);
     const leg = { ig: text(p["Légende Instagram"]), tt: text(p["Légende TikTok"]), x: text(p["Légende X"]) };
     const NOMS = { ig: "Légende Instagram", tt: "Légende TikTok", x: "Légende X" }, maj = {};
-    for (const k of ["ig", "tt", "x"]) { const n = syncMentions(leg[k], k, mentionList(cs, k)); if (n !== leg[k]) { leg[k] = n; maj[NOMS[k]] = rt(n); } }
+    // X : une ligne, auteurs puis éditeur français (jamais l'éditeur japonais ni les magazines).
+    const autC = aut.map(k => comptes[k]).filter(Boolean), frC = rel(p["Éditeurs (fiches)"]).map(k => comptes[k]).filter(c => c && c.fr);
+    const mX = { aut: autC.map(c => c.x), fr: frC.map(c => c.x) };
+    for (const k of ["ig", "tt", "x"]) { const n = syncMentions(leg[k], k, k === "x" ? mX : mentionList(cs, k)); if (n !== leg[k]) { leg[k] = n; maj[NOMS[k]] = rt(n); } }
     if (Object.keys(maj).length) aMettreAJour.push([r.id, maj]);
     return {
       id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p),

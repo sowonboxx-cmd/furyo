@@ -119,20 +119,24 @@ ${mentions(d, "tt") ? "\n📣 " + mentions(d, "tt") + "\n" : ""}
 ${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf(v) === i).slice(0, 8).join(" ")}`;
   // X : règle « Nouvelle fiche » de FuryoGang. 280 caractères (un lien compte pour 23) ; on raccourcit
   // la description, puis on retire le 3e hashtag (2 minimum) ; les comptes les moins pertinents sautent en dernier.
+  // Description : toujours des phrases entières, jamais coupées par « … » (règle de Will, 03/10/2026).
+  // Comptes : une seule ligne, auteurs d'abord puis l'éditeur français (toujours là s'il existe), jamais l'éditeur japonais.
   const hx = [...new Set((d.genres || []).map(g => tagOf(g)).filter(h => h.length > 1))];
-  let hs = hx.slice(0, 3), r = phrases(d.resumeLong || d.resume, 1);
-  const ats = (mentions(d, "x") || "").split(" ").filter(Boolean);
-  const xBase = (r, hs, k) => `Nouvelle fiche : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${k ? "\nX " + ats.slice(0, k).join(" · ") : ""}`;
+  const h = d.handles || {}, autX = (h.auteurs || []).map(a => a.x), frX = (h.editeurs || []).filter(e => e.type === "Éditeur FR").map(e => e.x);
   const xLen = t => t.replace(url, "x".repeat(23)).length;
-  // Description + hashtags : 3 lignes au plus (~140 caractères) ; on retire d'abord le 3e hashtag, puis on raccourcit.
-  const lg = () => r.length + 1 + hs.join(" ").length;
-  if (lg() > 140 && hs.length > 2) hs = hs.slice(0, 2);
-  while (lg() > 140 && r.includes(" ")) r = r.split(" ").slice(0, -1).join(" ").replace(/[,;:]?$/, "…");
-  let k = ats.length, x = xBase(r, hs, k);
-  while (xLen(x) > 280 && r.length > 90) { r = r.split(" ").slice(0, -1).join(" ").replace(/[,;:]?$/, "…"); x = xBase(r, hs, k); }
-  if (xLen(x) > 280 && hs.length > 2) { hs = hs.slice(0, 2); x = xBase(r, hs, k); }
-  while (xLen(x) > 280 && k > 0) { k--; x = xBase(r, hs, k); }
-  while (xLen(x) > 280 && r) { r = r.split(" ").slice(0, -1).join(" ").replace(/[,;:]?$/, "…"); x = xBase(r, hs, k); }
+  const xBase = (r, hs, ats) => `Nouvelle fiche : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${ats.length ? "\nX " + ats.map(a => "@" + a).join(" · ") : ""}`;
+  const choix = (r, hs) => { const f = [...new Set(frX.filter(Boolean))].slice(0, 1), a = [...new Set(autX.filter(Boolean))].filter(x => !f.includes(x));
+    for (let k = a.length; k >= 0; k--) { const l = [...a.slice(0, k), ...f]; if (("X " + l.map(x => "@" + x).join(" · ")).length <= 42 && xLen(xBase(r, hs, l)) <= 280) return l; }
+    return f; };
+  const ph = (String(d.resumeLong || d.resume || "").replace(/\s+/g, " ").match(/[^.!?…]+(?:[.!?…]+|$)(?=\s|$)/g) || []).map(t => t.trim()).filter(Boolean);
+  const cands = ph.map((_, n) => ph.slice(0, n + 1).join(" ")).reverse(); // toujours depuis la 1re phrase (sinon « Il suit… » ne veut rien dire)
+  let x = "", best = null;
+  for (const hs of [hx.slice(0, 3), hx.slice(0, 2)]) {
+    for (const r of cands) { if (r.length + 1 + hs.join(" ").length > 140) continue; const ats = choix(r, hs), t = xBase(r, hs, ats);
+      if (xLen(t) <= 280) { const sc = r.length + ats.length * 1000; if (!best || sc > best.sc) best = { sc, t }; } }
+    if (best) break;
+  }
+  x = best ? best.t : xBase(cands[cands.length - 1] || "", hx.slice(0, 2), choix(cands[cands.length - 1] || "", hx.slice(0, 2)));
   return { ig, tt, x, xLen };
 }
 function drawCaps(){

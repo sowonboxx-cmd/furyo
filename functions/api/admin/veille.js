@@ -124,9 +124,15 @@ export async function onRequestGet({ request, env }) {
     // Éditeur du pays concerné (France → éditeur français, Japon → éditeur japonais).
     const cand = i.serie.editeurs.map(k => editeurs[k]).filter(Boolean).filter(e => pays === "France" ? /FR/.test(e.type) : /JP/.test(e.type));
     const ed = cand.find(e => norm(e.nom) && norm(pub).includes(norm(e.nom))) || cand.find(e => norm(e.nom) && norm(e.nom).includes(norm(pub).slice(0, 5))) || cand[0];
-    // Comptes cités en fin de post : les auteurs d'abord, puis l'éditeur du pays (listes, sans doublon).
-    const qui = [...i.serie.auteurs.map(k => auteurs[nid(k)]).filter(Boolean), ...(ed ? [ed] : [])];
-    i.comptes = Object.fromEntries(["x", "ig", "tt"].map(n => [n, [...new Set(qui.map(c => c[n]).filter(Boolean))]]));
+    // Comptes cités en fin de post : les auteurs d'abord, puis l'éditeur français s'il existe (jamais l'éditeur japonais).
+    const frs = i.serie.editeurs.map(k => editeurs[k]).filter(e => e && /FR/.test(e.type));
+    const fr = (pays === "France" && ed && /FR/.test(ed.type)) ? ed : frs[0];
+    const aut = i.serie.auteurs.map(k => auteurs[nid(k)]).filter(Boolean);
+    const uniq = l => [...new Set(l.filter(Boolean))];
+    i.comptes = {
+      x: uniq(aut.map(c => c.x)), xFR: fr && fr.x ? [fr.x] : [],
+      ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]),
+    };
   }
   const counts = {};
   items.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });

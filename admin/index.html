@@ -487,34 +487,42 @@ function resumeCourt(t){ return phrases(t)[0] || ""; }
 // Poids X : un lien compte pour 23 caractères.
 const poidsX = t => [...String(t).replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|fr|jp|net|org|io)(\/\S*)?/gi, "x".repeat(23))].length;
 // Post X d'une sortie : on garde autant de comptes que possible (auteurs puis éditeur) sans dépasser 280.
+// Ligne « X @… » : une seule ligne (42 caractères), auteurs d'abord, éditeur français toujours présent s'il existe.
+const LIGNE_X = 42;
+function choixX(aut, fr, tient){
+  const f = [...new Set((fr || []).filter(Boolean))].slice(0, 1), a = [...new Set((aut || []).filter(Boolean))].filter(h => !f.includes(h));
+  const ligne = hs => ("X " + hs.map(h => "@" + h).join(" · ")).length;
+  for (let k = a.length; k >= 0; k--) { const hs = [...a.slice(0, k), ...f]; if (!hs.length) return []; if (ligne(hs) <= LIGNE_X && tient(hs)) return hs; }
+  return f;
+}
 function postX(i, rs){
-  const s = i.serie || {}, ats = ((i.comptes || {}).x || []).map(h => "@" + h);
+  const s = i.serie || {}, c = i.comptes || {};
   const base = `${i.titre}\n${ligneSortie(i)}${rs ? `\n\nRésumé : ${rs}` : ""}\n\nFiche complète · Extraits · Couverture\n↗ furyogang.com/series/${s.slug}`;
-  let k = ats.length; while (k > 0 && poidsX(base + "\nX " + ats.slice(0, k).join(" · ")) > 280) k--;
-  return base + (k ? "\nX " + ats.slice(0, k).join(" · ") : "");
+  const hs = choixX(c.x, c.xFR, h => poidsX(base + "\nX " + h.map(x => "@" + x).join(" · ")) <= 280);
+  return base + (hs.length ? "\nX " + hs.map(h => "@" + h).join(" · ") : "");
 }
 // Résumé sortie proposé quand le champ est vide : la plus longue suite de phrases entières qui tient dans le post X
 // avec tous les comptes ; sinon avec moins de comptes ; sinon la phrase la plus courte (Will retouche).
 function resumeAuto(i){
   const s = i.serie || {}, cands = [];
-  for (const t of [s.resumeImg, s.resume]) { const ph = phrases(t); ph.forEach((_, n) => cands.push(ph.slice(0, n + 1).join(" "))); ph.forEach(x => cands.push(x)); }
+  for (const t of [s.resumeImg, s.resume]) { const ph = phrases(t); ph.forEach((_, n) => cands.push(ph.slice(0, n + 1).join(" "))); } // toujours depuis la 1re phrase
   const u = [...new Set(cands)].sort((a, b) => b.length - a.length);
   if (!u.length) return "";
-  const n = ((i.comptes || {}).x || []).length;
-  for (let k = n; k >= 0; k--) {
-    const j = { ...i, comptes: { ...(i.comptes || {}), x: ((i.comptes || {}).x || []).slice(0, k) } };
-    const ok = u.find(r => { const p = postX(j, r); return poidsX(p) <= 280 && (k === 0 || p.includes("\nX ")); });
+  // On cherche d'abord le résumé le plus long qui laisse passer tous les comptes retenus sur la ligne X, puis avec moins d'auteurs.
+  const c = i.comptes || {}, plein = choixX(c.x, c.xFR, () => true);
+  for (let k = plein.length; k >= 0; k--) {
+    const ok = u.find(r => { const p = postX(i, r); return poidsX(p) <= 280 && (p.match(/\nX (.*)$/) || ["", ""])[1].split(" · ").filter(Boolean).length >= k; });
     if (ok) return ok;
   }
   return u[u.length - 1];
 }
 const tagOf = s => "#" + String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9 ]/g, " ").split(" ").filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join("");
+// Ligne de sortie ; « Dernier tome. » sur sa propre ligne (rien pour un premier tome : règle de Will, 03/10/2026).
 function ligneSortie(i){
   const t = i.tome || {}, d = i.sortie;
   let q = "";
   if (d) { const o = new Date(d + "T12:00:00"); q = o.toLocaleDateString("fr-FR", { day: "numeric", month: "long", ...(o.getFullYear() !== new Date().getFullYear() ? { year: "numeric" } : {}) }); q = q.replace(/^1 /, "1er "); }
-  const flag = t.flag === "premier" ? " Premier tome." : t.flag === "dernier" ? " Dernier tome." : "";
-  return (q ? `Sortie le ${q}` : "Sortie") + (t.pub ? ` chez ${t.pub}` : "") + "." + flag;
+  return (q ? `Sortie le ${q}` : "Sortie") + (t.pub ? ` chez ${t.pub}` : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
 }
 function captions(i, rs){
   const s = i.serie || {}, c = i.comptes || {}, url = s.slug ? `furyogang.com/series/${s.slug}` : "furyogang.com";
