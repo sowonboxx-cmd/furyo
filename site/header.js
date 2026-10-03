@@ -277,7 +277,7 @@
     if (!force && choix()) return;
     var old = document.getElementById("ck"); if (old) old.remove();
     var d = document.createElement("div"); d.className = "ck"; d.id = "ck"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Cookies");
-    d.innerHTML = "<b>Cookies</b><p>FuryoGang n'utilise aucun cookie publicitaire ni de mesure d'audience. Les bandes-annonces sont hébergées par YouTube, qui dépose ses propres cookies : on ne les charge qu'avec ton accord. <a href=\"/cookies/\">En savoir plus</a></p>" +
+    d.innerHTML = "<b>Cookies</b><p>FuryoGang n'utilise aucun cookie publicitaire ni de mesure d'audience. Les bandes-annonces sont hébergées par YouTube ou Dailymotion, qui déposent leurs propres cookies : on ne les charge qu'avec ton accord. <a href=\"/cookies/\">En savoir plus</a></p>" +
       '<div class="ck-b"><button class="n" data-ck="non">Refuser</button><button class="y" data-ck="oui">Accepter</button></div>';
     d.addEventListener("click", function (e) { var b = e.target.closest("[data-ck]"); if (b) { garder(b.dataset.ck); d.remove(); } });
     document.body.appendChild(d);

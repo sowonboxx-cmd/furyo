@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /studio/
+Disallow: /profil/
+Disallow: /api/admin/
+Disallow: /api/auth/
+
+Sitemap: https://furyogang.com/sitemap.xml

@@ -236,13 +236,13 @@ a.t{text-decoration:none}
 .foot{margin-top:40px;color:var(--paper-3);font-size:13px;text-align:center}
 /* Champs en 16 px minimum : sinon iPhone zoome quand on touche le champ */
 input,select,textarea{font-size:16px!important}
+.seo-pre{padding:18px 0;color:var(--paper-2);max-width:720px}.seo-pre h1{font-family:var(--f-display,Antonio),sans-serif;text-transform:uppercase;font-size:34px;color:var(--paper);margin:0 0 8px}.seo-pre p{margin:0 0 10px}
 </style>
 </head>
 <body>
 <script src="/site/header.js?v=9"></script>
 <div class="page">
   <div id="app"><p class="empty">Chargement…</p></div>
-  <p class="foot">Par Sowon, créateur et boss du <a href="https://x.com/FuryoGang">FuryoGang</a>.</p>
 </div>
 <script>
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -308,11 +308,17 @@ const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { d
 // Ordre : films, dramas, OAV, animés, jeux. Libellé au pluriel quand il y a plusieurs œuvres.
 const CATS = [["film", "Film", "Films"], ["drama", "Drama", "Dramas"], ["oav", "OAV", "OAV"], ["anime", "Animé", "Animés"], ["jeux", "Jeu vidéo", "Jeux vidéo"]];
 // Une ligne d'adaptation : « Titre (2026, détails) <lien source> <lien YouTube> ». Les liens YouTube sont des bandes-annonces.
+// Une œuvre : « Titre (année, détails) <source> [VO|VF] <vidéo> … ». Les vidéos YouTube ou Dailymotion
+// peuvent être précédées de « VO » ou « VF » pour avoir un bouton par version.
 function adParse(x){
-  let src = "", yt = "", m;
-  while ((m = x.match(/\s*<?(https?:\/\/[^\s>]+)>?\s*$/))) { if (/youtu/.test(m[1])) yt = yt || m[1]; else src = src || m[1]; x = x.slice(0, m.index); }
+  let src = "", vids = [], m;
+  while ((m = x.match(/\s*(?:\b(VO|VF|VOSTFR)\s*:?\s*)?<?(https?:\/\/[^\s>]+)>?\s*$/i))) {
+    if (vidSpec(m[2])) vids.unshift({ u: m[2], l: (m[1] || "").toUpperCase() }); else src = src || m[2];
+    x = x.slice(0, m.index);
+  }
+  const yt = vids.length ? vids[0].u : "";
   const r = x.match(/^(.*?)\s*\((\d{4})\s*,?\s*(.*)\)\s*$/);
-  return r ? { t: r[1], y: r[2], d: r[3], src, yt } : { t: x.trim(), y: "", d: "", src, yt };
+  return r ? { t: r[1], y: r[2], d: r[3], src, yt, vids } : { t: x.trim(), y: "", d: "", src, yt, vids };
 }
 function adCats(o, tr){
   return CATS.map(([k, un, plus]) => {
@@ -320,7 +326,7 @@ function adCats(o, tr){
     if (!raw || /^(aucun|non|-)/i.test(raw)) return null;
     const items = raw.split(/\s*(?:\||;|\n)\s*/).filter(Boolean).map(adParse);
     // Bandes-annonces du champ « Trailers » : dans l'ordre des œuvres de la catégorie, si la ligne n'a pas déjà la sienne.
-    (tr || []).filter(t => t.cat === k).forEach((t, i) => { if (items[i] && !items[i].yt) items[i].yt = t.url; });
+    (tr || []).filter(t => t.cat === k).forEach((t, i) => { if (items[i] && !items[i].vids.length) { items[i].yt = t.url; items[i].vids = [{ u: t.url, l: "" }]; } });
     return { label: items.length > 1 ? plus : un, items };
   }).filter(Boolean);
 }
@@ -332,7 +338,8 @@ function ADAPT(s){
 }
 const SRC_NOMS = { "asianwiki.com": "AsianWiki", "myanimelist.net": "MyAnimeList", "anilist.co": "AniList", "mydramalist.com": "MyDramaList", "netflix.com": "Netflix", "wikipedia.org": "Wikipedia", "eiga.com": "Eiga.com", "realsound.jp": "Real Sound", "animenewsnetwork.com": "Anime News Network", "allcinema.net": "allcinema" };
 const srcNom = u => { try { const h = new URL(u).hostname.replace(/^www\./, ""); return SRC_NOMS[h] || SRC_NOMS[h.split(".").slice(-2).join(".")] || h; } catch (e) { return "Source"; } };
-const adLinks = it => it.src || it.yt ? `<div class="wk-l">${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source :<b>${esc(srcNom(it.src))}</b>&nbsp;↗</a>` : ""}${it.yt && ytId(it.yt) ? `<button type="button" data-vid="${ytId(it.yt)}">▶ Bande-annonce</button>` : ""}</div>` : "";
+const adLinks = it => { const v = (it.vids || []).filter(x => vidSpec(x.u));
+  return it.src || v.length ? `<div class="wk-l">${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source :<b>${esc(srcNom(it.src))}</b>&nbsp;↗</a>` : ""}${v.map(x => `<button type="button" data-vid="${vidSpec(x.u)}">▶ Bande-annonce${x.l ? " " + x.l : ""}</button>`).join("")}</div>` : ""; };
 const adItem = (it, court) => `<div class="wk-it"><b>${esc(it.t)}${it.y ? `<em>${it.y}</em>` : ""}</b>${!court && it.d ? `<p>${esc(it.d.charAt(0).toUpperCase() + it.d.slice(1))}</p>` : ""}${adLinks(it)}</div>`;
 function adHTML(ad){
   return ad.map(c => c.mere
@@ -340,20 +347,25 @@ function adHTML(ad){
     : `<div class="wk-cat"><h3>${c.label}</h3>${c.items.map(it => adItem(it, false)).join("")}</div>`).join("");
 }
 // Fenêtre vidéo (bande-annonce) : la vidéo ne se charge qu'à l'ouverture.
-function vidOpen(id){
-  // Sans accord pour les cookies YouTube : on propose d'accepter ou d'ouvrir la vidéo sur YouTube.
+function vidOpen(spec){
+  const [k, id] = spec.includes(":") ? spec.split(":") : ["yt", spec];
+  const dm = k === "dm", nom = dm ? "Dailymotion" : "YouTube";
+  const page = dm ? `https://www.dailymotion.com/video/${id}` : `https://www.youtube.com/watch?v=${id}`;
+  const src = dm ? `https://www.dailymotion.com/embed/video/${id}?autoplay=1` : `https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0&origin=${encodeURIComponent(location.origin)}`;
+  // Sans accord pour les cookies des plateformes vidéo : on propose d'accepter ou d'ouvrir la vidéo sur la plateforme.
   if (window.FG_CONSENT && !FG_CONSENT.video()) {
     const d = document.createElement("div"); d.className = "vid"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Bande-annonce");
-    d.innerHTML = `<div class="vid-in vid-ask"><p>Cette bande-annonce est hébergée par YouTube, qui dépose ses propres cookies.</p>
-      <button type="button" class="vid-ok" data-vok="${id}">Accepter et lire</button><a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Ouvrir sur YouTube ↗</a><button type="button" data-vclose>Fermer</button></div>`;
+    d.innerHTML = `<div class="vid-in vid-ask"><p>Cette bande-annonce est hébergée par ${nom}, qui dépose ses propres cookies.</p>
+      <button type="button" class="vid-ok" data-vok="${spec}">Accepter et lire</button><a href="${page}" target="_blank" rel="noopener">Ouvrir sur ${nom} ↗</a><button type="button" data-vclose>Fermer</button></div>`;
     document.body.appendChild(d); document.documentElement.style.overflow = "hidden"; return;
   }
   const d = document.createElement("div"); d.className = "vid"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Bande-annonce");
-  d.innerHTML = `<div class="vid-in"><div class="vid-f"><iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0&origin=${encodeURIComponent(location.origin)}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Bande-annonce"></iframe></div>
-    <div class="vid-b"><a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Ouvrir sur YouTube ↗</a><button type="button" data-vclose>Fermer</button></div></div>`;
+  d.innerHTML = `<div class="vid-in"><div class="vid-f"><iframe src="${src}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Bande-annonce"></iframe></div>
+    <div class="vid-b"><a href="${page}" target="_blank" rel="noopener">Ouvrir sur ${nom} ↗</a><button type="button" data-vclose>Fermer</button></div></div>`;
   document.body.appendChild(d); document.documentElement.style.overflow = "hidden";
 }
-function vidClose(){ const d = document.querySelector(".vid"); if (d) d.remove(); document.documentElement.style.overflow = ""; }
+// Vidéo reconnue : « yt:ID » (YouTube) ou « dm:ID » (Dailymotion), sinon "".
+function vidSpec(u){ const y = ytId(u); if (y) return "yt:" + y; const m = String(u).match(/dailymotion\.com\/(?:embed\/)?video\/([a-z0-9]+)|dai\.ly\/([a-z0-9]+)/i); return m ? "dm:" + (m[1] || m[2]) : ""; }
 function ytId(u){ const m = String(u).match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
 function ytHTML(t){ const id = ytId(t.url); if (!id) return "";
   return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube ↗</a>`; }
@@ -377,7 +389,7 @@ function crumb(titre){
 function render(){
   const { serie: s, editions: eds } = DATA;
   const titre = shown(s);
-  document.title = `${titre} · FuryoGang`;
+  document.title = `${titre} (manga) – tomes, sorties, extraits | FuryoGang`;
   const pays = [...new Set(eds.map(e => e.pays))].filter(Boolean);
   if (!pays.includes(PAYS)) PAYS = pays[0] || "France";
   const pubFR = [...new Set(eds.filter(e => e.pays === "France").map(e => e.pub))];
@@ -558,7 +570,7 @@ document.addEventListener("click", e => {
 });
 // Sans nom de série dans l'adresse : liste de toutes les séries.
 function renderList(items){
-  document.title = "Séries · FuryoGang";
+  document.title = "Séries manga furyō, yakuza et crime · FuryoGang";
   document.getElementById("app").innerHTML = `
   <input class="search" id="q" type="search" placeholder="Chercher une série" aria-label="Chercher une série" autocomplete="off">
   <div class="fl" id="fl"></div>
