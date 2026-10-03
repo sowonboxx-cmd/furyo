@@ -203,7 +203,11 @@ body.tb-open{overflow:hidden}
 .seg button{height:40px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
 .seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
 .seg small{color:var(--paper-3);font-weight:600}
-.ed-info{margin:0 0 12px;font-size:13px;color:var(--paper-3)}
+.ed + .ed{margin-top:36px;padding-top:28px;border-top:1px solid var(--ink-3)}
+.ed-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 16px}
+.ed-pill{display:inline-flex;align-items:center;height:32px;padding:0 13px;border-radius:9px;background:var(--ink-3);color:var(--paper);font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
+.ed-meta{font-size:14px;font-weight:500;color:var(--paper-2);line-height:1.35}
+.ed-meta b{color:var(--paper);font-weight:600}
 .grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px}
 @media (min-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 12px}}
 .t{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -570,12 +574,21 @@ function renderTomes(){
   const otherByN = {}; (eds.find(e => e.pays === other)?.tomes || []).forEach(t => { if (t.n != null) otherByN[t.n] = t; });
   const list = eds.filter(e => e.pays === PAYS);
   TL = []; // tomes affichés, dans l'ordre, pour la fenêtre plein écran
-  document.getElementById("tomes").innerHTML = list.map(e => `
-    ${list.length > 1 ? `<p class="ed-info">${esc(e.nom)}</p>` : `<p class="ed-info">${esc([e.pub, e.label, e.format].filter(Boolean).join(" · "))}</p>`}
+  // En-tête d'édition : le format en pastille (Tankōbon, Kanzenban…), puis éditeur, collection, nombre de tomes et années.
+  const edHead = e => {
+    const ys = e.tomes.map(t => (t.date || "").slice(0, 4)).filter(Boolean).sort();
+    const ans = ys.length ? (ys[0] === ys[ys.length - 1] ? ys[0] : `${ys[0]}–${ys[ys.length - 1]}`) : "";
+    const n = e.tomes.length;
+    const pill = e.format || (e.nom.split(" — ")[1] || "Édition").replace(/\s*\(.*$/, "");
+    const meta = [e.pub ? `<b>${esc(e.pub)}</b>` : "", e.label && e.label !== e.pub ? esc(e.label) : "", n ? `${n} tome${n > 1 ? "s" : ""}` : "", ans].filter(Boolean).join(" · ");
+    return `<div class="ed-h"><span class="ed-pill">${esc(pill)}</span>${meta ? `<span class="ed-meta">${meta}</span>` : ""}</div>`;
+  };
+  document.getElementById("tomes").innerHTML = list.map(e => `<section class="ed">
+    ${edHead(e)}
     ${e.tomes.length ? `<ul class="grid">${(ASC ? e.tomes : [...e.tomes].reverse()).map(t => {
       const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub });
       return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="Tome ${tn(t.n)}" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
-        <span class="t-n">Tome ${tn(t.n)}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
+        <span class="t-n">Tome ${tn(t.n)}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}</section>`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
 }
 document.addEventListener("click", e => {
   const bk = e.target.closest("a[data-back]");
