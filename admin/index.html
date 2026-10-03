@@ -152,7 +152,15 @@ function toast(t){ const el = document.getElementById("toast"); el.textContent =
 function login(msg){
   root.innerHTML = `<form class="login" id="lf"><h1>Back-office</h1><p>FuryoGang · accès administrateur</p>
     <input id="pw" type="password" autocomplete="current-password" placeholder="Mot de passe" required>
-    <button>Se connecter</button><div class="err" id="err">${esc(msg || "")}</div></form>`;
+    <button>Se connecter</button><p style="margin:14px 0 8px;color:var(--paper-3);font-size:13px">ou</p><div id="gbtn" style="display:flex;justify-content:center"></div><div class="err" id="err">${esc(msg || "")}</div></form>`;
+  // Connexion avec le compte Google de l'administrateur.
+  const g = () => { google.accounts.id.initialize({ client_id: "923817714860-h88lmvr2bnvninn41ioa19iv2lrd2ed5.apps.googleusercontent.com", callback: async r => {
+      const x = await fetch("/api/auth/google", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ credential: r.credential }) });
+      const j = await x.json().catch(() => ({}));
+      if (j.admin) load(); else document.getElementById("err").textContent = j.ok ? "Ce compte Google n'est pas administrateur." : (j.error || "Connexion impossible.");
+    } });
+    google.accounts.id.renderButton(document.getElementById("gbtn"), { theme: "filled_black", shape: "pill", size: "large", text: "continue_with", locale: "fr", width: 280 }); };
+  if (window.google && google.accounts) g(); else { const sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true; sc.onload = g; document.head.appendChild(sc); }
   document.getElementById("lf").onsubmit = async e => {
     e.preventDefault();
     const r = await fetch("/api/admin/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password: document.getElementById("pw").value }) });

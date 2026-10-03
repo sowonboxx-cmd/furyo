@@ -53,7 +53,12 @@
     ".me-box ul{margin:0 0 18px;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14.5px}" +
     ".me-box li{display:flex;gap:10px;align-items:center}.me-box li i{width:30px;height:30px;border-radius:9px;background:#2C2C2F;display:grid;place-items:center;font-style:normal;flex:none}" +
     ".me-box button{width:100%;height:46px;border:0;border-radius:23px;font:inherit;font-weight:700;cursor:pointer}" +
-    ".me-box .go{background:#2D74D2;color:#fff;opacity:.55;cursor:default}.me-box .no{margin-top:8px;background:transparent;color:#98989D}";
+    ".me-box .go{background:#2D74D2;color:#fff;opacity:.55;cursor:default}.me-box .no{margin-top:8px;background:transparent;color:#98989D}" +
+    ".me-g{display:flex;justify-content:center;min-height:44px;margin-top:6px}.me-err{color:#F08A7E;font-size:13px;min-height:0;margin:6px 0 0}" +
+    ".me-u{display:flex;align-items:center;gap:12px;margin:4px 0 14px}.me-u img{width:52px;height:52px;border-radius:50%}.me-u b{display:block;font-size:17px}.me-u small{color:#98989D}" +
+    ".me-box a.go2{display:flex;align-items:center;justify-content:center;height:46px;border-radius:23px;background:#2D74D2;color:#fff;font-weight:700;text-decoration:none;margin-bottom:8px}" +
+    ".me-box .out{background:#38383B;color:#F5F5F7}" +
+    ".sh-me img{width:30px;height:30px;border-radius:50%;display:block}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
   var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : (p === "/" || p === "/index.html") ? "actu" : "";
@@ -164,9 +169,9 @@
     '<div class="fs-res" id="fs-res" role="listbox"></div>' +
     '<div class="fs-h"><span><kbd>↑</kbd> <kbd>↓</kbd> naviguer</span><span><kbd>Entrée</kbd> ouvrir</span><span><kbd>Échap</kbd> fermer</span></div></div></div>' +
     '<div class="me" id="me" hidden role="dialog" aria-modal="true" aria-label="Compte"><div class="me-box"><h3>Ton compte FuryoGang</h3>' +
-    "<p>Bientôt, tu pourras créer ton compte gratuit pour :</p>" +
+    "<p>Connecte-toi en un clic avec Google. Ton compte gratuit te permettra bientôt de :</p>" +
     "<ul><li><i>❤️</i>Liker les actus et les séries</li><li><i>🔖</i>Garder tes séries préférées en favoris</li><li><i>⬆️</i>Voter pour les séries populaires</li></ul>" +
-    '<button class="go" disabled>Bientôt disponible</button><button class="no" id="me-x">Fermer</button></div></div>');
+    '<div id="me-g" class="me-g"></div><p class="me-err" id="me-err"></p><button class="no" id="me-x">Fermer</button></div></div>');
   var fs = document.getElementById("fs"), inp = document.getElementById("fs-q"), res = document.getElementById("fs-res"), meBox = document.getElementById("me");
   function open() {
     fs.hidden = false; document.body.classList.add("fs-open"); inp.value = ""; draw(); inp.focus();
@@ -190,13 +195,44 @@
   });
   // Préchargement discret des données quand le doigt ou la souris approche de la loupe.
   ["pointerenter", "touchstart", "focus"].forEach(function (ev) { document.getElementById("sh-search").addEventListener(ev, load, { passive: true }); });
-  document.getElementById("sh-me").addEventListener("click", function () { meBox.hidden = false; });
-  // Administrateur connecté : bouton « Back-office » à côté de l'avatar.
-  if (/^https?:$/.test(location.protocol)) fetch("/api/admin/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
-    if (!j || !j.admin) return; var a = document.createElement("a"); a.className = "sh-bo"; a.href = "/admin/"; a.textContent = "Back-office";
-    document.querySelector(".sh-top").appendChild(a);
-  }).catch(function () {});
-  document.getElementById("me-x").addEventListener("click", function () { meBox.hidden = true; });
+  /* ---------- Compte : connexion « Continuer avec Google » ---------- */
+  var GCID = "923817714860-h88lmvr2bnvninn41ioa19iv2lrd2ed5.apps.googleusercontent.com", ME = null;
+  var meInner = meBox.querySelector(".me-box"), meDefault = meInner.innerHTML;
+  function bindClose() { var x = document.getElementById("me-x"); if (x) x.onclick = function () { meBox.hidden = true; }; }
+  function drawAvatar() {
+    var btn = document.getElementById("sh-me");
+    if (ME && ME.user && ME.user.picture) btn.innerHTML = '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">';
+    var old = document.querySelector(".sh-bo"); if (old) old.remove();
+    if (ME && ME.admin) { var a = document.createElement("a"); a.className = "sh-bo"; a.href = "/admin/"; a.textContent = "Back-office"; document.querySelector(".sh-top").appendChild(a); }
+  }
+  function gis(cb) {
+    if (window.google && google.accounts && google.accounts.id) return cb();
+    var sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true; sc.onload = cb; document.head.appendChild(sc);
+  }
+  function openMe() {
+    if (ME && ME.user) {
+      meInner.innerHTML = '<div class="me-u">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "") + '<div><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + "</small></div></div>" +
+        (ME.admin ? '<a class="go2" href="/admin/">Ouvrir le back-office</a>' : "") +
+        '<button class="out" id="me-out">Se déconnecter</button><button class="no" id="me-x">Fermer</button>';
+      document.getElementById("me-out").onclick = function () { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); };
+    } else {
+      meInner.innerHTML = meDefault;
+      gis(function () {
+        google.accounts.id.initialize({ client_id: GCID, callback: function (r) {
+          fetch("/api/auth/google", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ credential: r.credential }) })
+            .then(function (x) { return x.json(); }).then(function (j) {
+              if (j.ok) { ME = { user: j.user, admin: j.admin }; drawAvatar(); meBox.hidden = true; if (j.admin) location.reload(); }
+              else document.getElementById("me-err").textContent = j.error || "Connexion impossible.";
+            }).catch(function () { document.getElementById("me-err").textContent = "Connexion impossible."; });
+        } });
+        google.accounts.id.renderButton(document.getElementById("me-g"), { theme: "filled_black", shape: "pill", size: "large", text: "continue_with", locale: "fr", width: 280 });
+      });
+    }
+    bindClose(); meBox.hidden = false;
+  }
+  document.getElementById("sh-me").addEventListener("click", openMe);
+  if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j) { ME = j; drawAvatar(); } }).catch(function () {});
+  bindClose();
   meBox.addEventListener("click", function (e) { if (e.target === meBox) meBox.hidden = true; });
   // Retour en haut (mobile) : même flèche que la chronologie CROWS x WORST, qui a déjà la sienne.
   function toTop() {
