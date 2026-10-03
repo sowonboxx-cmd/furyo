@@ -42,7 +42,7 @@ function seo(res, url) {
       el.onEndTag(end => {
         end.before(balises({
           titre: titre.trim() || "FuryoGang", desc, url: canon, prive,
-          image: fiche && fiche.image, type: fiche && fiche.type,
+          image: fiche && fiche.image, type: fiche && fiche.type, carte: fiche && fiche.carte,
           jsonld: fiche ? fiche.jsonld : url.pathname === "/" ? jsonSite() : null,
         }), { html: true });
       });
