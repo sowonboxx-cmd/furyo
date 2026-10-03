@@ -46,52 +46,76 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .empty{color:var(--paper-3);text-align:center;margin-top:18vh}
 .links{display:flex;flex-wrap:wrap;gap:8px}
 .links a,.links span{height:40px;padding:0 16px;border-radius:20px;background:var(--ink-2);color:var(--paper);text-decoration:none;font-weight:600;font-size:14px;display:inline-flex;align-items:center}
+.adm{background:var(--ink-2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px;border:1.5px solid #4C9BFF55}
+.adm p{margin:0;font-size:12.5px;color:var(--paper-3)}
+.tg{display:flex;flex-wrap:wrap;gap:8px}
+.tg button{height:36px;padding:0 14px 0 10px;border-radius:18px;border:1.5px solid var(--ink-3);background:transparent;color:var(--paper-2);font:inherit;font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;cursor:pointer}
+.tg button svg{width:17px;height:17px}
+.tg button[aria-pressed="true"]{color:#fff;border-color:transparent}
+.tg button:disabled{cursor:default;opacity:.75}
+.adm label{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:var(--paper-2)}
+.adm input{width:110px;height:40px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);font:inherit;padding:0 12px;outline:none}
+.adm .save{height:44px;border:0;border-radius:22px;background:var(--blue);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.adm .msg{min-height:18px;font-size:13px;color:var(--ok)}.adm .msg.err{color:var(--red)}
 </style>
 </head>
 <body>
 <script src="/site/header.js?v=7"></script>
+<script src="/site/badges.js?v=1"></script>
 <main id="app"><p class="empty">Chargement…</p></main>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const I = {
-  admin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/></svg>`,
-  fond: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6-4.5-4.2 6.1-.7z"/></svg>`,
-  don: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>`,
-  contrib: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>`,
-  lecteur: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg>`,
-};
-// Badges (voir badges.md). Administrateur et Fondateur (100 premiers) sont automatiques ; Will ajoute les autres dans Notion.
-const BADGES = {
-  "Administrateur": ["admin", "Gère FuryoGang", "#4C9BFF"],
-  "Fondateur": ["fond", "Parmi les 100 premiers inscrits", "#F2B33D"],
-  "Ancien": ["fond", "Là depuis le début", "#E0955F"],
-  "Ami": ["don", "Ami de la maison", "#F08AC0"],
-  "Donateur": ["don", "Soutient le site", "#E54839"],
-  "Contributeur": ["contrib", "Aide à enrichir les fiches", "#7BC67E"],
-  "Modérateur": ["admin", "Veille sur la communauté", "#B38CFF"],
-};
-const badge = (n, on = true) => { const [ic, d, c] = BADGES[n] || ["fond", "", "#98989D"]; return `<div class="bd ${on ? "" : "off"}"><i style="background:${c}22;color:${c}">${I[ic]}</i><b>${esc(n)}</b><small>${d}${on ? "" : " · pas encore"}</small></div>`; };
 const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 // Profil public : seulement les badges obtenus, et les réseaux si le membre les a rendus publics.
-(async () => {
-  const app = document.getElementById("app");
-  const slug = decodeURIComponent(location.pathname.replace(/^\/membres\//, "").replace(/\/$/, ""));
-  const x = await fetch("/api/membres?u=" + encodeURIComponent(slug)).catch(() => null);
-  const j = x && x.ok ? await x.json() : null, m = j && j.membre;
-  if (!m) { document.title = "Membre introuvable · FuryoGang"; app.innerHTML = `<p class="empty">Ce membre n'existe pas (ou a changé de pseudo).<br><br><a href="/membres/" style="color:var(--blue)">Voir tous les membres</a></p>`; return; }
-  document.title = `${m.pseudo} · Membres FuryoGang`;
-  const r = m.reseaux || {}, admin = m.badges.includes("Administrateur");
+// Un admin voit en plus « Gérer les badges » : il coche / décoche les badges du membre et ajuste ses points.
+const app = document.getElementById("app");
+let M, CAT = [], ADMIN = false;
+function draw() {
+  const m = M, r = m.reseaux || {}, estAdmin = m.badges.some(b => b.r === "admin");
   const liens = [r.instagram && `<a href="https://instagram.com/${esc(r.instagram)}" target="_blank" rel="noopener">Instagram · @${esc(r.instagram)}</a>`,
     r.x && `<a href="https://x.com/${esc(r.x)}" target="_blank" rel="noopener">X · @${esc(r.x)}</a>`,
     r.discord && `<span>Discord · ${esc(r.discord)}</span>`].filter(Boolean);
+  const ont = new Set(m.badges.map(b => b.id)), fixes = new Set(m.badges.filter(b => b.fixe).map(b => b.id));
   app.innerHTML = `
     <section class="hero">${m.photo ? `<img src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}
-      <div><h1>${esc(m.pseudo || "Membre")}</h1><span class="role ${admin ? "admin" : ""}">${admin ? "Administrateur" : "Membre"} · n°${m.num || "?"}</span><div class="since">Inscrit le ${dl(m.inscrit)}</div></div></section>
+      <div><h1>${esc(m.pseudo || "Membre")}</h1><span class="role ${estAdmin ? "admin" : ""}">${estAdmin ? "Administrateur" : "Membre"} · n°${m.num || "?"}</span><div class="since">Inscrit le ${dl(m.inscrit)}</div></div></section>
     <h2>Classement</h2>
     <div class="stats"><div><b>${m.num || "—"}</b><span>N° de membre</span></div><div><b>${m.points}</b><span>Points</span></div><div><b>${m.badges.length}</b><span>Badges</span></div></div>
-    ${m.badges.length ? `<h2>Badges</h2><div class="badges">${m.badges.map(n => badge(n)).join("")}</div>` : ""}
+    ${m.badges.length ? `<h2>Badges</h2><div class="badges">${m.badges.map(b => FG_BADGES.carte(b, true)).join("")}</div>` : ""}
     ${liens.length ? `<h2>Réseaux</h2><div class="links">${liens.join("")}</div>` : ""}
+    ${ADMIN ? `<h2>Gérer les badges · admin</h2>
+    <form class="adm" id="adm">
+      <p>Touche un badge pour l'ajouter ou le retirer, puis enregistre. Les badges grisés sont automatiques. Donner « Administrateur » ouvre l'accès au back-office.</p>
+      <div class="tg">${CAT.map(b => { const on = ont.has(b.id), auto = b.r === "cent" || fixes.has(b.id);
+        return `<button type="button" data-b="${b.id}" aria-pressed="${on}" ${auto ? "disabled" : ""} style="${on ? `background:${b.c}` : ""}" title="${esc(b.d)}">${FG_BADGES.icone(b)}${esc(b.n)}${auto ? " · auto" : ""}</button>`; }).join("")}</div>
+      <label>Points <input type="number" name="points" min="0" step="1" value="${m.points}"></label>
+      <button class="save">Enregistrer</button><div class="msg" id="amsg"></div>
+    </form>` : ""}
     <div class="acts"><a href="/membres/" class="sec">Voir tous les membres</a></div>`;
+  if (!ADMIN) return;
+  const f = document.getElementById("adm");
+  f.querySelectorAll("[data-b]").forEach(bt => bt.onclick = () => {
+    const on = bt.getAttribute("aria-pressed") !== "true", b = CAT.find(x => x.id === bt.dataset.b);
+    bt.setAttribute("aria-pressed", on); bt.style.background = on ? b.c : "";
+  });
+  f.onsubmit = async e => { e.preventDefault(); const msg = document.getElementById("amsg"); msg.className = "msg"; msg.textContent = "Enregistrement…";
+    // On n'envoie que les badges attribués à la main (les automatiques restent).
+    const badges = [...f.querySelectorAll("[data-b]:not(:disabled)")].filter(x => x.getAttribute("aria-pressed") === "true").map(x => x.dataset.b);
+    const x = await fetch("/api/admin/membre", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: M.id, badges, points: f.points.value }) }).catch(() => null);
+    const k = x ? await x.json().catch(() => ({})) : {};
+    if (!x || !x.ok) { msg.className = "msg err"; msg.textContent = k.error || "Erreur, réessaie."; return; }
+    if (k.membre) M = { ...k.membre, reseaux: M.reseaux };
+    draw(); const m2 = document.getElementById("amsg"); if (m2) m2.textContent = "Enregistré ✓";
+  };
+}
+(async () => {
+  const slug = decodeURIComponent(location.pathname.replace(/^\/membres\//, "").replace(/\/$/, ""));
+  const [x, me] = await Promise.all([fetch("/api/membres?u=" + encodeURIComponent(slug)).catch(() => null), fetch("/api/auth/me").then(r => r.json()).catch(() => ({}))]);
+  const j = x && x.ok ? await x.json() : null;
+  if (!j || !j.membre) { document.title = "Membre introuvable · FuryoGang"; app.innerHTML = `<p class="empty">Ce membre n'existe pas (ou a changé de pseudo).<br><br><a href="/membres/" style="color:var(--blue)">Voir tous les membres</a></p>`; return; }
+  M = j.membre; CAT = j.catalogue || []; ADMIN = !!me.admin;
+  document.title = `${M.pseudo} · Membres FuryoGang`;
+  draw();
 })();
 </script>
 </body>

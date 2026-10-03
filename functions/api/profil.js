@@ -2,14 +2,16 @@
 // POST /api/profil { instagram, x, discord, public } : le membre met à jour ses réseaux et choisit s'ils sont publics.
 import { membre, estAdminEmail, cookieMembre } from "../../lib/auth.js";
 import { json } from "../../lib/admin.js";
+import { catalogue } from "../../lib/badges.js";
 import { lirePage, fiche, patch, rt, identifiant, prisPar, estReserve } from "../../lib/membres.js";
 const propre = s => String(s || "").trim().replace(/^https?:\/\/(www\.)?(instagram\.com|x\.com|twitter\.com)\//i, "").replace(/^@/, "").replace(/[/?#].*$/, "").slice(0, 60);
 export async function onRequestGet({ request, env }) {
   const u = await membre(request, env);
   if (!u || !u.m) return json({ error: "connexion requise" }, 401);
-  const page = await lirePage(env.NOTION_TOKEN, u.m);
+  const [page, cat] = await Promise.all([lirePage(env.NOTION_TOKEN, u.m), catalogue(env.NOTION_TOKEN).catch(() => [])]);
   if (!page) return json({ error: "membre introuvable" }, 404);
-  return json({ membre: fiche(page, { admin: await estAdminEmail(u.e, env), prive: true }) });
+  // catalogue : tous les badges, pour montrer aussi ceux qu'on n'a pas encore (grisés).
+  return json({ membre: fiche(page, { admin: await estAdminEmail(u.e, env), prive: true, cat }), catalogue: cat });
 }
 export async function onRequestPost({ request, env }) {
   const u = await membre(request, env);
