@@ -29,7 +29,13 @@
     '.fgt .info{position:absolute;left:64px;right:64px;top:calc(var(--cy) + 482px);display:flex;flex-direction:column;align-items:center;text-align:center}',
     '.fgt .date{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:36px;letter-spacing:.06em;text-transform:uppercase;background:var(--red);color:#fff;padding:6px 20px;border-radius:6px}',
     '.fgt .title{margin-top:18px;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:108px;line-height:.92;text-transform:uppercase;letter-spacing:.005em}',
-    '.fgt .title.s{font-size:88px}.fgt .title.xs{font-size:68px}',
+    // Titre : une ligne (108 px, réduit jusqu'à 84 px), sinon deux lignes aérées (68 → 60 px, interligne 1.1),
+    // jamais trois lignes : au-delà, le titre est coupé par « … » (règle de Will, 04/10/2026).
+    '.fgt .title{white-space:nowrap}',
+    '.fgt .title.two{white-space:normal;line-height:1.1;margin-top:14px}',
+    '.fgt.t2 .who{margin-top:10px}.fgt.t2 .flag{margin-top:16px}',
+    // Post 3:4 avec titre sur deux lignes : tout remonte un peu pour garder de l'air sous le drapeau.
+    '.fgt.post.t2{--cy:594px}',
     '.fgt .who{margin-top:16px;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}',
     '.fgt .who i{font-style:normal;margin:0 14px;opacity:.5}',
     '.fgt .flag{margin-top:26px;width:60px;height:41px;border-radius:5px;overflow:hidden}',
@@ -71,7 +77,6 @@
 
   function card(d, theme, fmt) {
     var t = d.titre || "", j = jpOf(d.jp), n = d.n != null ? String(d.n).padStart(2, "0") : "";
-    var size = t.length > 26 ? "xs" : t.length > 16 ? "s" : "";
     var js = Math.min(56, Math.floor(640 / (Math.max(1, Array.from(j).length) * 1.12))) + "px";
     var who = (d.auteurs || []).filter(Boolean).slice(0, 2).map(esc).join("<i>·</i>");
     var c = couv(d.cover);
@@ -82,8 +87,20 @@
       (n ? '<div class="num">' + n + "</div>" : "") +
       (j ? '<div class="jpw"><div class="jp" lang="ja" style="--js:' + js + '">' + esc(j) + "</div></div>" : "") +
       '<div class="info">' + (d.date ? '<span class="date">' + esc(dateLong(d.date, d.prec)) + "</span>" : "") +
-      '<div class="title ' + size + '">' + esc(t) + "</div>" + (who ? '<div class="who">' + who + "</div>" : "") +
+      '<div class="title">' + esc(t) + "</div>" + (who ? '<div class="who">' + who + "</div>" : "") +
       (FLAG[d.pays] ? '<div class="flag">' + FLAG[d.pays] + "</div>" : "") + "</div></div>";
+  }
+  // Mise à l'échelle du titre, une fois les polices chargées.
+  function ajuster(c) {
+    var el = c.querySelector(".title"); if (!el) return;
+    var txt = el.textContent, max = el.parentNode.clientWidth;
+    el.className = "title"; c.classList.remove("t2");
+    for (var fs = 108; fs >= 84; fs -= 2) { el.style.fontSize = fs + "px"; if (el.scrollWidth <= max) return; }
+    el.className = "title two"; c.classList.add("t2");
+    var lignes = function () { return Math.round(el.offsetHeight / (parseFloat(el.style.fontSize) * 1.1)); };
+    for (fs = 68; fs >= 60; fs -= 2) { el.style.fontSize = fs + "px"; if (lignes() <= 2) return; }
+    var mots = txt.split(" ");
+    while (mots.length > 1 && lignes() > 2) { mots.pop(); el.textContent = mots.join(" ").replace(/[\s,;:·–-]+$/, "") + "…"; }
   }
   function charger(src) { return new Promise(function (ok, ko) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
   function images(el) {
@@ -97,7 +114,7 @@
     var lib = window.htmlToImage ? Promise.resolve() : charger("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js");
     return lib.then(function () { return fonts(d.jp); }).then(function (fcss) {
       var names = ['700 40px "FGAntonio"', '500 40px "FGInter"'].concat(jpOf(d.jp) ? ['900 40px "FGNotoJP"'] : []);
-      return Promise.all(names.map(function (f) { return document.fonts.load(f, jpOf(d.jp) || "A"); })).then(function () { return images(box); }).then(function () { return fcss; });
+      return Promise.all(names.map(function (f) { return document.fonts.load(f, jpOf(d.jp) || "A"); })).then(function () { return images(box); }).then(function () { ajuster(box.firstChild); return fcss; });
     }).then(function (fcss) {
       // Safari dessine parfois avant d'avoir intégré polices et photos : on recommence jusqu'à ce que le résultat ne change plus.
       var opts = { width: wh[0], height: wh[1], pixelRatio: 1, fontEmbedCSS: fcss, cacheBust: false };
@@ -110,5 +127,5 @@
       return essai(1, null);
     }).finally(function () { box.remove(); });
   }
-  window.FG_TOME = { card: card, png: png, SIZE: SIZE };
+  window.FG_TOME = { card: card, png: png, ajuster: ajuster, SIZE: SIZE };
 })();
