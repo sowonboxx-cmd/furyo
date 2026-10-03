@@ -10,7 +10,7 @@
     ".sh-logo img{height:42px;width:auto;display:block}" +
     ".sh-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;display:grid;place-items:center;color:#F5F5F7;text-decoration:none;border:0;background:transparent;cursor:pointer;padding:0}" +
     ".sh-search{right:8px}.sh-me{left:8px}" +
-    ".sh-bo{position:absolute;top:50%;left:56px;transform:translateY(-50%);height:28px;padding:0 11px;border-radius:14px;background:#4C9BFF;color:#fff;font:600 12.5px Inter,system-ui,sans-serif;text-decoration:none;display:flex;align-items:center}" +
+    ".sh-bo{position:absolute;top:50%;left:56px;transform:translateY(-50%);height:28px;padding:0 11px;border-radius:14px;background:#305887;color:#fff;font:600 12.5px Inter,system-ui,sans-serif;text-decoration:none;display:flex;align-items:center}" +
     ".sh-bo svg{display:none;width:16px;height:16px}" +
     "@media (max-width:520px){.sh-bo{width:30px;height:30px;padding:0;justify-content:center;border-radius:50%;font-size:0}.sh-bo svg{display:block}}" +
     ".sh-me span{width:30px;height:30px;border-radius:50%;background:#38383B;display:grid;place-items:center;color:#CFCFD4}" +
@@ -55,10 +55,10 @@
     ".me-box ul{margin:0 0 18px;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14.5px}" +
     ".me-box li{display:flex;gap:10px;align-items:center}.me-box li i{width:30px;height:30px;border-radius:9px;background:#2C2C2F;display:grid;place-items:center;font-style:normal;flex:none}" +
     ".me-box button{width:100%;height:46px;border:0;border-radius:23px;font:inherit;font-weight:700;cursor:pointer}" +
-    ".me-box .go{background:#2D74D2;color:#fff;opacity:.55;cursor:default}.me-box .no{margin-top:8px;background:transparent;color:#98989D}" +
+    ".me-box .go{background:#305887;color:#fff;opacity:.55;cursor:default}.me-box .no{margin-top:8px;background:transparent;color:#98989D}" +
     ".me-g{display:flex;justify-content:center;min-height:44px;margin-top:6px;color-scheme:light}.me-err{color:#F08A7E;font-size:13px;min-height:0;margin:6px 0 0}" +
     ".me-u{display:flex;align-items:center;gap:12px;margin:4px 0 14px}.me-u img{width:52px;height:52px;border-radius:50%}.me-u b{display:block;font-size:17px}.me-u small{color:#98989D}" +
-    ".me-box a.go2{display:flex;align-items:center;justify-content:center;height:46px;border-radius:23px;background:#2D74D2;color:#fff;font-weight:700;text-decoration:none;margin-bottom:8px}" +
+    ".me-box a.go2{display:flex;align-items:center;justify-content:center;height:46px;border-radius:23px;background:#305887;color:#fff;font-weight:700;text-decoration:none;margin-bottom:8px}" +
     ".me-box .out{background:#38383B;color:#F5F5F7}" +
     ".me-mb{display:block;text-align:center;margin-top:12px;color:#4C9BFF;font-weight:600;font-size:14px;text-decoration:none}" +
     ".sh-me img{width:30px;height:30px;border-radius:50%;display:block}";
@@ -266,7 +266,7 @@
       ".ck{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:95;max-width:560px;margin:0 auto;background:#1B1B1D;border:1px solid #2C2C2F;border-radius:18px;padding:16px;box-shadow:0 20px 50px rgba(0,0,0,.55);font-family:Inter,system-ui,sans-serif;color:#F5F5F7}" +
       ".ck b{display:block;font-size:15px;margin-bottom:4px}.ck p{margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#CFCFD4}.ck p a{color:#4C9BFF}" +
       ".ck-b{display:flex;gap:8px}.ck-b button{flex:1;height:42px;border:0;border-radius:21px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}" +
-      ".ck-b .y{background:#2D74D2;color:#fff}.ck-b .n{background:#38383B;color:#F5F5F7}" +
+      ".ck-b .y{background:#305887;color:#fff}.ck-b .n{background:#38383B;color:#F5F5F7}" +
       ".sh-legal{max-width:1080px;margin:28px auto 0;padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 90px);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;border-top:1px solid #2C2C2F;font:500 12.5px Inter,system-ui,sans-serif}" +
       ".sh-legal a,.sh-legal button{color:#98989D;text-decoration:none;background:none;border:0;padding:0;font:inherit;cursor:pointer}.sh-legal a:hover,.sh-legal button:hover{color:#F5F5F7}";
       document.head.appendChild(st); }
