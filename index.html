@@ -70,7 +70,6 @@ button{font:inherit;color:inherit}
 .post[hidden]{display:none}
 .p-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--paper-3)}
 .tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:7px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c);background:color-mix(in srgb,var(--c) 18%,var(--ink-3))}
-.p-src{margin-left:auto;color:var(--paper-2);font-weight:600}
 .p-title{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(24px,6.4vw,30px);line-height:1.02;letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
 .p-jp{display:block;margin-top:4px;font-size:13px;color:var(--paper-2);font-weight:500}
 .p-text{margin:0;color:var(--paper-2);font-size:15px;max-width:60ch}
@@ -283,7 +282,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
         </li>
 
         <li class="post" data-type="fin" style="--c:var(--t-fin)">
-          <div class="p-head"><span class="tag">Fin de série</span><span>13 janv. 2026</span><span class="p-src">Akita Shoten</span></div>
+          <div class="p-head"><span class="tag">Fin de série</span><span>13 janv. 2026</span></div>
           <h2 class="p-title">Crows Gaiden Housenka se termine</h2>
           <div class="big"><b>24</b><span>tomes · série terminée</span></div>
           <p class="p-text">Le tome 24, le dernier, conclut l'histoire de la fondation du lycée Hōsen, commencée en 2017.</p>
@@ -291,7 +290,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
         </li>
 
         <li class="post" data-type="trailer" style="--c:var(--t-trailer)">
-          <div class="p-head"><span class="tag">Trailer</span><span>hier</span><span class="p-src">Chaîne officielle</span></div>
+          <div class="p-head"><span class="tag">Trailer</span><span>hier</span></div>
           <h2 class="p-title">Exemple : bande-annonce d'une adaptation</h2>
           <a class="video" href="#" aria-label="Voir la bande-annonce sur la chaîne officielle">
             <img src="/crows-x-worst/img/crows-banner.jpg" alt="">
@@ -315,7 +314,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
         </li>
 
         <li class="post" data-type="annonce" style="--c:var(--t-annonce)">
-          <div class="p-head"><span class="tag">Annonce</span><span>il y a 3 j</span><span class="p-src">Akita Shoten</span></div>
+          <div class="p-head"><span class="tag">Annonce</span><span>il y a 3 j</span></div>
           <h2 class="p-title">Dustland, retour à Toaru<span class="p-jp" lang="ja">ダストランド</span></h2>
           <p class="p-text">Hiroshi Takahashi signe une nouvelle série dans l'univers de CROWS et WORST, treize ans après la fin de WORST.</p>
           <div class="p-foot"><a class="series" href="#">Dustland</a><a class="series" href="/crows-x-worst/">CROWS X WORST</a><a class="src" href="#">Source officielle ↗</a></div>
@@ -334,14 +333,14 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
         </li>
 
         <li class="post" data-type="news" style="--c:var(--t-news)">
-          <div class="p-head"><span class="tag">News</span><span>il y a 5 j</span><span class="p-src">Monthly Shōnen Champion</span></div>
+          <div class="p-head"><span class="tag">News</span><span>il y a 5 j</span></div>
           <h2 class="p-title">Exemple : chapitre en couleur dans le magazine</h2>
           <p class="p-text">Carte type pour une info courte sans visuel : ce qui se passe, la date, et le lien vers la page du magazine.</p>
           <div class="p-foot"><a class="series" href="#">WORST Gaiden Guriko</a><a class="src" href="#">Champion Cross ↗</a></div>
         </li>
 
         <li class="post" data-type="pause" style="--c:var(--t-pause)">
-          <div class="p-head"><span class="tag">Pause</span><span>il y a 6 j</span><span class="p-src">Magazine</span></div>
+          <div class="p-head"><span class="tag">Pause</span><span>il y a 6 j</span></div>
           <h2 class="p-title">Exemple : la série fait une pause</h2>
           <div class="big"><b>2</b><span>numéros sans chapitre</span></div>
           <p class="p-text">Reprise annoncée dans le numéro suivant du magazine.</p>
@@ -495,7 +494,7 @@ function liveNews(j){
   const html = items.map(it => {
     const titre = it.fr || it.titre, jp = it.jp ? `<span class="p-jp" lang="ja">${escN(it.jp)}</span>` : "";
     const tag = it.type === "licence" ? "Licence FR" : "News", c = it.type === "licence" ? "--t-licence" : "--t-news";
-    const head = `<div class="p-head"><span class="tag">${tag}</span><span>${escN(dN(it.date))}</span>${it.pub ? `<span class="p-src">${escN(it.pub)}</span>` : ""}</div>`;
+    const head = `<div class="p-head"><span class="tag">${tag}</span><span>${escN(dN(it.date))}</span></div>`;
     const body = `${head}<h2 class="p-title">${escN(titre)}${jp}</h2><p class="p-text">${escN(it.texte)}</p>`;
     const inner = it.cover ? `<div class="p-split"><img class="cover" src="/api/couv?u=${encodeURIComponent(it.cover)}&w=480" alt="Couverture de ${escN(titre)}" loading="lazy"><div class="p-body">${body}</div></div>` : body;
     return `<li class="post" id="n-${escN(it.id)}" data-type="${it.type}" data-id="${it.type}-${slugN(titre)}" style="--c:var(${c})">${inner}<div class="p-foot"><a class="series" href="/series/${slugN(it.titre)}">${escN(titre)}</a>${it.src ? `<a class="src" href="${escN(it.src)}" target="_blank" rel="noopener">Source : ${escN(it.srcName || "officielle")} ↗</a>` : ""}</div></li>`;
