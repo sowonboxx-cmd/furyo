@@ -86,7 +86,7 @@ function render(a, list){
     <p class="k">Fiches séries en ligne</p>
     <div class="big"><b>${nf(a.enLigne)}</b><span>sur ${nf(a.total)} séries</span><em>${pct} %</em></div>
     <div class="bar"><i style="width:${a.pct}%"></i></div>
-    <div class="kpi"><div><b>+${a.semaine}</b><span>cette semaine</span></div><div><b>${nf(a.reste)}</b><span>encore à faire</span></div><div><b>${nf(a.enPreparation)}</b><span>en préparation</span></div></div>
+    <div class="kpi"><div><b>+${a.semaine}</b><span>cette semaine</span></div><div><b>${nf(a.reste)}</b><span>encore à faire</span></div><div><b>${nf(a.enPreparation)}</b><span>prêtes à publier</span></div></div>
   </section>
   <h2>Cette semaine <small>${a.semaine ? `${a.semaine} nouvelle${a.semaine > 1 ? "s" : ""} fiche${a.semaine > 1 ? "s" : ""}` : ""}</small></h2>
   ${wk.length ? `<ul class="grid">${wk.map(s => card(s, cov, true)).join("")}</ul>` : `<p class="empty">De nouvelles fiches arrivent chaque semaine. Reviens vite !</p>`}

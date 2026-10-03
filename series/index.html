@@ -140,7 +140,7 @@ body.tb-open{overflow:hidden}
 .nw-s b{color:#6FA8F5}
 .nw-b p{margin:0}
 .nw-none{color:var(--paper-3);font-size:14px}
-/* Extraits (bas de l'onglet Info / Extrait) */
+/* Extraits (bas de l'onglet Info et Extrait) */
 .ext{margin-top:20px}
 .ext.info-h{margin-top:4px}
 .ext h3{margin:0 0 8px;font-size:15px;font-weight:700}
@@ -163,6 +163,7 @@ body.tb-open{overflow:hidden}
 .yt span{position:absolute;inset:0;display:grid;place-items:center}
 .yt span i{width:58px;height:58px;border-radius:50%;background:var(--blue);display:grid;place-items:center}
 .yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.yt-l{display:inline-block;margin-top:6px;font-size:13px;font-weight:600;color:var(--paper-3);text-decoration:none}
 .yt small{position:absolute;left:10px;bottom:8px;font-size:11px;font-weight:700;background:rgba(0,0,0,.75);padding:2px 7px;border-radius:5px;color:var(--paper)}
 
 /* Tomes */
@@ -293,7 +294,7 @@ function ADAPT(s){
 }
 function ytId(u){ const m = String(u).match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
 function ytHTML(t){ const id = ytId(t.url); if (!id) return "";
-  return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button>`; }
+  return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube ↗</a>`; }
 let TAB = "syn", ASC = true;
 
 // Titre affiché : le titre FR, sauf quand le titre de la série s'écrit en capitales (CROWS, WORST…).
@@ -337,7 +338,7 @@ function render(){
   <div class="band" aria-hidden="true"></div>
   <div class="tabs" role="tablist">
       <button role="tab" data-tab="syn" aria-selected="${TAB === "syn"}">Synopsis</button>
-      <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Info / Extrait</button>
+      <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Info et Extrait</button>
       <button role="tab" data-tab="news" aria-selected="${TAB === "news"}">News${(s.news || []).length ? ` <small class="nb">${s.news.length}</small>` : ""}</button>
       ${ad.length ? `<button role="tab" data-tab="ad" aria-selected="${TAB === "ad"}">Adaptations</button>` : ""}
   </div>
@@ -466,7 +467,8 @@ document.addEventListener("click", e => {
   const bk = e.target.closest("a[data-back]");
   if (bk && document.referrer && new URL(document.referrer).pathname === bk.getAttribute("href") && history.length > 1) { e.preventDefault(); history.back(); return; }
   const yt = e.target.closest(".yt[data-yt]");
-  if (yt) { yt.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${yt.dataset.yt}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Bande-annonce"></iframe>`; yt.removeAttribute("data-yt"); return; }
+  // Lecteur YouTube intégré (avec l'adresse du site, que YouTube exige désormais pour lire une vidéo intégrée).
+  if (yt) { yt.innerHTML = `<iframe src="https://www.youtube.com/embed/${yt.dataset.yt}?autoplay=1&playsinline=1&rel=0&origin=${encodeURIComponent(location.origin)}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Bande-annonce"></iframe>`; yt.removeAttribute("data-yt"); return; }
   const tb = e.target.closest(".tabs button");
   if (tb) { TAB = tb.dataset.tab; const { serie: s, editions: eds } = DATA; document.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x === tb));
     const pubFR = [...new Set(eds.filter(x => x.pays === "France").map(x => x.pub))], pubJP = [...new Set(eds.filter(x => x.pays === "Japon").map(x => x.pub))];

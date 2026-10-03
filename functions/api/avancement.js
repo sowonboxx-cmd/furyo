@@ -2,6 +2,7 @@
 // Sert au module « Avancement » (Actualités), à la page /avancement/ et aux visuels « Nouvelle fiche » du Studio.
 import { text, date, list, queryAll, cached, slugify } from "../../lib/notion.js";
 import { estVisible } from "../../lib/site.js";
+import { chargerContexte, estPrete } from "../../lib/oblig.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const ETATS = ["À faire", "En cours", "À valider", "Validée"];
@@ -9,7 +10,7 @@ const ETATS = ["À faire", "En cours", "À valider", "Validée"];
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   return cached(request, waitUntil, "/api/avancement", 600, async () => {
-    const rows = await queryAll(env.NOTION_TOKEN, { ...SERIES });
+    const [rows, { ctx }] = await Promise.all([queryAll(env.NOTION_TOKEN, { ...SERIES }), chargerContexte(env.NOTION_TOKEN)]);
     const today = new Date(); const d7 = new Date(today - 7 * 864e5).toISOString().slice(0, 10);
     const etats = Object.fromEntries(ETATS.map(e => [e, 0]));
     const enLigne = [], prepa = [];
@@ -18,7 +19,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const etat = text(p["Avancement"]) || "À faire";
       if (etats[etat] !== undefined) etats[etat]++;
       if (estVisible(p)) enLigne.push({ t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugify(t), date: date(p["Date de publication"]), type: text(p["Type"]), genres: list(p["Genre"]).slice(0, 3) });
-      else if (etat === "En cours" || etat === "À valider" || etat === "Validée") prepa.push(t);
+      // Prêtes à publier : tous les éléments ★ faits, pas encore cochées « Publier » (même règle que le back-office).
+      if (estPrete(p, r.id.replace(/-/g, ""), ctx)) prepa.push(t);
     }
     const total = rows.filter(r => text((r.properties || {})["SERIES"])).length;
     // Rang de publication : dans l'ordre des dates (les fiches du socle, sans date, comptent en premier).
@@ -35,7 +37,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     return {
       total, enLigne: enLigne.length, reste: total - enLigne.length, pct: total ? Math.round(enLigne.length / total * 1000) / 10 : 0,
       semaine: semaine.length, semaineSeries: semaine.map(s => ({ t: s.t, fr: s.fr, slug: s.slug, rang: s.rang })),
-      enPreparation: prepa.length, etats, recentes, parSemaine: sem,
+      enPreparation: prepa.length, pretes: prepa.length, etats, recentes, parSemaine: sem,
       series: enLigne.map(s => ({ slug: s.slug, rang: s.rang, date: s.date })),
     };
   });
