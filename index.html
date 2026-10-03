@@ -56,7 +56,9 @@ button{font:inherit;color:inherit}
 @media (min-width:980px){.layout{grid-template-columns:minmax(0,1fr) 320px}}
 
 /* Filtres */
-.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-bottom:12px}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-bottom:12px;min-height:36px}
+/* Le fil apparaît une fois les news chargées (pas de cartes qui sautent). */
+#feed.wait{visibility:hidden}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;height:34px;padding:0 13px;border:0;border-radius:999px;background:var(--ink-3);color:var(--paper-2);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .chip i{width:7px;height:7px;border-radius:50%;background:var(--c,var(--paper-3))}
@@ -260,7 +262,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
   <div class="layout">
     <main id="fil">
       <div class="chips" id="chips" role="group" aria-label="Type d'actu"></div>
-      <ul class="feed" id="feed">
+      <ul class="feed wait" id="feed">
 
         <li class="post" data-type="cover" style="--c:var(--t-cover)">
           <div class="p-split">
@@ -503,6 +505,7 @@ const newsReady = /^https?:$/.test(location.protocol)
   : Promise.resolve();
 newsReady.finally(init);
 function init(){
+document.getElementById("feed").classList.remove("wait");
 // Les pastilles « série » du fil mènent à la fiche de la série.
 document.querySelectorAll('#feed a.series[href="#"]').forEach(a => { a.href = "/series/" + slugN(a.textContent); });
 const posts = [...document.querySelectorAll(".post")];
