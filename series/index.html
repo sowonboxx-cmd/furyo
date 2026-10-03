@@ -298,7 +298,8 @@ function ligne(pays, s, eds){
 const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
 // Adaptations : un champ Notion peut contenir plusieurs œuvres (séparées par « | », « ; » ou un retour à la ligne).
 // « Titre (2026, détails) » devient : Titre · 2026 + détails. Les bandes-annonces viennent du champ « Trailers ».
-const CATS = [["anime", "Anime"], ["drama", "Drama"], ["film", "Film"], ["oav", "OAV"], ["jeux", "Jeu vidéo"]];
+// Ordre : films, dramas, OAV, animés, jeux. Libellé au pluriel quand il y a plusieurs œuvres.
+const CATS = [["film", "Film", "Films"], ["drama", "Drama", "Dramas"], ["oav", "OAV", "OAV"], ["anime", "Animé", "Animés"], ["jeux", "Jeu vidéo", "Jeux vidéo"]];
 // Une ligne d'adaptation : « Titre (2026, détails) <lien source> <lien YouTube> ». Les liens YouTube sont des bandes-annonces.
 function adParse(x){
   let src = "", yt = "", m;
@@ -307,13 +308,13 @@ function adParse(x){
   return r ? { t: r[1], y: r[2], d: r[3], src, yt } : { t: x.trim(), y: "", d: "", src, yt };
 }
 function adCats(o, tr){
-  return CATS.map(([k, label]) => {
+  return CATS.map(([k, un, plus]) => {
     const raw = (o[k] || "").trim();
     if (!raw || /^(aucun|non|-)/i.test(raw)) return null;
     const items = raw.split(/\s*(?:\||;|\n)\s*/).filter(Boolean).map(adParse);
     // Bandes-annonces du champ « Trailers » : dans l'ordre des œuvres de la catégorie, si la ligne n'a pas déjà la sienne.
     (tr || []).filter(t => t.cat === k).forEach((t, i) => { if (items[i] && !items[i].yt) items[i].yt = t.url; });
-    return { label, items };
+    return { label: items.length > 1 ? plus : un, items };
   }).filter(Boolean);
 }
 // Adaptations de la série + celles de la série d'origine (pour une suite, une préquelle ou un spin-off).

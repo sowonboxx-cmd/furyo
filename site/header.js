@@ -10,6 +10,7 @@
     ".sh-logo img{height:42px;width:auto;display:block}" +
     ".sh-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;display:grid;place-items:center;color:#F5F5F7;text-decoration:none;border:0;background:transparent;cursor:pointer;padding:0}" +
     ".sh-search{right:8px}.sh-me{left:8px}" +
+    ".sh-bo{position:absolute;top:50%;left:56px;transform:translateY(-50%);height:28px;padding:0 11px;border-radius:14px;background:#4C9BFF;color:#fff;font:600 12.5px Inter,system-ui,sans-serif;text-decoration:none;display:flex;align-items:center}" +
     ".sh-me span{width:30px;height:30px;border-radius:50%;background:#38383B;display:grid;place-items:center;color:#CFCFD4}" +
     ".sh-nav{display:flex;justify-content:center;gap:4px;max-width:1080px;margin:0 auto;border-top:1px solid #2C2C2F;padding:0 8px}" +
     ".sh-nav a{position:relative;padding:0 16px;height:44px;display:flex;align-items:center;text-decoration:none;color:#CFCFD4;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:15px;letter-spacing:-.005em}" +
@@ -190,6 +191,11 @@
   // Préchargement discret des données quand le doigt ou la souris approche de la loupe.
   ["pointerenter", "touchstart", "focus"].forEach(function (ev) { document.getElementById("sh-search").addEventListener(ev, load, { passive: true }); });
   document.getElementById("sh-me").addEventListener("click", function () { meBox.hidden = false; });
+  // Administrateur connecté : bouton « Back-office » à côté de l'avatar.
+  if (/^https?:$/.test(location.protocol)) fetch("/api/admin/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+    if (!j || !j.admin) return; var a = document.createElement("a"); a.className = "sh-bo"; a.href = "/admin/"; a.textContent = "Back-office";
+    document.querySelector(".sh-top").appendChild(a);
+  }).catch(function () {});
   document.getElementById("me-x").addEventListener("click", function () { meBox.hidden = true; });
   meBox.addEventListener("click", function (e) { if (e.target === meBox) meBox.hidden = true; });
   // Retour en haut (mobile) : même flèche que la chronologie CROWS x WORST, qui a déjà la sienne.
