@@ -206,7 +206,8 @@
     var btn = document.getElementById("sh-me");
     if (ME && ME.user && ME.user.picture) btn.innerHTML = '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">';
     var old = document.querySelector(".sh-bo"); if (old) old.remove();
-    if (ME && ME.admin) { var a = document.createElement("a"); a.className = "sh-bo"; a.href = "/admin/"; a.setAttribute("aria-label", "Back-office"); a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Back-office'; document.querySelector(".sh-top").appendChild(a); }
+    // Seulement pour un membre connecté avec Google ET administrateur (un ancien accès admin seul ne suffit pas).
+    if (ME && ME.admin && ME.user) { var a = document.createElement("a"); a.className = "sh-bo"; a.href = "/admin/"; a.setAttribute("aria-label", "Back-office"); a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Back-office'; document.querySelector(".sh-top").appendChild(a); }
   }
   function gis(cb) {
     if (window.google && google.accounts && google.accounts.id) return cb();
