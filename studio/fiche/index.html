@@ -126,6 +126,10 @@ ${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf
   const ats = (mentions(d, "x") || "").split(" ").filter(Boolean);
   const xBase = (r, hs, k) => `Nouvelle fiche : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${k ? "\nX " + ats.slice(0, k).join(" · ") : ""}`;
   const xLen = t => t.replace(url, "x".repeat(23)).length;
+  // Description + hashtags : 3 lignes au plus (~140 caractères) ; on retire d'abord le 3e hashtag, puis on raccourcit.
+  const lg = () => r.length + 1 + hs.join(" ").length;
+  if (lg() > 140 && hs.length > 2) hs = hs.slice(0, 2);
+  while (lg() > 140 && r.includes(" ")) r = r.split(" ").slice(0, -1).join(" ").replace(/[,;:]?$/, "…");
   let k = ats.length, x = xBase(r, hs, k);
   while (xLen(x) > 280 && r.length > 90) { r = r.split(" ").slice(0, -1).join(" ").replace(/[,;:]?$/, "…"); x = xBase(r, hs, k); }
   if (xLen(x) > 280 && hs.length > 2) { hs = hs.slice(0, 2); x = xBase(r, hs, k); }
