@@ -192,6 +192,7 @@ body.tb-open{overflow:hidden}
 .yt-l{display:inline-block;margin-top:6px;font-size:13px;font-weight:600;color:var(--paper-3);text-decoration:none}
 .yt small{position:absolute;left:10px;bottom:8px;font-size:11px;font-weight:700;background:rgba(0,0,0,.75);padding:2px 7px;border-radius:5px;color:var(--paper)}
 
+.tabs{scroll-margin-top:calc(var(--sh-h,0px) + 8px)}
 /* Tomes */
 .sec{margin-top:28px}
 .sec-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:var(--sh-h,0px);z-index:5;background:var(--ink);padding:8px 0 10px}
@@ -397,7 +398,9 @@ function vidClose(){ const d = document.querySelector(".vid"); if (d) d.remove()
 function ytId(u){ const m = String(u).match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
 function ytHTML(t){ const id = ytId(t.url); if (!id) return "";
   return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube ↗</a>`; }
-let TAB = "syn", ASC = true;
+// Onglet d'arrivée : /series/<nom>#news ouvre directement les news (liens des posts « sortie de tome »), idem #info, #ad.
+const HASH_TAB = ["syn", "info", "news", "ad"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "";
+let TAB = HASH_TAB || "syn", ASC = true, HASH_DONE = false;
 
 // Titre affiché : le titre FR, sauf quand le titre de la série s'écrit en capitales (CROWS, WORST…).
 const shown = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
@@ -462,6 +465,8 @@ function render(){
   </section>` : ""}`;
   if (eds.length) renderTomes();
   markCut();
+  // Arrivée par un lien #news : on amène l'onglet en haut de l'écran, une seule fois.
+  if (HASH_TAB && !HASH_DONE) { HASH_DONE = true; requestAnimationFrame(() => { const t = document.querySelector(".tabs"); if (t) t.scrollIntoView({ block: "start" }); }); }
 }
 function panel(s, pubFR, pubJP, eds, ad){
   // News de la série : une ligne par news (catégorie + petit titre), qui se déplie d'un appui.
