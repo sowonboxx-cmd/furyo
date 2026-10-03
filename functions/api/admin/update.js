@@ -22,6 +22,8 @@ export async function onRequestPost({ request, env }) {
   // N° de fiche choisi par Will (vide = numéro attribué automatiquement).
   if ("num" in b) { const n = Number(b.num); props["N° fiche"] = { number: b.num === "" || b.num === null || !(n > 0) ? null : Math.round(n) }; }
   if (typeof b.resumeImg === "string") props["Résumé image"] = rt(b.resumeImg);
+  // Résumé court commun à tous les posts de sortie de tome de la série (écran Validation).
+  if (typeof b.resumeSortie === "string") props["Résumé sortie"] = rt(b.resumeSortie.trim());
   if (typeof b.coeur === "boolean") props["Prochaine à traiter"] = { checkbox: b.coeur };
   // Légendes des réseaux (depuis le Studio « Nouvelle fiche »).
   if (typeof b.legIG === "string") props["Légende Instagram"] = rt(b.legIG);

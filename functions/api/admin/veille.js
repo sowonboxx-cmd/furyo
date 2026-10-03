@@ -2,9 +2,11 @@
 // GET /api/admin/veille            → { items: [...], counts: { cat: n } }
 // GET /api/admin/veille?count=1    → { n } (pastille verte de l'en-tête du site)
 // POST /api/admin/veille {id, statut, texte?} → change le statut (Validé, Vu, Rejeté) et, si fourni, le texte de la news (Résumé FR).
-import { text, date, rel, queryAll, slugSerie } from "../../../lib/notion.js";
+import { text, date, num, rel, list, queryAll, slugSerie } from "../../../lib/notion.js";
+import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 
+const EDITEURS = { dataSource: "16e967fc-8e7b-4b7c-ab98-6a25cbdcd75a", database: "c9dc1efdf33d4ad09711d20d55860d52" };
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
 const STATUTS = ["Validé", "Vu", "Rejeté", "À valider"];
 const rt = s => ({ rich_text: s ? [{ type: "text", text: { content: String(s).slice(0, 1900) } }] : [] });
@@ -62,7 +64,12 @@ export async function onRequestGet({ request, env }) {
     const r = await fetch(`https://api.notion.com/v1/pages/${id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } }).catch(() => null);
     if (!r || !r.ok) return;
     const p = (await r.json()).properties || {};
-    series[id] = { t: text(p["Titre FR"]) || text(p["SERIES"]), slug: slugSerie(p) };
+    series[id] = {
+      id, t: text(p["Titre FR"]) || text(p["SERIES"]), slug: slugSerie(p), jp: text(p["Titre Original"]), genres: list(p["Genre"]),
+      resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), resumeSortie: text(p["Résumé sortie"]),
+      stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
+      editeurs: rel(p["Éditeurs (fiches)"]),
+    };
   }));
   const items = rows.map(r => {
     const p = r.properties || {};
@@ -88,15 +95,29 @@ export async function onRequestGet({ request, env }) {
     const r = await fetch(new URL("/api/serie?s=" + encodeURIComponent(sl), request.url).toString(), { headers: { cookie: "" } }).catch(() => null);
     if (r && r.ok) fiches[sl] = await r.json().catch(() => null);
   }));
+  // Comptes des éditeurs (pour la ligne « X @… » et le 📣 d'Instagram / TikTok).
+  const edRows = tomeItems.length ? await queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []) : [];
+  const editeurs = {};
+  for (const e of edRows) { const q = e.properties || {};
+    editeurs[nid(e.id)] = { nom: text(q["Nom"]), type: text(q["Type"]), x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])) }; }
+  const norm = v => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
   for (const i of tomeItems) {
     const m = i.prop.match(/\bT\.?\s?0*(\d+)\b|\btome\s+0*(\d+)/i);
     const n = m ? Number(m[1] || m[2]) : null;
     const pays = /FR$/.test(i.cat) ? "France" : "Japon";
     if (n != null) i.titre = `${i.serie.t} T.${String(n).padStart(2, "0")}`;
     const eds = ((fiches[i.serie.slug] || {}).editions || []).filter(e => e.pays === pays);
-    const tomes = eds.flatMap(e => e.tomes).filter(t => t.n === n);
-    const t = tomes.find(x => x.cover) || tomes[0];
+    let t = null, pub = "";
+    for (const e of eds) { const x = e.tomes.find(y => y.n === n && y.cover) || e.tomes.find(y => y.n === n); if (x && (!t || (!t.cover && x.cover))) { t = x; pub = e.pub; } }
     if (t) { if (t.cover) i.image = t.cover; i.sortie = t.date || ""; }
+    // Premier ou dernier tome : seules infos ajoutées au post de sortie.
+    const total = pays === "France" ? i.serie.tomesFR : i.serie.tomesJP, statut = pays === "France" ? i.serie.stFR : i.serie.stJP;
+    const fin = /final|dernier|完結|termin/i.test(`${i.prop} ${i.champ} ${i.propose} ${i.texte}`) || (/termin/i.test(statut || "") && n && total && n === total);
+    i.tome = { n, pays, pub: (pub || "").replace(/\s*\(.*$/, ""), flag: n === 1 ? "premier" : fin ? "dernier" : "" };
+    // Éditeur du pays concerné (France → éditeur français, Japon → éditeur japonais).
+    const cand = i.serie.editeurs.map(k => editeurs[k]).filter(Boolean).filter(e => pays === "France" ? /FR/.test(e.type) : /JP/.test(e.type));
+    const ed = cand.find(e => norm(e.nom) && norm(pub).includes(norm(e.nom))) || cand.find(e => norm(e.nom) && norm(e.nom).includes(norm(pub).slice(0, 5))) || cand[0];
+    i.comptes = ed ? { x: ed.x, ig: ed.ig, tt: ed.tt } : { x: "", ig: "", tt: "" };
   }
   const counts = {};
   items.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });

@@ -158,7 +158,17 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 /* Fenêtre de détail : feuille du bas sur téléphone, fenêtre centrée sur ordinateur */
 .vm{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center}
 .vm-b{width:100%;max-width:560px;max-height:92vh;overflow:auto;background:var(--ink);border-radius:22px 22px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 16px);border-top:1px solid var(--line)}
+@media (max-width:699px){.vm-b{max-width:none;height:100%;max-height:100%;border-radius:0;border-top:0;padding-top:calc(env(safe-area-inset-top,0px) + 14px)}}
 @media (min-width:700px){.vm{align-items:center}.vm-b{border-radius:22px;border:1px solid var(--line)}}
+.vm .tabs{display:flex;gap:6px;margin:14px 0 8px;clear:both}
+.vm .tabs button{flex:1;height:36px;border:0;border-radius:18px;background:var(--ink-3);color:var(--paper-3);font-weight:700;font-size:13px;cursor:pointer}
+.vm .tabs button[aria-pressed=true]{background:var(--paper);color:var(--ink)}
+.vm textarea.cap{min-height:280px}
+.vm .cnt{font-size:12px;color:var(--paper-3);margin-left:auto;align-self:center}
+.vm .cnt.ko{color:#F08A7E;font-weight:700}
+.vm .rs{display:flex;gap:8px;align-items:flex-start}
+.vm .rs textarea{min-height:88px;flex:1}
+.vm .rs button{height:38px;padding:0 12px;border:0;border-radius:19px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
 .vm-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--paper-3)}
 .vm-h .x{margin-left:auto;width:36px;height:36px;border:0;border-radius:50%;background:var(--ink-3);color:var(--paper);font-size:18px;cursor:pointer}
 .vm h2{margin:10px 0 4px;font-size:19px;line-height:1.3}
@@ -169,7 +179,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm dl{margin:10px 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
 .vm dt{color:var(--paper-3)}.vm dd{margin:0;overflow-wrap:anywhere}
 .vm label{display:block;clear:both;font-size:12px;color:var(--paper-3);margin:12px 0 4px}
-.vm textarea{width:100%;min-height:120px;border:0;border-radius:12px;background:var(--ink-3);padding:10px 12px;font-size:15px!important;line-height:1.45;resize:vertical;outline:none}
+.vm textarea{width:100%;min-height:120px;color:var(--paper);font-family:inherit;border:0;border-radius:12px;background:var(--ink-3);padding:10px 12px;font-size:15px!important;line-height:1.45;resize:vertical;outline:none}
 .vm .srcs{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 0;font-size:13px;font-weight:600}
 .vm .srcs a{color:var(--blue-2);text-decoration:none}
 .vm .tools{display:flex;gap:8px;margin-top:12px}
@@ -442,6 +452,11 @@ function vopen(id){
   const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   // Couverture : seulement la date de sortie. Le reste : ce qui aide à décider (sans le niveau de source).
   const champs = couv ? dt("Sortie", dLong(i.sortie)) : (/^sortie/.test(i.cat) ? dt("Sortie", dLong(i.sortie)) : "") + dt("Type", i.type) + dt("Concerne", i.champ) + dt("Actuel", i.actuel) + dt("Proposé", i.propose);
+  const tomeIt = /^(couv|sortie)/.test(i.cat) && i.serie && i.tome;
+  const rs = i.serie ? (i.serie.resumeSortie || resumeCourt(i.serie.resumeImg || i.serie.resume)) : "";
+  const tabs = [...(news ? [["site", "Site"]] : []), ["x", "X"], ["ig", "Instagram"], ["tt", "TikTok"]];
+  // Couverture / sortie : on ouvre sur la légende X ; news : sur le texte du site (celui qui est publié).
+  const act = tomeIt || !news ? "x" : "site";
   const m = document.createElement("div"); m.className = "vm"; m.dataset.vid = id;
   m.innerHTML = `<div class="vm-b" role="dialog" aria-modal="true">
     <div class="vm-h"><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span>${esc(i.date ? new Date(i.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
@@ -449,9 +464,12 @@ function vopen(id){
     ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
     ${img}
     ${champs ? `<dl>${champs}</dl>` : ""}
-    <label for="vtx">${news ? "Texte de la news (modifiable)" : "Note de la veille (modifiable)"}</label>
-    <textarea id="vtx">${esc(i.texte)}</textarea>
-    <div class="tools"><button data-vcp>${ICO_COPY}Copier le texte</button>${news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}</div>
+    ${tomeIt ? `<label for="vrs">Résumé sortie (commun à tous les tomes de la série)</label>
+    <div class="rs"><textarea id="vrs" maxlength="300">${esc(rs)}</textarea><button data-vrs>Enregistrer</button></div>` : ""}
+    <div class="tabs">${tabs.map(([k, n], x) => `<button data-vtab="${k}" aria-pressed="${k === act}">${n}</button>`).join("")}</div>
+    ${news ? `<textarea id="vtx" class="cap" data-cap="site"${act !== "site" ? " hidden" : ""}>${esc(i.texte)}</textarea>` : ""}
+    ${["x", "ig", "tt"].map(k => `<textarea class="cap" data-cap="${k}"${k !== act ? " hidden" : ""}></textarea>`).join("")}
+    <div class="tools"><button data-vcp>${ICO_COPY}Copier</button>${news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}<span class="cnt" id="vcnt"></span></div>
     <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
     <div class="act">
       <button class="go" data-vs="Validé">${news ? "Publier la news" : "Valider"}</button>
@@ -459,10 +477,58 @@ function vopen(id){
       <button class="rej" data-vs="Rejeté">Rejeter</button>
     </div></div>`;
   document.body.appendChild(m);
+  vcaps(m, i, true);
+  vcount(m);
+}
+/* Légendes des réseaux (règle « Sortie d'un tome » : pas de hashtag sur X, éditeur du pays seulement). */
+function resumeCourt(t){
+  t = String(t || "").replace(/\s+/g, " ").trim(); if (!t) return "";
+  const s = (t.match(/^.+?[.!?…](?=\s|$)/) || [t])[0];
+  if (s.length <= 140) return s;
+  const c = s.slice(0, 140); return c.slice(0, c.lastIndexOf(" ")).replace(/[,;:]$/, "") + "…";
+}
+const tagOf = s => "#" + String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9 ]/g, " ").split(" ").filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join("");
+function ligneSortie(i){
+  const t = i.tome || {}, d = i.sortie;
+  let q = "";
+  if (d) { const o = new Date(d + "T12:00:00"); q = o.toLocaleDateString("fr-FR", { day: "numeric", month: "long", ...(o.getFullYear() !== new Date().getFullYear() ? { year: "numeric" } : {}) }); q = q.replace(/^1 /, "1er "); }
+  const flag = t.flag === "premier" ? " Premier tome." : t.flag === "dernier" ? " Dernier tome." : "";
+  return (q ? `Sortie le ${q}` : "Sortie") + (t.pub ? ` chez ${t.pub}` : "") + "." + flag;
+}
+function captions(i, rs){
+  const s = i.serie || {}, c = i.comptes || {}, url = s.slug ? `furyogang.com/series/${s.slug}` : "furyogang.com";
+  const tags = [...new Set([tagOf(s.t), ...(s.genres || []).slice(0, 2).map(tagOf), "#manga", "#FuryoGang", ...(/FR$/.test(i.cat) ? ["#mangafr"] : [])])].filter(x => x.length > 1);
+  if (/^(couv|sortie)/.test(i.cat) && i.tome) {
+    const res = rs ? `\n\nRésumé : ${rs}` : "";
+    return {
+      x: `${i.titre}\n${ligneSortie(i)}${res}\n\nFiche complète · Extraits · Couverture\n↗ ${url}${c.x ? `\nX @${c.x}` : ""}`,
+      ig: `🆕 ${i.titre}${s.jp ? ` (${s.jp})` : ""}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio).${c.ig ? `\n📣 @${c.ig}` : ""}\n\n${tags.join(" ")}`,
+      tt: `🆕 ${i.titre}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète sur furyogang.com${c.tt ? `\n📣 @${c.tt}` : ""}\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
+    };
+  }
+  const txt = (i.texte || "").trim();
+  return {
+    x: `${i.titre}${txt ? `\n${resumeCourt(txt)}` : ""}\n\n↗ ${url}`,
+    ig: `🆕 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
+    tt: `🆕 ${i.titre}${txt ? `\n\n${resumeCourt(txt)}` : ""}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
+  };
+}
+// Régénère les légendes ; celles que Will a retouchées à la main restent telles quelles (sauf « force »).
+function vcaps(m, i, force){
+  const rsEl = m.querySelector("#vrs"), cap = captions(i, rsEl ? rsEl.value.trim() : "");
+  for (const k of ["x", "ig", "tt"]) { const ta = m.querySelector(`[data-cap="${k}"]`); if (force || !ta.dataset.edit) ta.value = cap[k]; }
+}
+// Compteur X : un lien compte pour 23 caractères.
+function vcount(m){
+  const ta = [...m.querySelectorAll(".cap")].find(t => !t.hidden), el = m.querySelector("#vcnt");
+  if (!ta || ta.dataset.cap === "site") { el.textContent = ""; return; }
+  const n = [...ta.value.replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|fr|jp|net|org|io)(\/\S*)?/gi, "x".repeat(23))].length;
+  if (ta.dataset.cap === "x") { el.textContent = `${n} / 280`; el.classList.toggle("ko", n > 280); }
+  else { el.textContent = `${n} car.`; el.classList.remove("ko"); }
 }
 async function vsend(btn, statut){
   const m = btn.closest(".vm"), id = m.dataset.vid, i = VITEMS.find(x => x.id === id);
-  const texte = m.querySelector("#vtx").value;
+  const vtx = m.querySelector("#vtx"), texte = vtx ? vtx.value : i.texte;
   btn.classList.add("busy");
   const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, statut, ...(texte !== i.texte ? { texte } : {}), slug: i.serie && i.serie.slug }) }).catch(() => null);
   btn.classList.remove("busy");
@@ -474,8 +540,24 @@ document.addEventListener("click", async e => {
   const vf = e.target.closest("[data-vf]"); if (vf) { VF = vf.dataset.vf; vdraw(); return; }
   const vi = e.target.closest(".vi"); if (vi) { vopen(vi.dataset.vid); return; }
   if (e.target.closest("[data-vx]") || e.target.classList.contains("vm")) { document.querySelectorAll(".vm").forEach(m => m.remove()); return; }
-  const vcp = e.target.closest("[data-vcp]"); if (vcp) { const ok = await copier(vcp.closest(".vm").querySelector("#vtx").value); toast(ok ? "Texte copié ✓" : "Copie impossible"); return; }
+  const vt = e.target.closest("[data-vtab]"); if (vt) { const m = vt.closest(".vm");
+    m.querySelectorAll("[data-vtab]").forEach(b => b.setAttribute("aria-pressed", b === vt));
+    m.querySelectorAll(".cap").forEach(t => t.hidden = t.dataset.cap !== vt.dataset.vtab); vcount(m); return; }
+  const vcp = e.target.closest("[data-vcp]"); if (vcp) { const ta = [...vcp.closest(".vm").querySelectorAll(".cap")].find(t => !t.hidden); const ok = await copier(ta ? ta.value : ""); toast(ok ? "Copié ✓" : "Copie impossible"); return; }
+  const vr = e.target.closest("[data-vrs]"); if (vr) { const m = vr.closest(".vm"), i = VITEMS.find(x => x.id === m.dataset.vid), v = m.querySelector("#vrs").value.trim();
+    vr.classList.add("busy"); vr.disabled = true;
+    const r = await fetch("/api/admin/update", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: i.serie.id, resumeSortie: v }) }).catch(() => null);
+    vr.disabled = false;
+    if (!r || !r.ok) { toast("Échec, réessaie"); return; }
+    VITEMS.forEach(x => { if (x.serie && x.serie.id === i.serie.id) x.serie.resumeSortie = v; });
+    toast("Résumé sortie enregistré pour toute la série ✓"); return; }
   const vs = e.target.closest("[data-vs]"); if (vs) vsend(vs, vs.dataset.vs);
+});
+document.addEventListener("input", e => {
+  const m = e.target.closest(".vm"); if (!m) return;
+  if (e.target.id === "vrs") vcaps(m, VITEMS.find(x => x.id === m.dataset.vid), false);
+  else if (e.target.classList.contains("cap")) e.target.dataset.edit = "1";
+  vcount(m);
 });
 addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".vm").forEach(m => m.remove()); });
 
