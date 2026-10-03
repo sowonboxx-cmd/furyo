@@ -192,4 +192,19 @@
   document.getElementById("sh-me").addEventListener("click", function () { meBox.hidden = false; });
   document.getElementById("me-x").addEventListener("click", function () { meBox.hidden = true; });
   meBox.addEventListener("click", function (e) { if (e.target === meBox) meBox.hidden = true; });
+  // Retour en haut (mobile) : même flèche que la chronologie CROWS x WORST, qui a déjà la sienne.
+  function toTop() {
+    if (document.getElementById("toTop")) return;
+    var st = document.createElement("style");
+    st.textContent = ".sh-up{position:fixed;z-index:35;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);width:48px;height:48px;border-radius:50%;border:0;background:#38383B;color:#F5F5F7;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35);padding:0}" +
+      ".sh-up[hidden]{display:none}@media (min-width:980px){.sh-up{display:none!important}}";
+    document.head.appendChild(st);
+    var b = document.createElement("button");
+    b.className = "sh-up"; b.hidden = true; b.setAttribute("aria-label", "Revenir en haut");
+    b.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    document.body.appendChild(b);
+    addEventListener("scroll", function () { b.hidden = scrollY < 700; }, { passive: true });
+    b.addEventListener("click", function () { scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", toTop); else toTop();
 })();
