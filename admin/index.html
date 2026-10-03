@@ -453,7 +453,7 @@ function vopen(id){
   // Couverture : seulement la date de sortie. Le reste : ce qui aide à décider (sans le niveau de source).
   const champs = couv ? dt("Sortie", dLong(i.sortie)) : (/^sortie/.test(i.cat) ? dt("Sortie", dLong(i.sortie)) : "") + dt("Type", i.type) + dt("Concerne", i.champ) + dt("Actuel", i.actuel) + dt("Proposé", i.propose);
   const tomeIt = /^(couv|sortie)/.test(i.cat) && i.serie && i.tome;
-  const rs = i.serie ? (i.serie.resumeSortie || resumeCourt(i.serie.resumeImg || i.serie.resume)) : "";
+  const rs = i.serie ? (i.serie.resumeSortie || (/^(couv|sortie)/.test(i.cat) && i.tome ? resumeAuto(i) : "")) : "";
   const tabs = [...(news ? [["site", "Site"]] : []), ["x", "X"], ["ig", "Instagram"], ["tt", "TikTok"]];
   // Couverture / sortie : on ouvre sur la légende X ; news : sur le texte du site (celui qui est publié).
   const act = tomeIt || !news ? "x" : "site";
@@ -481,11 +481,32 @@ function vopen(id){
   vcount(m);
 }
 /* Légendes des réseaux (règle « Sortie d'un tome » : pas de hashtag sur X, éditeur du pays seulement). */
-function resumeCourt(t){
-  t = String(t || "").replace(/\s+/g, " ").trim(); if (!t) return "";
-  const s = (t.match(/^.+?[.!?…](?=\s|$)/) || [t])[0];
-  if (s.length <= 140) return s;
-  const c = s.slice(0, 140); return c.slice(0, c.lastIndexOf(" ")).replace(/[,;:]$/, "") + "…";
+// Phrases entières d'un texte (jamais de « … » : un résumé s'arrête sur une vraie phrase).
+const phrases = t => (String(t || "").replace(/\s+/g, " ").trim().match(/[^.!?…]+(?:[.!?…]+|$)(?=\s|$)/g) || []).map(x => x.trim()).filter(Boolean);
+function resumeCourt(t){ return phrases(t)[0] || ""; }
+// Poids X : un lien compte pour 23 caractères.
+const poidsX = t => [...String(t).replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|fr|jp|net|org|io)(\/\S*)?/gi, "x".repeat(23))].length;
+// Post X d'une sortie : on garde autant de comptes que possible (auteurs puis éditeur) sans dépasser 280.
+function postX(i, rs){
+  const s = i.serie || {}, ats = ((i.comptes || {}).x || []).map(h => "@" + h);
+  const base = `${i.titre}\n${ligneSortie(i)}${rs ? `\n\nRésumé : ${rs}` : ""}\n\nFiche complète · Extraits · Couverture\n↗ furyogang.com/series/${s.slug}`;
+  let k = ats.length; while (k > 0 && poidsX(base + "\nX " + ats.slice(0, k).join(" · ")) > 280) k--;
+  return base + (k ? "\nX " + ats.slice(0, k).join(" · ") : "");
+}
+// Résumé sortie proposé quand le champ est vide : la plus longue suite de phrases entières qui tient dans le post X
+// avec tous les comptes ; sinon avec moins de comptes ; sinon la phrase la plus courte (Will retouche).
+function resumeAuto(i){
+  const s = i.serie || {}, cands = [];
+  for (const t of [s.resumeImg, s.resume]) { const ph = phrases(t); ph.forEach((_, n) => cands.push(ph.slice(0, n + 1).join(" "))); ph.forEach(x => cands.push(x)); }
+  const u = [...new Set(cands)].sort((a, b) => b.length - a.length);
+  if (!u.length) return "";
+  const n = ((i.comptes || {}).x || []).length;
+  for (let k = n; k >= 0; k--) {
+    const j = { ...i, comptes: { ...(i.comptes || {}), x: ((i.comptes || {}).x || []).slice(0, k) } };
+    const ok = u.find(r => { const p = postX(j, r); return poidsX(p) <= 280 && (k === 0 || p.includes("\nX ")); });
+    if (ok) return ok;
+  }
+  return u[u.length - 1];
 }
 const tagOf = s => "#" + String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9 ]/g, " ").split(" ").filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join("");
 function ligneSortie(i){
@@ -501,9 +522,9 @@ function captions(i, rs){
   if (/^(couv|sortie)/.test(i.cat) && i.tome) {
     const res = rs ? `\n\nRésumé : ${rs}` : "";
     return {
-      x: `${i.titre}\n${ligneSortie(i)}${res}\n\nFiche complète · Extraits · Couverture\n↗ ${url}${c.x ? `\nX @${c.x}` : ""}`,
-      ig: `🆕 ${i.titre}${s.jp ? ` (${s.jp})` : ""}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio).${c.ig ? `\n📣 @${c.ig}` : ""}\n\n${tags.join(" ")}`,
-      tt: `🆕 ${i.titre}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète sur furyogang.com${c.tt ? `\n📣 @${c.tt}` : ""}\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
+      x: postX(i, rs),
+      ig: `🆕 ${i.titre}${s.jp ? ` (${s.jp})` : ""}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio).${(c.ig || []).length ? `\n📣 ${c.ig.map(h => "@" + h).join(" ")}` : ""}\n\n${tags.join(" ")}`,
+      tt: `🆕 ${i.titre}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète sur furyogang.com${(c.tt || []).length ? `\n📣 ${c.tt.map(h => "@" + h).join(" ")}` : ""}\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
     };
   }
   const txt = (i.texte || "").trim();

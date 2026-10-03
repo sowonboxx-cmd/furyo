@@ -6,6 +6,7 @@ import { text, date, num, rel, list, queryAll, slugSerie } from "../../../lib/no
 import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 
+const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 const EDITEURS = { dataSource: "16e967fc-8e7b-4b7c-ab98-6a25cbdcd75a", database: "c9dc1efdf33d4ad09711d20d55860d52" };
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
 const STATUTS = ["Validé", "Vu", "Rejeté", "À valider"];
@@ -68,7 +69,7 @@ export async function onRequestGet({ request, env }) {
       id, t: text(p["Titre FR"]) || text(p["SERIES"]), slug: slugSerie(p), jp: text(p["Titre Original"]), genres: list(p["Genre"]),
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), resumeSortie: text(p["Résumé sortie"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
-      editeurs: rel(p["Éditeurs (fiches)"]),
+      editeurs: rel(p["Éditeurs (fiches)"]), auteurs: rel(p["Auteurs"]),
     };
   }));
   const items = rows.map(r => {
@@ -96,7 +97,13 @@ export async function onRequestGet({ request, env }) {
     if (r && r.ok) fiches[sl] = await r.json().catch(() => null);
   }));
   // Comptes des éditeurs (pour la ligne « X @… » et le 📣 d'Instagram / TikTok).
-  const edRows = tomeItems.length ? await queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []) : [];
+  const [edRows, auRows] = tomeItems.length ? await Promise.all([
+    queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []),
+    queryAll(env.NOTION_TOKEN, { ...AUTEURS }).catch(() => []),
+  ]) : [[], []];
+  const auteurs = {};
+  for (const a of auRows) { const q = a.properties || {};
+    auteurs[nid(a.id)] = { x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])) }; }
   const editeurs = {};
   for (const e of edRows) { const q = e.properties || {};
     editeurs[nid(e.id)] = { nom: text(q["Nom"]), type: text(q["Type"]), x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])) }; }
@@ -117,7 +124,9 @@ export async function onRequestGet({ request, env }) {
     // Éditeur du pays concerné (France → éditeur français, Japon → éditeur japonais).
     const cand = i.serie.editeurs.map(k => editeurs[k]).filter(Boolean).filter(e => pays === "France" ? /FR/.test(e.type) : /JP/.test(e.type));
     const ed = cand.find(e => norm(e.nom) && norm(pub).includes(norm(e.nom))) || cand.find(e => norm(e.nom) && norm(e.nom).includes(norm(pub).slice(0, 5))) || cand[0];
-    i.comptes = ed ? { x: ed.x, ig: ed.ig, tt: ed.tt } : { x: "", ig: "", tt: "" };
+    // Comptes cités en fin de post : les auteurs d'abord, puis l'éditeur du pays (listes, sans doublon).
+    const qui = [...i.serie.auteurs.map(k => auteurs[nid(k)]).filter(Boolean), ...(ed ? [ed] : [])];
+    i.comptes = Object.fromEntries(["x", "ig", "tt"].map(n => [n, [...new Set(qui.map(c => c[n]).filter(Boolean))]]));
   }
   const counts = {};
   items.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
