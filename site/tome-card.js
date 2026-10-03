@@ -1,4 +1,5 @@
-// Visuel « Sortie d'un tome » (design « Soleil » du Studio) en post 3:4 (1080×1440) et story 9:16 (1080×1920),
+// Visuel « Sortie d'un tome » (design « Soleil » du Studio, standard validé par Will le 03/10/2026 :
+// couverture 652 × 912, soit +20 %, qui cache le haut et le bas du cercle ; drapeau juste sous les auteurs) en post 3:4 (1080×1440) et story 9:16 (1080×1920),
 // thème sombre ou crème. Utilisé par l'écran Validation du back-office.
 // FG_TOME.png(d, { theme: "sombre" | "creme", fmt: "post" | "story" }) → data URL PNG.
 // d = { titre, n, jp, date (AAAA-MM-JJ), prec ("Jour" | "Mois"), cover (URL officielle), auteurs: [noms], pays ("France" | "Japon") }
@@ -12,26 +13,26 @@
   };
   var CSS = [
     '.fgt{width:1080px;height:1440px;position:relative;overflow:hidden;font-family:"FGInter",sans-serif;--fg:#fff;--bg:#0c0c0e;--muted:rgba(255,255,255,.62);--cream:#F2EFE9;--red:#BC002D;',
-    '  --top:70px;--cy:612px;--r:400px;--bot:62px;background:var(--bg);color:var(--fg);line-height:normal;letter-spacing:normal;text-align:left}',
+    '  --top:48px;--cy:606px;--r:400px;background:var(--bg);color:var(--fg);line-height:normal;letter-spacing:normal;text-align:left}',
     '.fgt.creme{--fg:#0c0c0e;--bg:#F2EFE9;--muted:rgba(12,12,14,.6)}',
     // Story : 200 px libres en haut, 250 px en bas (sticker lien), tout est descendu d'autant.
-    '.fgt.story{height:1920px;--top:250px;--cy:812px;--bot:290px}',
+    '.fgt.story{height:1920px;--top:250px;--cy:850px}',
     '.fgt .blur{position:absolute;inset:-80px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}',
     '.fgt.creme .blur{opacity:.28}',
     '.fgt .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 35%,transparent) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 76%)}',
     '.fgt .sun{position:absolute;width:calc(var(--r) * 2);height:calc(var(--r) * 2);border-radius:50%;background:var(--red);left:50%;top:calc(var(--cy) - var(--r));transform:translateX(-50%)}',
     '.fgt .logo{position:absolute;left:50%;top:var(--top);transform:translateX(-50%);width:290px}',
-    '.fgt .cover{position:absolute;left:50%;top:calc(var(--cy) - 380px);width:543px;height:760px;transform:translateX(-50%);object-fit:cover;box-sizing:border-box;border:12px solid #fff;box-shadow:0 40px 90px rgba(0,0,0,.55)}',
+    '.fgt .cover{position:absolute;left:50%;top:calc(var(--cy) - 456px);width:652px;height:912px;transform:translateX(-50%);object-fit:cover;box-sizing:border-box;border:12px solid #fff;box-shadow:0 40px 90px rgba(0,0,0,.55)}',
     '.fgt .num{position:absolute;left:72px;top:var(--cy);transform:translate(-50%,-50%);font-family:"FGAntonio",sans-serif;font-weight:700;font-size:124px;line-height:.8;letter-spacing:-.02em;color:var(--fg)}',
     '.fgt .jpw{position:absolute;left:calc(50% + var(--r));right:0;top:var(--cy);transform:translateY(-50%);display:flex;justify-content:center}',
     '.fgt .jp{writing-mode:vertical-rl;font-family:"FGNotoJP",sans-serif;font-weight:900;font-size:var(--js,56px);line-height:1;letter-spacing:.06em;color:var(--fg);max-height:720px;overflow:hidden;white-space:nowrap}',
-    '.fgt .info{position:absolute;left:64px;right:64px;top:calc(var(--cy) + 406px);display:flex;flex-direction:column;align-items:center;text-align:center}',
+    '.fgt .info{position:absolute;left:64px;right:64px;top:calc(var(--cy) + 482px);display:flex;flex-direction:column;align-items:center;text-align:center}',
     '.fgt .date{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:36px;letter-spacing:.06em;text-transform:uppercase;background:var(--red);color:#fff;padding:6px 20px;border-radius:6px}',
     '.fgt .title{margin-top:18px;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:108px;line-height:.92;text-transform:uppercase;letter-spacing:.005em}',
     '.fgt .title.s{font-size:88px}.fgt .title.xs{font-size:68px}',
     '.fgt .who{margin-top:16px;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}',
     '.fgt .who i{font-style:normal;margin:0 14px;opacity:.5}',
-    '.fgt .flag{position:absolute;left:50%;bottom:var(--bot);transform:translateX(-50%);width:60px;height:41px;border-radius:5px;overflow:hidden}',
+    '.fgt .flag{margin-top:26px;width:60px;height:41px;border-radius:5px;overflow:hidden}',
     '.fgt .flag svg{display:block;width:100%;height:100%}'
   ].join("\n");
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
@@ -81,8 +82,8 @@
       (n ? '<div class="num">' + n + "</div>" : "") +
       (j ? '<div class="jpw"><div class="jp" lang="ja" style="--js:' + js + '">' + esc(j) + "</div></div>" : "") +
       '<div class="info">' + (d.date ? '<span class="date">' + esc(dateLong(d.date, d.prec)) + "</span>" : "") +
-      '<div class="title ' + size + '">' + esc(t) + "</div>" + (who ? '<div class="who">' + who + "</div>" : "") + "</div>" +
-      (FLAG[d.pays] ? '<div class="flag">' + FLAG[d.pays] + "</div>" : "") + "</div>";
+      '<div class="title ' + size + '">' + esc(t) + "</div>" + (who ? '<div class="who">' + who + "</div>" : "") +
+      (FLAG[d.pays] ? '<div class="flag">' + FLAG[d.pays] + "</div>" : "") + "</div></div>";
   }
   function charger(src) { return new Promise(function (ok, ko) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
   function images(el) {
