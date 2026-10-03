@@ -61,7 +61,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return json({ error: "NOTION_TOKEN manquant" }, 503);
   const slug = slugify(new URL(request.url).searchParams.get("s") || "");
   if (!slug) return json({ error: "série manquante" }, 400);
-  const admin = FILTRE_PUBLIER && await isAdmin(request, env);
+  const estAdmin = await isAdmin(request, env).catch(() => false);
+  const admin = FILTRE_PUBLIER && estAdmin;
   const build = async () => {
     let map = await index(env, request, waitUntil, false);
     if (!map[slug]) map = await index(env, request, waitUntil, true); // série toute neuve : on relit l'index
@@ -125,5 +126,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
   };
   // Aperçu admin (après le lancement) : réponse directe, jamais mise dans le cache partagé.
   if (admin) return new Response(JSON.stringify({ synced: new Date().toISOString(), ...(await build()) }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
-  return cached(request, waitUntil, "/api/serie?s=" + slug, 900, build);
+  // Avant le lancement, quand l'administrateur ouvre une fiche, on la reconstruit tout de suite et on met à jour
+  // le cache de sa région (le cache Cloudflare est propre à chaque centre de données) : il voit toujours la dernière version.
+  const req = estAdmin ? new Request(new URL(request.url.replace(/[?&]refresh(=[^&]*)?/, "") + (request.url.includes("?") ? "&" : "?") + "refresh=1"), request) : request;
+  return cached(req, waitUntil, "/api/serie?s=" + slug, 900, build);
 }
