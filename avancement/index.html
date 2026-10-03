@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#232325">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"></noscript>
 <style>
 /* Avancement du site : fiches en ligne, semaine, reste à faire. */
 :root{
@@ -71,7 +71,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const nf = n => Number(n || 0).toLocaleString("fr-FR");
 const MC = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 const dc = s => { const d = new Date(s + "T12:00:00"); return `${d.getDate()} ${MC[d.getMonth()]}`; };
-const couv = u => "/api/couv?u=" + encodeURIComponent(u);
+const couv = (u, w) => "/api/couv?u=" + encodeURIComponent(u) + "&w=" + (w || 360);
 function card(s, cov, isNew){
   return `<li><a href="/series/${esc(s.slug)}"><div class="cv">${cov[s.slug] ? `<img src="${couv(cov[s.slug].c)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}<span class="rk">n°${s.rang}</span>${isNew ? `<span class="nw">Nouveau</span>` : ""}</div>
     <span class="tn">${esc(s.fr || s.t)}</span>${s.date ? `<span class="td">${dc(s.date)}</span>` : ""}</a></li>`;

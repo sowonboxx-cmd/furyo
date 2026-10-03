@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#232325">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"></noscript>
 <style>
 /* Fiche série : même système que le fil et le calendrier (sombre, cartes noires, Antonio + Inter). */
 :root{
@@ -236,7 +236,7 @@ a.t{text-decoration:none}
 .foot{margin-top:40px;color:var(--paper-3);font-size:13px;text-align:center}
 /* Champs en 16 px minimum : sinon iPhone zoome quand on touche le champ */
 input,select,textarea{font-size:16px!important}
-.seo-pre{padding:18px 0;color:var(--paper-2);max-width:720px}.seo-pre h1{font-family:var(--f-display,Antonio),sans-serif;text-transform:uppercase;font-size:34px;color:var(--paper);margin:0 0 8px}.seo-pre p{margin:0 0 10px}
+.seo-pre{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:normal}.seo-pre h1{font-family:var(--f-display,Antonio),sans-serif;text-transform:uppercase;font-size:34px;color:var(--paper);margin:0 0 8px}.seo-pre p{margin:0 0 10px}
 </style>
 </head>
 <body>
@@ -253,7 +253,7 @@ const FLAGS = {
   Japon: `<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>`,
   France: `<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="France"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>`
 };
-const couv = u => "/api/couv?u=" + encodeURIComponent(u);
+const couv = (u, w) => "/api/couv?u=" + encodeURIComponent(u) + (w ? "&w=" + w : "");
 function dTxt(t){
   if (!t || !t.date) return "Date à venir";
   const d = new Date(t.date + "T12:00:00");
@@ -273,7 +273,7 @@ function mainCover(s, eds){
   const any = eds.flatMap(e => e.tomes).find(t => t.cover);
   const c = (first("France") || first("Japon"))?.cover || s.cover1 || any?.cover;
   const ph = `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`;
-  return c ? `<img src="${couv(c)}" alt="" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">` : ph;
+  return c ? `<img src="${couv(c, 720)}" alt="" fetchpriority="high" decoding="async" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">` : ph;
 }
 // Statut par pays, en texte : drapeau + « en cours », « terminé », « en pause », « abandonné »…
 // Statut avec une majuscule : « En cours », « Terminé », « Annoncé »…
@@ -477,7 +477,7 @@ function markCut(){
   const h = document.getElementById("ttl"); if (!h) return;
   const cut = h.scrollHeight > h.clientHeight + 2;
   h.classList.toggle("cut", cut); h.title = cut ? "Voir le titre en entier" : "";
-  if (cut) { h.setAttribute("role", "button"); h.tabIndex = 0; } else { h.removeAttribute("role"); h.removeAttribute("tabindex"); }
+  h.removeAttribute("role"); h.removeAttribute("tabindex");
 }
 addEventListener("resize", markCut);
 if (document.fonts) document.fonts.ready.then(markCut);
@@ -496,12 +496,12 @@ function tlShow(i){
   const { serie: s } = DATA, other = PAYS === "France" ? "Japon" : "France";
   // Seulement la date du pays affiché (France ou Japon), sans drapeau : plus clair.
   const date = t => t && t.date ? `<p class="tb-d"><span>${esc(dTxt(t))}</span></p>` : "";
-  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover)}" alt="Tome ${tn(x.t.n)}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="Tome ${tn(x.t.n)}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
     <p class="tb-t">Tome ${tn(x.t.n)}${x.t.titre ? ` <em>${esc(x.t.titre)}</em>` : ""}</p>
     <div class="tb-ds">${date(x.t)}</div>`;
   document.getElementById("tb-c").textContent = `${i + 1} / ${TL.length}`;
   document.getElementById("tb-p").disabled = i <= 0; document.getElementById("tb-n").disabled = i >= TL.length - 1;
-  [TL[i - 1], TL[i + 1]].forEach(y => { if (y && y.t.cover) new Image().src = couv(y.t.cover); });
+  [TL[i - 1], TL[i + 1]].forEach(y => { if (y && y.t.cover) new Image().src = couv(y.t.cover, 1000); });
 }
 function tbOpen(i){
   let tb = document.getElementById("tb");
@@ -531,9 +531,9 @@ document.addEventListener("click", e => {
   const mc = e.target.closest(".main-cv"); if (!mc || !DATA || !DATA.editions) return;
   const img = mc.querySelector("img"); if (!img) return;
   const src = img.getAttribute("src"), eds = DATA.editions;
-  const ed = eds.find(x => x.tomes.some(t => t.cover && couv(t.cover) === src));
+  const ed = eds.find(x => x.tomes.some(t => t.cover && couv(t.cover, 720) === src));
   if (ed && ed.pays !== PAYS) { const b = document.querySelector(`.seg button[data-p="${ed.pays}"]`); if (b) b.click(); else { PAYS = ed.pays; renderTomes(); } }
-  let i = TL.findIndex(x => x.t.cover && couv(x.t.cover) === src);
+  let i = TL.findIndex(x => x.t.cover && couv(x.t.cover, 720) === src);
   if (i < 0) i = Math.max(0, TL.findIndex(x => x.t.n === 1));
   if (TL.length) tbOpen(i);
 });
@@ -548,7 +548,7 @@ function renderTomes(){
     ${list.length > 1 ? `<p class="ed-info">${esc(e.nom)}</p>` : `<p class="ed-info">${esc([e.pub, e.label, e.format].filter(Boolean).join(" · "))}</p>`}
     ${e.tomes.length ? `<ul class="grid">${(ASC ? e.tomes : [...e.tomes].reverse()).map(t => {
       const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub });
-      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover)}" alt="Tome ${tn(t.n)}" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
+      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="Tome ${tn(t.n)}" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
         <span class="t-n">Tome ${tn(t.n)}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">Aucun tome renseigné pour l'instant.</p>`}`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
 }
 document.addEventListener("click", e => {
@@ -625,7 +625,7 @@ function renderList(items){
     const list = items.filter(s => keep(s) && (!n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q))).sort(sorter);
     document.getElementById("fc").textContent = (n || nAct()) ? `${list.length} série${list.length > 1 ? "s" : ""}` : "";
     document.getElementById("fc").hidden = !(n || nAct());
-    document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}${s.apercu ? `<span class="ap">Aperçu</span>` : ""}</div>
+    document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover, 360)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}${s.apercu ? `<span class="ap">Aperçu</span>` : ""}</div>
       <span class="t-n">${esc(shown(s))}</span>${(SORT === "new" || SORT === "old") && s.y1 ? `<span class="t-d">${s.y1}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   const q = document.getElementById("q");
@@ -648,7 +648,7 @@ if (!slug) {
 } else {
   // Aperçu immédiat (titre et couverture connus depuis la liste) pendant le chargement de la fiche.
   try { const pre = JSON.parse(sessionStorage.getItem("fg-pre-" + slug) || "null");
-    if (pre) document.getElementById("app").innerHTML = `<div class="head"><div class="main-cv">${pre.c ? `<img src="${couv(pre.c)}" alt="">` : ""}</div><div><h1>${esc(pre.t)}</h1>${pre.jp ? `<p class="jp" lang="ja">${esc(pre.jp)}</p>` : ""}<p class="credit">Chargement…</p></div></div>`;
+    if (pre) document.getElementById("app").innerHTML = `<div class="head"><div class="main-cv">${pre.c ? `<img src="${couv(pre.c, 720)}" alt="">` : ""}</div><div><h1>${esc(pre.t)}</h1>${pre.jp ? `<p class="jp" lang="ja">${esc(pre.jp)}</p>` : ""}<p class="credit">Chargement…</p></div></div>`;
   } catch (e) {}
 }
 document.addEventListener("click", e => { const a = e.target.closest("a[data-pre]"); if (a) try { sessionStorage.setItem("fg-pre-" + a.getAttribute("href").split("/").pop(), a.dataset.pre); } catch (er) {} });

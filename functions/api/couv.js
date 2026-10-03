@@ -2,7 +2,7 @@
 // Sert la couverture d'un tome depuis le site de l'éditeur, gardée en cache chez Cloudflare (7 jours) :
 // l'image reste affichée même si l'éditeur bloque l'affichage depuis un autre site.
 // Seuls les sites officiels sont relayés ; une autre adresse est simplement redirigée.
-const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","kazemanga.fr","crunchyroll-editions.fr","mangetsu-manga.fr","anime-store.fr","meian-editions.fr","akitashoten.co.jp","bookwalker.jp","kodansha.co.jp","shogakukan.co.jp","shueisha.co.jp","hakusensha.co.jp","kadokawa.co.jp","nihonbungeisha.co.jp","shonengahosha.co.jp","ebookjapan.yahoo.co.jp","cmoa.jp","bigcomicbros.net","championcross.jp","yanmaga.jp","kana.fr","pika.fr","ki-oon.com","glenat.com","meian.fr","akata.fr","kurokawa.fr","panini.fr","mangetsu.fr","nabanco.com","vega-dupuis.com","delcourt.fr","doki-doki.fr","soleil.fr","notion.so","notion-static.com","amazonaws.com"];
+const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","kazemanga.fr","crunchyroll-editions.fr","mangetsu-manga.fr","anime-store.fr","meian-editions.fr","akitashoten.co.jp","bookwalker.jp","kodansha.co.jp","shogakukan.co.jp","shueisha.co.jp","hakusensha.co.jp","kadokawa.co.jp","nihonbungeisha.co.jp","shonengahosha.co.jp","ebookjapan.yahoo.co.jp","cmoa.jp","bigcomicbros.net","championcross.jp","yanmaga.jp","kana.fr","pika.fr","ki-oon.com","glenat.com","meian.fr","akata.fr","kurokawa.fr","panini.fr","mangetsu.fr","nabanco.com","vega-dupuis.com","delcourt.fr","doki-doki.fr","soleil.fr","notion.so","notion-static.com","amazonaws.com","furyo.pages.dev","furyogang.com"];
 // Images « NOW PRINTING » / « 画像準備中 » connues (empreinte SHA-256) : ce ne sont pas des couvertures.
 const PLACEHOLDERS = new Set([
   "517f458418f9ecf80b1c12449843a6584db25f398a70f00080d972fcdc9dc82a", // BookWalker NOW PRINTING
@@ -34,12 +34,33 @@ export async function onRequestGet({ request, waitUntil }) {
   if (t.protocol !== "https:" && t.protocol !== "http:") return new Response("u invalide", { status: 400 });
   if (!OFFICIELS.some(h => t.hostname === h || t.hostname.endsWith("." + h))) return Response.redirect(t.href, 302);
   const cache = caches.default, key = new Request(self.origin + "/api/couv?u=" + encodeURIComponent(t.href));
-  const hit = await cache.match(key); if (hit) return hit;
-  const r = await fetch(t.href, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" } });
-  const buf = r.ok ? await r.arrayBuffer() : null, ct = buf ? sniff(buf) : "";
-  if (!ct) return Response.redirect(t.href, 302);
-  if (PLACEHOLDERS.has(hex(await crypto.subtle.digest("SHA-256", buf)))) return new Response("Couverture provisoire", { status: 404 });
-  const out = new Response(buf, { headers: { "content-type": ct, "cache-control": "public, max-age=604800" } });
-  waitUntil(cache.put(key, out.clone()));
-  return out;
+  // &w=360 : version réduite (vignettes), en AVIF ou WebP si le navigateur les accepte.
+  // Utilise le redimensionnement d'images de Cloudflare (Images → Transformations) ; s'il n'est pas activé,
+  // on sert simplement l'image d'origine.
+  const w = Math.min(1200, Math.max(0, parseInt(self.searchParams.get("w") || "0", 10) || 0));
+  const acc = request.headers.get("accept") || "", fmt = /image\/avif/.test(acc) ? "avif" : /image\/webp/.test(acc) ? "webp" : "";
+  const key2 = w ? new Request(key.url + "&w=" + w + "&f=" + (fmt || "o")) : null;
+  if (key2) { const h2 = await cache.match(key2); if (h2) return h2; }
+  let orig = await cache.match(key);
+  if (!orig) {
+    const r = await fetch(t.href, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" } });
+    const buf = r.ok ? await r.arrayBuffer() : null, ct = buf ? sniff(buf) : "";
+    if (!ct) return Response.redirect(t.href, 302);
+    if (PLACEHOLDERS.has(hex(await crypto.subtle.digest("SHA-256", buf)))) return new Response("Couverture provisoire", { status: 404 });
+    orig = new Response(buf, { headers: { "content-type": ct, "cache-control": "public, max-age=604800" } });
+    waitUntil(cache.put(key, orig.clone()));
+  }
+  if (!w) return orig;
+  try {
+    const rs = await fetch(t.href, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" },
+      cf: { image: { width: w, fit: "scale-down", quality: 78, ...(fmt ? { format: fmt } : {}) } } });
+    const ct = rs.headers.get("content-type") || "";
+    // « cf-resized » : Cloudflare a bien redimensionné (sinon l'option est ignorée et on garde l'original, sans le figer en cache).
+    if (rs.ok && ct.startsWith("image/") && rs.headers.has("cf-resized")) {
+      const out = new Response(rs.body, { headers: { "content-type": ct, "cache-control": "public, max-age=604800", vary: "Accept" } });
+      waitUntil(cache.put(key2, out.clone()));
+      return out;
+    }
+  } catch (e) {}
+  return orig;
 }

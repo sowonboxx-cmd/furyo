@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#232325">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"></noscript>
 <style>
 /* Calendrier des sorties : même système que le fil (sombre, cartes noires, Antonio + Inter). */
 :root{
@@ -151,7 +151,7 @@ const d0 = s => new Date(s + "T12:00:00");
 // Titre français dès qu'il existe (même pour une sortie japonaise), sinon le titre officiel ; CROWS, WORST… restent en capitales.
 const title = it => (it.fr && !(it.series && it.series === it.series.toUpperCase() && /[A-Z]/.test(it.series) && it.series.toLowerCase() === it.fr.toLowerCase()) ? it.fr : (it.series || it.tome));
 function img(it){
-  if (it.cover) return `<img src="/api/couv?u=${encodeURIComponent(it.cover)}" alt="" loading="lazy">`;
+  if (it.cover) return `<img src="/api/couv?u=${encodeURIComponent(it.cover)}&w=360" alt="" loading="lazy" decoding="async">`;
   if (it.visual) return `<img src="/api/visuel?s=${it.seriesId}&p=main" alt="" loading="lazy">`;
   return `<span class="ph" lang="ja">${esc((it.jp || it.series || "").slice(0, 6))}</span>`;
 }
@@ -257,7 +257,7 @@ function dateLong(it){ const d = d0(it.date); return it.prec === "Mois" ? `${MOI
 function lbShow(i){
   const it = SHOWN[i]; if (!it) return; LBI = i;
   const past = it.date < today;
-  const cover = it.cover ? `<img src="/api/couv?u=${encodeURIComponent(it.cover)}" alt="Couverture de ${esc(title(it))}${it.n != null ? " tome " + tn(it.n) : ""}">` : it.visual ? `<img src="/api/visuel?s=${it.seriesId}&p=main" alt="">` : `<span class="ph" lang="ja">${esc((it.jp || it.series || "").slice(0, 6))}</span>`;
+  const cover = it.cover ? `<img src="/api/couv?u=${encodeURIComponent(it.cover)}&w=1000" alt="Couverture de ${esc(title(it))}${it.n != null ? " tome " + tn(it.n) : ""}">` : it.visual ? `<img src="/api/visuel?s=${it.seriesId}&p=main" alt="">` : `<span class="ph" lang="ja">${esc((it.jp || it.series || "").slice(0, 6))}</span>`;
   document.getElementById("lb-in").innerHTML = `<div class="lb-cv">${cover}</div>
     <h2 class="lb-t">${esc(title(it))}${it.n != null ? ` <em>T.${tn(it.n)}</em>` : ""}</h2>
     ${it.jp ? `<p class="lb-jp" lang="ja">${esc(it.jp)}${it.vtitle ? " · " + esc(it.vtitle) : ""}</p>` : ""}
@@ -268,7 +268,7 @@ function lbShow(i){
   document.getElementById("lb-p").disabled = i <= 0;
   document.getElementById("lb-n").disabled = i >= SHOWN.length - 1;
   // Précharge les couvertures voisines pour que les flèches soient instantanées.
-  [SHOWN[i - 1], SHOWN[i + 1]].forEach(x => { if (x && x.cover) new Image().src = "/api/couv?u=" + encodeURIComponent(x.cover); });
+  [SHOWN[i - 1], SHOWN[i + 1]].forEach(x => { if (x && x.cover) new Image().src = "/api/couv?u=" + encodeURIComponent(x.cover) + "&w=1000"; });
 }
 function lbOpen(i){ lbShow(i); LB.hidden = false; document.body.classList.add("lb-open"); requestAnimationFrame(() => LB.classList.add("on")); }
 function lbClose(){ LB.classList.remove("on"); document.body.classList.remove("lb-open"); setTimeout(() => { LB.hidden = true; }, 180); LBI = -1; }

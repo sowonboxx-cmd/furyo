@@ -40,7 +40,7 @@
     '.fgc .fgc-kick{display:inline-flex;align-items:center;height:56px;padding:0 22px;border-radius:6px;background:var(--red);color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:34px;line-height:1}',
     '.fgc .fgc-kick span{display:block;transform:translateY(-1px)}',
     '.fgc .fgc-t{margin:20px 0 0;font-size:96px;line-height:.92;overflow-wrap:anywhere}',
-    '.fgc .fgc-t.fgc-one{white-space:nowrap;overflow:hidden}',
+    '.fgc .fgc-t.fgc-one{white-space:nowrap;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}',
     '.fgc .fgc-t.fgc-clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}',
     '.fgc .fgc-jp{margin-top:10px;line-height:1.4;padding-bottom:4px;font-family:"FGNotoJP","FGInter",sans-serif;font-weight:700;font-size:30px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     '.fgc dl{margin:26px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 20px;align-items:baseline}',

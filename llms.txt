@@ -1,0 +1,27 @@
+# FuryoGang
+
+> FuryoGang (furyogang.com) est un site français consacré aux mangas les plus sombres du Japon : furyō (délinquants japonais, yankees), bōsōzoku (gangs de motards), yakuza, crime, underground et violence. Actualité manga, sorties des tomes au Japon et en France, liens de lecture officiels (extraits gratuits), adaptations (films, dramas, animés) et fiches détaillées par série. Créé par Sowon, du FuryoGang et du FuryoSquad.
+
+Les informations viennent uniquement de sources officielles (éditeurs japonais et français, magazines de prépublication, plateformes officielles). Chaque fiche série donne : titre français et japonais, auteurs, type (shōnen, seinen…), genres, magazine de prépublication, éditeurs, statut au Japon et en France, liste des tomes avec dates de sortie et couvertures, extrait officiel et adaptations.
+
+## Pages principales
+
+- [Accueil – actualité manga furyō, yakuza et crime](https://furyogang.com/): fil d'actualité (nouveaux tomes, couvertures, annonces, nouvelles licences françaises) et prépublication japonaise.
+- [Toutes les séries](https://furyogang.com/series/): catalogue des mangas furyō, yakuza, crime et underground suivis, avec filtres par type, genre et décennie.
+- [Calendrier des sorties](https://furyogang.com/calendrier/): prochaines sorties de tomes, au Japon et en France.
+- [Mangakas](https://furyogang.com/auteurs/): les auteurs et leurs séries.
+- [CROWS × WORST, chronologie](https://furyogang.com/crows-x-worst/): l'univers de Hiroshi Takahashi dans l'ordre de lecture (CROWS, WORST, QP, spin-offs).
+
+## Exemples de fiches séries
+
+- [CROWS](https://furyogang.com/series/crows)
+- [Kujô l'implacable (Kujou no Taizai)](https://furyogang.com/series/kujo-l-implacable)
+- [Hell Dogs](https://furyogang.com/series/hell-dogs)
+- [Tokyo Cannabis](https://furyogang.com/series/tokyo-cannabis)
+- [Gannibal](https://furyogang.com/series/gannibal)
+
+## Données
+
+- [Plan du site (toutes les fiches)](https://furyogang.com/sitemap.xml)
+- [Liste des séries en JSON](https://furyogang.com/api/series)
+- Fiche d'une série en JSON : https://furyogang.com/api/serie?s=<nom-de-la-serie>
