@@ -47,13 +47,12 @@
     "@media (max-width:719px){.fs{padding:calc(env(safe-area-inset-top,0px) + 8px) 8px 8px;background:rgba(8,8,10,.86)}.fs-box{max-height:none;height:100%;border-radius:16px}.fs-h{display:none}}" +
     "body.fs-open{overflow:hidden}" +
     /* Compte (brouillon) */
-    ".me{position:fixed;inset:0;z-index:80;background:rgba(8,8,10,.72);display:flex;align-items:flex-end;justify-content:center;font-family:Inter,system-ui,sans-serif}" +
+    ".me{position:fixed;inset:0;z-index:80;background:rgba(8,8,10,.72);display:flex;align-items:center;justify-content:center;padding:16px;font-family:Inter,system-ui,sans-serif}" +
     ".me[hidden]{display:none}" +
-    ".me-box{width:100%;max-width:440px;background:#1B1B1D;border:1px solid #2C2C2F;border-radius:22px 22px 0 0;padding:22px 20px calc(env(safe-area-inset-bottom,0px) + 22px);color:#F5F5F7}" +
-    "@media (min-width:720px){.me{align-items:center}.me-box{border-radius:22px}}" +
+    ".me-box{width:100%;max-width:400px;max-height:calc(100vh - 32px);overflow:auto;background:#1B1B1D;border:1px solid #2C2C2F;border-radius:22px;padding:22px 20px 18px;color:#F5F5F7}" +
     ".me-box h3{margin:0 0 6px;font-size:20px}.me-box p{margin:0 0 14px;color:#CFCFD4;font-size:14.5px;line-height:1.5}" +
     ".me-box ul{margin:0 0 18px;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14.5px}" +
-    ".me-box li{display:flex;gap:10px;align-items:center}.me-box li i{width:30px;height:30px;border-radius:9px;background:#2C2C2F;display:grid;place-items:center;font-style:normal;flex:none}" +
+    ".me-box li{display:flex;gap:10px;align-items:center}.me-box li i{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-style:normal;flex:none}.me-box li i svg{width:17px;height:17px;display:block}" +
     ".me-box button{width:100%;height:46px;border:0;border-radius:23px;font:inherit;font-weight:700;cursor:pointer}" +
     ".me-box .go{background:#305887;color:#fff;opacity:.55;cursor:default}.me-box .no{margin-top:8px;background:transparent;color:#98989D}" +
     ".me-g{display:flex;justify-content:center;min-height:44px;margin-top:6px;color-scheme:light}.me-err{color:#F08A7E;font-size:13px;min-height:0;margin:6px 0 0}" +
@@ -173,7 +172,7 @@
     '<div class="fs-h"><span><kbd>↑</kbd> <kbd>↓</kbd> naviguer</span><span><kbd>Entrée</kbd> ouvrir</span><span><kbd>Échap</kbd> fermer</span></div></div></div>' +
     '<div class="me" id="me" hidden role="dialog" aria-modal="true" aria-label="Compte"><div class="me-box"><h3>Ton compte FuryoGang</h3>' +
     "<p>Connecte-toi en un clic avec Google. Ton compte gratuit te permettra bientôt de :</p>" +
-    "<ul><li><i>❤️</i>Liker les actus et les séries</li><li><i>🔖</i>Garder tes séries préférées en favoris</li><li><i>⬆️</i>Voter pour les séries populaires</li></ul>" +
+    "<ul><li><i style=\"background:#E5483926;color:#E54839\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 21s-8.5-5.2-8.5-11.6C3.5 6.3 5.8 4 8.6 4c1.5 0 2.7.7 3.4 1.8C12.7 4.7 13.9 4 15.4 4c2.8 0 5.1 2.3 5.1 5.4C20.5 15.8 12 21 12 21z\"/></svg></i>Liker les actus et les séries</li><li><i style=\"background:#F2B33D26;color:#F2B33D\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z\"/></svg></i>Garder tes séries préférées en favoris</li><li><i style=\"background:#4C9BFF26;color:#4C9BFF\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 3l8 9h-5v9H9v-9H4z\"/></svg></i>Voter pour les séries populaires</li><li><i style=\"background:#7BC67E26;color:#7BC67E\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"8\" r=\"4\"/><path d=\"M2 20c0-3.9 3.1-7 7-7s7 3.1 7 7z\"/><circle cx=\"17\" cy=\"7\" r=\"3\"/><path d=\"M17.5 12c2.8.3 4.5 2.6 4.5 5.5V19h-4.2c-.3-2.6-1.5-4.9-3.3-6.4.9-.4 1.9-.6 3-.6z\"/></svg></i>Voir la famille FuryoGang (réservé aux membres)</li></ul>" +
     '<div id="me-g" class="me-g"></div><p class="me-err" id="me-err"></p><a class="me-mb" href="/membres/">Voir les membres</a><button class="no" id="me-x">Fermer</button></div></div>');
   var fs = document.getElementById("fs"), inp = document.getElementById("fs-q"), res = document.getElementById("fs-res"), meBox = document.getElementById("me");
   function open() {
@@ -226,7 +225,7 @@
         google.accounts.id.initialize({ client_id: GCID, callback: function (r) {
           fetch("/api/auth/google", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ credential: r.credential }) })
             .then(function (x) { return x.json(); }).then(function (j) {
-              if (j.ok) { ME = { user: j.user, admin: j.admin }; drawAvatar(); meBox.hidden = true; if (j.admin) location.reload(); }
+              if (j.ok) { ME = { user: j.user, admin: j.admin }; drawAvatar(); meBox.hidden = true; location.reload(); }
               else document.getElementById("me-err").textContent = j.error || "Connexion impossible.";
             }).catch(function () { document.getElementById("me-err").textContent = "Connexion impossible."; });
         } });
@@ -236,6 +235,7 @@
     bindClose(); meBox.hidden = false;
   }
   document.getElementById("sh-me").addEventListener("click", openMe);
+  window.FG_LOGIN = openMe;
   if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j) { ME = j; drawAvatar(); } }).catch(function () {});
   bindClose();
   meBox.addEventListener("click", function (e) { if (e.target === meBox) meBox.hidden = true; });

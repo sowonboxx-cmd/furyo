@@ -57,10 +57,17 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .adm input{width:110px;height:40px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);font:inherit;padding:0 12px;outline:none}
 .adm .save{height:44px;border:0;border-radius:22px;background:#305887;color:#fff;font:inherit;font-weight:700;cursor:pointer}
 .adm .msg{min-height:18px;font-size:13px;color:var(--ok)}.adm .msg.err{color:var(--red)}
+.lock{max-width:420px;margin:10vh auto 0;text-align:center;background:var(--ink-2);border-radius:22px;padding:28px 22px}
+.lock i{width:56px;height:56px;border-radius:16px;background:#4C9BFF26;color:#4C9BFF;display:inline-grid;place-items:center;margin-bottom:12px}
+.lock i svg{width:26px;height:26px}
+.lock h2{font-family:Antonio,sans-serif;text-transform:uppercase;font-size:30px;margin:0 0 8px;letter-spacing:0;color:var(--paper)}
+.lock p{margin:0 0 18px;color:var(--paper-2);font-size:14.5px;line-height:1.5}
+.lock b.n{color:var(--paper)}
+.lock button{width:100%;height:46px;border:0;border-radius:23px;background:#305887;color:#fff;font:inherit;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=11"></script>
+<script src="/site/header.js?v=12"></script>
 <script src="/site/badges.js?v=1"></script>
 <main id="app"><p class="empty">Chargement…</p></main>
 <script>
@@ -68,6 +75,9 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 // Profil public : seulement les badges obtenus, et les réseaux si le membre les a rendus publics.
 // Un admin voit en plus « Gérer les badges » : il coche / décoche les badges du membre et ajuste ses points.
+// Il faut être membre pour voir les membres.
+const LOCK_ICO = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>`;
+const verrou = (total) => `<div class="lock"><i>${LOCK_ICO}</i><h2>Réservé aux membres</h2><p>Pour voir les membres, il faut être membre.${total ? ` Déjà <b class="n">${total}</b> inscrit${total > 1 ? "s" : ""} dans la famille FuryoGang.` : ""}<br>Connecte-toi en un clic avec Google, c'est gratuit.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Se connecter / s'inscrire</button></div>`;
 const app = document.getElementById("app");
 let M, CAT = [], ADMIN = false;
 function draw() {
@@ -111,6 +121,7 @@ function draw() {
 (async () => {
   const slug = decodeURIComponent(location.pathname.replace(/^\/membres\//, "").replace(/\/$/, ""));
   const [x, me] = await Promise.all([fetch("/api/membres?u=" + encodeURIComponent(slug)).catch(() => null), fetch("/api/auth/me").then(r => r.json()).catch(() => ({}))]);
+  if (x && x.status === 401) { const t = await fetch("/api/membres").then(r => r.json()).catch(() => ({})); app.innerHTML = verrou(t.total); return; }
   const j = x && x.ok ? await x.json() : null;
   if (!j || !j.membre) { document.title = "Membre introuvable · FuryoGang"; app.innerHTML = `<p class="empty">Ce membre n'existe pas (ou a changé de pseudo).<br><br><a href="/membres/" style="color:var(--blue)">Voir tous les membres</a></p>`; return; }
   M = j.membre; CAT = j.catalogue || []; ADMIN = !!me.admin;

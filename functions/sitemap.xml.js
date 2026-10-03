@@ -4,7 +4,7 @@ import { SITE } from "../lib/seo.js";
 export async function onRequestGet({ request }) {
   const get = p => fetch(new URL(p, request.url).toString()).then(r => r.ok ? r.json() : {}).catch(() => ({}));
   const [series, auteurs] = await Promise.all([get("/api/series"), get("/api/auteurs")]);
-  const fixes = [["/", "daily", "1.0"], ["/series/", "daily", "0.9"], ["/calendrier/", "daily", "0.8"], ["/crows-x-worst/", "weekly", "0.7"], ["/auteurs/", "weekly", "0.6"], ["/avancement/", "weekly", "0.4"], ["/membres/", "weekly", "0.3"]];
+  const fixes = [["/", "daily", "1.0"], ["/series/", "daily", "0.9"], ["/calendrier/", "daily", "0.8"], ["/crows-x-worst/", "weekly", "0.7"], ["/auteurs/", "weekly", "0.6"], ["/avancement/", "weekly", "0.4"]];
   const urls = [
     ...fixes.map(([p, f, pr]) => ({ loc: SITE + p, f, pr })),
     ...(series.items || []).filter(s => !s.apercu).map(s => ({ loc: `${SITE}/series/${s.slug}`, f: "weekly", pr: "0.8" })),

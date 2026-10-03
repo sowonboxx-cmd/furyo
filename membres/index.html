@@ -32,10 +32,17 @@ a.m{color:inherit;text-decoration:none}a.m:hover{background:#111}
 .rs{display:flex;gap:8px;margin-top:5px;font-size:12.5px}
 .rs a,.rs span{color:var(--paper-2);text-decoration:none}
 .empty{color:var(--paper-3);text-align:center;margin:12vh 0}
+.lock{max-width:420px;margin:10vh auto 0;text-align:center;background:var(--ink-2);border-radius:22px;padding:28px 22px}
+.lock i{width:56px;height:56px;border-radius:16px;background:#4C9BFF26;color:#4C9BFF;display:inline-grid;place-items:center;margin-bottom:12px}
+.lock i svg{width:26px;height:26px}
+.lock h2{font-family:Antonio,sans-serif;text-transform:uppercase;font-size:30px;margin:0 0 8px;letter-spacing:0;color:var(--paper)}
+.lock p{margin:0 0 18px;color:var(--paper-2);font-size:14.5px;line-height:1.5}
+.lock b.n{color:var(--paper)}
+.lock button{width:100%;height:46px;border:0;border-radius:23px;background:#305887;color:#fff;font:inherit;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=11"></script>
+<script src="/site/header.js?v=12"></script>
 <script src="/site/badges.js?v=1"></script>
 <main>
   <div class="top"><h1>Membres</h1><span class="count" id="count"></span></div>
@@ -50,6 +57,9 @@ let VUES = [
   ["recents", "Plus récents", () => true],
   ["badges", "Avec badges", m => m.badges.length > 0],
 ];
+// Il faut être membre pour voir les membres.
+const LOCK_ICO = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>`;
+const verrou = (total) => `<div class="lock"><i>${LOCK_ICO}</i><h2>Réservé aux membres</h2><p>Pour voir les membres, il faut être membre.${total ? ` Déjà <b class="n">${total}</b> inscrit${total > 1 ? "s" : ""} dans la famille FuryoGang.` : ""}<br>Connecte-toi en un clic avec Google, c'est gratuit.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Se connecter / s'inscrire</button></div>`;
 let ITEMS = [], V = "tous";
 const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
 function draw(){
@@ -63,7 +73,9 @@ function draw(){
     ${m.reseaux && (m.reseaux.instagram || m.reseaux.x || m.reseaux.discord) ? `<div class="rs">${m.reseaux.instagram ? `<span>Instagram</span>` : ""}${m.reseaux.x ? `<span>X</span>` : ""}${m.reseaux.discord ? `<span>Discord</span>` : ""}</div>` : ""}</div></${tag}></li>`; }).join("") || `<li class="empty">Personne ici pour l'instant.</li>`;
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-v]"); if (b) { V = b.dataset.v; draw(); } });
-fetch("/api/membres").then(r => r.json()).then(j => { ITEMS = j.items || [];
+fetch("/api/membres").then(r => r.json()).then(j => {
+  if (j.locked) { document.querySelector("main").innerHTML = verrou(j.total); return; }
+  ITEMS = j.items || [];
   // Un filtre par badge, seulement pour les badges que quelqu'un a déjà.
   for (const b of j.catalogue || []) if (ITEMS.some(m => m.badges.some(x => x.id === b.id))) VUES.push(["b" + b.id, b.n, m => m.badges.some(x => x.id === b.id)]); document.getElementById("count").textContent = `${j.total || 0} membre${(j.total || 0) > 1 ? "s" : ""}`; draw(); })
   .catch(() => { document.getElementById("list").innerHTML = `<li class="empty">Impossible de charger les membres.</li>`; });

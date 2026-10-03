@@ -1,9 +1,18 @@
 // GET /api/membres : la liste publique des membres (sans e-mail ; réseaux seulement si le membre les a rendus publics).
 import { queryAll, check, cached } from "../../lib/notion.js";
 import { MEMBRES, fiche } from "../../lib/membres.js";
-import { estAdminEmail } from "../../lib/auth.js";
+import { estAdminEmail, membre } from "../../lib/auth.js";
 import { catalogue } from "../../lib/badges.js";
-export async function onRequestGet({ request, env, waitUntil }) {
+// Il faut être membre pour voir les membres : sans connexion, on ne donne que le nombre d'inscrits.
+const J = (o, st = 200) => new Response(JSON.stringify(o), { status: st, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+export async function onRequestGet(ctx) {
+  const u = await membre(ctx.request, ctx.env);
+  if (u && u.m) { const r = await liste(ctx); const out = new Response(r.body, r); out.headers.set("cache-control", "private, no-store"); return out; }
+  if (new URL(ctx.request.url).searchParams.get("u")) return J({ locked: true, error: "réservé aux membres" }, 401);
+  const r = await liste(ctx); const j = await r.json().catch(() => ({}));
+  return J({ locked: true, total: j.total || 0 });
+}
+async function liste({ request, env, waitUntil }) {
   // ?u=<identifiant> : un seul membre (page publique furyogang.com/membres/<identifiant>).
   const one = new URL(request.url).searchParams.get("u");
   if (one) {
