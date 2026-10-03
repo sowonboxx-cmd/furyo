@@ -169,7 +169,7 @@ function dayBox(it){
 }
 const MCOURT = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 function dateTxt(it){ const d = d0(it.date); return it.prec === "Mois" ? `${MOIS[d.getMonth()]}` : `${d.getDate()} ${MCOURT[d.getMonth()]}`; }
-const sref = it => "/series/" + String(it.fr || it.series || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const sref = it => "/series/" + String(it.fr || it.series || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 function rowHTML(it){
   const past = it.date < today;
   const thumb = it.cover || it.visual ? `<span class="thumb">${img(it).replace("<img ", '<img style="width:100%;height:100%;object-fit:cover" ')}</span>` : `<span class="thumb" lang="ja">${esc((it.jp || "").slice(0, 5))}</span>`;
