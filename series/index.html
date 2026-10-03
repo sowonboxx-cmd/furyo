@@ -218,6 +218,23 @@ body.tb-open{overflow:hidden}
 .empty{color:var(--paper-3);text-align:center;padding:40px 0}
 .search{width:100%;height:46px;border:0;border-radius:14px;background:var(--ink-3);color:var(--paper);font:inherit;font-size:15px;padding:0 16px;margin:-2px 0 10px;outline:none;box-shadow:none;-webkit-appearance:none;appearance:none}
 .search:focus,.search:focus-visible{outline:none;box-shadow:none}
+/* Liste des séries : barre de recherche + choix grille / liste (même design que le calendrier) */
+.sbar{display:flex;gap:8px;align-items:center;margin:-2px 0 10px}
+.sbar .search{margin:0;flex:1;min-width:0}
+.views{display:flex;gap:4px;padding:4px;background:var(--ink-3);border-radius:14px;flex:none}
+.views button{width:38px;height:38px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);display:grid;place-items:center;cursor:pointer}
+.views button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
+.lv{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+@media (min-width:900px){.lv{display:grid;grid-template-columns:1fr 1fr}}
+.lv .row{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:center;background:var(--ink-2);border-radius:16px;padding:10px 12px 10px 10px;text-decoration:none;color:inherit}
+.lv .thumb{width:64px;aspect-ratio:5/7;border-radius:8px;background:var(--ink-3);display:grid;place-items:center;overflow:hidden;color:var(--paper-3);font-size:11px;font-weight:700;writing-mode:vertical-rl;text-orientation:upright}
+.lv .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.lv .r-t{font-family:var(--f-display,Antonio),sans-serif;font-weight:700;font-size:19px;line-height:1.05;text-transform:uppercase;letter-spacing:.01em}
+.lv .r-jp{display:block;font-size:12.5px;color:var(--paper-2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lv .r-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+.lv .pill{height:22px;padding:0 8px;border-radius:6px;background:var(--ink-3);display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--paper-2)}
+.lv .pill.fr{color:var(--fr);background:color-mix(in srgb,var(--fr) 18%,var(--ink-3))}
+.lv .pill.jp{color:var(--jp);background:color-mix(in srgb,var(--jp) 18%,var(--ink-3))}
 .search::placeholder{color:var(--paper-3)}
 /* Filtres de la liste : pays en accès direct, type / année / genre dans un panneau */
 .fl{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 14px;padding:0 16px 2px}
@@ -570,10 +587,15 @@ document.addEventListener("click", e => {
   PAYS = b.dataset.p; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b)); renderTomes();
 });
 // Sans nom de série dans l'adresse : liste de toutes les séries.
+let SVIEW = (() => { try { return localStorage.getItem("series-view") === "list" ? "list" : "grid"; } catch (e) { return "grid"; } })();
 function renderList(items){
   document.title = "Séries manga furyō, yakuza et crime · FuryoGang";
   document.getElementById("app").innerHTML = `
-  <input class="search" id="q" type="search" placeholder="Chercher une série" aria-label="Chercher une série" autocomplete="off">
+  <div class="sbar"><input class="search" id="q" type="search" placeholder="Chercher une série" aria-label="Chercher une série" autocomplete="off">
+    <div class="views" role="group" aria-label="Affichage">
+      <button data-sview="grid" aria-pressed="true" aria-label="Vue grille"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+      <button data-sview="list" aria-pressed="false" aria-label="Vue liste"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
+    </div></div>
   <div class="fl" id="fl"></div>
   <div class="fp" id="fp" hidden></div>
   <p class="fcount" id="fc"></p>
@@ -625,10 +647,20 @@ function renderList(items){
     const list = items.filter(s => keep(s) && (!n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q))).sort(sorter);
     document.getElementById("fc").textContent = (n || nAct()) ? `${list.length} série${list.length > 1 ? "s" : ""}` : "";
     document.getElementById("fc").hidden = !(n || nAct());
-    document.getElementById("sl").innerHTML = list.map(s => `<li><a class="t" href="/series/${s.slug}" data-pre="${esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }))}"><div class="cv">${s.cover ? `<img src="${couv(s.cover, 360)}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}${s.apercu ? `<span class="ap">Aperçu</span>` : ""}</div>
+    // Grille (par défaut) ou liste, comme dans le calendrier ; le choix est gardé sur l'appareil.
+    const sl = document.getElementById("sl"), lv = SVIEW === "list";
+    sl.className = lv ? "lv" : "grid";
+    document.querySelectorAll("[data-sview]").forEach(b => b.setAttribute("aria-pressed", b.dataset.sview === SVIEW));
+    const pre = s => esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }));
+    const ph = s => `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`;
+    sl.innerHTML = list.map(s => lv
+      ? `<li><a class="row" href="/series/${s.slug}" data-pre="${pre(s)}"><span class="thumb">${s.cover ? `<img src="${couv(s.cover, 200)}" alt="" loading="lazy" decoding="async">` : esc((s.jp || "").slice(0, 5))}</span><div><div class="r-t">${esc(shown(s))}</div>${s.jp ? `<span class="r-jp" lang="ja">${esc(s.jp)}</span>` : ""}
+        <div class="r-meta">${s.type ? `<span class="pill">${esc(s.type)}</span>` : ""}${s.y1 ? `<span class="pill">${s.y1}</span>` : ""}${s.pubFR ? `<span class="pill fr">${esc(s.pubFR.replace(/\s*\([^)]*\)/g, ""))}</span>` : `<span class="pill jp">VO</span>`}${s.apercu ? `<span class="pill">Aperçu</span>` : ""}</div></div></a></li>`
+      : `<li><a class="t" href="/series/${s.slug}" data-pre="${pre(s)}"><div class="cv">${s.cover ? `<img src="${couv(s.cover, 360)}" alt="" loading="lazy">` : ph(s)}${s.apercu ? `<span class="ap">Aperçu</span>` : ""}</div>
       <span class="t-n">${esc(shown(s))}</span>${(SORT === "new" || SORT === "old") && s.y1 ? `<span class="t-d">${s.y1}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   const q = document.getElementById("q");
+  document.querySelector(".views").addEventListener("click", e => { const b = e.target.closest("[data-sview]"); if (!b) return; SVIEW = b.dataset.sview; try { localStorage.setItem("series-view", SVIEW); } catch (err) {} draw(cur); });
   drawBar(); draw(""); q.addEventListener("input", e => draw(e.target.value.trim()));
   document.getElementById("app").addEventListener("click", e => {
     const b = e.target.closest(".fl .chip, .fp .chip"); if (!b) return;
