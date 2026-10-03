@@ -269,6 +269,8 @@ input,select,textarea{font-size:16px!important}
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 const tn = n => (Number.isInteger(n) && n < 10) ? "0" + n : String(n ?? "");
+// Libellé d'un tome : « Tome 03 », ou son titre quand il n'a pas de numéro (volume unique, hors-série).
+const tLab = t => t.n != null ? `Tome ${tn(t.n)}` : (t.titre || "Tome unique");
 const slugify = s => String(s || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const FLAGS = {
   Japon: `<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>`,
@@ -526,8 +528,8 @@ function tlShow(i){
   const { serie: s } = DATA, other = PAYS === "France" ? "Japon" : "France";
   // Seulement la date du pays affiché (France ou Japon), sans drapeau : plus clair.
   const date = t => t && t.date ? `<p class="tb-d"><span>${esc(dTxt(t))}</span></p>` : "";
-  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="Tome ${tn(x.t.n)}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
-    <p class="tb-t">Tome ${tn(x.t.n)}${x.t.titre ? ` <em>${esc(x.t.titre)}</em>` : ""}</p>
+  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+    <p class="tb-t">${esc(tLab(x.t))}${x.t.titre && x.t.n != null ? ` <em>${esc(x.t.titre)}</em>` : ""}</p>
     <div class="tb-ds">${date(x.t)}</div>`;
   document.getElementById("tb-c").textContent = `${i + 1} / ${TL.length}`;
   document.getElementById("tb-p").disabled = i <= 0; document.getElementById("tb-n").disabled = i >= TL.length - 1;
@@ -587,8 +589,8 @@ function renderTomes(){
     ${edHead(e)}
     ${e.tomes.length ? `<ul class="grid">${(ASC ? e.tomes : [...e.tomes].reverse()).map(t => {
       const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub });
-      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="Tome ${tn(t.n)}" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
-        <span class="t-n">Tome ${tn(t.n)}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}</section>`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
+      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="${esc(tLab(t))}" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
+        <span class="t-n">${esc(tLab(t))}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}</section>`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
 }
 document.addEventListener("click", e => {
   const bk = e.target.closest("a[data-back]");
