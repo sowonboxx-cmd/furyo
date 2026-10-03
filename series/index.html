@@ -80,6 +80,7 @@ h1.cut{cursor:pointer}
 /* Onglets façon Twitter : un simple trait, contenu directement dessous */
 .tabs{display:flex;margin-top:6px;border-bottom:1px solid var(--ink-3);overflow-x:auto}
 .tabs button{position:relative;flex:1;height:44px;padding:0 10px;border:0;background:transparent;color:var(--paper-3);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
+@media (max-width:440px){.tabs button{padding:0 6px;font-size:13.5px}}
 @media (min-width:720px){.tabs button{flex:none;padding:0 22px;font-size:15px}}
 .tabs button[aria-selected="true"]{color:var(--paper)}
 .tabs button[aria-selected="true"]::after{content:"";position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);width:min(64px,80%);height:3px;border-radius:3px;background:var(--blue)}
@@ -158,6 +159,9 @@ body.tb-open{overflow:hidden}
 .ad-it b{display:block;font-size:14.5px}
 .ad-it b em{font-style:normal;color:var(--paper-3);font-weight:600;margin-left:6px}
 .ad-it p{margin:3px 0 0;font-size:13px;color:var(--paper-2)}
+.ad-l{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.ad-l a{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;background:var(--ink-3);color:var(--paper-2);font-size:12px;font-weight:600;text-decoration:none}
+.ad-l a b{display:inline;font-size:12px;color:var(--paper);margin-left:3px}
 .yt{position:relative;margin-top:10px;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;border:0;display:block;cursor:pointer;padding:0}
 .yt img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85}
 .yt span{position:absolute;inset:0;display:grid;place-items:center}
@@ -286,12 +290,18 @@ function ADAPT(s){
     const raw = (s[k] || "").trim();
     if (!raw || /^(aucun|non|-)/i.test(raw)) return null;
     const items = raw.split(/\s*(?:\||;|\n)\s*/).filter(Boolean).map(x => {
+      // Lien de la source à la fin : « … <https://asianwiki.com/…> » (ou l'adresse seule).
+      let src = ""; x = x.replace(/\s*<?(https?:\/\/[^\s>]+)>?\s*$/, (_, u) => { src = u; return ""; });
       const m = x.match(/^(.*?)\s*\((\d{4})\s*,?\s*(.*)\)\s*$/);
-      return m ? { t: m[1], y: m[2], d: m[3] } : { t: x, y: "", d: "" };
+      return m ? { t: m[1], y: m[2], d: m[3], src } : { t: x, y: "", d: "", src };
     });
     return { label, items, trailers: tr.filter(t => t.cat === k) };
   }).filter(Boolean);
 }
+const SRC_NOMS = { "asianwiki.com": "AsianWiki", "myanimelist.net": "MyAnimeList", "anilist.co": "AniList", "mydramalist.com": "MyDramaList", "netflix.com": "Netflix", "wikipedia.org": "Wikipedia", "eiga.com": "Eiga.com" };
+const srcNom = u => { try { const h = new URL(u).hostname.replace(/^www\./, ""); return SRC_NOMS[h] || SRC_NOMS[h.split(".").slice(-2).join(".")] || h; } catch (e) { return "Source"; } };
+const trLink = t => t && t.url ? `<a href="${esc(t.url)}" target="_blank" rel="noopener">▶ ${esc(t.nom ? t.nom.split(" · ")[0] : "Bande-annonce")} ↗</a>` : "";
+const adItem = (it, tr) => `<div class="ad-it"><b>${esc(it.t)}${it.y ? `<em>${it.y}</em>` : ""}</b>${it.d ? `<p>${esc(it.d.charAt(0).toUpperCase() + it.d.slice(1))}</p>` : ""}${it.src || tr ? `<div class="ad-l">${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source :<b>${esc(srcNom(it.src))}</b>&nbsp;↗</a>` : ""}${trLink(tr)}</div>` : ""}</div>`;
 function ytId(u){ const m = String(u).match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
 function ytHTML(t){ const id = ytId(t.url); if (!id) return "";
   return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube ↗</a>`; }
@@ -367,7 +377,8 @@ function panel(s, pubFR, pubJP, eds, ad){
     return `<ul class="nw">${n.map(it => `<li><details><summary>${it.date ? `<time class="nw-d">${dd(it.date)}</time>` : ""}<span class="nw-c${it.cat === "Licence FR" ? " lic" : ""}">${esc(it.cat)}</span><span class="nw-t">${esc(it.titre)}</span></summary>
       <div class="nw-b">${it.texte ? `<p>${esc(it.texte)}</p>` : ""}${it.src ? `<a class="nw-s" href="${esc(it.src)}" target="_blank" rel="noopener">Source : <b>${esc(it.srcName || "officielle")}</b> ↗</a>` : ""}</div></details></li>`).join("")}</ul>`;
   }
-  if (TAB === "ad") return ad.map(c => `<div class="ad-cat"><h3>${c.label}</h3>${c.items.map((it, i) => `<div class="ad-it"><b>${esc(it.t)}${it.y ? `<em>${it.y}</em>` : ""}</b>${it.d ? `<p>${esc(it.d.charAt(0).toUpperCase() + it.d.slice(1))}</p>` : ""}${c.trailers[i] ? ytHTML(c.trailers[i]) : ""}</div>`).join("")}${c.trailers.slice(c.items.length).map(t => `<div class="ad-it">${ytHTML(t)}</div>`).join("")}</div>`).join("");
+  // Liste simple (pas de vidéo intégrée, trop lourd) : titre, année, détails, puis les liens Source et Bande-annonce.
+  if (TAB === "ad") return ad.map(c => `<div class="ad-cat"><h3>${c.label}</h3>${c.items.map((it, i) => adItem(it, c.trailers[i])).join("")}${c.trailers.slice(c.items.length).map(t => `<div class="ad-it"><div class="ad-l">${trLink(t)}</div></div>`).join("")}</div>`).join("");
   if (TAB === "info") {
     const today = new Date().toISOString().slice(0, 10);
     const nJP = s.tomesJP || eds.filter(e => e.pays === "Japon").reduce((n, e) => Math.max(n, e.tomes.length), 0) || "";
