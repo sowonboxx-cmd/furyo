@@ -231,6 +231,7 @@ function row(s){
       ${(() => { const ok = s.oblig.length - s.manque.length, r = s.oblig.length ? ok / s.oblig.length : 0;
         return `<span class="ob" style="--h:${Math.round(r * 120)}">★ ${ok}/${s.oblig.length}</span>`; })()}
       ${s.sns && s.sns.tot ? `<span class="sns${s.sns.ok >= s.sns.tot ? " ok" : ""}" title="Réseaux des auteurs (facultatif)">SNS ${s.sns.ok}/${s.sns.tot}</span>` : ""}
+      ${s.exFR ? `<span class="sns${s.exFR.ok ? " ok" : ""}" title="${s.exFR.lien ? "Extrait FR trouvé" : s.exFR.aucun ? "Pas d'extrait FR (vérifié)" : "Extrait FR à chercher (facultatif)"}">Extrait FR${s.exFR.lien ? " ✓" : s.exFR.aucun ? " —" : ""}</span>` : ""}
     </div>
     <div class="more">
       <label>★ Éléments obligatoires</label>
