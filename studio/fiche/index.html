@@ -8,15 +8,12 @@
 <style>
 /* Studio « Nouvelle fiche » : design « Dossier » choisi par Will, en crème et en sombre,
    au format post (3:4, 1080×1440) et story (9:16, 1080×1920, avec marges pour l'encoche et les boutons d'Instagram). */
-@font-face{font-family:"Antonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
-@font-face{font-family:"Inter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
-@font-face{font-family:"Noto Sans JP";src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
 :root{--ink:#232325;--ink-2:#000;--ink-3:#38383B;--paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;--red:#BC002D;color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--ink);color:var(--paper);font-family:"Inter",system-ui,sans-serif;font-weight:500}
+body{background:var(--ink);color:var(--paper);font-family:"FGInter",system-ui,sans-serif;font-weight:500}
 .page{max-width:1240px;margin:0 auto;padding:20px 16px 60px}
-h1{font-family:"Antonio",sans-serif;font-weight:700;font-size:44px;text-transform:uppercase;margin:0 0 4px}
+h1{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:44px;text-transform:uppercase;margin:0 0 4px}
 .sub{margin:0 0 16px;color:var(--paper-2)}
 .pick{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
 select,button,input{font:inherit;height:42px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);padding:0 14px}
@@ -29,7 +26,7 @@ button.main{background:var(--red)}
 .slot h2 button{height:32px;font-size:12px}
 .frame{width:100%;position:relative;overflow:hidden;border-radius:10px}
 .frame.post{aspect-ratio:3/4}.frame.story{aspect-ratio:9/16}
-.frame>.card{position:absolute;left:0;top:0;transform-origin:0 0}
+.frame>.fgc{position:absolute;left:0;top:0;transform-origin:0 0}
 .frame .safe{position:absolute;left:0;right:0;pointer-events:none;background:repeating-linear-gradient(45deg,rgba(255,80,80,.18) 0 6px,transparent 6px 12px);display:none}
 .show-safe .frame .safe{display:block}
 
@@ -42,60 +39,6 @@ button.main{background:var(--red)}
 .cap-b button{height:34px;font-size:12px}
 .cap-act{display:flex;gap:8px;align-items:center;margin-top:14px}
 .cap-act small{color:var(--paper-3)}
-/* ---------- Carte « Dossier » ---------- */
-.card{width:1080px;height:1440px;position:relative;overflow:hidden;font-family:"Inter",sans-serif;display:flex;flex-direction:column;
-  --bg:#F2EFE9;--fg:#0c0c0e;--muted:rgba(12,12,14,.58);--track:rgba(12,12,14,.12);--on:#0c0c0e;--res:#26262a;--bar:#0c0c0e;
-  --safe-top:0px;--safe-bot:0px;background:var(--bg);color:var(--fg)}
-.card.dark{--bg:#121214;--fg:#F5F5F7;--muted:rgba(245,245,247,.58);--track:rgba(245,245,247,.13);--on:#F5F5F7;--res:#D9D9DE;--bar:#000}
-.card.story{height:1920px;--safe-top:200px;--safe-bot:250px}
-.card .A{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase}
-.card .top{flex:none;background:var(--bar);padding:calc(var(--safe-top) + 36px) 64px 36px;display:flex;align-items:center;justify-content:space-between}
-.card.dark .top{border-bottom:1px solid rgba(255,255,255,.08)}
-.card .top img{width:250px;display:block}
-.card .top .A{color:#fff;font-size:52px;letter-spacing:.06em;line-height:1}
-.card .top .A span{color:#E0123F}
-.card .main{flex:1;min-height:0;display:flex;flex-direction:column;padding:56px 64px calc(var(--safe-bot) + 60px)}
-.card .hero{display:flex;gap:46px;align-items:flex-start;flex:none}
-.card .cover{flex:none;width:400px;height:560px;object-fit:cover;border:10px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);background:#222}
-.card.story .cover{width:410px;height:574px}
-/* Post 3:4 : la hauteur en plus sert à grossir la couverture et les textes */
-.card.post .cover{width:420px;height:588px}
-.card.post dt,.card.post dd{font-size:31px}
-.card.post dl{gap:14px 20px}
-.card.post .res{margin-top:56px}
-.card.post .res p{font-size:38px}
-/* Story : plus de hauteur, donc tout un peu plus grand */
-.card.story .main{padding-top:64px}
-.card.story .t{font-size:108px}
-.card.story .jp{font-size:32px}
-.card.story dt,.card.story dd{font-size:32px}
-.card.story dl{gap:16px 20px;margin-top:30px}
-.card.story .res{margin-top:56px}
-.card.story .res p{font-size:39px}
-.card.story .row .A{font-size:50px}
-.card.story .seg i{height:40px}
-.card.story .cap{font-size:32px}
-.card .info{flex:1;min-width:0;position:relative}
-.card .kick{display:inline-flex;align-items:center;height:56px;padding:0 22px;border-radius:6px;background:var(--red);color:#fff;font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:34px;line-height:1}
-.card .kick span{display:block;transform:translateY(-1px)}
-.card .t{margin:20px 0 0;font-size:96px;line-height:.92;overflow-wrap:anywhere}
-.card .jp{margin-top:12px;font-family:"Noto Sans JP",sans-serif;font-weight:700;font-size:30px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card dl{margin:26px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 20px;align-items:baseline}
-.card dt{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-size:30px;line-height:1.15;white-space:nowrap}
-.card dd{margin:0;font-weight:700;font-size:30px;line-height:1.15;white-space:nowrap;overflow:hidden}
-.card .cv{position:relative;flex:none}
-.card .res{flex:1;min-height:0;margin:52px 0 0;overflow:hidden}
-.card .res p{margin:0;font-size:36px;line-height:1.42;color:var(--res);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lines,5);overflow:hidden}
-.card .res b{font-family:"Antonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-right:12px}
-.card .prog{flex:none;margin-top:24px}
-.card .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
-.card .row .A{font-size:46px;letter-spacing:.03em;line-height:1}
-.card .row .A span{color:var(--muted)}
-.card .seg{display:grid;grid-template-columns:repeat(20,1fr);gap:6px}
-.card .seg i{height:36px;border-radius:4px;background:var(--track)}
-.card .seg i.on{background:var(--on)}
-.card .seg i.part{background:linear-gradient(90deg,var(--red) var(--p),var(--track) var(--p))}
-.card .cap{margin-top:16px;font-size:30px;color:var(--muted);font-weight:700}
 </style>
 </head>
 <body>
@@ -114,69 +57,27 @@ button.main{background:var(--red)}
   <div class="caps" id="caps"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script src="/site/fiche-card.js?v=1"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const LOGO_B = "/img/social/logo-blanc.png";
 const VARIANTS = [["creme", "post", "Crème · post 3:4"], ["dark", "post", "Sombre · post 3:4"], ["creme", "story", "Crème · story 9:16"], ["dark", "story", "Sombre · story 9:16"]];
 const SIZE = { post: [1080, 1440], story: [1080, 1920] };
-let LIST = [], AV = null, cur = null;
+let LIST = [], AV = null, cur = null, FONTS = "";
 const couv = u => u ? "/api/couv?u=" + encodeURIComponent(u) : "";
 const shown = s => (s.t && s.fr && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t);
 const pad = d => String(d.n).padStart(Math.max(3, String(d.tot).length), "0");
 const pctTxt = d => (Math.round(d.n / d.tot * 1000) / 10).toLocaleString("fr-FR") + " %";
 const parts = s => String(s || "").split(/\s*[,&/]\s*|\s+et\s+/).map(x => x.trim()).filter(Boolean);
 
-function card(d, theme, fmt){
-  const p = d.n / d.tot * 20;
-  const rows = [
-    ["Histoire", d.scen ? parts(d.scen) : []],
-    ["Dessin", d.dess && d.dess !== d.scen ? parts(d.dess) : []],
-    ["Type", d.type ? [d.type] : []],
-    ["Genres", d.genres || []],
-    ["Début", d.y1 ? [String(d.y1)] : []],
-    ["En France", d.pubs || []],
-  ].filter(r => r[1].length);
-  return `<div class="card ${theme} ${fmt}">
-    <div class="top"><img src="${LOGO_B}" alt=""><span class="A">Fiche <span>n°${pad(d)}</span></span></div>
-    <div class="main">
-      <div class="hero">
-        <div class="cv">${d.cover ? `<img class="cover" src="${couv(d.cover)}" alt="">` : `<div class="cover"></div>`}</div>
-        <div class="info"><span class="kick"><span>Nouvelle fiche</span></span>
-          <p class="t A">${esc(d.t)}</p>${d.jp ? `<div class="jp" lang="ja">${esc(d.jp)}</div>` : ""}
-          <dl>${rows.map(r => `<dt>${r[0]}</dt><dd data-items="${esc(JSON.stringify(r[1]))}">${esc(r[1].join(", "))}</dd>`).join("")}</dl>
-        </div>
-      </div>
-      <div class="res">${d.resume ? `<p><b>Résumé</b>${esc(d.resume)}</p>` : ""}</div>
-      <div class="prog"><div class="row"><span class="A">La base FuryoGang · ${d.n} <span>/ ${d.tot}</span></span><span class="A">${pctTxt(d)}</span></div>
-        <div class="seg">${Array.from({ length: 20 }, (_, i) => i + 1 <= Math.floor(p) ? '<i class="on"></i>' : i < p ? `<i class="part" style="--p:${Math.round((p - i) * 100)}%"></i>` : "<i></i>").join("")}</div>
-        <div class="cap">De nouvelles fiches chaque semaine</div></div>
-    </div></div>`;
-}
-// Mise en page fine, une fois les polices chargées : titre sur 2 lignes maximum, chaque info sur une seule ligne
-// (on garde autant de noms ou de genres que la place permet), résumé coupé à la dernière ligne entière.
-function polish(c){
-  const t = c.querySelector(".t");
-  const big = c.classList.contains("story") ? 108 : 96;
-  for (let s = big; s >= 52; s -= 4) { t.style.fontSize = s + "px"; if (t.offsetHeight <= s * 0.92 * 2 + 4) break; }
-  c.querySelectorAll("dd[data-items]").forEach(dd => {
-    const items = JSON.parse(dd.dataset.items);
-    for (let k = items.length; k >= 1; k--) {
-      dd.textContent = items.slice(0, k).join(", ");
-      if (dd.scrollWidth <= dd.clientWidth + 1) break;
-      if (k === 1) dd.style.textOverflow = "ellipsis";
-    }
-  });
-  const res = c.querySelector(".res"), p = res.querySelector("p");
-  if (p) { const lh = parseFloat(getComputedStyle(p).lineHeight); p.style.setProperty("--lines", Math.max(2, Math.floor(res.clientHeight / lh))); }
-}
-function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".card"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
+const card = (d, theme, fmt) => FG_FICHE.card(d, theme, fmt);
+function fit(){ document.querySelectorAll(".frame").forEach(f => { const c = f.querySelector(".fgc"); if (c) c.style.transform = `scale(${f.clientWidth / 1080})`; }); }
 function draw(){
   if (!cur) return;
   document.getElementById("pair").innerHTML = VARIANTS.map(([th, fm, nom]) => `<div class="slot"><h2>${nom} <button data-dl="${th}-${fm}">PNG</button></h2>
     <div class="frame ${fm}" id="f-${th}-${fm}">${card(cur, th, fm)}${fm === "story" ? `<div class="safe" style="top:0;height:${200 / 19.2}%"></div><div class="safe" style="bottom:0;height:${250 / 19.2}%"></div>` : ""}</div></div>`).join("");
   fit();
-  const go = () => document.querySelectorAll(".frame .card").forEach(polish);
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(go);
+  FG_FICHE.preparer(document.getElementById("pair"), cur).then(f => { FONTS = f; });
 }
 // ---------- Légendes « Nouvelle fiche » ----------
 // Tant que les comptes membres ne sont pas ouverts, on n'invite pas encore à s'inscrire.
@@ -199,7 +100,7 @@ function caps(d){
   const membre = MEMBRES_OUVERTS ? "\n👉 Crée ton compte gratuit sur le site pour suivre tes séries." : "";
   const ig = `🆕 NOUVELLE FICHE · ${d.t.toUpperCase()}${d.jp ? ` (${d.jp})` : ""}
 
-${phrases(d.resume, 2)}
+${phrases(d.resume, 3)}
 
 ✍️ ${auteurs.replace("Histoire ", "Histoire : ").replace("Dessin ", "Dessin : ")}
 📚 ${infos}
@@ -212,17 +113,24 @@ Fiche n°${d.n} sur ${d.tot} · de nouvelles fiches chaque semaine.
 ${tags.concat(["#mangafr"]).slice(0, 12).join(" ")}`;
   const tt = `🆕 Nouvelle fiche : ${d.t}${d.jp ? ` (${d.jp})` : ""}
 
-${phrases(d.resume, 1)}
+${phrases(d.resume, 3)}
 
 ${auteurs}
 📖 Toutes les infos sur le site FuryoGang${membre}
 ${mentions(d, "tt") ? "\n📣 " + mentions(d, "tt") + "\n" : ""}
 ${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf(v) === i).slice(0, 8).join(" ")}`;
-  // X : 280 caractères, un lien compte pour 23. On raccourcit le résumé jamais le reste.
-  const xBase = r => `🆕 Nouvelle fiche : ${d.t}${infos ? ` (${[d.type, d.y1].filter(Boolean).join(", ")})` : ""}\n\n${r}${r ? "\n\n" : ""}Toutes les infos 👉 ${url}\n${mentions(d, "x") ? mentions(d, "x") + "\n" : ""}${tags.slice(0, 3).join(" ")}`;
+  // X : règle « Nouvelle fiche » de FuryoGang. 280 caractères (un lien compte pour 23) ; on raccourcit
+  // la description, puis on retire le 3e hashtag (2 minimum) ; les comptes les moins pertinents sautent en dernier.
+  const hx = [...new Set((d.genres || []).map(g => tagOf(g)).filter(h => h.length > 1))];
+  let hs = hx.slice(0, 3), r = phrases(d.resume, 1);
+  const ats = (mentions(d, "x") || "").split(" ").filter(Boolean);
+  const xBase = (r, hs, k) => `Nouvelle fiche : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${k ? "\nX " + ats.slice(0, k).join(" · ") : ""}`;
   const xLen = t => t.replace(url, "x".repeat(23)).length;
-  let r = phrases(d.resume, 1), x = xBase(r);
-  while (xLen(x) > 280 && r) { r = r.split(" ").slice(0, -1).join(" "); x = xBase(r ? r.replace(/[,;:]?$/, "…") : ""); }
+  let k = ats.length, x = xBase(r, hs, k);
+  while (xLen(x) > 280 && r.length > 90) { r = r.split(" ").slice(0, -1).join(" ").replace(/[,;:]?$/, "…"); x = xBase(r, hs, k); }
+  if (xLen(x) > 280 && hs.length > 2) { hs = hs.slice(0, 2); x = xBase(r, hs, k); }
+  while (xLen(x) > 280 && k > 0) { k--; x = xBase(r, hs, k); }
+  while (xLen(x) > 280 && r) { r = r.split(" ").slice(0, -1).join(" ").replace(/[,;:]?$/, "…"); x = xBase(r, hs, k); }
   return { ig, tt, x, xLen };
 }
 function drawCaps(){
@@ -266,8 +174,8 @@ async function pick(slug){
 }
 async function dl(key){
   const [th, fm] = key.split("-"), [w, h] = SIZE[fm];
-  const node = document.querySelector(`#f-${key} .card`), keep = node.style.transform; node.style.transform = "none";
-  try { const url = await htmlToImage.toPng(node, { width: w, height: h, pixelRatio: 1 }); const a = document.createElement("a"); a.href = url; a.download = `nouvelle-fiche-${cur.slug}-${th}-${fm}.png`; a.click(); }
+  const node = document.querySelector(`#f-${key} .fgc`), keep = node.style.transform; node.style.transform = "none";
+  try { const url = await htmlToImage.toPng(node, { width: w, height: h, pixelRatio: 1, fontEmbedCSS: FONTS || undefined }); const a = document.createElement("a"); a.href = url; a.download = `nouvelle-fiche-${cur.slug}-${th}-${fm}.png`; a.click(); }
   finally { node.style.transform = keep; fit(); }
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-dl]"); if (b) dl(b.dataset.dl); });
