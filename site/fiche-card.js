@@ -42,7 +42,7 @@
     '.fgc .fgc-t{margin:20px 0 0;font-size:96px;line-height:.92;overflow-wrap:anywhere}',
     '.fgc .fgc-t.fgc-one{white-space:nowrap;overflow:hidden}',
     '.fgc .fgc-t.fgc-clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}',
-    '.fgc .fgc-jp{margin-top:12px;font-family:"FGNotoJP","FGInter",sans-serif;font-weight:700;font-size:30px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.fgc .fgc-jp{margin-top:10px;line-height:1.4;padding-bottom:4px;font-family:"FGNotoJP","FGInter",sans-serif;font-weight:700;font-size:30px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
     '.fgc dl{margin:26px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 20px;align-items:baseline}',
     '.fgc dt{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-size:30px;line-height:1.15;white-space:nowrap}',
     '.fgc dd{margin:0;font-weight:700;font-size:30px;line-height:1.15;white-space:nowrap;overflow:hidden}',
