@@ -10,9 +10,13 @@
     ".sh-logo img{height:42px;width:auto;display:block}" +
     ".sh-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;display:grid;place-items:center;color:#F5F5F7;text-decoration:none;border:0;background:transparent;cursor:pointer;padding:0}" +
     ".sh-search{right:8px}.sh-me{left:8px}" +
-    ".sh-bo{position:absolute;top:50%;left:56px;transform:translateY(-50%);height:28px;padding:0 11px;border-radius:14px;background:#305887;color:#fff;font:600 12.5px Inter,system-ui,sans-serif;text-decoration:none;display:flex;align-items:center}" +
+    ".sh-adm{position:absolute;top:50%;left:56px;transform:translateY(-50%);display:flex;gap:6px}" +
+    ".sh-bo,.sh-val{height:28px;padding:0 11px;border-radius:14px;background:#305887;color:#fff;font:600 12.5px Inter,system-ui,sans-serif;text-decoration:none;display:flex;align-items:center;gap:6px}" +
+    ".sh-val{background:#2E7D4F}.sh-val b{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:#1F5C38;font:700 11px Inter,system-ui,sans-serif;display:grid;place-items:center}" +
+    ".sh-val[data-n='0'] b{display:none}" +
     ".sh-bo svg{display:none;width:16px;height:16px}" +
-    "@media (max-width:520px){.sh-bo{width:30px;height:30px;padding:0;justify-content:center;border-radius:50%;font-size:0}.sh-bo svg{display:block}}" +
+    "@media (max-width:520px){.sh-bo{width:30px;height:30px;padding:0;justify-content:center;border-radius:50%;font-size:0}.sh-bo svg{display:block}" +
+    ".sh-val{height:30px;min-width:30px;padding:0 8px;justify-content:center;border-radius:15px;font-size:0}.sh-val b{background:transparent;color:#fff;font-size:13px;padding:0;min-width:0}.sh-val[data-n='0'] b{display:grid}}" +
     ".sh-me span{width:30px;height:30px;border-radius:50%;background:#38383B;display:grid;place-items:center;color:#CFCFD4}" +
     ".sh-nav{display:flex;justify-content:center;gap:4px;max-width:1080px;margin:0 auto;border-top:1px solid #2C2C2F;padding:0 8px}" +
     ".sh-nav a{position:relative;padding:0 16px;height:44px;display:flex;align-items:center;text-decoration:none;color:#CFCFD4;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:15px;letter-spacing:-.005em}" +
@@ -204,9 +208,25 @@
   function drawAvatar() {
     var btn = document.getElementById("sh-me");
     if (ME && ME.user && ME.user.picture) btn.innerHTML = '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">';
-    var old = document.querySelector(".sh-bo"); if (old) old.remove();
+    var old = document.querySelector(".sh-adm"); if (old) old.remove();
     // Seulement pour un membre connecté avec Google ET administrateur (un ancien accès admin seul ne suffit pas).
-    if (ME && ME.admin && ME.user) { var a = document.createElement("a"); a.className = "sh-bo"; a.href = "/admin/"; a.setAttribute("aria-label", "Back-office"); a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Back-office'; document.querySelector(".sh-top").appendChild(a); }
+    if (ME && ME.admin && ME.user) {
+      var box = document.createElement("div"); box.className = "sh-adm";
+      box.innerHTML = '<a class="sh-bo" href="/admin/" aria-label="Back-office"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Back-office</a>' +
+        '<a class="sh-val" href="/admin/#validation" data-n="0" aria-label="Validation">Validation<b>0</b></a>';
+      document.querySelector(".sh-top").appendChild(box);
+      valCount();
+    }
+  }
+  // Pastille « Validation » : nombre d'éléments de la veille à relire, mis à jour chaque minute tant que la page est ouverte.
+  var valTimer = null;
+  function valCount() {
+    var a = document.querySelector(".sh-val"); if (!a) return;
+    fetch("/api/admin/veille?count=1", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j) return; var n = j.n || 0; a.setAttribute("data-n", n); a.querySelector("b").textContent = n > 99 ? "99+" : n;
+      a.setAttribute("aria-label", "Validation : " + n + " à relire");
+    }).catch(function () {});
+    clearTimeout(valTimer); valTimer = setTimeout(function () { if (!document.hidden) valCount(); else document.addEventListener("visibilitychange", function v() { if (!document.hidden) { document.removeEventListener("visibilitychange", v); valCount(); } }); }, 60000);
   }
   function gis(cb) {
     if (window.google && google.accounts && google.accounts.id) return cb();

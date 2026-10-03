@@ -130,6 +130,57 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .login input{width:100%;height:48px;border:0;border-radius:14px;background:var(--ink-3);padding:0 16px;outline:none;text-align:center}
 .login button{width:100%;height:48px;margin-top:10px;border:0;border-radius:24px;background:#305887;color:#fff;font-weight:700;cursor:pointer}
 .login .err{color:#F08A7E;margin-top:12px;font-size:14px;min-height:20px}
+/* ---------- Accueil du back-office : deux gros blocs ---------- */
+.hub{max-width:900px;margin:0 auto;padding:18px 16px 60px;display:grid;gap:14px}
+@media (min-width:700px){.hub{grid-template-columns:1fr 1fr}}
+.tile{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:26px;min-height:168px;padding:20px;border-radius:22px;background:var(--ink-2);border:1px solid var(--line);color:inherit;text-decoration:none;overflow:hidden;transition:transform .15s,border-color .15s}
+.tile:active{transform:scale(.98)}
+@media (hover:hover){.tile:hover{border-color:var(--paper-3)}}
+.tile .ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#305887;color:#fff}
+.tile .ic svg{width:26px;height:26px}
+.tile h2{margin:0;font-family:var(--f-display);font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.02em}
+.tile p{margin:6px 0 0;color:var(--paper-3);font-size:14px}
+.tile .n{position:absolute;top:20px;right:20px;min-width:44px;height:44px;padding:0 12px;border-radius:22px;display:grid;place-items:center;font-family:var(--f-display);font-size:24px;font-weight:700;background:var(--ink-3);color:var(--paper)}
+.tile.val{background:linear-gradient(160deg,#1E3A2A,#000 70%);border-color:#2E7D4F}
+.tile.val .ic{background:#2E7D4F}
+.tile.val .n{background:#2E7D4F;color:#fff}
+.back{border:0;background:transparent;color:var(--paper-2);font-size:14px;font-weight:600;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:4px;text-decoration:none}
+/* ---------- Validation (veille) ---------- */
+.vl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.vi{display:grid;grid-template-columns:44px auto minmax(0,1fr);align-items:center;gap:10px;min-height:48px;padding:8px 12px;border-radius:14px;background:var(--ink-2);cursor:pointer}
+.vi:active{background:#0d0d0e}
+.vi time{font-size:12.5px;font-weight:600;color:var(--paper-3);font-variant-numeric:tabular-nums}
+.vi .t{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.02em;white-space:nowrap;color:var(--c);background:color-mix(in srgb,var(--c) 18%,var(--ink-3))}
+.chip .d{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.chip[aria-pressed=true] .d{background:#fff}
+.vhint{margin:4px 0 12px;font-size:12.5px;color:var(--paper-3)}
+/* Fenêtre de détail : feuille du bas sur téléphone, fenêtre centrée sur ordinateur */
+.vm{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center}
+.vm-b{width:100%;max-width:560px;max-height:92vh;overflow:auto;background:var(--ink);border-radius:22px 22px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 16px);border-top:1px solid var(--line)}
+@media (min-width:700px){.vm{align-items:center}.vm-b{border-radius:22px;border:1px solid var(--line)}}
+.vm-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--paper-3)}
+.vm-h .x{margin-left:auto;width:36px;height:36px;border:0;border-radius:50%;background:var(--ink-3);color:var(--paper);font-size:18px;cursor:pointer}
+.vm h2{margin:10px 0 4px;font-size:19px;line-height:1.3}
+.vm .sr{font-size:13px;color:var(--paper-3);margin:0 0 10px}
+.vm .sr a{color:var(--blue-2);text-decoration:none}
+.vm .cv{float:right;width:96px;margin:0 0 8px 12px;border-radius:8px;background:var(--ink-3)}
+.vm dl{margin:10px 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
+.vm dt{color:var(--paper-3)}.vm dd{margin:0;overflow-wrap:anywhere}
+.vm label{display:block;clear:both;font-size:12px;color:var(--paper-3);margin:12px 0 4px}
+.vm textarea{width:100%;min-height:120px;border:0;border-radius:12px;background:var(--ink-3);padding:10px 12px;font-size:15px!important;line-height:1.45;resize:vertical;outline:none}
+.vm .srcs{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 0;font-size:13px;font-weight:600}
+.vm .srcs a{color:var(--blue-2);text-decoration:none}
+.vm .tools{display:flex;gap:8px;margin-top:12px}
+.vm .tools button{height:38px;padding:0 14px;border:0;border-radius:19px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.vm .tools button svg{width:16px;height:16px}
+.vm .tools button:disabled{opacity:.45;cursor:default}
+.vm .act{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.vm .act button{height:48px;border:0;border-radius:24px;font-weight:700;font-size:14.5px;cursor:pointer;background:var(--ink-3);color:var(--paper)}
+.vm .act .go{grid-column:1/3;background:#2E7D4F;color:#fff}
+.vm .act .rej{color:#F08A7E}
+.vm .act button.busy{opacity:.5;pointer-events:none}
+.vm .note{grid-column:1/3;margin:0;font-size:12px;color:var(--paper-3);text-align:center}
 </style>
 </head>
 <body>
@@ -175,7 +226,7 @@ function login(msg){
   const g = () => { google.accounts.id.initialize({ client_id: "923817714860-h88lmvr2bnvninn41ioa19iv2lrd2ed5.apps.googleusercontent.com", callback: async r => {
       const x = await fetch("/api/auth/google", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ credential: r.credential }) });
       const j = await x.json().catch(() => ({}));
-      if (j.admin) load(); else document.getElementById("err").textContent = j.ok ? "Ce compte Google n'est pas administrateur." : (j.error || "Connexion impossible.");
+      if (j.admin) route(); else document.getElementById("err").textContent = j.ok ? "Ce compte Google n'est pas administrateur." : (j.error || "Connexion impossible.");
     } });
     google.accounts.id.renderButton(document.getElementById("gbtn"), { theme: "filled_black", shape: "pill", size: "large", text: "continue_with", locale: "fr", width: 280 }); };
   if (window.google && google.accounts) g(); else { const sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true; sc.onload = g; document.head.appendChild(sc); }
@@ -183,7 +234,7 @@ function login(msg){
     e.preventDefault();
     const r = await fetch("/api/admin/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password: document.getElementById("pw").value }) });
     const j = await r.json().catch(() => ({}));
-    if (r.ok) load(); else document.getElementById("err").textContent = j.error || "Connexion impossible.";
+    if (r.ok) route(); else document.getElementById("err").textContent = j.error || "Connexion impossible.";
   };
 }
 async function load(){
@@ -198,14 +249,13 @@ async function load(){
 }
 function shell(){
   root.innerHTML = `<header class="top"><div class="top-in">
-      <div class="brand"><a class="home" href="/" title="Retour au site"><b>FuryoGang<span>Back-office</span></b></a><button class="out" id="out">Déconnexion</button></div>
+      <div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Base mangas</b></div>
       <div class="prog" id="prog"></div>
       <input class="q" id="q" type="search" placeholder="Chercher une série" autocomplete="off">
       <div class="chips" id="chips"></div>
       <div class="tris" id="tris"></div></div></header>
     <main><p class="count" id="count"></p><ul class="list" id="list"></ul></main>`;
   document.getElementById("q").oninput = e => { Q = e.target.value.trim(); draw(); };
-  document.getElementById("out").onclick = async () => { await fetch("/api/admin/login", { method: "DELETE" }); login(); };
 }
 function draw(){
   const on = ITEMS.filter(s => s.publier).length, tot = ITEMS.length;
@@ -333,7 +383,99 @@ document.addEventListener("change", e => {
   if (e.target.matches("[data-pub]")) send(s, { publier: e.target.checked }, e.target.closest(".sw"));
   if (e.target.matches(".etat")) send(s, { etat: e.target.value });
 });
-fetch("/api/admin/login").then(r => r.json()).then(j => j.ok ? load() : login(j.configured ? "" : "Mot de passe pas encore défini dans Cloudflare (ADMIN_PASSWORD).")).catch(() => login());
+
+/* ---------- Navigation : accueil (#), base mangas (#mangas), validation (#validation) ---------- */
+function route(){
+  const h = location.hash.replace("#", "");
+  document.querySelectorAll(".vm").forEach(m => m.remove());
+  if (h === "mangas") return ITEMS.length ? (shell(), draw()) : load();
+  if (h === "validation") return veille();
+  hub();
+}
+addEventListener("hashchange", route);
+const ICO_BASE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H9v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M9 4h4.5A1.5 1.5 0 0 1 15 5.5V20H9z"/><path d="M15.5 6.2l3-.8a1.5 1.5 0 0 1 1.8 1l3 11.2"/></svg>`;
+const ICO_VAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11.5l2.2 2.2L16 9"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>`;
+async function hub(){
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="home" href="/" title="Retour au site"><b>FuryoGang<span>Back-office</span></b></a><button class="out" id="out">Déconnexion</button></div></div></header>
+    <div class="hub">
+      <a class="tile val" href="#validation"><span class="n" id="hub-n">…</span><span class="ic">${ICO_VAL}</span><div><h2>Validation</h2><p>News, couvertures, sorties, fins de série : tout ce que la veille a trouvé et qui attend ton avis.</p></div></a>
+      <a class="tile" href="#mangas"><span class="ic">${ICO_BASE}</span><div><h2>Base mangas</h2><p>Les fiches séries : avancement, publication, résumés, légendes et images des réseaux.</p></div></a>
+    </div>`;
+  document.getElementById("out").onclick = async () => { await fetch("/api/admin/login", { method: "DELETE" }); login(); };
+  const r = await fetch("/api/admin/veille?count=1").catch(() => null);
+  if (r && r.status === 401) return login();
+  const j = r && r.ok ? await r.json() : null;
+  document.getElementById("hub-n").textContent = j ? j.n : "?";
+}
+
+/* ---------- Validation : la veille à relire ---------- */
+const VCOL = { couvJP: "#F2B33D", couvFR: "#F2B33D", sortieJP: "#6FA8F5", sortieFR: "#6FA8F5", annFR: "#7BC67E", annJP: "#7BC67E", fin: "#F08A7E", serie: "#C49BF0", fiche: "#98989D", news: "#5FD0D0" };
+let VITEMS = [], VCATS = {}, VF = "tout";
+const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
+async function veille(){
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Validation</b></div>
+    <div class="chips" id="vchips"></div></div></header><main><p class="vhint" id="vhint">Chargement…</p><ul class="vl" id="vl"></ul></main>`;
+  const r = await fetch("/api/admin/veille");
+  if (r.status === 401) return login("Session expirée, reconnecte-toi.");
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { document.getElementById("vhint").textContent = j.error || "Impossible de charger la veille."; return; }
+  VITEMS = j.items || []; VCATS = j.cats || {};
+  vdraw();
+}
+function vdraw(){
+  const counts = {}; VITEMS.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
+  if (VF !== "tout" && !counts[VF]) VF = "tout";
+  document.getElementById("vchips").innerHTML = `<button class="chip" data-vf="tout" aria-pressed="${VF === "tout"}">Tout <small>${VITEMS.length}</small></button>` +
+    Object.keys(VCATS).filter(k => counts[k]).map(k => `<button class="chip" data-vf="${k}" aria-pressed="${VF === k}" style="--c:${VCOL[k]}"><span class="d"></span>${esc(VCATS[k])} <small>${counts[k]}</small></button>`).join("");
+  const list = VITEMS.filter(i => VF === "tout" || i.cat === VF);
+  document.getElementById("vhint").textContent = VITEMS.length ? `${list.length} à relire · touche une ligne pour voir le détail` : "Rien à relire pour l'instant 👌";
+  document.getElementById("vl").innerHTML = list.map(i => `<li class="vi" data-vid="${i.id}"><time>${esc(dCourt(i.date || i.cree))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
+  const a = document.querySelector(".sh-val b"); if (a) a.textContent = VITEMS.length;
+}
+function vopen(id){
+  const i = VITEMS.find(x => x.id === id); if (!i) return;
+  const news = i.news;
+  const img = i.image ? `<img class="cv" src="/api/couv?u=${encodeURIComponent(i.image)}&w=300" alt="" onerror="this.remove()">` : "";
+  const dt = (k, v) => v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : "";
+  const m = document.createElement("div"); m.className = "vm"; m.dataset.vid = id;
+  m.innerHTML = `<div class="vm-b" role="dialog" aria-modal="true">
+    <div class="vm-h"><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span>${esc(i.date ? new Date(i.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
+    <h2>${esc(i.titre)}</h2>
+    ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
+    ${img}
+    <dl>${dt("Type", i.type)}${dt("Concerne", i.champ)}${dt("Actuel", i.actuel)}${dt("Proposé", i.propose)}${dt("Source", i.niveau)}</dl>
+    <label for="vtx">${news ? "Texte de la news (modifiable)" : "Note de la veille (modifiable)"}</label>
+    <textarea id="vtx">${esc(i.texte)}</textarea>
+    <div class="tools"><button data-vcp>${ICO_COPY}Copier le texte</button>${news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}</div>
+    <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
+    <div class="act">
+      <button class="go" data-vs="Validé">${news ? "Publier la news" : "Valider"}</button>
+      <button data-vs="Vu">${news ? "Vu, pas de news" : "Vu, rien à faire"}</button>
+      <button class="rej" data-vs="Rejeté">Rejeter</button>
+      <p class="note">${news ? "Publier : la news part sur le site avec ce texte." : "Valider : la modification est appliquée dans la base au prochain passage de la veille."}</p>
+    </div></div>`;
+  document.body.appendChild(m);
+}
+async function vsend(btn, statut){
+  const m = btn.closest(".vm"), id = m.dataset.vid, i = VITEMS.find(x => x.id === id);
+  const texte = m.querySelector("#vtx").value;
+  btn.classList.add("busy");
+  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, statut, ...(texte !== i.texte ? { texte } : {}), slug: i.serie && i.serie.slug }) }).catch(() => null);
+  btn.classList.remove("busy");
+  if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
+  VITEMS = VITEMS.filter(x => x.id !== id); m.remove(); vdraw();
+  toast(statut === "Validé" ? (i.news ? "News publiée ✓" : "Validé ✓") : statut === "Vu" ? "Marqué comme vu" : "Rejeté");
+}
+document.addEventListener("click", async e => {
+  const vf = e.target.closest("[data-vf]"); if (vf) { VF = vf.dataset.vf; vdraw(); return; }
+  const vi = e.target.closest(".vi"); if (vi) { vopen(vi.dataset.vid); return; }
+  if (e.target.closest("[data-vx]") || e.target.classList.contains("vm")) { document.querySelectorAll(".vm").forEach(m => m.remove()); return; }
+  const vcp = e.target.closest("[data-vcp]"); if (vcp) { const ok = await copier(vcp.closest(".vm").querySelector("#vtx").value); toast(ok ? "Texte copié ✓" : "Copie impossible"); return; }
+  const vs = e.target.closest("[data-vs]"); if (vs) vsend(vs, vs.dataset.vs);
+});
+addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".vm").forEach(m => m.remove()); });
+
+fetch("/api/admin/login").then(r => r.json()).then(j => j.ok ? route() : login(j.configured ? "" : "Mot de passe pas encore défini dans Cloudflare (ADMIN_PASSWORD).")).catch(() => login());
 </script>
 </body>
 </html>
