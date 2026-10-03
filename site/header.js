@@ -96,7 +96,7 @@
         series: (r[0].items || []).map(function (s) { return { t: shown(s), alt: [s.t, s.fr, s.jp].join(" "), d: [s.jp, s.type, s.y1].filter(Boolean).join(" · "), u: "/series/" + s.slug, img: s.cover }; }),
         auteurs: (r[1].authors || []).map(function (a) { return { t: a.name, alt: [a.name, a.jp].join(" "), d: [a.jp, (a.series || []).map(function (x) { return x.t; }).slice(0, 3).join(", ")].filter(Boolean).join(" · "), u: "/auteurs/" + a.slug, ini: (a.jp || a.name || "?").charAt(0) }; }),
         sorties: (r[2].items || []).filter(function (it) { return it.date >= from; }).map(function (it) {
-          var t = it.pays === "France" && it.fr ? it.fr : it.series;
+          var t = it.fr && !(it.series && it.series === it.series.toUpperCase() && /[A-Z]/.test(it.series) && it.series.toLowerCase() === it.fr.toLowerCase()) ? it.fr : it.series;
           return { t: t + (it.n != null ? " T." + tn(it.n) : ""), alt: [it.series, it.fr, it.jp, it.pub].join(" "), d: [it.pays, it.pub, (it.date < today ? "sorti le " : "") + dc(it.date)].filter(Boolean).join(" · "), u: "/calendrier/#t-" + it.id, img: it.cover, date: it.date };
         }),
         news: (r[3].items || []).map(function (n) { return { t: n.fr || n.titre, alt: [n.titre, n.fr, n.jp, n.pub, n.texte].join(" "), d: [n.type === "licence" ? "Licence FR" : "News", n.pub, dc(n.date)].filter(Boolean).join(" · "), u: "/#n-" + n.id, ini: n.type === "licence" ? "FR" : "!" }; }),

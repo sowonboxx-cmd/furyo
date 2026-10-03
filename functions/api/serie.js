@@ -2,7 +2,7 @@
 // Rapide : un index slug → page (gardé en cache) évite de relire toute la base Séries à chaque fiche,
 // puis la page série, ses éditions et ses tomes sont lus en parallèle.
 // Les sources restent dans Notion : elles ne sont pas renvoyées.
-import { text, num, date, rel, list, queryAll, cached, slugify } from "../../lib/notion.js";
+import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
 import { estVisible } from "../../lib/site.js";
 import { sourceName } from "../../lib/source.js";
 
@@ -64,7 +64,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       } }).catch(() => []),
     ]);
     const serie = {
-      id: nid(id), slug, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]),
+      id: nid(id), slug: slugSerie(p), t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]),
       resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
       pubJP: list(p["Éditeur Japonais"]).join(", "), pubFR: list(p["Éditeur Français"]).join(", "),

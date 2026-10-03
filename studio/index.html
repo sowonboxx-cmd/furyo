@@ -93,7 +93,7 @@ const FLAG = {
 };
 let ITEMS = [], cur = null;
 const cov = it => it.cover ? "/api/couv?u=" + encodeURIComponent(it.cover) : "";
-const titleOf = it => it.pays === "France" && it.fr ? it.fr : (it.series || it.tome);
+const titleOf = it => (it.fr && !(it.series && it.series === it.series.toUpperCase() && /[A-Z]/.test(it.series) && it.series.toLowerCase() === it.fr.toLowerCase()) ? it.fr : (it.series || it.tome));
 function dateLong(it){ const d = new Date(it.date + "T12:00:00"); return it.prec === "Mois" ? `${MOIS[d.getMonth()]} ${d.getFullYear()}` : `${d.getDate()} ${MOIS[d.getMonth()]} ${d.getFullYear()}`; }
 // Titre japonais vertical : si le titre original est en lettres latines, on prend la lecture entre parenthèses (ex. JUMBO MAX（ジャンボマックス）).
 const CJK = /[\u3040-\u30ff\u3400-\u9fff]/;

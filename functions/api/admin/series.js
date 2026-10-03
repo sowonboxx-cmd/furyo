@@ -1,6 +1,6 @@
 // GET /api/admin/series : toutes les séries de la base, avec leur avancement et la liste des éléments obligatoires (back-office, connecté seulement).
 // Une fiche n'est jamais déclarée « complète » toute seule : la liste dit ce qui est fait, Will valide.
-import { text, num, date, check, rel, list, queryAll, slugify } from "../../../lib/notion.js";
+import { text, num, date, check, rel, list, queryAll, slugify, slugSerie } from "../../../lib/notion.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 import { estVisible } from "../../../lib/site.js";
 import { handle, mentionList, syncMentions } from "../../../lib/mentions.js";
@@ -48,7 +48,7 @@ export async function onRequestGet({ request, env, waitUntil }) {
     for (const k of ["ig", "tt", "x"]) { const n = syncMentions(leg[k], k, mentionList(cs, k)); if (n !== leg[k]) { leg[k] = n; maj[NOMS[k]] = rt(n); } }
     if (Object.keys(maj).length) aMettreAJour.push([r.id, maj]);
     return {
-      id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugify(t),
+      id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p),
       etat: text(p["Avancement"]) || "À faire", publier: check(p["Publier"]), visible: estVisible(p), date: date(p["Date de publication"]),
       leg,
       lot: text(p["Lot"]), trouver: text(p["À trouver"]), coeur: check(p["Prochaine à traiter"]), editions: rel(p["Éditions"]).length,

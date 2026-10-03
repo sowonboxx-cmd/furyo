@@ -1,6 +1,6 @@
 // GET /api/avancement : où en est le site. Total = toutes les séries de la base ; en ligne = celles visibles sur le site.
 // Sert au module « Avancement » (Actualités), à la page /avancement/ et aux visuels « Nouvelle fiche » du Studio.
-import { text, date, list, queryAll, cached, slugify } from "../../lib/notion.js";
+import { text, date, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
 import { estVisible } from "../../lib/site.js";
 import { chargerContexte, estPrete } from "../../lib/oblig.js";
 
@@ -18,7 +18,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const p = r.properties || {}, t = text(p["SERIES"]); if (!t) continue;
       const etat = text(p["Avancement"]) || "À faire";
       if (etats[etat] !== undefined) etats[etat]++;
-      if (estVisible(p)) enLigne.push({ t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugify(t), date: date(p["Date de publication"]), type: text(p["Type"]), genres: list(p["Genre"]).slice(0, 3) });
+      if (estVisible(p)) enLigne.push({ t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), date: date(p["Date de publication"]), type: text(p["Type"]), genres: list(p["Genre"]).slice(0, 3) });
       // Prêtes à publier : tous les éléments ★ faits, pas encore cochées « Publier » (même règle que le back-office).
       if (estPrete(p, r.id.replace(/-/g, ""), ctx)) prepa.push(t);
     }
