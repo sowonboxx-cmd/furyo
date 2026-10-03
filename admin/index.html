@@ -165,6 +165,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm .sr{font-size:13px;color:var(--paper-3);margin:0 0 10px}
 .vm .sr a{color:var(--blue-2);text-decoration:none}
 .vm .cv{float:right;width:96px;margin:0 0 8px 12px;border-radius:8px;background:var(--ink-3)}
+.vm .cv.big{float:none;display:block;width:min(240px,62%);margin:12px auto 4px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .vm dl{margin:10px 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
 .vm dt{color:var(--paper-3)}.vm dd{margin:0;overflow-wrap:anywhere}
 .vm label{display:block;clear:both;font-size:12px;color:var(--paper-3);margin:12px 0 4px}
@@ -435,15 +436,19 @@ function vdraw(){
 function vopen(id){
   const i = VITEMS.find(x => x.id === id); if (!i) return;
   const news = i.news;
-  const img = i.image ? `<img class="cv" src="/api/couv?u=${encodeURIComponent(i.image)}&w=300" alt="" onerror="this.remove()">` : "";
+  const couv = /^couv/.test(i.cat);
+  const img = i.image ? `<img class="cv${couv ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
   const dt = (k, v) => v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : "";
+  const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
+  // Couverture : seulement la date de sortie. Le reste : ce qui aide à décider (sans le niveau de source).
+  const champs = couv ? dt("Sortie", dLong(i.sortie)) : (/^sortie/.test(i.cat) ? dt("Sortie", dLong(i.sortie)) : "") + dt("Type", i.type) + dt("Concerne", i.champ) + dt("Actuel", i.actuel) + dt("Proposé", i.propose);
   const m = document.createElement("div"); m.className = "vm"; m.dataset.vid = id;
   m.innerHTML = `<div class="vm-b" role="dialog" aria-modal="true">
     <div class="vm-h"><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span>${esc(i.date ? new Date(i.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
     <h2>${esc(i.titre)}</h2>
     ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
     ${img}
-    <dl>${dt("Type", i.type)}${dt("Concerne", i.champ)}${dt("Actuel", i.actuel)}${dt("Proposé", i.propose)}${dt("Source", i.niveau)}</dl>
+    ${champs ? `<dl>${champs}</dl>` : ""}
     <label for="vtx">${news ? "Texte de la news (modifiable)" : "Note de la veille (modifiable)"}</label>
     <textarea id="vtx">${esc(i.texte)}</textarea>
     <div class="tools"><button data-vcp>${ICO_COPY}Copier le texte</button>${news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}</div>
@@ -452,7 +457,6 @@ function vopen(id){
       <button class="go" data-vs="Validé">${news ? "Publier la news" : "Valider"}</button>
       <button data-vs="Vu">${news ? "Vu, pas de news" : "Vu, rien à faire"}</button>
       <button class="rej" data-vs="Rejeté">Rejeter</button>
-      <p class="note">${news ? "Publier : la news part sur le site avec ce texte." : "Valider : la modification est appliquée dans la base au prochain passage de la veille."}</p>
     </div></div>`;
   document.body.appendChild(m);
 }

@@ -79,6 +79,25 @@ export async function onRequestGet({ request, env }) {
       serie: s, news: type === "News",
     };
   });
+  // Couvertures et sorties : la couverture et la date viennent de la base Tomes (comme le calendrier),
+  // via la fiche série en cache. Titre court : « Série T.03 ».
+  const tomeItems = items.filter(i => /^(couv|sortie)/.test(i.cat) && i.serie);
+  const slugs = [...new Set(tomeItems.map(i => i.serie.slug))];
+  const fiches = {};
+  await Promise.all(slugs.map(async sl => {
+    const r = await fetch(new URL("/api/serie?s=" + encodeURIComponent(sl), request.url).toString(), { headers: { cookie: "" } }).catch(() => null);
+    if (r && r.ok) fiches[sl] = await r.json().catch(() => null);
+  }));
+  for (const i of tomeItems) {
+    const m = i.prop.match(/\bT\.?\s?0*(\d+)\b|\btome\s+0*(\d+)/i);
+    const n = m ? Number(m[1] || m[2]) : null;
+    const pays = /FR$/.test(i.cat) ? "France" : "Japon";
+    if (n != null) i.titre = `${i.serie.t} T.${String(n).padStart(2, "0")}`;
+    const eds = ((fiches[i.serie.slug] || {}).editions || []).filter(e => e.pays === pays);
+    const tomes = eds.flatMap(e => e.tomes).filter(t => t.n === n);
+    const t = tomes.find(x => x.cover) || tomes[0];
+    if (t) { if (t.cover) i.image = t.cover; i.sortie = t.date || ""; }
+  }
   const counts = {};
   items.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
   return json({ items, counts, cats: CATS });
