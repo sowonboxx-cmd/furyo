@@ -583,7 +583,7 @@ if (/^https?:$/.test(location.protocol)) {
   fetch("/api/prepub").then(r => r.ok ? r.json() : null).then(j => {
     if (!j || j.error || !j.items) return;
     const ul = document.querySelector("#m-jp .jp"); if (!ul) return;
-    ul.innerHTML = j.items.slice(0, 8).map(it => `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${esc2(it.entry.split(" · ")[0])}${(it.hl || []).map(h => `<span class="hlp">${esc2(h)}</span>`).join("")}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
+    ul.innerHTML = j.items.slice(0, 8).map(it => `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${esc2(it.entry.split(" · ")[0])}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
     const note = document.querySelector("#m-jp .m-note"); if (note) note.hidden = true;
   }).catch(() => {});
   fetch("/api/avancement").then(r => r.ok ? r.json() : null).then(j => {
