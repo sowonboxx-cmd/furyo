@@ -481,7 +481,8 @@ function vopen(id){
     ${news ? `<textarea id="vtx" class="cap" data-cap="site"${act !== "site" ? " hidden" : ""}>${esc(i.texte)}</textarea>` : ""}
     ${["x", "ig", "tt"].map(k => `<textarea class="cap" data-cap="${k}"${k !== act ? " hidden" : ""}></textarea>`).join("")}
     <div class="tools"><button data-vcp>${ICO_COPY}Copier</button>${!tomeIt && news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}<span class="cnt" id="vcnt"></span></div>
-    ${tomeIt && i.image ? `<div class="vimg"><button data-vimg="post">${ICO_DL}Post 3:4</button><button data-vimg="story">${ICO_DL}Story 9:16</button></div>` : ""}
+    ${tomeIt && i.image ? `<div class="vimg"><div class="seg" role="group" aria-label="Thème"><button data-vth="creme" aria-pressed="true">Crème</button><button data-vth="sombre" aria-pressed="false">Sombre</button></div>
+      <button data-vimg="post">${ICO_DL}Post 3:4</button><button data-vimg="story">${ICO_DL}Story 9:16</button></div>` : ""}
     <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
     <div class="act">
       <button class="go" data-vs="Validé">${news ? "Publier la news" : "Valider"}</button>
@@ -608,8 +609,9 @@ document.addEventListener("click", async e => {
     m.querySelectorAll("[data-vtab]").forEach(b => b.setAttribute("aria-pressed", b === vt));
     m.querySelectorAll(".cap").forEach(t => t.hidden = t.dataset.cap !== vt.dataset.vtab); vcount(m); return; }
   const vcp = e.target.closest("[data-vcp]"); if (vcp) { const ta = [...vcp.closest(".vm").querySelectorAll(".cap")].find(t => !t.hidden); const ok = await copier(ta ? ta.value : ""); toast(ok ? "Copié ✓" : "Copie impossible"); return; }
+  const th = e.target.closest("[data-vth]"); if (th) { th.parentNode.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === th)); return; }
   const vg = e.target.closest("[data-vimg]"); if (vg) { const m = vg.closest(".vm"), i = VITEMS.find(x => x.id === m.dataset.vid);
-    imageTome(i, "creme", vg.dataset.vimg, vg); return; } // crème seulement pour l'instant (Will, 03/10/2026)
+    imageTome(i, (m.querySelector('[data-vth][aria-pressed="true"]') || { dataset: {} }).dataset.vth || "creme", vg.dataset.vimg, vg); return; }
   const vr = e.target.closest("[data-vrs]"); if (vr) { const m = vr.closest(".vm"), i = VITEMS.find(x => x.id === m.dataset.vid), v = m.querySelector("#vrs").value.trim();
     vr.classList.add("busy"); vr.disabled = true;
     const r = await fetch("/api/admin/update", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: i.serie.id, resumeSortie: v }) }).catch(() => null);
