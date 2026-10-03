@@ -64,7 +64,10 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .leg-h{display:flex;justify-content:space-between;align-items:center;font-size:13px}
 .leg pre{margin:8px 0 0;white-space:pre-wrap;font:inherit;font-size:13.5px;line-height:1.45;color:var(--paper)}
 .leg-no{margin:6px 0 0;font-size:12.5px;color:var(--paper-3)}
-.cp{height:30px;padding:0 14px;border:0;border-radius:15px;background:var(--blue);color:#fff;font-size:12.5px;font-weight:700;cursor:pointer}
+.cp{width:36px;height:36px;padding:0;border:0;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .2s,transform .15s}
+.cp svg{width:17px;height:17px;display:block}
+.cp:active{transform:scale(.88)}
+.cp.done{background:var(--ok)}
 .chk{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:13px}
 .chk li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chk .ok{color:var(--ok)}.chk .ko{color:#F08A7E}
@@ -120,6 +123,15 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const root = document.getElementById("root");
 const ETATS = ["À faire", "En cours", "À valider", "Validée"];
+const ICO_COPY = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg>`;
+const ICO_OK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+// Copie fiable aussi sur iPhone : presse-papiers moderne, sinon l'ancienne méthode (zone de texte cachée).
+async function copier(txt){
+  try { await navigator.clipboard.writeText(txt); return true; } catch (e) {}
+  const ta = document.createElement("textarea"); ta.value = txt; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;font-size:16px";
+  document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, txt.length);
+  let ok = false; try { ok = document.execCommand("copy"); } catch (e) {} ta.remove(); return ok;
+}
 const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>`;
 // Prête = tous les éléments ★ obligatoires sont faits, pas encore publiée : c'est là qu'on pioche chaque semaine.
 const pret = s => !s.publier && s.oblig.length > 0 && s.manque.length === 0;
@@ -197,7 +209,7 @@ function row(s){
       <label>★ Éléments obligatoires</label>
       <ul class="chk">${s.oblig.map(o => `<li class="${o.ok ? "ok" : "ko"}">${o.ok ? "✓" : "✗"} ${esc(o.k)}</li>`).join("")}</ul>
       <label>Légendes réseaux sociaux</label>
-      ${["ig", "tt", "x"].map(k => `<div class="leg"><div class="leg-h"><b>${{ ig: "Instagram", tt: "TikTok", x: "X" }[k]}</b>${s.leg && s.leg[k] ? `<button class="cp" data-cp="${k}">Copier</button>` : ""}</div>${s.leg && s.leg[k] ? `<pre>${esc(s.leg[k])}</pre>` : `<p class="leg-no">Pas encore de légende (à générer dans le Studio « Nouvelle fiche »).</p>`}</div>`).join("")}
+      ${["ig", "tt", "x"].map(k => `<div class="leg"><div class="leg-h"><b>${{ ig: "Instagram", tt: "TikTok", x: "X" }[k]}</b>${s.leg && s.leg[k] ? `<button class="cp" data-cp="${k}" aria-label="Copier la légende ${{ ig: "Instagram", tt: "TikTok", x: "X" }[k]}">${ICO_COPY}</button>` : ""}</div>${s.leg && s.leg[k] ? `<pre>${esc(s.leg[k])}</pre>` : `<p class="leg-no">Pas encore de légende (à générer dans le Studio « Nouvelle fiche »).</p>`}</div>`).join("")}
       <label>Lot</label><input data-lot value="${esc(s.lot)}" placeholder="ex. S41 – Bōsōzoku">
       <label>À trouver</label><textarea data-trouver placeholder="Liens de lecture, extraits…">${esc(s.trouver)}</textarea>
       <button class="save" data-save>Enregistrer</button>
@@ -224,7 +236,12 @@ document.addEventListener("click", e => {
   // Un appui n'importe où sur la carte (hors boutons et champs) la déplie ou la replie.
   if (!e.target.closest("button, select, input, textarea, label, a, .more")) { li.classList.toggle("open"); return; }
   const cp = e.target.closest("[data-cp]");
-  if (cp) { navigator.clipboard.writeText(s.leg[cp.dataset.cp]).then(() => { cp.textContent = "Copié ✓"; setTimeout(() => { cp.textContent = "Copier"; }, 1500); }).catch(() => toast("Copie impossible")); return; }
+  if (cp) { const nom = { ig: "Instagram", tt: "TikTok", x: "X" }[cp.dataset.cp];
+    copier(s.leg[cp.dataset.cp]).then(ok => {
+      if (!ok) { toast("Copie impossible, sélectionne le texte à la main"); return; }
+      cp.innerHTML = ICO_OK; cp.classList.add("done"); toast(`Légende ${nom} copiée ✓`);
+      setTimeout(() => { cp.innerHTML = ICO_COPY; cp.classList.remove("done"); }, 1800);
+    }); return; }
   if (e.target.closest("[data-coeur]")) { send(s, { coeur: !s.coeur }); return; }
   if (e.target.closest("[data-save]")) { send(s, { lot: li.querySelector("[data-lot]").value.trim(), trouver: li.querySelector("[data-trouver]").value.trim() }); }
 });
