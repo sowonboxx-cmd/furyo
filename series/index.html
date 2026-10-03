@@ -126,6 +126,8 @@ body.tb-open{overflow:hidden}
 @media (max-height:640px){.tb-cv{height:56vh}.tb-t,.tb-ds{width:calc(56vh * 5 / 7)}.tb-c{left:max(16px, calc(50% - 56vh * 5 / 14))}}
 /* Onglet News */
 .tabs .nb{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:9px;background:var(--ink-3);font-size:11px;margin-left:4px;padding:0 5px}
+/* Une news de moins d'un mois : le compteur passe en bleu vif pour la repérer. */
+.tabs .nb.hot{background:var(--blue);color:#fff;font-weight:700}
 .nw{list-style:none;margin:0;padding:0}
 .nw li+li{border-top:1px solid var(--ink-3)}
 .nw summary{list-style:none;display:flex;align-items:center;gap:10px;padding:13px 2px;cursor:pointer;min-width:0}
@@ -399,7 +401,7 @@ function render(){
   <div class="tabs" role="tablist">
       <button role="tab" data-tab="syn" aria-selected="${TAB === "syn"}">Synopsis</button>
       <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Info &amp; Extraits</button>
-      <button role="tab" data-tab="news" aria-selected="${TAB === "news"}">News${(s.news || []).length ? ` <small class="nb">${s.news.length}</small>` : ""}</button>
+      <button role="tab" data-tab="news" aria-selected="${TAB === "news"}">News${(s.news || []).length ? ` <small class="nb${s.news.some(n => n.date && (Date.now() - new Date(n.date + "T12:00:00")) < 30 * 864e5) ? " hot" : ""}">${s.news.length}</small>` : ""}</button>
       ${ad.length ? `<button role="tab" data-tab="ad" aria-selected="${TAB === "ad"}">Adaptations</button>` : ""}
   </div>
   <div class="panel">${panel(s, pubFR, pubJP, eds, ad)}</div>
