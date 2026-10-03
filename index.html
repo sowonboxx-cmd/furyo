@@ -83,6 +83,7 @@ button{font:inherit;color:inherit}
 .p-split{display:grid;grid-template-columns:132px minmax(0,1fr);gap:16px;align-items:start}
 .p-split .p-body{display:flex;flex-direction:column;gap:8px;min-width:0}
 .cover{width:100%;aspect-ratio:7/10;border-radius:10px;object-fit:cover;background:var(--ink-3);display:block}
+.cover.wide{aspect-ratio:auto;object-fit:contain}
 @media (max-width:420px){.p-split{grid-template-columns:112px minmax(0,1fr);gap:14px}}
 
 /* Carte vidéo */
@@ -496,7 +497,7 @@ function liveNews(j){
     const tag = it.type === "licence" ? "Licence FR" : "News", c = it.type === "licence" ? "--t-licence" : "--t-news";
     const head = `<div class="p-head"><span class="tag">${tag}</span><span>${escN(dN(it.date))}</span></div>`;
     const body = `${head}<h2 class="p-title">${escN(titre)}${jp}</h2><p class="p-text">${escN(it.texte)}</p>`;
-    const inner = it.cover ? `<div class="p-split"><img class="cover" src="/api/couv?u=${encodeURIComponent(it.cover)}&w=480" alt="Couverture de ${escN(titre)}" loading="lazy"><div class="p-body">${body}</div></div>` : body;
+    const inner = it.cover ? `<div class="p-split"><img class="cover" src="/api/couv?u=${encodeURIComponent(it.cover)}&w=480" alt="Image de la news : ${escN(titre)}" loading="lazy" onload="if(this.naturalWidth/this.naturalHeight>.85)this.classList.add('wide')"><div class="p-body">${body}</div></div>` : body;
     return `<li class="post" id="n-${escN(it.id)}" data-type="${it.type}" data-id="${it.type}-${slugN(titre)}" style="--c:var(${c})">${inner}<div class="p-foot"><a class="series" href="/series/${slugN(it.titre)}">${escN(titre)}</a>${it.src ? `<a class="src" href="${escN(it.src)}" target="_blank" rel="noopener">Source : ${escN(it.srcName || "officielle")} ↗</a>` : ""}</div></li>`;
   }).join("");
   feedEl.insertAdjacentHTML("afterbegin", html);
