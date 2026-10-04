@@ -6,6 +6,7 @@ import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from
 import { estVisible, FILTRE_PUBLIER } from "../../lib/site.js";
 import { isAdmin } from "../../lib/admin.js";
 import { sourceName } from "../../lib/source.js";
+import { categorie } from "../../lib/categories.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
@@ -82,8 +83,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
         filter: { and: [
           { property: "Série", relation: { contains: id } },
-          { property: "Type", select: { equals: "News" } },
-          { or: [{ property: "Statut", select: { equals: "Validé" } }, { property: "Statut", select: { equals: "Appliqué" } }] },
+          { property: "Statut", select: { equals: "Publié sur le site" } },
         ] },
         sorts: [{ property: "Date de la news", direction: "descending" }],
       } }).catch(() => []),
@@ -120,7 +120,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
     editions.sort((a, b) => (a.pays === b.pays ? b.tomes.length - a.tomes.length : a.pays === "France" ? -1 : 1));
     serie.news = nRows.map(r => {
       const q = r.properties || {}, champ = text(q["Champ concerné"]), prop = text(q["Proposition"]);
-      return { id: nid(r.id), cat: /licence/i.test(champ + " " + prop) ? "Licence FR" : "News", date: date(q["Date de la news"]), titre: prop.replace(/^\s*(licence\s*fr|news)\s*:\s*/i, ""), texte: text(q["Résumé FR"]), src: text(q["Source officielle"]), srcName: sourceName(text(q["Source officielle"])) };
+      const c = categorie({ cat: text(q["Catégorie"]), type: text(q["Type"]), champ, prop, vp: text(q["Valeur proposée"]), src: text(q["Source officielle"]) }) || categorie({ cat: "Annonce" });
+      return { id: nid(r.id), cat: c.nom, catC: c.c, date: date(q["Date de la news"]), titre: prop.replace(/^\s*(licence\s*fr|news|couverture dévoilée)\s*:\s*/i, ""), texte: text(q["Résumé site"]), src: text(q["Source officielle"]), srcName: sourceName(text(q["Source officielle"])) };
     });
     return { serie, editions };
   };

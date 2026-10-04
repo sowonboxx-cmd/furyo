@@ -1,10 +1,12 @@
 // Back-office « Validation » : tout ce que Will doit relire dans la base Veille (statut « À valider »).
 // GET /api/admin/veille            → { items: [...], counts: { cat: n } }
 // GET /api/admin/veille?count=1    → { n } (pastille verte de l'en-tête du site)
-// POST /api/admin/veille {id, statut, texte?} → change le statut (Validé, Vu, Rejeté) et, si fourni, le texte de la news (Résumé FR).
+// POST /api/admin/veille {id, statut, texte?, categorie?} → change le statut (voir STATUTS) et, si fournis, le texte de la news
+// (« Résumé site ») et sa catégorie.
 import { text, date, num, rel, list, queryAll, slugSerie } from "../../../lib/notion.js";
 import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
+import { CATEGORIES, categorie } from "../../../lib/categories.js";
 
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
@@ -13,43 +15,21 @@ const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database:
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
 const EDITEURS = { dataSource: "16e967fc-8e7b-4b7c-ab98-6a25cbdcd75a", database: "c9dc1efdf33d4ad09711d20d55860d52" };
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
-const STATUTS = ["Validé", "Vu", "Rejeté", "À valider"];
+// Statuts de la base Veille (renommés le 04/10/2026, Will) :
+//   « Publié sur le site » : la news est en ligne ; « À appliquer à la fiche » : changement de fiche approuvé, Claude l'applique
+//   puis passe la ligne en « Appliqué » ; « Vu » : gardé mais pas publié ; « Rejeté » : écarté.
+const STATUTS = ["Publié sur le site", "À appliquer à la fiche", "Vu", "Rejeté", "À valider"];
 const rt = s => ({ rich_text: s ? [{ type: "text", text: { content: String(s).slice(0, 1900) } }] : [] });
 const nid = id => id.replace(/-/g, "");
 
-// Catégories affichées en pastille (ordre des filtres dans le back-office).
-const CATS = {
-  couvJP: "Couverture JP", couvFR: "Couverture FR", sortieJP: "Sortie JP", sortieFR: "Sortie FR",
-  annFR: "Annonce FR", annJP: "Annonce JP", fin: "Fin de série", serie: "Nouvelle série", fiche: "Fiche", news: "News",
-};
-
-// Pays d'une proposition : mention explicite, sinon le site de la source officielle.
-function pays(prop, src) {
-  if (/\(France\)|\bFR\b|VF/.test(prop)) return "FR";
-  if (/\(Japon\)|\bJP\b/.test(prop)) return "JP";
-  let h = ""; try { h = new URL(src).hostname; } catch (e) {}
-  if (/\.jp$|bookwalker|prtimes/.test(h)) return "JP";
-  if (/\.fr$|kana|akata|pika|meian|ki-oon|kioon|delcourt|panini|mangetsu|kazemanga|glenat|kurokawa/.test(h)) return "FR";
-  return "JP";
-}
-
-function categorie(type, champ, prop, vp, src) {
-  const p = pays(prop, src), all = `${champ} ${prop}`;
-  if (type === "Nouvelle série") return "serie";
-  if (type === "Mise à jour fiche") return /termin|final|完結/i.test(`${prop} ${vp}`) ? "fin" : "fiche";
-  if (type === "Nouvelle édition / tome") return /couverture/i.test(all) ? "couv" + p : "sortie" + p;
-  if (type === "News") {
-    if (/couverture/i.test(prop)) return "couv" + p;
-    if (/annonce fr|licence/i.test(champ)) return "annFR";
-    if (/annonce jp/i.test(champ)) return "annJP";
-    if (/termin|final|完結/i.test(prop)) return "fin";
-    return "news";
-  }
-  return "news";
-}
+// Catégories : celles de Notion (lib/categories.js), plus les lignes internes (mise à jour de fiche, nouvelle série
+// à créer) et les prépublications.
+const INTERNES = { fiche: ["Mise à jour de fiche", "#98989D"], serie: ["Nouvelle série à créer", "#C49BF0"], prepub: ["Prépublication", "#E58AD1"] };
+const CATS = Object.fromEntries([...CATEGORIES.map(c => [c.k, c.nom]), ...Object.entries(INTERNES).map(([k, v]) => [k, v[0]])]);
+const COLS = Object.fromEntries([...CATEGORIES.map(c => [c.k, c.c]), ...Object.entries(INTERNES).map(([k, v]) => [k, v[1]])]);
 
 // Titre court sur une ligne : sans les préfixes « News : », « Couverture dévoilée : »…
-const court = prop => String(prop || "").replace(/^\s*(news|licence fr|nouvelle série)\s*:\s*/i, "").replace(/^couverture dévoilée\s*:\s*/i, "").trim();
+const court = prop => String(prop || "").replace(/^\s*(news|licence fr|nouvelle licence[^:]*|nouvelle série)\s*:\s*/i, "").replace(/^couverture dévoilée\s*:\s*/i, "").trim();
 
 async function lister(env) {
   return queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
@@ -87,20 +67,23 @@ export async function onRequestGet({ request, env }) {
     const p = r.properties || {};
     const type = text(p["Type"]), champ = text(p["Champ concerné"]), prop = text(p["Proposition"]);
     const vp = text(p["Valeur proposée"]), src = text(p["Source officielle"]);
-    const cat = categorie(type, champ, prop, vp, src);
+    // News : une catégorie choisie dans Notion, ou une proposition de type « News ». Le reste est interne (fiche à mettre à jour).
+    const catN = text(p["Catégorie"]), c = categorie({ cat: catN, type, champ, prop, vp, src });
+    const news = !!catN || type === "News";
+    const cat = c ? c.k : type === "Nouvelle série" ? "serie" : "fiche";
     const s = series[rel(p["Série"])[0]] || null;
     return {
       id: nid(r.id), notion: r.url, cat, label: CATS[cat], type, champ, titre: court(prop), prop,
       date: date(p["Date de la news"]), cree: (r.created_time || "").slice(0, 10),
-      actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé FR"]),
+      actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]),
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",
-      serie: s, news: type === "News",
+      serie: s, news,
     };
   });
   // Couvertures et sorties : la couverture et la date viennent de la base Tomes (comme le calendrier).
   // Titre court : « Série T.03 ». Deux requêtes en tout : les éditions des séries concernées, puis leurs tomes.
-  const tomeItems = items.filter(i => /^(couv|sortie)/.test(i.cat) && i.serie);
+  const tomeItems = items.filter(i => /^(couv|sortie)-/.test(i.cat) && i.serie);
   for (const i of tomeItems) { const m = i.prop.match(/\bT\.?\s?0*(\d+)\b|\btome\s+0*(\d+)/i); i._n = m ? Number(m[1] || m[2]) : null; }
   const sIds = [...new Set(tomeItems.map(i => i.serie.id))];
   const eRows = sIds.length ? await queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { or: sIds.slice(0, 100).map(id => ({ property: "Série", relation: { contains: id } })) } } }).catch(() => []) : [];
@@ -124,7 +107,7 @@ export async function onRequestGet({ request, env }) {
   const norm = v => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
   for (const i of tomeItems) {
     const n = i._n; delete i._n;
-    const pays = /FR$/.test(i.cat) ? "France" : "Japon";
+    const pays = /-fr$/.test(i.cat) ? "France" : "Japon";
     if (n != null) i.titre = `${i.serie.t} T.${String(n).padStart(2, "0")}`;
     let t = null, pub = "";
     for (const e of eds.filter(e => e.serie === i.serie.id && e.pays === pays)) { const x = e.tomes.find(y => y.n === n && y.cover) || e.tomes.find(y => y.n === n); if (x && (!t || (!t.cover && x.cover))) { t = x; pub = e.pub; } }
@@ -160,7 +143,7 @@ export async function onRequestGet({ request, env }) {
   items.sort((a, b) => String(b.date || b.cree).localeCompare(String(a.date || a.cree)));
   const counts = {};
   items.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
-  return json({ items, counts, cats: CATS });
+  return json({ items, counts, cats: CATS, cols: COLS });
 }
 
 export async function onRequestPost({ request, env }) {
@@ -169,7 +152,7 @@ export async function onRequestPost({ request, env }) {
   if (!/^[0-9a-f]{32}$/.test(b.id || "")) return json({ error: "élément inconnu" }, 400);
   // Prépublication : « Validé » coche la case Validé, « Vu » ou « Rejeté » coche Écarté.
   if (b.base === "prepub") {
-    if (!STATUTS.includes(b.statut)) return json({ error: "statut inconnu" }, 400);
+    if (!["Validé", "Vu", "Rejeté"].includes(b.statut)) return json({ error: "statut inconnu" }, 400);
     const pp = b.statut === "Validé" ? { "Validé": { checkbox: true } } : { "Écarté": { checkbox: true } };
     if (typeof b.texte === "string") pp["Annonce du magazine"] = rt(b.texte.trim());
     const r = await fetch(`https://api.notion.com/v1/pages/${b.id}`, {
@@ -186,7 +169,11 @@ export async function onRequestPost({ request, env }) {
     if (!STATUTS.includes(b.statut)) return json({ error: "statut inconnu" }, 400);
     props["Statut"] = { select: { name: b.statut } };
   }
-  if (typeof b.texte === "string") props["Résumé FR"] = rt(b.texte.trim());
+  if (typeof b.texte === "string") props["Résumé site"] = rt(b.texte.trim());
+  if (b.categorie) {
+    if (!CATEGORIES.some(c => c.nom === b.categorie)) return json({ error: "catégorie inconnue" }, 400);
+    props["Catégorie"] = { select: { name: b.categorie } };
+  }
   if (!Object.keys(props).length) return json({ error: "rien à changer" }, 400);
   const r = await fetch(`https://api.notion.com/v1/pages/${b.id}`, {
     method: "PATCH",
@@ -196,6 +183,6 @@ export async function onRequestPost({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
-  await Promise.all(["/api/news", "/api/crows", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/news?v=2", "/api/crows", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   return json({ ok: true });
 }

@@ -161,7 +161,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 @media (max-width:699px){.vm-b{max-width:none;height:100%;max-height:100%;border-radius:0;border-top:0;padding-top:calc(env(safe-area-inset-top,0px) + 14px)}}
 @media (min-width:700px){.vm{align-items:center}.vm-b{border-radius:22px;border:1px solid var(--line)}}
 .vm .tabs{display:flex;gap:6px;margin:14px 0 8px;clear:both}
-.vm .tabs button{flex:1;height:36px;border:0;border-radius:18px;background:var(--ink-3);color:var(--paper-3);font-weight:700;font-size:13px;cursor:pointer}
+.vm .tabs button{flex:1 1 auto;white-space:nowrap;padding:0 10px;height:36px;border:0;border-radius:18px;background:var(--ink-3);color:var(--paper-3);font-weight:700;font-size:13px;cursor:pointer}
 .vm .tabs button[aria-pressed=true]{background:var(--paper);color:var(--ink)}
 .vm textarea.cap{min-height:280px}
 .vm .cnt{font-size:12px;color:var(--paper-3);margin-left:auto;align-self:center}
@@ -176,7 +176,14 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm .rs{display:flex;gap:8px;align-items:flex-start}
 .vm .rs textarea{min-height:88px;flex:1}
 .vm .rs button{height:38px;padding:0 12px;border:0;border-radius:19px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
-.vm-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--paper-3)}
+.vm-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--paper-3);white-space:nowrap;min-width:0}
+.vm-h>span:not(.pc){overflow:hidden;text-overflow:ellipsis;min-width:0}
+.vm-h .x{flex:none}
+.pcs{position:relative;flex:none;max-width:70%;display:inline-flex;align-items:center;height:30px;border-radius:8px;color:var(--c);background:color-mix(in srgb,var(--c) 18%,var(--ink-3))}
+.pcs select{appearance:none;-webkit-appearance:none;height:30px;padding:0 26px 0 10px;border:0;background:transparent;color:var(--c);font-family:inherit;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
+.pcs::after{content:"▾";position:absolute;right:9px;font-size:11px;pointer-events:none}
+.pcs option{color:#000}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .vm-h .x{margin-left:auto;width:36px;height:36px;border:0;border-radius:50%;background:var(--ink-3);color:var(--paper);font-size:18px;cursor:pointer}
 .vm h2{margin:10px 0 4px;font-size:19px;line-height:1.3}
 .vm .sr{font-size:13px;color:var(--paper-3);margin:0 0 10px}
@@ -428,7 +435,9 @@ async function hub(){
 }
 
 /* ---------- Validation : la veille à relire ---------- */
-const VCOL = { couvJP: "#F2B33D", couvFR: "#F2B33D", sortieJP: "#6FA8F5", sortieFR: "#6FA8F5", annFR: "#7BC67E", annJP: "#7BC67E", fin: "#F08A7E", serie: "#C49BF0", fiche: "#98989D", news: "#5FD0D0", prepub: "#E58AD1" };
+// Catégories et couleurs : celles de Notion, envoyées par /api/admin/veille (lib/categories.js).
+let VCOL = {};
+const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "adaptation", "annonce"];
 let VITEMS = [], VCATS = {}, VF = "tout";
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
 async function veille(){
@@ -438,7 +447,7 @@ async function veille(){
   if (r.status === 401) return login("Session expirée, reconnecte-toi.");
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { document.getElementById("vhint").textContent = j.error || "Impossible de charger la veille."; return; }
-  VITEMS = j.items || []; VCATS = j.cats || {};
+  VITEMS = j.items || []; VCATS = j.cats || {}; VCOL = j.cols || {};
   vdraw();
 }
 function vdraw(){
@@ -468,12 +477,12 @@ function vopen(id){
     : tomeCat ? dt("Sortie", dLong(i.sortie)) : dt("Actuel", i.actuel) + dt("Proposé", i.propose);
   const tomeIt = /^(couv|sortie)/.test(i.cat) && i.serie && i.tome;
   const rs = i.serie ? (i.serie.resumeSortie || (/^(couv|sortie)/.test(i.cat) && i.tome ? resumeAuto(i) : "")) : "";
-  const tabs = [...(site ? [["site", pp ? "Annonce" : "Site"]] : []), ["x", "X"], ["ig", "Instagram"], ["tt", "TikTok"]];
+  const tabs = [...(site ? [["site", pp ? "Annonce" : "Résumé site"]] : []), ["x", "X"], ["ig", "Instagram"], ["tt", "TikTok"]];
   // Couverture / sortie : on ouvre sur la légende X ; news : sur le texte du site (celui qui est publié).
   const act = tomeIt || !site || (pp && !i.texte) ? "x" : "site";
   const m = document.createElement("div"); m.className = "vm"; m.dataset.vid = id;
   m.innerHTML = `<div class="vm-b" role="dialog" aria-modal="true">
-    <div class="vm-h"><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span>${esc(i.date ? new Date(i.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
+    <div class="vm-h">${news ? `<label class="pcs" style="--c:${VCOL[i.cat]}"><span class="vh">Catégorie</span><select id="vcat">${NEWS_CATS.map(k => `<option value="${k}"${k === i.cat ? " selected" : ""}>${esc(VCATS[k])}</option>`).join("")}</select></label>` : `<span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span>`}<span>${esc(i.date ? new Date(i.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
     <h2>${esc(i.titre)}</h2>
     ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
     ${img}
@@ -488,8 +497,8 @@ function vopen(id){
       <button data-vimg="post">${ICO_DL}Post 3:4</button><button data-vimg="story">${ICO_DL}Story 9:16</button></div>` : ""}
     <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
     <div class="act">
-      <button class="go" data-vs="Validé">${news ? "Publier la news" : pp ? "Valider (en ligne sur le site)" : "Valider"}</button>
-      ${pp ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : `<button data-vs="Vu">${news ? "Vu, pas de news" : "Vu, rien à faire"}</button>
+      <button class="go" data-vs="${news ? "Publié sur le site" : pp ? "Validé" : "À appliquer à la fiche"}">${news ? "Publier sur le site" : pp ? "Publier sur le site" : "Appliquer à la fiche"}</button>
+      ${pp ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : `<button data-vs="Vu">${news ? "Vu, pas sur le site" : "Vu, rien à faire"}</button>
       <button class="rej" data-vs="Rejeté">Rejeter</button>`}
     </div></div>`;
   document.body.appendChild(m);
@@ -536,7 +545,7 @@ function choixX(aut, fr, tient){
 function postX(i, rs){
   const s = i.serie || {}, c = i.comptes || {};
   // Règle simplifiée (Will, 03/10/2026) : le résumé directement, sans « Résumé : », et plus de ligne « Fiche complète ».
-  const base = `${i.titre}\n${ligneSortie(i)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
+  const base = `${catLigne(i)}${i.titre}\n${ligneSortie(i)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
   const hs = choixX(c.x, c.xFR, h => poidsX(base + "\nX " + h.map(x => "@" + x).join(" · ")) <= 280);
   return base + (hs.length ? "\nX " + hs.map(h => "@" + h).join(" · ") : "");
 }
@@ -563,15 +572,17 @@ function ligneSortie(i){
   if (d) { const o = new Date(d + "T12:00:00"); q = o.toLocaleDateString("fr-FR", { day: "numeric", month: "long", ...(o.getFullYear() !== new Date().getFullYear() ? { year: "numeric" } : {}) }); q = q.replace(/^1 /, "1er "); }
   return (q ? `Sortie le ${q}` : "Sortie") + (t.pub ? ` chez ${t.pub}` : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
 }
+// Catégorie en première ligne des posts : la même que sur le site et dans Notion (Will, 04/10/2026).
+function catLigne(i){ const k = i.catChoisie || i.cat; return NEWS_CATS.includes(k) ? `${VCATS[k]}\n` : ""; }
 function captions(i, rs){
   const s = i.serie || {}, c = i.comptes || {}, url = s.slug ? `furyogang.com/series/${s.slug}` : "furyogang.com";
-  const tags = [...new Set([tagOf(s.t), ...(s.genres || []).slice(0, 2).map(tagOf), "#manga", "#FuryoGang", ...(/FR$/.test(i.cat) ? ["#mangafr"] : [])])].filter(x => x.length > 1);
+  const tags = [...new Set([tagOf(s.t), ...(s.genres || []).slice(0, 2).map(tagOf), "#manga", "#FuryoGang", ...(/-fr$/.test(i.cat) ? ["#mangafr"] : [])])].filter(x => x.length > 1);
   if (/^(couv|sortie)/.test(i.cat) && i.tome) {
     const res = rs ? `\n\n${rs}` : "";
     return {
       x: postX(i, rs),
-      ig: `🆕 ${i.titre}${s.jp ? ` (${s.jp})` : ""}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio).${(c.ig || []).length ? `\n📣 ${c.ig.map(h => "@" + h).join(" ")}` : ""}\n\n${tags.join(" ")}`,
-      tt: `🆕 ${i.titre}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète sur furyogang.com${(c.tt || []).length ? `\n📣 ${c.tt.map(h => "@" + h).join(" ")}` : ""}\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
+      ig: `${catLigne(i)}🆕 ${i.titre}${s.jp ? ` (${s.jp})` : ""}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio).${(c.ig || []).length ? `\n📣 ${c.ig.map(h => "@" + h).join(" ")}` : ""}\n\n${tags.join(" ")}`,
+      tt: `${catLigne(i)}🆕 ${i.titre}\n📅 ${ligneSortie(i)}${res}\n\n📖 Fiche complète sur furyogang.com${(c.tt || []).length ? `\n📣 ${c.tt.map(h => "@" + h).join(" ")}` : ""}\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
     };
   }
   const txt = (i.texte || "").trim();
@@ -582,9 +593,9 @@ function captions(i, rs){
     tt: `📖 ${i.titre}\n\n${i.tweet}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
   };
   return {
-    x: `${i.titre}${txt ? `\n${resumeCourt(txt)}` : ""}\n\n↗ ${url}`,
-    ig: `🆕 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
-    tt: `🆕 ${i.titre}${txt ? `\n\n${resumeCourt(txt)}` : ""}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
+    x: `${catLigne(i)}${i.titre}${txt ? `\n${resumeCourt(txt)}` : ""}\n\n↗ ${url}`,
+    ig: `${catLigne(i)}🆕 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
+    tt: `${catLigne(i)}🆕 ${i.titre}${txt ? `\n\n${resumeCourt(txt)}` : ""}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
   };
 }
 // Régénère les légendes ; celles que Will a retouchées à la main restent telles quelles (sauf « force »).
@@ -602,14 +613,23 @@ function vcount(m){
 }
 async function vsend(btn, statut){
   const m = btn.closest(".vm"), id = m.dataset.vid, i = VITEMS.find(x => x.id === id);
-  const vtx = m.querySelector("#vtx"), texte = vtx ? vtx.value : i.texte;
+  const vtx = m.querySelector("#vtx"), texte = vtx ? vtx.value : i.texte, vc = m.querySelector("#vcat");
   btn.classList.add("busy");
-  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, statut, ...(texte !== i.texte ? { texte } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
+  // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
+  const categorie = vc && statut === "Publié sur le site" ? VCATS[vc.value] : "";
+  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, statut, ...(texte !== i.texte ? { texte } : {}), ...(categorie ? { categorie } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
   VITEMS = VITEMS.filter(x => x.id !== id); m.remove(); vdraw();
-  toast(statut === "Validé" ? (i.news ? "News publiée ✓" : i.base === "prepub" ? "Prépublication en ligne ✓" : "Validé ✓") : statut === "Vu" ? "Marqué comme vu" : i.base === "prepub" ? "Écartée" : "Rejeté");
+  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Prépublication en ligne ✓" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? "Marqué comme vu" : i.base === "prepub" ? "Écartée" : "Rejeté");
 }
+// Catégorie changée dans la fiche : couleur, puis légendes régénérées avec le nouveau nom.
+document.addEventListener("change", e => {
+  if (e.target.id !== "vcat") return;
+  const m = e.target.closest(".vm"), i = VITEMS.find(x => x.id === m.dataset.vid);
+  e.target.parentNode.style.setProperty("--c", VCOL[e.target.value]);
+  i.catChoisie = e.target.value; vcaps(m, i, false); vcount(m);
+});
 document.addEventListener("click", async e => {
   const vf = e.target.closest("[data-vf]"); if (vf) { VF = vf.dataset.vf; vdraw(); return; }
   const vi = e.target.closest(".vi"); if (vi) { vopen(vi.dataset.vid); return; }

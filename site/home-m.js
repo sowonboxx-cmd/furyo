@@ -5,7 +5,8 @@
   var MQ = matchMedia("(max-width:719px)");
   var root = document.getElementById("mh");
   if (!root) return;
-  var TYPES = [["news", "News", "#7FA7C9"], ["cover", "Couvertures", "#F2B33D"], ["annonce", "Annonces", "#E5483A"], ["licence", "Licences FR", "#7BC67E"], ["trailer", "Trailers", "#A48CD6"], ["fin", "Fins de série", "#E0955F"], ["pause", "Pauses", "#9C978A"], ["mag", "Magazines", "#E58FA8"]];
+  // Catégories : mêmes noms et couleurs que la propriété « Catégorie » de Notion (voir lib/categories.js).
+  var TYPES = [["licence-fr", "Nouvelle licence (France)", "#529CCA"], ["licence-jp", "Nouvelle licence (Japon)", "#FF7369"], ["couv-fr", "Couverture française", "#9A6DD7"], ["couv-jp", "Couverture japonaise", "#E255A1"], ["sortie-fr", "Sortie française", "#4DAB9A"], ["sortie-jp", "Sortie japonaise", "#FFA344"], ["fin", "Fin de série", "#BA856F"], ["pause", "Pause", "#9B9A97"], ["adaptation", "Adaptation", "#FFDC49"], ["annonce", "Annonce", "#D4D4D8"]];
   var TL = {}; TYPES.forEach(function (t) { TL[t[0]] = t; });
   var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var slug = function (t) { return String(t || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60); };
@@ -39,8 +40,8 @@
   }
   function link(it) { return "/actus/" + slug(it.fr || it.titre) + "-" + String(it.id).slice(0, 8); }
   function meta(it) {
-    var t = TL[it.type] || TL.news;
-    return '<div class="mh-meta"><span style="color:' + t[2] + '">' + esc(it.type === "licence" ? "Licence FR" : t[1]) + "</span>· " + esc(dd(it.date)) + "</div>";
+    var t = TL[it.cat] || TL.annonce;
+    return '<div class="mh-meta"><span style="color:' + t[2] + '">' + esc(t[1]) + "</span>· " + esc(dd(it.date)) + "</div>";
   }
   // Carte « O » : texte à gauche, image à droite
   function cardO(it) {
@@ -54,9 +55,9 @@
   }
   // La plus récente en grand
   function hero(it) {
-    var t = TL[it.type] || TL.news;
+    var t = TL[it.cat] || TL.annonce;
     return '<article class="mh-hero"><a class="mh-hit" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 720)) + '" alt="">' : "") +
-      '<span class="mh-hv"><span class="mh-pill" style="background:' + t[2] + '">' + esc(it.type === "licence" ? "Licence FR" : t[1]) + "</span><em>" + esc(dd(it.date)) + "</em></span>" +
+      '<span class="mh-hv"><span class="mh-pill" style="background:' + t[2] + '">' + esc(t[1]) + "</span><em>" + esc(dd(it.date)) + "</em></span>" +
       "<h2>" + esc(it.fr || it.titre) + "</h2><p>" + esc(it.texte) + "</p></a>" + acts(it) + "</article>";
   }
 
@@ -68,7 +69,7 @@
     }).join("") + '<button type="button" class="mh-catb" aria-haspopup="listbox" aria-expanded="false">Catégories' + I.chev + "</button></nav>";
   }
   function catMenu(cur) {
-    var n = function (k) { return (D.news || []).filter(function (it) { return it.type === k; }).length; };
+    var n = function (k) { return (D.news || []).filter(function (it) { return it.cat === k; }).length; };
     return '<div class="mh-menu" role="listbox" aria-label="Catégories" hidden>' +
       '<button role="option" data-cat="" aria-selected="' + !cur + '"><i style="background:#F5F5F7"></i>Toutes les catégories</button>' +
       TYPES.map(function (t) { return '<button role="option" data-cat="' + t[0] + '" aria-selected="' + (cur === t[0]) + '"' + (n(t[0]) ? "" : ' class="vide"') + '><i style="background:' + t[2] + '"></i>' + t[1] + "<small>" + n(t[0]) + "</small></button>"; }).join("") + "</div>";
@@ -148,7 +149,7 @@
     var v = q(), news = (D.news || []).slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); });
     if (v.vue === "magazines") { root.innerHTML = top("Tous les magazines") + '<div class="mh-mags">' + (D.prepub ? mags().map(magCard).join("") || '<p class="mh-note">Aucun magazine pour l\'instant.</p>' : '<p class="mh-note">Chargement…</p>') + "</div>"; return; }
     if (v.vue === "actus" || v.cat) {
-      LIST = v.cat ? news.filter(function (it) { return it.type === v.cat; }) : news; PAGE = 0;
+      LIST = v.cat ? news.filter(function (it) { return it.cat === v.cat; }) : news; PAGE = 0;
       var chips = v.cat ? '<div class="mh-chips">' + TYPES.map(function (t) { return '<a href="/?cat=' + t[0] + '" aria-current="' + (t[0] === v.cat) + '"><i style="background:' + t[2] + '"></i>' + t[1] + "</a>"; }).join("") + "</div>" : "";
       root.innerHTML = top(v.cat ? (TL[v.cat] || ["", "Catégorie"])[1] : "Toutes les actualités") + chips + '<div class="mh-list" id="mh-list"></div><div id="mh-more" class="mh-note"></div>';
       if (!D.news) { document.getElementById("mh-more").textContent = "Chargement…"; return; }

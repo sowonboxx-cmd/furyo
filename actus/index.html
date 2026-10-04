@@ -24,7 +24,7 @@ a{color:inherit}
 .na-back svg,.na-share svg{width:20px;height:20px}
 .na-share{position:absolute;z-index:2;right:12px;top:12px;width:42px;height:42px;border:0;border-radius:21px;background:rgba(0,0,0,.55);display:grid;place-items:center;color:#fff;cursor:pointer}
 .na-ht{position:absolute;z-index:1;left:20px;right:20px;bottom:6px;display:flex;flex-direction:column;gap:8px}
-.na-pill{align-self:flex-start;height:26px;padding:0 10px;border-radius:8px;color:#000;font:700 12px/26px Inter,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.na-pill{align-self:flex-start;white-space:nowrap;height:26px;padding:0 10px;border-radius:8px;color:#000;font:700 12px/26px Inter,sans-serif;text-transform:uppercase;letter-spacing:.04em}
 .na-ht h1{margin:0;font:700 clamp(38px,11vw,56px)/.95 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em}
 .na-body{display:flex;flex-direction:column;gap:16px;padding:12px 20px 0}
 .na-meta{font-size:13px;color:var(--paper-3)}
@@ -65,7 +65,7 @@ a{color:inherit}
 <main class="na" id="na"><p class="na-empty">Chargement…</p></main>
 <script>
 (function () {
-  var TYPES = { news: ["News", "#7FA7C9"], cover: ["Couverture", "#F2B33D"], annonce: ["Annonce", "#E5483A"], licence: ["Licence FR", "#7BC67E"], trailer: ["Trailer", "#A48CD6"], fin: ["Fin de série", "#E0955F"], pause: ["Pause", "#9C978A"], mag: ["Magazine", "#E58FA8"] };
+
   var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var slug = function (t) { return String(t || "").replace(/œ/g, "oe").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60); };
   var couv = function (u, w) { return u ? (/^https?:/.test(u) ? "/api/couv?u=" + encodeURIComponent(u) + "&w=" + w : u) : ""; };
@@ -98,7 +98,7 @@ a{color:inherit}
   }
   function render() {
     if (!N) return;
-    var t = TYPES[N.type] || TYPES.news, titre = N.fr || N.titre;
+    var t = [N.catNom || "Annonce", N.catC || "#D4D4D8"], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '">' : "") +
       '<a class="na-back" href="/" aria-label="Retour aux actualités">' + I.back + '</a><button type="button" class="na-share" id="na-share" aria-label="Partager">' + I.share + "</button>" +
