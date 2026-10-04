@@ -409,9 +409,10 @@ body{font-weight:500}
 .l-seg{position:static!important;margin:0 10px 8px!important}
 .to-top{position:fixed;z-index:25;right:max(16px,calc((100vw - 880px) / 2 + 16px));bottom:calc(env(safe-area-inset-bottom,0px) + 18px);width:48px;height:48px;border-radius:50%;border:0;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .to-top:hover{background:color-mix(in srgb,var(--paper) 16%,var(--ink-3))}
-.uni-head{position:relative;isolation:isolate;min-height:120px}
-.uni-char{position:absolute;z-index:-1;right:-8px;top:-54px;height:230px;width:auto;max-width:55%;object-fit:contain;object-position:right top;opacity:.5;pointer-events:none}
-@media (min-width:700px){.uni-char{height:300px;top:-70px}}
+.uni-head{position:relative;isolation:isolate;min-height:230px;display:flex;flex-direction:column;justify-content:flex-end;padding-right:38%}
+.uni-char{position:absolute;z-index:-1;right:0;top:0;bottom:0;height:100%;width:auto;max-width:48%;object-fit:contain;object-position:right bottom;opacity:.55;pointer-events:none}
+@media (min-width:700px){.uni-head{min-height:340px;padding-right:34%}.uni-char{opacity:.8}}
+@media (max-width:699px){.uni-head{padding-right:0}.uni-head p{max-width:62%}}
 
 /* ---------- Couvertures : sans liseré ni ombre, +20 % ---------- */
 .cover,.s-res .cover,.feature .cover,.lb-cover .cover.big{box-shadow:none!important}
@@ -486,8 +487,18 @@ footer{padding-block:0 32px!important;margin-top:-28px}
 
 .s-res .cover{grid-row:1 / span 4!important}
 .s-res .sj{grid-column:2;font-size:12.5px;line-height:1.3;color:var(--paper-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* En-tête de la chronologie : pas de Validation, la bande de rubriques devient le titre du guide + la recherche */
-.sh-val{display:none!important}
+/* × bien au milieu de CROWS et WORST */
+.hero h1 .home-link{display:inline-flex;align-items:center;justify-content:center}
+.hero h1 .x{display:inline-flex;align-items:center;vertical-align:0!important;line-height:1;height:.72em;font-size:.62em!important;padding-inline:.1em!important;transform:translateY(-.12em)}
+/* En-tête de la chronologie : ni Validation ni back-office */
+.sh-adm{display:none!important}
+/* Série mère : titre en haut à droite de la couverture, résumé dessous, détails en bas */
+.feature .f-top{grid-template-areas:"cv main" "cv syn";grid-template-rows:auto 1fr;align-items:start!important;column-gap:28px!important;row-gap:14px!important}
+.feature .f-top>.cover{grid-area:cv}
+.feature .f-top>.f-main{grid-area:main}
+.feature .f-top>.syn{grid-area:syn;margin:0;max-width:70ch}
+@media (max-width:699px){.feature .f-top{grid-template-areas:"cv main" "syn syn";column-gap:14px!important}}
+
 .sh-nav.cx-nav{align-items:center;gap:10px}
 .cx-guide{font:600 15px var(--f-body);color:var(--paper)}
 .cx-search{width:36px;height:36px;border:0;border-radius:18px;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer;flex:none}
@@ -505,19 +516,20 @@ footer{padding-block:0 32px!important;margin-top:-28px}
 .mt-tag{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px;border-radius:14px;background:color-mix(in srgb,var(--cv-live,#4CD07D) 18%,var(--ink-3));color:#4CD07D;font:700 12px var(--f-body);letter-spacing:.06em;text-transform:uppercase}
 .mt-tag i{width:8px;height:8px;border-radius:50%;background:#4CD07D;animation:mtPulse 1.6s ease-in-out infinite}
 @keyframes mtPulse{50%{opacity:.25}}
-.mt-t{font:700 60px/.95 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.mt-t{font:700 57px/1.08 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
 .mt-d{font:500 16px/1.5 var(--f-body);color:var(--paper-2);max-width:40ch}
 .mt-go{display:inline-flex;align-items:center;gap:10px;height:50px;margin-top:auto;padding:0 24px;border-radius:25px;background:var(--paper);color:var(--ink-2);font:700 15px var(--f-body);transition:transform .2s}
 .mt:hover .mt-go{transform:translateX(4px)}
 .mt:focus-visible{outline:3px solid var(--paper);outline-offset:3px}
-@media (prefers-reduced-motion:no-preference){.mt-world{animation:mtPan 38s ease-in-out infinite alternate}}
-@keyframes mtPan{from{translate:0 0}to{translate:var(--mt-dx,0px) 0}}
+.mt-loop{position:absolute;left:0;top:0;will-change:transform}
+@media (prefers-reduced-motion:no-preference){.mt-loop{animation:mtLoop var(--mt-t,60s) linear infinite}}
+@keyframes mtLoop{from{transform:translateX(0)}to{transform:translateX(var(--mt-dx,0px))}}
 @media (max-width:699px){
   .mt{min-height:0;border-radius:20px}
   .mt-view{bottom:auto;height:170px}
   .mt::before{background:linear-gradient(180deg,transparent 0,transparent 90px,var(--ink-2) 175px)}
   .mt-txt{min-height:0;padding:182px 20px 22px;gap:10px;max-width:none}
-  .mt-t{font-size:42px}
+  .mt-t{font-size:40px}
   .mt-t br{display:none}
   .mt-d{font-size:14.5px}
   .mt-go{margin-top:6px;height:46px}
@@ -718,9 +730,9 @@ body.cv-on .lightbox{z-index:130}
     <h1><a href="#" class="home-link" data-home aria-label="Retour à l'accueil de la chronologie">CROWS<span class="x">×</span>WORST</a></h1>
     <div class="stats" id="stats"></div>
     <button class="mt" id="mapTeaser" data-map-open aria-label="Ouvrir la carte dynamique de l'univers">
-      <span class="mt-view" aria-hidden="true"><span class="mt-world" id="mtWorld"></span></span>
+      <span class="mt-view" aria-hidden="true"></span>
       <span class="mt-txt">
-        <span class="mt-tag"><i></i>Interactif</span>
+        <span class="mt-tag">Interactif</span>
         <span class="mt-t">Carte dynamique <br>de l'univers</span>
         <span class="mt-d">Toutes les œuvres CROWS × WORST sur une seule carte, dans l'ordre de l'histoire. Déplace-toi, zoome et ouvre chaque série.</span>
         <span class="mt-go">Explorer la carte<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
@@ -865,8 +877,8 @@ function featureHTML(w, pos){
         ${w.jp && w.jp !== w.t ? `<span class="w-jp" lang="ja">${esc(w.jp)}</span>` : ""}
         <div class="f-nums"><span><b>${w.vol != null ? w.vol : "?"}</b> tomes</span>${yearsShort(w) ? `<span><b>${esc(yearsShort(w))}</b></span>` : ""}${isLive(w) ? `<span class="pill live">En cours</span>` : ""}</div>
       </div>
+      ${w.syn ? `<p class="syn">${esc(w.syn)}</p>` : ""}
     </div>
-    ${w.syn ? `<p class="syn">${esc(w.syn)}</p>` : ""}
     <div class="facts">${facts}</div>
   </article>`;
 }
@@ -1436,25 +1448,26 @@ CV.el.addEventListener("scroll", () => { if (CV.el.scrollLeft || CV.el.scrollTop
 document.getElementById("mapTeaser").addEventListener("click", cvOpen);
 // Aperçu vivant de la carte dans la grande carte cliquable : la vraie carte, en tout petit, qui défile doucement
 function mtPreview(){
-  const box = document.getElementById("mtWorld"), mt = document.getElementById("mapTeaser"); if (!box || !mt) return;
+  const view = document.querySelector(".mt-view"), mt = document.getElementById("mapTeaser"); if (!view || !mt) return;
   if (!CV.built) cvBuild();
-  box.innerHTML = CV.world.innerHTML;
-  box.querySelectorAll("img").forEach(i => i.loading = "eager");
   const h = mt.clientHeight, w = mt.clientWidth, mob = w < 700;
-  const s = (mob ? 170 * 0.98 : h * 1.08) / CV.H;
-  box.style.width = CV.W + "px"; box.style.height = CV.H + "px";
-  const x0 = mob ? 14 : Math.max(w * 0.42, w - CV.W * s * 0.55);
-  box.style.transform = `translate(${x0}px,${mob ? 8 : 12}px) scale(${s})`;
-  box.style.setProperty("--mt-dx", Math.min(0, w - x0 - CV.W * s - 20) / s + "px");
+  const s = (mob ? 170 * 0.98 : h * 1.0) / CV.H, gap = 220, step = (CV.W + gap) * s;
+  // Deux copies côte à côte (trois si l'écran est large) qui défilent en boucle : la carte ne s'arrête jamais
+  const n = Math.max(2, Math.ceil(w / step) + 1);
+  let html = "";
+  for (let i = 0; i < n; i++) html += `<span class="mt-world" style="width:${CV.W}px;height:${CV.H}px;transform:translate(${i * step}px,0) scale(${s})">${CV.world.innerHTML}</span>`;
+  view.innerHTML = `<span class="mt-loop" style="top:${mob ? 8 : 18}px;left:${mob ? 14 : Math.round(w * 0.42)}px;--mt-dx:${-step}px;--mt-t:${Math.round(step / 18)}s">${html}</span>`;
+  view.querySelectorAll("img").forEach(i => i.loading = "eager");
 }
 mtPreview();
 addEventListener("resize", () => { clearTimeout(mtPreview.t); mtPreview.t = setTimeout(mtPreview, 200); });
-// Bande sous le logo : le guide de lecture et la recherche, à la place des rubriques du site
-(function cxNav(){
-  const nav = document.querySelector(".sh-nav"); if (!nav) return;
-  nav.classList.add("cx-nav");
-  nav.setAttribute("aria-label", "Guide de lecture");
-  nav.innerHTML = `<span class="cx-guide">Guide de lecture <span class="cx-l">de l'univers </span>de Hiroshi Takahashi</span><button class="cx-search" id="searchBtn" aria-label="Rechercher une œuvre"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>`;
+// En-tête sur cette page : pas de rubriques ni de back-office, et la loupe du site cherche dans l'univers CROWS x WORST
+(function cxHeader(){
+  const nav = document.querySelector(".sh-nav"); if (nav) nav.remove();
+  dispatchEvent(new Event("resize"));
+  const sb = document.getElementById("sh-search");
+  if (sb) sb.setAttribute("aria-label", "Rechercher une œuvre CROWS × WORST");
+  addEventListener("click", e => { if (e.target.closest("#sh-search")) { e.preventDefault(); e.stopImmediatePropagation(); openSearch(); } }, true);
 })();
 if (location.hash === "#carte") cvOpen();
 
