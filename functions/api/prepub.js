@@ -4,6 +4,18 @@ import { text, num, date, rel, list, queryAll, cached } from "../../lib/notion.j
 
 const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
 
+// Sites officiels des magazines (repli quand « Lien du numéro » est vide).
+const MAG_LINK = {
+  "Weekly Young Magazine": "https://yanmaga.jp/",
+  "Young Champion": "https://youngchampion.jp/",
+  "Champion Cross": "https://championcross.jp/",
+  "Weekly Shōnen Champion": "https://www.akitashoten.co.jp/w-champion",
+  "Monthly Shōnen Champion": "https://www.akitashoten.co.jp/m-champion",
+  "Tonari no Young Jump": "https://tonarinoyj.jp/",
+  "Comic Zenon": "https://comic-zenon.com/",
+  "Big Comics": "https://bigcomics.jp/",
+};
+
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
@@ -24,6 +36,13 @@ export async function onRequestGet({ env, request, waitUntil }) {
         hl: list(p["Mise en avant"]), note: text(p["Annonce du magazine"]),
       };
     });
+    // Lien de lecture et page officielle d'une série : repris d'un numéro précédent s'il manque sur le nouveau (la base garde l'historique).
+    const k = it => (it.entry || "").split(" · ")[0].toLowerCase();
+    const keep = {};
+    for (const it of items) { const c = keep[k(it)] = keep[k(it)] || {}; if (it.read && !c.read) c.read = it.read; if (it.page && !c.page) c.page = it.page; }
+    for (const it of items) { const c = keep[k(it)] || {}; if (!it.read) it.read = c.read || ""; if (!it.page) it.page = c.page || ""; }
+    // Page officielle du magazine quand le numéro n'a pas de lien (Will, 05/10/2026).
+    for (const it of items) if (!it.link) { const m = Object.keys(MAG_LINK).find(n => (it.mag || "").toLowerCase().startsWith(n.toLowerCase())); if (m) it.link = MAG_LINK[m]; }
     return { items };
   });
 }

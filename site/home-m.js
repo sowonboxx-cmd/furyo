@@ -122,14 +122,17 @@
   function webCard(m) {
     var img = (m.items.filter(function (it) { return it.cover; })[0] || {}).cover; // image d'une des séries (ex. Doom), sinon « WEB »
     return '<article class="mh-mag mh-web"><div class="mh-magc">' + (img ? '<img src="' + esc(couv(img, 200)) + '" alt="" loading="lazy">' : '<span class="mh-webi">WEB</span>') + "</div><div class=\"mh-magt\"><small>Mis à jour le " + esc(dd(m.date)) + "</small><b>Séries en ligne</b>" +
-      m.items.map(function (it) { return '<span class="mh-ch"><span>' + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + "</span></span>"; }).join("") + "</div></article>";
+      m.items.map(function (it) { var u = it.read || it.page, inner = "<span>" + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + (u ? '<b class="go">↗</b>' : "") + "</span>";
+        return u ? '<a class="mh-ch" href="' + esc(u) + '" target="_blank" rel="noopener">' + inner + "</a>" : '<span class="mh-ch">' + inner + "</span>"; }).join("") + "</div></article>";
   }
   function magCard(m) {
     if (m.web) return webCard(m);
     var t = new Date().toISOString().slice(0, 10), paru = !m.date || m.date <= t;
-    return '<article class="mh-mag"><div class="mh-magc">' + (m.cover ? '<img src="' + esc(couv(m.cover, 200)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') + "</div><div class='mh-magt'><small>" + (paru ? "Sorti le " : "Sort le ") + esc(dd(m.date)) + "</small><b>" + esc(m.mag) + " " + esc(m.issue) + "</b>" +
+    return '<article class="mh-mag"><div class="mh-magc">' + (m.cover ? '<img src="' + esc(couv(m.cover, 200)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') + "</div><div class='mh-magt'><small>" + (paru ? "Sorti le " : "Sort le ") + esc(dd(m.date)) + "</small>" + (m.link ? '<a class="mh-magl" href="' + esc(m.link) + '" target="_blank" rel="noopener"><b>' + esc(m.mag) + " " + esc(m.issue) + " ↗</b></a>" : "<b>" + esc(m.mag) + " " + esc(m.issue) + "</b>") +
       // Juste le titre et le numéro de chapitre (pas de pastille couverture / pause, Will 04/10/2026) ; seule exception : « Fin » pour un dernier chapitre.
-      m.items.map(function (it) { return '<span class="mh-ch"><span>' + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.status === "Pause" ? "<em class=\"p\">Pause</em>" : it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + ((it.hl || []).indexOf("Dernier chapitre") >= 0 ? "<i>Fin</i>" : "") + "</span></span>"; }).join("") + "</div></article>";
+      // Chaque série mène à sa lecture en ligne officielle ; le titre du magazine à son site (Will, 05/10/2026).
+      m.items.map(function (it) { var u = it.read || it.page, inner = "<span>" + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.status === "Pause" ? "<em class=\"p\">Pause</em>" : it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + ((it.hl || []).indexOf("Dernier chapitre") >= 0 ? "<i>Fin</i>" : "") + (u ? '<b class="go">↗</b>' : "") + "</span>";
+        return u ? '<a class="mh-ch" href="' + esc(u) + '" target="_blank" rel="noopener">' + inner + "</a>" : '<span class="mh-ch">' + inner + "</span>"; }).join("") + "</div></article>";
   }
   function direct() {
     var m = mags(); if (!m.length) return "";
