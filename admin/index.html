@@ -665,8 +665,20 @@ function captions(i, rs){
     tt: `📖 ${i.titre}\n\n${i.tweet}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
   };
   // Toutes les news : auteurs (puis éditeur) cités sous le lien, pour être repartagé (Will, 05/10/2026).
-  const xBase = `${catLigne(i)}${i.titre}${txt ? `\n${resumeCourt(txt)}` : ""}\n\n↗ ${url}`;
-  const hs = choixX(c.x, c.xFR, h => poidsX(xBase + "\nX " + h.map(x => "@" + x).join(" · ")) <= 280);
+  // X ne dépasse JAMAIS 280 (Will, 05/10/2026) : on garde des phrases entières du résumé tant que ça tient,
+  // on enlève les parenthèses du titre si besoin, et on cite au moins un compte quand il y en a un.
+  const titres = [...new Set([i.titre, i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news)\s*:\s*/i, ""), String(i.serie && i.serie.t || i.titre)])];
+  const ph = phrases(txt), resumes = [...ph.map((_, n) => ph.slice(0, n + 1).join(" ")).reverse(), ""];
+  const nbC = ((c.x || []).length + (c.xFR || []).length) ? 1 : 0;
+  let xBase = "", hs = [];
+  trouve: for (const min of [nbC, 0]) for (const r of resumes) for (const t of titres) {
+    const b = `${catLigne(i)}${t}${r ? `\n${r}` : ""}\n\n↗ ${url}`;
+    if (poidsX(b) > 280) continue;
+    let h = choixX(c.x, c.xFR, l => poidsX(b + "\nX " + l.map(x => "@" + x).join(" · ")) <= 280);
+    if (h.length && poidsX(b + "\nX " + h.map(x => "@" + x).join(" · ")) > 280) h = [];
+    if (h.length >= min) { xBase = b; hs = h; break trouve; }
+  }
+  if (!xBase) xBase = `${catLigne(i)}${titres[titres.length - 1]}\n\n↗ ${url}`;
   const igL = (c.ig || []).length ? `\n📣 ${c.ig.map(h => "@" + h).join(" ")}` : "", ttL = (c.tt || []).length ? `\n📣 ${c.tt.map(h => "@" + h).join(" ")}` : "";
   return {
     x: xBase + (hs.length ? "\nX " + hs.map(h => "@" + h).join(" · ") : ""),
