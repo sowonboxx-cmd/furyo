@@ -68,6 +68,8 @@ export async function onRequestGet({ request, env }) {
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), resumeSortie: text(p["Résumé sortie"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
       editeurs: rel(p["Éditeurs (fiches)"]), auteurs: rel(p["Auteurs"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
+      // Comptes X notés directement sur la fiche (souvent remplis alors que la relation Auteurs est vide).
+      twX: [text(p["Twitter Author"]), text(p["Twitter Artist"]), text(p["Twitter Serie"])].map(handle).filter(Boolean),
     };
   }
   const items = rows.map(r => {
@@ -102,7 +104,9 @@ export async function onRequestGet({ request, env }) {
   const tRows = besoins.length ? await queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { or: besoins.slice(0, 100).map(b => ({ and: [{ property: "Édition", relation: { contains: b.e } }, { property: "N°", number: { equals: b.n } }] })) } } }).catch(() => []) : [];
   for (const t of tRows) { const q = t.properties || {}, e = edById[rel(q["Édition"])[0]]; if (e) e.tomes.push({ n: num(q["N°"]), date: date(q["Date de sortie"]), prec: text(q["Précision date"]) || "Jour", cover: text(q["Couverture"]) }); }
   // Comptes des éditeurs (pour la ligne « X @… » et le 📣 d'Instagram / TikTok).
-  const [edRows, auRows] = tomeItems.length ? await Promise.all([
+  // Comptes chargés dès qu'une ligne est reliée à une série : toutes les news (et prépublications) citent auteurs et éditeur (Will, 05/10/2026).
+  const avecSerie = items.some(i => i.serie) || pRows.some(r => rel(r.properties["Série"]).length);
+  const [edRows, auRows] = avecSerie ? await Promise.all([
     queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []),
     queryAll(env.NOTION_TOKEN, { ...AUTEURS }).catch(() => []),
   ]) : [[], []];
@@ -133,7 +137,7 @@ export async function onRequestGet({ request, env }) {
     const aut = i.serie.auteurs.map(k => auteurs[nid(k)]).filter(Boolean);
     const uniq = l => [...new Set(l.filter(Boolean))];
     i.comptes = {
-      x: uniq(aut.map(c => c.x)), xFR: fr && fr.x ? [fr.x] : [],
+      x: uniq([...aut.map(c => c.x), ...(i.serie.twX || [])]), xFR: fr && fr.x ? [fr.x] : [],
       ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]),
     };
   }
@@ -147,6 +151,17 @@ export async function onRequestGet({ request, env }) {
       image: text(p["Couverture du numéro"]), serie: series[rel(p["Série"])[0]] || null, news: false,
       prepub: { mag: text(p["Magazine"]), num: text(p["Numéro"]), statut: text(p["Statut"]), ch: num(p["Chapitre"]), hl: list(p["Mise en avant"]), jp: text(p["Titre au sommaire"]), lire: text(p["Lecture en ligne"]) },
     });
+  }
+  // News sans tome (fin de série, anime, cap d'exemplaires…) et prépublications : mêmes comptes que les sorties,
+  // les auteurs d'abord, puis l'éditeur français s'il existe (sinon l'éditeur japonais, s'il a un compte).
+  for (const i of items) {
+    if (i.comptes || !i.serie) continue;
+    const uniq = l => [...new Set(l.filter(Boolean))];
+    const eds2 = i.serie.editeurs.map(k => editeurs[k]).filter(Boolean);
+    const fr = eds2.find(e => /FR/.test(e.type)), jp = eds2.find(e => /JP/.test(e.type) && (e.x || e.ig));
+    const ed = fr || jp;
+    const aut = i.serie.auteurs.map(k => auteurs[nid(k)]).filter(Boolean);
+    i.comptes = { x: uniq([...aut.map(c => c.x), ...(i.serie.twX || [])]), xFR: ed && ed.x ? [ed.x] : [], ig: uniq([...aut.map(c => c.ig), ed && ed.ig]), tt: uniq([...aut.map(c => c.tt), ed && ed.tt]) };
   }
   // Ordre chronologique de repérage (date où la veille a trouvé l'info), jamais la date de sortie (Will, 04/10/2026).
   items.sort((a, b) => String(b.creeT || b.cree).localeCompare(String(a.creeT || a.cree)));

@@ -646,14 +646,18 @@ function captions(i, rs){
   const txt = (i.texte || "").trim();
   // Prépublication : le brouillon de tweet de la base sert de légende X.
   if (i.cat === "prepub" && i.tweet) return {
-    x: `${i.tweet}${s.slug ? `\n↗ ${url}` : ""}`,
+    x: `${i.tweet}${s.slug ? `\n↗ ${url}` : ""}${(c.x || []).length || (c.xFR || []).length ? "\nX " + choixX(c.x, c.xFR, () => true).map(h => "@" + h).join(" · ") : ""}`,
     ig: `📖 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n${i.tweet}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
     tt: `📖 ${i.titre}\n\n${i.tweet}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
   };
+  // Toutes les news : auteurs (puis éditeur) cités sous le lien, pour être repartagé (Will, 05/10/2026).
+  const xBase = `${catLigne(i)}${i.titre}${txt ? `\n${resumeCourt(txt)}` : ""}\n\n↗ ${url}`;
+  const hs = choixX(c.x, c.xFR, h => poidsX(xBase + "\nX " + h.map(x => "@" + x).join(" · ")) <= 280);
+  const igL = (c.ig || []).length ? `\n📣 ${c.ig.map(h => "@" + h).join(" ")}` : "", ttL = (c.tt || []).length ? `\n📣 ${c.tt.map(h => "@" + h).join(" ")}` : "";
   return {
-    x: `${catLigne(i)}${i.titre}${txt ? `\n${resumeCourt(txt)}` : ""}\n\n↗ ${url}`,
-    ig: `${catLigne(i)}🆕 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
-    tt: `${catLigne(i)}🆕 ${i.titre}${txt ? `\n\n${resumeCourt(txt)}` : ""}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
+    x: xBase + (hs.length ? "\nX " + hs.map(h => "@" + h).join(" · ") : ""),
+    ig: `${catLigne(i)}🆕 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).${igL}\n\n${tags.join(" ")}`,
+    tt: `${catLigne(i)}🆕 ${i.titre}${txt ? `\n\n${resumeCourt(txt)}` : ""}\n\n📖 Infos sur furyogang.com${ttL}\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
   };
 }
 // Régénère les légendes ; celles que Will a retouchées à la main restent telles quelles (sauf « force »).
