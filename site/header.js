@@ -23,7 +23,21 @@
     ".sh-nav a:hover{color:#F5F5F7}" +
     ".sh-nav a[aria-current=page]{color:#F5F5F7}" +
     ".sh-nav a[aria-current=page]::after{content:'';position:absolute;left:16px;right:16px;bottom:-1px;height:3px;border-radius:3px;background:#4C9BFF}" +
-    "@media (max-width:719px){.sh-top{height:54px}.sh-logo img{height:34px}.sh-nav{justify-content:space-around;gap:0}.sh-nav a{padding:0 10px;font-size:14px;height:42px}.sh-nav a[aria-current=page]::after{left:10px;right:10px}}" +
+        /* Téléphone : rubriques en barre d'onglets ; admin : seulement le nombre à valider, discret, à côté de l'avatar */
+    "@media (max-width:719px){.sh-nav{margin:8px 12px 10px!important;padding:4px!important;gap:4px!important;border:0!important;background:#000;border-radius:14px;justify-content:stretch!important}" +
+    ".sh-nav a{flex:1;justify-content:center;height:40px!important;padding:0!important;border-radius:10px;font:700 17px/1 Antonio,'Arial Narrow',sans-serif!important;text-transform:uppercase;letter-spacing:.03em;color:#8E8E93}" +
+    ".sh-nav a[aria-current=page]{background:#38383B;color:#F5F5F7}.sh-nav a[aria-current=page]::after{display:none}" +
+    ".sh-bo{display:none!important}" +
+    ".sh-adm{left:50px}.sh-val{pointer-events:none;background:transparent!important;width:auto!important;min-width:0!important;padding:0!important;height:auto!important}" +
+    ".sh-val b{background:transparent!important;color:#8E8E93!important;font:600 13px Inter,system-ui,sans-serif!important;min-width:0!important;padding:0!important}.sh-val[data-n='0'] b{display:none!important}}" +
+    ".adm-pop{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);font-family:Inter,system-ui,sans-serif}.adm-pop[hidden]{display:none}" +
+    ".adm-box{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 60px);width:min(320px,calc(100% - 24px));box-sizing:border-box;padding:16px;background:#1C1C1E;border-radius:20px;display:flex;flex-direction:column;gap:10px;color:#F5F5F7}" +
+    ".adm-u{display:flex;align-items:center;gap:12px;padding-bottom:6px;text-decoration:none;color:inherit}.adm-u img,.adm-u i{width:48px;height:48px;border-radius:24px;background:#38383B;object-fit:cover;display:block}.adm-u b{display:block;font-size:17px}.adm-u small{font-size:13px;color:#98989D}" +
+    ".adm-b{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 16px;border-radius:14px;background:#38383B;color:#F5F5F7;text-decoration:none}.adm-b.v{background:#305887;color:#fff}" +
+    ".adm-b strong{display:block;font:700 20px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em}.adm-b small{display:block;margin-top:3px;font-size:12.5px;color:#C9D6E6}.adm-b:not(.v) small{color:#98989D}" +
+    ".adm-b em{font-style:normal;min-width:40px;height:32px;padding:0 10px;box-sizing:border-box;border-radius:16px;background:#fff;color:#305887;font-weight:700;font-size:15px;display:grid;place-items:center}" +
+    ".adm-out{height:44px;border:0;border-radius:12px;background:transparent;color:#98989D;font:600 14px Inter,system-ui,sans-serif;cursor:pointer}" +
+"@media (max-width:719px){.sh-top{height:54px}.sh-logo img{height:34px}.sh-nav{justify-content:space-around;gap:0}.sh-nav a{padding:0 10px;font-size:14px;height:42px}.sh-nav a[aria-current=page]::after{left:10px;right:10px}}" +
     /* Recherche */
     ".fs{position:fixed;inset:0;z-index:80;background:rgba(8,8,10,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;justify-content:center;align-items:flex-start;padding:calc(env(safe-area-inset-top,0px) + 10vh) 16px 16px;font-family:Inter,'Noto Sans JP',system-ui,sans-serif}" +
     ".fs[hidden]{display:none}" +
@@ -232,7 +246,25 @@
     if (window.google && google.accounts && google.accounts.id) return cb();
     var sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true; sc.onload = cb; document.head.appendChild(sc);
   }
+  // Téléphone, administrateur : l'avatar ouvre une petite fenêtre avec Validation et Back-office.
+  function admPop() {
+    var pop = document.getElementById("adm-pop");
+    if (!pop) {
+      pop = document.createElement("div"); pop.className = "adm-pop"; pop.id = "adm-pop"; pop.hidden = true;
+      document.body.appendChild(pop);
+      pop.addEventListener("click", function (e) { if (e.target === pop) pop.hidden = true; });
+    }
+    var n = (document.querySelector(".sh-val") || { getAttribute: function () { return "0"; } }).getAttribute("data-n") || "0";
+    pop.innerHTML = '<div class="adm-box" role="dialog" aria-label="Mon compte">' +
+      '<a class="adm-u" href="/profil/">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "<i></i>") + '<span><b>' + esc(ME.user.name || "Membre") + '</b><small>Administrateur · Voir mon profil</small></span></a>' +
+      '<a class="adm-b v" href="/admin/#validation"><span><strong>Validation</strong><small>À relire avant publication</small></span><em>' + esc(n) + '</em></a>' +
+      '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' +
+      '<button class="adm-out" type="button">Se déconnecter</button></div>';
+    pop.querySelector(".adm-out").onclick = function () { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); };
+    pop.hidden = false;
+  }
   function openMe() {
+    if (ME && ME.user && ME.admin && matchMedia("(max-width:719px)").matches) { admPop(); return; }
     if (ME && ME.user) { location.href = "/profil/"; return; }
     if (false) {
       meInner.innerHTML = '<div class="me-u">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "") + '<div><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + "</small></div></div>" +
