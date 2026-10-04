@@ -87,7 +87,7 @@
     if (!it.length) return "";
     return '<section class="mh-sec" aria-label="Sorties en France">' + head2(titre, sous, "/calendrier/#france", "Calendrier") + '<div class="mh-car">' + it.map(function (x) {
       var t = (x.fr || x.series) + (x.n != null ? " T." + String(x.n).padStart(2, "0") : "");
-      return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/") + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(dd(x.date)) + "</em></span><b>" + esc(t) + "</b><small>" + esc(x.pub || "") + "</small></a>";
+      return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/") + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(dd(x.date)) + "</em></span><b>" + esc(t) + "</b></a>";
     }).join("") + "</div></section>";
   }
   function sortiesJP() {
