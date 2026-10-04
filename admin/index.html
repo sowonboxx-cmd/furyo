@@ -178,6 +178,8 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm .rs button{height:38px;padding:0 12px;border:0;border-radius:19px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
 .nimg{margin:4px 0 12px}.nimg-v{border:1px solid #48484C;border-radius:12px;min-height:64px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px}
 .nimg-v img{display:block;width:100%;max-height:340px;object-fit:contain}.nimg-v span{color:var(--paper-2);font-size:13px;padding:14px;text-align:center}
+.ncrop{margin-top:12px}.ncrop label{display:block;margin-bottom:6px}.ncrop-v{aspect-ratio:16/9;border-radius:12px;background:#000 no-repeat;background-size:cover;border:1px solid #48484C}
+.ncrop-r{display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap}.ncrop-r input{flex:1;min-width:120px;accent-color:#4C9BFF}.ncrop-r b{min-width:44px;text-align:right;font-size:13px;color:var(--paper-2)}
 .nimg-r{display:flex;gap:6px;align-items:flex-start}.nimg-r .vvid{flex:1;min-width:0}
 .vm .nimg-b{flex:none;margin:0;font-size:13px;height:42px;padding:0 12px;border:1px solid #48484C;border-radius:12px;background:transparent;color:var(--paper);font:600 13px Inter,sans-serif;display:inline-flex;align-items:center;cursor:pointer}
 .vvid{width:100%;height:42px;padding:0 14px;border:1px solid #48484C;border-radius:12px;background:transparent;color:var(--paper);font:400 15px Inter,sans-serif;margin-bottom:6px}
@@ -543,8 +545,17 @@ function vimgBloc(i){
   return `<div class="nimg"><div class="nimg-v">${u ? `<img src="/api/couv?u=${encodeURIComponent(u)}&w=600" alt="" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'Image illisible'}))">` : `<span>Pas d'image : la news s'affiche sans illustration.</span>`}</div>
     <label for="vimgu">Image de la news${i.imageChoisie ? "" : u ? " (trouvée automatiquement)" : ""}</label>
     <div class="nimg-r"><input id="vimgu" class="vvid" type="url" placeholder="Colle une image ici (Ctrl+V) ou son adresse https://…" value="${esc(i.imageChoisie || "")}">
-    <label class="nimg-b">Choisir…<input type="file" accept="image/*" data-vimgf hidden></label>${i.imageChoisie ? `<button class="nimg-b" data-vimgx>Retirer</button>` : ""}</div></div>`;
+    <label class="nimg-b">Choisir…<input type="file" accept="image/*" data-vimgf hidden></label>${i.imageChoisie ? `<button class="nimg-b" data-vimgx>Retirer</button>` : ""}</div>${vcropBloc(i, u)}</div>`;
 }
+// Cadrage sur ordinateur : la grande news de l'accueil est en 16:9, on choisit quelle partie de l'image garder (Will, 05/10/2026).
+function vcropBloc(i, u){
+  const c = i.cadrage ?? 0;
+  return `<div class="ncrop"${u ? "" : " hidden"}><label>Cadrage sur ordinateur (16:9)</label>
+    <div class="ncrop-v" id="vcropv" style="${u ? `background-image:url('/api/couv?u=${encodeURIComponent(u)}&w=900');` : ""}background-position:center ${c}%"></div>
+    <div class="ncrop-r"><button type="button" class="nimg-b" data-vcrop="0">Haut</button><button type="button" class="nimg-b" data-vcrop="50">Milieu</button><button type="button" class="nimg-b" data-vcrop="100">Bas</button>
+    <input type="range" id="vcrop" min="0" max="100" step="1" value="${c}" aria-label="Cadrage vertical"><b id="vcropn">${c} %</b></div></div>`;
+}
+function vcropSet(m, v){ const r = m.querySelector("#vcrop"); if (!r) return; r.value = v; m.querySelector("#vcropn").textContent = v + " %"; m.querySelector("#vcropv").style.backgroundPosition = "center " + v + "%"; }
 // Réduit l'image (1400 px de large au plus, JPEG) puis l'envoie dans le stockage du site ; renvoie son adresse.
 async function envoyerImage(file){
   let blob = file;
@@ -570,12 +581,15 @@ async function vimgFichier(m, file){
 function vimgApercu(m){
   const u = m.querySelector("#vimgu").value.trim(), i = VITEMS.find(x => x.id === m.dataset.vid), s = u || i.image;
   m.querySelector(".nimg-v").innerHTML = s ? `<img src="/api/couv?u=${encodeURIComponent(s)}&w=600" alt="">` : `<span>Pas d'image : la news s'affiche sans illustration.</span>`;
+  const cb = m.querySelector(".ncrop"); if (cb) { cb.hidden = !s; if (s) m.querySelector("#vcropv").style.backgroundImage = `url('/api/couv?u=${encodeURIComponent(s)}&w=900')`; }
 }
 document.addEventListener("paste", e => {
   const m = document.querySelector(".vm"); if (!m || !m.querySelector("#vimgu")) return;
   const f = [...(e.clipboardData || {}).files || []].find(x => /^image\//.test(x.type));
   if (f) { e.preventDefault(); vimgFichier(m, f); }
 });
+document.addEventListener("input", e => { if (e.target.id === "vcrop") vcropSet(e.target.closest(".vm"), e.target.value); });
+document.addEventListener("click", e => { const b = e.target.closest("[data-vcrop]"); if (b) { e.preventDefault(); vcropSet(b.closest(".vm"), b.dataset.vcrop); } });
 document.addEventListener("change", e => { const f = e.target.closest("[data-vimgf]"); if (f) vimgFichier(f.closest(".vm"), f.files[0]); });
 // Visuel « sortie d'un tome » (design Soleil) : post 3:4 ou story 9:16, sombre ou crème.
 async function imageTome(i, theme, fmt, btn){
@@ -703,16 +717,17 @@ async function vsend(btn, statut){
   const m = btn.closest(".vm"), id = m.dataset.vid, i = VITEMS.find(x => x.id === id);
   const vtx = m.querySelector("#vtx"), texte = vtx ? vtx.value : i.texte, vc = m.querySelector("#vcat"), vv = m.querySelector("#vvid");
   const video = vv ? vv.value.trim() : "", vu = m.querySelector("#vimgu"), image = vu ? vu.value.trim() : null;
+  const vcr = m.querySelector("#vcrop"), cadrage = vcr && Number(vcr.value) !== (i.cadrage ?? 0) ? Number(vcr.value) : undefined;
   if (image && !/^https:\/\//.test(image)) { toast("L'image doit être une adresse https://"); return; }
   btn.classList.add("busy");
   // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
   const vc2 = m.querySelector("#vcat2"), c2 = vc2 && vc2.value !== (vc && vc.value) ? vc2.value : "";
   const categorie = vc && (statut === "Publié sur le site" || (!statut && (vc.value !== i.cat || c2 !== (i.cat2 || "")))) ? [VCATS[vc.value], ...(c2 ? [VCATS[c2]] : [])] : "";
-  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
+  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(cadrage !== undefined ? { cadrage } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
   if (!statut) { // news en ligne modifiée : elle reste dans « Publiées »
-    if (vtx) i.texte = vtx.value; if (vv) i.video = video; if (image !== null) i.imageChoisie = image;
+    if (vtx) i.texte = vtx.value; if (vv) i.video = video; if (image !== null) i.imageChoisie = image; if (cadrage !== undefined) i.cadrage = cadrage;
     if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; i.cat2 = c2; }
     m.remove(); vdraw(); toast("Changements en ligne ✓"); return;
   }

@@ -87,7 +87,7 @@ export async function onRequestGet({ request, env }) {
       actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]), video: text(p["Vidéo"]),
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",
-      serie: s, news, vu: vu(r), enLigne: pub(r), imageChoisie: text(p["Image"]),
+      serie: s, news, vu: vu(r), enLigne: pub(r), imageChoisie: text(p["Image"]), cadrage: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null,
       cat2: (categoriesDe(catN)[1] || {}).k || "", // 2e catégorie (Notion en accepte plusieurs ; le back-office en gère deux)
     };
   });
@@ -199,6 +199,8 @@ export async function onRequestPost({ request, env }) {
     if (v && !/^https:\/\//.test(v)) return json({ error: "L'image doit être une adresse https." }, 400);
     props["Image"] = { url: v || null };
   }
+  // Cadrage de l'image en 16:9 sur ordinateur (0 = haut, 100 = bas).
+  if (b.cadrage !== undefined) props["Cadrage"] = { number: b.cadrage === null || b.cadrage === "" ? null : Math.max(0, Math.min(100, Math.round(Number(b.cadrage)))) };
   if (typeof b.video === "string") {
     const v = b.video.trim();
     if (v && !/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(v)) return json({ error: "La vidéo doit être un lien YouTube." }, 400);
@@ -219,6 +221,6 @@ export async function onRequestPost({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
-  await Promise.all(["/api/news?v=3", "/api/crows", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/news?v=4", "/api/crows", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   return json({ ok: true });
 }

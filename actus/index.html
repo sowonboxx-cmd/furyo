@@ -70,7 +70,7 @@ a{color:inherit}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=18"></script>
+<script src="/site/header.js?v=19"></script>
 <main class="na" id="na"><p class="na-empty">Chargement…</p></main>
 <script>
 (function () {
@@ -96,8 +96,8 @@ a{color:inherit}
 
   function acts() {
     return '<div class="na-acts" id="na-acts"><button type="button" class="a-like' + (ST.ml ? " on" : "") + '" data-act="like" aria-label="J\'aime">' + I.heart + "<b>" + nf(ST.l) + "</b></button>" +
-      '<button type="button" class="a-com" data-open aria-label="Commentaires">' + I.com + "<b>" + CM.length + "</b></button>" +
       '<span aria-label="Vues">' + I.stat + "<b>" + nf(ST.v) + "</b></span>" +
+      '<button type="button" class="a-com" data-open aria-label="Commentaires">' + I.com + "<b>" + CM.length + "</b></button>" +
       '<button type="button" class="a-book' + (ST.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button></div>";
   }
   // Avatar rond du membre (photo Google), ou son initiale si pas de photo.

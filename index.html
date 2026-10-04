@@ -259,21 +259,20 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dt-menu i{width:8px;height:8px;border-radius:50%;flex:none}.dt-menu small{margin-left:auto;color:#8E8E93;font-size:12.5px}
 .feed{display:flex;flex-direction:column;gap:12px}
 .dm{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font:600 12.5px Inter,system-ui,sans-serif;color:#98989D}
-/* Grande news */
+/* Grande news : image 16:9 pleine largeur, texte sur un dégradé, actions sur fond noir dessous */
 .dh{background:#000;border-radius:20px;overflow:hidden}
-.dh-a{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;min-height:360px;text-decoration:none;color:inherit;isolation:isolate}
-.dh-bg{position:absolute;inset:-30px;background-size:cover;background-position:center;filter:blur(28px) brightness(.38) saturate(1.2);z-index:-1}
-.dh-img{grid-column:2;grid-row:1;height:360px;width:auto;max-width:300px;object-fit:cover;display:block;margin:20px 20px 0 0;border-radius:12px;align-self:start}
-.dh-tx{grid-column:1;grid-row:1;align-self:end;display:flex;flex-direction:column;gap:8px;padding:24px 24px 8px}
-.dh h2{margin:0;font:700 44px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.dh-a{position:relative;display:block;aspect-ratio:16/9;text-decoration:none;color:inherit;background:#1C1C1E}
+.dh.noimg .dh-a{aspect-ratio:auto;min-height:240px}
+.dh-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.dh-a::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 28%,rgba(0,0,0,.62) 52%,rgba(0,0,0,.9) 76%,#000 100%)}
+.dh-tx{text-shadow:0 1px 12px rgba(0,0,0,.6)}
+.dh-tx{position:absolute;left:0;right:0;bottom:0;z-index:1;display:flex;flex-direction:column;gap:8px;padding:0 28px 14px}
+.dh.noimg .dh-tx{position:relative;padding-top:28px}
+.dh h2{margin:0;font:700 46px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
 .dh-jp{font-size:14px;color:#CFCFD4;margin-top:-2px}
-.dh p{margin:0;color:#E5E5EA;font-size:15.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;max-width:62ch}
-.dh.wide .dh-a{grid-template-columns:1fr;min-height:0}
-.dh.wide .dh-bg{display:none}
-.dh.wide .dh-img{grid-column:1;grid-row:1;width:100%;max-width:none;height:400px;margin:0;border-radius:0}
-.dh.wide .dh-a::after{content:"";grid-column:1;grid-row:1;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.92));z-index:0}
-.dh.wide .dh-tx{position:relative;z-index:1}
-.dh .da{padding:4px 14px 10px}
+.dh p{margin:0;color:#E5E5EA;font-size:15.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;max-width:72ch}
+.dh .da{padding:6px 20px 12px;margin:0}
+.dh .da button,.dh .da a,.dh .da span:not(.sp){color:#CFCFD4}
 /* Liste */
 .dr{background:#000;border-radius:20px;padding:14px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:start}
 .dr-i{display:block;line-height:0}
@@ -298,6 +297,27 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dn-go{margin-top:14px;height:44px;padding:0 22px;border:0;border-radius:22px;background:#305887;color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
 .ftabs{position:sticky}
 .ftabs{overflow:visible}
+/* Direct du Japon (ordinateur) */
+.dgh{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:20px 22px}
+.dgh small{font:600 12.5px Inter,sans-serif;color:#98989D}.dgh .live{color:#E5483A}
+.dgh h1{margin:4px 0 6px;font:700 40px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}
+.dgh p{margin:0;color:#CFCFD4;font-size:14.5px}
+.dgh>a{flex:none;height:40px;padding:0 16px;border-radius:20px;background:#38383B;color:#F5F5F7;text-decoration:none;display:flex;align-items:center;font:600 14px Inter,sans-serif}
+.dgs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dgs>.dn{grid-column:1/-1}
+.dg{background:#000;border-radius:20px;padding:16px;display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px;align-items:start}
+.dg-c img,.dg-noimg{width:110px;aspect-ratio:7/10;object-fit:cover;border-radius:10px;display:grid;place-items:center;background:#305887;color:#fff;font:700 24px Antonio,sans-serif;letter-spacing:.06em}
+.dg-t{min-width:0}.dg-t small{font:600 12px Inter,sans-serif;color:#98989D}
+.dg-t h3{margin:2px 0 8px;font:700 22px/1.05 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}
+.dg-t ul{list-style:none;margin:0;padding:0}
+.dg-t li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px dashed #38383B;font:600 14px Inter,sans-serif}
+.dg-t li>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dg-t li small{display:block;font:500 12px "Noto Sans JP",sans-serif;color:#8E8E93;overflow:hidden;text-overflow:ellipsis}
+.dg-t li>span:last-child{flex:none;display:flex;gap:6px;align-items:center}
+.dg-t em{font-style:normal;font:700 13px Inter,sans-serif;color:#F5F5F7;background:#38383B;border-radius:8px;padding:3px 8px}.dg-t em.p{color:#8E8E93;background:transparent}
+.dg-t i{font-style:normal;height:22px;padding:0 8px;border-radius:7px;background:#E5483A;color:#fff;font:700 11px/22px Inter,sans-serif;text-transform:uppercase}
+.m-all{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;margin-top:12px;border-radius:22px;background:#38383B;color:#F5F5F7;font:700 14px Inter,sans-serif;text-decoration:none}
+.m-all small{color:#98989D;font-weight:600;font-size:12.5px}.m-all:hover{background:#48484C}
 /* ===== Accueil téléphone (site/home-m.js) ===== */
 .mh{display:none}
 @media (max-width:719px){
@@ -443,10 +463,10 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 
 </head>
 <body>
-<script src="/site/header.js?v=18"></script>
+<script src="/site/header.js?v=19"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=17" defer></script>
+<script src="/site/home-m.js?v=18" defer></script>
 <div class="page">
 
 
@@ -472,7 +492,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
         <a class="mbr-cta" href="/membres/">Voir tous les membres<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </section>
       <section class="box mod" id="m-jp" data-slot="0">
-        <div class="m-head"><h3>Direct Japon</h3><span class="m-sub">Prépublication</span></div>
+        <div class="m-head"><h3>Direct Japon</h3><a class="m-sub" href="/?vue=magazines">Tout voir</a></div>
         <ul class="jp">
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">WORST Gaiden Zetton Sensei<small lang="ja">WORST外伝 ゼットン先生 · ch. ?</small></span><span class="st ok">Paru</span></li>
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">Gabu<small lang="ja">ガブ · ch. ?</small></span><span class="st ok">Paru</span></li>
@@ -546,7 +566,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
         </ul>
       </section>
 
-      <a class="box promo mod" id="m-chrono" data-slot="6" href="/crows-x-worst/">
+      <a class="box promo mod" id="m-chrono" data-slot="6" href="/crows-x-worst/" target="_blank" rel="noopener">
         <img src="/crows-x-worst/img/char-hana.png" alt="">
         <h3>CROWS × WORST</h3>
         <p>Toutes les œuvres de l'univers de Hiroshi Takahashi, dans l'ordre de lecture.</p>
@@ -567,6 +587,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 <script>
 /* Accueil ordinateur (Will, 05/10/2026) : tout est dans des cadres noirs. Onglets Toutes / Mon fil / Signets / Catégories dans un cadre,
    la news la plus récente en grand, les suivantes en liste. Actions : signet et commentaires à gauche, likes et vues à droite. */
+const VUE_N = new URLSearchParams(location.search).get("vue");
 const DT = {
   types: [["licence-fr","Nouvelle licence (France)","#529CCA"],["licence-jp","Nouvelle série (Japon)","#FF7369"],["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]],
   news: null, me: null, stats: {}, cn: {}, signets: null, tab: "toutes", cat: "", all: false
@@ -591,17 +612,19 @@ const ICN = {
 const catsN = it => (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(c => DT.TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : DT.TL.news));
 const metaN = it => '<div class="dm">' + catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>") + `<span>·</span><span>${escN(ddN(it.date))}</span></div>`;
 function actsN(it) {
+  // Comme sur X (Will, 05/10/2026) : likes, vues, commentaires à gauche ; signet tout à droite.
   const id = it.id, st = DT.stats[id] || {};
-  return `<div class="da" data-id="${escN(id)}"><button type="button" class="a-book${st.mb ? " on" : ""}" data-act="bookmark" aria-label="Signet">${ICN.book}</button>` +
+  return `<div class="da" data-id="${escN(id)}"><button type="button" class="a-like${st.ml ? " on" : ""}" data-act="like" aria-label="J'aime">${ICN.heart}<b>${nfN(st.l || 0)}</b></button>` +
+    `<span class="a-v" title="Vues">${ICN.stat}<b>${nfN(st.v || 0)}</b></span>` +
     `<a class="a-com" href="${escN(linkN(it))}#commentaires" aria-label="Commentaires">${ICN.com}<b>${nfN(DT.cn[id] || 0)}</b></a><span class="sp"></span>` +
-    `<button type="button" class="a-like${st.ml ? " on" : ""}" data-act="like" aria-label="J'aime">${ICN.heart}<b>${nfN(st.l || 0)}</b></button>` +
-    `<span class="a-v" title="Vues">${ICN.stat}<b>${nfN(st.v || 0)}</b></span></div>`;
+    `<button type="button" class="a-book${st.mb ? " on" : ""}" data-act="bookmark" aria-label="Signet">${ICN.book}</button></div>`;
 }
 const wideN = "if(this.naturalWidth/this.naturalHeight>1.15)this.closest('[data-img]').classList.add('wide')";
 function heroN(it) {
-  const t = it.fr || it.titre, img = couvN(it.cover, 900);
-  return `<article class="dh" data-img data-id="${escN(it.id)}"><a class="dh-a" href="${escN(linkN(it))}">` +
-    (img ? `<span class="dh-bg" style="background-image:url('${escN(img)}')"></span><img class="dh-img" src="${escN(img)}" alt="Image de la news : ${escN(t)}" onload="${wideN}">` : "") +
+  // Image en 16:9 sur toute la largeur ; le cadrage vertical se règle dans le back-office (0 = haut).
+  const t = it.fr || it.titre, img = couvN(it.cover, 1200), pos = it.pos == null ? 0 : it.pos;
+  return `<article class="dh${img ? "" : " noimg"}" data-id="${escN(it.id)}"><a class="dh-a" href="${escN(linkN(it))}">` +
+    (img ? `<img class="dh-img" src="${escN(img)}" alt="Image de la news : ${escN(t)}" style="object-position:center ${pos}%">` : "") +
     `<span class="dh-tx">${metaN(it)}<h2>${escN(t)}</h2>${it.jp ? `<span class="dh-jp" lang="ja">${escN(it.jp)}</span>` : ""}<p>${escN(it.texte)}</p></span></a>${actsN(it)}</article>`;
 }
 function rowN(it) {
@@ -695,13 +718,44 @@ function licN() {
   const lic = (DT.news || []).filter(it => it.cat === "licence-fr"), ul = document.querySelector("#m-lic .lic");
   if (lic.length && ul) ul.innerHTML = lic.slice(0, 6).map(it => `<li><span class="pub">${escN(it.pub || "Éditeur")}</span><span class="t">${escN(it.fr || it.titre)}<small>${escN([it.label, it.t1 ? "T.01 le " + it.t1.slice(0, 5) : ""].filter(Boolean).join(" · "))}</small></span></li>`).join("");
 }
-if (!matchMedia("(max-width:719px)").matches) {
+if (!matchMedia("(max-width:719px)").matches && VUE_N === "magazines") magsViewN();
+else if (!matchMedia("(max-width:719px)").matches) {
   renderN();
   if (/^https?:$/.test(location.protocol)) {
     getN("/api/auth/me").then(j => { DT.me = j; if (DT.tab !== "toutes") renderN(); });
     getN("/api/news").then(j => { if (!j) return; DT.news = j.items || []; try { localStorage.setItem("fg-news", JSON.stringify(DT.news)); } catch (e) {} renderN(); licN(); });
   }
   licN();
+}
+
+// ---------- Direct du Japon (?vue=magazines) : les derniers numéros des magazines, comme sur téléphone ----------
+function magsN(items) {
+  const g = {}, order = [], web = [], seen = {};
+  items.forEach(it => {
+    if (/\(en ligne\)/i.test(it.mag || "")) { const k = it.entry.split(" · ")[0]; if (!seen[k]) { seen[k] = 1; web.push(it); } return; }
+    const k = it.mag + "|" + it.issue;
+    if (!g[k]) { g[k] = { mag: it.mag, issue: it.issue, date: it.date, cover: it.cover, link: it.link, items: [] }; order.push(k); }
+    if (it.cover && !g[k].cover) g[k].cover = it.cover; g[k].items.push(it);
+  });
+  const out = order.map(k => g[k]);
+  if (web.length) out.splice(Math.min(2, out.length), 0, { web: true, items: web, date: web.reduce((a, it) => it.date > a ? it.date : a, ""), cover: (web.find(it => it.cover) || {}).cover });
+  return out;
+}
+function magCardN(m) {
+  const today = new Date().toLocaleDateString("sv"), paru = !m.date || m.date <= today;
+  const head = m.web ? `<small>Mis à jour le ${escN(ddN(m.date))}</small><h3>Séries en ligne</h3>` : `<small>${paru ? "Sorti le " : "Sort le "}${escN(ddN(m.date))}</small><h3>${escN(m.mag)} ${escN(m.issue || "")}</h3>`;
+  const rows = m.items.map(it => `<li><span>${escN(it.entry.split(" · ")[0])}${it.jp ? `<small lang="ja">${escN(it.jp)}</small>` : ""}</span><span>${it.status === "Pause" ? '<em class="p">Pause</em>' : it.ch ? `<em>Ch. ${escN(it.ch)}</em>` : ""}${(it.hl || []).includes("Dernier chapitre") ? "<i>Fin</i>" : ""}</span></li>`).join("");
+  const cov = m.cover ? `<img src="${escN(couvN(m.cover, 320))}" alt="Couverture ${escN(m.mag || "")}" loading="lazy">` : `<span class="dg-noimg">${m.web ? "WEB" : ""}</span>`;
+  return `<article class="dg"><div class="dg-c">${m.link ? `<a href="${escN(m.link)}" target="_blank" rel="noopener">${cov}</a>` : cov}</div><div class="dg-t">${head}<ul>${rows}</ul></div></article>`;
+}
+function magsViewN() {
+  const fil = document.getElementById("fil");
+  fil.innerHTML = `<div class="box dgh"><div><small><span class="live">●</span> En direct · Prépublication</small><h1>Direct du Japon</h1><p>Les derniers numéros des magazines japonais et les chapitres de nos séries.</p></div><a href="/">← Actualités</a></div><div class="dgs" id="dgs"><div class="box dn"><p>Chargement des magazines…</p></div></div>`;
+  const side = document.getElementById("m-jp"); if (side) side.hidden = true;
+  getN("/api/prepub").then(j => {
+    const box = document.getElementById("dgs"), list = magsN((j && j.items) || []);
+    box.innerHTML = list.length ? list.map(magCardN).join("") : '<div class="box dn"><p>Aucun magazine pour l\'instant.</p></div>';
+  });
 }
 init();
 function init(){
@@ -745,8 +799,8 @@ if (/^https?:$/.test(location.protocol)) {
   fetch("/api/prepub").then(r => r.ok ? r.json() : null).then(j => {
     if (!j || j.error || !j.items) return;
     const ul = document.querySelector("#m-jp .jp"); if (!ul) return;
-    ul.innerHTML = j.items.slice(0, 8).map(it => `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${esc2(it.entry.split(" · ")[0])}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
-    const note = document.querySelector("#m-jp .m-note"); if (note) note.hidden = true;
+    ul.innerHTML = j.items.slice(0, 5).map(it => `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${esc2(it.entry.split(" · ")[0])}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
+    const note = document.querySelector("#m-jp .m-note"); if (note) note.outerHTML = `<a class="m-all" href="/?vue=magazines">Voir tous les magazines<small>${j.items.length} chapitres</small></a>`;
   }).catch(() => {});
   fetch("/api/avancement").then(r => r.ok ? r.json() : null).then(j => {
     if (!j || j.error || !j.total) return;
