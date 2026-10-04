@@ -466,6 +466,8 @@ function render(){
   if (eds.length) renderTomes();
   markCut();
   // Arrivée par un lien #news : on amène l'onglet en haut de l'écran, une seule fois.
+  // /series/<nom>#tomes (liens de la carte CROWS x WORST) : on descend directement aux tomes
+  if (location.hash === "#tomes" && !HASH_DONE) { HASH_DONE = true; setTimeout(() => { const t = document.getElementById("tomes"); if (t) t.scrollIntoView({ block: "start" }); }, 60); }
   if (HASH_TAB && !HASH_DONE) { HASH_DONE = true; requestAnimationFrame(() => { const t = document.querySelector(".tabs"); if (t) t.scrollIntoView({ block: "start" }); }); }
 }
 function panel(s, pubFR, pubJP, eds, ad){
