@@ -498,6 +498,7 @@ footer{padding-block:0 32px!important;margin-top:-28px}
 .feature .f-top>.cover{grid-area:cv}
 .feature .f-top>.f-main{grid-area:main}
 .feature .f-top>.syn{grid-area:syn;margin:0;max-width:70ch}
+@media (max-width:699px){.feature .f-nums{flex-direction:column;align-items:flex-start;gap:4px}.feature .f-yr{order:-1}}
 @media (max-width:699px){.feature .f-top{grid-template-areas:"cv main" "syn syn";column-gap:14px!important}}
 
 .sh-nav.cx-nav{align-items:center;gap:10px}
@@ -886,7 +887,7 @@ function featureHTML(w, pos){
         <span class="pos">Série mère${pos ? ` · #<b>${pos}</b>` : ""} · <span class="pos-era">${esc(era.name)}</span></span>
         <h3>${esc(w.t)}</h3>
         ${w.jp && w.jp !== w.t ? `<span class="w-jp" lang="ja">${esc(w.jp)}</span>` : ""}
-        <div class="f-nums"><span><b>${w.vol != null ? w.vol : "?"}</b> tomes</span>${yearsShort(w) ? `<span><b>${esc(yearsShort(w))}</b></span>` : ""}${isLive(w) ? `<span class="pill live">En cours</span>` : ""}</div>
+        <div class="f-nums"><span class="f-vol"><b>${w.vol != null ? w.vol : "?"}</b> tomes</span>${yearsShort(w) ? `<span class="f-yr"><b>${esc(yearsShort(w))}</b></span>` : ""}${isLive(w) ? `<span class="pill live">En cours</span>` : ""}</div>
       </div>
       ${w.syn ? `<p class="syn">${esc(w.syn)}</p>` : ""}
     </div>
