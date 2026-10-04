@@ -84,7 +84,7 @@
     ".sh-me img{width:30px;height:30px;border-radius:50%;display:block}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
-  var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : (p === "/" || p === "/index.html") ? "actu" : "";
+  var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : (p === "/" || p === "/index.html" || /^\/actus/.test(p)) ? "actu" : "";
   var a = function (k, href, label) { return '<a href="' + href + '"' + (cur === k ? ' aria-current="page"' : "") + ">" + label + "</a>"; };
   var ICON_S = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
   var html = '<header class="sh" id="sh">' +

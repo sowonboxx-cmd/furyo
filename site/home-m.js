@@ -83,8 +83,10 @@
     return '<div class="mh-h2"><div>' + (sub ? "<small>" + sub + "</small>" : "") + "<h2>" + t + "</h2></div>" + (href ? '<a href="' + href + '">' + (lab || "Tout voir") + "</a>" : "") + "</div>";
   }
   function sortiesFR() {
-    var w = semaine(), it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= w[0] && x.date <= w[1]; });
-    var titre = "Sorties de la semaine", sous = I.fr + "En France · " + w[2].getDate() + " – " + w[3].getDate() + " " + MC[w[3].getMonth()];
+    // Pas assez de sorties pour une semaine : les prochaines sorties du mois en cours, à partir d'aujourd'hui (Will, 05/10/2026).
+    var now = new Date(), t0 = now.toISOString().slice(0, 10), fin = new Date(now.getFullYear(), now.getMonth() + 1, 0), t1 = fin.getFullYear() + "-" + String(fin.getMonth() + 1).padStart(2, "0") + "-" + String(fin.getDate()).padStart(2, "0");
+    var it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t0 && x.date <= t1; });
+    var titre = "Prochaines sorties", sous = I.fr + "En France · " + ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][now.getMonth()];
     if (!it.length) { var t = new Date().toISOString().slice(0, 10); it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t; }).slice(0, 8); titre = "Prochaines sorties"; sous = I.fr + "En France"; }
     if (!it.length) return "";
     return '<section class="mh-sec" aria-label="Sorties en France">' + head2(titre, sous, "/calendrier/#france", "Calendrier") + '<div class="mh-car">' + it.map(function (x) {
