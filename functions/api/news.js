@@ -45,7 +45,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const label = (pubFull.match(/\(([^)]+)\)/) || prop.match(/\(([^)]+)\)/) || [])[1] || "";
       const t1 = (prop.match(/tome 1 le (\d{2}\/\d{2}\/\d{4})/i) || [])[1] || "";
       // Image : fichier .jpg/.png/.webp, ou adresse de couverture officielle sans extension (Shōgakukan snsbooks, Akita Shoten /cover).
-      const cover = (val.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "";
+      const cover = text(p["Image"]) || (val.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "";
       const m = prop.match(/\bT\.?\s?0*(\d+)\b|\btome\s+0*(\d+)/i);
       return {
         // Date affichée : le jour où la veille a repéré l'info (ordre chronologique, Will 04/10/2026) ;

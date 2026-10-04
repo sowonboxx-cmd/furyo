@@ -176,6 +176,10 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm .rs{display:flex;gap:8px;align-items:flex-start}
 .vm .rs textarea{min-height:88px;flex:1}
 .vm .rs button{height:38px;padding:0 12px;border:0;border-radius:19px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.nimg{margin:4px 0 12px}.nimg-v{border:1px solid #48484C;border-radius:12px;min-height:64px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px}
+.nimg-v img{display:block;width:100%;max-height:340px;object-fit:contain}.nimg-v span{color:var(--paper-2);font-size:13px;padding:14px;text-align:center}
+.nimg-r{display:flex;gap:6px;align-items:flex-start}.nimg-r .vvid{flex:1;min-width:0}
+.vm .nimg-b{flex:none;margin:0;font-size:13px;height:42px;padding:0 12px;border:1px solid #48484C;border-radius:12px;background:transparent;color:var(--paper);font:600 13px Inter,sans-serif;display:inline-flex;align-items:center;cursor:pointer}
 .vvid{width:100%;height:42px;padding:0 14px;border:1px solid #48484C;border-radius:12px;background:transparent;color:var(--paper);font:400 15px Inter,sans-serif;margin-bottom:6px}
 .vm-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--paper-3);white-space:nowrap;min-width:0}
 .vm-h>span:not(.pc){overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -453,15 +457,18 @@ async function veille(){
 }
 function vdraw(){
   // « Vu, pas sur le site » : news gardées de côté, à part, qu'on peut encore publier plus tard.
-  const actifs = VITEMS.filter(i => !i.vu), gardes = VITEMS.filter(i => i.vu);
+  // « Publiées » : news déjà en ligne, encore modifiables (texte, image, vidéo, catégorie).
+  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
   const counts = {}; actifs.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
   if (VF !== "tout" && VF !== "vu" && !counts[VF]) VF = "tout";
   if (VF === "vu" && !gardes.length) VF = "tout";
+  if (VF === "pub" && !pubs.length) VF = "tout";
   document.getElementById("vchips").innerHTML = `<button class="chip" data-vf="tout" aria-pressed="${VF === "tout"}">Tout <small>${actifs.length}</small></button>` +
     Object.keys(VCATS).filter(k => counts[k]).map(k => `<button class="chip" data-vf="${k}" aria-pressed="${VF === k}" style="--c:${VCOL[k]}"><span class="d"></span>${esc(VCATS[k])} <small>${counts[k]}</small></button>`).join("") +
-    (gardes.length ? `<button class="chip" data-vf="vu" aria-pressed="${VF === "vu"}" style="--c:#9A6DD7"><span class="d"></span>Vu, pas sur le site <small>${gardes.length}</small></button>` : "");
-  const list = VF === "vu" ? gardes : actifs.filter(i => VF === "tout" || i.cat === VF);
-  document.getElementById("vhint").textContent = VF === "vu" ? `${list.length} news gardées de côté · tu peux encore les publier` : actifs.length ? `${list.length} à relire · touche une ligne pour voir le détail` : "Rien à relire pour l'instant 👌";
+    (gardes.length ? `<button class="chip" data-vf="vu" aria-pressed="${VF === "vu"}" style="--c:#9A6DD7"><span class="d"></span>Vu, pas sur le site <small>${gardes.length}</small></button>` : "") +
+    (pubs.length ? `<button class="chip" data-vf="pub" aria-pressed="${VF === "pub"}" style="--c:#4DAB9A"><span class="d"></span>Publiées <small>${pubs.length}</small></button>` : "");
+  const list = VF === "pub" ? pubs : VF === "vu" ? gardes : actifs.filter(i => VF === "tout" || i.cat === VF);
+  document.getElementById("vhint").textContent = VF === "pub" ? `${list.length} news en ligne · touche une ligne pour changer le texte, l'image ou la vidéo` : VF === "vu" ? `${list.length} news gardées de côté · tu peux encore les publier` : actifs.length ? `${list.length} à relire · touche une ligne pour voir le détail` : "Rien à relire pour l'instant 👌";
   document.getElementById("vl").innerHTML = list.map(i => `<li class="vi" data-vid="${i.id}"><time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
   const a = document.querySelector(".sh-val b"); if (a) a.textContent = actifs.length;
 }
@@ -470,7 +477,7 @@ function vopen(id){
   const news = i.news, pp = i.cat === "prepub";
   const site = news || pp; // onglet « Site » : texte de la news, ou annonce du magazine pour une prépublication
   const couv = /^couv/.test(i.cat);
-  const img = i.image ? `<img class="cv${/^(couv|sortie|prepub)/.test(i.cat) ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
+  const img = news ? "" : i.image ? `<img class="cv${/^(couv|sortie|prepub)/.test(i.cat) ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
   const dt = (k, v) => v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : "";
   const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
   // Couverture : seulement la date de sortie. Le reste : ce qui aide à décider (sans le niveau de source).
@@ -491,6 +498,7 @@ function vopen(id){
     <h2>${esc(i.titre)}</h2>
     ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
     ${img}
+    ${news ? vimgBloc(i) : ""}
     ${champs ? `<dl>${champs}</dl>` : ""}
     ${tomeIt ? `<label for="vrs">Résumé sortie (commun à tous les tomes de la série)</label>
     <div class="rs"><textarea id="vrs" maxlength="300">${esc(rs)}</textarea><button data-vrs>Enregistrer</button></div>` : ""}
@@ -502,15 +510,58 @@ function vopen(id){
     ${tomeIt && i.image ? `<div class="vimg"><div class="seg" role="group" aria-label="Thème"><button data-vth="creme" aria-pressed="true">Crème</button><button data-vth="sombre" aria-pressed="false">Sombre</button></div>
       <button data-vimg="post">${ICO_DL}Post 3:4</button><button data-vimg="story">${ICO_DL}Story 9:16</button></div>` : ""}
     <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
-    <div class="act">
+    <div class="act">${i.enLigne ? `
+      <button class="go" data-vsave style="grid-column:1/3">Enregistrer les changements</button>
+      <button class="rej" data-vs="Vu" style="grid-column:1/3">Retirer du site</button>` : `
       <button class="go" data-vs="${news ? "Publié sur le site" : pp ? "Validé" : "À appliquer à la fiche"}">${news ? "Publier sur le site" : pp ? "Publier sur le site" : "Appliquer à la fiche"}</button>
       ${pp ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : i.vu ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Rejeter</button>` : `<button data-vs="Vu">${news ? "Vu, pas sur le site" : "Vu, rien à faire"}</button>
-      <button class="rej" data-vs="Rejeté">Rejeter</button>`}
+      <button class="rej" data-vs="Rejeté">Rejeter</button>`}`}
     </div></div>`;
   document.body.appendChild(m);
   vcaps(m, i, true);
   vcount(m);
 }
+// Image d'une news : celle choisie par Will (propriété « Image »), sinon celle trouvée automatiquement.
+// On peut en envoyer une (fichier ou copier-coller), coller une adresse, ou la retirer.
+function vimgBloc(i){
+  const u = i.imageChoisie || i.image || "";
+  return `<div class="nimg"><div class="nimg-v">${u ? `<img src="/api/couv?u=${encodeURIComponent(u)}&w=600" alt="" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'Image illisible'}))">` : `<span>Pas d'image : la news s'affiche sans illustration.</span>`}</div>
+    <label for="vimgu">Image de la news${i.imageChoisie ? "" : u ? " (trouvée automatiquement)" : ""}</label>
+    <div class="nimg-r"><input id="vimgu" class="vvid" type="url" placeholder="Colle une image ici (Ctrl+V) ou son adresse https://…" value="${esc(i.imageChoisie || "")}">
+    <label class="nimg-b">Choisir…<input type="file" accept="image/*" data-vimgf hidden></label>${i.imageChoisie ? `<button class="nimg-b" data-vimgx>Retirer</button>` : ""}</div></div>`;
+}
+// Réduit l'image (1400 px de large au plus, JPEG) puis l'envoie dans le stockage du site ; renvoie son adresse.
+async function envoyerImage(file){
+  let blob = file;
+  try {
+    const bm = await createImageBitmap(file), k = Math.min(1, 1400 / bm.width);
+    if (k < 1 || !/png|gif/.test(file.type)) {
+      const c = document.createElement("canvas"); c.width = Math.round(bm.width * k); c.height = Math.round(bm.height * k);
+      c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height);
+      blob = await new Promise(r => c.toBlob(r, "image/jpeg", .88));
+    }
+  } catch (e) {}
+  const r = await fetch("/api/admin/image", { method: "POST", headers: { "content-type": blob.type || "image/jpeg" }, body: blob }).catch(() => null);
+  const j = r ? await r.json().catch(() => ({})) : {};
+  if (!r || !r.ok) throw new Error(j.error || "Envoi impossible");
+  return j.url;
+}
+async function vimgFichier(m, file){
+  if (!file || !/^image\//.test(file.type)) return;
+  const v = m.querySelector(".nimg-v"); v.innerHTML = "<span>Envoi de l'image…</span>";
+  try { const url = await envoyerImage(file); m.querySelector("#vimgu").value = url; vimgApercu(m); toast("Image prête · pense à enregistrer ✓"); }
+  catch (e) { v.innerHTML = `<span>${esc(e.message)}</span>`; }
+}
+function vimgApercu(m){
+  const u = m.querySelector("#vimgu").value.trim(), i = VITEMS.find(x => x.id === m.dataset.vid), s = u || i.image;
+  m.querySelector(".nimg-v").innerHTML = s ? `<img src="/api/couv?u=${encodeURIComponent(s)}&w=600" alt="">` : `<span>Pas d'image : la news s'affiche sans illustration.</span>`;
+}
+document.addEventListener("paste", e => {
+  const m = document.querySelector(".vm"); if (!m || !m.querySelector("#vimgu")) return;
+  const f = [...(e.clipboardData || {}).files || []].find(x => /^image\//.test(x.type));
+  if (f) { e.preventDefault(); vimgFichier(m, f); }
+});
+document.addEventListener("change", e => { const f = e.target.closest("[data-vimgf]"); if (f) vimgFichier(f.closest(".vm"), f.files[0]); });
 // Visuel « sortie d'un tome » (design Soleil) : post 3:4 ou story 9:16, sombre ou crème.
 async function imageTome(i, theme, fmt, btn){
   btn.classList.add("busy"); const lbl = btn.innerHTML; btn.innerHTML = "Génération…";
@@ -620,13 +671,21 @@ function vcount(m){
 async function vsend(btn, statut){
   const m = btn.closest(".vm"), id = m.dataset.vid, i = VITEMS.find(x => x.id === id);
   const vtx = m.querySelector("#vtx"), texte = vtx ? vtx.value : i.texte, vc = m.querySelector("#vcat"), vv = m.querySelector("#vvid");
-  const video = vv ? vv.value.trim() : "";
+  const video = vv ? vv.value.trim() : "", vu = m.querySelector("#vimgu"), image = vu ? vu.value.trim() : null;
+  if (image && !/^https:\/\//.test(image)) { toast("L'image doit être une adresse https://"); return; }
   btn.classList.add("busy");
   // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
-  const categorie = vc && statut === "Publié sur le site" ? VCATS[vc.value] : "";
-  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, statut, ...(texte !== i.texte ? { texte } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
+  const categorie = vc && (statut === "Publié sur le site" || (!statut && vc.value !== i.cat)) ? VCATS[vc.value] : "";
+  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
+  if (!statut) { // news en ligne modifiée : elle reste dans « Publiées »
+    if (vtx) i.texte = vtx.value; if (vv) i.video = video; if (image !== null) i.imageChoisie = image;
+    if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; }
+    m.remove(); vdraw(); toast("Changements en ligne ✓"); return;
+  }
+  if (statut === "Vu" && i.enLigne) { i.enLigne = false; i.vu = true; m.remove(); vdraw(); toast("Retirée du site · rangée dans « Vu, pas sur le site »"); return; }
+  if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } m.remove(); vdraw(); toast("Publié sur le site ✓"); return; }
   // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
   if (statut === "Vu" && i.news) { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
   m.remove(); vdraw();
@@ -658,9 +717,12 @@ document.addEventListener("click", async e => {
     VITEMS.forEach(x => { if (x.serie && x.serie.id === i.serie.id) x.serie.resumeSortie = v; });
     toast("Résumé sortie enregistré pour toute la série ✓"); return; }
   const vs = e.target.closest("[data-vs]"); if (vs) vsend(vs, vs.dataset.vs);
+  const sv = e.target.closest("[data-vsave]"); if (sv) vsend(sv, "");
+  const vx = e.target.closest("[data-vimgx]"); if (vx) { const m = vx.closest(".vm"); m.querySelector("#vimgu").value = ""; vimgApercu(m); vx.remove(); return; }
 });
 document.addEventListener("input", e => {
   const m = e.target.closest(".vm"); if (!m) return;
+  if (e.target.id === "vimgu") { clearTimeout(m._ti); m._ti = setTimeout(() => vimgApercu(m), 500); return; }
   if (e.target.id === "vrs") vcaps(m, VITEMS.find(x => x.id === m.dataset.vid), false);
   else if (e.target.classList.contains("cap")) e.target.dataset.edit = "1";
   vcount(m);
