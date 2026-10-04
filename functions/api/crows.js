@@ -5,7 +5,8 @@ import { slugify } from "../../lib/notion.js";
 
 const DATA_SOURCE_ID = "3ebb5e1a-634f-8051-9faf-000be2dabb16";
 const DATABASE_ID = "3ebb5e1a634f80f998e3c0fe5b75b6ea";
-const FILTER = { property: "Univers", rich_text: { equals: "CROWS X WORST" } };
+// CROWS X WORST, plus les autres œuvres de Hiroshi Takahashi (Univers « Hiroshi Takahashi »), rangées à part sur la carte.
+const FILTER = { or: [{ property: "Univers", rich_text: { equals: "CROWS X WORST" } }, { property: "Univers", rich_text: { equals: "Hiroshi Takahashi" } }] };
 const CACHE_SECONDS = 300;
 
 const text = p => {

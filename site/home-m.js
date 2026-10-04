@@ -14,7 +14,8 @@
   var MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   var dd = function (d) { if (!d) return ""; var x = new Date(d + "T12:00:00"); return x.getDate() + " " + MC[x.getMonth()]; };
   var nf = function (n) { return n >= 1000 ? (n / 1000).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " k" : String(n || 0); };
-  var D = { cn: {}, news: null, cal: null, prepub: null, av: null, mbr: null, aut: null, stats: {}, me: null };
+  var NEWS0 = null; try { NEWS0 = JSON.parse(localStorage.getItem("fg-news") || "null"); } catch (e) {}
+  var D = { cn: {}, news: NEWS0 && NEWS0.length ? NEWS0 : null, cal: null, prepub: null, av: null, mbr: null, aut: null, stats: {}, me: null };
   var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
   var newsId = function (it) { return it.id; };
 
@@ -130,7 +131,7 @@
     return '<section class="mh-sec" aria-label="Direct du Japon">' + head2("Direct du Japon", '<span class="live">● En direct</span> · Prépublication', "/?vue=magazines", "Tous les magazines") + '<div class="mh-car">' + m.slice(0, 6).map(magCard).join("") + "</div></section>";
   }
   function crows() {
-    return '<a class="mh-cxw" href="/crows-x-worst/"><span class="chars"><img src="/crows-x-worst/img/char-hana.png" alt=""><img src="/crows-x-worst/img/char-boya.png" alt=""></span><span class="t"><small>Carte interactive</small><b>CROWS<i>×</i>WORST</b><em>Toutes les œuvres dans l\'ordre de l\'histoire</em></span></a>';
+    return '<a class="mh-cxw" href="/crows-x-worst/"><span class="map" aria-hidden="true"></span><span class="chars"><img src="/crows-x-worst/img/char-hana.png" alt=""><img src="/crows-x-worst/img/char-boya.png" alt=""></span><span class="t"><small>Carte interactive</small><b>CROWS<i>×</i>WORST</b><em>Toutes les œuvres dans l\'ordre de l\'histoire</em></span></a>';
   }
   function avance() {
     var a = D.av; if (!a || !a.total) return "";
@@ -176,8 +177,9 @@
     else if (!(D.me && D.me.user)) feed = '<div class="mh-lock"><b>' + (TAB === "feed" ? "Ton fil personnalisé" : "Tes signets") + "</b><p>" + (TAB === "feed" ? "Les news des séries que tu suis, rien que pour toi." : "Retrouve toutes les news que tu as gardées.") + ' Réservé aux membres.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button></div>';
     else if (TAB === "feed") feed = '<p class="mh-note">Bientôt : les news des séries que tu suis apparaîtront ici. Pour l\'instant, ajoute des news à tes signets.</p>';
     else { var ids = D.signets || []; var sig = news.filter(function (it) { return ids.indexOf(newsId(it)) >= 0; }); feed = D.signets == null ? '<p class="mh-note">Chargement…</p>' : sig.length ? sig.map(cardO).join("") : '<p class="mh-note">Aucun signet pour l\'instant : touche l\'icône signet d\'une news pour la garder ici.</p>'; }
-    root.innerHTML = xtabs() + catMenu("") + '<div class="mh-feed">' + feed + "</div>" +
-      (TAB === "toutes" && news.length > 2 ? '<a class="mh-all" href="/?vue=actus">Voir toutes les actualités</a>' : TAB === "toutes" && news.length ? '<a class="mh-all" href="/?vue=actus">Voir toutes les actualités</a>' : "") +
+    // « Voir toutes les actualités » dans le bloc noir des news, pour qu'on voie qu'il en fait partie (Will, 04/10/2026).
+    root.innerHTML = xtabs() + catMenu("") + '<div class="mh-feed">' + feed +
+      (TAB === "toutes" && news.length ? '<a class="mh-all" href="/?vue=actus">Voir toutes les actualités<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>' : "") + "</div>" +
       sortiesFR() + sortiesJP() + direct() + crows() + avance() + membres() + mangakas();
   }
   // Chargement au fur et à mesure (10 par 10)
