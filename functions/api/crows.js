@@ -65,7 +65,8 @@ function mapRow(r) {
     o: num(p["Ordre chrono"]),
     epoque: text(p["Époque"]),
     relation: text(p["Relation"]),
-    check: text(p["Vérification"]),
+    // Doublons (tomes créés comme des séries) : repérés par « Doublon » dans Relation (la colonne Vérification a été supprimée le 04/10/2026).
+    check: /doublon/i.test(text(p["Relation"])) ? "Doublon" : "",
   };
 }
 
@@ -81,7 +82,14 @@ export async function onRequestGet({ env, request, waitUntil }) {
     if (hit) return hit;
   }
   try {
-    const rows = (await queryAll(env.NOTION_TOKEN)).map(mapRow);
+    // Une série ajoutée par Claude n'entre dans la chronologie qu'une fois validée par Will
+    // (élément « Nouvelle série » encore « À valider » dans la Veille → la série est mise de côté).
+    const attente = await fetch("https://api.notion.com/v1/data_sources/d748cac9-fdb0-4d44-87e8-cef34669f0b2/query", {
+      method: "POST", headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2025-09-03", "Content-Type": "application/json" },
+      body: JSON.stringify({ page_size: 100, filter: { and: [{ property: "Type", select: { equals: "Nouvelle série" } }, { property: "Statut", select: { equals: "À valider" } }] } }),
+    }).then(r => r.ok ? r.json() : { results: [] }).catch(() => ({ results: [] }));
+    const enAttente = new Set((attente.results || []).flatMap(v => ((v.properties || {})["Série"] || {}).relation || []).map(x => x.id.replace(/-/g, "")));
+    const rows = (await queryAll(env.NOTION_TOKEN)).filter(r => !enAttente.has(r.id.replace(/-/g, ""))).map(mapRow);
     const res = new Response(JSON.stringify({ synced: new Date().toISOString(), works: rows }), { headers });
     waitUntil(cache.put(key, res.clone()));
     return res;
