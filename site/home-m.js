@@ -109,7 +109,8 @@
   function magCard(m) {
     var t = new Date().toISOString().slice(0, 10), paru = !m.date || m.date <= t;
     return '<article class="mh-mag"><div class="mh-magc">' + (m.cover ? '<img src="' + esc(couv(m.cover, 200)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') + "</div><div class='mh-magt'><small>" + (paru ? "Sorti le " : "Sort le ") + esc(dd(m.date)) + "</small><b>" + esc(m.mag) + " " + esc(m.issue) + "</b>" +
-      m.items.map(function (it) { var hl = (it.hl || [])[0]; return '<span class="mh-ch"><span>' + esc(it.entry.split(" · ")[0]) + "</span><span>" + (hl ? '<i>' + esc(hl.replace(/^En /, "")) + "</i>" : "") + (it.status === "Pause" ? "<em>Pause</em>" : it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + "</span></span>"; }).join("") + "</div></article>";
+      // Juste le titre et le numéro de chapitre (pas de pastille couverture / pause, Will 04/10/2026).
+      m.items.map(function (it) { return '<span class="mh-ch"><span>' + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.status !== "Pause" && it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + "</span></span>"; }).join("") + "</div></article>";
   }
   function direct() {
     var m = mags(); if (!m.length) return "";
