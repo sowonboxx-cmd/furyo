@@ -460,7 +460,7 @@ function vdraw(){
   // « Publiées » : news déjà en ligne, encore modifiables (texte, image, vidéo, catégorie).
   const actifs = VITEMS.filter(i => !i.vu && !i.enLigne), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
   const counts = {}; actifs.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
-  if (VF !== "tout" && VF !== "vu" && !counts[VF]) VF = "tout";
+  if (!["tout", "vu", "pub"].includes(VF) && !counts[VF]) VF = "tout";
   if (VF === "vu" && !gardes.length) VF = "tout";
   if (VF === "pub" && !pubs.length) VF = "tout";
   document.getElementById("vchips").innerHTML = `<button class="chip" data-vf="tout" aria-pressed="${VF === "tout"}">Tout <small>${actifs.length}</small></button>` +
