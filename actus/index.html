@@ -32,7 +32,7 @@ a{color:inherit}
 .na-text{margin:0;font-size:16.5px;line-height:1.65;color:#E4E4E8;white-space:pre-line}
 .na-vid{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}.na-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .na-links{display:flex;flex-wrap:wrap;gap:8px}
-.na-links a{height:38px;padding:0 15px;border-radius:19px;display:inline-flex;align-items:center;background:var(--ink-3);text-decoration:none;font-size:13.5px;font-weight:600}
+.na-links a{height:38px;padding:0 15px;border-radius:19px;display:inline-flex;align-items:center;background:#000;text-decoration:none;font-size:13.5px;font-weight:600}
 .na-acts{display:flex;align-items:center;gap:22px;padding:6px 0;color:var(--paper-3);font-size:13.5px;font-weight:600}
 .na-acts button,.na-acts span{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:inherit;font:inherit;padding:6px 0;cursor:pointer}
 .na-acts svg{width:21px;height:21px}
@@ -40,6 +40,11 @@ a{color:inherit}
 .na-acts .a-book{margin-left:auto}.na-acts .on.a-book{color:var(--blue)}.na-acts .on.a-book svg{fill:var(--blue)}
 .na-com{display:flex;flex-direction:column;gap:12px;padding-top:16px;border-top:1px solid var(--ink-3)}
 .na-com button.open{align-self:flex-start;border:0;background:none;padding:0;color:var(--paper-3);font:600 14px Inter,sans-serif;cursor:pointer}
+.na-com h2{margin:0;font:700 20px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em}
+.na-add{display:flex;align-items:center;gap:10px;width:100%;height:48px;padding:0 6px 0 8px;border:1px solid var(--ink-3);border-radius:24px;background:#000;color:var(--paper-3);font:500 14.5px Inter,sans-serif;text-align:left;cursor:text}
+.na-add .na-av{width:32px;height:32px;font-size:13px}.na-av svg{width:16px;height:16px}
+.na-add span{flex:1}
+.na-add b{flex:none;height:34px;padding:0 14px;border-radius:17px;background:var(--blue);color:#fff;font:700 13px/34px Inter,sans-serif}
 .na-com p{margin:0;font-size:14px;line-height:1.45;color:var(--paper-2)}.na-com p b{color:var(--paper)}
 .na-cl{display:flex;align-items:flex-start;gap:9px}
 .na-av{width:24px;height:24px;border-radius:50%;flex:none;object-fit:cover;background:var(--ink-3);display:grid;place-items:center;font:700 11px Inter,sans-serif;color:var(--paper)}
@@ -97,10 +102,17 @@ a{color:inherit}
   }
   // Avatar rond du membre (photo Google), ou son initiale si pas de photo.
   function av(c, cls) { return c.p ? '<img class="' + cls + '" src="' + esc(c.p) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : '<span class="' + cls + '">' + esc((c.n || "?").charAt(0).toUpperCase()) + "</span>"; }
+  // Zone commentaires qui donne envie d'écrire : titre, derniers commentaires, puis un faux champ « Ajouter un commentaire… » (Will, 05/10/2026).
+  function addBox() {
+    var u = member() ? ME.user : null;
+    return '<button type="button" class="na-add" data-open>' + (u ? av({ p: u.picture, n: u.name }, "na-av") : '<span class="na-av">' + I.com + "</span>") +
+      "<span>" + (CM.length ? "Ajouter un commentaire…" : "Sois le premier à commenter…") + "</span><b>Publier</b></button>";
+  }
   function preview() {
-    if (!CM.length) return '<section class="na-com"><button type="button" class="open" data-open>' + (STORED ? "Aucun commentaire pour l'instant : sois le premier." : "Commentaires bientôt disponibles.") + "</button></section>";
-    return '<section class="na-com" aria-label="Commentaires"><button type="button" class="open" data-open>Afficher ' + (CM.length > 1 ? "les " + CM.length + " commentaires" : "le commentaire") + "</button>" +
-      CM.slice(-2).map(function (c) { return '<p class="na-cl">' + av(c, "na-av") + "<span><b>" + esc(c.n) + "</b> " + esc(c.t) + "</span></p>"; }).join("") + "</section>";
+    if (!STORED) return '<section class="na-com"><h2>Commentaires</h2><p>Commentaires bientôt disponibles.</p></section>';
+    return '<section class="na-com" aria-label="Commentaires"><h2>Commentaires' + (CM.length ? " · " + CM.length : "") + "</h2>" +
+      CM.slice(-2).map(function (c) { return '<p class="na-cl">' + av(c, "na-av") + "<span><b>" + esc(c.n) + "</b> " + esc(c.t) + "</span></p>"; }).join("") +
+      (CM.length > 2 ? '<button type="button" class="open" data-open>Afficher les ' + CM.length + " commentaires</button>" : "") + addBox() + "</section>";
   }
   // Vidéo YouTube jouée dans la page (trailer, PV d'anime…).
   function vid(u) {
@@ -178,7 +190,7 @@ a{color:inherit}
     get("/api/stats?ids=" + N.id).then(function (s) { if (s && s.stats) { ST = s.stats[N.id] || {}; STORED = s.stored !== false; render(); } });
     get("/api/comments?id=" + N.id).then(function (c) { if (c) { CM = c.items || []; STORED = c.stored !== false; render(); var o = document.getElementById("cm"); if (o && !o.hidden) sheet(); } });
   });
-  get("/api/auth/me").then(function (j) { ME = j; });
+  get("/api/auth/me").then(function (j) { ME = j; if (N && member()) render(); });
 })();
 </script>
 </body>
