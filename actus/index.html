@@ -37,7 +37,7 @@ a{color:inherit}
 .na-acts button,.na-acts span{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:inherit;font:inherit;padding:6px 0;cursor:pointer}
 .na-acts svg{width:21px;height:21px}
 .na-acts .on.a-like{color:var(--red)}.na-acts .on.a-like svg{fill:var(--red)}
-.na-acts .a-book{margin-left:auto}.na-acts .on.a-book{color:var(--blue)}.na-acts .on.a-book svg{fill:var(--blue)}
+.na-acts .a-com{margin-left:auto}.na-acts .on.a-book{color:var(--blue)}.na-acts .on.a-book svg{fill:var(--blue)}
 .na-com{display:flex;flex-direction:column;gap:12px;padding-top:16px;border-top:1px solid var(--ink-3)}
 .na-com button.open{align-self:flex-start;border:0;background:none;padding:0;color:var(--paper-3);font:600 14px Inter,sans-serif;cursor:pointer}
 .na-com h2{margin:0;font:700 20px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em}
@@ -70,7 +70,7 @@ a{color:inherit}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=19"></script>
+<script src="/site/header.js?v=20"></script>
 <main class="na" id="na"><p class="na-empty">Chargement…</p></main>
 <script>
 (function () {
@@ -95,10 +95,11 @@ a{color:inherit}
   var member = function () { return ME && ME.user; };
 
   function acts() {
-    return '<div class="na-acts" id="na-acts"><button type="button" class="a-like' + (ST.ml ? " on" : "") + '" data-act="like" aria-label="J\'aime">' + I.heart + "<b>" + nf(ST.l) + "</b></button>" +
-      '<span aria-label="Vues">' + I.stat + "<b>" + nf(ST.v) + "</b></span>" +
-      '<button type="button" class="a-com" data-open aria-label="Commentaires">' + I.com + "<b>" + CM.length + "</b></button>" +
-      '<button type="button" class="a-book' + (ST.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button></div>";
+    // Vues, likes et signet à gauche ; commentaires tout à droite (Will, 05/10/2026).
+    return '<div class="na-acts" id="na-acts"><span aria-label="Vues">' + I.stat + "<b>" + nf(ST.v) + "</b></span>" +
+      '<button type="button" class="a-like' + (ST.ml ? " on" : "") + '" data-act="like" aria-label="J\'aime">' + I.heart + "<b>" + nf(ST.l) + "</b></button>" +
+      '<button type="button" class="a-book' + (ST.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button>" +
+      '<button type="button" class="a-com" data-open aria-label="Commentaires">' + I.com + "<b>" + CM.length + "</b></button></div>";
   }
   // Avatar rond du membre (photo Google), ou son initiale si pas de photo.
   function av(c, cls) { return c.p ? '<img class="' + cls + '" src="' + esc(c.p) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : '<span class="' + cls + '">' + esc((c.n || "?").charAt(0).toUpperCase()) + "</span>"; }

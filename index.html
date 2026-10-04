@@ -349,7 +349,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
   .mh-acts button,.mh-acts a,.mh-acts span{display:inline-flex;align-items:center;gap:5px;border:0;background:none;padding:4px 0;color:inherit;font:inherit;text-decoration:none;cursor:pointer}
   .mh-acts svg{width:17px;height:17px}
   .mh-acts .a-like.on{color:#E5483A}.mh-acts .a-like.on svg{fill:#E5483A}
-  .mh-acts .a-book{margin-left:auto}.mh-acts .a-book.on{color:#4C9BFF}.mh-acts .a-book.on svg{fill:#4C9BFF}
+  .mh-acts .a-com{margin-left:auto}.mh-acts .a-book.on{color:#4C9BFF}.mh-acts .a-book.on svg{fill:#4C9BFF}
   .mh-feed{padding-bottom:18px}
   .mh-all{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;margin:14px 16px 0;border-radius:24px;background:#232325;color:#F5F5F7;font:600 14.5px Inter,system-ui,sans-serif;text-decoration:none}
   .mh-all svg{width:17px;height:17px;color:#4C9BFF}
@@ -463,10 +463,10 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 
 </head>
 <body>
-<script src="/site/header.js?v=19"></script>
+<script src="/site/header.js?v=20"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=18" defer></script>
+<script src="/site/home-m.js?v=19" defer></script>
 <div class="page">
 
 
@@ -590,7 +590,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 const VUE_N = new URLSearchParams(location.search).get("vue");
 const DT = {
   types: [["licence-fr","Nouvelle licence (France)","#529CCA"],["licence-jp","Nouvelle série (Japon)","#FF7369"],["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]],
-  news: null, me: null, stats: {}, cn: {}, signets: null, tab: "toutes", cat: "", all: false
+  news: null, me: null, stats: {}, cn: {}, signets: null, tab: "toutes", cat: new URLSearchParams(location.search).get("cat") || "", all: VUE_N === "actus"
 };
 DT.TL = Object.fromEntries(DT.types.map(t => [t[0], t])); DT.TL.annonce = DT.TL.news;
 try { const c = JSON.parse(localStorage.getItem("fg-news") || "null"); if (c && c.length) DT.news = c; } catch (e) {}
@@ -612,12 +612,12 @@ const ICN = {
 const catsN = it => (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(c => DT.TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : DT.TL.news));
 const metaN = it => '<div class="dm">' + catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>") + `<span>·</span><span>${escN(ddN(it.date))}</span></div>`;
 function actsN(it) {
-  // Comme sur X (Will, 05/10/2026) : likes, vues, commentaires à gauche ; signet tout à droite.
+  // Will, 05/10/2026 : vues, likes et signet à gauche ; commentaires tout à droite pour y accéder plus facilement.
   const id = it.id, st = DT.stats[id] || {};
-  return `<div class="da" data-id="${escN(id)}"><button type="button" class="a-like${st.ml ? " on" : ""}" data-act="like" aria-label="J'aime">${ICN.heart}<b>${nfN(st.l || 0)}</b></button>` +
-    `<span class="a-v" title="Vues">${ICN.stat}<b>${nfN(st.v || 0)}</b></span>` +
-    `<a class="a-com" href="${escN(linkN(it))}#commentaires" aria-label="Commentaires">${ICN.com}<b>${nfN(DT.cn[id] || 0)}</b></a><span class="sp"></span>` +
-    `<button type="button" class="a-book${st.mb ? " on" : ""}" data-act="bookmark" aria-label="Signet">${ICN.book}</button></div>`;
+  return `<div class="da" data-id="${escN(id)}"><span class="a-v" title="Vues">${ICN.stat}<b>${nfN(st.v || 0)}</b></span>` +
+    `<button type="button" class="a-like${st.ml ? " on" : ""}" data-act="like" aria-label="J'aime">${ICN.heart}<b>${nfN(st.l || 0)}</b></button>` +
+    `<button type="button" class="a-book${st.mb ? " on" : ""}" data-act="bookmark" aria-label="Signet">${ICN.book}</button><span class="sp"></span>` +
+    `<a class="a-com" href="${escN(linkN(it))}#commentaires" aria-label="Commentaires">${ICN.com}<b>${nfN(DT.cn[id] || 0)}</b></a></div>`;
 }
 const wideN = "if(this.naturalWidth/this.naturalHeight>1.15)this.closest('[data-img]').classList.add('wide')";
 function heroN(it) {

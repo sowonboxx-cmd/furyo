@@ -32,12 +32,13 @@
 
   // ---------- Actions d'une news (sans l'ouvrir) ----------
   function acts(it) {
+    // Vues, likes et signet à gauche ; commentaires tout à droite (Will, 05/10/2026).
     var id = newsId(it), st = D.stats[id] || {};
     return '<div class="mh-acts" data-id="' + esc(id) + '">' +
-      '<button type="button" class="a-like' + (st.ml ? " on" : "") + '" data-act="like" aria-label="J\'aime">' + I.heart + "<b>" + nf(st.l || 0) + "</b></button>" +
       '<span class="a-v" aria-label="Vues">' + I.stat + "<b>" + nf(st.v || 0) + "</b></span>" +
-      '<a class="a-com" href="' + esc(link(it)) + '#commentaires" aria-label="Commentaires">' + I.com + "<b>" + nf((D.cn || {})[id] || 0) + "</b></a>" +
-      '<button type="button" class="a-book' + (st.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button></div>";
+      '<button type="button" class="a-like' + (st.ml ? " on" : "") + '" data-act="like" aria-label="J\'aime">' + I.heart + "<b>" + nf(st.l || 0) + "</b></button>" +
+      '<button type="button" class="a-book' + (st.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button>" +
+      '<a class="a-com" href="' + esc(link(it)) + '#commentaires" aria-label="Commentaires">' + I.com + "<b>" + nf((D.cn || {})[id] || 0) + "</b></a></div>";
   }
   function link(it) { return "/actus/" + slug(it.fr || it.titre) + "-" + String(it.id).slice(-8); }
   function meta(it) {
