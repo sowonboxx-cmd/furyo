@@ -409,7 +409,10 @@ function ligne(pays, s, eds){
   if (prepubSeule(eds, pays)) { const stop = /abandon|arr[êe]t|stopp/i.test(st);
     return `<span>${FLAGS[pays] || ""}<b class="${stop ? "stop" : /termin/i.test(st) ? "end" : "on"}" style="font-weight:600;white-space:nowrap">Prépublication${stop ? " stoppée" : /termin/i.test(st) ? " terminée" : " en cours"}</b></span>`; }
   const today = new Date().toISOString().slice(0, 10);
-  const tomes = eds.filter(e => e.pays === pays).flatMap(e => e.tomes).filter(t => t.date && t.date <= today);
+  // Années : seulement l'édition classique (pas la Deluxe, le Kanzenban, le Shinsōban…), pour comparer les mêmes choses (Will, 04/10/2026).
+  const edsP = eds.filter(e => e.pays === pays), SPE = /deluxe|kanzen|完全|新装|shins[oō]|perfect|collector|int[ée]grale|ultimate|bunko|文庫/i;
+  const classique = edsP.find(e => !SPE.test(`${e.nom || ""} ${e.titre || ""} ${e.label || ""} ${e.format || ""}`)) || edsP[0];
+  const tomes = (classique ? classique.tomes : []).filter(t => t.date && t.date <= today);
   const n = (pays === "France" ? s.tomesFR : s.tomesJP) || tomes.reduce((m, t) => Math.max(m, t.n || 0), 0);
   let ans = "";
   if (/termin/i.test(st)) {
