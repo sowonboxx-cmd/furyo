@@ -1,3 +1,4 @@
+import { slugify } from "../../lib/notion.js";
 // GET /api/crows : lit la base Notion « FuryoGang — Séries » (Univers = CROWS X WORST)
 // et renvoie les champs affichés par la chronologie. Mis en cache 5 minutes.
 // Secret requis dans Cloudflare Pages : NOTION_TOKEN (clé d'intégration Notion).
@@ -50,6 +51,8 @@ function mapRow(r) {
     nid: r.id,
     edited: r.last_edited_time,
     t: text(p["SERIES"]),
+    // Adresse de la fiche du site (/series/<slug>) : titre français, sinon titre de la série
+    slug: slugify(text(p["Titre FR"]) || text(p["SERIES"])),
     jp: text(p["Titre Original"]),
     fr: text(p["Titre FR"]),
     frPub: text(p["Éditeur Français"]),

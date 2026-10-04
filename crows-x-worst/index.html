@@ -534,12 +534,57 @@ body.cv-on .lightbox{z-index:130}
 .cv-t:hover .cv-c,.cv-t:focus-visible .cv-c{transform:translateY(-4px)}
 .cv-t:focus-visible{outline:none}
 .cv-t:focus-visible .cv-c{box-shadow:0 0 0 3px var(--paper)}
-/* Fiche ouverte au centre */
-.cv-modal{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:40px;background:rgba(0,0,0,.6);cursor:default}
-.cv-card{width:min(760px,100%);max-height:calc(100vh - 80px);overflow:auto;border-radius:20px;user-select:text;-webkit-user-select:text;overscroll-behavior:contain}
-.cv-card .work-btn{cursor:default}
-.cv-card .chev{display:none}
-.cv-card .cover{cursor:zoom-in}
+.cv-modal{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:32px;background:rgba(0,0,0,.66);cursor:default}
+/* Fiche ouverte sur la carte (ordinateur) : couverture à gauche, infos et résumé à droite, détails puis tomes */
+.cf{position:relative;width:min(1180px,100%);max-height:calc(100vh - 64px);overflow:auto;overscroll-behavior:contain;border-radius:24px;background:var(--ink-2);padding:36px 40px 40px;box-sizing:border-box;user-select:text;-webkit-user-select:text;cursor:default}
+.cf-x{position:sticky;top:0;float:right;margin:-12px -16px 0 0;z-index:2;width:44px;height:44px;border:0;border-radius:22px;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer}
+.cf-x:hover{background:color-mix(in srgb,var(--paper) 14%,var(--ink-3))}
+.cf-top{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:44px;align-items:start}
+.cf-cover{position:relative;width:100%;aspect-ratio:5/7;border-radius:16px;overflow:hidden;background:var(--ink-3);cursor:zoom-in}
+.cf-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.cf-cover .ph{position:absolute;inset:0;display:flex;justify-content:flex-end;padding:18px;writing-mode:vertical-rl;font:900 56px/1.05 "Noto Sans JP",sans-serif;color:var(--paper);background:linear-gradient(160deg,color-mix(in srgb,var(--era) 45%,var(--ink-3)),var(--ink-3))}
+.cf-cover::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--st)}
+.cf-main{display:flex;flex-direction:column;gap:10px;min-width:0;padding-top:4px}
+.cf-pos{font:600 14px var(--f-body);color:var(--paper-3)}
+.cf-pos b{color:var(--era)}
+.cf-t{margin:0;font:700 56px/1 var(--f-display);text-transform:uppercase;letter-spacing:.01em;color:var(--paper);overflow-wrap:anywhere}
+.cf-jp{font:500 18px "Noto Sans JP",sans-serif;color:var(--paper-2)}
+.cf-auth{font:500 16px var(--f-body);color:var(--paper)}
+.cf-auth span{color:var(--paper-3)}
+.cf .pills{gap:8px;margin-top:4px}
+.cf .pill{font-size:12px;padding:6px 10px;border-radius:7px}
+.cf-syn{margin:10px 0 0;font:400 17px/1.6 var(--f-body);color:var(--paper-2);max-width:68ch}
+.cf-act{display:flex;gap:10px;margin-top:16px}
+.cf-full{display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 24px;border-radius:25px;background:var(--paper);color:var(--ink-2)!important;font:700 15px var(--f-body);text-decoration:none}
+.cf-full:hover{background:var(--paper-2)}
+.cf-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:36px}
+.cf-f{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:14px;background:var(--ink-3)}
+.cf-f .k{font:700 11px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--paper-3)}
+.cf-f .v{font:500 15px/1.35 var(--f-body);color:var(--paper)}
+.cf-tomes{margin-top:40px;padding-top:32px;border-top:1px solid var(--ink-3)}
+.cf-th{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+.cf-th h3{margin:0;font:700 30px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em;color:var(--paper)}
+.cf-seg{display:flex;gap:4px;padding:4px;background:var(--ink-3);border-radius:14px}
+.cf-seg button{height:40px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font:600 14px var(--f-body);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.cf-seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
+.cf-seg small{color:var(--paper-3);font-weight:600}
+.cf .flag{width:22px;height:15px;border-radius:3px;flex:none}
+.cf-ed + .cf-ed{margin-top:32px;padding-top:26px;border-top:1px solid var(--ink-3)}
+.cf-edh{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 16px}
+.cf-pill{display:inline-flex;align-items:center;height:32px;padding:0 13px;border-radius:9px;background:var(--ink-3);color:var(--paper);font:700 16px/1 var(--f-display);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.cf-meta{font:500 14px/1.35 var(--f-body);color:var(--paper-2)}
+.cf-meta b{color:var(--paper);font-weight:600}
+.cf-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(124px,1fr));gap:18px 12px}
+.cf-tm{display:flex;flex-direction:column;gap:6px;min-width:0}
+.cf-tc{position:relative;width:100%;aspect-ratio:5/7;border-radius:12px;overflow:hidden;background:var(--ink-3);display:grid;place-items:center}
+.cf-tc img{width:100%;height:100%;object-fit:cover;display:block}
+.cf-tc .ph{font:900 22px/1.05 "Noto Sans JP",sans-serif;writing-mode:vertical-rl;color:var(--paper-3)}
+.cf-tc .wait{position:absolute;left:5px;right:5px;bottom:5px;text-align:center;background:rgba(0,0,0,.8);border-radius:6px;padding:3px 2px;font:700 9.5px/1.2 var(--f-body);letter-spacing:.05em;text-transform:uppercase;color:var(--amber)}
+.cf-tn{font:700 15px/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.01em;color:var(--paper);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cf-td{font:400 12.5px/1.3 var(--f-body);color:var(--paper-2)}
+.cf-empty{margin:0;font:500 15px var(--f-body);color:var(--paper-3)}
+@media (max-width:1100px){.cf-top{grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:32px}.cf-t{font-size:44px}.cf-facts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -1149,14 +1194,84 @@ function cvClose(){
   cvCloseCard(); CV.el.hidden = true; document.body.classList.remove("cv-on");
   try { history.replaceState(history.state, "", location.pathname); } catch (e) {}
 }
+// Fiche d'une œuvre sur la carte : grande couverture, infos, détails, puis tous les tomes (France / Japon) lus sur la fiche du site
+const CF_FLAGS = {
+  Japon: `<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>`,
+  France: `<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="France"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>`
+};
+const cfSlugify = s => String(s || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const cfCouv = (u, w) => /^https?:/.test(u || "") ? "/api/couv?u=" + encodeURIComponent(u) + (w ? "&w=" + w : "") : u;
+const CF_MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const cfDate = t => { if (!t || !t.date) return "Date à venir"; const d = new Date(t.date + "T12:00:00"); return t.prec === "Mois" ? `${CF_MOIS[d.getMonth()]} ${d.getFullYear()}` : d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }); };
+const cfLab = t => t.n != null ? `Tome ${String(t.n).padStart(2, "0")}` : (t.titre || "Tome unique");
+const CF_CACHE = {};
+let CF = null; // { w, data, pays }
+function cfHTML(w){
+  const era = DATA.eras[w.era], live = isLive(w), pos = positions(DATA.works)[w.id];
+  const pills = [`<span class="pill type">${esc(w.type)}</span>`, live ? `<span class="pill live">En cours</span>` : (w.stJP ? `<span class="pill">${esc(w.stJP)}</span>` : "")].join("");
+  const authors = w.story === w.art ? `<span>Auteur</span> ${esc(w.story)}` : `<span>Histoire</span> ${esc(w.story)} · <span>Dessin</span> ${esc(w.art)}`;
+  const facts = [
+    ...(w.story === w.art ? [["Auteur", w.story]] : [["Histoire", w.story], ["Dessin", w.art]]),
+    ["Magazine", w.mag], ["Parution", w.years], ["Tomes (Japon)", w.volText],
+    ["Édition française", frLabel(w)], ["Personnages", w.focus], ["Statut au Japon", w.stJP]
+  ].filter(f => f[1]).map(f => `<div class="cf-f"><span class="k">${f[0]}</span><span class="v">${esc(f[1])}</span></div>`).join("");
+  const jpShort = (w.jp || "").replace(/^(クローズ外伝|WORST外伝)\s*/, "").replace(/[\x00-\x7F]+/g, "").slice(0, 6) || era.kanji;
+  return `<article class="cf" style="--era:${eraColor(era.k)};--st:var(${live ? "--cv-live" : "--cv-end"})" aria-label="${esc(w.t)}">
+    <button class="cf-x" data-cf-close aria-label="Fermer la fiche"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="cf-top">
+      <div class="cf-cover" data-zoom="${w.id}" title="Agrandir la couverture">${w.img ? `<img src="${esc(w.img)}" alt="Couverture de ${esc(w.t)}" referrerpolicy="no-referrer" onerror="this.remove()">` : `<span class="ph" lang="ja">${esc(jpShort)}</span>`}</div>
+      <div class="cf-main">
+        <span class="cf-pos">${pos ? `#<b>${pos}</b>` : "Hors chrono"} · ${esc(era.name)}</span>
+        <h2 class="cf-t">${esc(w.t)}</h2>
+        ${w.jp && w.jp !== w.t ? `<span class="cf-jp" lang="ja">${esc(w.jp)}</span>` : ""}
+        <span class="cf-auth">${authors}</span>
+        <div class="pills">${pills}</div>
+        ${w.syn ? `<p class="cf-syn">${esc(w.syn)}</p>` : ""}
+        <div class="cf-act" id="cfAct" hidden></div>
+      </div>
+    </div>
+    <div class="cf-facts">${facts}</div>
+    <section class="cf-tomes" id="cfTomes"><div class="cf-th"><h3>Tomes</h3><div id="cfSeg"></div></div><div id="cfEds"><p class="cf-empty">Chargement des tomes…</p></div></section>
+  </article>`;
+}
+function cfRenderTomes(){
+  if (!CF || !CF.data) return;
+  const eds = CF.data.editions || [], s = CF.data.serie || {};
+  const pays = ["France", "Japon"].filter(p => eds.some(e => e.pays === p));
+  const segEl = document.getElementById("cfSeg"), box = document.getElementById("cfEds"); if (!box) return;
+  segEl.innerHTML = pays.length > 1 ? `<div class="cf-seg" role="group" aria-label="Pays">${pays.map(p => `<button data-cf-p="${p}" aria-pressed="${p === CF.pays}">${CF_FLAGS[p]}${p} <small>${eds.filter(e => e.pays === p).reduce((n, e) => Math.max(n, e.tomes.length), 0)}</small></button>`).join("")}</div>` : "";
+  const list = eds.filter(e => e.pays === CF.pays);
+  const head = e => {
+    const ys = e.tomes.map(t => (t.date || "").slice(0, 4)).filter(Boolean).sort();
+    const ans = ys.length ? (ys[0] === ys[ys.length - 1] ? ys[0] : `${ys[0]}–${ys[ys.length - 1]}`) : "";
+    const n = e.tomes.length, pill = e.format || ((e.nom || "").split(" — ")[1] || "Édition").replace(/\s*\(.*$/, "");
+    const meta = [e.pub ? `<b>${esc(e.pub)}</b>` : "", e.label && e.label !== e.pub ? esc(e.label) : "", n ? `${n} tome${n > 1 ? "s" : ""}` : "", ans].filter(Boolean).join(" · ");
+    return `<div class="cf-edh"><span class="cf-pill">${esc(pill)}</span>${meta ? `<span class="cf-meta">${meta}</span>` : ""}</div>`;
+  };
+  const ph = esc((s.jp || s.t || "").slice(0, 4));
+  box.innerHTML = list.map(e => `<div class="cf-ed">${head(e)}${e.tomes.length ? `<ul class="cf-grid">${e.tomes.map(t => `<li class="cf-tm"><div class="cf-tc">${t.cover ? `<img src="${esc(cfCouv(t.cover, 360))}" alt="${esc(cfLab(t))}" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${ph}</span><span class="wait">Couverture à venir</span>`}</div><span class="cf-tn">${esc(cfLab(t))}</span><span class="cf-td">${esc(cfDate(t))}</span></li>`).join("")}</ul>` : `<p class="cf-empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}</div>`).join("") || `<p class="cf-empty">Aucune édition renseignée pour l'instant.</p>`;
+}
+async function cfLoad(w){
+  const slug = w.slug || cfSlugify(w.fr || w.t);
+  let d = CF_CACHE[slug];
+  if (!d) { try { const r = await fetch("/api/serie?s=" + encodeURIComponent(slug), { headers: { Accept: "application/json" } }); d = r.ok ? await r.json() : { error: "http" }; } catch (e) { d = { error: "réseau" }; } if (!d.error) CF_CACHE[slug] = d; }
+  if (!CF || CF.w !== w) return;
+  if (d.error || !d.editions) { const t = document.getElementById("cfTomes"); if (t) t.hidden = true; return; }
+  CF.data = d;
+  const eds = d.editions;
+  CF.pays = eds.some(e => e.pays === "France" && e.tomes.length) ? "France" : "Japon";
+  const act = document.getElementById("cfAct");
+  if (act) { act.innerHTML = `<a class="cf-full" href="/series/${esc(d.serie && d.serie.slug || slug)}">Voir la fiche complète<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>`; act.hidden = false; }
+  cfRenderTomes();
+}
 function cvOpenCard(id){
   const w = DATA.works.find(x => String(x.id) === String(id)); if (!w) return;
   cvCloseCard();
   const m = document.createElement("div"); m.className = "cv-modal"; m.id = "cvModal";
-  m.innerHTML = `<div class="cv-card">${workHTML(w, positions(DATA.works)[w.id], true).replace('data-open="false"', 'data-open="true"').replace('aria-expanded="false"', 'aria-expanded="true"')}</div>`;
-  CV.el.appendChild(m);
+  m.innerHTML = cfHTML(w); CF = { w, data: null, pays: "France" };
+  CV.el.appendChild(m); cfLoad(w);
 }
-function cvCloseCard(){ const m = document.getElementById("cvModal"); if (m) m.remove(); }
+function cvCloseCard(){ const m = document.getElementById("cvModal"); if (m) m.remove(); CF = null; }
 // Déplacement à la souris (un vrai glisser n'ouvre pas de fiche)
 let cvDrag = null, cvMoved = false;
 CV.el.addEventListener("pointerdown", e => {
@@ -1182,9 +1297,11 @@ CV.el.addEventListener("click", e => {
   if (cvMoved) { e.stopPropagation(); e.preventDefault(); cvMoved = false; return; }
   const modal = e.target.closest(".cv-modal");
   if (modal) {
-    if (!e.target.closest(".cv-card")) { e.stopPropagation(); cvCloseCard(); return; }
+    if (!e.target.closest(".cf") || e.target.closest("[data-cf-close]")) { e.stopPropagation(); cvCloseCard(); return; }
     if (e.target.closest("[data-zoom]")) return; // la lightbox du site s'en charge
-    e.stopPropagation(); return;
+    e.stopPropagation();
+    const pb = e.target.closest("[data-cf-p]"); if (pb && CF) { CF.pays = pb.dataset.cfP; cfRenderTomes(); }
+    return;
   }
   e.stopPropagation();
   const t = e.target.closest("[data-cv-open]"); if (t) { cvOpenCard(t.dataset.cvOpen); return; }
@@ -1229,6 +1346,7 @@ async function syncNotion(){
     const w = byNid.get(id);
     const set = (k, v) => { if (v !== "" && v !== null && v !== undefined && w[k] !== v) { w[k] = v; changed++; } };
     if (w) {
+      if (n.slug) w.slug = n.slug;
       set("vol", n.vol); if (n.vol != null) w.volText = String(n.vol);
       set("stJP", n.stJP); set("stFR", n.stFR); set("story", n.story); set("art", n.art);
       set("mag", n.mag); set("syn", n.syn); if (!/^img\//.test(w.img || "")) set("img", n.img); set("jp", n.jp);
@@ -1238,7 +1356,7 @@ async function syncNotion(){
     } else if (typeof n.o === "number") {
       // Nouvelle œuvre ajoutée dans Notion avec un « Ordre chrono » : placée à côté des œuvres voisines
       const near = DATA.works.filter(x => x.o <= n.o).sort((a, b) => b.o - a.o)[0] || DATA.works[0];
-      DATA.works.push({ id: nextId++, nid: n.nid, o: n.o, era: near.era, t: n.t, jp: n.jp, fr: n.fr, type: n.relation || "Œuvre", kind: "serie",
+      DATA.works.push({ id: nextId++, nid: n.nid, slug: n.slug, o: n.o, era: near.era, t: n.t, jp: n.jp, fr: n.fr, type: n.relation || "Œuvre", kind: "serie",
         story: n.story, art: n.art, mag: n.mag, years: "", vol: n.vol, volText: n.vol != null ? String(n.vol) : "?", stJP: n.stJP, stFR: n.stFR,
         frPub: n.frPub || "", volFr: n.volFr, focus: "", syn: n.syn, note: "", conf: "", src: [], img: n.img, line: /WORST/i.test(n.t) ? ["worst"] : ["crows"], gaiden: true, film: false });
       changed++;
