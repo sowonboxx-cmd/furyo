@@ -39,6 +39,8 @@ a{color:inherit}
 .na-com{display:flex;flex-direction:column;gap:12px;padding-top:16px;border-top:1px solid var(--ink-3)}
 .na-com button.open{align-self:flex-start;border:0;background:none;padding:0;color:var(--paper-3);font:600 14px Inter,sans-serif;cursor:pointer}
 .na-com p{margin:0;font-size:14px;line-height:1.45;color:var(--paper-2)}.na-com p b{color:var(--paper)}
+.na-cl{display:flex;align-items:flex-start;gap:9px}
+.na-av{width:24px;height:24px;border-radius:50%;flex:none;object-fit:cover;background:var(--ink-3);display:grid;place-items:center;font:700 11px Inter,sans-serif;color:var(--paper)}
 .na-empty{padding:40px 20px;color:var(--paper-3);text-align:center}
 /* Commentaires façon Insta */
 .cm{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
@@ -91,10 +93,12 @@ a{color:inherit}
       '<span aria-label="Vues">' + I.stat + "<b>" + nf(ST.v) + "</b></span>" +
       '<button type="button" class="a-book' + (ST.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button></div>";
   }
+  // Avatar rond du membre (photo Google), ou son initiale si pas de photo.
+  function av(c, cls) { return c.p ? '<img class="' + cls + '" src="' + esc(c.p) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : '<span class="' + cls + '">' + esc((c.n || "?").charAt(0).toUpperCase()) + "</span>"; }
   function preview() {
     if (!CM.length) return '<section class="na-com"><button type="button" class="open" data-open>' + (STORED ? "Aucun commentaire pour l'instant : sois le premier." : "Commentaires bientôt disponibles.") + "</button></section>";
     return '<section class="na-com" aria-label="Commentaires"><button type="button" class="open" data-open>Afficher ' + (CM.length > 1 ? "les " + CM.length + " commentaires" : "le commentaire") + "</button>" +
-      CM.slice(-2).map(function (c) { return "<p><b>" + esc(c.n) + "</b> " + esc(c.t) + "</p>"; }).join("") + "</section>";
+      CM.slice(-2).map(function (c) { return '<p class="na-cl">' + av(c, "na-av") + "<span><b>" + esc(c.n) + "</b> " + esc(c.t) + "</span></p>"; }).join("") + "</section>";
   }
   function render() {
     if (!N) return;
@@ -113,7 +117,7 @@ a{color:inherit}
     var box = document.getElementById("cm");
     if (!box) { box = document.createElement("div"); box.className = "cm"; box.id = "cm"; document.body.appendChild(box); box.addEventListener("click", function (e) { if (e.target === box) close(); }); }
     var list = CM.length ? CM.map(function (c) {
-      return '<div class="cm-it">' + (c.p ? '<img class="cm-av" src="' + esc(c.p) + '" alt="" referrerpolicy="no-referrer">' : '<span class="cm-av">' + esc(c.n.charAt(0).toUpperCase()) + "</span>") +
+      return '<div class="cm-it">' + av(c, "cm-av") +
         "<div><small><b>" + esc(c.n) + "</b> · " + ago(c.d) + "</small><p>" + esc(c.t) + "</p></div></div>";
     }).join("") : '<p class="cm-none">' + (STORED ? "Aucun commentaire pour l'instant." : "Les commentaires arrivent bientôt.") + "</p>";
     var form = !STORED ? "" : member() ? '<form class="cm-form" id="cm-form"><label class="sr" for="cm-in">Ton commentaire</label><input id="cm-in" maxlength="600" placeholder="Ajouter un commentaire…" autocomplete="off"><button type="submit" id="cm-go" disabled>Publier</button></form>'
