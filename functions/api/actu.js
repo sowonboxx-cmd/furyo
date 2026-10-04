@@ -22,7 +22,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return json({ error: "NOTION_TOKEN manquant" }, 503);
   const id = nid(new URL(request.url).searchParams.get("id"));
   if (!/^[0-9a-f]{32}$/.test(id)) return json({ error: "id invalide" }, 400);
-  return cached(request, waitUntil, "/api/actu?v=1&id=" + id, 600, async () => {
+  return cached(request, waitUntil, "/api/actu?v=2&id=" + id, 600, async () => {
     const T = env.NOTION_TOKEN;
     const n = await page(T, id);
     if (!n || text(n.properties["Statut"]) !== "Publié sur le site") return { serie: null, dernier: null, auteurs: [] };

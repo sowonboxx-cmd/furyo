@@ -6,7 +6,7 @@ const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "
 
 // Sites officiels des magazines (repli quand « Lien du numéro » est vide).
 const MAG_LINK = {
-  "Weekly Young Magazine": "https://yanmaga.jp/",
+  "Weekly Young Magazine": "https://magazine.yanmaga.jp/ym/",
   "Young Champion": "https://youngchampion.jp/",
   "Champion Cross": "https://championcross.jp/",
   "Weekly Shōnen Champion": "https://www.akitashoten.co.jp/w-champion",

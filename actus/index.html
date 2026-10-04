@@ -126,6 +126,10 @@ a{color:inherit}
 .nd-cm .cm-av{width:36px;height:36px}
 .nd-cm b{font-size:14px}.nd-cm small{margin-left:8px;color:#8E8E93;font-size:12.5px}.nd-cm p{margin:4px 0 0;font-size:14.5px;line-height:1.5;color:#E5E5EA;white-space:pre-line;overflow-wrap:anywhere}
 .nd-none{margin:6px 0 0;color:var(--paper-3);font-size:14px}
+.nd-lv{align-items:start}.nd-lt{padding-top:2px}.nd-l3{margin-top:2px}.nd-l4{margin-top:6px}
+.arr{width:13px;height:13px;flex:none;margin-left:2px}
+.nd-src a{display:inline-flex;align-items:center;gap:4px}
+.nd-main .na-acts .a-com .lbl{margin-left:-2px}
 .cm{align-items:center}.cm-box{border-radius:22px;height:min(80vh,720px)}.cm-grip{display:none}
 }
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -162,7 +166,7 @@ a{color:inherit}
     return '<div class="na-acts" id="na-acts"><span aria-label="Vues">' + I.stat + "<b>" + nf(ST.v) + "</b></span>" +
       '<button type="button" class="a-like' + (ST.ml ? " on" : "") + '" data-act="like" aria-label="J\'aime">' + I.heart + "<b>" + nf(ST.l) + "</b></button>" +
       '<button type="button" class="a-book' + (ST.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button>" +
-      '<button type="button" class="a-com" data-open aria-label="Commentaires">' + I.com + "<b>" + CM.length + "</b></button></div>";
+      '<button type="button" class="a-com" data-open aria-label="Commentaires">' + I.com + "<b>" + CM.length + "</b>" + (DESK.matches ? '<span class="lbl">' + (CM.length > 1 ? "commentaires" : "commentaire") + "</span>" : "") + "</button></div>";
   }
   // Avatar rond du membre (photo Google), ou son initiale si pas de photo.
   function av(c, cls) { return c.p ? '<img class="' + cls + '" src="' + esc(c.p) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : '<span class="' + cls + '">' + esc((c.n || "?").charAt(0).toUpperCase()) + "</span>"; }
@@ -199,6 +203,7 @@ a{color:inherit}
   }
 
   // ---------- Ordinateur ----------
+  var ARR = '<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg>';
   var X_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg>';
   var MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   var dShort = function (d) { if (!d) return ""; var x = new Date(d + "T12:00:00"); return x.getDate() + " " + MC[x.getMonth()]; };
@@ -234,7 +239,7 @@ a{color:inherit}
       '<span class="nd-l2">' + esc(d.mag.replace(/\s*\(en ligne\)/i, "")) + (d.issue && !/\(en ligne\)/i.test(d.mag) ? " " + esc(issue(d.issue)) : "") + "</span>" +
       '<span class="nd-l3">' + esc(d.entry) + "</span>" +
       '<span class="nd-l4">' + (d.status === "Pause" ? "En pause dans ce numéro" : d.ch != null ? "Chapitre <b>" + esc(d.ch) + "</b>" : "") + (d.fin ? "<i>Fin</i>" : "") + "</span></div></div>" +
-      (lire || d.link ? '<div class="nd-two">' + (lire ? '<a class="nd-btn blue" href="' + esc(lire) + '" target="_blank" rel="noopener">Lecture en ligne ↗</a>' : "") + (d.link ? '<a class="nd-btn" href="' + esc(d.link) + '" target="_blank" rel="noopener">Le magazine ↗</a>' : "") + "</div>" : "") + "</section>";
+      (lire || d.link ? '<div class="nd-two">' + (lire ? '<a class="nd-btn blue" href="' + esc(lire) + '" target="_blank" rel="noopener">Lecture en ligne' + ARR + '</a>' : "") + (d.link ? '<a class="nd-btn" href="' + esc(d.link) + '" target="_blank" rel="noopener">Le magazine' + ARR + '</a>' : "") + "</div>" : "") + "</section>";
   }
   function mangakas() {
     var s = CTX && CTX.serie; if (!CTX) return "";
@@ -274,7 +279,7 @@ a{color:inherit}
       '<div class="nd-tx"><span class="nd-date">' + esc(dLong(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
       (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div></div>" +
       '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
-      (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc(N.srcName || "Officielle") + " ↗</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
+      (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
       '<aside class="nd-col">' + fiche() + dernier() + mangakas() + autres() + "</aside></div>";
   }
   DESK.addEventListener("change", function () { render(); });
