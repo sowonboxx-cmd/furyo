@@ -79,7 +79,7 @@ export async function onRequestGet({ request, env }) {
     const s = series[rel(p["Série"])[0]] || null;
     return {
       id: nid(r.id), notion: r.url, cat, label: CATS[cat], type, champ, titre: court(prop), prop,
-      date: date(p["Date de la news"]), cree: (r.created_time || "").slice(0, 10),
+      date: date(p["Date de la news"]), cree: (r.created_time || "").slice(0, 10), creeT: r.created_time || "",
       actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]),
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",
@@ -139,13 +139,14 @@ export async function onRequestGet({ request, env }) {
     const p = r.properties || {};
     items.push({
       id: nid(r.id), notion: r.url, cat: "prepub", label: CATS.prepub, base: "prepub", type: "Prépublication",
-      titre: text(p["Entrée"]), prop: text(p["Entrée"]), date: date(p["Date de sortie"]), cree: (r.created_time || "").slice(0, 10),
+      titre: text(p["Entrée"]), prop: text(p["Entrée"]), date: date(p["Date de sortie"]), cree: (r.created_time || "").slice(0, 10), creeT: r.created_time || "",
       texte: text(p["Annonce du magazine"]), tweet: text(p["Tweet"]), src: text(p["Lien du numéro"]), relais: text(p["Page de la série"]),
       image: text(p["Couverture du numéro"]), serie: series[rel(p["Série"])[0]] || null, news: false,
       prepub: { mag: text(p["Magazine"]), num: text(p["Numéro"]), statut: text(p["Statut"]), ch: num(p["Chapitre"]), hl: list(p["Mise en avant"]), jp: text(p["Titre au sommaire"]), lire: text(p["Lecture en ligne"]) },
     });
   }
-  items.sort((a, b) => String(b.date || b.cree).localeCompare(String(a.date || a.cree)));
+  // Ordre chronologique de repérage (date où la veille a trouvé l'info), jamais la date de sortie (Will, 04/10/2026).
+  items.sort((a, b) => String(b.creeT || b.cree).localeCompare(String(a.creeT || a.cree)));
   const counts = {};
   items.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
   return json({ items, counts, cats: CATS, cols: COLS });

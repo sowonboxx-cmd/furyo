@@ -461,7 +461,7 @@ function vdraw(){
     (gardes.length ? `<button class="chip" data-vf="vu" aria-pressed="${VF === "vu"}" style="--c:#9A6DD7"><span class="d"></span>Vu, pas sur le site <small>${gardes.length}</small></button>` : "");
   const list = VF === "vu" ? gardes : actifs.filter(i => VF === "tout" || i.cat === VF);
   document.getElementById("vhint").textContent = VF === "vu" ? `${list.length} news gardées de côté · tu peux encore les publier` : actifs.length ? `${list.length} à relire · touche une ligne pour voir le détail` : "Rien à relire pour l'instant 👌";
-  document.getElementById("vl").innerHTML = list.map(i => `<li class="vi" data-vid="${i.id}"><time>${esc(dCourt(i.date || i.cree))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
+  document.getElementById("vl").innerHTML = list.map(i => `<li class="vi" data-vid="${i.id}"><time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
   const a = document.querySelector(".sh-val b"); if (a) a.textContent = actifs.length;
 }
 function vopen(id){
@@ -478,7 +478,7 @@ function vopen(id){
   const tomeCat = /^(couv|sortie)/.test(i.cat);
   const P = i.prepub || {};
   const champs = pp ? dt("Magazine", P.mag) + dt("Numéro", P.num) + dt("Sortie", dLong(i.date)) + dt("Statut", P.statut) + dt("Chapitre", P.ch != null ? String(P.ch) : "") + dt("Mis en avant", (P.hl || []).join(", ")) + dt("Au sommaire", P.jp)
-    : tomeCat ? dt("Sortie", dLong(i.sortie)) : dt("Actuel", i.actuel) + dt("Proposé", i.propose);
+    : tomeCat ? dt("Sortie", dLong(i.sortie || i.date)) : dt("Date de l'info", i.date && i.date !== i.cree ? dLong(i.date) : "") + dt("Actuel", i.actuel) + dt("Proposé", i.propose);
   const tomeIt = /^(couv|sortie)/.test(i.cat) && i.serie && i.tome;
   const rs = i.serie ? (i.serie.resumeSortie || (/^(couv|sortie)/.test(i.cat) && i.tome ? resumeAuto(i) : "")) : "";
   const tabs = [...(site ? [["site", pp ? "Annonce" : "Résumé site"]] : []), ["x", "X"], ["ig", "Instagram"], ["tt", "TikTok"]];
@@ -486,7 +486,7 @@ function vopen(id){
   const act = tomeIt || !site || (pp && !i.texte) ? "x" : "site";
   const m = document.createElement("div"); m.className = "vm"; m.dataset.vid = id;
   m.innerHTML = `<div class="vm-b" role="dialog" aria-modal="true">
-    <div class="vm-h">${news ? `<label class="pcs" style="--c:${VCOL[i.cat]}"><span class="vh">Catégorie</span><select id="vcat">${NEWS_CATS.map(k => `<option value="${k}"${k === i.cat ? " selected" : ""}>${esc(VCATS[k])}</option>`).join("")}</select></label>` : `<span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span>`}<span>${esc(i.date ? new Date(i.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
+    <div class="vm-h">${news ? `<label class="pcs" style="--c:${VCOL[i.cat]}"><span class="vh">Catégorie</span><select id="vcat">${NEWS_CATS.map(k => `<option value="${k}"${k === i.cat ? " selected" : ""}>${esc(VCATS[k])}</option>`).join("")}</select></label>` : `<span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span>`}<span>${esc(i.cree ? "Repérée le " + new Date(i.cree + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
     <h2>${esc(i.titre)}</h2>
     ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
     ${img}

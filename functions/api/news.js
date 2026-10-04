@@ -48,7 +48,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const cover = (val.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "";
       const m = prop.match(/\bT\.?\s?0*(\d+)\b|\btome\s+0*(\d+)/i);
       return {
-        id: r.id.replace(/-/g, ""), cat: cat.k, catNom: cat.nom, catC: cat.c, date: date(p["Date de la news"]),
+        // Date affichée : le jour où la veille a repéré l'info (ordre chronologique, Will 04/10/2026) ;
+        // la date de sortie d'un tome reste dans le texte de la news.
+        id: r.id.replace(/-/g, ""), cat: cat.k, catNom: cat.nom, catC: cat.c, date: (r.created_time || "").slice(0, 10) || date(p["Date de la news"]), _t: r.created_time || "",
         titre: s.t || prop, fr: s.fr, jp: s.jp, pub, label, t1, cover, texte: text(p["Résumé site"]),
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),
@@ -70,7 +72,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         if (t) i.cover = text(t.properties["Couverture"]);
       }
     }
-    items.forEach(i => { delete i._sid; delete i._n; delete i._pays; });
+    items.sort((a, b) => b._t.localeCompare(a._t));
+    items.forEach(i => { delete i._sid; delete i._n; delete i._pays; delete i._t; });
     return { items };
   });
 }
