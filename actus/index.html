@@ -43,7 +43,7 @@ a{color:inherit}
 .na-com h2{margin:0;font:700 20px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em}
 .na-add{display:flex;align-items:center;gap:10px;width:100%;height:48px;padding:0 6px 0 8px;border:1px solid var(--ink-3);border-radius:24px;background:#000;color:var(--paper-3);font:500 14.5px Inter,sans-serif;text-align:left;cursor:text}
 .na-add .na-av{width:32px;height:32px;font-size:13px}.na-av svg{width:16px;height:16px}
-.na-add span{flex:1}
+.na-add>span:not(.na-av){flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .na-add b{flex:none;height:34px;padding:0 14px;border-radius:17px;background:var(--blue);color:#fff;font:700 13px/34px Inter,sans-serif}
 .na-com p{margin:0;font-size:14px;line-height:1.45;color:var(--paper-2)}.na-com p b{color:var(--paper)}
 .na-cl{display:flex;align-items:flex-start;gap:9px}
