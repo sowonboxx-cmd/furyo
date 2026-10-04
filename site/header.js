@@ -210,7 +210,7 @@
   });
   addEventListener("keydown", function (e) {
     var typing = /input|textarea|select/i.test((document.activeElement || {}).tagName || "");
-    if (e.key === "Escape") { if (!fs.hidden) close(); if (!meBox.hidden) meBox.hidden = true; }
+    if (e.key === "Escape") { if (!fs.hidden) close(); if (!meBox.hidden) meBox.hidden = true; var ap = document.getElementById("adm-pop"); if (ap) ap.hidden = true; }
     else if ((e.key === "k" && (e.metaKey || e.ctrlKey)) || (e.key === "/" && !typing && fs.hidden)) { e.preventDefault(); open(); }
   });
   // Préchargement discret des données quand le doigt ou la souris approche de la loupe.
@@ -261,10 +261,18 @@
       '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' +
       '<button class="adm-out" type="button">Se déconnecter</button></div>';
     pop.querySelector(".adm-out").onclick = function () { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); };
+    // Ordinateur : même fenêtre que sur téléphone, ouverte sous l'avatar, sans assombrir la page (Will, 04/10/2026).
+    var box = pop.querySelector(".adm-box"), av = document.getElementById("sh-me");
+    if (!matchMedia("(max-width:719px)").matches && av) {
+      var r = av.getBoundingClientRect();
+      pop.style.background = "transparent";
+      box.style.left = "auto"; box.style.top = Math.round(r.bottom + 10) + "px"; box.style.right = Math.max(12, Math.round(innerWidth - r.right)) + "px";
+      box.style.boxShadow = "0 20px 50px rgba(0,0,0,.5)"; box.style.border = "1px solid #38383B";
+    } else { pop.style.background = ""; box.style.cssText = ""; }
     pop.hidden = false;
   }
   function openMe() {
-    if (ME && ME.user && ME.admin && matchMedia("(max-width:719px)").matches) { admPop(); return; }
+    if (ME && ME.user && ME.admin) { admPop(); return; }
     if (ME && ME.user) { location.href = "/profil/"; return; }
     if (false) {
       meInner.innerHTML = '<div class="me-u">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "") + '<div><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + "</small></div></div>" +
