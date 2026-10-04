@@ -389,7 +389,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 <script src="/site/header.js?v=16"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=12" defer></script>
+<script src="/site/home-m.js?v=13" defer></script>
 <div class="page">
   <header class="masthead">
     <p class="lede">Au cœur des mangas les plus sombres du Japon</p>
@@ -624,7 +624,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 const TYPES = [
   ["all","Tout",""],["licence-fr","Nouvelle licence (France)","#529CCA"],["licence-jp","Nouvelle série (Japon)","#FF7369"],
   ["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],
-  ["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["annonce","Annonce","#D4D4D8"]
+  ["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]
 ];
 // News validées dans Notion (base Veille) : ajoutées en tête du fil avant le reste.
 const escN = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -637,7 +637,7 @@ function liveNews(j){
   if (lic.length) feedEl.querySelectorAll('.post[data-type="licence"]').forEach(p => p.remove()); // retire la carte exemple
   const html = items.map(it => {
     const titre = it.fr || it.titre, jp = it.jp ? `<span class="p-jp" lang="ja">${escN(it.jp)}</span>` : "";
-    const tag = escN(it.catNom || "Annonce"), c = it.catC || "#D4D4D8";
+    const tag = escN((it.cats && it.cats.length ? it.cats.map(c => c.nom).join(" · ") : it.catNom) || "News"), c = it.catC || "#D4D4D8";
     const head = `<div class="p-head"><span class="tag">${tag}</span><span>${escN(dN(it.date))}</span></div>`;
     const body = `${head}<h2 class="p-title">${escN(titre)}${jp}</h2><p class="p-text">${escN(it.texte)}</p>`;
     const inner = it.cover ? `<div class="p-split"><img class="cover" src="/api/couv?u=${encodeURIComponent(it.cover)}&w=480" alt="Image de la news : ${escN(titre)}" loading="lazy" onload="if(this.naturalWidth/this.naturalHeight>.85)this.classList.add('wide')"><div class="p-body">${body}</div></div>` : body;

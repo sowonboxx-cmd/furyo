@@ -6,7 +6,7 @@
 import { text, date, num, rel, list, queryAll, slugSerie } from "../../../lib/notion.js";
 import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
-import { CATEGORIES, categorie } from "../../../lib/categories.js";
+import { CATEGORIES, categorie, categoriesDe } from "../../../lib/categories.js";
 
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
@@ -86,6 +86,7 @@ export async function onRequestGet({ request, env }) {
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",
       serie: s, news, vu: vu(r), enLigne: pub(r), imageChoisie: text(p["Image"]),
+      cat2: (categoriesDe(catN)[1] || {}).k || "", // 2e catégorie (Notion en accepte plusieurs ; le back-office en gère deux)
     };
   });
   // Couvertures et sorties : la couverture et la date viennent de la base Tomes (comme le calendrier).
@@ -188,9 +189,11 @@ export async function onRequestPost({ request, env }) {
     if (v && !/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(v)) return json({ error: "La vidéo doit être un lien YouTube." }, 400);
     props["Vidéo"] = { url: v || null };
   }
+  // Catégorie : choix multiple dans Notion (la première est la principale). Accepte un nom ou une liste de noms.
   if (b.categorie) {
-    if (!CATEGORIES.some(c => c.nom === b.categorie)) return json({ error: "catégorie inconnue" }, 400);
-    props["Catégorie"] = { select: { name: b.categorie } };
+    const noms = [...new Set((Array.isArray(b.categorie) ? b.categorie : [b.categorie]).filter(Boolean))];
+    if (!noms.length || noms.some(n => !CATEGORIES.some(c => c.nom === n))) return json({ error: "catégorie inconnue" }, 400);
+    props["Catégorie"] = { multi_select: noms.map(name => ({ name })) };
   }
   if (!Object.keys(props).length) return json({ error: "rien à changer" }, 400);
   const r = await fetch(`https://api.notion.com/v1/pages/${b.id}`, {
@@ -201,6 +204,6 @@ export async function onRequestPost({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
-  await Promise.all(["/api/news?v=2", "/api/crows", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/news?v=3", "/api/crows", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   return json({ ok: true });
 }

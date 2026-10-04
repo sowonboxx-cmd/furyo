@@ -181,13 +181,14 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .nimg-r{display:flex;gap:6px;align-items:flex-start}.nimg-r .vvid{flex:1;min-width:0}
 .vm .nimg-b{flex:none;margin:0;font-size:13px;height:42px;padding:0 12px;border:1px solid #48484C;border-radius:12px;background:transparent;color:var(--paper);font:600 13px Inter,sans-serif;display:inline-flex;align-items:center;cursor:pointer}
 .vvid{width:100%;height:42px;padding:0 14px;border:1px solid #48484C;border-radius:12px;background:transparent;color:var(--paper);font:400 15px Inter,sans-serif;margin-bottom:6px}
-.vm-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--paper-3);white-space:nowrap;min-width:0}
+.vm-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--paper-3);white-space:nowrap;min-width:0;flex-wrap:wrap;row-gap:6px}
 .vm-h>span:not(.pc){overflow:hidden;text-overflow:ellipsis;min-width:0}
 .vm-h .x{flex:none}
 .pcs{position:relative;flex:none;max-width:70%;display:inline-flex;align-items:center;height:30px;border-radius:8px;color:#111;background:var(--c)}
 .pcs select{appearance:none;-webkit-appearance:none;height:30px;padding:0 26px 0 10px;border:0;background:transparent;color:#111;font-family:inherit;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
 .pcs::after{content:"▾";position:absolute;right:9px;font-size:11px;pointer-events:none}
 .pcs option{color:#000}
+.pcs.vide,.pcs.vide select{color:#F5F5F7}.pcs.vide select{font-weight:600}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .vm-h .x{margin-left:auto;width:36px;height:36px;border:0;border-radius:50%;background:var(--ink-3);color:var(--paper);font-size:18px;cursor:pointer}
 .vm h2{margin:10px 0 4px;font-size:19px;line-height:1.3}
@@ -442,7 +443,7 @@ async function hub(){
 /* ---------- Validation : la veille à relire ---------- */
 // Catégories et couleurs : celles de Notion, envoyées par /api/admin/veille (lib/categories.js).
 let VCOL = {};
-const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "annonce"];
+const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "news"];
 let VITEMS = [], VCATS = {}, VF = "tout";
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
 async function veille(){
@@ -494,7 +495,7 @@ function vopen(id){
   const act = tomeIt || !site || (pp && !i.texte) ? "x" : "site";
   const m = document.createElement("div"); m.className = "vm"; m.dataset.vid = id;
   m.innerHTML = `<div class="vm-b" role="dialog" aria-modal="true">
-    <div class="vm-h">${news ? `<label class="pcs" style="--c:${VCOL[i.cat]}"><span class="vh">Catégorie</span><select id="vcat">${NEWS_CATS.map(k => `<option value="${k}"${k === i.cat ? " selected" : ""}>${esc(VCATS[k])}</option>`).join("")}</select></label>` : `<span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span>`}<span>${esc(i.cree ? "Repérée le " + new Date(i.cree + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
+    <div class="vm-h">${news ? `<label class="pcs" style="--c:${VCOL[i.cat]}"><span class="vh">Catégorie</span><select id="vcat">${NEWS_CATS.map(k => `<option value="${k}"${k === i.cat ? " selected" : ""}>${esc(VCATS[k])}</option>`).join("")}</select></label><label class="pcs${i.cat2 ? "" : " vide"}" style="--c:${i.cat2 ? VCOL[i.cat2] : "#38383B"}"><span class="vh">2e catégorie</span><select id="vcat2"><option value="">+ catégorie</option>${NEWS_CATS.map(k => `<option value="${k}"${k === i.cat2 ? " selected" : ""}>${esc(VCATS[k])}</option>`).join("")}</select></label>` : `<span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span>`}<span>${esc(i.cree ? "Repérée le " + new Date(i.cree + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : "")}</span><button class="x" data-vx aria-label="Fermer">×</button></div>
     <h2>${esc(i.titre)}</h2>
     ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
     ${img}
@@ -630,7 +631,7 @@ function ligneSortie(i){
   return (q ? `Sortie le ${q}` : "Sortie") + (t.pub ? ` chez ${t.pub}` : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
 }
 // Catégorie en première ligne des posts : la même que sur le site et dans Notion (Will, 04/10/2026).
-function catLigne(i){ const k = i.catChoisie || i.cat; return NEWS_CATS.includes(k) ? `${VCATS[k]}\n` : ""; }
+function catLigne(i){ const k = i.catChoisie || i.cat, k2 = i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2; return NEWS_CATS.includes(k) ? `${[VCATS[k], ...(k2 && k2 !== k && NEWS_CATS.includes(k2) ? [VCATS[k2]] : [])].join(" · ")}\n` : ""; }
 function captions(i, rs){
   const s = i.serie || {}, c = i.comptes || {}, url = s.slug ? `furyogang.com/series/${s.slug}` : "furyogang.com";
   const tags = [...new Set([tagOf(s.t), ...(s.genres || []).slice(0, 2).map(tagOf), "#manga", "#FuryoGang", ...(/-fr$/.test(i.cat) ? ["#mangafr"] : [])])].filter(x => x.length > 1);
@@ -675,13 +676,14 @@ async function vsend(btn, statut){
   if (image && !/^https:\/\//.test(image)) { toast("L'image doit être une adresse https://"); return; }
   btn.classList.add("busy");
   // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
-  const categorie = vc && (statut === "Publié sur le site" || (!statut && vc.value !== i.cat)) ? VCATS[vc.value] : "";
+  const vc2 = m.querySelector("#vcat2"), c2 = vc2 && vc2.value !== (vc && vc.value) ? vc2.value : "";
+  const categorie = vc && (statut === "Publié sur le site" || (!statut && (vc.value !== i.cat || c2 !== (i.cat2 || "")))) ? [VCATS[vc.value], ...(c2 ? [VCATS[c2]] : [])] : "";
   const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
   if (!statut) { // news en ligne modifiée : elle reste dans « Publiées »
     if (vtx) i.texte = vtx.value; if (vv) i.video = video; if (image !== null) i.imageChoisie = image;
-    if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; }
+    if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; i.cat2 = c2; }
     m.remove(); vdraw(); toast("Changements en ligne ✓"); return;
   }
   if (statut === "Vu" && i.enLigne) { i.enLigne = false; i.vu = true; m.remove(); vdraw(); toast("Retirée du site · rangée dans « Vu, pas sur le site »"); return; }
@@ -693,10 +695,11 @@ async function vsend(btn, statut){
 }
 // Catégorie changée dans la fiche : couleur, puis légendes régénérées avec le nouveau nom.
 document.addEventListener("change", e => {
-  if (e.target.id !== "vcat") return;
+  if (e.target.id !== "vcat" && e.target.id !== "vcat2") return;
   const m = e.target.closest(".vm"), i = VITEMS.find(x => x.id === m.dataset.vid);
-  e.target.parentNode.style.setProperty("--c", VCOL[e.target.value]);
-  i.catChoisie = e.target.value; vcaps(m, i, false); vcount(m);
+  e.target.parentNode.style.setProperty("--c", e.target.value ? VCOL[e.target.value] : "#38383B"); e.target.parentNode.classList.toggle("vide", !e.target.value);
+  if (e.target.id === "vcat") i.catChoisie = e.target.value; else i.cat2Choisie = e.target.value;
+  vcaps(m, i, false); vcount(m);
 });
 document.addEventListener("click", async e => {
   const vf = e.target.closest("[data-vf]"); if (vf) { VF = vf.dataset.vf; vdraw(); return; }

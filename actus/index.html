@@ -24,6 +24,7 @@ a{color:inherit}
 .na-back svg,.na-share svg{width:20px;height:20px}
 .na-share{position:absolute;z-index:2;right:12px;top:12px;width:42px;height:42px;border:0;border-radius:21px;background:rgba(0,0,0,.55);display:grid;place-items:center;color:#fff;cursor:pointer}
 .na-ht{position:absolute;z-index:1;left:20px;right:20px;bottom:6px;display:flex;flex-direction:column;gap:8px}
+.na-pills{display:flex;flex-wrap:wrap;gap:6px}
 .na-pill{align-self:flex-start;white-space:nowrap;height:26px;padding:0 10px;border-radius:8px;color:#000;font:700 12px/26px Inter,sans-serif;text-transform:uppercase;letter-spacing:.04em}
 .na-ht h1{margin:0;font:700 clamp(38px,11vw,56px)/.95 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em}
 .na-body{display:flex;flex-direction:column;gap:16px;padding:12px 20px 0}
@@ -108,11 +109,11 @@ a{color:inherit}
   }
   function render() {
     if (!N) return;
-    var t = [N.catNom || "Annonce", N.catC || "#D4D4D8"], titre = N.fr || N.titre;
+    var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '">' : "") +
       '<a class="na-back" href="/" aria-label="Retour aux actualités">' + I.back + '</a><button type="button" class="na-share" id="na-share" aria-label="Partager">' + I.share + "</button>" +
-      '<div class="na-ht"><span class="na-pill" style="background:' + t[1] + '">' + t[0] + "</span><h1>" + esc(titre) + "</h1></div></div>" +
+      '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
       '<div class="na-body"><span class="na-meta">' + esc([N.pub, dLong(N.date)].filter(Boolean).join(" · ")) + "</span>" +
       '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
       '<div class="na-links"><a href="/series/' + esc(slug(N.titre)) + '">Fiche ' + esc(titre) + "</a>" + (N.src ? '<a href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(N.srcName || "officielle") + " ↗</a>" : "") + "</div>" +

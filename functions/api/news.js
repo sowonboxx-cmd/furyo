@@ -3,7 +3,7 @@
 // Image : lien d'image de « Valeur proposée », sinon la couverture du tome concerné dans la base Tomes.
 // Rien n'apparaît sur le site sans validation. Seule la source officielle est publiée (décision de Will, 02/10/2026).
 import { text, date, rel, num, queryAll, cached } from "../../lib/notion.js";
-import { categorie } from "../../lib/categories.js";
+import { categorie, categoriesDe } from "../../lib/categories.js";
 import { sourceName } from "../../lib/source.js";
 
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
@@ -19,7 +19,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
   // Pas de reconstruction forcée pour Will (elle rendait les pages news lentes) : le back-office vide le cache à chaque changement.
-  return cached(request, waitUntil, "/api/news?v=2", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=3", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -34,7 +34,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const p = r.properties || {};
       const champ = text(p["Champ concerné"]), prop = text(p["Proposition"]), val = text(p["Valeur proposée"]), src = text(p["Source officielle"]);
       const sid = rel(p["Série"])[0], s = series[sid] || {};
-      const cat = categorie({ cat: text(p["Catégorie"]), type: text(p["Type"]), champ, prop, vp: val, src }) || categorie({ cat: "Annonce" });
+      const cat = categorie({ cat: text(p["Catégorie"]), type: text(p["Type"]), champ, prop, vp: val, src }) || categorie({ cat: "News" });
+      const autres = categoriesDe(text(p["Catégorie"])).filter(c => c !== cat).map(c => ({ k: c.k, nom: c.nom, c: c.c }));
       const pubFull = s.editeurFR || (prop.match(/chez ([^,(]+?)(?: \(|,|$)/) || [])[1] || "";
       // Une série passée d'un éditeur à l'autre (« J'ai lu, Pika ») : la news ne cite que l'éditeur actuel,
       // celui de la source officielle s'il en fait partie, sinon le dernier de la liste.
@@ -49,7 +50,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       return {
         // Date affichée : le jour où la veille a repéré l'info (ordre chronologique, Will 04/10/2026) ;
         // la date de sortie d'un tome reste dans le texte de la news.
-        id: r.id.replace(/-/g, ""), cat: cat.k, catNom: cat.nom, catC: cat.c, date: (r.created_time || "").slice(0, 10) || date(p["Date de la news"]), _t: r.created_time || "",
+        id: r.id.replace(/-/g, ""), cat: cat.k, catNom: cat.nom, catC: cat.c, cats: [{ k: cat.k, nom: cat.nom, c: cat.c }, ...autres], date: (r.created_time || "").slice(0, 10) || date(p["Date de la news"]), _t: r.created_time || "",
         titre: s.t || prop, fr: s.fr, jp: s.jp, pub, label, t1, cover, texte: text(p["Résumé site"]),
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),

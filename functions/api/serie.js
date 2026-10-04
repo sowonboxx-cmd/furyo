@@ -120,7 +120,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     editions.sort((a, b) => (a.pays === b.pays ? b.tomes.length - a.tomes.length : a.pays === "France" ? -1 : 1));
     serie.news = nRows.slice().sort((a, b) => String(b.created_time).localeCompare(String(a.created_time))).map(r => {
       const q = r.properties || {}, champ = text(q["Champ concerné"]), prop = text(q["Proposition"]);
-      const c = categorie({ cat: text(q["Catégorie"]), type: text(q["Type"]), champ, prop, vp: text(q["Valeur proposée"]), src: text(q["Source officielle"]) }) || categorie({ cat: "Annonce" });
+      const c = categorie({ cat: text(q["Catégorie"]), type: text(q["Type"]), champ, prop, vp: text(q["Valeur proposée"]), src: text(q["Source officielle"]) }) || categorie({ cat: "News" });
       return { id: nid(r.id), cat: c.nom, catC: c.c, date: (r.created_time || "").slice(0, 10) || date(q["Date de la news"]), titre: prop.replace(/^\s*(licence\s*fr|news|couverture dévoilée)\s*:\s*/i, ""), texte: text(q["Résumé site"]), src: text(q["Source officielle"]), srcName: sourceName(text(q["Source officielle"])) };
     });
     return { serie, editions };
