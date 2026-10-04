@@ -242,6 +242,62 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--paper);color:var(--ink);border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;transition:.25s;z-index:50;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
+/* ===== Accueil ordinateur (Will, 05/10/2026) : tout dans des cadres noirs ===== */
+@media (min-width:980px){.page{max-width:1240px;padding-inline:20px}.layout{grid-template-columns:minmax(0,1fr) 340px;gap:20px}}
+.layout{margin-top:6px}
+#fil{display:flex;flex-direction:column;gap:12px;min-width:0}
+.ftabs{position:sticky;top:calc(var(--sh-h,0px) + 10px);z-index:6;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:5px;border-radius:16px}
+.ftabs>button{height:44px;border:0;border-radius:12px;background:transparent;color:#8E8E93;font:600 15px Inter,system-ui,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;overflow:hidden;transition:background .15s,color .15s}
+.ftabs>button:hover{background:#1C1C1E;color:#F5F5F7}
+.ftabs>button[aria-pressed=true]{background:#38383B;color:#F5F5F7}
+.ftabs>button svg{width:14px;height:14px;flex:none}
+.ftabs>button i{width:8px;height:8px;border-radius:50%;flex:none}
+.dt-menu{position:absolute;right:5px;top:calc(100% + 6px);width:300px;max-height:70vh;overflow:auto;padding:6px;background:#1C1C1E;border:1px solid #38383B;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.dt-menu[hidden]{display:none}
+.dt-menu button{display:flex;align-items:center;gap:10px;height:40px;padding:0 12px;border:0;border-radius:10px;background:transparent;color:#F5F5F7;font:600 14px Inter,system-ui,sans-serif;text-align:left;cursor:pointer;white-space:nowrap}
+.dt-menu button:hover{background:#2A2A2D}.dt-menu button[aria-selected=true]{background:#38383B}.dt-menu button.vide{color:#6E6E73}
+.dt-menu i{width:8px;height:8px;border-radius:50%;flex:none}.dt-menu small{margin-left:auto;color:#8E8E93;font-size:12.5px}
+.feed{display:flex;flex-direction:column;gap:12px}
+.dm{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font:600 12.5px Inter,system-ui,sans-serif;color:#98989D}
+/* Grande news */
+.dh{background:#000;border-radius:20px;overflow:hidden}
+.dh-a{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;min-height:360px;text-decoration:none;color:inherit;isolation:isolate}
+.dh-bg{position:absolute;inset:-30px;background-size:cover;background-position:center;filter:blur(28px) brightness(.38) saturate(1.2);z-index:-1}
+.dh-img{grid-column:2;grid-row:1;height:360px;width:auto;max-width:300px;object-fit:cover;display:block;margin:20px 20px 0 0;border-radius:12px;align-self:start}
+.dh-tx{grid-column:1;grid-row:1;align-self:end;display:flex;flex-direction:column;gap:8px;padding:24px 24px 8px}
+.dh h2{margin:0;font:700 44px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.dh-jp{font-size:14px;color:#CFCFD4;margin-top:-2px}
+.dh p{margin:0;color:#E5E5EA;font-size:15.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;max-width:62ch}
+.dh.wide .dh-a{grid-template-columns:1fr;min-height:0}
+.dh.wide .dh-bg{display:none}
+.dh.wide .dh-img{grid-column:1;grid-row:1;width:100%;max-width:none;height:400px;margin:0;border-radius:0}
+.dh.wide .dh-a::after{content:"";grid-column:1;grid-row:1;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.92));z-index:0}
+.dh.wide .dh-tx{position:relative;z-index:1}
+.dh .da{padding:4px 14px 10px}
+/* Liste */
+.dr{background:#000;border-radius:20px;padding:14px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:start}
+.dr-i{display:block;line-height:0}
+.dr-i img,.dr-i span{width:112px;aspect-ratio:7/10;object-fit:cover;border-radius:10px;background:#38383B;display:block}
+.dr.wide .dr-i img{object-fit:contain;background:#1C1C1E}
+.dr-b{display:flex;flex-direction:column;gap:4px;min-width:0}
+.dr-a{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}
+.dr h3{margin:0;font:700 26px/1.02 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.dr p{margin:0;color:#CFCFD4;font-size:14.5px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dh-a:hover h2,.dr-a:hover h3{color:#fff;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+/* Actions : signet et commentaires à gauche, likes et vues à droite (comme sur téléphone) */
+.da{display:flex;align-items:center;gap:2px;margin:0 -8px}
+.da .sp{flex:1}
+.da button,.da a,.da span:not(.sp){display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 9px;border:0;border-radius:999px;background:transparent;color:#98989D;font:600 13.5px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums;text-decoration:none}
+.da button,.da a{cursor:pointer}.da button:hover,.da a:hover{background:#1C1C1E;color:#F5F5F7}
+.da svg{width:19px;height:19px;flex:none}
+.da .a-like.on{color:#FF4D67}.da .a-like.on svg{fill:currentColor}
+.da .a-book.on{color:#4C9BFF}.da .a-book.on svg{fill:currentColor}
+.dmore{display:flex;align-items:center;justify-content:center;gap:10px;height:54px;border:0;width:100%;color:#F5F5F7;font:600 15px Inter,system-ui,sans-serif;cursor:pointer;padding:0 16px}
+.dmore:hover{background:#1C1C1E}.dmore small{color:#8E8E93;font-size:13px;font-weight:600}
+.dn{text-align:center;padding:28px 20px}.dn p{margin:0;color:#CFCFD4;font-size:14.5px}.dn b{display:block;color:#F5F5F7;font:700 24px Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;margin-bottom:6px}
+.dn-go{margin-top:14px;height:44px;padding:0 22px;border:0;border-radius:22px;background:#305887;color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
+.ftabs{position:sticky}
+.ftabs{overflow:visible}
 /* ===== Accueil téléphone (site/home-m.js) ===== */
 .mh{display:none}
 @media (max-width:719px){
@@ -387,130 +443,17 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 
 </head>
 <body>
-<script src="/site/header.js?v=17"></script>
+<script src="/site/header.js?v=18"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/home-m.js?v=17" defer></script>
 <div class="page">
-  <header class="masthead">
-    <p class="lede">Au cœur des mangas les plus sombres du Japon</p>
-    <p class="themes">Furyō • Bōsōzoku • Yakuza • Crime • Violence</p>
-  </header>
 
-
-  <nav class="quick" aria-label="Accès rapide">
-    <a href="#m-jp"><span class="qi" style="--c:var(--t-annonce)">日</span>Japon</a>
-    <a href="#m-top"><span class="qi" style="--c:var(--t-cover)">★</span>Top</a>
-    <a href="#m-lic"><span class="qi" style="--c:var(--t-licence)">FR</span>Licences</a>
-    <a href="#m-ann"><span class="qi" style="--c:var(--t-annonce)">!</span>Annonces</a>
-    <a href="#m-auteurs"><span class="qi" style="--c:var(--paper)">筆</span>Mangakas</a>
-    <a href="#m-ecran"><span class="qi" style="--c:var(--t-trailer)">▶</span>Écrans</a>
-    <a href="/calendrier/"><span class="qi" style="--c:var(--t-news)">31</span>Sorties</a>
-    <a href="#m-shop"><span class="qi" style="--c:var(--t-mag)">♦</span>Boutique</a>
-  </nav>
 
   <div class="layout">
     <main id="fil">
-      <div class="chips" id="chips" role="group" aria-label="Type d'actu"></div>
-      <ul class="feed wait" id="feed">
-
-        <li class="post" data-type="cover" style="--c:var(--t-cover)">
-          <div class="p-split">
-            <img class="cover" src="/crows-x-worst/img/worst-gaiden.jpg" alt="Couverture de WORST Gaiden">
-            <div class="p-body">
-              <div class="p-head"><span class="tag">Couverture JP</span><span>il y a 2 h</span></div>
-              <h2 class="p-title">WORST Gaiden<span class="p-jp" lang="ja">ワースト外伝</span></h2>
-              <p class="p-text">La couverture de la réédition est dévoilée par l'éditeur. Sortie au Japon chez Akita Shoten.</p>
-            </div>
-          </div>
-          <div class="p-foot"><a class="series" href="#">WORST Gaiden</a><a class="src" href="#">Akita Shoten ↗</a></div>
-        </li>
-
-        <li class="post" data-type="fin" style="--c:var(--t-fin)">
-          <div class="p-head"><span class="tag">Fin de série</span><span>13 janv. 2026</span></div>
-          <h2 class="p-title">Crows Gaiden Housenka se termine</h2>
-          <div class="big"><b>24</b><span>tomes · série terminée</span></div>
-          <p class="p-text">Le tome 24, le dernier, conclut l'histoire de la fondation du lycée Hōsen, commencée en 2017.</p>
-          <div class="p-foot"><a class="series" href="#">Crows Gaiden Housenka</a><a class="src" href="#">Source officielle ↗</a></div>
-        </li>
-
-        <li class="post" data-type="trailer" style="--c:var(--t-trailer)">
-          <div class="p-head"><span class="tag">Trailer</span><span>hier</span></div>
-          <h2 class="p-title">Exemple : bande-annonce d'une adaptation</h2>
-          <a class="video" href="#" aria-label="Voir la bande-annonce sur la chaîne officielle">
-            <img src="/crows-x-worst/img/crows-banner.jpg" alt="">
-            <span class="play"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-            <span class="dur">1:32</span>
-          </a>
-          <p class="p-text">La vidéo s'ouvre sur la chaîne officielle (YouTube du studio ou de l'éditeur), jamais un réupload.</p>
-          <div class="p-foot"><a class="series" href="#">CROWS</a><a class="src" href="#">YouTube officiel ↗</a></div>
-        </li>
-
-        <li class="post" data-type="licence" style="--c:var(--t-licence)">
-          <div class="p-split">
-            <img class="cover" src="/crows-x-worst/img/qp-gaiden.jpg" alt="Couverture de QP Gaiden">
-            <div class="p-body">
-              <div class="p-head"><span class="tag">Licence FR</span><span>il y a 2 j</span></div>
-              <h2 class="p-title">Exemple : une série arrive en France<span class="p-jp" lang="ja">QP外伝</span></h2>
-              <p class="p-text">Carte type pour une annonce de licence : éditeur français, date du tome 1 et lien vers l'annonce de l'éditeur.</p>
-            </div>
-          </div>
-          <div class="p-foot"><a class="series" href="#">QP Gaiden</a><span class="verify">À vérifier</span><a class="src" href="#">Annonce de l'éditeur ↗</a></div>
-        </li>
-
-        <li class="post" data-type="annonce" style="--c:var(--t-annonce)">
-          <div class="p-head"><span class="tag">Annonce</span><span>il y a 3 j</span></div>
-          <h2 class="p-title">Dustland, retour à Toaru<span class="p-jp" lang="ja">ダストランド</span></h2>
-          <p class="p-text">Hiroshi Takahashi signe une nouvelle série dans l'univers de CROWS et WORST, treize ans après la fin de WORST.</p>
-          <div class="p-foot"><a class="series" href="#">Dustland</a><a class="series" href="/crows-x-worst/">CROWS X WORST</a><a class="src" href="#">Source officielle ↗</a></div>
-        </li>
-
-        <li class="post" data-type="cover" style="--c:var(--t-cover)">
-          <div class="p-split">
-            <img class="cover" src="/crows-x-worst/img/worst816.jpg" alt="Couverture de WORST 816">
-            <div class="p-body">
-              <div class="p-head"><span class="tag">Couverture JP</span><span>il y a 4 j</span></div>
-              <h2 class="p-title">WORST 816<span class="p-jp" lang="ja">WORST 816</span></h2>
-              <p class="p-text">Le faux « tome 816 » de WORST, centré sur le lycée Hōsen, offert aux spectateurs du film HiGH&amp;LOW THE WORST.</p>
-            </div>
-          </div>
-          <div class="p-foot"><a class="series" href="#">WORST</a><a class="src" href="#">Source officielle ↗</a></div>
-        </li>
-
-        <li class="post" data-type="news" style="--c:var(--t-news)">
-          <div class="p-head"><span class="tag">News</span><span>il y a 5 j</span></div>
-          <h2 class="p-title">Exemple : chapitre en couleur dans le magazine</h2>
-          <p class="p-text">Carte type pour une info courte sans visuel : ce qui se passe, la date, et le lien vers la page du magazine.</p>
-          <div class="p-foot"><a class="series" href="#">WORST Gaiden Guriko</a><a class="src" href="#">Champion Cross ↗</a></div>
-        </li>
-
-        <li class="post" data-type="pause" style="--c:var(--t-pause)">
-          <div class="p-head"><span class="tag">Pause</span><span>il y a 6 j</span></div>
-          <h2 class="p-title">Exemple : la série fait une pause</h2>
-          <div class="big"><b>2</b><span>numéros sans chapitre</span></div>
-          <p class="p-text">Reprise annoncée dans le numéro suivant du magazine.</p>
-          <div class="p-foot"><a class="series" href="#">Série</a><a class="src" href="#">Source officielle ↗</a></div>
-        </li>
-
-        <li class="post" data-type="mag" style="--c:var(--t-mag)">
-          <div class="p-split">
-            <a class="mag-cover" href="https://www.akitashoten.co.jp/m-champion" aria-label="Couverture du numéro sur le site d'Akita Shoten"><span lang="ja">月刊少年<br>チャンピオン</span><b>10月<br>特大号</b><small>Couverture officielle sur le site</small></a>
-            <div class="p-body">
-              <div class="p-head"><span class="tag">Magazine</span><span>4 sept. 2026</span></div>
-              <h2 class="p-title">Monthly Shōnen Champion, numéro d'octobre<span class="p-jp" lang="ja">月刊少年チャンピオン 2026年10月特大号</span></h2>
-              <p class="p-text">Nos séries dans ce numéro :</p>
-              <ul class="in-mag">
-                <li><span lang="ja">WORST外伝 ゼットン先生</span><b>Zetton Sensei · ch. ?</b></li>
-                <li><span lang="ja">ガブ</span><b>Gabu · ch. ?</b></li>
-                <li><span lang="ja">チキン「ドロップ」前夜の物語</span><b>Chicken, avant DROP · ch. ?</b></li>
-              </ul>
-              <p class="p-text">Prochain numéro le 6 octobre.</p>
-            </div>
-          </div>
-          <div class="p-foot"><a class="series" href="#">WORST Gaiden Zetton Sensei</a><a class="series" href="#">Gabu</a><a class="src" href="https://www.akitashoten.co.jp/m-champion">Akita Shoten ↗</a></div>
-        </li>
-      </ul>
-      <p class="empty" id="empty" hidden>Aucune actu de ce type pour l'instant.</p>
+      <div class="box ftabs" id="ftabs" role="group" aria-label="Fil d'actualités"></div>
+      <div class="feed wait" id="feed"></div>
     </main>
 
     <aside class="side" id="side">
@@ -622,57 +565,146 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 </div>
 
 <script>
-const TYPES = [
-  ["all","Tout",""],["licence-fr","Nouvelle licence (France)","#529CCA"],["licence-jp","Nouvelle série (Japon)","#FF7369"],
-  ["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],
-  ["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]
-];
-// News validées dans Notion (base Veille) : ajoutées en tête du fil avant le reste.
+/* Accueil ordinateur (Will, 05/10/2026) : tout est dans des cadres noirs. Onglets Toutes / Mon fil / Signets / Catégories dans un cadre,
+   la news la plus récente en grand, les suivantes en liste. Actions : signet et commentaires à gauche, likes et vues à droite. */
+const DT = {
+  types: [["licence-fr","Nouvelle licence (France)","#529CCA"],["licence-jp","Nouvelle série (Japon)","#FF7369"],["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]],
+  news: null, me: null, stats: {}, cn: {}, signets: null, tab: "toutes", cat: "", all: false
+};
+DT.TL = Object.fromEntries(DT.types.map(t => [t[0], t])); DT.TL.annonce = DT.TL.news;
+try { const c = JSON.parse(localStorage.getItem("fg-news") || "null"); if (c && c.length) DT.news = c; } catch (e) {}
 const escN = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const dN = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "";
-const slugN = t => t.replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
-function liveNews(j){
-  const items = (j && j.items) || []; if (!items.length) return;
-  const lic = items.filter(it => it.cat === "licence-fr");
-  const feedEl = document.getElementById("feed");
-  if (lic.length) feedEl.querySelectorAll('.post[data-type="licence"]').forEach(p => p.remove()); // retire la carte exemple
-  const html = items.map(it => {
-    const titre = it.fr || it.titre, jp = it.jp ? `<span class="p-jp" lang="ja">${escN(it.jp)}</span>` : "";
-    const tag = escN((it.cats && it.cats.length ? it.cats.map(c => c.nom).join(" · ") : it.catNom) || "News"), c = it.catC || "#D4D4D8";
-    const head = `<div class="p-head"><span class="tag">${tag}</span><span>${escN(dN(it.date))}</span></div>`;
-    const body = `${head}<h2 class="p-title">${escN(titre)}${jp}</h2><p class="p-text">${escN(it.texte)}</p>`;
-    const inner = it.cover ? `<div class="p-split"><img class="cover" src="/api/couv?u=${encodeURIComponent(it.cover)}&w=480" alt="Image de la news : ${escN(titre)}" loading="lazy" onload="if(this.naturalWidth/this.naturalHeight>.85)this.classList.add('wide')"><div class="p-body">${body}</div></div>` : body;
-    return `<li class="post" id="n-${escN(it.id)}" data-type="${it.cat}" data-id="${it.id}" style="--c:${c}">${inner}<div class="p-foot"><a class="series" href="/series/${slugN(it.titre)}">${escN(titre)}</a>${it.src ? `<a class="src" href="${escN(it.src)}" target="_blank" rel="noopener">Source : ${escN(it.srcName || "officielle")} ↗</a>` : ""}</div></li>`;
-  }).join("");
-  feedEl.insertAdjacentHTML("afterbegin", html);
-  if (lic.length) {
-    const ul = document.querySelector("#m-lic .lic");
-    if (ul) ul.innerHTML = lic.slice(0, 6).map(it => `<li><span class="pub">${escN(it.pub || "Éditeur")}</span><span class="t">${escN(it.fr || it.titre)}<small>${escN([it.label, it.t1 ? "T.01 le " + it.t1.slice(0, 5) : ""].filter(Boolean).join(" · "))}</small></span></li>`).join("");
-  }
+const slugN = t => String(t || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+const MCN = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const ddN = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return x.getDate() + " " + MCN[x.getMonth()]; };
+const nfN = n => n >= 1000 ? (n / 1000).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " k" : String(n || 0);
+const couvN = (u, w) => u ? (/^https?:/.test(u) ? "/api/couv?u=" + encodeURIComponent(u) + "&w=" + w : u) : "";
+const getN = u => fetch(u, { credentials: "same-origin" }).then(r => r.ok ? r.json() : null).catch(() => null);
+const linkN = it => "/actus/" + slugN(it.fr || it.titre) + "-" + String(it.id).slice(-8);
+const ICN = {
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>',
+  com: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>',
+  stat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>',
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'
+};
+const catsN = it => (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(c => DT.TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : DT.TL.news));
+const metaN = it => '<div class="dm">' + catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>") + `<span>·</span><span>${escN(ddN(it.date))}</span></div>`;
+function actsN(it) {
+  const id = it.id, st = DT.stats[id] || {};
+  return `<div class="da" data-id="${escN(id)}"><button type="button" class="a-book${st.mb ? " on" : ""}" data-act="bookmark" aria-label="Signet">${ICN.book}</button>` +
+    `<a class="a-com" href="${escN(linkN(it))}#commentaires" aria-label="Commentaires">${ICN.com}<b>${nfN(DT.cn[id] || 0)}</b></a><span class="sp"></span>` +
+    `<button type="button" class="a-like${st.ml ? " on" : ""}" data-act="like" aria-label="J'aime">${ICN.heart}<b>${nfN(st.l || 0)}</b></button>` +
+    `<span class="a-v" title="Vues">${ICN.stat}<b>${nfN(st.v || 0)}</b></span></div>`;
 }
-const newsReady = /^https?:$/.test(location.protocol)
-  ? Promise.race([fetch("/api/news").then(r => r.ok ? r.json() : null).then(liveNews), new Promise(r => setTimeout(r, 2500))]).catch(() => {})
-  : Promise.resolve();
-newsReady.finally(init);
-function init(){
-document.getElementById("feed").classList.remove("wait");
-// Les pastilles « série » du fil mènent à la fiche de la série.
-document.querySelectorAll('#feed a.series[href="#"]').forEach(a => { a.href = "/series/" + slugN(a.textContent); });
-const posts = [...document.querySelectorAll(".post")];
-const chips = document.getElementById("chips");
-chips.innerHTML = TYPES.map(([k, l, c]) => {
-  const n = k === "all" ? posts.length : posts.filter(p => p.dataset.type === k).length;
-  if (!n) return "";
-  return `<button class="chip" data-k="${k}" aria-pressed="${k === "all"}" style="${c ? `--c:${c}` : ""}">${c ? "<i></i>" : ""}${l}</button>`;
-}).join("");
-chips.addEventListener("click", e => {
-  const b = e.target.closest(".chip"); if (!b) return;
-  const k = b.dataset.k;
-  chips.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b));
-  let shown = 0;
-  posts.forEach(p => { const on = k === "all" || p.dataset.type === k; p.hidden = !on; if (on) shown++; });
-  document.getElementById("empty").hidden = shown > 0;
+const wideN = "if(this.naturalWidth/this.naturalHeight>1.15)this.closest('[data-img]').classList.add('wide')";
+function heroN(it) {
+  const t = it.fr || it.titre, img = couvN(it.cover, 900);
+  return `<article class="dh" data-img data-id="${escN(it.id)}"><a class="dh-a" href="${escN(linkN(it))}">` +
+    (img ? `<span class="dh-bg" style="background-image:url('${escN(img)}')"></span><img class="dh-img" src="${escN(img)}" alt="Image de la news : ${escN(t)}" onload="${wideN}">` : "") +
+    `<span class="dh-tx">${metaN(it)}<h2>${escN(t)}</h2>${it.jp ? `<span class="dh-jp" lang="ja">${escN(it.jp)}</span>` : ""}<p>${escN(it.texte)}</p></span></a>${actsN(it)}</article>`;
+}
+function rowN(it) {
+  const t = it.fr || it.titre, img = couvN(it.cover, 360);
+  return `<article class="dr" data-img data-id="${escN(it.id)}"><a class="dr-i" href="${escN(linkN(it))}" tabindex="-1">${img ? `<img src="${escN(img)}" alt="" loading="lazy" onload="${wideN}">` : "<span></span>"}</a>` +
+    `<div class="dr-b"><a class="dr-a" href="${escN(linkN(it))}">${metaN(it)}<h3>${escN(t)}</h3><p>${escN(it.texte)}</p></a>${actsN(it)}</div></article>`;
+}
+function tabsN() {
+  const n = k => (DT.news || []).filter(it => it.cat === k || (it.cats || []).some(c => c.k === k)).length;
+  const cur = DT.cat ? DT.TL[DT.cat] : null;
+  return [["toutes","Toutes"],["feed","Mon fil"],["signets","Signets"]].map(([k, l]) => `<button type="button" data-tab="${k}" aria-pressed="${DT.tab === k && !DT.cat}">${l}</button>`).join("") +
+    `<button type="button" class="dt-cat" aria-haspopup="listbox" aria-expanded="false" aria-pressed="${!!DT.cat}">${cur ? `<i style="background:${cur[2]}"></i>${escN(cur[1])}` : "Catégories"}${ICN.chev}</button>` +
+    `<div class="dt-menu" role="listbox" aria-label="Catégories" hidden><button type="button" role="option" data-cat="" aria-selected="${!DT.cat}"><i style="background:#F5F5F7"></i>Toutes les catégories<small>${(DT.news || []).length}</small></button>` +
+    DT.types.map(t => `<button type="button" role="option" data-cat="${t[0]}" aria-selected="${DT.cat === t[0]}"${n(t[0]) ? "" : ' class="vide"'}><i style="background:${t[2]}"></i>${t[1]}<small>${n(t[0])}</small></button>`).join("") + "</div>";
+}
+function renderN() {
+  document.getElementById("ftabs").innerHTML = tabsN();
+  const feed = document.getElementById("feed"); feed.classList.remove("wait");
+  const news = (DT.news || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  const note = (t, cta) => `<div class="box dn"><p>${t}</p>${cta ? '<button type="button" class="dn-go" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button>' : ""}</div>`;
+  let list = null, html = "";
+  if (!DT.news) html = note("Chargement des actualités…");
+  else if (DT.cat) list = news.filter(it => it.cat === DT.cat || (it.cats || []).some(c => c.k === DT.cat));
+  else if (DT.tab === "toutes") list = news;
+  else if (!(DT.me && DT.me.user)) html = note(DT.tab === "feed" ? "<b>Ton fil personnalisé</b>Les news des séries que tu suis, rien que pour toi. Réservé aux membres." : "<b>Tes signets</b>Retrouve toutes les news que tu as gardées. Réservé aux membres.", true);
+  else if (DT.tab === "feed") html = note("<b>Ton fil personnalisé</b>Bientôt : les news des séries que tu suis apparaîtront ici. Pour l'instant, ajoute des news à tes signets.");
+  else if (DT.signets == null) html = note("Chargement de tes signets…");
+  else list = news.filter(it => DT.signets.includes(it.id));
+  if (list) {
+    const max = DT.all || DT.cat || DT.tab !== "toutes" ? list.length : 8;
+    html = list.length ? list.slice(0, max).map((it, i) => i === 0 ? heroN(it) : rowN(it)).join("") : note(DT.tab === "signets" && !DT.cat ? "Aucun signet pour l'instant : clique sur l'icône signet d'une news pour la garder ici." : "Aucune actualité dans cette catégorie pour l'instant.");
+    if (list.length > max) html += `<button type="button" class="box dmore" data-all>Voir toutes les actualités<small>${list.length - max} de plus</small></button>`;
+    loadStatsN(list.slice(0, max));
+  }
+  feed.innerHTML = html;
+  viewsN();
+}
+function loadStatsN(list) {
+  const ids = list.map(it => it.id).filter(id => !(id in DT.stats)); if (!ids.length) return;
+  getN("/api/stats?ids=" + ids.join(",")).then(j => { if (j && j.stats) { Object.assign(DT.stats, j.stats); ids.forEach(paintN); } });
+  getN("/api/comments?ids=" + ids.join(",")).then(j => { if (j && j.counts) { Object.assign(DT.cn, j.counts); ids.forEach(paintN); } });
+}
+function paintN(id) {
+  const st = DT.stats[id] || {};
+  document.querySelectorAll(`#feed .da[data-id="${id}"]`).forEach(a => {
+    a.querySelector(".a-like b").textContent = nfN(st.l || 0); a.querySelector(".a-like").classList.toggle("on", !!st.ml);
+    a.querySelector(".a-v b").textContent = nfN(st.v || 0); a.querySelector(".a-com b").textContent = nfN(DT.cn[id] || 0); a.querySelector(".a-book").classList.toggle("on", !!st.mb);
+  });
+}
+// Vues : comptées une fois par session, quand la news reste une seconde à l'écran.
+const seenN = (() => { try { return new Set(JSON.parse(sessionStorage.getItem("fg-vues") || "[]")); } catch (e) { return new Set(); } })();
+const timersN = new Map();
+const ioN = new IntersectionObserver(es => es.forEach(e => {
+  const id = e.target.dataset.id; if (seenN.has(id)) return ioN.unobserve(e.target);
+  if (e.isIntersecting) timersN.set(id, setTimeout(() => {
+    seenN.add(id); try { sessionStorage.setItem("fg-vues", JSON.stringify([...seenN])); } catch (er) {} ioN.unobserve(e.target);
+    fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, act: "view" }) })
+      .then(r => r.json()).then(j => { if (j.stored) { (DT.stats[id] = DT.stats[id] || {}).v = j.v; paintN(id); } }).catch(() => {});
+  }, 1000)); else clearTimeout(timersN.get(id));
+}), { threshold: .6 });
+function viewsN() { if (/^https?:$/.test(location.protocol)) document.querySelectorAll("#feed [data-id]").forEach(p => { if (p.matches("article")) ioN.observe(p); }); }
+function toastN(t) { const x = Object.assign(document.createElement("div"), { className: "toast on", role: "status", textContent: t }); document.body.append(x); setTimeout(() => x.remove(), 2400); }
+document.getElementById("fil").addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  if (a) {
+    e.preventDefault();
+    if (!(DT.me && DT.me.user)) { if (window.FG_LOGIN) FG_LOGIN(); return; }
+    const id = a.closest(".da").dataset.id, act = a.dataset.act;
+    fetch("/api/stats", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, act }) })
+      .then(r => r.json()).then(j => {
+        if (!j.ok) { if (window.FG_LOGIN) FG_LOGIN(); return; }
+        if (!j.stored) { toastN("Bientôt actif : le stockage du site n'est pas encore branché"); return; }
+        const st = DT.stats[id] = DT.stats[id] || {};
+        if (act === "like") { st.l = j.n; st.ml = j.on; } else { st.b = j.n; st.mb = j.on; if (DT.signets) { DT.signets = DT.signets.filter(x => x !== id); if (j.on) DT.signets.unshift(id); } toastN(j.on ? "Ajouté à tes signets" : "Retiré de tes signets"); }
+        paintN(id);
+      }).catch(() => {});
+    return;
+  }
+  const menu = document.querySelector(".dt-menu");
+  const tb = e.target.closest("[data-tab]");
+  if (tb) { DT.tab = tb.dataset.tab; DT.cat = ""; DT.all = false;
+    if (DT.tab === "signets" && DT.me && DT.me.user && DT.signets == null) getN("/api/stats?mine=b").then(j => { DT.signets = (j && j.ids) || []; renderN(); });
+    renderN(); return; }
+  if (e.target.closest(".dt-cat")) { menu.hidden = !menu.hidden; e.target.closest(".dt-cat").setAttribute("aria-expanded", !menu.hidden); return; }
+  const c = e.target.closest("[data-cat]");
+  if (c) { DT.cat = c.dataset.cat; if (!DT.cat) DT.tab = "toutes"; renderN(); return; }
+  if (e.target.closest("[data-all]")) { DT.all = true; renderN(); return; }
 });
+document.addEventListener("click", e => { const m = document.querySelector(".dt-menu"); if (m && !m.hidden && !e.target.closest(".dt-menu, .dt-cat")) { m.hidden = true; } });
+function licN() {
+  const lic = (DT.news || []).filter(it => it.cat === "licence-fr"), ul = document.querySelector("#m-lic .lic");
+  if (lic.length && ul) ul.innerHTML = lic.slice(0, 6).map(it => `<li><span class="pub">${escN(it.pub || "Éditeur")}</span><span class="t">${escN(it.fr || it.titre)}<small>${escN([it.label, it.t1 ? "T.01 le " + it.t1.slice(0, 5) : ""].filter(Boolean).join(" · "))}</small></span></li>`).join("");
+}
+if (!matchMedia("(max-width:719px)").matches) {
+  renderN();
+  if (/^https?:$/.test(location.protocol)) {
+    getN("/api/auth/me").then(j => { DT.me = j; if (DT.tab !== "toutes") renderN(); });
+    getN("/api/news").then(j => { if (!j) return; DT.news = j.items || []; try { localStorage.setItem("fg-news", JSON.stringify(DT.news)); } catch (e) {} renderN(); licN(); });
+  }
+  licN();
+}
+init();
+function init(){
 // Votes (maquette : compteur local)
 document.getElementById("rank").addEventListener("click", e => {
   const b = e.target.closest(".vote"); if (!b) return;
@@ -685,20 +717,6 @@ document.querySelector(".ecran-tabs").addEventListener("click", e => {
   document.querySelectorAll(".ecran-tabs button").forEach(x => x.setAttribute("aria-pressed", x === b));
   document.querySelectorAll("#ecran li").forEach(li => li.hidden = b.dataset.e !== "all" && li.dataset.e !== b.dataset.e);
 });
-// Sur mobile, les modules de la colonne s'insèrent dans le fil (un toutes les deux cartes)
-const side = document.getElementById("side"), feed = document.getElementById("feed");
-const mods = [...side.querySelectorAll(".mod")];
-const mq = matchMedia("(max-width:979px)");
-function place(){
-  if (mq.matches) {
-    const items = [...feed.querySelectorAll(".post")];
-    mods.forEach((m, i) => { const anchor = items[Math.min(items.length - 1, i * 2 + 1)]; anchor.after(m); });
-  } else {
-    const foot = null;
-    mods.forEach(m => side.insertBefore(m, foot));
-  }
-}
-mq.addEventListener("change", place); place();
 
 // Données en direct depuis Notion (sur le site seulement)
 const esc2 = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -746,60 +764,6 @@ if (/^https?:$/.test(location.protocol)) {
   }).catch(() => {});
 }
 
-// Le nom tient toujours sur une ligne : on réduit la taille si l'écran est trop étroit
-function fitBrand(){
-  const h = document.querySelector(".masthead .brand"); if (!h) return;
-  h.style.fontSize = ""; const t = h.querySelector(".bt"); const max = h.parentElement.clientWidth - 96;
-  let size = parseFloat(getComputedStyle(h).fontSize);
-  while (t.offsetWidth > max && size > 14) { size -= 1; h.style.fontSize = size + "px"; }
-}
-fitBrand(); addEventListener("resize", fitBrand);
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitBrand);
-
-/* Stats des news. Vues : comptées quand la news est vue, une seule fois par session.
-   Likes et favoris : réservés aux membres connectés (l'inscription arrive). */
-(() => {
-  const posts = [...document.querySelectorAll("#feed > .post")];
-  const slug = t => t.replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70);
-  const fmt = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(".0", "") + " M" : n >= 1e4 ? Math.round(n / 1e3) + " k" : n >= 1e3 ? (n / 1e3).toFixed(1).replace(".0", "") + " k" : String(n);
-  const I = {
-    like: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.6 3.9 4 7.4 4c2 0 3.5 1.1 4.6 2.7C13.1 5.1 14.6 4 16.6 4c3.5 0 5.8 3.6 4.6 7.1-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>',
-    views: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M10 20V5M15 20v-9M20 20v-5"/></svg>',
-    bm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h12v17l-6-4.2-6 4.2z"/></svg>'
-  };
-  posts.forEach(p => {
-    if (!p.dataset.id) p.dataset.id = slug(p.querySelector(".p-title")?.firstChild?.textContent || p.textContent);
-    p.insertAdjacentHTML("beforeend", `<div class="p-acts"><button class="a-like" type="button" aria-label="J'aime">${I.like}<b>0</b></button><span class="a-views" title="Vues">${I.views}<b>0</b></span><button class="a-bm" type="button" aria-label="Garder en favori">${I.bm}<b>0</b></button></div>`);
-  });
-  const paint = (id, st) => { const p = document.querySelector(`.post[data-id="${id}"]`); if (!p || !st) return;
-    const b = p.querySelectorAll(".p-acts b"); b[0].textContent = fmt(st.l); b[1].textContent = fmt(st.v); b[2].textContent = fmt(st.b); };
-  fetch("/api/stats?ids=" + posts.map(p => p.dataset.id).join(",")).then(r => r.json()).then(j => Object.entries(j.stats || {}).forEach(([id, st]) => paint(id, st))).catch(() => {});
-
-  const seen = (() => { try { return new Set(JSON.parse(sessionStorage.getItem("fg-vues") || "[]")); } catch (e) { return new Set(); } })();
-  const save = () => { try { sessionStorage.setItem("fg-vues", JSON.stringify([...seen])); } catch (e) {} };
-  const timers = new Map();
-  const io = new IntersectionObserver(es => es.forEach(e => {
-    const id = e.target.dataset.id;
-    if (seen.has(id)) return io.unobserve(e.target);
-    if (e.isIntersecting) timers.set(id, setTimeout(() => {
-      seen.add(id); save(); io.unobserve(e.target);
-      const b = e.target.querySelectorAll(".p-acts b")[1];
-      fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, act: "view" }) })
-        .then(r => r.json()).then(j => { if (j.stored) b.textContent = fmt(j.v); }).catch(() => {});
-    }, 1000));
-    else clearTimeout(timers.get(id));
-  }), { threshold: .6 });
-  posts.forEach(p => io.observe(p));
-
-  const toast = Object.assign(document.createElement("div"), { className: "toast", role: "status" });
-  document.body.append(toast);
-  let tt;
-  document.addEventListener("click", e => {
-    const b = e.target.closest(".a-like, .a-bm"); if (!b) return;
-    toast.textContent = b.classList.contains("a-like") ? "Connecte-toi pour liker les news." : "Connecte-toi pour garder les news en favori.";
-    toast.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove("on"), 2600);
-  });
-})();
 }
 </script>
 </body>

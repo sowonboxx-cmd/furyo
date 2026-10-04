@@ -81,17 +81,27 @@
     ".me-box a.go2{display:flex;align-items:center;justify-content:center;height:46px;border-radius:23px;background:#305887;color:#fff;font-weight:700;text-decoration:none;margin-bottom:8px}" +
     ".me-box .out{background:#38383B;color:#F5F5F7}" +
     ".me-mb{display:block;text-align:center;margin-top:12px;color:#4C9BFF;font-weight:600;font-size:14px;text-decoration:none}" +
-    ".sh-me img{width:30px;height:30px;border-radius:50%;display:block}";
+    ".sh-me img{width:30px;height:30px;border-radius:50%;display:block}" +
+    /* Ordinateur (Will, 05/10/2026) : une seule ligne. Logo à gauche, rubriques, puis loupe, nombre à valider et avatar tout à droite. */
+    "@media (max-width:719px){.sh-d{display:none!important}}" +
+    "@media (min-width:720px){.sh-in{display:flex;align-items:center;gap:8px;max-width:1240px;margin:0 auto;padding:0 20px;height:68px}" +
+    ".sh-top{display:contents}.sh-logo{order:0;flex:none;margin-right:14px}.sh-logo img{height:38px}" +
+    ".sh-nav{order:1;flex:1;min-width:0;margin:0;padding:0;border:0;justify-content:flex-start;gap:2px;overflow-x:auto;scrollbar-width:none}.sh-nav::-webkit-scrollbar{display:none}" +
+    ".sh-nav a{flex:none;height:68px;padding:0 12px;font-size:14.5px;white-space:nowrap}.sh-nav a[aria-current=page]::after{left:12px;right:12px;bottom:0}" +
+    ".sh-btn{position:static;transform:none;flex:none}.sh-search{order:3}.sh-adm{order:4;position:static;transform:none;margin-left:4px}.sh-me{order:5}" +
+    ".sh-val b{font-size:14px!important;color:#CFCFD4!important}}" +
+    "@media (min-width:720px) and (max-width:1099px){.sh-nav a{padding:0 9px;font-size:13.5px}.sh-nav a[aria-current=page]::after{left:9px;right:9px}}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
-  var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : (p === "/" || p === "/index.html" || /^\/actus/.test(p)) ? "actu" : "";
-  var a = function (k, href, label) { return '<a href="' + href + '"' + (cur === k ? ' aria-current="page"' : "") + ">" + label + "</a>"; };
+  var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (p === "/" || p === "/index.html" || /^\/actus/.test(p)) ? "actu" : "";
+  var a = function (k, href, label, d) { return '<a href="' + href + '"' + (d ? ' class="sh-d"' : "") + (cur === k ? ' aria-current="page"' : "") + ">" + label + "</a>"; };
   var ICON_S = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
-  var html = '<header class="sh" id="sh">' +
+  var html = '<header class="sh" id="sh"><div class="sh-in">' +
     '<div class="sh-top"><button class="sh-btn sh-me" id="sh-me" aria-label="Mon compte"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.3 4.2-7 8.5-7s7.7 2.7 8.5 7z"/></svg></span></button>' +
     '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
-    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/", "Actualités") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") + "</nav></header>";
+    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/", "Actualités") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") +
+    a("jp", "/#m-jp", "Direct du Japon", 1) + a("cxw", "/crows-x-worst/", "CROWS X WORST", 1) + a("sjp", "/calendrier/#japon", "Sorties du Japon", 1) + a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
   var me = document.currentScript;
   me.insertAdjacentHTML("beforebegin", html);
   var set = function () { var h = document.getElementById("sh"); if (h) document.documentElement.style.setProperty("--sh-h", h.offsetHeight + "px"); };
