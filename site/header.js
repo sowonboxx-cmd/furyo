@@ -30,6 +30,9 @@
     ".sh-bo{display:none!important}" +
     ".sh-adm{left:50px}.sh-val{pointer-events:none;background:transparent!important;width:auto!important;min-width:0!important;padding:0!important;height:auto!important}" +
     ".sh-val b{background:transparent!important;color:#8E8E93!important;font:600 13px Inter,system-ui,sans-serif!important;min-width:0!important;padding:0!important}.sh-val[data-n='0'] b{display:none!important}}" +
+    /* Ordinateur aussi (Will, 04/10/2026) : plus de pastilles Back-office / Validation, juste le nombre à valider ; tout passe par l'avatar */
+    ".sh-bo{display:none!important}.sh-val{pointer-events:none;background:transparent!important;padding:0!important;height:auto!important;font-size:0!important}" +
+    ".sh-val b{background:transparent!important;color:#8E8E93!important;font:600 13px Inter,system-ui,sans-serif!important;padding:0!important}.sh-val[data-n='0'] b{display:none!important}" +
     ".adm-pop{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);font-family:Inter,system-ui,sans-serif}.adm-pop[hidden]{display:none}" +
     ".adm-box{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 60px);width:min(320px,calc(100% - 24px));box-sizing:border-box;padding:16px;background:#1C1C1E;border-radius:20px;display:flex;flex-direction:column;gap:10px;color:#F5F5F7}" +
     ".adm-u{display:flex;align-items:center;gap:12px;padding-bottom:6px;text-decoration:none;color:inherit}.adm-u img,.adm-u i{width:48px;height:48px;border-radius:24px;background:#38383B;object-fit:cover;display:block}.adm-u b{display:block;font-size:17px}.adm-u small{font-size:13px;color:#98989D}" +
@@ -266,7 +269,7 @@
     if (!matchMedia("(max-width:719px)").matches && av) {
       var r = av.getBoundingClientRect();
       pop.style.background = "transparent";
-      box.style.left = "auto"; box.style.top = Math.round(r.bottom + 10) + "px"; box.style.right = Math.max(12, Math.round(innerWidth - r.right)) + "px";
+      box.style.top = Math.round(r.bottom + 10) + "px"; if (r.left < innerWidth / 2) box.style.left = Math.max(12, Math.round(r.left)) + "px"; else { box.style.left = "auto"; box.style.right = Math.max(12, Math.round(innerWidth - r.right)) + "px"; }
       box.style.boxShadow = "0 20px 50px rgba(0,0,0,.5)"; box.style.border = "1px solid #38383B";
     } else { pop.style.background = ""; box.style.cssText = ""; }
     pop.hidden = false;
