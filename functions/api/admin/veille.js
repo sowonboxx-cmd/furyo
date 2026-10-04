@@ -29,7 +29,8 @@ const CATS = Object.fromEntries([...CATEGORIES.map(c => [c.k, c.nom]), ...Object
 const COLS = Object.fromEntries([...CATEGORIES.map(c => [c.k, c.c]), ...Object.entries(INTERNES).map(([k, v]) => [k, v[1]])]);
 
 // Titre court sur une ligne : sans les préfixes « News : », « Couverture dévoilée : »…
-const court = prop => String(prop || "").replace(/^\s*(news|licence fr|nouvelle licence[^:]*|nouvelle série)\s*:\s*/i, "").replace(/^couverture dévoilée\s*:\s*/i, "").trim();
+// (le nom de la catégorie est déjà en tête des légendes : on ne le répète pas dans le titre).
+const court = prop => String(prop || "").replace(/^\s*(news|annonce|licence fr|nouvelle licence[^:]*|nouvelle série|fin de série|pause|adaptation|sortie (?:française|japonaise)|couverture (?:française|japonaise))\s*:\s*/i, "").replace(/^couverture dévoilée\s*:\s*/i, "").trim();
 
 async function lister(env) {
   return queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
