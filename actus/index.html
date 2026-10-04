@@ -215,7 +215,7 @@ a{color:inherit}
     var rows = [["Mangaka", auteurs.join(", ")], ["Éditeur JP", [s.pubJP, s.mag].filter(Boolean).join(" · ")],
       ["Au Japon", suite ? "Suite en cours · " + suite : [s.stJP, s.volJP ? s.volJP + " tomes" : ""].filter(Boolean).join(" · ")],
       ["En France", s.pubFR ? s.pubFR + (s.volFR ? " · " + s.volFR + " tomes" : "") + (partie1 ? " (partie 1)" : "") : (s.stFR || "Inédit")],
-      ["Anime", s.anime]].filter(function (r) { return r[1]; });
+      ["Anime", String(s.anime || "").replace(/\s*;\s*/g, " · ")]].filter(function (r) { return r[1]; });
     var img = s.cover || N.cover;
     return '<section class="nd-box"><div class="nd-bh"><small>La série</small><h2>' + esc(titre) + "</h2></div>" +
       '<div class="nd-fc">' + (img ? '<img src="' + esc(couv(img, 300)) + '" alt="">' : '<span class="ph"></span>') + "<div>" +
