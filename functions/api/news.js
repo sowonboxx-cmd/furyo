@@ -2,7 +2,6 @@
 // Catégorie : propriété « Catégorie » (mêmes noms et couleurs que dans Notion, voir lib/categories.js).
 // Image : lien d'image de « Valeur proposée », sinon la couverture du tome concerné dans la base Tomes.
 // Rien n'apparaît sur le site sans validation. Seule la source officielle est publiée (décision de Will, 02/10/2026).
-import { isAdmin } from "../../lib/admin.js";
 import { text, date, rel, num, queryAll, cached } from "../../lib/notion.js";
 import { categorie } from "../../lib/categories.js";
 import { sourceName } from "../../lib/source.js";
@@ -19,7 +18,7 @@ async function page(token, id) {
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
-  if (await isAdmin(request, env).catch(() => false)) request = new Request(new URL(request.url.replace(/[?&]refresh(=[^&]*)?/, "") + (request.url.includes("?") ? "&" : "?") + "refresh=1"), request);
+  // Pas de reconstruction forcée pour Will (elle rendait les pages news lentes) : le back-office vide le cache à chaque changement.
   return cached(request, waitUntil, "/api/news?v=2", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },

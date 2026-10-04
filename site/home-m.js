@@ -268,7 +268,7 @@
   function start() {
     render();
     get("/api/auth/me").then(function (j) { D.me = j; refresh("me"); });
-    get("/api/news").then(function (j) { D.news = (j && j.items) || []; refresh("news"); loadStats(); });
+    get("/api/news").then(function (j) { D.news = (j && j.items) || []; try { localStorage.setItem("fg-news", JSON.stringify(D.news)); } catch (e) {} refresh("news"); loadStats(); });
     get("/api/calendrier").then(function (j) { D.cal = (j && j.items) || []; refresh("cal"); });
     get("/api/prepub").then(function (j) { D.prepub = (j && j.items) || []; refresh("prepub"); });
     get("/api/avancement").then(function (j) { D.av = j; refresh("av"); });

@@ -160,11 +160,17 @@ a{color:inherit}
       });
   });
 
+  // Affichage immédiat avec les news déjà chargées par l'accueil (gardées dans le téléphone), puis mise à jour par le réseau.
+  var trouve = function (items) { return items.filter(function (it) { return key.length >= 6 && it.id.slice(-key.length) === key; })[0] || items.filter(function (it) { return it.id.indexOf(key) === 0; })[0]; };
+  try { var vite = trouve(JSON.parse(localStorage.getItem("fg-news") || "[]")); if (vite) { N = vite; render(); } } catch (e) {}
   get("/api/news").then(function (j) {
     var items = (j && j.items) || [];
+    try { if (items.length) localStorage.setItem("fg-news", JSON.stringify(items)); } catch (e) {}
+    var avant = N;
     N = items.filter(function (it) { return key.length >= 6 && it.id.slice(-key.length) === key; })[0] || items.filter(function (it) { return it.id.indexOf(key) === 0; })[0]; // fin de l'id (unique) ; le début pour les anciens liens
+    if (!N && avant && !items.length) N = avant; // réseau coupé : on garde la version déjà affichée
     if (!N) { root.innerHTML = '<p class="na-empty">Cette actualité n\'existe plus. <a href="/">Retour aux actualités</a></p>'; return; }
-    render();
+    if (!avant || JSON.stringify(avant) !== JSON.stringify(N)) render();
     if (location.hash === "#commentaires") sheet();
     // Une vue par news et par session
     try { if (!sessionStorage.getItem("v-" + N.id)) { sessionStorage.setItem("v-" + N.id, "1"); fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, act: "view" }) }); } } catch (e) {}
