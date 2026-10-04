@@ -413,7 +413,7 @@ body{font-weight:500}
 .uni-head{position:relative;isolation:isolate;min-height:230px;display:flex;flex-direction:column;justify-content:flex-end;padding-right:38%}
 .uni-char{position:absolute;z-index:-1;right:0;top:0;bottom:0;height:100%;width:auto;max-width:48%;object-fit:contain;object-position:right bottom;opacity:.55;pointer-events:none}
 @media (min-width:700px){.uni-head{min-height:340px;padding-right:34%}.uni-char{opacity:.8}.uni-logo{max-height:170px}}
-@media (max-width:699px){.uni-head{padding-right:0}.uni-head p{max-width:62%}}
+@media (max-width:699px){.uni-head{padding-right:0}.uni-head p{max-width:62%}.uni-logo{max-width:54%;max-height:96px}}
 
 /* ---------- Couvertures : sans liseré ni ombre, +20 % ---------- */
 .cover,.s-res .cover,.feature .cover,.lb-cover .cover.big{box-shadow:none!important}
@@ -973,7 +973,10 @@ addEventListener("resize", setSegH);
 const _render = render;
 render = function(){ _render(); syncHash(); setSegH(); };
 function jumpToList(){
-  const top = document.getElementById("timeline").getBoundingClientRect().top + scrollY - 8;
+  // Sous l'en-tête fixe du site ; dans un univers, on arrive pile sur le logo et le personnage
+  const shH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sh-h")) || (document.getElementById("sh") || { offsetHeight: 0 }).offsetHeight;
+  const target = (state.line && document.querySelector(".uni-head")) || document.getElementById("timeline");
+  const top = target.getBoundingClientRect().top + scrollY - shH - (state.line ? 14 : 8);
   if (scrollY > top || filtering() || state.order === "release") scrollTo({ top, behavior: "auto" });
 }
 
