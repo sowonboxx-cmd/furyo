@@ -259,6 +259,17 @@ a.t{text-decoration:none}
 /* Champs en 16 px minimum : sinon iPhone zoome quand on touche le champ */
 input,select,textarea{font-size:16px!important}
 .seo-pre{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:normal}.seo-pre h1{font-family:var(--f-display,Antonio),sans-serif;text-transform:uppercase;font-size:34px;color:var(--paper);margin:0 0 8px}.seo-pre p{margin:0 0 10px}
+/* Ordinateur : bloc principal sur fond noir, synopsis et genres à côté de la couverture */
+@media (min-width:900px){
+  .head{background:var(--ink-2);border-radius:24px;padding:32px;gap:36px;grid-template-columns:260px minmax(0,1fr)}
+  .credits{font-size:16px;margin-top:12px;gap:3px 10px}
+  .st{font-size:15.5px;gap:6px;margin-top:12px}
+  .st .flag{width:19px;height:13px;vertical-align:-2px;margin-right:8px}
+  .hd-syn{margin-top:20px;max-width:72ch}
+  .hd-syn .resume{font-size:16px;line-height:1.65;text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+  .hd-syn .tags{margin-top:16px;flex-wrap:wrap;white-space:normal;-webkit-mask-image:none;mask-image:none}
+  .hd-syn .tags b,.hd-syn .tags span{height:30px;padding:0 12px;font-size:13.5px;border-radius:8px}
+}
 </style>
 </head>
 <body>
@@ -432,6 +443,9 @@ function render(){
   const same = s.scen && s.scen === s.dess;
   const ad = ADAPT(s);
   if (TAB === "ad" && !ad.length) TAB = "syn";
+  // Ordinateur : le synopsis est déjà en haut, à côté de la couverture ; les onglets commencent à « Info & Extraits ».
+  DESK = matchMedia("(min-width:900px)").matches;
+  if (DESK && TAB === "syn") TAB = "info";
   document.getElementById("app").innerHTML = `
   ${crumb(titre)}
   ${s.apercu ? `<p class="apercu">Aperçu administrateur · cette fiche n'est pas encore publiée, toi seul la vois.</p>` : ""}
@@ -442,11 +456,12 @@ function render(){
       ${s.jp ? `<p class="jp" lang="ja">${esc(s.jp)}</p>` : ""}
       <dl class="credits">${same ? `<dt>Auteur :</dt><dd>${authorLink(s.scen)}</dd>` : `${s.scen ? `<dt>Scénario :</dt><dd>${authorLink(s.scen)}</dd>` : ""}${s.dess ? `<dt>Dessin :</dt><dd>${authorLink(s.dess)}</dd>` : ""}`}</dl>
       <div class="st">${ligne("France", s, eds)}${ligne("Japon", s, eds)}</div>
+      ${DESK ? `<div class="hd-syn"><p class="resume">${esc(s.resume || "Synopsis à venir.")}</p>${tagsHTML(s)}</div>` : ""}
     </div>
   </div>
   <div class="band" aria-hidden="true"></div>
   <div class="tabs" role="tablist">
-      <button role="tab" data-tab="syn" aria-selected="${TAB === "syn"}">Synopsis</button>
+      ${DESK ? "" : `<button role="tab" data-tab="syn" aria-selected="${TAB === "syn"}">Synopsis</button>`}
       <button role="tab" data-tab="info" aria-selected="${TAB === "info"}">Info &amp; Extraits</button>
       <button role="tab" data-tab="news" aria-selected="${TAB === "news"}">News${(s.news || []).length ? ` <small class="nb${s.news.some(n => n.date && (Date.now() - new Date(n.date + "T12:00:00")) < 30 * 864e5) ? " hot" : ""}">${s.news.length}</small>` : ""}</button>
       ${ad.length ? `<button role="tab" data-tab="ad" aria-selected="${TAB === "ad"}">Adaptations</button>` : ""}
@@ -470,6 +485,9 @@ function render(){
   if (location.hash === "#tomes" && !HASH_DONE) { HASH_DONE = true; setTimeout(() => { const t = document.getElementById("tomes"); if (t) t.scrollIntoView({ block: "start" }); }, 60); }
   if (HASH_TAB && !HASH_DONE) { HASH_DONE = true; requestAnimationFrame(() => { const t = document.querySelector(".tabs"); if (t) t.scrollIntoView({ block: "start" }); }); }
 }
+const tagsHTML = s => s.type || (s.genres || []).length ? `<div class="tags">${s.type ? `<b>${esc(s.type)}</b>` : ""}${(s.genres || []).map(g => `<span>${esc(g)}</span>`).join("")}</div>` : "";
+let DESK = false;
+matchMedia("(min-width:900px)").addEventListener("change", () => { if (DATA && DATA.serie) render(); });
 function panel(s, pubFR, pubJP, eds, ad){
   // News de la série : une ligne par news (catégorie + petit titre), qui se déplie d'un appui.
   if (TAB === "news") {
@@ -508,7 +526,7 @@ function panel(s, pubFR, pubJP, eds, ad){
     </div>`;
   }
   // Sous le synopsis : une seule ligne, le type (Seinen, Shonen…) mis en avant puis les genres (défile si trop long).
-  const tags = s.type || (s.genres || []).length ? `<div class="tags">${s.type ? `<b>${esc(s.type)}</b>` : ""}${(s.genres || []).map(g => `<span>${esc(g)}</span>`).join("")}</div>` : "";
+  const tags = tagsHTML(s);
   return (s.resume ? `<p class="resume">${esc(s.resume)}</p>` : `<p class="resume">Synopsis à venir.</p>`) + tags;
 }
 // Titre trop long (coupé à 2 lignes) : un appui l'affiche en entier dans une petite fenêtre.
