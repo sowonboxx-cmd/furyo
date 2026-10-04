@@ -451,14 +451,18 @@ async function veille(){
   vdraw();
 }
 function vdraw(){
-  const counts = {}; VITEMS.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
-  if (VF !== "tout" && !counts[VF]) VF = "tout";
-  document.getElementById("vchips").innerHTML = `<button class="chip" data-vf="tout" aria-pressed="${VF === "tout"}">Tout <small>${VITEMS.length}</small></button>` +
-    Object.keys(VCATS).filter(k => counts[k]).map(k => `<button class="chip" data-vf="${k}" aria-pressed="${VF === k}" style="--c:${VCOL[k]}"><span class="d"></span>${esc(VCATS[k])} <small>${counts[k]}</small></button>`).join("");
-  const list = VITEMS.filter(i => VF === "tout" || i.cat === VF);
-  document.getElementById("vhint").textContent = VITEMS.length ? `${list.length} à relire · touche une ligne pour voir le détail` : "Rien à relire pour l'instant 👌";
+  // « Vu, pas sur le site » : news gardées de côté, à part, qu'on peut encore publier plus tard.
+  const actifs = VITEMS.filter(i => !i.vu), gardes = VITEMS.filter(i => i.vu);
+  const counts = {}; actifs.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
+  if (VF !== "tout" && VF !== "vu" && !counts[VF]) VF = "tout";
+  if (VF === "vu" && !gardes.length) VF = "tout";
+  document.getElementById("vchips").innerHTML = `<button class="chip" data-vf="tout" aria-pressed="${VF === "tout"}">Tout <small>${actifs.length}</small></button>` +
+    Object.keys(VCATS).filter(k => counts[k]).map(k => `<button class="chip" data-vf="${k}" aria-pressed="${VF === k}" style="--c:${VCOL[k]}"><span class="d"></span>${esc(VCATS[k])} <small>${counts[k]}</small></button>`).join("") +
+    (gardes.length ? `<button class="chip" data-vf="vu" aria-pressed="${VF === "vu"}" style="--c:#9A6DD7"><span class="d"></span>Vu, pas sur le site <small>${gardes.length}</small></button>` : "");
+  const list = VF === "vu" ? gardes : actifs.filter(i => VF === "tout" || i.cat === VF);
+  document.getElementById("vhint").textContent = VF === "vu" ? `${list.length} news gardées de côté · tu peux encore les publier` : actifs.length ? `${list.length} à relire · touche une ligne pour voir le détail` : "Rien à relire pour l'instant 👌";
   document.getElementById("vl").innerHTML = list.map(i => `<li class="vi" data-vid="${i.id}"><time>${esc(dCourt(i.date || i.cree))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
-  const a = document.querySelector(".sh-val b"); if (a) a.textContent = VITEMS.length;
+  const a = document.querySelector(".sh-val b"); if (a) a.textContent = actifs.length;
 }
 function vopen(id){
   const i = VITEMS.find(x => x.id === id); if (!i) return;
@@ -498,7 +502,7 @@ function vopen(id){
     <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
     <div class="act">
       <button class="go" data-vs="${news ? "Publié sur le site" : pp ? "Validé" : "À appliquer à la fiche"}">${news ? "Publier sur le site" : pp ? "Publier sur le site" : "Appliquer à la fiche"}</button>
-      ${pp ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : `<button data-vs="Vu">${news ? "Vu, pas sur le site" : "Vu, rien à faire"}</button>
+      ${pp ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : i.vu ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Rejeter</button>` : `<button data-vs="Vu">${news ? "Vu, pas sur le site" : "Vu, rien à faire"}</button>
       <button class="rej" data-vs="Rejeté">Rejeter</button>`}
     </div></div>`;
   document.body.appendChild(m);
@@ -620,8 +624,10 @@ async function vsend(btn, statut){
   const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, statut, ...(texte !== i.texte ? { texte } : {}), ...(categorie ? { categorie } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
-  VITEMS = VITEMS.filter(x => x.id !== id); m.remove(); vdraw();
-  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Prépublication en ligne ✓" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? "Marqué comme vu" : i.base === "prepub" ? "Écartée" : "Rejeté");
+  // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
+  if (statut === "Vu" && i.news) { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
+  m.remove(); vdraw();
+  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Prépublication en ligne ✓" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? (i.news ? "Rangée dans « Vu, pas sur le site »" : "Marqué comme vu") : i.base === "prepub" ? "Écartée" : "Rejeté");
 }
 // Catégorie changée dans la fiche : couleur, puis légendes régénérées avec le nouveau nom.
 document.addEventListener("change", e => {

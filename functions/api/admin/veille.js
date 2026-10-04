@@ -33,7 +33,8 @@ const court = prop => String(prop || "").replace(/^\s*(news|licence fr|nouvelle 
 
 async function lister(env) {
   return queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
-    filter: { property: "Statut", select: { equals: "À valider" } },
+    // « Vu » : news gardées de côté (pas publiées), qu'on peut encore publier plus tard depuis le back-office.
+    filter: { or: [{ property: "Statut", select: { equals: "À valider" } }, { property: "Statut", select: { equals: "Vu" } }] },
     sorts: [{ property: "Date de la news", direction: "descending" }],
   } });
 }
@@ -47,8 +48,11 @@ async function listerPrepub(env) {
 
 export async function onRequestGet({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
-  const [rows, pRows] = await Promise.all([lister(env), listerPrepub(env)]);
-  if (new URL(request.url).searchParams.has("count")) return json({ n: rows.length + pRows.length });
+  const [all, pRows] = await Promise.all([lister(env), listerPrepub(env)]);
+  const vu = r => text(r.properties["Statut"]) === "Vu";
+  // Gardées de côté : seulement les news (une mise à jour de fiche « Vu, rien à faire » est classée pour de bon).
+  const rows = all.filter(r => !vu(r) || text(r.properties["Catégorie"]) || text(r.properties["Type"]) === "News");
+  if (new URL(request.url).searchParams.has("count")) return json({ n: rows.filter(r => !vu(r)).length + pRows.length });
   // Séries liées : une seule requête sur la base Séries (pas une lecture par série : Cloudflare limite
   // le nombre de requêtes par appel, et au-delà les comptes des auteurs / éditeurs sautaient en silence).
   const ids = new Set([...rows, ...pRows].flatMap(r => rel(r.properties["Série"])));
@@ -78,7 +82,7 @@ export async function onRequestGet({ request, env }) {
       actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]),
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",
-      serie: s, news,
+      serie: s, news, vu: vu(r),
     };
   });
   // Couvertures et sorties : la couverture et la date viennent de la base Tomes (comme le calendrier).
