@@ -13,9 +13,9 @@
   var MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   var dd = function (d) { if (!d) return ""; var x = new Date(d + "T12:00:00"); return x.getDate() + " " + MC[x.getMonth()]; };
   var nf = function (n) { return n >= 1000 ? (n / 1000).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " k" : String(n || 0); };
-  var D = { news: null, cal: null, prepub: null, av: null, mbr: null, aut: null, stats: {}, me: null };
+  var D = { cn: {}, news: null, cal: null, prepub: null, av: null, mbr: null, aut: null, stats: {}, me: null };
   var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
-  var newsId = function (it) { return it.type + "-" + slug(it.fr || it.titre); };
+  var newsId = function (it) { return it.id; };
 
   var I = {
     heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>',
@@ -33,11 +33,11 @@
     var id = newsId(it), st = D.stats[id] || {};
     return '<div class="mh-acts" data-id="' + esc(id) + '">' +
       '<button type="button" class="a-like' + (st.ml ? " on" : "") + '" data-act="like" aria-label="J\'aime">' + I.heart + "<b>" + nf(st.l || 0) + "</b></button>" +
-      '<a class="a-com" href="' + esc(link(it)) + '" aria-label="Commentaires">' + I.com + "<b>0</b></a>" +
+      '<a class="a-com" href="' + esc(link(it)) + '#commentaires" aria-label="Commentaires">' + I.com + "<b>" + nf((D.cn || {})[id] || 0) + "</b></a>" +
       '<span class="a-v" aria-label="Vues">' + I.stat + "<b>" + nf(st.v || 0) + "</b></span>" +
       '<button type="button" class="a-book' + (st.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button></div>";
   }
-  function link(it) { return "/series/" + slug(it.titre) + "#news"; }
+  function link(it) { return "/actus/" + slug(it.fr || it.titre) + "-" + String(it.id).slice(0, 8); }
   function meta(it) {
     var t = TL[it.type] || TL.news;
     return '<div class="mh-meta"><span style="color:' + t[2] + '">' + esc(it.type === "licence" ? "Licence FR" : t[1]) + "</span>· " + esc(dd(it.date)) + "</div>";
@@ -86,7 +86,7 @@
     if (!it.length) return "";
     return '<section class="mh-sec" aria-label="Sorties en France">' + head2(titre, sous, "/calendrier/#france", "Calendrier") + '<div class="mh-car">' + it.map(function (x) {
       var t = (x.fr || x.series) + (x.n != null ? " T." + String(x.n).padStart(2, "0") : "");
-      return '<a class="mh-cov" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/") + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(dd(x.date)) + "</em></span><b>" + esc(t) + "</b><small>" + esc(x.pub || "") + "</small></a>";
+      return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/") + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(dd(x.date)) + "</em></span><b>" + esc(t) + "</b><small>" + esc(x.pub || "") + "</small></a>";
     }).join("") + "</div></section>";
   }
   function sortiesJP() {
@@ -97,7 +97,7 @@
     var J = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
     return '<section class="mh-jpbox" aria-label="Sorties au Japon">' + head2(titre, I.jp + "Au Japon", "/calendrier/#japon", "Calendrier") + it.slice(0, 6).map(function (x) {
       var d = new Date(x.date + "T12:00:00"), t = (x.series) + (x.n != null ? " T." + String(x.n).padStart(2, "0") : "");
-      return '<a class="mh-jprow" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span class="d"><b>' + String(d.getDate()).padStart(2, "0") + "</b>" + J[d.getDay()] + "</span>" + (x.cover ? '<img src="' + esc(couv(x.cover, 120)) + '" alt="" loading="lazy">' : '<span class="mh-noimg s"></span>') + '<span class="t"><b>' + esc(t) + "</b><small>" + esc(x.pub || "") + "</small></span></a>";
+      return '<a class="mh-jprow" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span class="d"><b>' + String(d.getDate()).padStart(2, "0") + "</b>" + J[d.getDay()] + "</span>" + (x.cover ? '<img src="' + esc(couv(x.cover, 120)) + '" alt="" loading="lazy">' : '<span class="mh-noimg s"></span>') + '<span class="t"><b>' + esc(t) + "</b><small>" + esc(x.pub || "") + "</small></span></a>";
     }).join("") + "</section>";
   }
   function mags() {
@@ -184,13 +184,29 @@
       if (!j || !j.stats) return;
       Object.keys(j.stats).forEach(function (id) { D.stats[id] = j.stats[id]; paint(id); });
     });
+    get("/api/comments?ids=" + ids.join(",")).then(function (j) {
+      if (!j || !j.counts) return;
+      Object.keys(j.counts).forEach(function (id) { D.cn[id] = j.counts[id]; paint(id); });
+    });
   }
   function paint(id) {
     var st = D.stats[id] || {};
     root.querySelectorAll('.mh-acts[data-id="' + id + '"]').forEach(function (a) {
       a.querySelector(".a-like b").textContent = nf(st.l || 0); a.querySelector(".a-like").classList.toggle("on", !!st.ml);
-      a.querySelector(".a-v b").textContent = nf(st.v || 0); a.querySelector(".a-book").classList.toggle("on", !!st.mb);
+      a.querySelector(".a-v b").textContent = nf(st.v || 0); a.querySelector(".a-com b").textContent = nf(D.cn[id] || 0); a.querySelector(".a-book").classList.toggle("on", !!st.mb);
     });
+  }
+  // Fenêtre d'un tome (sorties FR / JP) : couverture en grand, tome, date, accès à la fiche si elle existe
+  function tomePop(x) {
+    var b = document.getElementById("mh-tp");
+    if (!b) { b = document.createElement("div"); b.id = "mh-tp"; b.className = "mh-tp"; document.body.appendChild(b); b.addEventListener("click", function (e) { if (e.target === b || e.target.closest(".mh-tpx")) { b.hidden = true; document.body.style.overflow = ""; } }); }
+    var jp = x.pays === "Japon", titre = jp ? x.series : (x.fr || x.series), d = x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "";
+    b.innerHTML = '<div class="mh-tpb" role="dialog" aria-label="' + esc(titre) + '"><button type="button" class="mh-tpx" aria-label="Fermer">×</button>' +
+      (x.cover ? '<img src="' + esc(couv(x.cover, 600)) + '" alt="Couverture ' + esc(titre) + '">' : '<span class="mh-noimg"></span>') +
+      "<small>" + (jp ? I.jp + "Sortie au Japon" : I.fr + "Sortie en France") + "</small><h2>" + esc(titre) + "</h2>" +
+      (x.n != null ? "<b>Tome " + esc(x.n) + "</b>" : "") + "<p>" + esc(d) + (x.pub ? " · " + esc(x.pub) : "") + "</p>" +
+      (x.fiche ? '<a class="mh-tpgo" href="/series/' + esc(slug(x.fr || x.series)) + '#tomes">Accéder à la fiche</a>' : "") + "</div>";
+    b.hidden = false; document.body.style.overflow = "hidden";
   }
   function toast(t) { var x = document.createElement("div"); x.className = "mh-toast"; x.textContent = t; document.body.appendChild(x); setTimeout(function () { x.remove(); }, 2200); }
 
@@ -204,12 +220,15 @@
       fetch("/api/stats", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, act: act }) })
         .then(function (r) { return r.json(); }).then(function (j) {
           if (!j.ok) { if (window.FG_LOGIN) FG_LOGIN(); return; }
+          if (!j.stored) { toast("Bientôt actif : le stockage du site n'est pas encore branché"); return; }
           var st = D.stats[id] = D.stats[id] || {};
           if (act === "like") { st.l = j.n; st.ml = j.on; } else { st.b = j.n; st.mb = j.on; if (D.signets) { D.signets = D.signets.filter(function (x) { return x !== id; }); if (j.on) D.signets.unshift(id); } toast(j.on ? "Ajouté à tes signets" : "Retiré de tes signets"); }
           paint(id);
         }).catch(function () {});
       return;
     }
+    var tp = e.target.closest("[data-tome]");
+    if (tp) { var x = (D.cal || []).filter(function (c) { return c.id === tp.dataset.tome; })[0]; if (x) { e.preventDefault(); tomePop(x); return; } }
     var tb = e.target.closest("[data-tab]");
     if (tb) { TAB = tb.dataset.tab; if (TAB === "signets" && D.me && D.me.user && D.signets == null) get("/api/stats?mine=b").then(function (j) { D.signets = (j && j.ids) || []; render(); }); render(); return; }
     var cb = e.target.closest(".mh-catb");

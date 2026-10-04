@@ -5,7 +5,7 @@
 // Stockage : namespace KV lié au projet Pages sous le nom STATS. Sans lui, tout renvoie 0 sans erreur.
 import { membre } from "../../lib/auth.js";
 const ID = /^[a-z0-9-]{1,80}$/;
-const uid = u => String(u.s || u.e || u.k || "").replace(/[^\w@.-]/g, "").slice(0, 80);
+const uid = u => String(u.m || u.k || u.e || "").replace(/[^\w@.-]/g, "").slice(0, 80);
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 
 export async function onRequestGet({ env, request }) {

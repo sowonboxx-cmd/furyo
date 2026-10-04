@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#232325">
+<title>Actualité | FuryoGang</title>
+<meta name="description" content="Actualité manga furyō, yakuza et crime sur FuryoGang.">
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#232325;--ink-2:#000;--ink-3:#38383B;--paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;--blue:#4C9BFF;--red:#E5483A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+[hidden]{display:none!important}
+.na{max-width:680px;margin:0 auto;padding-bottom:60px}
+.na-hero{position:relative;height:min(62vh,480px);overflow:hidden;background:var(--ink-3)}
+.na-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.na-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(35,35,37,0) 35%,var(--ink) 100%)}
+.na-back{position:absolute;z-index:2;left:12px;top:12px;width:42px;height:42px;border-radius:21px;background:rgba(0,0,0,.55);display:grid;place-items:center;color:#fff;text-decoration:none}
+.na-back svg,.na-share svg{width:20px;height:20px}
+.na-share{position:absolute;z-index:2;right:12px;top:12px;width:42px;height:42px;border:0;border-radius:21px;background:rgba(0,0,0,.55);display:grid;place-items:center;color:#fff;cursor:pointer}
+.na-ht{position:absolute;z-index:1;left:20px;right:20px;bottom:6px;display:flex;flex-direction:column;gap:8px}
+.na-pill{align-self:flex-start;height:26px;padding:0 10px;border-radius:8px;color:#000;font:700 12px/26px Inter,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.na-ht h1{margin:0;font:700 clamp(38px,11vw,56px)/.95 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.na-body{display:flex;flex-direction:column;gap:16px;padding:12px 20px 0}
+.na-meta{font-size:13px;color:var(--paper-3)}
+.na-text{margin:0;font-size:16.5px;line-height:1.65;color:#E4E4E8;white-space:pre-line}
+.na-links{display:flex;flex-wrap:wrap;gap:8px}
+.na-links a{height:38px;padding:0 15px;border-radius:19px;display:inline-flex;align-items:center;background:var(--ink-3);text-decoration:none;font-size:13.5px;font-weight:600}
+.na-acts{display:flex;align-items:center;gap:22px;padding:6px 0;color:var(--paper-3);font-size:13.5px;font-weight:600}
+.na-acts button,.na-acts span{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:inherit;font:inherit;padding:6px 0;cursor:pointer}
+.na-acts svg{width:21px;height:21px}
+.na-acts .on.a-like{color:var(--red)}.na-acts .on.a-like svg{fill:var(--red)}
+.na-acts .a-book{margin-left:auto}.na-acts .on.a-book{color:var(--blue)}.na-acts .on.a-book svg{fill:var(--blue)}
+.na-com{display:flex;flex-direction:column;gap:12px;padding-top:16px;border-top:1px solid var(--ink-3)}
+.na-com button.open{align-self:flex-start;border:0;background:none;padding:0;color:var(--paper-3);font:600 14px Inter,sans-serif;cursor:pointer}
+.na-com p{margin:0;font-size:14px;line-height:1.45;color:var(--paper-2)}.na-com p b{color:var(--paper)}
+.na-empty{padding:40px 20px;color:var(--paper-3);text-align:center}
+/* Commentaires façon Insta */
+.cm{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
+.cm-box{width:100%;max-width:680px;height:min(78vh,700px);background:#1C1C1E;border-radius:22px 22px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
+.cm-grip{display:flex;justify-content:center;padding-top:10px}.cm-grip span{width:40px;height:5px;border-radius:3px;background:#5A5A5E}
+.cm-box h2{margin:10px 0 6px;text-align:center;font:600 15px Inter,sans-serif}
+.cm-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;padding:10px 16px}
+.cm-it{display:flex;gap:10px}
+.cm-av{width:34px;height:34px;border-radius:17px;background:var(--ink-3);flex:none;display:grid;place-items:center;font:700 13px Inter,sans-serif;object-fit:cover}
+.cm-it div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.cm-it small{font-size:12.5px;color:var(--paper-3)}.cm-it small b{color:var(--paper)}
+.cm-it p{margin:0;font-size:14px;line-height:1.45;color:#E4E4E8;white-space:pre-line;overflow-wrap:anywhere}
+.cm-none{margin:auto;color:var(--paper-3);font-size:14px;text-align:center;padding:30px}
+.cm-form{display:flex;align-items:center;gap:10px;padding:10px 14px 14px;border-top:1px solid var(--ink-3)}
+.cm-form input{flex:1;min-width:0;height:42px;padding:0 14px;border:1px solid #48484C;border-radius:21px;background:transparent;color:var(--paper);font:400 16px Inter,sans-serif}
+.cm-form button{border:0;background:none;color:var(--blue);font:700 14px Inter,sans-serif;cursor:pointer}
+.cm-form button:disabled{opacity:.4}
+.cm-login{margin:10px 14px 14px;height:46px;border:0;border-radius:23px;background:#305887;color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<script src="/site/header.js?v=14"></script>
+<main class="na" id="na"><p class="na-empty">Chargement…</p></main>
+<script>
+(function () {
+  var TYPES = { news: ["News", "#7FA7C9"], cover: ["Couverture", "#F2B33D"], annonce: ["Annonce", "#E5483A"], licence: ["Licence FR", "#7BC67E"], trailer: ["Trailer", "#A48CD6"], fin: ["Fin de série", "#E0955F"], pause: ["Pause", "#9C978A"], mag: ["Magazine", "#E58FA8"] };
+  var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var slug = function (t) { return String(t || "").replace(/œ/g, "oe").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60); };
+  var couv = function (u, w) { return u ? (/^https?:/.test(u) ? "/api/couv?u=" + encodeURIComponent(u) + "&w=" + w : u) : ""; };
+  var nf = function (n) { return n >= 1000 ? (n / 1000).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " k" : String(n || 0); };
+  var I = {
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v11M7 9l5-5 5 5M5 20h14"/></svg>',
+    heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>',
+    com: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>',
+    stat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>',
+    book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>'
+  };
+  var root = document.getElementById("na"), N = null, ME = null, ST = {}, CM = [], STORED = true;
+  var key = (location.pathname.replace(/^\/actus\/?/, "").replace(/\/$/, "").split("-").pop() || new URLSearchParams(location.search).get("id") || "").toLowerCase();
+  var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
+  var dLong = function (d) { return d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : ""; };
+  var ago = function (d) { var m = Math.round((Date.now() - new Date(d)) / 6e4); return m < 60 ? Math.max(1, m) + " min" : m < 1440 ? Math.round(m / 60) + " h" : Math.round(m / 1440) + " j"; };
+  var member = function () { return ME && ME.user; };
+
+  function acts() {
+    return '<div class="na-acts" id="na-acts"><button type="button" class="a-like' + (ST.ml ? " on" : "") + '" data-act="like" aria-label="J\'aime">' + I.heart + "<b>" + nf(ST.l) + "</b></button>" +
+      '<button type="button" class="a-com" data-open aria-label="Commentaires">' + I.com + "<b>" + CM.length + "</b></button>" +
+      '<span aria-label="Vues">' + I.stat + "<b>" + nf(ST.v) + "</b></span>" +
+      '<button type="button" class="a-book' + (ST.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button></div>";
+  }
+  function preview() {
+    if (!CM.length) return '<section class="na-com"><button type="button" class="open" data-open>' + (STORED ? "Aucun commentaire pour l'instant : sois le premier." : "Commentaires bientôt disponibles.") + "</button></section>";
+    return '<section class="na-com" aria-label="Commentaires"><button type="button" class="open" data-open>Afficher ' + (CM.length > 1 ? "les " + CM.length + " commentaires" : "le commentaire") + "</button>" +
+      CM.slice(-2).map(function (c) { return "<p><b>" + esc(c.n) + "</b> " + esc(c.t) + "</p>"; }).join("") + "</section>";
+  }
+  function render() {
+    if (!N) return;
+    var t = TYPES[N.type] || TYPES.news, titre = N.fr || N.titre;
+    document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
+    root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '">' : "") +
+      '<a class="na-back" href="/" aria-label="Retour aux actualités">' + I.back + '</a><button type="button" class="na-share" id="na-share" aria-label="Partager">' + I.share + "</button>" +
+      '<div class="na-ht"><span class="na-pill" style="background:' + t[1] + '">' + t[0] + "</span><h1>" + esc(titre) + "</h1></div></div>" +
+      '<div class="na-body"><span class="na-meta">' + esc([N.pub, dLong(N.date)].filter(Boolean).join(" · ")) + "</span>" +
+      '<p class="na-text">' + esc(N.texte) + "</p>" +
+      '<div class="na-links"><a href="/series/' + esc(slug(N.titre)) + '">Fiche ' + esc(titre) + "</a>" + (N.src ? '<a href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(N.srcName || "officielle") + " ↗</a>" : "") + "</div>" +
+      acts() + preview() + "</div>";
+  }
+  // Fenêtre des commentaires
+  function sheet() {
+    var box = document.getElementById("cm");
+    if (!box) { box = document.createElement("div"); box.className = "cm"; box.id = "cm"; document.body.appendChild(box); box.addEventListener("click", function (e) { if (e.target === box) close(); }); }
+    var list = CM.length ? CM.map(function (c) {
+      return '<div class="cm-it">' + (c.p ? '<img class="cm-av" src="' + esc(c.p) + '" alt="" referrerpolicy="no-referrer">' : '<span class="cm-av">' + esc(c.n.charAt(0).toUpperCase()) + "</span>") +
+        "<div><small><b>" + esc(c.n) + "</b> · " + ago(c.d) + "</small><p>" + esc(c.t) + "</p></div></div>";
+    }).join("") : '<p class="cm-none">' + (STORED ? "Aucun commentaire pour l'instant." : "Les commentaires arrivent bientôt.") + "</p>";
+    var form = !STORED ? "" : member() ? '<form class="cm-form" id="cm-form"><label class="sr" for="cm-in">Ton commentaire</label><input id="cm-in" maxlength="600" placeholder="Ajouter un commentaire…" autocomplete="off"><button type="submit" id="cm-go" disabled>Publier</button></form>'
+      : '<button type="button" class="cm-login" id="cm-login">Devenir membre pour commenter</button>';
+    box.innerHTML = '<div class="cm-box" role="dialog" aria-label="Commentaires"><div class="cm-grip"><span></span></div><h2>Commentaires</h2><div class="cm-list" id="cm-list">' + list + "</div>" + form + "</div>";
+    box.hidden = false; document.body.style.overflow = "hidden";
+    var l = document.getElementById("cm-list"); l.scrollTop = l.scrollHeight;
+    var f = document.getElementById("cm-form");
+    if (f) {
+      var inp = document.getElementById("cm-in"), go = document.getElementById("cm-go");
+      inp.addEventListener("input", function () { go.disabled = !inp.value.trim(); });
+      f.addEventListener("submit", function (e) {
+        e.preventDefault(); var t = inp.value.trim(); if (!t) return; go.disabled = true;
+        fetch("/api/comments", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, text: t }) })
+          .then(function (r) { return r.json(); }).then(function (j) { if (j.ok) { CM.push(j.item); render(); sheet(); } else { alert(j.error || "Impossible de publier."); go.disabled = false; } });
+      });
+    }
+    var lg = document.getElementById("cm-login"); if (lg) lg.onclick = function () { close(); if (window.FG_LOGIN) FG_LOGIN(); };
+  }
+  function close() { var b = document.getElementById("cm"); if (b) b.hidden = true; document.body.style.overflow = ""; }
+  addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+
+  root.addEventListener("click", function (e) {
+    if (e.target.closest("[data-open]")) { sheet(); return; }
+    if (e.target.closest("#na-share")) { var u = location.href; if (navigator.share) navigator.share({ title: document.title, url: u }).catch(function () {}); else if (navigator.clipboard) navigator.clipboard.writeText(u); return; }
+    var a = e.target.closest("[data-act]"); if (!a) return;
+    if (!member()) { if (window.FG_LOGIN) FG_LOGIN(); return; }
+    fetch("/api/stats", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, act: a.dataset.act }) })
+      .then(function (r) { return r.json(); }).then(function (j) {
+        if (!j.ok) return;
+        if (!j.stored) { alert("Les likes et signets seront actifs dès que le stockage du site sera branché."); return; }
+        if (a.dataset.act === "like") { ST.l = j.n; ST.ml = j.on; } else { ST.b = j.n; ST.mb = j.on; }
+        document.getElementById("na-acts").outerHTML = acts();
+      });
+  });
+
+  get("/api/news").then(function (j) {
+    var items = (j && j.items) || [];
+    N = items.filter(function (it) { return it.id.indexOf(key) === 0; })[0];
+    if (!N) { root.innerHTML = '<p class="na-empty">Cette actualité n\'existe plus. <a href="/">Retour aux actualités</a></p>'; return; }
+    render();
+    if (location.hash === "#commentaires") sheet();
+    // Une vue par news et par session
+    try { if (!sessionStorage.getItem("v-" + N.id)) { sessionStorage.setItem("v-" + N.id, "1"); fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, act: "view" }) }); } } catch (e) {}
+    get("/api/stats?ids=" + N.id).then(function (s) { if (s && s.stats) { ST = s.stats[N.id] || {}; STORED = s.stored !== false; render(); } });
+    get("/api/comments?id=" + N.id).then(function (c) { if (c) { CM = c.items || []; STORED = c.stored !== false; render(); var o = document.getElementById("cm"); if (o && !o.hidden) sheet(); } });
+  });
+  get("/api/auth/me").then(function (j) { ME = j; });
+})();
+</script>
+</body>
+</html>
