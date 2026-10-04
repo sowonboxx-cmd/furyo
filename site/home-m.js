@@ -117,7 +117,8 @@
     return out;
   }
   function webCard(m) {
-    return '<article class="mh-mag mh-web"><div class="mh-magc"><span class="mh-webi">WEB</span></div><div class="mh-magt"><small>Mis à jour le ' + esc(dd(m.date)) + "</small><b>Séries en ligne</b>" +
+    var img = (m.items.filter(function (it) { return it.cover; })[0] || {}).cover; // image d'une des séries (ex. Doom), sinon « WEB »
+    return '<article class="mh-mag mh-web"><div class="mh-magc">' + (img ? '<img src="' + esc(couv(img, 200)) + '" alt="" loading="lazy">' : '<span class="mh-webi">WEB</span>') + "</div><div class=\"mh-magt\"><small>Mis à jour le " + esc(dd(m.date)) + "</small><b>Séries en ligne</b>" +
       m.items.map(function (it) { return '<span class="mh-ch"><span>' + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + "</span></span>"; }).join("") + "</div></article>";
   }
   function magCard(m) {
