@@ -162,7 +162,7 @@ a{color:inherit}
 
   get("/api/news").then(function (j) {
     var items = (j && j.items) || [];
-    N = items.filter(function (it) { return it.id.indexOf(key) === 0; })[0];
+    N = items.filter(function (it) { return key.length >= 6 && it.id.slice(-key.length) === key; })[0] || items.filter(function (it) { return it.id.indexOf(key) === 0; })[0]; // fin de l'id (unique) ; le début pour les anciens liens
     if (!N) { root.innerHTML = '<p class="na-empty">Cette actualité n\'existe plus. <a href="/">Retour aux actualités</a></p>'; return; }
     render();
     if (location.hash === "#commentaires") sheet();

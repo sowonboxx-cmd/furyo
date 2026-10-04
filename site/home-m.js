@@ -38,7 +38,7 @@
       '<span class="a-v" aria-label="Vues">' + I.stat + "<b>" + nf(st.v || 0) + "</b></span>" +
       '<button type="button" class="a-book' + (st.mb ? " on" : "") + '" data-act="bookmark" aria-label="Signet">' + I.book + "</button></div>";
   }
-  function link(it) { return "/actus/" + slug(it.fr || it.titre) + "-" + String(it.id).slice(0, 8); }
+  function link(it) { return "/actus/" + slug(it.fr || it.titre) + "-" + String(it.id).slice(-8); }
   function meta(it) {
     var t = TL[it.cat] || TL.annonce;
     return '<div class="mh-meta"><span style="color:' + t[2] + '">' + esc(t[1]) + "</span>· " + esc(dd(it.date)) + "</div>";
