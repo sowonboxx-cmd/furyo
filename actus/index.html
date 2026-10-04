@@ -66,6 +66,68 @@ a{color:inherit}
 .cm-form button{border:0;background:none;color:var(--blue);font:700 14px Inter,sans-serif;cursor:pointer}
 .cm-form button:disabled{opacity:.4}
 .cm-login{margin:10px 14px 14px;height:46px;border:0;border-radius:23px;background:#305887;color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
+/* ===== Ordinateur (maquette A3 validée par Will le 05/10/2026) : bannière 16:9, article + commentaires à gauche ; série, dernier chapitre, mangaka, autres news à droite ===== */
+@media (min-width:980px){
+.na.nd{max-width:1240px;padding:20px 20px 60px}
+.nd-hero{position:relative;aspect-ratio:21/8;border-radius:20px;overflow:hidden;background:#000}
+.nd-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.nd-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),transparent 22%,transparent 34%,rgba(0,0,0,.65) 62%,#000)}
+.nd-hero.noimg{aspect-ratio:auto;min-height:260px}
+.nd-crumb{position:absolute;left:20px;top:20px;z-index:2;display:inline-flex;height:38px;align-items:center;padding:0 16px;border-radius:19px;background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font:600 13.5px Inter,sans-serif;color:var(--paper);text-decoration:none}
+.nd-crumb:hover{background:#000}
+.nd-tx{position:absolute;left:32px;right:32px;bottom:26px;z-index:1;display:flex;flex-direction:column;align-items:flex-start;text-shadow:0 1px 12px rgba(0,0,0,.5)}
+.nd-date{font:600 14px Inter,sans-serif;color:var(--paper-2);margin-bottom:10px}
+.nd-tx .na-pill{height:28px;line-height:28px;padding:0 11px;font-size:12.5px;text-shadow:none}
+.nd-tx h1{margin:10px 0 4px;font:700 64px/.95 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.nd-jp{font-size:15px;color:var(--paper-2)}
+.nd-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;margin-top:20px;align-items:start}
+.nd-col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.nd-box{background:#000;border-radius:20px;padding:20px}
+.nd-main{padding:28px;display:flex;flex-direction:column;gap:20px}
+.nd-main .na-text{font-size:17.5px;line-height:1.65;max-width:72ch}
+.nd-main .na-vid{border-radius:16px}
+.nd-src{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.nd-src span{font:600 12.5px Inter,sans-serif;color:var(--paper-3)}
+.nd-src a{background:#1C1C1E;border-radius:14px;padding:6px 12px;font:700 13px Inter,sans-serif;text-decoration:none}.nd-src a:hover{background:var(--ink-3)}
+.nd-main .na-acts{gap:24px;font-size:14px;color:#AEAEB2}
+.nd-main .na-acts .a-com{background:#1C1C1E;border-radius:18px;padding:8px 14px;color:var(--paper)}.nd-main .na-acts .a-com:hover{background:var(--ink-3)}
+.nd-bh{margin-bottom:14px}.nd-bh small{display:block;font:600 12px Inter,sans-serif;color:var(--paper-3);margin-bottom:3px}
+.nd-bh h2{margin:0;font:700 26px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.nd-bh.row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.nd-dot{color:var(--red)}
+.nd-fc{display:grid;grid-template-columns:92px minmax(0,1fr);gap:14px}.nd-fc img,.nd-fc .ph{width:92px;aspect-ratio:7/10;object-fit:cover;border-radius:10px;background:var(--ink-3);display:block}
+.nd-tags{display:flex;flex-wrap:wrap;gap:5px}.nd-tags span{background:#1C1C1E;border-radius:7px;padding:3px 8px;font:600 11.5px Inter,sans-serif;color:var(--paper-2)}
+.nd-fc p{margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--paper-2);display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.nd-dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:9px 14px;margin:16px 0;font-size:13.5px}.nd-dl dt{color:var(--paper-3);font-weight:600}.nd-dl dd{margin:0;font-weight:600}
+.nd-btn{height:42px;border:0;border-radius:21px;background:#1C1C1E;color:var(--paper);display:flex;align-items:center;justify-content:center;gap:7px;font:700 13.5px Inter,sans-serif;text-decoration:none;cursor:pointer;width:100%}
+.nd-btn:hover{background:var(--ink-3)}.nd-btn.blue{background:#305887;color:#fff}.nd-btn.blue:hover{background:#3A6699}.nd-btn.off{opacity:.55;cursor:default}
+.nd-btn svg{width:16px;height:16px}
+.nd-two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.nd-lv{display:grid;grid-template-columns:78px minmax(0,1fr);gap:14px;align-items:center;padding:12px;border-radius:16px;background:#1C1C1E}
+.nd-lv img,.nd-lv .ph{width:78px;aspect-ratio:7/10;object-fit:cover;border-radius:8px;background:#305887;display:grid;place-items:center;color:#fff;font:700 18px Antonio,sans-serif}
+.nd-lt{display:flex;flex-direction:column;gap:3px;min-width:0}.nd-lt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nd-l1{font:600 12.5px Inter,sans-serif;color:var(--paper-3)}.nd-l2{font:600 13.5px Inter,sans-serif;color:var(--paper-2)}
+.nd-l3{font:700 19px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}
+.nd-l4{font:600 14px Inter,sans-serif;color:var(--paper-2)}.nd-l4 b{color:var(--blue)}.nd-l4 i{font-style:normal;margin-left:6px;padding:1px 7px;border-radius:6px;background:var(--red);color:#fff;font:700 11px/18px Inter,sans-serif;text-transform:uppercase}
+.nd-live .nd-two{margin-top:12px}
+.nd-mkh{display:flex;align-items:center;gap:16px;text-decoration:none}
+.nd-mkh i,.nd-mkh img{width:72px;height:72px;border-radius:50%;background:var(--ink-3);display:grid;place-items:center;font:700 30px "Noto Sans JP",sans-serif;font-style:normal;object-fit:cover;flex:none}
+.nd-mkh b{display:block;font:700 28px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}.nd-mkh small{font-size:15px;color:var(--paper-3)}
+.nd-x{display:flex;align-items:center;gap:12px;margin:16px 0 12px;padding:12px 14px;border-radius:14px;background:#1C1C1E;text-decoration:none}.nd-x:hover{background:var(--ink-3)}
+.nd-x svg{width:20px;height:20px;flex:none}.nd-x span{font:700 15px Inter,sans-serif;min-width:0}.nd-x small{display:block;font:500 13px Inter,sans-serif;color:var(--paper-3)}
+.nd-mks{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 14px}.nd-mks a,.nd-mks span{background:#1C1C1E;border-radius:9px;padding:7px 11px;font:600 14px Inter,sans-serif;color:#E5E5EA;text-decoration:none}.nd-mks a:hover{background:var(--ink-3)}
+.nd-o{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none}
+.nd-o img,.nd-o .ph{width:52px;aspect-ratio:7/10;object-fit:cover;border-radius:7px;background:var(--ink-3)}
+.nd-o span{font:600 11.5px Inter,sans-serif;color:var(--paper-3);min-width:0}.nd-o b{display:block;margin-top:2px;font:700 17px/1.05 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:var(--paper)}
+.nd-o:hover b{text-decoration:underline}
+.nd-more{margin-top:12px}
+.nd-com{display:flex;flex-direction:column}
+.nd-com .na-add{border:0;background:#1C1C1E;height:52px;border-radius:26px;margin-bottom:6px}
+.nd-cm{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;padding:14px 0;border-top:1px solid #1C1C1E}
+.nd-cm .cm-av{width:36px;height:36px}
+.nd-cm b{font-size:14px}.nd-cm small{margin-left:8px;color:#8E8E93;font-size:12.5px}.nd-cm p{margin:4px 0 0;font-size:14.5px;line-height:1.5;color:#E5E5EA;white-space:pre-line;overflow-wrap:anywhere}
+.nd-none{margin:6px 0 0;color:var(--paper-3);font-size:14px}
+.cm{align-items:center}.cm-box{border-radius:22px;height:min(80vh,720px)}.cm-grip{display:none}
+}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 </style>
 </head>
@@ -87,7 +149,8 @@ a{color:inherit}
     stat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>',
     book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>'
   };
-  var root = document.getElementById("na"), N = null, ME = null, ST = {}, CM = [], STORED = true;
+  var root = document.getElementById("na"), N = null, ME = null, ST = {}, CM = [], STORED = true, ALL = [], CTX = null;
+  var DESK = matchMedia("(min-width:980px)");
   var key = (location.pathname.replace(/^\/actus\/?/, "").replace(/\/$/, "").split("-").pop() || new URLSearchParams(location.search).get("id") || "").toLowerCase();
   var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
   var dLong = function (d) { return d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : ""; };
@@ -122,16 +185,99 @@ a{color:inherit}
   }
   function render() {
     if (!N) return;
+    if (DESK.matches) return renderD();
+    root.classList.remove("nd");
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '">' : "") +
-      '<a class="na-back" href="/" aria-label="Retour aux actualités">' + I.back + '</a><button type="button" class="na-share" id="na-share" aria-label="Partager">' + I.share + "</button>" +
+      '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a><button type="button" class="na-share" id="na-share" aria-label="Partager">' + I.share + "</button>" +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
       '<div class="na-body"><span class="na-meta">' + esc([N.pub, dLong(N.date)].filter(Boolean).join(" · ")) + "</span>" +
       '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
       '<div class="na-links"><a href="/series/' + esc(slug(N.titre)) + '">Fiche ' + esc(titre) + "</a>" + (N.src ? '<a href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(N.srcName || "officielle") + " ↗</a>" : "") + "</div>" +
       acts() + preview() + "</div>";
   }
+
+  // ---------- Ordinateur ----------
+  var X_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg>';
+  var MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+  var dShort = function (d) { if (!d) return ""; var x = new Date(d + "T12:00:00"); return x.getDate() + " " + MC[x.getMonth()]; };
+  var dDay = function (d) { return d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : ""; };
+  // « 2026年No.45 » → « n°45 », « 2026年 10/16号 » → « 10/16 », sinon tel quel.
+  var issue = function (v) { v = String(v || ""); var m = v.match(/No\.?\s*(\d+)/i) || v.match(/第?(\d+)号/); if (m) return "n°" + m[1]; m = v.match(/(\d+\/\d+)号/); return m ? m[1] : v; };
+  var handle = function (u) { var m = String(u || "").match(/(?:x|twitter)\.com\/(?:#!\/)?@?([A-Za-z0-9_]{1,15})/); return m ? "@" + m[1] : ""; };
+  function fiche() {
+    var s = CTX && CTX.serie, d = CTX && CTX.dernier; if (!s) return "";
+    var titre = s.fr || s.t, auteurs = [];
+    [s.scen, s.dess].join(", ").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*/).forEach(function (a) { if (a && auteurs.indexOf(a) < 0) auteurs.push(a); });
+    var suite = d && d.entry && d.entry.toLowerCase() !== String(s.t).toLowerCase() ? d.entry.replace(new RegExp("^" + String(s.t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*[-:–]\\s*", "i"), "") : "";
+    var partie1 = /principale/i.test(s.relation || "") && (suite || (s.enCours && s.enCours.length));
+    var rows = [["Mangaka", auteurs.join(", ")], ["Éditeur JP", [s.pubJP, s.mag].filter(Boolean).join(" · ")],
+      ["Au Japon", suite ? "Suite en cours · " + suite : [s.stJP, s.volJP ? s.volJP + " tomes" : ""].filter(Boolean).join(" · ")],
+      ["En France", s.pubFR ? s.pubFR + (s.volFR ? " · " + s.volFR + " tomes" : "") + (partie1 ? " (partie 1)" : "") : (s.stFR || "Inédit")],
+      ["Anime", s.anime]].filter(function (r) { return r[1]; });
+    var img = s.cover || N.cover;
+    return '<section class="nd-box"><div class="nd-bh"><small>La série</small><h2>' + esc(titre) + "</h2></div>" +
+      '<div class="nd-fc">' + (img ? '<img src="' + esc(couv(img, 300)) + '" alt="">' : '<span class="ph"></span>') + "<div>" +
+      (s.genres && s.genres.length ? '<div class="nd-tags">' + s.genres.slice(0, 3).map(function (g) { return "<span>" + esc(g) + "</span>"; }).join("") + "</div>" : "") +
+      (s.resume ? "<p>" + esc(s.resume) + "</p>" : "") + "</div></div>" +
+      '<dl class="nd-dl">' + rows.map(function (r) { return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + "</dl>" +
+      (s.visible ? '<a class="nd-btn blue" href="/series/' + esc(s.slug) + '">Voir la fiche</a>' : '<span class="nd-btn blue off">Fiche bientôt en ligne</span>') +
+      '<div class="nd-two"><button type="button" class="nd-btn" data-soon="suivre">' + I.heart + ' Suivre la série</button><button type="button" class="nd-btn" data-soon="liste">' + I.book + " Ma liste</button></div></section>";
+  }
+  function dernier() {
+    var d = CTX && CTX.dernier; if (!d) return "";
+    var t = new Date().toLocaleDateString("sv"), lire = d.read || d.page;
+    return '<section class="nd-box nd-live"><div class="nd-bh"><small><span class="nd-dot">●</span> En direct du Japon</small><h2>Dernier chapitre</h2></div>' +
+      '<div class="nd-lv">' + (d.cover ? '<img src="' + esc(couv(d.cover, 200)) + '" alt="Couverture ' + esc(d.mag) + '">' : '<span class="ph">WEB</span>') + '<div class="nd-lt">' +
+      '<span class="nd-l1">' + (!d.date || d.date <= t ? "Sorti le " : "Sort le ") + esc(dDay(d.date)) + "</span>" +
+      '<span class="nd-l2">' + esc(d.mag.replace(/\s*\(en ligne\)/i, "")) + (d.issue && !/\(en ligne\)/i.test(d.mag) ? " " + esc(issue(d.issue)) : "") + "</span>" +
+      '<span class="nd-l3">' + esc(d.entry) + "</span>" +
+      '<span class="nd-l4">' + (d.status === "Pause" ? "En pause dans ce numéro" : d.ch != null ? "Chapitre <b>" + esc(d.ch) + "</b>" : "") + (d.fin ? "<i>Fin</i>" : "") + "</span></div></div>" +
+      (lire || d.link ? '<div class="nd-two">' + (lire ? '<a class="nd-btn blue" href="' + esc(lire) + '" target="_blank" rel="noopener">Lecture en ligne ↗</a>' : "") + (d.link ? '<a class="nd-btn" href="' + esc(d.link) + '" target="_blank" rel="noopener">Le magazine ↗</a>' : "") + "</div>" : "") + "</section>";
+  }
+  function mangakas() {
+    var s = CTX && CTX.serie; if (!CTX) return "";
+    var list = CTX.auteurs || [];
+    return list.map(function (a, i) {
+      var x = a.x || (i === 0 && s ? s.x : ""), xLabel = a.x ? "Compte officiel du mangaka" : "Compte officiel de la série";
+      return '<section class="nd-box"><div class="nd-bh"><small>Le mangaka</small></div>' +
+        '<a class="nd-mkh" href="/auteurs/' + esc(a.slug) + '">' + (a.photo ? '<img src="' + esc(a.photo) + '" alt="">' : '<i lang="ja">' + esc((a.jp || a.name).charAt(0)) + "</i>") + "<div><b>" + esc(a.name) + "</b>" + (a.jp ? '<small lang="ja">' + esc(a.jp) + "</small>" : "") + "</div></a>" +
+        (x && handle(x) ? '<a class="nd-x" href="' + esc(x) + '" target="_blank" rel="noopener">' + X_ICON + "<span>" + esc(handle(x)) + "<small>" + xLabel + "</small></span></a>" : "") +
+        (a.series && a.series.length ? '<div class="nd-mks">' + a.series.map(function (z) { var t = z.fr || z.t; return z.visible ? '<a href="/series/' + esc(z.slug) + '">' + esc(t) + "</a>" : "<span>" + esc(t) + "</span>"; }).join("") + "</div>" : "") +
+        '<a class="nd-btn" href="/auteurs/' + esc(a.slug) + '">Voir la fiche mangaka</a></section>';
+    }).join("");
+  }
+  function autres() {
+    var o = ALL.filter(function (it) { return it.id !== N.id; }).sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }).slice(0, 4);
+    if (!o.length) return "";
+    return '<section class="nd-box"><div class="nd-bh"><small>À lire aussi</small><h2>Autres actualités</h2></div>' + o.map(function (it) {
+      var c = (it.cats && it.cats[0]) || { nom: it.catNom || "News", c: it.catC || "#D4D4D8" };
+      return '<a class="nd-o" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 160)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
+        '<span><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "<b>" + esc(it.fr || it.titre) + "</b></span></a>";
+    }).join("") + '<a class="nd-btn nd-more" href="/?vue=actus">Toutes les actualités</a></section>';
+  }
+  function comD() {
+    if (!STORED) return '<section class="nd-box nd-com"><div class="nd-bh"><h2>Commentaires</h2></div><p class="nd-none">Commentaires bientôt disponibles.</p></section>';
+    var last = CM.slice(-3).reverse();
+    return '<section class="nd-box nd-com" id="commentaires" aria-label="Commentaires"><div class="nd-bh row"><h2>Commentaires' + (CM.length ? " · " + CM.length : "") + "</h2></div>" + addBox() +
+      last.map(function (c) { return '<div class="nd-cm">' + av(c, "cm-av") + "<div><b>" + esc(c.n) + "</b><small>il y a " + ago(c.d) + "</small><p>" + esc(c.t) + "</p></div></div>"; }).join("") +
+      (CM.length > 3 ? '<button type="button" class="nd-btn nd-more" data-open>Voir les ' + CM.length + " commentaires</button>" : "") + "</section>";
+  }
+  function renderD() {
+    root.classList.add("nd");
+    var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
+    document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
+    var pos = N.pos == null ? 0 : N.pos;
+    root.innerHTML = '<div class="nd-hero' + (N.cover ? "" : " noimg") + '">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1600)) + '" alt="Image de la news : ' + esc(titre) + '" style="object-position:center ' + pos + '%">' : "") +
+      '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' +
+      '<div class="nd-tx"><span class="nd-date">' + esc(dLong(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
+      (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div></div>" +
+      '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
+      (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc(N.srcName || "Officielle") + " ↗</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
+      '<aside class="nd-col">' + fiche() + dernier() + mangakas() + autres() + "</aside></div>";
+  }
+  DESK.addEventListener("change", function () { render(); });
   // Fenêtre des commentaires
   function sheet() {
     var box = document.getElementById("cm");
@@ -162,6 +308,8 @@ a{color:inherit}
 
   root.addEventListener("click", function (e) {
     if (e.target.closest("[data-open]")) { sheet(); return; }
+    var so = e.target.closest("[data-soon]");
+    if (so) { if (!member()) { if (window.FG_LOGIN) FG_LOGIN(); return; } so.textContent = so.dataset.soon === "suivre" ? "Bientôt disponible" : "Bientôt disponible"; return; }
     if (e.target.closest("#na-share")) { var u = location.href; if (navigator.share) navigator.share({ title: document.title, url: u }).catch(function () {}); else if (navigator.clipboard) navigator.clipboard.writeText(u); return; }
     var a = e.target.closest("[data-act]"); if (!a) return;
     if (!member()) { if (window.FG_LOGIN) FG_LOGIN(); return; }
@@ -176,16 +324,17 @@ a{color:inherit}
 
   // Affichage immédiat avec les news déjà chargées par l'accueil (gardées dans le téléphone), puis mise à jour par le réseau.
   var trouve = function (items) { return items.filter(function (it) { return key.length >= 6 && it.id.slice(-key.length) === key; })[0] || items.filter(function (it) { return it.id.indexOf(key) === 0; })[0]; };
-  try { var vite = trouve(JSON.parse(localStorage.getItem("fg-news") || "[]")); if (vite) { N = vite; render(); } } catch (e) {}
+  try { ALL = JSON.parse(localStorage.getItem("fg-news") || "[]"); var vite = trouve(ALL); if (vite) { N = vite; render(); } } catch (e) {}
   get("/api/news").then(function (j) {
-    var items = (j && j.items) || [];
+    var items = (j && j.items) || []; ALL = items;
     try { if (items.length) localStorage.setItem("fg-news", JSON.stringify(items)); } catch (e) {}
     var avant = N;
     N = items.filter(function (it) { return key.length >= 6 && it.id.slice(-key.length) === key; })[0] || items.filter(function (it) { return it.id.indexOf(key) === 0; })[0]; // fin de l'id (unique) ; le début pour les anciens liens
     if (!N && avant && !items.length) N = avant; // réseau coupé : on garde la version déjà affichée
     if (!N) { root.innerHTML = '<p class="na-empty">Cette actualité n\'existe plus. <a href="/">Retour aux actualités</a></p>'; return; }
     if (!avant || JSON.stringify(avant) !== JSON.stringify(N)) render();
-    if (location.hash === "#commentaires") sheet();
+    if (location.hash === "#commentaires") { if (DESK.matches) { var cbox = document.getElementById("commentaires"); if (cbox) cbox.scrollIntoView(); } else sheet(); }
+    get("/api/actu?id=" + N.id).then(function (c) { if (c && !c.error) { CTX = c; if (DESK.matches) render(); } });
     // Une vue par news et par session
     try { if (!sessionStorage.getItem("v-" + N.id)) { sessionStorage.setItem("v-" + N.id, "1"); fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, act: "view" }) }); } } catch (e) {}
     get("/api/stats?ids=" + N.id).then(function (s) { if (s && s.stats) { ST = s.stats[N.id] || {}; STORED = s.stored !== false; render(); } });
