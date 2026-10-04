@@ -587,7 +587,6 @@ body.cv-on .lightbox{z-index:130}
 .cf-cover{position:relative;width:100%;aspect-ratio:5/7;border-radius:16px;overflow:hidden;background:var(--ink-3);cursor:zoom-in}
 .cf-cover img{width:100%;height:100%;object-fit:cover;display:block}
 .cf-cover .ph{position:absolute;inset:0;display:flex;justify-content:flex-end;padding:18px;writing-mode:vertical-rl;font:900 56px/1.05 "Noto Sans JP",sans-serif;color:var(--paper);background:linear-gradient(160deg,color-mix(in srgb,var(--era) 45%,var(--ink-3)),var(--ink-3))}
-.cf-cover::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--st)}
 .cf-main{display:flex;flex-direction:column;gap:10px;min-width:0;padding-top:4px}
 .cf-pos{font:600 14px var(--f-body);color:var(--paper-3)}
 .cf-pos b{color:var(--era)}
@@ -599,6 +598,7 @@ body.cv-on .lightbox{z-index:130}
 .cf .pill{font-size:12px;padding:6px 10px;border-radius:7px}
 .cf .pill.st-on{background:color-mix(in srgb,var(--cv-live) 22%,var(--ink-3));color:var(--cv-live)}
 .cf .pill.st-end{background:color-mix(in srgb,var(--cv-end) 24%,var(--ink-3));color:#FF8A80}
+.cf-sm{display:none}
 .cf-syn{margin:10px 0 0;font:400 17px/1.6 var(--f-body);color:var(--paper-2);max-width:68ch}
 .cf-act{display:flex;gap:10px;margin-top:16px}
 .cf-full{display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 24px;border-radius:25px;background:var(--paper);color:var(--ink-2)!important;font:700 15px var(--f-body);text-decoration:none}
@@ -653,18 +653,24 @@ body.cv-on .lightbox{z-index:130}
   .cv-zoom{display:none}
   .cv-hint{display:none}
   .cv-legend{left:12px;bottom:12px;padding:8px 12px;gap:12px;font-size:12px}
-  .cv-modal{padding:10px;align-items:flex-end}
-  .cf{padding:20px 18px 24px;max-height:calc(100vh - 20px);border-radius:20px}
-  .cf-top{grid-template-columns:minmax(0,1fr);gap:18px}
-  .cf-cover{width:150px}
+  .cv-modal{padding:0;align-items:stretch}
+  .cf{width:100%;height:100%;max-height:none;padding:16px 16px 28px;border-radius:0}
+  .cf-top{grid-template-columns:118px minmax(0,1fr);gap:14px;align-items:start}
+  .cf-cover{width:118px;border-radius:10px}
+  .cf-main{gap:6px;padding-top:0}
+  .cf-pos{font-size:12px;padding-right:40px}
+  .cf-t{font-size:28px;line-height:1.02;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cf .pills{gap:6px;margin-top:2px}.cf .pill{font-size:10.5px;padding:4px 8px}
+  .cf-main .cf-syn{display:none}
+  .cf-act{margin-top:6px}.cf-full{height:40px;padding:0 16px;font-size:13.5px}
+  .cf-sm{display:block!important;margin:16px 0 0;font:400 15px/1.6 var(--f-body);color:var(--paper-2)}
   .cf-t{font-size:30px}
-  .cf-jp{font-size:14px}.cf-auth{font-size:14px}
-  .cf-syn{font-size:15px}
+  .cf-jp{font-size:13px}.cf-auth{font-size:13px;line-height:1.35}
   .cf-facts{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:20px}
   .cf-tzg{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cf-tzc{height:130px;padding:14px}.cf-tzc b{font-size:19px}.cf-tzc .ic{left:14px;top:14px;width:36px;height:36px}
   .cf-tzh h3{font-size:22px}.cf-tzh a{display:none}
-  .cf-x{margin:-6px -8px 0 0}
+  .cf-x{position:absolute;float:none;top:12px;right:12px;margin:0;width:38px;height:38px}
 }
 
 </style>
@@ -1323,6 +1329,7 @@ function cfHTML(w){
         <div class="cf-act" id="cfAct" hidden></div>
       </div>
     </div>
+    ${w.syn ? `<p class="cf-sm">${esc(w.syn)}</p>` : ""}
     <div class="cf-facts">${facts}</div>
     <section class="cf-tz" id="cfTz" hidden></section>
   </article>`;
