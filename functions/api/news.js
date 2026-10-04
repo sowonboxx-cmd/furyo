@@ -35,7 +35,11 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const s = series[rel(p["Série"])[0]] || {};
       const licence = /licence/i.test(champ + " " + prop);
       const pubFull = s.editeurFR || (prop.match(/chez ([^,(]+?)(?: \(|,|$)/) || [])[1] || "";
-      const pub = pubFull.replace(/\s*\(.*$/, "").trim();
+      // Une série passée d'un éditeur à l'autre (« J'ai lu, Pika ») : la news ne cite que l'éditeur actuel,
+      // celui de la source officielle s'il en fait partie, sinon le dernier de la liste.
+      const pubs = pubFull.replace(/\s*\([^)]*\)/g, "").split(",").map(x => x.trim()).filter(Boolean);
+      const srcPub = sourceName(text(p["Source officielle"]));
+      const pub = pubs.find(x => srcPub && x.toLowerCase() === srcPub.toLowerCase()) || pubs[pubs.length - 1] || "";
       const label = (pubFull.match(/\(([^)]+)\)/) || prop.match(/\(([^)]+)\)/) || [])[1] || "";
       const t1 = (prop.match(/tome 1 le (\d{2}\/\d{2}\/\d{4})/i) || [])[1] || "";
       const cover = (val.match(/https?:\/\/\S+?\.(?:jpe?g|png|webp)/i) || [])[0] || "";
