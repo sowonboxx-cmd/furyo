@@ -6,7 +6,7 @@
   var root = document.getElementById("mh");
   if (!root) return;
   // Catégories : mêmes noms et couleurs que la propriété « Catégorie » de Notion (voir lib/categories.js).
-  var TYPES = [["licence-fr", "Nouvelle licence (France)", "#529CCA"], ["licence-jp", "Nouvelle licence (Japon)", "#FF7369"], ["couv-fr", "Couverture française", "#9A6DD7"], ["couv-jp", "Couverture japonaise", "#4DAB9A"], ["sortie-fr", "Sortie française", "#E255A1"], ["sortie-jp", "Sortie japonaise", "#FFA344"], ["fin", "Fin de série", "#BA856F"], ["pause", "Pause", "#9B9A97"], ["adaptation", "Adaptation", "#FFDC49"], ["annonce", "Annonce", "#D4D4D8"]];
+  var TYPES = [["licence-fr", "Nouvelle licence (France)", "#529CCA"], ["licence-jp", "Nouvelle série (Japon)", "#FF7369"], ["couv-fr", "Couverture française", "#9A6DD7"], ["couv-jp", "Couverture japonaise", "#4DAB9A"], ["sortie-fr", "Sortie française", "#E255A1"], ["sortie-jp", "Sortie japonaise", "#FFA344"], ["fin", "Fin de série", "#BA856F"], ["pause", "Pause", "#9B9A97"], ["anime", "Anime", "#FFDC49"], ["adaptation", "Adaptation", "#9B9A97"], ["annonce", "Annonce", "#D4D4D8"]];
   var TL = {}; TYPES.forEach(function (t) { TL[t[0]] = t; });
   var esc = function (v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var slug = function (t) { return String(t || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60); };
@@ -101,12 +101,25 @@
       return '<a class="mh-jprow" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span class="d"><b>' + String(d.getDate()).padStart(2, "0") + "</b>" + J[d.getDay()] + "</span>" + (x.cover ? '<img src="' + esc(couv(x.cover, 120)) + '" alt="" loading="lazy">' : '<span class="mh-noimg s"></span>') + '<span class="t"><b>' + esc(t) + "</b><small>" + esc(x.pub || "") + "</small></span></a>";
     }).join("") + "</section>";
   }
+  // Séries publiées seulement en ligne (Magazine « … (en ligne) ») : regroupées dans une seule carte, la dernière parution de chacune.
+  function web() {
+    var seen = {}, items = [];
+    (D.prepub || []).filter(function (it) { return /\(en ligne\)/i.test(it.mag || ""); }).forEach(function (it) { var k = it.entry.split(" · ")[0]; if (!seen[k]) { seen[k] = 1; items.push(it); } });
+    return items.length ? { web: true, items: items, date: items.reduce(function (a, it) { return it.date > a ? it.date : a; }, "") } : null;
+  }
   function mags() {
     var g = {}, order = [];
-    (D.prepub || []).forEach(function (it) { var k = it.mag + "|" + it.issue; if (!g[k]) { g[k] = { mag: it.mag, issue: it.issue, date: it.date, cover: it.cover, link: it.link, items: [] }; order.push(k); } if (it.cover && !g[k].cover) g[k].cover = it.cover; g[k].items.push(it); });
-    return order.map(function (k) { return g[k]; });
+    (D.prepub || []).filter(function (it) { return !/\(en ligne\)/i.test(it.mag || ""); }).forEach(function (it) { var k = it.mag + "|" + it.issue; if (!g[k]) { g[k] = { mag: it.mag, issue: it.issue, date: it.date, cover: it.cover, link: it.link, items: [] }; order.push(k); } if (it.cover && !g[k].cover) g[k].cover = it.cover; g[k].items.push(it); });
+    var out = order.map(function (k) { return g[k]; }), w = web();
+    if (w) out.splice(Math.min(2, out.length), 0, w);
+    return out;
+  }
+  function webCard(m) {
+    return '<article class="mh-mag mh-web"><div class="mh-magc"><span class="mh-webi">WEB</span></div><div class="mh-magt"><small>Mis à jour le ' + esc(dd(m.date)) + "</small><b>Séries en ligne</b>" +
+      m.items.map(function (it) { return '<span class="mh-ch"><span>' + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + "</span></span>"; }).join("") + "</div></article>";
   }
   function magCard(m) {
+    if (m.web) return webCard(m);
     var t = new Date().toISOString().slice(0, 10), paru = !m.date || m.date <= t;
     return '<article class="mh-mag"><div class="mh-magc">' + (m.cover ? '<img src="' + esc(couv(m.cover, 200)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') + "</div><div class='mh-magt'><small>" + (paru ? "Sorti le " : "Sort le ") + esc(dd(m.date)) + "</small><b>" + esc(m.mag) + " " + esc(m.issue) + "</b>" +
       // Juste le titre et le numéro de chapitre (pas de pastille couverture / pause, Will 04/10/2026).

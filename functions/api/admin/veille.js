@@ -30,7 +30,7 @@ const COLS = Object.fromEntries([...CATEGORIES.map(c => [c.k, c.c]), ...Object.e
 
 // Titre court sur une ligne : sans les préfixes « News : », « Couverture dévoilée : »…
 // (le nom de la catégorie est déjà en tête des légendes : on ne le répète pas dans le titre).
-const court = prop => String(prop || "").replace(/^\s*(news|annonce|licence fr|nouvelle licence[^:]*|nouvelle série|fin de série|pause|adaptation|sortie (?:française|japonaise)|couverture (?:française|japonaise))\s*:\s*/i, "").replace(/^couverture dévoilée\s*:\s*/i, "").trim();
+const court = prop => String(prop || "").replace(/^\s*(news|annonce|anime|licence fr|nouvelle licence[^:]*|nouvelle série[^:]*|fin de série|pause|adaptation|sortie (?:française|japonaise)|couverture (?:française|japonaise))\s*:\s*/i, "").replace(/^couverture dévoilée\s*:\s*/i, "").trim();
 
 async function lister(env) {
   return queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
@@ -80,7 +80,7 @@ export async function onRequestGet({ request, env }) {
     return {
       id: nid(r.id), notion: r.url, cat, label: CATS[cat], type, champ, titre: court(prop), prop,
       date: date(p["Date de la news"]), cree: (r.created_time || "").slice(0, 10), creeT: r.created_time || "",
-      actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]),
+      actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]), video: text(p["Vidéo"]),
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",
       serie: s, news, vu: vu(r),
@@ -176,6 +176,11 @@ export async function onRequestPost({ request, env }) {
     props["Statut"] = { select: { name: b.statut } };
   }
   if (typeof b.texte === "string") props["Résumé site"] = rt(b.texte.trim());
+  if (typeof b.video === "string") {
+    const v = b.video.trim();
+    if (v && !/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(v)) return json({ error: "La vidéo doit être un lien YouTube." }, 400);
+    props["Vidéo"] = { url: v || null };
+  }
   if (b.categorie) {
     if (!CATEGORIES.some(c => c.nom === b.categorie)) return json({ error: "catégorie inconnue" }, 400);
     props["Catégorie"] = { select: { name: b.categorie } };

@@ -54,6 +54,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         titre: s.t || prop, fr: s.fr, jp: s.jp, pub, label, t1, cover, texte: text(p["Résumé site"]),
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),
+        // Vidéo (trailer, PV) jouée dans la page de la news : propriété « Vidéo », sinon un lien YouTube de « Valeur proposée ».
+        video: text(p["Vidéo"]) || (val.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}\S*/) || [])[0] || "",
         _sid: sid, _n: m ? Number(m[1] || m[2]) : null, _pays: /-jp$/.test(cat.k) ? "Japon" : "France",
       };
     });

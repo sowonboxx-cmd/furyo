@@ -29,6 +29,7 @@ a{color:inherit}
 .na-body{display:flex;flex-direction:column;gap:16px;padding:12px 20px 0}
 .na-meta{font-size:13px;color:var(--paper-3)}
 .na-text{margin:0;font-size:16.5px;line-height:1.65;color:#E4E4E8;white-space:pre-line}
+.na-vid{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}.na-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .na-links{display:flex;flex-wrap:wrap;gap:8px}
 .na-links a{height:38px;padding:0 15px;border-radius:19px;display:inline-flex;align-items:center;background:var(--ink-3);text-decoration:none;font-size:13.5px;font-weight:600}
 .na-acts{display:flex;align-items:center;gap:22px;padding:6px 0;color:var(--paper-3);font-size:13.5px;font-weight:600}
@@ -100,6 +101,11 @@ a{color:inherit}
     return '<section class="na-com" aria-label="Commentaires"><button type="button" class="open" data-open>Afficher ' + (CM.length > 1 ? "les " + CM.length + " commentaires" : "le commentaire") + "</button>" +
       CM.slice(-2).map(function (c) { return '<p class="na-cl">' + av(c, "na-av") + "<span><b>" + esc(c.n) + "</b> " + esc(c.t) + "</span></p>"; }).join("") + "</section>";
   }
+  // Vidéo YouTube jouée dans la page (trailer, PV d'anime…).
+  function vid(u) {
+    var m = String(u || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+    return m ? '<div class="na-vid"><iframe src="https://www.youtube-nocookie.com/embed/' + m[1] + '" title="Vidéo de la news" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>' : "";
+  }
   function render() {
     if (!N) return;
     var t = [N.catNom || "Annonce", N.catC || "#D4D4D8"], titre = N.fr || N.titre;
@@ -108,7 +114,7 @@ a{color:inherit}
       '<a class="na-back" href="/" aria-label="Retour aux actualités">' + I.back + '</a><button type="button" class="na-share" id="na-share" aria-label="Partager">' + I.share + "</button>" +
       '<div class="na-ht"><span class="na-pill" style="background:' + t[1] + '">' + t[0] + "</span><h1>" + esc(titre) + "</h1></div></div>" +
       '<div class="na-body"><span class="na-meta">' + esc([N.pub, dLong(N.date)].filter(Boolean).join(" · ")) + "</span>" +
-      '<p class="na-text">' + esc(N.texte) + "</p>" +
+      '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
       '<div class="na-links"><a href="/series/' + esc(slug(N.titre)) + '">Fiche ' + esc(titre) + "</a>" + (N.src ? '<a href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(N.srcName || "officielle") + " ↗</a>" : "") + "</div>" +
       acts() + preview() + "</div>";
   }
