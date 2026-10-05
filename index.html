@@ -262,10 +262,11 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dt-menu i{width:8px;height:8px;border-radius:50%;flex:none}.dt-menu small{margin-left:auto;color:#8E8E93;font-size:12.5px}
 .feed{display:flex;flex-direction:column;gap:12px}
 .vmag #d-jp,.vmag .dduo,.vmag #d-ecran{display:none!important}
-#m-fr h3{display:flex;align-items:center;gap:12px}#m-fr h3 .fl-h{width:34px;height:23px;border-radius:3px;flex:none}
+#m-fr h3{display:flex;align-items:center;gap:10px}#m-fr h3 .fl-h{width:19px;height:13px;border-radius:2px;flex:none}
 /* Titres des cadres de la colonne en bleu (essai de Will, 05/10/2026) ; « Toutes les séries » reste en blanc. */
-.side .m-head h3,.side .m-head h3 a{color:#305887}
-.vmag .dgh p{color:#305887;font-weight:600}
+.side .m-head h3,.side .m-head h3 a{color:#658DBB}
+.side .m-head{margin-bottom:16px}
+.vmag .dgh p{color:#658DBB;font-weight:600}
 .dser-k{display:block;margin-top:3px;font-weight:700;letter-spacing:.06em}
 .dg-mi{display:inline-block;white-space:nowrap}
 .smk{display:flex;flex-direction:column;gap:2px}
@@ -632,11 +633,11 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
     <aside class="side" id="side">
       <div id="m-cats" hidden></div>
       <section class="box" id="m-fr">
-        <div class="m-head"><div><small class="m-eye"><svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>En France</small><h3><a class="h3a" href="/calendrier/#france">Prochaines sorties</a></h3></div></div>
+        <div class="m-head"><div><h3><a class="h3a" href="/calendrier/#france">Prochaines sorties</a><svg class="fl fl-h" viewBox="0 0 22 15" aria-label="France"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg></h3></div></div>
         <div class="dfr" id="dfr"><p class="m-note">Chargement…</p></div>
       </section>
       <a class="box dser" href="/series/" id="m-ser"><span class="dser-c" id="dser-c"></span><span class="dser-t"><b>Toutes les séries</b><em id="dser-n">Toutes les fiches.<span class="dser-k">FURYŌ · YAKUZA · CRIME</span></em></span><span class="dser-go">Voir toutes les séries</span></a>
-      <section class="box" id="m-mk" hidden><div class="m-head"><div><h3><a class="h3a" href="/auteurs/">Mangakas</a></h3></div></div><div class="smk" id="smk"></div></section>
+      <section class="box" id="m-mk" hidden><div class="m-head"><div><h3><a class="h3a" href="/auteurs/">Les mangakas</a></h3></div></div><div class="smk" id="smk"></div></section>
 
       <section class="box mod" id="m-jp" data-slot="0">
         <div class="m-head"><h3>Les prépublications au Japon</h3></div>
@@ -658,7 +659,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 
   <!-- Sections pleine largeur (Will, 05/10/2026) : sorties au Japon en grandes couvertures, carte CROWS × WORST + base, membres + mangakas, à l'écran -->
   <section class="dsec" id="d-jp" hidden>
-    <div class="dsh"><div><small><svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>Au Japon</small><h2>Prochaines sorties</h2></div><a href="/calendrier/#japon">Calendrier</a></div>
+    <div class="dsh"><div><h2>Prochaines sorties au Japon</h2></div><a href="/calendrier/#japon">Calendrier</a></div>
     <div class="djp" id="djp"></div>
   </section>
   <div class="dduo">
@@ -1014,10 +1015,9 @@ getN("/api/calendrier").then(j => {
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
   // Page « En direct du Japon » : la colonne affiche les 6 prochaines sorties japonaises (Will, 05/10/2026).
   if (VUE_N === "magazines") {
-    const jps = all.filter(x => x.pays === "Japon" && x.date >= t).slice(0, 6); TP.jps = jps;
+    const jps = all.filter(x => x.pays === "Japon" && x.date >= t).slice(0, 4); TP.jps = jps;
     // Titre « Prochaines sorties » avec le drapeau japonais à droite, sans la ligne « Au Japon » au-dessus (Will, 05/10/2026).
-    const head = document.querySelector("#m-fr .m-eye"); if (head) head.remove();
-    const h3 = document.querySelector("#m-fr h3"); if (h3 && !h3.querySelector(".fl")) h3.insertAdjacentHTML("beforeend", '<svg class="fl fl-h" viewBox="0 0 22 15" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>');
+    const h3 = document.querySelector("#m-fr h3"); if (h3) { const f = h3.querySelector(".fl"); if (f) f.remove(); } if (h3) h3.insertAdjacentHTML("beforeend", '<svg class="fl fl-h" viewBox="0 0 22 15" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>');
     const h = document.querySelector("#m-fr .h3a"); if (h) h.href = "/calendrier/#japon";
     document.getElementById("dfr").innerHTML = jps.length ? jps.map((x, i) => { const d = new Date(x.date + "T12:00:00");
       return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="jps" data-i="${i}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
@@ -1105,7 +1105,7 @@ getN("/api/membres").then(m => {
 getN("/api/auteurs").then(j => {
   // Page « En direct du Japon » : les mangakas dans la colonne, à la place des derniers commentaires (Will, 05/10/2026).
   const sm = document.getElementById("smk");
-  if (sm) sm.innerHTML = ((j && j.authors) || []).slice().sort((x, y) => y.series.length - x.series.length).slice(0, 6).map(x => `<a href="/auteurs/${esc2(x.slug)}"><i lang="ja" data-i="${esc2((x.jp || x.name).charAt(0))}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.i">` : esc2((x.jp || x.name).charAt(0))}</i><span><b>${esc2(x.name)}</b><small>${esc2(x.series.slice(0, 2).map(s => s.fr || s.t).join(" · "))}${x.series.length > 2 ? " +" + (x.series.length - 2) : ""}</small></span></a>`).join("");
+  if (sm) sm.innerHTML = ((j && j.authors) || []).slice().sort((x, y) => y.series.length - x.series.length).slice(0, 5).map(x => `<a href="/auteurs/${esc2(x.slug)}"><i lang="ja" data-i="${esc2((x.jp || x.name).charAt(0))}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.i">` : esc2((x.jp || x.name).charAt(0))}</i><span><b>${esc2(x.name)}</b><small>${esc2(x.series.slice(0, 2).map(s => s.fr || s.t).join(" · "))}${x.series.length > 2 ? " +" + (x.series.length - 2) : ""}</small></span></a>`).join("");
   const a = ((j && j.authors) || []).slice().sort((x, y) => y.series.length - x.series.length).slice(0, 4);
   document.getElementById("dmk").innerHTML = a.map(x => `<a href="/auteurs/${esc2(x.slug)}"><i lang="ja" data-i="${esc2((x.jp || x.name).charAt(0))}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.i">` : esc2((x.jp || x.name).charAt(0))}</i><b>${esc2(x.name)}</b><small>${esc2(x.series.slice(0, 2).map(s => s.fr || s.t).join(" · "))}${x.series.length > 2 ? " +" + (x.series.length - 2) : ""}</small></a>`).join("");
 });
