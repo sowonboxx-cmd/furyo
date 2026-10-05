@@ -726,13 +726,15 @@ async function vsend(btn, statut){
   const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(cadrage !== undefined ? { cadrage } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}), ...(btn.dataset.news ? { news: true } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
+  const rj = await r.clone().json().catch(() => ({}));
+  const ficheMsg = rj.fiche && rj.fiche.length ? " · fiche à jour : " + rj.fiche.join(", ") : "";
   if (!statut) { // news en ligne modifiée : elle reste dans « Publiées »
     if (vtx) i.texte = vtx.value; if (vv) i.video = video; if (image !== null) i.imageChoisie = image; if (cadrage !== undefined) i.cadrage = cadrage;
     if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; i.cat2 = c2; }
     m.remove(); vdraw(); toast("Changements en ligne ✓"); return;
   }
   if (statut === "Vu" && i.enLigne) { i.enLigne = false; i.vu = true; m.remove(); vdraw(); toast("Retirée du site · rangée dans « Vu, pas sur le site »"); return; }
-  if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } m.remove(); vdraw(); toast("Publié sur le site ✓"); return; }
+  if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } m.remove(); vdraw(); toast("Publié sur le site ✓" + ficheMsg); if (ficheMsg) { toast.t && clearTimeout(toast.t); toast.t = setTimeout(() => document.getElementById("toast").classList.remove("on"), 5000); } return; }
   // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
   // Prépublication publiée aussi en news : la news créée arrive dans la liste, à relire et publier comme les autres.
   if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(); return; }

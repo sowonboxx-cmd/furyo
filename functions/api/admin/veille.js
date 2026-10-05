@@ -234,8 +234,48 @@ export async function onRequestPost({ request, env }) {
     body: JSON.stringify({ properties: props }),
   });
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
+  // News publiée = fiche à jour en même temps (Will, 06/10/2026) : les « Mise à jour fiche » en attente pour la même série sont appliquées.
+  let fiche = [];
+  if (b.statut === "Publié sur le site") fiche = await appliquerFiche(env, b.id).catch(() => []);
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
-  await Promise.all(["/api/news?v=8", "/api/crows", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
-  return json({ ok: true });
+  await Promise.all(["/api/news?v=8", "/api/crows", "/api/series", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  return json({ ok: true, fiche });
+}
+
+// Applique à la fiche série les propositions « Mise à jour fiche » encore en attente (À valider / À appliquer à la fiche)
+// reliées à la même série que la news publiée, puis les passe en « Appliqué ». Renvoie la liste de ce qui a été fait.
+// Champs gérés : toute propriété de la fiche de type select, nombre, texte ou case à cocher (ex. Statut Japon « Terminé (8 tomes) »
+// → Statut Japon = Terminé et, si un nombre de tomes est donné, Tomes JP = 8). Les autres restent à appliquer à la main.
+async function appliquerFiche(env, newsId) {
+  const H = { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" };
+  const news = await (await fetch(`https://api.notion.com/v1/pages/${newsId}`, { headers: H })).json();
+  const sid = rel(news.properties && news.properties["Série"])[0];
+  if (!sid) return [];
+  const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: { filter: { and: [
+    { property: "Série", relation: { contains: sid } },
+    { property: "Type", select: { equals: "Mise à jour fiche" } },
+    { or: [{ property: "Statut", select: { equals: "À valider" } }, { property: "Statut", select: { equals: "À appliquer à la fiche" } }] },
+  ] } } });
+  if (!rows.length) return [];
+  const serie = await (await fetch(`https://api.notion.com/v1/pages/${sid}`, { headers: H })).json();
+  const sp = serie.properties || {}, done = [];
+  for (const row of rows) {
+    const q = row.properties, champ = text(q["Champ concerné"]).trim(), val = text(q["Valeur proposée"]).trim();
+    const prop = sp[champ]; if (!prop || !val) continue;
+    const props = {}, simple = val.replace(/\s*\(.*\)\s*$/, "").trim(), n = (val.match(/(\d+)\s*tomes?/i) || [])[1];
+    if (prop.type === "select") props[champ] = { select: { name: simple } };
+    else if (prop.type === "status") props[champ] = { status: { name: simple } };
+    else if (prop.type === "number") { const x = parseFloat(val.replace(",", ".")); if (isNaN(x)) continue; props[champ] = { number: x }; }
+    else if (prop.type === "rich_text") props[champ] = rt(val);
+    else if (prop.type === "checkbox") props[champ] = { checkbox: !/^(non|no|false|0)$/i.test(simple) };
+    else continue;
+    // « Terminé (8 tomes) » sur un statut : on met aussi le nombre de tomes du même pays.
+    if (n && /^Statut (Japon|France)$/.test(champ)) { const t = champ === "Statut Japon" ? "Tomes JP" : "Tomes FR"; if (sp[t] && sp[t].type === "number") props[t] = { number: +n }; }
+    const u = await fetch(`https://api.notion.com/v1/pages/${sid}`, { method: "PATCH", headers: H, body: JSON.stringify({ properties: props }) });
+    if (!u.ok) continue;
+    await fetch(`https://api.notion.com/v1/pages/${row.id}`, { method: "PATCH", headers: H, body: JSON.stringify({ properties: { "Statut": { select: { name: "Appliqué" } } } }) });
+    done.push(champ + " → " + val);
+  }
+  return done;
 }
