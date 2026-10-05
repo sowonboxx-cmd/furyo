@@ -159,6 +159,11 @@ a{color:inherit}
 .cm{align-items:center}.cm-box{border-radius:22px;height:min(80vh,720px)}.cm-grip{display:none}
 }
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* Lisibilité « façon Apple » (Will, 05/10/2026) : poids 500, lettres à peine resserrées, textes secondaires plus gros et plus clairs. */
+.na-text{font-weight:500;letter-spacing:-.005em;font-size:17px}.nd-main .na-text{font-size:18px}
+.nd-o p,.na-ao .nd-o p,.nd-fc p,.na-com p{color:#D8D8DC;letter-spacing:-.005em;font-weight:500}
+.nd-o p,.na-ao .nd-o p{font-size:15px}.nd-fc p{font-size:14.5px}.na-com p{font-size:15px}
+.nd-l2{font-size:14.5px}.nd-l4{font-size:15px}.nd-jp{font-size:16px}
 </style>
 </head>
 <body>
@@ -220,7 +225,7 @@ a{color:inherit}
     root.classList.remove("nd");
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
-    root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '">' : "") +
+    root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "") +
       '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a>' + (N.cover && N.credit ? '<span class="cr" lang="' + (/^©[^ ]/.test(N.credit) ? "ja" : "fr") + '">' + esc(N.credit) + "</span>" : "") +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
       '<div class="na-body"><span class="na-meta">' + esc(dLong(N.date) || "") + "</span>" +

@@ -345,7 +345,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 /* Accueil ordinateur, sections (Will, 05/10/2026) */
 .m-eye{display:flex;align-items:center;gap:6px;font:600 12px Inter,sans-serif;color:#98989D;margin-bottom:4px}.fl{width:18px;height:12px;border-radius:2px;flex:none}
 #m-fr .m-head{align-items:flex-end}
-.dfr{display:flex;flex-direction:column}.h3a{color:inherit;text-decoration:none}.h3a:hover{text-decoration:underline;text-underline-offset:3px}
+.dfr{display:flex;flex-direction:column}.h3go{display:inline-flex;align-items:center;gap:6px}.h3go svg{width:18px;height:18px;flex:none;transition:transform .2s}.h3go:hover svg{transform:translateX(3px)}.h3a{color:inherit;text-decoration:none}.h3a:hover{text-decoration:underline;text-underline-offset:3px}
 .dfr-r{display:grid;grid-template-columns:44px 40px minmax(0,1fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none;color:inherit}
 .dfr-r:first-child{border-top:0;padding-top:2px}
 /* Prochaine sortie en vedette (option A « L'affiche ») */
@@ -487,7 +487,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
   .mh-o{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-bottom:1px solid #2C2C2F}
   .mh-ot{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
   .mh-o h3,.mh-r h3{font:700 21px/1.05 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em}
-  .mh-o p,.mh-r p,.mh-hero p{margin:0;font-size:13.5px;line-height:1.4;color:#CFCFD4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .mh-o p,.mh-r p,.mh-hero p{margin:0;font-size:14.5px;line-height:1.4;color:#D8D8DC;font-weight:500;letter-spacing:-.005em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .mh-o img{width:84px;height:84px;border-radius:14px;object-fit:cover;object-position:top;flex:none}
   .mh-acts{display:flex;align-items:center;gap:20px;color:#98989D;font:600 12px Inter,system-ui,sans-serif}
   .mh-acts button,.mh-acts a,.mh-acts span{display:inline-flex;align-items:center;gap:5px;border:0;background:none;padding:4px 0;color:inherit;font:inherit;text-decoration:none;cursor:pointer}
@@ -635,7 +635,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=28"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=31" defer></script>
+<script src="/site/home-m.js?v=32" defer></script>
 <div class="page">
 
 
@@ -655,7 +655,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
       <section class="box" id="m-mk" hidden><div class="m-head"><div><h3><a class="h3a" href="/auteurs/">Les mangakas</a></h3></div></div><div class="smk" id="smk"></div></section>
 
       <section class="box mod" id="m-jp" data-slot="0">
-        <div class="m-head"><h3>Les prépublications au Japon</h3></div>
+        <div class="m-head"><h3><a class="h3a h3go" href="/?vue=magazines">Les prépublications au Japon<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a></h3></div>
         <ul class="jp">
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">WORST Gaiden Zetton Sensei<small lang="ja">WORST外伝 ゼットン先生 · ch. ?</small></span><span class="st ok">Paru</span></li>
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">Gabu<small lang="ja">ガブ · ch. ?</small></span><span class="st ok">Paru</span></li>
@@ -1028,8 +1028,8 @@ getN("/api/calendrier").then(j => {
   // La prochaine sortie en grand, façon affiche (option A, Will, 05/10/2026) ; date avec le mois en entier.
   const JL = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"], ML = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
   const dans = x => { const n = Math.round((new Date(x.date + "T12:00:00") - new Date(t + "T12:00:00")) / 864e5); return n <= 0 ? "aujourd'hui" : n === 1 ? "demain" : "dans " + n + " jours"; };
-  const une = x => { const d = new Date(x.date + "T12:00:00");
-    return `<a class="dfr-f" href="${escN(lien(x))}" data-tp="fr" data-i="0">${phN(x, 300)}<span class="x"><span class="pill">${JL[d.getDay()]} ${d.getDate()}${d.getDate() === 1 ? "er" : ""} ${ML[d.getMonth()]}</span><b>${escN(x.fr || x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}<em>${[x.pub, dans(x)].filter(Boolean).map(escN).join(" · ")}</em></span></a>`; };
+  const une = (x, tp = "fr", nom = x.fr || x.series) => { const d = new Date(x.date + "T12:00:00");
+    return `<a class="dfr-f" href="${escN(lien(x))}" data-tp="${tp}" data-i="0">${phN(x, 300)}<span class="x"><span class="pill">${JL[d.getDay()]} ${d.getDate()}${d.getDate() === 1 ? "er" : ""} ${ML[d.getMonth()]}</span><b>${escN(nom)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}<em>${[x.pub, dans(x)].filter(Boolean).map(escN).join(" · ")}</em></span></a>`; };
   if (VUE_N !== "magazines") document.getElementById("dfr").innerHTML = fr.length ? une(fr[0]) + fr.slice(1).map(x => { const d = new Date(x.date + "T12:00:00");
     return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="fr" data-i="${fr.indexOf(x)}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.fr || x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
@@ -1039,7 +1039,8 @@ getN("/api/calendrier").then(j => {
     // Titre « Prochaines sorties » avec le drapeau japonais à droite, sans la ligne « Au Japon » au-dessus (Will, 05/10/2026).
     const h3 = document.querySelector("#m-fr h3"); if (h3) { const f = h3.querySelector(".fl"); if (f) f.remove(); } if (h3) h3.insertAdjacentHTML("beforeend", '<svg class="fl fl-h" viewBox="0 0 22 15" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>');
     const h = document.querySelector("#m-fr .h3a"); if (h) h.href = "/calendrier/#japon";
-    document.getElementById("dfr").innerHTML = jps.length ? jps.map((x, i) => { const d = new Date(x.date + "T12:00:00");
+    // Même mise en avant que les sorties françaises : la prochaine en grand, façon affiche (Will, 05/10/2026).
+    document.getElementById("dfr").innerHTML = jps.length ? une(jps[0], "jps", jps[0].series) + jps.slice(1).map((x, k) => { const i = k + 1, d = new Date(x.date + "T12:00:00");
       return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="jps" data-i="${i}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   }
   TP.fr = fr; TP.jp = jp;

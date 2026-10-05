@@ -689,6 +689,19 @@ body.cv-on .lightbox{z-index:130}
   .cf-x{position:absolute;float:none;top:12px;right:12px;margin:0;width:38px;height:38px}
 }
 
+
+/* Lisibilité « façon Apple » (Will, 05/10/2026) : textes et descriptions un peu plus gros, poids 500, gris plus clair, lettres à peine resserrées. */
+:root{--read:#D8D8DC}:root[data-fyg-light]{--read:#2C2C2E}
+.syn,.cf-syn,.era p,.mt-d,.cvg-b p,.note,.start span.d,.blocks .line-btn .d,.cv-legend,.w-auth,.w-years{color:var(--read);font-weight:500;letter-spacing:-.005em}
+body{font-size:16px}
+.syn{font-size:15.5px;line-height:1.6}.cf-syn{font-size:18px;line-height:1.55}.era p{font-size:15.5px}
+.mt-d{font-size:17px}.cvg-b p{font-size:16px}.note{font-size:13.5px}
+.start span.d,.blocks .line-btn .d{font-size:13.5px}
+.w-jp,.w-auth,.w-years{font-size:13.5px}.fact span:last-child{font-size:14px}.fact .mono{font-size:10.5px}
+.cv-legend{font-size:14px}.cv-hint{font-size:13.5px}.cv-title small{font-size:14px}
+.cf-auth{font-size:17px}.cf-f .k{font-size:12px}.cf-f .v{font-size:16px}.cf-pos{font-size:15px}
+.s-res .sj{font-size:13.5px}.result{font-size:13px}
+@media (max-width:560px){.mt-d{font-size:15.5px}.cf-syn{font-size:16.5px}}
 </style>
 </head>
 <body>
