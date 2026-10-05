@@ -179,6 +179,7 @@ body{background:#000}
 .na-seg>*+*{border-left:1px solid #2C2C2E}.na-seg svg{width:19px;height:19px}.na-seg .p{color:#4C9BFF}.na-seg .on{color:#AEAEB2}
 .na-srcs{background:#1C1C1E;border-radius:14px;overflow:hidden}
 .na-srcs .h{padding:12px 14px 4px;font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8E8E93}
+.na-srcw{display:flex;flex-direction:column;gap:8px}.na-srch{padding:0 4px;font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8E8E93}
 .na-srcs img{width:22px;height:22px;border-radius:5px;flex:none;background:#2C2C2E}
 .na-srcs a{display:flex;align-items:center;gap:12px;min-height:50px;padding:6px 14px;color:#F5F5F7;text-decoration:none;font:600 14.5px/1.25 Inter,sans-serif}
 .na-srcs a+a{border-top:1px solid #2C2C2E}
@@ -261,8 +262,9 @@ body{background:#000}
       return { u: x.u, h: host };
     }).filter(function (x) { return x.h; });
     if (!L.length) return "";
-    return '<div class="na-srcs"><div class="h">' + (L.length > 1 ? "Sources · " + L.length : "Source") + "</div>" + L.map(function (x) {
-      return '<a href="' + esc(x.u) + '" target="_blank" rel="noopener"><img src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(x.h) + '&amp;sz=64" alt="" loading="lazy"><span>' + esc(x.h) + "</span>" + ARR + "</a>"; }).join("") + "</div>";
+    // Test (Will, 06/10/2026) : le titre « Source » sort du bloc, posé sur le fond noir ; seules les sources sont dans le bloc gris.
+    return '<div class="na-srcw"><div class="na-srch">' + (L.length > 1 ? "Sources · " + L.length : "Source") + '</div><div class="na-srcs">' + L.map(function (x) {
+      return '<a href="' + esc(x.u) + '" target="_blank" rel="noopener"><img src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(x.h) + '&amp;sz=64" alt="" loading="lazy"><span>' + esc(x.h) + "</span>" + ARR + "</a>"; }).join("") + "</div></div>";
   }
   function render() {
     if (!N) return;
