@@ -240,7 +240,7 @@
     fitM(box);
     PAGE++;
     var fini = PAGE * 10 >= LIST.length;
-    m.textContent = fini ? (LIST.length > 1 ? "Tu as tout vu." : "") : "Chargement…";
+    m.textContent = fini ? (LIST.length > 1 ? "Reviens plus tard, t’as tout lu bâtard." : "") : "Chargement…";
     if (io) io.disconnect();
     if (!fini) { io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) more(); }, { rootMargin: "400px" }); io.observe(m); }
     loadStats(part);
