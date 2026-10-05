@@ -138,7 +138,7 @@ a{color:inherit}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=21"></script>
+<script src="/site/header.js?v=22"></script>
 <main class="na" id="na"><p class="na-empty">Chargement…</p></main>
 <script>
 (function () {
@@ -211,6 +211,8 @@ a{color:inherit}
   var dShort = function (d) { if (!d) return ""; var x = new Date(d + "T12:00:00"); return x.getDate() + " " + MC[x.getMonth()]; };
   var dDay = function (d) { return d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) : ""; };
   // « 2026年No.45 » → « n°45 », « 2026年 10/16号 » → « 10/16 », sinon tel quel.
+  // Dates naturelles : aujourd'hui, hier, avant-hier, puis la date (Will, 05/10/2026).
+  var rel = function (d) { if (!d) return ""; var t = new Date(new Date().toLocaleDateString("sv") + "T12:00:00"), x = new Date(d + "T12:00:00"), k = Math.round((t - x) / 864e5); return k === 0 ? "Aujourd'hui" : k === 1 ? "Hier" : k === 2 ? "Avant-hier" : dLong(d); };
   var issue = function (v) { v = String(v || ""); var m = v.match(/No\.?\s*(\d+)/i) || v.match(/第?(\d+)号/); if (m) return "n°" + m[1]; m = v.match(/(\d+\/\d+)号/); return m ? m[1] : v; };
   var handle = function (u) { var m = String(u || "").match(/(?:x|twitter)\.com\/(?:#!\/)?@?([A-Za-z0-9_]{1,15})/); return m ? "@" + m[1] : ""; };
   function fiche() {
@@ -278,11 +280,11 @@ a{color:inherit}
     var pos = N.pos == null ? 0 : N.pos;
     root.innerHTML = '<div class="nd-hero' + (N.cover ? "" : " noimg") + '">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1600)) + '" alt="Image de la news : ' + esc(titre) + '" style="object-position:center ' + pos + '%">' : "") +
       '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' +
-      '<div class="nd-tx"><span class="nd-date">' + esc(dLong(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
+      '<div class="nd-tx"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
       (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div></div>" +
       '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
       (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
-      '<aside class="nd-col">' + fiche() + dernier() + mangakas() + autres() + "</aside></div>";
+      '<aside class="nd-col">' + fiche() + dernier() + autres() + mangakas() + "</aside></div>";
   }
   DESK.addEventListener("change", function () { render(); });
   // Fenêtre des commentaires

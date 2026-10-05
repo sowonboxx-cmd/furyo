@@ -90,7 +90,11 @@
     ".sh-nav a{flex:none;height:68px;padding:0 12px;font-size:14.5px;white-space:nowrap}.sh-nav a[aria-current=page]::after{left:12px;right:12px;bottom:0}" +
     ".sh-btn{position:static;transform:none;flex:none}.sh-search{order:3;margin-left:auto}.sh-adm{order:4;position:static;transform:none;margin-left:4px}.sh-me{order:5}" +
     ".sh-val b{font-size:14px!important;color:#CFCFD4!important}}" +
-    "@media (min-width:720px) and (max-width:1099px){.sh-nav a{padding:0 9px;font-size:13.5px}.sh-nav a[aria-current=page]::after{left:9px;right:9px}}";
+    "@media (min-width:720px) and (max-width:1099px){.sh-nav a{padding:0 9px;font-size:13.5px}.sh-nav a[aria-current=page]::after{left:9px;right:9px}}" +
+    /* Rubriques en onglets plats dans un cadre noir, comme la maquette T (Will, 05/10/2026) */
+    "@media (min-width:720px){.sh-nav{flex:none;background:#000;border-radius:16px;padding:5px;gap:4px;overflow:visible}" +
+    ".sh-nav a{height:40px;padding:0 18px;border-radius:12px;font:700 17px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em;color:#98989D}" +
+    ".sh-nav a:hover{color:#F5F5F7;background:#1C1C1E}.sh-nav a[aria-current=page]{background:#38383B;color:#F5F5F7}.sh-nav a[aria-current=page]::after{display:none}}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
   var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (p === "/" || p === "/index.html" || /^\/actus/.test(p)) ? "actu" : "";
@@ -102,7 +106,7 @@
     '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
     '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", /^\/actus/.test(p) ? "/?vue=actus" : "/", "Actualités") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") +
-    a("jp", "/?vue=magazines", "Direct du Japon", 1) + a("cxw", "/crows-x-worst/", "CROWS X WORST", 1, 1) + a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
+a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
   var me = document.currentScript;
   me.insertAdjacentHTML("beforebegin", html);
   var set = function () { var h = document.getElementById("sh"); if (h) document.documentElement.style.setProperty("--sh-h", h.offsetHeight + "px"); };
