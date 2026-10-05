@@ -531,7 +531,7 @@ function vopen(id){
       <button class="go" data-vsave style="grid-column:1/3">Enregistrer les changements</button>
       <button class="rej" data-vs="Vu" style="grid-column:1/3">Retirer du site</button>` : `
       <button class="go" data-vs="${news ? "Publié sur le site" : pp ? "Validé" : "À appliquer à la fiche"}">${news ? "Publier sur le site" : pp ? "Mettre à jour les magazines" : "Appliquer à la fiche"}</button>
-      ${pp ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : i.vu ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Rejeter</button>` : `<button data-vs="Vu">${news ? "Vu, pas sur le site" : "Vu, rien à faire"}</button>
+      ${pp ? `<button data-vs="Validé" data-news="1" style="grid-column:1/3">Mettre à jour + créer une news</button><button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : i.vu ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Rejeter</button>` : `<button data-vs="Vu">${news ? "Vu, pas sur le site" : "Vu, rien à faire"}</button>
       <button class="rej" data-vs="Rejeté">Rejeter</button>`}`}
     </div></div>`;
   document.body.appendChild(m);
@@ -723,7 +723,7 @@ async function vsend(btn, statut){
   // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
   const vc2 = m.querySelector("#vcat2"), c2 = vc2 && vc2.value !== (vc && vc.value) ? vc2.value : "";
   const categorie = vc && (statut === "Publié sur le site" || (!statut && (vc.value !== i.cat || c2 !== (i.cat2 || "")))) ? [VCATS[vc.value], ...(c2 ? [VCATS[c2]] : [])] : "";
-  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(cadrage !== undefined ? { cadrage } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}) }) }).catch(() => null);
+  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(cadrage !== undefined ? { cadrage } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}), ...(btn.dataset.news ? { news: true } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
   if (!statut) { // news en ligne modifiée : elle reste dans « Publiées »
@@ -734,6 +734,8 @@ async function vsend(btn, statut){
   if (statut === "Vu" && i.enLigne) { i.enLigne = false; i.vu = true; m.remove(); vdraw(); toast("Retirée du site · rangée dans « Vu, pas sur le site »"); return; }
   if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } m.remove(); vdraw(); toast("Publié sur le site ✓"); return; }
   // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
+  // Prépublication publiée aussi en news : la news créée arrive dans la liste, à relire et publier comme les autres.
+  if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(); return; }
   if (statut === "Vu" && i.news) { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
   m.remove(); vdraw();
   toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? (i.news ? "Rangée dans « Vu, pas sur le site »" : "Marqué comme vu") : i.base === "prepub" ? "Écartée" : "Rejeté");

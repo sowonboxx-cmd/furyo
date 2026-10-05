@@ -186,6 +186,21 @@ export async function onRequestPost({ request, env }) {
     });
     if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
     await caches.default.delete(new Request(new URL("/api/prepub", request.url).toString()));
+    // « Mettre à jour + créer une news » (Will, 05/10/2026) : une ligne News « À valider » dans la Veille, reprise du chapitre.
+    if (b.news && b.statut === "Validé") {
+      const pg = await (await fetch(`https://api.notion.com/v1/pages/${b.id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } })).json();
+      const q = pg.properties || {}, src = text(q["Lien du numéro"]) || text(q["Page de la série"]) || text(q["Lecture en ligne"]), img = text(q["Couverture du numéro"]), d = date(q["Date de sortie"]);
+      const serie = rel(q["Série"]), texte = typeof b.texte === "string" ? b.texte.trim() : text(q["Annonce du magazine"]);
+      const props = {
+        "Proposition": { title: [{ type: "text", text: { content: text(q["Entrée"]).slice(0, 1900) || "Prépublication" } }] },
+        "Type": { select: { name: "News" } }, "Catégorie": { multi_select: [{ name: "News" }] }, "Statut": { select: { name: "À valider" } },
+        "Résumé site": rt(texte), ...(serie.length ? { "Série": { relation: serie.slice(0, 1).map(id => ({ id })) } } : {}),
+        ...(d ? { "Date de la news": { date: { start: d } } } : {}), ...(src ? { "Source officielle": { url: src }, "Niveau source": { select: { name: "1 · Officielle avec lien" } } } : {}),
+        ...(/^https:\/\//.test(img) ? { "Image": { url: img } } : {}),
+      };
+      const c = await fetch("https://api.notion.com/v1/pages", { method: "POST", headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" }, body: JSON.stringify({ parent: { database_id: VEILLE.database }, properties: props }) });
+      if (!c.ok) return json({ error: "Magazines mis à jour, mais la news n'a pas pu être créée : " + (await c.text()).slice(0, 200) }, 502);
+    }
     return json({ ok: true });
   }
   const props = {};

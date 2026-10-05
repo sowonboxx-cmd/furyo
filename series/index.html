@@ -148,6 +148,17 @@ body.tb-open{overflow:hidden}
 .nw-s{display:inline-flex;align-items:center;gap:6px;margin-top:12px;height:32px;padding:0 12px;border-radius:16px;background:var(--ink-3);font-size:13px;font-weight:700;color:#fff;text-decoration:none}
 .nw-s b{color:#6FA8F5}
 .nw-b p{margin:0}
+.fx-br{margin-top:22px;padding-top:16px;border-top:1px dashed #38383B}
+.fx-br h3{margin:0 0 8px;display:flex;align-items:baseline;gap:10px;font:700 18px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;color:#CFCFD4}
+.fx-br h3 small{font:600 11.5px Inter,sans-serif;text-transform:none;letter-spacing:0;color:var(--paper-3)}
+.fx-br ul{list-style:none;margin:0;padding:0}
+.fx-br li{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid #2C2C2F;font-size:13px}
+.fx-br li:first-child{border-top:0}
+.fx-br time{flex:none;width:86px;color:var(--paper-3);font-size:12px;font-weight:600}
+.fx-br li>span{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px;white-space:nowrap;overflow:hidden}
+.fx-br li b{font-weight:700;color:var(--paper)}.fx-br li small{color:var(--paper-3);overflow:hidden;text-overflow:ellipsis}
+.fx-br li i{font-style:normal;flex:none;height:18px;padding:0 6px;border-radius:5px;background:#E5483A;color:#fff;font:700 10px/18px Inter,sans-serif;text-transform:uppercase}
+.fx-br li a{flex:none;display:inline-flex;align-items:center;gap:3px;color:#6FA8F5;font-weight:700;font-size:12.5px;text-decoration:none}
 .nw-none{color:var(--paper-3);font-size:14px}
 /* Extraits (bas de l'onglet Info & Extraits) */
 .ext{margin-top:20px}
@@ -633,12 +644,17 @@ function adPanel(ad, s){
 function panel(s, pubFR, pubJP, eds, ad){
   // News : une carte par news (catégorie, date, titre), qui s'ouvre d'un appui pour lire le texte et la source.
   if (TAB === "news") {
-    const n = s.news || [];
-    if (!n.length) return `<p class="fx-none">Pas encore de news pour cette série.</p>`;
+    const n = s.news || [], br = s.breves || [];
     const MC = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
     const dd = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return `${x.getDate()} ${MC[x.getMonth()]} ${x.getFullYear()}`; };
+    // Brèves : les chapitres sortis au Japon, en petit et à part des vraies news (Will, 05/10/2026).
+    const ARRB = `<svg class="arr" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg>`;
+    const breves = br.length ? `<section class="fx-br"><h3>Derniers chapitres<small>Brèves · au Japon</small></h3><ul>${br.map(b => {
+      const ch = b.ch != null ? `Chapitre ${String(b.ch).replace(".", ",")}` : (b.num || "Nouveau chapitre"), u = b.read || b.lien;
+      return `<li><time>${dd(b.date)}</time><span><b>${esc(ch)}</b>${b.fin ? `<i>Dernier</i>` : ""}<small>${esc(b.mag)}</small></span>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${b.read ? "Lire" : "Voir"}${ARRB}</a>` : ""}</li>`; }).join("")}</ul></section>` : "";
+    if (!n.length) return `<p class="fx-none">Pas encore de news pour cette série.</p>` + breves;
     return `<div class="fx-news">${n.map(it => `<details class="fx-nw"><summary><span class="fx-nwm"><span class="fx-nwc" style="${it.catC ? `background:${it.catC};color:#000` : ""}">${esc(it.cat)}</span>${it.date ? `<time>${dd(it.date)}</time>` : ""}</span><b>${esc(it.titre)}</b><span class="fx-more">Lire la news</span></summary>
-      <div class="fx-nwb">${it.texte ? `<p>${esc(it.texte)}</p>` : ""}${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source : <b>${esc(it.srcName || "officielle")}</b><svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}</div></details>`).join("")}</div>`;
+      <div class="fx-nwb">${it.texte ? `<p>${esc(it.texte)}</p>` : ""}${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source : <b>${esc(it.srcName || "officielle")}</b><svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}</div></details>`).join("")}</div>` + breves;
   }
   if (TAB === "ad") return adPanel(ad, s);
   const cover = p => { const t = eds.filter(e => e.pays === p).flatMap(e => e.tomes).filter(t => t.cover).sort((a, b) => (a.n ?? 999) - (b.n ?? 999))[0]; return t ? couv(t.cover, 400) : (s.cover1 ? couv(s.cover1, 400) : ""); };

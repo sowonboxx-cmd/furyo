@@ -11,6 +11,7 @@ import { categorie } from "../../lib/categories.js";
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
+const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8" } });
 const nid = id => id.replace(/-/g, "");
@@ -73,7 +74,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     const p = row.properties || {};
     if (!estVisible(p) && !(admin && rel(p["Éditions"]).length)) return { error: "introuvable" };
     const edIds = rel(p["Éditions"]);
-    const [eRows, tRows, nRows] = await Promise.all([
+    const [eRows, tRows, nRows, bRows] = await Promise.all([
       edIds.length ? queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } }) : [],
       edIds.length ? queryAll(env.NOTION_TOKEN, { ...TOMES, body: {
         filter: { or: edIds.map(e => ({ property: "Édition", relation: { contains: e } })) },
@@ -86,6 +87,11 @@ export async function onRequestGet({ env, request, waitUntil }) {
           { property: "Statut", select: { equals: "Publié sur le site" } },
         ] },
         sorts: [{ property: "Date de la news", direction: "descending" }],
+      } }).catch(() => []),
+      // Brèves (Will, 05/10/2026) : les chapitres sortis au Japon (prépublications validées), en petit sous les vraies news.
+      queryAll(env.NOTION_TOKEN, { ...PREPUB, body: {
+        filter: { and: [{ property: "Série", relation: { contains: id } }, { property: "Validé", checkbox: { equals: true } }] },
+        sorts: [{ property: "Date de sortie", direction: "descending" }], page_size: 12,
       } }).catch(() => []),
     ]);
     const serie = {
@@ -123,6 +129,11 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const c = categorie({ cat: text(q["Catégorie"]), type: text(q["Type"]), champ, prop, vp: text(q["Valeur proposée"]), src: text(q["Source officielle"]) }) || categorie({ cat: "News" });
       return { id: nid(r.id), cat: c.nom, catC: c.c, date: (r.created_time || "").slice(0, 10) || date(q["Date de la news"]), titre: prop.replace(/^\s*(licence\s*fr|news|couverture dévoilée)\s*:\s*/i, ""), texte: text(q["Résumé site"]), src: text(q["Source officielle"]), srcName: sourceName(text(q["Source officielle"])) };
     });
+    const noLib = u => /bookwalker|cmoa|ebookjapan|amazon/i.test(u) ? "" : u;
+    serie.breves = bRows.slice(0, 12).map(r => { const q = r.properties || {};
+      return { date: date(q["Date de sortie"]), mag: text(q["Magazine"]), num: text(q["Numéro"]), ch: num(q["Chapitre"]), statut: text(q["Statut"]),
+        fin: list(q["Mise en avant"]).includes("Dernier chapitre"), read: noLib(text(q["Lecture en ligne"])), lien: noLib(text(q["Page de la série"]) || text(q["Lien du numéro"])) };
+    }).filter(b => b.date);
     return { serie, editions };
   };
   // Aperçu admin (après le lancement) : réponse directe, jamais mise dans le cache partagé.
