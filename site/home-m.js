@@ -64,6 +64,16 @@
       "<h2>" + esc(it.fr || it.titre) + "</h2><p>" + esc(it.texte) + "</p></a>" + acts(it) + "</article>";
   }
 
+  // Grande image en tête de l'accueil, comme en haut d'une news (Will, 05/10/2026) : catégories, titre, date,
+  // et les actions (vues, j'aime, signet, commentaires) dans l'image.
+  function heroH(it) {
+    var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
+    return '<article class="mh-hx">' + (it.cover ? '<img src="' + esc(couv(it.cover, 1000)) + '" alt="" fetchpriority="high">' : "") +
+      '<a class="mh-hxa" href="' + esc(link(it)) + '" aria-label="' + esc(it.fr || it.titre) + '"></a>' +
+      '<div class="mh-hxt"><span class="mh-hxp">' + cs.map(function (t) { return '<span style="background:' + t[2] + '">' + esc(t[1]) + "</span>"; }).join("") + "</span>" +
+      "<h2>" + esc(it.fr || it.titre) + "</h2><em>" + esc(dd(it.date)) + "</em>" + acts(it) + "</div></article>";
+  }
+
   // ---------- Barre d'onglets façon X ----------
   var TAB = "toutes";
   function xtabs() {
@@ -181,7 +191,7 @@
     }
     // Accueil
     var feed;
-    if (TAB === "toutes") feed = news.length ? news.slice(0, 2).map(cardO).join("") : '<p class="mh-note">' + (D.news ? "Pas encore d'actualité." : "Chargement…") + "</p>";
+    if (TAB === "toutes") feed = news.length ? heroH(news[0]) + news.slice(1, 3).map(cardO).join("") : '<p class="mh-note">' + (D.news ? "Pas encore d'actualité." : "Chargement…") + "</p>";
     else if (!(D.me && D.me.user)) feed = '<div class="mh-lock"><b>' + (TAB === "feed" ? "Ton fil personnalisé" : "Tes signets") + "</b><p>" + (TAB === "feed" ? "Les news des séries que tu suis, rien que pour toi." : "Retrouve toutes les news que tu as gardées.") + ' Réservé aux membres.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button></div>';
     else if (TAB === "feed") { var fl = D.follow; var mine = fl ? news.filter(function (it) { return fl.indexOf(slug(it.fr || it.titre)) >= 0 || fl.indexOf(slug(it.titre)) >= 0; }) : [];
       feed = fl == null ? '<p class="mh-note">Chargement…</p>' : mine.length ? mine.map(cardO).join("") : '<p class="mh-note">' + (fl.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton + en haut de leur fiche : leurs news apparaîtront ici.") + "</p>"; }
