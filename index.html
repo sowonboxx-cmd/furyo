@@ -635,7 +635,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=28"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=32" defer></script>
+<script src="/site/home-m.js?v=33" defer></script>
 <div class="page">
 
 
@@ -696,7 +696,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
    la news la plus récente en grand, les suivantes en liste. Actions : signet et commentaires à gauche, likes et vues à droite. */
 const VUE_N = new URLSearchParams(location.search).get("vue");
 const DT = {
-  types: [["licence-fr","Nouvelle licence (France)","#529CCA"],["licence-jp","Nouvelle série (Japon)","#FF7369"],["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]],
+  types: [["licence-fr","Nouvelle licence FR","#529CCA"],["licence-jp","Nouvelle série JP","#FF7369"],["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]],
   news: null, me: null, stats: {}, cn: {}, signets: null, follow: null, tab: (t => t === "feed" || t === "signets" ? t : "toutes")(new URLSearchParams(location.search).get("tab")), cat: new URLSearchParams(location.search).get("cat") || "", all: VUE_N === "actus"
 };
 DT.TL = Object.fromEntries(DT.types.map(t => [t[0], t])); DT.TL.annonce = DT.TL.news;
