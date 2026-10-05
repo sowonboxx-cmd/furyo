@@ -378,6 +378,19 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .df b{font:700 14.5px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.df small{font-size:11.5px;color:#98989D}
 @media (max-width:1099px){.dfilms{grid-template-columns:repeat(5,minmax(0,1fr))}.djp{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:979px){.dduo{grid-template-columns:1fr}}
+.dcm{display:flex;flex-direction:column}
+.dcm-r{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid #1C1C1E}.dcm-r:first-child{border-top:0;padding-top:0}
+.dcm-r img,.dcm-r i{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#38383B;display:grid;place-items:center;font:700 13px Inter,sans-serif;font-style:normal}
+.dcm-t{display:block;text-decoration:none;color:inherit}.dcm-t b{font-size:13.5px}.dcm-t small{margin-left:6px;font-size:12px;color:#8E8E93}
+.dcm-t span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px;font-size:13.5px;line-height:1.4;color:#E5E5EA}
+.dcm-t:hover span{color:#fff}
+.dcm-a{display:inline-flex;margin-top:6px;max-width:100%;padding:3px 9px;border-radius:8px;background:#1C1C1E;font:700 12.5px Inter,sans-serif;color:#CFCFD4;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dcm-a:hover{background:#38383B;color:#fff}
+.dser{position:relative;display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px;align-items:center;text-decoration:none;color:inherit;overflow:hidden}
+.dser-c{position:relative;height:120px}.dser-c img{position:absolute;bottom:0;width:62px;aspect-ratio:2/3;object-fit:cover;border-radius:7px;box-shadow:0 6px 18px rgba(0,0,0,.6);transition:transform .25s}
+.dser-c img:nth-child(1){left:0;transform:rotate(-9deg)}.dser-c img:nth-child(2){left:24px;z-index:1;bottom:8px}.dser-c img:nth-child(3){left:48px;z-index:2;transform:rotate(9deg)}
+.dser:hover .dser-c img:nth-child(1){transform:rotate(-14deg) translateX(-4px)}.dser:hover .dser-c img:nth-child(3){transform:rotate(14deg) translateX(4px)}
+.dser-t small{display:block;font:600 12px Inter,sans-serif;color:#98989D}.dser-t b{display:block;font:700 26px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;margin:3px 0 6px}.dser-t em{font-style:normal;font-size:13px;color:#CFCFD4}
+.dser-go{grid-column:1/-1;display:flex;align-items:center;justify-content:center;height:42px;border-radius:21px;background:#38383B;font:700 14px Inter,sans-serif}.dser:hover .dser-go{background:#48484C}
 /* ===== Accueil téléphone (site/home-m.js) ===== */
 .mh{display:none}
 @media (max-width:719px){
@@ -543,6 +556,10 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
         <div class="m-head"><div><small class="m-eye"><svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>En France</small><h3>Prochaines sorties</h3></div><a class="m-sub" href="/calendrier/#france">Calendrier</a></div>
         <div class="dfr" id="dfr"><p class="m-note">Chargement…</p></div>
       </section>
+      <section class="box" id="m-com" hidden>
+        <div class="m-head"><div><h3>Derniers commentaires</h3></div></div>
+        <div class="dcm" id="dcm"></div>
+      </section>
       <section class="box mod" id="m-jp" data-slot="0">
         <div class="m-head"><h3>Direct Japon</h3><a class="m-sub" href="/?vue=magazines">Tout voir</a></div>
         <ul class="jp">
@@ -553,6 +570,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
         </ul>
         <p class="m-note">Prochain Monthly Champion le 6 oct. · <a href="https://bigcomics.jp/episodes/d4caca9984016">Lire Kujou no Taizai en ligne (JP) ↗</a></p>
       </section>
+      <a class="box dser" href="/series/" id="m-ser"><span class="dser-c" id="dser-c"></span><span class="dser-t"><small>Le catalogue</small><b>Toutes les séries</b><em id="dser-n">Furyō, yakuza, crime : toutes les fiches</em></span><span class="dser-go">Voir toutes les séries</span></a>
     </aside>
   </div>
 
@@ -562,17 +580,17 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
     <div class="djp" id="djp"></div>
   </section>
   <div class="dduo">
-    <a class="dcxw" href="/crows-x-worst/" target="_blank" rel="noopener"><span class="map" aria-hidden="true"></span><span class="chars"><img src="/crows-x-worst/img/char-hana.png" alt=""><img src="/crows-x-worst/img/char-boya.png" alt=""></span><span class="t"><small>Carte interactive</small><b>CROWS<i>×</i>WORST</b><em>Toutes les œuvres de l'univers de Hiroshi Takahashi</em></span></a>
     <a class="box dav" href="/avancement/" id="d-av"><div class="dsh"><div><h2>La base FuryoGang</h2></div><span>Mise à jour chaque semaine</span></div><div class="dav-n"><b id="dav-on">–</b><span id="dav-tot">fiches en ligne</span></div><div class="dav-g" id="dav-g"></div><p class="m-note" id="dav-last">De nouvelles fiches chaque semaine.</p></a>
-  </div>
-  <div class="dduo">
-    <section class="box" id="d-mbr"><div class="dsh"><div><small>Derniers membres</small><h2>Ils ont rejoint le gang</h2></div><a href="/membres/">Membres</a></div><div class="dmb" id="dmb"><p class="m-note">Chargement…</p></div></section>
-    <section class="box" id="d-mk"><div class="dsh"><div><h2>Mangakas</h2></div><a href="/auteurs/">Tous</a></div><div class="dmk" id="dmk"><p class="m-note">Chargement…</p></div></section>
+    <a class="dcxw" href="/crows-x-worst/" target="_blank" rel="noopener"><span class="map" aria-hidden="true"></span><span class="chars"><img src="/crows-x-worst/img/char-hana.png" alt=""><img src="/crows-x-worst/img/char-boya.png" alt=""></span><span class="t"><small>Carte interactive</small><b>CROWS<i>×</i>WORST</b><em>Toutes les œuvres de l'univers de Hiroshi Takahashi</em></span></a>
   </div>
   <section class="box dsec" id="d-ecran">
     <div class="dsh"><div><small>À l'écran</small><h2>Les films à voir absolument</h2></div></div>
     <div class="dfilms"><figure class="df"><img src="/affiches/crows-zero.jpg" alt="Affiche de Crows Zero" loading="lazy"><figcaption><b>Crows Zero</b><small>Film · 2007</small></figcaption></figure><figure class="df"><img src="/affiches/crows-zero-2.jpg" alt="Affiche de Crows Zero II" loading="lazy"><figcaption><b>Crows Zero II</b><small>Film · 2009</small></figcaption></figure><figure class="df"><img src="/affiches/crows-explode.jpg" alt="Affiche de Crows Explode" loading="lazy"><figcaption><b>Crows Explode</b><small>Film · 2014</small></figcaption></figure><figure class="df"><img src="/affiches/high-low-the-worst.jpg" alt="Affiche de HiGH&amp;LOW THE WORST" loading="lazy"><figcaption><b>HiGH&amp;LOW THE WORST</b><small>Film · 2019</small></figcaption></figure><figure class="df"><img src="/affiches/the-fable-2019.jpg" alt="Affiche de The Fable" loading="lazy"><figcaption><b>The Fable</b><small>Film · 2019</small></figcaption></figure><figure class="df"><img src="/affiches/shinjuku-swan-2015.jpg" alt="Affiche de Shinjuku Swan" loading="lazy"><figcaption><b>Shinjuku Swan</b><small>Film · 2015</small></figcaption></figure><figure class="df"><img src="/affiches/hell-dogs-2022.jpg" alt="Affiche de Hell Dogs" loading="lazy"><figcaption><b>Hell Dogs</b><small>Film · 2022</small></figcaption></figure><figure class="df"><img src="/affiches/out-2023.jpg" alt="Affiche de OUT" loading="lazy"><figcaption><b>OUT</b><small>Film · 2023</small></figcaption></figure><figure class="df"><img src="/affiches/tokyo-revengers-2-destiny-2023.jpg" alt="Affiche de Tokyo Revengers 2" loading="lazy"><figcaption><b>Tokyo Revengers 2</b><small>Film · 2023</small></figcaption></figure><figure class="df"><img src="/affiches/yamikin-ushijima-kun-part-2-2014.jpg" alt="Affiche de Ushijima Part 2" loading="lazy"><figcaption><b>Ushijima Part 2</b><small>Film · 2014</small></figcaption></figure></div>
   </section>
+  <div class="dduo">
+    <section class="box" id="d-mbr"><div class="dsh"><div><small>Derniers membres</small><h2>Ils ont rejoint le gang</h2></div><a href="/membres/">Membres</a></div><div class="dmb" id="dmb"><p class="m-note">Chargement…</p></div></section>
+    <section class="box" id="d-mk"><div class="dsh"><div><h2>Mangakas</h2></div><a href="/auteurs/">Tous</a></div><div class="dmk" id="dmk"><p class="m-note">Chargement…</p></div></section>
+  </div>
 </div>
 
 <script>
@@ -763,12 +781,34 @@ const tn = n => n == null ? "" : " T." + String(n).padStart(2, "0");
 getN("/api/calendrier").then(j => {
   const t = new Date().toLocaleDateString("sv"), all = (j && j.items) || [];
   const lien = x => x.fiche ? "/series/" + slugN(x.fr || x.series) + "#tomes" : "/calendrier/#t-" + x.id;
-  const fr = all.filter(x => x.pays === "France" && x.date >= t).slice(0, 6);
+  // Seulement le mois en cours (Will, 05/10/2026) : la date n'affiche pas le mois.
+  const mois = t.slice(0, 7), M = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][+t.slice(5, 7) - 1];
+  const fr = all.filter(x => x.pays === "France" && x.date >= t && x.date.slice(0, 7) === mois);
+  const eye = document.querySelector("#m-fr .m-eye"); if (eye) eye.lastChild.textContent = "En France · " + M;
   document.getElementById("dfr").innerHTML = fr.length ? fr.map(x => { const d = new Date(x.date + "T12:00:00");
     return `<a class="dfr-r" href="${escN(lien(x))}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${x.cover ? `<img src="${escN(couvN(x.cover, 120))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span class="t"><b>${escN((x.fr || x.series) + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
-  const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 8);
+  const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
   if (jp.length) { document.getElementById("d-jp").hidden = false;
     document.getElementById("djp").innerHTML = jp.map(x => `<a class="djp-c" href="${escN(lien(x))}"><span><img src="${escN(couvN(x.cover, 400))}" alt="Couverture ${escN(x.series + tn(x.n))}" loading="lazy" onerror="this.closest('.djp-c').remove()"><em>${escN(fmtD(x.date))}</em></span><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></a>`).join(""); }
+});
+// Derniers commentaires : 5 plus récents, avec l'article et la série ; clic sur le commentaire → section commentaires de l'article.
+const comN = () => {
+  const ids = (DT.news || []).map(n => n.id).slice(0, 30); if (!ids.length) return;
+  getN("/api/comments?recent=5&ids=" + ids.join(",")).then(j => {
+    const it = ((j && j.items) || []).filter(c => (DT.news || []).some(n => n.id === c.id)); if (!it.length) return;
+    const ago = d => { const m = Math.round((Date.now() - new Date(d)) / 6e4); return m < 60 ? Math.max(1, m) + " min" : m < 1440 ? Math.round(m / 60) + " h" : Math.round(m / 1440) + " j"; };
+    document.getElementById("dcm").innerHTML = it.map(c => { const n = DT.news.find(x => x.id === c.id), u = linkN(n);
+      return `<div class="dcm-r">${c.p ? `<img src="${esc2(c.p)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((c.n || "?").charAt(0).toUpperCase())}</i>`}<div><a class="dcm-t" href="${escN(u)}#commentaires"><b>${esc2(c.n)}</b><small>il y a ${ago(c.d)}</small><span>${esc2(c.t)}</span></a><a class="dcm-a" href="${escN(u)}">${esc2(n.fr || n.titre)}</a></div></div>`; }).join("");
+    document.getElementById("m-com").hidden = false;
+  });
+};
+if (DT.news) comN(); else { const w = setInterval(() => { if (DT.news) { clearInterval(w); comN(); } }, 400); setTimeout(() => clearInterval(w), 15000); }
+// Toutes les séries : trois couvertures en éventail et le nombre de fiches.
+getN("/api/series").then(j => {
+  const it = ((j && j.items) || []).filter(x => x.cover); if (!it.length) return;
+  const pick = it.slice().sort(() => Math.random() - .5).slice(0, 3);
+  document.getElementById("dser-c").innerHTML = pick.map(x => `<img src="${escN(couvN(x.cover, 200))}" alt="" loading="lazy">`).join("");
+  document.getElementById("dser-n").textContent = ((j.items || []).length) + " fiches en ligne : furyō, yakuza, crime";
 });
 // Direct du Japon (colonne) : 5 lignes puis « Voir tous les magazines ».
 getN("/api/prepub").then(j => {
