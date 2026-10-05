@@ -660,7 +660,7 @@ function rowN(it) {
 function tabsN() {
   const n = k => (DT.news || []).filter(it => it.cat === k || (it.cats || []).some(c => c.k === k)).length;
   const cur = DT.cat ? DT.TL[DT.cat] : null;
-  return [["toutes","Toutes"],["feed","Mon fil"],["signets","Signets"]].map(([k, l]) => `<button type="button" data-tab="${k}" aria-pressed="${DT.tab === k && !DT.cat}">${l}</button>`).join("") +
+  return [["toutes","Toutes"],["feed","Mon feed"],["signets","Signets"]].map(([k, l]) => `<button type="button" data-tab="${k}" aria-pressed="${DT.tab === k && !DT.cat}">${l}</button>`).join("") +
     `<button type="button" class="dt-cat" aria-haspopup="listbox" aria-expanded="false" aria-pressed="${!!DT.cat}">${cur ? `<i style="background:${cur[2]}"></i>${escN(cur[1])}` : "Catégories"}${ICN.chev}</button>` +
     `<div class="dt-menu" role="listbox" aria-label="Catégories" hidden><button type="button" role="option" data-cat="" aria-selected="${!DT.cat}"><i style="background:#F5F5F7"></i>Toutes les catégories<small>${(DT.news || []).length}</small></button>` +
     DT.types.map(t => `<button type="button" role="option" data-cat="${t[0]}" aria-selected="${DT.cat === t[0]}"${n(t[0]) ? "" : ' class="vide"'}><i style="background:${t[2]}"></i>${t[1]}<small>${n(t[0])}</small></button>`).join("") + "</div>";
@@ -674,10 +674,10 @@ function renderN() {
   if (!DT.news) html = note("Chargement des actualités…");
   else if (DT.cat) list = news.filter(it => it.cat === DT.cat || (it.cats || []).some(c => c.k === DT.cat));
   else if (DT.tab === "toutes") list = news;
-  else if (!(DT.me && DT.me.user)) html = note(DT.tab === "feed" ? "<b>Ton fil personnalisé</b>Les news des séries que tu suis, rien que pour toi. Réservé aux membres." : "<b>Tes signets</b>Retrouve toutes les news que tu as gardées. Réservé aux membres.", true);
-  else if (DT.tab === "feed" && DT.follow == null) html = note("Chargement de ton fil…");
+  else if (!(DT.me && DT.me.user)) html = note(DT.tab === "feed" ? "<b>Ton feed personnalisé</b>Les news des séries que tu suis, rien que pour toi. Réservé aux membres." : "<b>Tes signets</b>Retrouve toutes les news que tu as gardées. Réservé aux membres.", true);
+  else if (DT.tab === "feed" && DT.follow == null) html = note("Chargement de ton feed…");
   else if (DT.tab === "feed") { list = news.filter(it => DT.follow.includes(slugN(it.fr || it.titre)) || DT.follow.includes(slugN(it.titre)));
-    if (!list.length) { list = null; html = note("<b>Ton fil personnalisé</b>" + (DT.follow.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton « + Suivre » en haut de leur fiche : leurs news apparaîtront ici.")); } }
+    if (!list.length) { list = null; html = note("<b>Ton feed personnalisé</b>" + (DT.follow.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton « + Suivre » en haut de leur fiche : leurs news apparaîtront ici.")); } }
   else if (DT.signets == null) html = note("Chargement de tes signets…");
   else list = news.filter(it => DT.signets.includes(it.id));
   if (list) {

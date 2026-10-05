@@ -35,10 +35,11 @@ button{font:inherit;color:inherit}
 
 /* Fil d'Ariane */
 .crumb{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--paper-3);white-space:nowrap;overflow:hidden}
-.fol{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 9px;border:0;border-radius:16px;background:#000;color:#fff;font:600 13px var(--f-body);cursor:pointer}
+.head{position:relative}.head h1{padding-right:34px}@media (min-width:900px){.head h1{padding-right:110px}}.fol{position:absolute;top:14px;right:14px;z-index:2;flex:none;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 9px;border:0;border-radius:16px;background:#000;color:#fff;font:600 13px var(--f-body);cursor:pointer}
 .fol svg{width:15px;height:15px}.fol:hover{background:var(--ink-3);color:var(--paper)}
 .fol[aria-pressed=true]{background:#000;color:#FF4D67}.fol[aria-pressed=true] span{color:#fff}
-@media (max-width:719px){.fol{width:32px;padding:0;justify-content:center}.fol span{display:none}}
+@media (max-width:719px){.fol{top:8px;right:8px;width:34px;height:34px;padding:0;justify-content:center;background:transparent!important}.fol svg{width:20px;height:20px}.fol span{display:none}}
+@media (min-width:900px){.fol{top:24px;right:24px}}
 .crumb a{color:var(--paper-2);text-decoration:none;font-weight:600}
 .crumb a:hover{color:var(--paper)}
 .crumb [aria-current]{overflow:hidden;text-overflow:ellipsis;color:var(--paper-3)}
@@ -518,7 +519,7 @@ function crumb(titre){
       else if (r.pathname.startsWith("/auteurs")) from = { href: r.pathname, label: "Mangakas" };
     }
   } catch (e) {}
-  return `<nav class="crumb" aria-label="Fil d'Ariane"><a href="${from.href}" data-back>${from.label}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(titre)}</span>${folBtn()}</nav>`;
+  return ""; // Plus de fil d'Ariane sur les fiches (Will, 05/10/2026)
 }
 // Suivre la série (Will, 05/10/2026) : petit bouton « + » discret en haut à droite de la fiche ; réservé aux membres.
 let FOL = { on: false, ready: false };
@@ -559,6 +560,7 @@ function render(){
   ${crumb(titre)}
   ${s.apercu ? `<p class="apercu">Aperçu administrateur · cette fiche n'est pas encore publiée, toi seul la vois.</p>` : ""}
   <div class="head">
+    ${folBtn()}
     <div class="main-cv zoom" role="button" aria-label="Voir les couvertures en grand">${mainCover(s, eds)}</div>
     <div>
       <h1 id="ttl" data-jp="${esc(s.jp || "")}">${esc(titre)}</h1>
