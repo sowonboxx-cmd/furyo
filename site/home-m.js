@@ -101,6 +101,9 @@
   function head2(t, sub, href, lab) {
     return '<div class="mh-h2"><div>' + (sub ? "<small>" + sub + "</small>" : "") + "<h2>" + t + "</h2></div>" + (href ? '<a href="' + href + '">' + (lab || "Tout voir") + "</a>" : "") + "</div>";
   }
+  // Sous « Prochaines sorties en France » : un bloc don tiré au hasard (Haruyama, Jinnai ou le duo), le même pendant la visite (Will, 06/10/2026).
+  var DON_FR = null;
+  function donFR() { if (!window.FG_DON) return ""; if (DON_FR == null) DON_FR = ["haru", "jinnai", "duo"][Math.floor(Math.random() * 3)]; return '<div style="padding:0 16px">' + FG_DON(DON_FR) + "</div>"; }
   function sortiesFR() {
     // Pas assez de sorties pour une semaine : les prochaines sorties du mois en cours, à partir d'aujourd'hui (Will, 05/10/2026).
     var now = new Date(), t0 = now.toISOString().slice(0, 10), fin = new Date(now.getFullYear(), now.getMonth() + 1, 0), t1 = fin.getFullYear() + "-" + String(fin.getMonth() + 1).padStart(2, "0") + "-" + String(fin.getDate()).padStart(2, "0");
@@ -117,7 +120,7 @@
     return '<section class="mh-sec" aria-label="Sorties en France">' + headGo("Prochaines sorties en France", "/calendrier/#france").replace('class="mh-h2"', 'class="mh-h2 mh-blue"') + une + (it.length > 1 ? '<div class="mh-car">' + it.slice(1).map(function (x) {
       // Titre coupé avec « … » si trop long, le numéro de tome (T.10) toujours visible à côté (Will, 06/10/2026).
       return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + lien(x) + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(dd(x.date)) + '</em></span><b class="mh-ct"><span>' + esc(x.fr || x.series) + "</span>" + (x.n != null ? "<i>T." + esc(x.n) + "</i>" : "") + "</b></a>";
-    }).join("") + "</div>" : "") + "</section>";
+    }).join("") + "</div>" : "") + "</section>" + donFR();
   }
   function sortiesJP() {
     var w = semaine(), it = (D.cal || []).filter(function (x) { return x.pays === "Japon" && x.date >= w[0] && x.date <= w[1]; });
@@ -253,7 +256,7 @@
     fitM(box);
     PAGE++;
     var fini = PAGE * 10 >= LIST.length;
-    if (fini && LIST.length > 1) m.innerHTML = '<p class="mh-endt">Reviens plus tard, t’as tout lu bâtard.</p>' + ble();
+    if (fini && LIST.length > 1) m.innerHTML = '<p class="mh-endt">Reviens plus tard, t’as tout lu bâtard.</p>' + (window.FG_DON ? FG_DON("jinnai") : ble());
     else m.textContent = fini ? "" : "Chargement…";
     if (io) io.disconnect();
     if (!fini) { io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) more(); }, { rootMargin: "400px" }); io.observe(m); }

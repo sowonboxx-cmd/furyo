@@ -115,6 +115,7 @@ body:not(.ready) #app,body:not(.ready) .foot{opacity:0}
 body.ready #app{transition:opacity .15s}
 /* Champs en 16 px minimum : sinon iPhone zoome quand on touche le champ */
 input,select,textarea{font-size:16px!important}
+.fgdon{padding:0 16px 24px}#app:empty+.fgdon{display:none}@media (min-width:980px){.fgdon{display:none}}
 </style>
 </head>
 <body>
@@ -132,6 +133,10 @@ input,select,textarea{font-size:16px!important}
     </div>
   </div>
   <main id="app"></main>
+  <!-- Fin du calendrier sur téléphone : le duo à la sortie (Will, 06/10/2026) -->
+  <div id="fgdon" class="fgdon"></div>
+  <script src="/site/don.js?v=1"></script>
+  <script>if (window.FG_DON && innerWidth < 980) document.getElementById("fgdon").innerHTML = FG_DON("duo");</script>
 </div>
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Sortie">
   <span class="lb-c" id="lb-c"></span>

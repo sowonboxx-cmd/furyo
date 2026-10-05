@@ -660,7 +660,8 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
-<script src="/site/home-m.js?v=44" defer></script>
+<script src="/site/don.js?v=1"></script>
+<script src="/site/home-m.js?v=45" defer></script>
 <div class="page">
 
 
@@ -877,6 +878,8 @@ function renderN() {
     // « Voir toutes les actualités » toujours présent sous les 5 news de l'accueil (Will, 05/10/2026).
     if (list.length > max) html += `<button type="button" class="box dmore" data-all>Voir toutes les actualités<small>${list.length - max} de plus</small></button>`;
     else if (!DT.all && !DT.cat && DT.tab === "toutes" && list.length) html += `<a class="box dmore" href="/?vue=actus">Voir toutes les actualités</a>`;
+    // Bandeau don sous les news de l'accueil ordinateur : le duo, « Tes potes lisent gratos » (Will, 06/10/2026).
+    if (!DT.all && !DT.cat && DT.tab === "toutes" && list.length && window.FG_DON) html += FG_DON("bandeau");
     loadStatsN(list.slice(0, max));
   }
   feed.innerHTML = html;
