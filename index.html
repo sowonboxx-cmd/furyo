@@ -261,6 +261,11 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dt-menu button:hover{background:#2A2A2D}.dt-menu button[aria-selected=true]{background:#38383B}.dt-menu button.vide{color:#6E6E73}
 .dt-menu i{width:8px;height:8px;border-radius:50%;flex:none}.dt-menu small{margin-left:auto;color:#8E8E93;font-size:12.5px}
 .feed{display:flex;flex-direction:column;gap:12px}
+.dg-mi{display:inline-block;white-space:nowrap}
+.smk{display:flex;flex-direction:column;gap:2px}
+.smk a{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:8px;border-radius:12px;color:#F5F5F7;text-decoration:none}.smk a:hover{background:#1C1C1E}
+.smk i{width:44px;height:44px;border-radius:50%;overflow:hidden;background:#38383B;display:grid;place-items:center;font:700 18px "Noto Sans JP",sans-serif;font-style:normal}.smk i img{width:100%;height:100%;object-fit:cover;display:block}
+.smk b{display:block;font:700 17px/1.05 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}.smk small{display:block;margin-top:2px;font-size:12px;color:#98989D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Catégories en majuscules partout sur l'accueil (Will, 05/10/2026) */
 .dm span[style]{text-transform:uppercase;letter-spacing:.03em;font-weight:700}
 .dm{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font:600 12.5px Inter,system-ui,sans-serif;color:#98989D}
@@ -624,6 +629,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
         <div class="dfr" id="dfr"><p class="m-note">Chargement…</p></div>
       </section>
       <a class="box dser" href="/series/" id="m-ser"><span class="dser-c" id="dser-c"></span><span class="dser-t"><b>Toutes les séries</b><em id="dser-n">Furyō, yakuza, crime : toutes les fiches</em></span><span class="dser-go">Voir toutes les séries</span></a>
+      <section class="box" id="m-mk" hidden><div class="m-head"><div><h3><a class="h3a" href="/auteurs/">Mangakas</a></h3></div></div><div class="smk" id="smk"></div></section>
 
       <section class="box mod" id="m-jp" data-slot="0">
         <div class="m-head"><h3>En direct du Japon</h3></div>
@@ -904,8 +910,9 @@ function magsN(items) {
 }
 function magCardN(m) {
   const today = new Date().toLocaleDateString("sv"), paru = !m.date || m.date <= today;
-  const ttl = `${escN(m.mag)} ${escN(m.issue || "")}`;
-  const head = m.web ? `<small>Mis à jour le ${escN(ddN(m.date))}</small><h3>Séries en ligne</h3>` : `<small>${paru ? "Sorti le " : "Sort le "}${escN(ddN(m.date))}</small><h3>${m.link ? `<a href="${escN(m.link)}" target="_blank" rel="noopener">${ttl} <span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></span></a>` : ttl}</h3>`;
+  // Nom du magazine puis numéro : si tout ne tient pas sur une ligne, le numéro passe entier à la ligne (Will, 05/10/2026).
+  const ttl = `<span class="dg-mn">${escN(m.mag)}</span> <span class="dg-mi">${escN(m.issue || "")}`;
+  const head = m.web ? `<small>Mis à jour le ${escN(ddN(m.date))}</small><h3>Séries en ligne</h3>` : `<small>${paru ? "Sorti le " : "Sort le "}${escN(ddN(m.date))}</small><h3>${m.link ? `<a href="${escN(m.link)}" target="_blank" rel="noopener">${ttl} <span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></span></span></a>` : ttl + "</span>"}</h3>`;
   // Chaque série mène à sa lecture en ligne officielle (ou sa page), le magazine à son site (Will, 05/10/2026).
   const rows = m.items.map(it => { const u = it.read || it.page, inner = `<span>${escN(it.entry.split(" · ")[0])}${it.jp ? `<small lang="ja">${escN(it.jp)}</small>` : ""}</span><span>${it.status === "Pause" ? '<em class="p">Pause</em>' : it.ch ? `<em>Ch. ${escN(it.ch)}</em>` : ""}${(it.hl || []).includes("Dernier chapitre") ? "<i>Fin</i>" : ""}${u ? '<b class="go"><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></b>' : ""}</span>`;
     return `<li>${u ? `<a href="${escN(u)}" target="_blank" rel="noopener" title="Lecture en ligne">${inner}</a>` : inner}</li>`; }).join("");
@@ -913,8 +920,8 @@ function magCardN(m) {
   return `<article class="dg"><div class="dg-c">${m.link ? `<a href="${escN(m.link)}" target="_blank" rel="noopener">${cov}</a>` : cov}</div><div class="dg-t">${head}<ul>${rows}</ul></div></article>`;
 }
 function magsViewN() {
-  const fil = document.getElementById("fil");
-  fil.innerHTML = `<div class="box dgh"><div><small><span class="live">●</span> En direct · Prépublication</small><h1>En direct du Japon</h1><p>Les derniers numéros des magazines japonais et les chapitres de nos séries.</p></div><a href="/">← Actualités</a></div><div class="dgs" id="dgs"><div class="box dn"><p>Chargement des magazines…</p></div></div>`;
+  const fil = document.getElementById("fil"), mk = document.getElementById("m-mk"); if (mk) mk.hidden = false;
+  fil.innerHTML = `<div class="box dgh"><div><small><span class="live">●</span> En direct · Prépublication</small><h1>En direct du Japon</h1><p>Les derniers numéros des magazines japonais et les chapitres de nos séries.</p></div></div><div class="dgs" id="dgs"><div class="box dn"><p>Chargement des magazines…</p></div></div>`;
   const side = document.getElementById("m-jp"); if (side) side.hidden = true;
   getN("/api/prepub").then(j => {
     const box = document.getElementById("dgs"), list = magsN((j && j.items) || []);
@@ -988,9 +995,17 @@ getN("/api/calendrier").then(j => {
   const mois = t.slice(0, 7), M = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][+t.slice(5, 7) - 1];
   const fr = all.filter(x => x.pays === "France" && x.date >= t && x.date.slice(0, 7) === mois).slice(0, 4);
 
-  document.getElementById("dfr").innerHTML = fr.length ? fr.map(x => { const d = new Date(x.date + "T12:00:00");
+  if (VUE_N !== "magazines") document.getElementById("dfr").innerHTML = fr.length ? fr.map(x => { const d = new Date(x.date + "T12:00:00");
     return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="fr" data-i="${fr.indexOf(x)}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${x.cover ? `<img src="${escN(couvN(x.cover, 120))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span class="t"><b>${escN((x.fr || x.series) + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
+  // Page « En direct du Japon » : la colonne affiche les 6 prochaines sorties japonaises (Will, 05/10/2026).
+  if (VUE_N === "magazines") {
+    const jps = all.filter(x => x.pays === "Japon" && x.date >= t).slice(0, 6); TP.jps = jps;
+    const head = document.querySelector("#m-fr .m-eye"); if (head) head.innerHTML = `<svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>Au Japon`;
+    const h = document.querySelector("#m-fr .h3a"); if (h) h.href = "/calendrier/#japon";
+    document.getElementById("dfr").innerHTML = jps.length ? jps.map((x, i) => { const d = new Date(x.date + "T12:00:00");
+      return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="jps" data-i="${i}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${x.cover ? `<img src="${escN(couvN(x.cover, 120))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span class="t"><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
+  }
   TP.fr = fr; TP.jp = jp;
   if (jp.length) { document.getElementById("d-jp").hidden = false;
     document.getElementById("djp").innerHTML = jp.map((x, i) => `<a class="djp-c" href="${escN(lien(x))}" data-tp="jp" data-i="${i}"><span><img src="${escN(couvN(x.cover, 400))}" alt="Couverture ${escN(x.series + tn(x.n))}" loading="lazy" onerror="this.closest('.djp-c').remove()"><em>${escN(fmtD(x.date))}</em></span><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></a>`).join(""); }
@@ -1003,7 +1018,7 @@ const comN = () => {
     const ago = d => { const m = Math.round((Date.now() - new Date(d)) / 6e4); return m < 60 ? Math.max(1, m) + " min" : m < 1440 ? Math.round(m / 60) + " h" : Math.round(m / 1440) + " j"; };
     document.getElementById("dcm").innerHTML = it.map(c => { const n = DT.news.find(x => x.id === c.id), u = linkN(n);
       return `<div class="dcm-r">${c.p ? `<img src="${esc2(c.p)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((c.n || "?").charAt(0).toUpperCase())}</i>`}<div><a class="dcm-t" href="${escN(u)}#commentaires"><b>${esc2(c.n)}</b><small>il y a ${ago(c.d)}</small><span>${esc2(c.t)}</span></a><a class="dcm-a" href="${escN(u)}">${esc2(n.fr || n.titre)}</a></div></div>`; }).join("");
-    document.getElementById("m-com").hidden = false;
+    if (VUE_N !== "magazines") document.getElementById("m-com").hidden = false;
   });
 };
 if (DT.news) comN(); else { const w = setInterval(() => { if (DT.news) { clearInterval(w); comN(); } }, 400); setTimeout(() => clearInterval(w), 15000); }
@@ -1072,6 +1087,9 @@ getN("/api/membres").then(m => {
 });
 // Mangakas : les 4 qui ont le plus de séries
 getN("/api/auteurs").then(j => {
+  // Page « En direct du Japon » : les mangakas dans la colonne, à la place des derniers commentaires (Will, 05/10/2026).
+  const sm = document.getElementById("smk");
+  if (sm) sm.innerHTML = ((j && j.authors) || []).slice().sort((x, y) => y.series.length - x.series.length).slice(0, 6).map(x => `<a href="/auteurs/${esc2(x.slug)}"><i lang="ja" data-i="${esc2((x.jp || x.name).charAt(0))}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.i">` : esc2((x.jp || x.name).charAt(0))}</i><span><b>${esc2(x.name)}</b><small>${esc2(x.series.slice(0, 2).map(s => s.fr || s.t).join(" · "))}${x.series.length > 2 ? " +" + (x.series.length - 2) : ""}</small></span></a>`).join("");
   const a = ((j && j.authors) || []).slice().sort((x, y) => y.series.length - x.series.length).slice(0, 4);
   document.getElementById("dmk").innerHTML = a.map(x => `<a href="/auteurs/${esc2(x.slug)}"><i lang="ja" data-i="${esc2((x.jp || x.name).charAt(0))}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" loading="lazy" onerror="this.parentNode.textContent=this.parentNode.dataset.i">` : esc2((x.jp || x.name).charAt(0))}</i><b>${esc2(x.name)}</b><small>${esc2(x.series.slice(0, 2).map(s => s.fr || s.t).join(" · "))}${x.series.length > 2 ? " +" + (x.series.length - 2) : ""}</small></a>`).join("");
 });
