@@ -108,7 +108,7 @@
     var titre = "Prochaines sorties", sous = I.fr + "En France";
     if (!it.length) { var t = new Date().toISOString().slice(0, 10); it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t; }).slice(0, 8); titre = "Prochaines sorties"; sous = I.fr + "En France"; }
     if (!it.length) return "";
-    return '<section class="mh-sec" aria-label="Sorties en France">' + head2(titre, sous, "/calendrier/#france", "Calendrier") + '<div class="mh-car">' + it.map(function (x) {
+    return '<section class="mh-sec" aria-label="Sorties en France">' + headGo("Prochaines sorties en France", "/calendrier/#france").replace('class="mh-h2"', 'class="mh-h2 mh-blue"') + '<div class="mh-car">' + it.map(function (x) {
       var t = (x.fr || x.series) + (x.n != null ? " T." + String(x.n).padStart(2, "0") : "");
       return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/") + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(dd(x.date)) + "</em></span><b>" + esc(t) + "</b></a>";
     }).join("") + "</div></section>";
