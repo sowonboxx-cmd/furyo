@@ -847,7 +847,7 @@ function workHTML(w, pos, showEra){
     ["Magazine", w.mag], ["Parution", w.years], ["Tomes (Japon)", w.volText],
     ["Édition française", frLabel(w)], ["Personnages", w.focus], ["Statut au Japon", w.stJP]
   ].filter(f => f[1]).map(f => `<div class="fact"><span class="mono">${f[0]}</span><span>${esc(f[1])}</span></div>`).join("");
-  const srcs = w.src.length ? `<div class="srcs">${w.src.map(s => `<a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.l)} ↗</a>`).join("")}</div>` : "";
+  const srcs = w.src.length ? `<div class="srcs">${w.src.map(s => `<a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.l)}<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>`).join("")}</div>` : "";
   const note = w.note ? `<p class="note${w.conf === "basse" ? "" : " calm"}">${esc(w.note)}</p>` : "";
   let jpShort = (w.jp || "").replace(/^(クローズ外伝|WORST外伝)\s*/, "").replace(/[\x00-\x7F]+/g, "").slice(0, 9);
   if (!jpShort) jpShort = era.kanji;

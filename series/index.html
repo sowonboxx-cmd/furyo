@@ -471,11 +471,11 @@ function ADAPT(s){
 const SRC_NOMS = { "asianwiki.com": "AsianWiki", "myanimelist.net": "MyAnimeList", "anilist.co": "AniList", "mydramalist.com": "MyDramaList", "netflix.com": "Netflix", "wikipedia.org": "Wikipedia", "eiga.com": "Eiga.com", "realsound.jp": "Real Sound", "animenewsnetwork.com": "Anime News Network", "allcinema.net": "allcinema" };
 const srcNom = u => { try { const h = new URL(u).hostname.replace(/^www\./, ""); return SRC_NOMS[h] || SRC_NOMS[h.split(".").slice(-2).join(".")] || h; } catch (e) { return "Source"; } };
 const adLinks = it => { const v = (it.vids || []).filter(x => vidSpec(x.u));
-  return it.src || v.length ? `<div class="wk-l">${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source :<b>${esc(srcNom(it.src))}</b>&nbsp;↗</a>` : ""}${v.map(x => `<button type="button" data-vid="${vidSpec(x.u)}">▶ Bande-annonce${x.l ? " " + x.l : ""}</button>`).join("")}</div>` : ""; };
+  return it.src || v.length ? `<div class="wk-l">${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source :<b>${esc(srcNom(it.src))}</b><svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}${v.map(x => `<button type="button" data-vid="${vidSpec(x.u)}">▶ Bande-annonce${x.l ? " " + x.l : ""}</button>`).join("")}</div>` : ""; };
 const adItem = (it, court) => `<div class="wk-it"><b>${esc(it.t)}${it.y ? `<em>${it.y}</em>` : ""}</b>${!court && it.d ? `<p>${esc(it.d.charAt(0).toUpperCase() + it.d.slice(1))}</p>` : ""}${adLinks(it)}</div>`;
 function adHTML(ad){
   return ad.map(c => c.mere
-    ? `<div class="wk-mere"><h3 class="wk-mh">Adaptations de la série d'origine · ${esc(shown(c.mere))}${c.mere.visible ? ` <a href="/series/${esc(c.mere.slug)}">Voir la fiche ↗</a>` : ""}</h3>${c.cats.map(k => `<div class="wk-cat"><h4>${k.label}</h4>${k.items.map(it => adItem(it, true)).join("")}</div>`).join("")}</div>`
+    ? `<div class="wk-mere"><h3 class="wk-mh">Adaptations de la série d'origine · ${esc(shown(c.mere))}${c.mere.visible ? ` <a href="/series/${esc(c.mere.slug)}">Voir la fiche<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}</h3>${c.cats.map(k => `<div class="wk-cat"><h4>${k.label}</h4>${k.items.map(it => adItem(it, true)).join("")}</div>`).join("")}</div>`
     : `<div class="wk-cat"><h3>${c.label}</h3>${c.items.map(it => adItem(it, false)).join("")}</div>`).join("");
 }
 // Fenêtre vidéo (bande-annonce) : la vidéo ne se charge qu'à l'ouverture.
@@ -488,12 +488,12 @@ function vidOpen(spec){
   if (window.FG_CONSENT && !FG_CONSENT.video()) {
     const d = document.createElement("div"); d.className = "vid"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Bande-annonce");
     d.innerHTML = `<div class="vid-in vid-ask"><p>Cette bande-annonce est hébergée par ${nom}, qui dépose ses propres cookies.</p>
-      <button type="button" class="vid-ok" data-vok="${spec}">Accepter et lire</button><a href="${page}" target="_blank" rel="noopener">Ouvrir sur ${nom} ↗</a><button type="button" data-vclose>Fermer</button></div>`;
+      <button type="button" class="vid-ok" data-vok="${spec}">Accepter et lire</button><a href="${page}" target="_blank" rel="noopener">Ouvrir sur ${nom}<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a><button type="button" data-vclose>Fermer</button></div>`;
     document.body.appendChild(d); document.documentElement.style.overflow = "hidden"; return;
   }
   const d = document.createElement("div"); d.className = "vid"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Bande-annonce");
   d.innerHTML = `<div class="vid-in"><div class="vid-f"><iframe src="${src}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Bande-annonce"></iframe></div>
-    <div class="vid-b"><a href="${page}" target="_blank" rel="noopener">Ouvrir sur ${nom} ↗</a><button type="button" data-vclose>Fermer</button></div></div>`;
+    <div class="vid-b"><a href="${page}" target="_blank" rel="noopener">Ouvrir sur ${nom}<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a><button type="button" data-vclose>Fermer</button></div></div>`;
   document.body.appendChild(d); document.documentElement.style.overflow = "hidden";
 }
 // Vidéo reconnue : « yt:ID » (YouTube) ou « dm:ID » (Dailymotion), sinon "".
@@ -501,7 +501,7 @@ function vidSpec(u){ const y = ytId(u); if (y) return "yt:" + y; const m = Strin
 function vidClose(){ const d = document.querySelector(".vid"); if (d) d.remove(); document.documentElement.style.overflow = ""; }
 function ytId(u){ const m = String(u).match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
 function ytHTML(t){ const id = ytId(t.url); if (!id) return "";
-  return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube ↗</a>`; }
+  return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>`; }
 // Onglet d'arrivée : /series/<nom>#news ouvre directement les news (liens des posts « sortie de tome »), idem #info, #ad.
 const HASH_TAB = ["syn", "info", "ex", "news", "ad"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "";
 let TAB = HASH_TAB || "syn", ASC = true, HASH_DONE = false;
@@ -617,7 +617,7 @@ function adCard(it, k, s){
   return `<article class="fx-ad"><div class="fx-poster">${poster}</div><div class="fx-adm">
     <h4 class="fx-adt" title="${esc(it.t)}">${esc(it.t)}</h4>
     ${d ? `<p class="fx-add">${esc(d)}</p>` : ""}
-    <div class="fx-adf">${it.y ? `<span class="fx-y">${esc(it.y)}</span>` : ""}<span class="fx-bt">${v.map(x => `<button type="button" data-vid="${vidSpec(x.u)}" aria-label="Bande-annonce${x.l ? " " + esc(x.l) : ""}">▶ ${v.length > 1 && x.l ? esc(x.l) : "Bande-annonce"}</button>`).join("")}${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Fiche ↗</a>` : ""}</span></div>
+    <div class="fx-adf">${it.y ? `<span class="fx-y">${esc(it.y)}</span>` : ""}<span class="fx-bt">${v.map(x => `<button type="button" data-vid="${vidSpec(x.u)}" aria-label="Bande-annonce${x.l ? " " + esc(x.l) : ""}">▶ ${v.length > 1 && x.l ? esc(x.l) : "Bande-annonce"}</button>`).join("")}${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Fiche<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}</span></div>
   </div></article>`;
 }
 function adPanel(ad, s){
@@ -627,7 +627,7 @@ function adPanel(ad, s){
   if (!groups.length) return `<p class="fx-none">Aucune adaptation pour l'instant.</p>`;
   const g = groups.find(x => x.id === AD_K) || groups[0];
   const sub = groups.length > 1 ? `<div class="fx-sub">${groups.map(x => `<button type="button" data-adk="${esc(x.id)}" aria-pressed="${x === g}">${esc(x.label)}${x.mere ? ` <em>· ${esc(x.sub)}</em>` : ""}<small>${x.items.length}</small></button>`).join("")}</div>` : "";
-  const mereNote = g.mere ? `<p class="fx-mere">Adaptations de la série d'origine, ${esc(shown(g.mere))}.${g.mere.visible ? ` <a href="/series/${esc(g.mere.slug)}">Voir sa fiche ↗</a>` : ""}</p>` : "";
+  const mereNote = g.mere ? `<p class="fx-mere">Adaptations de la série d'origine, ${esc(shown(g.mere))}.${g.mere.visible ? ` <a href="/series/${esc(g.mere.slug)}">Voir sa fiche<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}</p>` : "";
   return sub + mereNote + `<div class="fx-ads">${g.items.map(it => adCard(it, g.label, s)).join("")}</div>`;
 }
 function panel(s, pubFR, pubJP, eds, ad){
@@ -638,13 +638,13 @@ function panel(s, pubFR, pubJP, eds, ad){
     const MC = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
     const dd = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return `${x.getDate()} ${MC[x.getMonth()]} ${x.getFullYear()}`; };
     return `<div class="fx-news">${n.map(it => `<details class="fx-nw"><summary><span class="fx-nwm"><span class="fx-nwc" style="${it.catC ? `background:${it.catC};color:#000` : ""}">${esc(it.cat)}</span>${it.date ? `<time>${dd(it.date)}</time>` : ""}</span><b>${esc(it.titre)}</b><span class="fx-more">Lire la news</span></summary>
-      <div class="fx-nwb">${it.texte ? `<p>${esc(it.texte)}</p>` : ""}${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source : <b>${esc(it.srcName || "officielle")}</b> ↗</a>` : ""}</div></details>`).join("")}</div>`;
+      <div class="fx-nwb">${it.texte ? `<p>${esc(it.texte)}</p>` : ""}${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source : <b>${esc(it.srcName || "officielle")}</b><svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}</div></details>`).join("")}</div>`;
   }
   if (TAB === "ad") return adPanel(ad, s);
   const cover = p => { const t = eds.filter(e => e.pays === p).flatMap(e => e.tomes).filter(t => t.cover).sort((a, b) => (a.n ?? 999) - (b.n ?? 999))[0]; return t ? couv(t.cover, 400) : (s.cover1 ? couv(s.cover1, 400) : ""); };
   if (TAB === "ex") {
     return `<div class="fx-ex">${[["France", s.extraitFR, "Extrait français", "Les premières pages en VF"], ["Japon", s.extraitJP, "Extrait japonais", "試し読み · en VO"]].map(([p, u, l, d]) => u
-      ? `<a class="fx-exb" href="${esc(u)}" target="_blank" rel="noopener">${cover(p) ? `<img src="${esc(cover(p))}" alt="" loading="lazy">` : ""}<span><b>${l}</b><em>${FLAGS[p]}${d}</em></span><i aria-hidden="true">↗</i></a>`
+      ? `<a class="fx-exb" href="${esc(u)}" target="_blank" rel="noopener">${cover(p) ? `<img src="${esc(cover(p))}" alt="" loading="lazy">` : ""}<span><b>${l}</b><em>${FLAGS[p]}${d}</em></span><i aria-hidden="true"><svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></i></a>`
       : `<span class="fx-exb off"><span><b>${l}</b><em>${FLAGS[p]}Non disponible</em></span></span>`).join("")}</div>`;
   }
   if (TAB === "info") {
