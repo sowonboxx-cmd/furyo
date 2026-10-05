@@ -5,6 +5,8 @@
 import { text, date, rel, num, queryAll, cached } from "../../lib/notion.js";
 import { categorie, categoriesDe } from "../../lib/categories.js";
 import { sourceName } from "../../lib/source.js";
+import { credits, estFR } from "../../lib/credit.js";
+const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
@@ -19,7 +21,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
   // Pas de reconstruction forcée pour Will (elle rendait les pages news lentes) : le back-office vide le cache à chaque changement.
-  return cached(request, waitUntil, "/api/news?v=4", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=5", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -28,8 +30,11 @@ export async function onRequestGet({ env, request, waitUntil }) {
     const series = {};
     await Promise.all(ids.map(async id => {
       const p = (await page(env.NOTION_TOKEN, id))?.properties || {};
-      series[id] = { t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), editeurFR: text(p["Éditeur Français"]) };
+      series[id] = { t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), editeurFR: text(p["Éditeur Français"]),
+        scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), pubJP: text(p["Éditeur Japonais"]), pubFR: text(p["Éditeur Français"]) };
     }));
+    // Noms japonais des mangakas (une seule requête sur la base Auteurs) pour les crédits des images.
+    const auteurs = ids.length ? (await queryAll(env.NOTION_TOKEN, { ...AUTEURS }).catch(() => [])).map(a => ({ name: text(a.properties["Auteur"]), jp: text(a.properties["Nom japonais"]) })).filter(a => a.name && a.jp) : [];
     const items = rows.map(r => {
       const p = r.properties || {};
       const champ = text(p["Champ concerné"]), prop = text(p["Proposition"]), val = text(p["Valeur proposée"]), src = text(p["Source officielle"]);
@@ -56,6 +61,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         src, srcName: sourceName(src),
         // Vidéo (trailer, PV) jouée dans la page de la news : propriété « Vidéo », sinon un lien YouTube de « Valeur proposée ».
         video: text(p["Vidéo"]) || (val.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}\S*/) || [])[0] || "",
+        // Crédit de l'image (Will, 05/10/2026) : en français pour une news française, en japonais sinon.
+        credit: sid ? (c => estFR([cat, ...autres]) ? c.fr : c.jp)(credits(s, auteurs)) : "",
         _sid: sid, _n: m ? Number(m[1] || m[2]) : null, _pays: /-jp$/.test(cat.k) ? "Japon" : "France",
       };
     });

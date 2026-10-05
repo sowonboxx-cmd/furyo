@@ -17,6 +17,8 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:Inter,system-
 a{color:inherit}
 [hidden]{display:none!important}
 .na{max-width:680px;margin:0 auto;padding-bottom:60px}
+/* Crédit de l'image (©), généré automatiquement (Will, 05/10/2026) */
+.cr{position:absolute;z-index:3;right:12px;top:12px;max-width:70%;font:600 10px/1.25 Inter,system-ui,sans-serif;letter-spacing:.01em;color:rgba(255,255,255,.8);text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cr.b{top:auto;bottom:6px;right:7px;font-size:9px;max-width:92%}
 .na-hero{position:relative;height:min(52.7vh,408px);overflow:hidden;background:var(--ink-3)}
 .na-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 15%}
 .na-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(35,35,37,0) 35%,var(--ink) 100%)}
@@ -204,7 +206,7 @@ a{color:inherit}
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '">' : "") +
-      '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a>' +
+      '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a>' + (N.cover && N.credit ? '<span class="cr" lang="' + (/^©[^ ]/.test(N.credit) ? "ja" : "fr") + '">' + esc(N.credit) + "</span>" : "") +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
       '<div class="na-body"><span class="na-meta">' + esc(dLong(N.date) || "") + "</span>" +
       '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
@@ -291,7 +293,7 @@ a{color:inherit}
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     var pos = N.pos == null ? 0 : N.pos;
-    root.innerHTML = '<div class="nd-hero' + (N.cover ? "" : " noimg") + '">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1600)) + '" alt="Image de la news : ' + esc(titre) + '" style="object-position:center ' + pos + '%">' : "") +
+    root.innerHTML = '<div class="nd-hero' + (N.cover ? "" : " noimg") + '">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1600)) + '" alt="Image de la news : ' + esc(titre) + '" style="object-position:center ' + pos + '%">' + (N.credit ? '<span class="cr">' + esc(N.credit) + "</span>" : "") : "") +
       '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' +
       '<div class="nd-tx"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
       (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div></div>" +

@@ -5,6 +5,7 @@
 // Seules les news publiées sont acceptées. Résultat gardé en cache 10 minutes.
 import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
 import { estVisible } from "../../lib/site.js";
+import { credits } from "../../lib/credit.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
@@ -22,7 +23,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return json({ error: "NOTION_TOKEN manquant" }, 503);
   const id = nid(new URL(request.url).searchParams.get("id"));
   if (!/^[0-9a-f]{32}$/.test(id)) return json({ error: "id invalide" }, 400);
-  return cached(request, waitUntil, "/api/actu?v=2&id=" + id, 600, async () => {
+  return cached(request, waitUntil, "/api/actu?v=3&id=" + id, 600, async () => {
     const T = env.NOTION_TOKEN;
     const n = await page(T, id);
     if (!n || text(n.properties["Statut"]) !== "Publié sur le site") return { serie: null, dernier: null, auteurs: [] };
@@ -77,6 +78,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       univers: univ, enCours: enCours.filter(t => t !== text(p["SERIES"])), relation: text(p["Relation"]),
       x: /x\.com|twitter\.com/.test(twSerie) ? twSerie : "",
     };
+    serie.credit = credits(serie, auteurs);
     return { serie, dernier, auteurs };
   });
 }

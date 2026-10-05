@@ -6,7 +6,10 @@
 <title>FuryoGang</title>
 <meta name="description" content="Au cœur des mangas les plus sombres du Japon. Furyō, bōsōzoku, yakuza, crime, violence.">
 <meta name="theme-color" content="#232325">
-<style>html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}/* Champs en 16 px minimum : sinon iPhone zoome quand on touche le champ */
+<style>
+/* Crédit de l'image (©), généré automatiquement (Will, 05/10/2026) */
+.cr{position:absolute;z-index:3;right:12px;top:12px;max-width:70%;font:600 10px/1.25 Inter,system-ui,sans-serif;letter-spacing:.01em;color:rgba(255,255,255,.8);text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cr.b{top:auto;bottom:6px;right:7px;font-size:9px;max-width:92%}
+html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}/* Champs en 16 px minimum : sinon iPhone zoome quand on touche le champ */
 input,select,textarea{font-size:16px!important}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -601,7 +604,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=27"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=29" defer></script>
+<script src="/site/home-m.js?v=30" defer></script>
 <div class="page">
 
 
@@ -698,7 +701,7 @@ function heroN(it) {
   // Image en 16:9 sur toute la largeur ; le cadrage vertical se règle dans le back-office (0 = haut).
   const t = it.fr || it.titre, img = couvN(it.cover, 1200), pos = it.pos == null ? 0 : it.pos;
   return `<article class="dh${img ? "" : " noimg"}" data-id="${escN(it.id)}"><a class="dh-a" href="${escN(linkN(it))}">` +
-    (img ? `<img class="dh-img" src="${escN(img)}" alt="Image de la news : ${escN(t)}" style="object-position:center ${pos}%">` : "") +
+    (img ? `<img class="dh-img" src="${escN(img)}" alt="Image de la news : ${escN(t)}" style="object-position:center ${pos}%">${it.credit ? `<span class="cr">${escN(it.credit)}</span>` : ""}` : "") +
     `<span class="dh-tx"><span class="dh-date">${escN(relN(it.date))}</span><div class="dm">${catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>")}</div><h2>${escN(t)}</h2>${it.jp ? `<span class="dh-jp" lang="ja">${escN(it.jp)}</span>` : ""}<p>${escN(it.texte)}</p></span></a>${actsN(it)}</article>`;
 }
 function rowN(it) {

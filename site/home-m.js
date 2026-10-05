@@ -68,7 +68,7 @@
   // et les actions (vues, j'aime, signet, commentaires) dans l'image.
   function heroH(it) {
     var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
-    return '<article class="mh-hx">' + (it.cover ? '<img src="' + esc(couv(it.cover, 1000)) + '" alt="" fetchpriority="high">' : "") +
+    return '<article class="mh-hx">' + (it.cover ? '<img src="' + esc(couv(it.cover, 1000)) + '" alt="" fetchpriority="high">' + (it.credit ? '<span class="cr">' + esc(it.credit) + "</span>" : "") : "") +
       '<a class="mh-hxa" href="' + esc(link(it)) + '" aria-label="' + esc(it.fr || it.titre) + '"></a>' +
       '<div class="mh-hxt"><span class="mh-hxp">' + cs.map(function (t) { return '<span style="background:' + t[2] + '">' + esc(t[1]) + "</span>"; }).join("") + "</span>" +
       "<h2>" + esc(it.fr || it.titre) + "</h2><em>" + esc(dd(it.date)) + "</em>" + acts(it) + "</div></article>";

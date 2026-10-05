@@ -46,7 +46,9 @@ button{font:inherit;color:inherit}
 /* En-tête : petite couverture à gauche, infos à droite, fond uni du site */
 .head{display:grid;grid-template-columns:114px minmax(0,1fr);gap:14px;margin-top:12px;align-items:start}
 @media (min-width:720px){.head{grid-template-columns:246px minmax(0,1fr);gap:28px;margin-top:28px}}
-.main-cv{width:100%;aspect-ratio:5/7;border-radius:8px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
+/* Crédit de la couverture (©), généré automatiquement (Will, 05/10/2026) */
+.cr{position:absolute;z-index:3;right:12px;top:12px;max-width:70%;font:600 10px/1.25 Inter,system-ui,sans-serif;letter-spacing:.01em;color:rgba(255,255,255,.8);text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cr.b{top:auto;bottom:6px;right:7px;font-size:9px;max-width:92%}
+.main-cv{position:relative;width:100%;aspect-ratio:5/7;border-radius:8px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
 @media (min-width:720px){.main-cv{border-radius:14px}}
 .main-cv img{width:100%;height:100%;object-fit:cover;display:block}
 .main-cv.zoom{cursor:zoom-in}
@@ -117,7 +119,7 @@ li.t[data-ti]{cursor:pointer}
 /* Ordinateur : compteur centré au-dessus de la couverture, en grand */
 
 .tb-in{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;min-height:0;flex:1;justify-content:center}
-.tb-cv{height:min(66vh,760px);aspect-ratio:5/7;max-width:100%;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.tb-cv{position:relative;height:min(66vh,760px);aspect-ratio:5/7;max-width:100%;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center;box-shadow:0 18px 50px rgba(0,0,0,.6)}
 .tb-cv img{width:100%;height:100%;object-fit:cover;display:block}
 .tb-t,.tb-ds{width:calc(min(66vh,760px) * 5 / 7);max-width:100%}
 .tb-t{margin:14px 0 0;font-family:var(--f-display);font-weight:700;font-size:26px;text-transform:uppercase;text-align:left}
@@ -406,8 +408,9 @@ function mainCover(s, eds){
   const first = p => eds.filter(e => e.pays === p).flatMap(e => e.tomes).filter(t => t.cover).sort((a, b) => (a.n ?? 999) - (b.n ?? 999))[0];
   const any = eds.flatMap(e => e.tomes).find(t => t.cover);
   const c = (first("France") || first("Japon"))?.cover || s.cover1 || any?.cover;
+  const cr = s.credit ? (first("France") ? s.credit.fr : s.credit.jp) : "";
   const ph = `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`;
-  return c ? `<img src="${couv(c, 720)}" alt="" fetchpriority="high" decoding="async" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">` : ph;
+  return c ? `<img src="${couv(c, 720)}" alt="" fetchpriority="high" decoding="async" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">${cr ? `<span class="cr b">${esc(cr)}</span>` : ""}` : ph;
 }
 // Statut par pays, en texte : drapeau + « en cours », « terminé », « en pause », « abandonné »…
 // Statut avec une majuscule : « En cours », « Terminé », « Annoncé »…
@@ -701,7 +704,8 @@ function tlShow(i){
   const { serie: s } = DATA, other = PAYS === "France" ? "Japon" : "France";
   // Seulement la date du pays affiché (France ou Japon), sans drapeau : plus clair.
   const date = t => t && t.date ? `<p class="tb-d"><span>${esc(dTxt(t))}</span></p>` : "";
-  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+  const cr = x.t.cover && s.credit ? (PAYS === "France" ? s.credit.fr : s.credit.jp) : "";
+  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}">${cr ? `<span class="cr b">${esc(cr)}</span>` : ""}` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
     <p class="tb-t">${esc(tLab(x.t))}${x.t.titre && x.t.n != null ? ` <em>${esc(x.t.titre)}</em>` : ""}</p>
     <div class="tb-ds">${date(x.t)}</div>`;
   document.getElementById("tb-c").textContent = `${i + 1} / ${TL.length}`;

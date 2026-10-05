@@ -7,6 +7,7 @@ import { estVisible, FILTRE_PUBLIER } from "../../lib/site.js";
 import { isAdmin } from "../../lib/admin.js";
 import { sourceName } from "../../lib/source.js";
 import { categorie } from "../../lib/categories.js";
+import { credits } from "../../lib/credit.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
@@ -130,6 +131,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
       return { id: nid(r.id), cat: c.nom, catC: c.c, date: (r.created_time || "").slice(0, 10) || date(q["Date de la news"]), titre: prop.replace(/^\s*(licence\s*fr|news|couverture dévoilée)\s*:\s*/i, ""), texte: text(q["Résumé site"]), src: text(q["Source officielle"]), srcName: sourceName(text(q["Source officielle"])) };
     });
     const noLib = u => /bookwalker|cmoa|ebookjapan|amazon/i.test(u) ? "" : u;
+    // Crédits des couvertures (Japon / France), générés à partir des auteurs et des éditeurs.
+    const auRows = (await Promise.all(rel(p["Auteurs"]).slice(0, 4).map(a => page(env.NOTION_TOKEN, a).catch(() => null)))).filter(Boolean);
+    serie.credit = credits(serie, auRows.map(a => ({ name: text(a.properties["Auteur"]), jp: text(a.properties["Nom japonais"]) })));
     serie.breves = bRows.slice(0, 12).map(r => { const q = r.properties || {};
       return { date: date(q["Date de sortie"]), mag: text(q["Magazine"]), num: text(q["Numéro"]), ch: num(q["Chapitre"]), statut: text(q["Statut"]),
         fin: list(q["Mise en avant"]).includes("Dernier chapitre"), read: noLib(text(q["Lecture en ligne"])), lien: noLib(text(q["Page de la série"]) || text(q["Lien du numéro"])) };
