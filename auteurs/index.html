@@ -44,6 +44,8 @@ h1{margin:18px 0 4px;font-family:var(--f-display);font-weight:700;font-size:clam
 /* Fiche auteur */
 .hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;margin-top:18px}
 .hero .av{width:84px;height:84px;font-size:34px}
+.av{overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}
 .hero h1{margin:0}
 .jp{color:var(--paper-2);font-size:16px}
 .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -77,6 +79,8 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const app = document.getElementById("app");
 let DATA = [];
 const initial = a => esc((a.jp || a.name || "?").trim().charAt(0));
+// Rond de l'auteur : sa photo si la base en a une, sinon l'initiale (aussi si l'image ne charge pas).
+const avatar = (a, eager) => `<span class="av" lang="ja" data-i="${initial(a)}">${a.photo ? `<img src="${esc(a.photo)}" alt="${esc(a.name)}" ${eager ? "" : 'loading="lazy" '}onerror="this.parentNode.textContent=this.parentNode.dataset.i">` : initial(a)}</span>`;
 const slugNow = () => decodeURIComponent(location.pathname.replace(/^\/auteurs\/?/, "").replace(/\/$/, ""));
 
 function listView(){
@@ -88,7 +92,7 @@ function listView(){
   const draw = () => {
     const v = q.value.trim().toLowerCase();
     const l = DATA.filter(a => !v || (a.name + " " + a.jp).toLowerCase().includes(v));
-    grid.innerHTML = l.map(a => `<li><a class="a-card" href="/auteurs/${a.slug}"><span class="av" lang="ja">${initial(a)}</span><span><b>${esc(a.name)}</b><small lang="ja">${esc(a.jp)}</small></span><span class="count">${a.series.length}<small>série${a.series.length > 1 ? "s" : ""}</small></span></a></li>`).join("") || `<li class="empty">Aucun auteur trouvé.</li>`;
+    grid.innerHTML = l.map(a => `<li><a class="a-card" href="/auteurs/${a.slug}">${avatar(a)}<span><b>${esc(a.name)}</b><small lang="ja">${esc(a.jp)}</small></span><span class="count">${a.series.length}<small>série${a.series.length > 1 ? "s" : ""}</small></span></a></li>`).join("") || `<li class="empty">Aucun auteur trouvé.</li>`;
   };
   q.addEventListener("input", draw); draw();
 }
@@ -99,7 +103,7 @@ function authorView(a){
   document.title = `${a.name} · FuryoGang`;
   const links = [["x","X"],["ig","Instagram"],["site","Site officiel"],["mu","MangaUpdates"],["anilist","AniList"]].filter(([k]) => a[k]).map(([k, l]) => `<a href="${esc(a[k])}" target="_blank" rel="noopener">${l}<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>`).join("");
   const series = a.series.slice().sort((x, y) => (y.y1 || 0) - (x.y1 || 0));
-  app.innerHTML = `<div class="hero"><span class="av" lang="ja">${initial(a)}</span><div><h1>${esc(a.name)}</h1>${a.jp ? `<div class="jp" lang="ja">${esc(a.jp)}</div>` : ""}<div class="pills">${a.roles.map(r => `<span class="pill">${esc(r)}</span>`).join("")}</div></div></div>
+  app.innerHTML = `<div class="hero">${avatar(a, true)}<div><h1>${esc(a.name)}</h1>${a.jp ? `<div class="jp" lang="ja">${esc(a.jp)}</div>` : ""}<div class="pills">${a.roles.map(r => `<span class="pill">${esc(r)}</span>`).join("")}</div></div></div>
     <div class="links">${links}${a.members ? `<span class="lock">Réseaux réservés aux membres</span>` : ""}</div>
     <h2 class="sec">Séries (${series.length})</h2>
     <ul class="works">${series.map(s => {
