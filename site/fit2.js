@@ -6,8 +6,8 @@
 (function () {
   var BRK = /^(sur|de|du|des|d'|d’|à|au|aux|pour|dans|avec|qui|que|qu'|qu’|par|en|et|est|sont|chez|sous|lié|liée|liés|dont|où|après|avant|depuis|entre|vers|contre|sans|mais|car|ou|grâce|selon|lors|via|comme)$/i;
   var STOP = /^(le|la|les|l'|l’|un|une|des|du|de|d'|d’|à|au|aux|sur|pour|dans|avec|par|en|et|ou|qui|que|son|sa|ses|leur|leurs|ce|cette|ces|est|a|partir|près|cours|travers|lors|auprès|afin|fin|début|suite|jusqu'|jusqu’|plus|moins|très|tout|toute)$/i;
-  // Expressions qu'on ne coupe pas : « tueur à gages », « à partir de », « à cause de »…
-  var LIE = /^(gages|partir|cause|propos|travers|peine|nouveau|venir|suivre|côté|part|fond|jour|main|mort|vie|feu|bout)$/i;
+  // Expressions qu'on ne coupe pas : « tueur à gages », « bateau à vapeur »… (couper avant « à partir de » reste permis)
+  var LIE = /^(gages|feu|vapeur|bord)$/i;
   function sent(t) {
     var raw = String(t || "").replace(/\s+/g, " ").trim().split(/(?<=[.!?…]["»”)]?)\s+(?=[A-ZÀ-ÖØ-Þ«"0-9])/), out = [];
     raw.forEach(function (x) { if (out.length && out[out.length - 1].length < 25) out[out.length - 1] += " " + x; else out.push(x); });
@@ -28,7 +28,7 @@
         var last = w[i - 1].replace(/[,;:]+$/, ""), nat = /,$/.test(w[i - 1]) || (BRK.test(w[i]) && !(/^(à|de)$/i.test(w[i]) && LIE.test(w[i + 1] || "")));
         if (!nat || STOP.test(last)) continue;
         var c = w.slice(0, i).join(" ").replace(/[\s,;:—–-]+$/, "") + ".";
-        if (fits(c)) best = c;
+        if (c.length >= 35 && fits(c)) best = c;
       }
       // Dernier recours : couper au dernier mot qui tient.
       for (var j = w.length - 1; j >= 2 && !best; j--) { if (STOP.test(w[j - 1].replace(/[,;:]+$/, ""))) continue; var c2 = w.slice(0, j).join(" ").replace(/[\s,;:—–-]+$/, "") + "."; if (fits(c2)) best = c2; }
