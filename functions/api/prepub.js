@@ -14,6 +14,7 @@ const MAG_LINK = {
   "Tonari no Young Jump": "https://tonarinoyj.jp/",
   "Comic Zenon": "https://comic-zenon.com/",
   "Big Comics": "https://bigcomics.jp/",
+  "Goraku": "https://www.nihonbungeisha.co.jp/goraku2",
 };
 
 export async function onRequestGet({ env, request, waitUntil }) {
@@ -36,6 +37,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
         hl: list(p["Mise en avant"]), note: text(p["Annonce du magazine"]),
       };
     });
+    // Seulement des liens d'éditeurs : les librairies numériques (BookWalker, Cmoa, eBookJapan) servent à la veille, pas au site (Will, 05/10/2026).
+    const libr = /bookwalker\.jp|cmoa\.jp|ebookjapan|amazon\./i;
+    for (const it of items) { if (libr.test(it.link)) it.link = ""; if (libr.test(it.read)) it.read = ""; if (libr.test(it.page)) it.page = ""; }
     // Lien de lecture et page officielle d'une série : repris d'un numéro précédent s'il manque sur le nouveau (la base garde l'historique).
     const k = it => (it.entry || "").split(" · ")[0].toLowerCase();
     const keep = {};
