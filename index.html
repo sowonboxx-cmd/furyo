@@ -824,7 +824,7 @@ function tpDraw(){
     ${x.cover ? `<img src="${escN(couvN(x.cover, 700))}" alt="Couverture ${escN(titre)}">` : '<span class="tp-ph"></span>'}
     <button type="button" class="tp-nav" data-tpn="1" aria-label="Suivant"${n > 1 ? "" : " hidden"}>${TPI.next}</button></div>
     <div class="tp-t"><h2>${escN(titre)}</h2>${x.n != null ? `<b>Tome ${escN(x.n)}</b>` : ""}<p>${escN(d)}${x.pub ? " · " + escN(x.pub) : ""}</p></div>
-    <div class="tp-a"><button type="button" class="tp-btn" data-tpf>${TPI.heart}<span>Suivre la série</span></button>${x.fiche ? `<a class="tp-btn blue" href="/series/${escN(tpSlug(x))}">Voir la fiche</a>` : '<span class="tp-btn off">Fiche bientôt</span>'}<button type="button" class="tp-btn" data-tpc>${TPI.cart}<span>Ajouter au panier</span></button></div></div>`;
+    <div class="tp-a"><button type="button" class="tp-btn" data-tpf>${TPI.heart}<span>Suivre la série</span></button>${x.fiche ? `<a class="tp-btn blue" href="/series/${escN(tpSlug(x))}">Voir la fiche</a>` : '<span class="tp-btn off">Fiche bientôt</span>'}<button type="button" class="tp-btn" data-tpc>${TPI.cart}<span>Au panier</span></button></div></div>`;
   box.hidden = false; document.body.style.overflow = "hidden";
   if (/^https?:$/.test(location.protocol)) getN("/api/follow?s=" + encodeURIComponent(tpSlug(x))).then(j => { const b = box.querySelector("[data-tpf]"); if (b && j && j.ok) { TP.membre = j.membre; tpFol(b, j.on); } });
 }
