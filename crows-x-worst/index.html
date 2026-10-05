@@ -492,6 +492,13 @@ footer{padding-block:0 32px!important;margin-top:-28px}
 .hero h1 .home-link{display:inline-flex;align-items:center;justify-content:center}
 .hero h1 .x{display:inline-flex;align-items:center;vertical-align:0!important;line-height:1;height:.72em;font-size:.62em!important;padding-inline:.1em!important;transform:translateY(-.07em)}
 /* En-tête de la chronologie : ni Validation ni back-office */
+.cvg{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px;font-family:Inter,system-ui,sans-serif}.cvg[hidden]{display:none}
+.cvg-b{position:relative;width:min(420px,100%);background:#1C1C1E;border-radius:22px;padding:24px 22px 20px;color:#F5F5F7;display:flex;flex-direction:column;gap:8px}
+.cvg-b small{font:700 12px Inter,sans-serif;color:#4CD07D;text-transform:uppercase;letter-spacing:.06em}
+.cvg-b h2{margin:0;font:700 32px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}
+.cvg-b p{margin:4px 0 10px;font-size:15px;line-height:1.5;color:#CFCFD4}
+.cvg-go{height:48px;border:0;border-radius:24px;background:#305887;color:#fff;font:700 15px Inter,sans-serif;cursor:pointer}
+.cvg-x{position:absolute;right:12px;top:10px;width:36px;height:36px;border:0;border-radius:18px;background:#38383B;color:#fff;font-size:22px;line-height:1;cursor:pointer}
 .sh-adm{display:none!important}
 /* En-tête aligné sur le contenu de la page : logo au milieu, loupe et avatar à droite (Will, 05/10/2026) */
 @media (min-width:720px){.sh .sh-in{max-width:880px;padding:0 16px;position:relative}.sh .sh-logo{position:absolute;left:50%;transform:translateX(-50%);margin:0}}
@@ -1295,7 +1302,22 @@ function cvZoomAt(f, cx, cy){
   const s = Math.max(0.08, Math.min(2.5, CV.s * f)); f = s / CV.s;
   CV.x = cx - (cx - CV.x) * f; CV.y = cy - (cy - CV.y) * f; CV.s = s; cvApply();
 }
-function cvOpen(){
+// Carte réservée aux membres (Will, 05/10/2026) : sinon, une fenêtre invite à se connecter avec Google (gratuit, un clic).
+let CV_ME = null;
+const cvMe = () => CV_ME || (CV_ME = fetch("/api/auth/me", { credentials: "same-origin" }).then(r => r.ok ? r.json() : null).catch(() => null));
+function cvGate(){
+  let g = document.getElementById("cvGate");
+  if (!g) {
+    g = document.createElement("div"); g.id = "cvGate"; g.className = "cvg";
+    g.innerHTML = '<div class="cvg-b" role="dialog" aria-label="Carte réservée aux membres"><button type="button" class="cvg-x" aria-label="Fermer">×</button><small>Carte interactive</small><h2>Réservée aux membres</h2><p>La carte dynamique de l\'univers CROWS × WORST est réservée aux membres. Connecte-toi avec ton compte Google : c\'est gratuit et ça prend un seul clic.</p><button type="button" class="cvg-go">Se connecter avec Google</button></div>';
+    document.body.appendChild(g);
+    g.addEventListener("click", e => { if (e.target === g || e.target.closest(".cvg-x")) g.hidden = true; if (e.target.closest(".cvg-go")) { g.hidden = true; if (window.FG_LOGIN) FG_LOGIN(); } });
+  }
+  g.hidden = false;
+}
+async function cvOpen(){
+  const me = /^https?:$/.test(location.protocol) ? await cvMe() : { user: 1 };
+  if (!(me && me.user)) { cvGate(); return; }
   if (!CV.built) cvBuild();
   CV.el.hidden = false; document.body.classList.add("cv-on"); cvFit(); CV.el.focus();
   try { history.replaceState(history.state, "", location.pathname + "#carte"); } catch (e) {}

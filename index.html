@@ -800,7 +800,7 @@ getN("/api/calendrier").then(j => {
   // Seulement le mois en cours (Will, 05/10/2026) : la date n'affiche pas le mois.
   const mois = t.slice(0, 7), M = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][+t.slice(5, 7) - 1];
   const fr = all.filter(x => x.pays === "France" && x.date >= t && x.date.slice(0, 7) === mois).slice(0, 4);
-  const eye = document.querySelector("#m-fr .m-eye"); if (eye) eye.lastChild.textContent = "En France · " + M;
+
   document.getElementById("dfr").innerHTML = fr.length ? fr.map(x => { const d = new Date(x.date + "T12:00:00");
     return `<a class="dfr-r" href="${escN(lien(x))}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${x.cover ? `<img src="${escN(couvN(x.cover, 120))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span class="t"><b>${escN((x.fr || x.series) + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
