@@ -27,6 +27,8 @@ button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--paper);outline-offset:2px}
 [hidden]{display:none!important}
 .page{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:calc(env(safe-area-inset-top,0px) + 14px) 48px}
+/* Ordinateur : même largeur que l'en-tête et l'accueil (logo et avatar alignés sur le contenu), Will 05/10/2026 */
+@media (min-width:980px){.page{max-width:1240px;padding-inline:20px}}
 .top{display:flex;align-items:center;gap:12px}
 .round{width:44px;height:44px;margin-left:-10px;display:grid;place-items:center;text-decoration:none;flex:none;color:var(--paper)}
 @media (min-width:980px){.top{display:none}}
