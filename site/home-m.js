@@ -242,7 +242,7 @@
   function ble() {
     return '<div class="mh-ble"><span class="bulle">T’as lu, t’as aimé&nbsp;? Alors aboule.</span><img src="/img/jinnai.png" alt="" loading="lazy" class="no-sk">' +
       '<div class="tx"><span class="tag">Message du gang</span><p>Si t’es encore là, autant filer <span>ton blé.</span></p>' +
-      (PAYPAL ? '<a class="pp" href="' + PAYPAL + '" target="_blank" rel="noopener">PayPal ↗</a>' : '<button type="button" class="pp" onclick="this.textContent=\'Bientôt dispo\'">PayPal ↗</button>') + "</div></div>";
+      (PAYPAL ? '<a class="pp" href="' + PAYPAL + '" target="_blank" rel="noopener">PayPal <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>' : '<button type="button" class="pp" onclick="this.textContent=\'Bientôt dispo\'">PayPal <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></button>') + "</div></div>";
   }
   // Chargement au fur et à mesure (10 par 10)
   var io = null;
