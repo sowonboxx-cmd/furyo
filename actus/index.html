@@ -33,6 +33,11 @@ a{color:inherit}
 .na-vid{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}.na-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .na-links{display:flex;flex-wrap:wrap;gap:8px}
 .na-fol{height:38px;padding:0 15px;border:0;border-radius:19px;display:inline-flex;align-items:center;gap:7px;background:#000;color:var(--paper);font:600 13.5px Inter,sans-serif;cursor:pointer}.na-fol svg{width:16px;height:16px}.na-fol.on{color:#AEAEB2}
+.na-three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.na-b{height:44px;border:0;border-radius:22px;background:#000;color:var(--paper);display:flex;align-items:center;justify-content:center;gap:6px;font:700 12.5px Inter,sans-serif;text-decoration:none;cursor:pointer;padding:0 8px;white-space:nowrap}
+.na-b svg{width:16px;height:16px;flex:none}.na-b.blue{background:#305887;color:#fff}.na-b.on{color:#AEAEB2}
+.na-src{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:-4px}.na-src span{font:600 12.5px Inter,sans-serif;color:var(--paper-3)}
+.na-src a{display:inline-flex;align-items:center;gap:4px;border-bottom:1px solid #48484C;padding-bottom:2px;font:600 13px Inter,sans-serif;color:#CFCFD4;text-decoration:none}.na-src .arr{width:12px;height:12px}
 .na-links a{height:38px;padding:0 15px;border-radius:19px;display:inline-flex;align-items:center;background:#000;text-decoration:none;font-size:13.5px;font-weight:600}
 .na-acts{display:flex;align-items:center;gap:22px;padding:6px 0;color:var(--paper-3);font-size:13.5px;font-weight:600}
 .na-acts button,.na-acts span{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:inherit;font:inherit;padding:6px 0;cursor:pointer}
@@ -203,8 +208,9 @@ a{color:inherit}
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
       '<div class="na-body"><span class="na-meta">' + esc(dLong(N.date) || "") + "</span>" +
       '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
-      '<div class="na-links"><a href="/series/' + esc(slug(N.titre)) + '">Fiche ' + esc(titre) + "</a>" +
-        (CTX && CTX.serie ? '<button type="button" class="na-fol' + (FOLLOW ? " on" : "") + '" data-soon="suivre">' + (FOLLOW ? HEART_ON + "Série suivie" : I.heart + "Suivre la série") + "</button>" : "") + (N.src ? '<a href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(N.srcName || "officielle") + "<svg class='arr' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true' style='display:inline-block;vertical-align:-1px;margin-left:3px'><path d='M8 16 16 8M9.5 8H16v6.5'/></svg></a>" : "") + "</div>" +
+      '<div class="na-three"><button type="button" class="na-b' + (FOLLOW ? " on" : "") + '" data-soon="suivre">' + (FOLLOW ? HEART_ON + "Série suivie" : I.heart + "Suivre la série") + "</button>" +
+        '<a class="na-b blue" href="/series/' + esc(CTX && CTX.serie && CTX.serie.slug || slug(N.titre)) + '">Voir la fiche</a><button type="button" class="na-b" data-soon="liste">' + I.book + "Ma liste</button></div>" +
+        (N.src ? '<div class="na-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") +
       acts() + preview() + "</div>";
   }
 
@@ -326,6 +332,7 @@ a{color:inherit}
     if (e.target.closest("[data-open]")) { sheet(); return; }
     var so = e.target.closest("[data-soon]");
     if (so) { if (!member()) { if (window.FG_LOGIN) FG_LOGIN(); return; }
+      if (so.dataset.soon === "suivre" && !(CTX && CTX.serie)) return;
       if (so.dataset.soon === "suivre" && CTX && CTX.serie) { fetch("/api/follow", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ s: CTX.serie.slug }) }).then(function (r) { return r.json(); }).then(function (j) { if (j.ok && j.stored) { FOLLOW = j.on; render(); } }); return; }
       so.textContent = "Bientôt disponible"; return; }
     if (e.target.closest("#na-share")) { var u = location.href; if (navigator.share) navigator.share({ title: document.title, url: u }).catch(function () {}); else if (navigator.clipboard) navigator.clipboard.writeText(u); return; }
