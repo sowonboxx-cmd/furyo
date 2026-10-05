@@ -275,7 +275,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dh.noimg .dh-tx{position:relative;padding-top:28px}
 .dh-date{font:600 13.5px Inter,sans-serif;color:#CFCFD4;margin-bottom:-2px}.dh h2{margin:0;font:700 46px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
 .dh-jp{font-size:14px;color:#CFCFD4;margin-top:-2px}
-.dh p{margin:6px 0 0;color:#E5E5EA;font-size:17px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;max-width:72ch}
+.dh p{margin:6px 0 0;color:#E5E5EA;font-size:17px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;max-width:72ch}
 .dh .da{padding:6px 20px 12px;margin:0}
 .dh .da button,.dh .da a,.dh .da span:not(.sp){color:#CFCFD4}
 /* Liste */
@@ -705,7 +705,7 @@ function heroN(it) {
   const t = it.fr || it.titre, img = couvN(it.cover, 1200), pos = it.pos == null ? 0 : it.pos;
   return `<article class="dh${img ? "" : " noimg"}" data-id="${escN(it.id)}"><a class="dh-a" href="${escN(linkN(it))}">` +
     (img ? `<img class="dh-img" src="${escN(img)}" alt="Image de la news : ${escN(t)}" style="object-position:center ${pos}%">${it.credit ? `<span class="cr">${escN(it.credit)}</span>` : ""}` : "") +
-    `<span class="dh-tx"><span class="dh-date">${escN(relN(it.date))}</span><div class="dm">${catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>")}</div><h2>${escN(t)}</h2>${it.jp ? `<span class="dh-jp" lang="ja">${escN(it.jp)}</span>` : ""}<p data-full="${escN(it.texte)}" data-l="2" data-first="1">${escN(it.texte)}</p></span></a>${actsN(it)}</article>`;
+    `<span class="dh-tx"><span class="dh-date">${escN(relN(it.date))}</span><div class="dm">${catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>")}</div><h2>${escN(t)}</h2>${it.jp ? `<span class="dh-jp" lang="ja">${escN(it.jp)}</span>` : ""}<p data-full="${escN(it.accroche || it.texte)}" data-l="1" data-first="1">${escN(it.accroche || it.texte)}</p></span></a>${actsN(it)}</article>`;
 }
 // Descriptions (Will, 05/10/2026) : jamais de « … » au milieu d'une phrase. On garde les phrases entières qui tiennent
 // en 2 lignes (la première phrase peut aller jusqu'à 3 lignes) ; la grande news n'affiche que sa première phrase.
@@ -716,17 +716,25 @@ const SENT = t => {
   return out;
 };
 function fitP(p){
-  const full = p.dataset.full || "", max = +p.dataset.l || 2, first = p.dataset.first === "1";
+  // Grande news : une seule ligne (l'« Accroche » de Notion, sinon la première phrase, coupée à une virgule si besoin).
+  // Fil : des phrases entières sur 3 lignes, la 3e jamais pleine ; à défaut 2 lignes pleines au minimum.
+  const full = p.dataset.full || "", max = +p.dataset.l || 3, first = p.dataset.first === "1";
   const s = SENT(full).map(x => x.trim()).filter(Boolean); if (!s.length) return;
-  const lh = parseFloat(getComputedStyle(p).lineHeight) || 22, fits = n => p.scrollHeight <= lh * n + 3;
   p.style.webkitLineClamp = "unset"; p.style.display = "block";
-  let k = 0; p.textContent = s[0];
-  if (!first) { while (k + 1 < s.length) { p.textContent = s.slice(0, k + 2).join(" "); if (fits(max)) k++; else { p.textContent = s.slice(0, k + 1).join(" "); break; } } }
-  if (fits(max + 1)) return;
-  // Première phrase trop longue : on la coupe à la dernière virgule qui tient, terminée par un point.
-  const parts = s[0].split(/,\s*/); let txt = "";
-  for (let i = 1; i < parts.length; i++) { const c = parts.slice(0, i).join(", ").replace(/[\s;:—-]+$/, "") + "."; p.textContent = c; if (fits(max)) txt = c; else break; }
-  if (txt) p.textContent = txt; else { p.textContent = s[0]; p.style.display = ""; p.style.webkitLineClamp = ""; }
+  const lh = parseFloat(getComputedStyle(p).lineHeight) || 22;
+  const lines = () => Math.round(p.scrollHeight / lh);
+  const fill = () => { const r = document.createRange(); r.selectNodeContents(p); const rs = r.getClientRects(), b = p.getBoundingClientRect(); return rs.length ? (rs[rs.length - 1].right - b.left) / p.clientWidth : 1; };
+  const ok = t => { p.textContent = t; const n = lines(); return n <= max && !(n === max && max > 1 && fill() > 0.85); };
+  const coupe = (base, phrase) => { const parts = phrase.split(/,\s*/); let best = ""; for (let i = 1; i < parts.length; i++) { const c = (base ? base + " " : "") + parts.slice(0, i).join(", ").replace(/[\s;:—-]+$/, "") + "."; if (ok(c)) best = c; else break; } return best; };
+  let best = "";
+  if (first) best = ok(s[0]) ? s[0] : coupe("", s[0]);
+  else {
+    for (let k = 1; k <= s.length; k++) { const t = s.slice(0, k).join(" "); if (ok(t)) best = t; else { p.textContent = t; if (lines() > max) break; } }
+    // Trop court (une seule ligne) : on complète avec le début de la phrase suivante, coupé à une virgule.
+    if (best) { p.textContent = best; if (lines() < 2) { const k2 = SENT(full).findIndex(x => !best.includes(x.trim())); const nx = k2 >= 0 ? SENT(full)[k2].trim() : ""; const c = nx ? coupe(best, nx) : ""; if (c) best = c; } }
+    else best = coupe("", s[0]);
+  }
+  if (best) p.textContent = best; else { p.textContent = full; p.style.display = ""; p.style.webkitLineClamp = ""; }
 }
 function fitN(root){ (root || document).querySelectorAll("p[data-full]").forEach(fitP); }
 addEventListener("resize", () => { clearTimeout(fitN.t); fitN.t = setTimeout(() => fitN(document.getElementById("feed")), 150); });
@@ -734,7 +742,7 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitN
 function rowN(it) {
   const t = it.fr || it.titre, img = couvN(it.cover, 360);
   return `<article class="dr" data-img data-id="${escN(it.id)}"><a class="dr-i" href="${escN(linkN(it))}" tabindex="-1">${img ? `<img src="${escN(img)}" alt="" loading="lazy" onload="${wideN}">` : "<span></span>"}</a>` +
-    `<div class="dr-b"><a class="dr-a" href="${escN(linkN(it))}">${metaN(it)}<h3>${escN(t)}</h3><p data-full="${escN(it.texte)}" data-l="2">${escN(it.texte)}</p></a>${actsN(it)}</div></article>`;
+    `<div class="dr-b"><a class="dr-a" href="${escN(linkN(it))}">${metaN(it)}<h3>${escN(t)}</h3><p data-full="${escN(it.texte)}" data-l="3">${escN(it.texte)}</p></a>${actsN(it)}</div></article>`;
 }
 function tabsN() {
   const n = k => (DT.news || []).filter(it => it.cat === k || (it.cats || []).some(c => c.k === k)).length;
