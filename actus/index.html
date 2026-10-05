@@ -344,7 +344,7 @@ body{background:#000}
     return '<section class="nd-box"><div class="nd-bh"><h2>Autres actualités</h2></div>' + o.map(function (it) {
       var c = (it.cats && it.cats[0]) || { nom: it.catNom || "News", c: it.catC || "#D4D4D8" };
       return '<a class="nd-o" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 160)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
-        '<span><i class="om"><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "</i><b>" + esc(it.fr || it.titre) + '</b><p data-full="' + esc(it.texte || "") + '">' + esc(it.texte || "") + "</p></span></a>";
+        '<span><i class="om"><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "</i><b>" + esc(it.fr || it.titre) + '</b><p data-full="' + esc(it.accroche || it.texte || "") + '">' + esc(it.texte || "") + "</p></span></a>";
     }).join("") + '<a class="nd-btn nd-more" href="/?vue=actus">Toutes les actualités</a></section>';
   }
   function comD() {

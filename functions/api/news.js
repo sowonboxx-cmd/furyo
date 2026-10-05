@@ -21,7 +21,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
   // Pas de reconstruction forcée pour Will (elle rendait les pages news lentes) : le back-office vide le cache à chaque changement.
-  return cached(request, waitUntil, "/api/news?v=7", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=8", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
