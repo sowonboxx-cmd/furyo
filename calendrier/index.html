@@ -226,7 +226,7 @@ function applyPays(){
 // Les images et polices du dessus finissent de charger après le premier placement : on se recale sur le mois en cours
 // tant que le visiteur n'a pas fait défiler lui-même (bug iPad : on voyait la fin de septembre, Will 05/10/2026).
 let moved = false;
-["wheel", "touchstart", "keydown", "mousedown"].forEach(ev => addEventListener(ev, () => { moved = true; }, { passive: true, once: true }));
+["wheel", "touchmove", "keydown"].forEach(ev => addEventListener(ev, () => { moved = true; }, { passive: true, once: true }));
 function settle(){ [200, 600, 1200, 2500].forEach(t => setTimeout(() => { if (!moved) goToday(); }, t)); }
 addEventListener("load", () => { if (!moved) goToday(); });
 // Titre sur deux lignes au plus : s'il dépasse, on le coupe avec « … » pour que le tome reste toujours visible.
@@ -247,7 +247,8 @@ function goToday(){
   // On s'arrête sur le titre du mois en cours : mois, nombre de sorties et « Aujourd'hui » visibles d'un coup.
   const sec = now.closest("section"), mo = sec && sec.querySelector(".month");
   // Si beaucoup de sorties sont déjà passées ce mois-ci, « Aujourd'hui » passe avant le titre du mois.
-  const el = mo && now.getBoundingClientRect().top - mo.getBoundingClientRect().top < innerHeight * 0.45 ? mo : now;
+  // Toujours calé pile sur le titre du mois en cours (Will, 05/10/2026), même si des sorties de ce mois sont déjà passées.
+  const el = mo || now;
   const bar = document.querySelector(".bar");
   // Sous l'en-tête du site et la barre Tout / Japon / France (toutes deux collées en haut), avec un peu d'air.
   const sh = document.getElementById("sh");
