@@ -198,7 +198,7 @@ a{color:inherit}
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '">' : "") +
-      '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a><button type="button" class="na-share" id="na-share" aria-label="Partager">' + I.share + "</button>" +
+      '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a>' +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
       '<div class="na-body"><span class="na-meta">' + esc([N.pub, dLong(N.date)].filter(Boolean).join(" · ")) + "</span>" +
       '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
