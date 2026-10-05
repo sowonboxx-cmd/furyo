@@ -421,6 +421,11 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .sc{display:flex;flex-direction:column}.sc-r{display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;align-items:center;padding:9px 0;border-top:1px solid #1C1C1E;text-decoration:none;color:inherit}.sc-r:first-child{border-top:0;padding-top:2px}
 .sc-r img,.sc-r .ph{width:42px;aspect-ratio:7/10;object-fit:cover;border-radius:6px;background:#38383B;display:block}
 .sc-r b{display:block;font:700 16px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sc-r small{font-size:12px;color:#98989D}.sc-r:hover b{text-decoration:underline}
+.sv{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#1C1C1E}.sv iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.sv-ok{position:absolute;inset:0;border:0;padding:0;background:none;cursor:pointer}.sv-ok img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85}
+.sv-p{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,.65);display:grid;place-items:center}
+.sv-ok em{position:absolute;left:8px;right:8px;bottom:8px;font:600 11.5px Inter,sans-serif;font-style:normal;color:#fff;text-shadow:0 1px 6px #000}
+.sv-t{display:block;margin:10px 0 4px;text-decoration:none;color:inherit}.sv-t b{display:block;font:700 18px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}.sv-t small{font-size:12px;color:#98989D}.sv-t:hover b{text-decoration:underline}
 /* ===== Accueil téléphone (site/home-m.js) ===== */
 .mh{display:none}
 @media (max-width:719px){
@@ -689,6 +694,16 @@ function tabsN() {
 const FLAG_FR = '<svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>';
 const FLAG_JP = '<svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>';
 const SIDE_CATS = [["licence-fr", "Nouvelles licences", "En France"], ["licence-jp", "Nouvelles séries", "Au Japon"], ["anime", "Anime", "Saisons, films et bandes-annonces"]];
+const ytId = u => (String(u || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/) || [])[1] || "";
+// Vidéo YouTube en lecture automatique et muette ; sans accord pour les cookies vidéo, une vignette qui demande l'accord au clic.
+function vidN(it) {
+  const id = ytId(it.video), t = it.fr || it.titre, lab = (it.cats || []).some(c => c.k === "bande-annonce") ? "Bande-annonce" : "Vidéo";
+  const ok = window.FG_CONSENT && FG_CONSENT.video();
+  const media = ok ? `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&playsinline=1&rel=0" title="${escN(t)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`
+    : `<button type="button" class="sv-ok" data-vok aria-label="Lire la vidéo"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span class="sv-p"><svg viewBox="0 0 24 24" width="22" height="22" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span><em>Lire la vidéo (accepte les cookies YouTube)</em></button>`;
+  return `<div class="sv">${media}</div><a class="sv-t" href="${escN(linkN(it))}"><b>${escN(t)}</b><small>${lab} · ${escN(relN(it.date))}</small></a>`;
+}
+document.addEventListener("click", e => { if (e.target.closest("[data-vok]")) { if (window.FG_CONSENT) FG_CONSENT.accepter(); sideN(); } });
 function sideN() {
   const mode = !!(DT.all || VUE_N === "actus"), box = document.getElementById("m-cats"); if (!box) return;
   box.hidden = !mode;
@@ -696,12 +711,15 @@ function sideN() {
   if (!mode || !DT.news) return;
   const has = (it, k) => it.cat === k || (it.cats || []).some(c => c.k === k) || (k === "anime" && (it.cats || []).some(c => c.k === "bande-annonce"));
   const news = DT.news.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-  box.innerHTML = SIDE_CATS.map(([k, t, sub]) => {
-    const l = news.filter(it => has(it, k)).slice(0, 4);
+  const html = SIDE_CATS.map(([k, t, sub]) => {
+    let l = news.filter(it => has(it, k)).slice(0, 4), vid = "";
+    // Anime : la vidéo de la news la plus récente qui en a une, lue directement, sans le son (Will, 05/10/2026).
+    if (k === "anime") { const v = l.find(it => ytId(it.video)); if (v) { vid = vidN(v); l = l.filter(it => it !== v); } }
     const fl = k === "licence-fr" ? FLAG_FR : k === "licence-jp" ? FLAG_JP : "";
     return `<section class="box"><div class="m-head"><div><small class="m-eye">${fl}${escN(sub)}</small><h3><a class="h3a" href="/?cat=${k}" data-cat-go="${k}">${escN(t)}</a></h3></div></div>` +
-      (l.length ? `<div class="sc">${l.map(it => `<a class="sc-r" href="${escN(linkN(it))}">${it.cover ? `<img src="${escN(couvN(it.cover, 160))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span><b>${escN(it.fr || it.titre)}</b><small>${escN(relN(it.date))}</small></span></a>`).join("")}</div>` : '<p class="m-note">Rien de nouveau pour l\'instant.</p>') + "</section>";
+      vid + (l.length ? `<div class="sc">${l.map(it => `<a class="sc-r" href="${escN(linkN(it))}">${it.cover ? `<img src="${escN(couvN(it.cover, 160))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span><b>${escN(it.fr || it.titre)}</b><small>${escN(relN(it.date))}</small></span></a>`).join("")}</div>` : vid ? "" : '<p class="m-note">Rien de nouveau pour l\'instant.</p>') + "</section>";
   }).join("");
+  if (box.dataset.h !== html) { box.innerHTML = html; box.dataset.h = html; }
 }
 function renderN() {
   setTimeout(sideN, 0);
