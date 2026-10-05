@@ -291,7 +291,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .da svg{width:19px;height:19px;flex:none}
 .da .a-like.on{color:#FF4D67}.da .a-like.on svg{fill:currentColor}
 .da .a-book.on{color:#4C9BFF}.da .a-book.on svg{fill:currentColor}
-.dmore{display:flex;align-items:center;justify-content:center;gap:10px;height:54px;border:0;width:100%;color:#F5F5F7;font:600 15px Inter,system-ui,sans-serif;cursor:pointer;padding:0 16px}
+a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-content:center;gap:10px;height:54px;border:0;width:100%;color:#F5F5F7;font:600 15px Inter,system-ui,sans-serif;cursor:pointer;padding:0 16px}
 .dmore:hover{background:#1C1C1E}.dmore small{color:#8E8E93;font-size:13px;font-weight:600}
 .dn{text-align:center;padding:28px 20px}.dn p{margin:0;color:#CFCFD4;font-size:14.5px}.dn b{display:block;color:#F5F5F7;font:700 24px Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;margin-bottom:6px}
 .dn-go{margin-top:14px;height:44px;padding:0 22px;border:0;border-radius:22px;background:#305887;color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
@@ -323,6 +323,61 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dg-t i{font-style:normal;height:22px;padding:0 8px;border-radius:7px;background:#E5483A;color:#fff;font:700 11px/22px Inter,sans-serif;text-transform:uppercase}
 .m-all{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;margin-top:12px;border-radius:22px;background:#38383B;color:#F5F5F7;font:700 14px Inter,sans-serif;text-decoration:none}
 .m-all small{color:#98989D;font-weight:600;font-size:12.5px}.m-all:hover{background:#48484C}
+/* Accueil ordinateur, sections (Will, 05/10/2026) */
+.m-eye{display:flex;align-items:center;gap:6px;font:600 12px Inter,sans-serif;color:#98989D;margin-bottom:4px}.fl{width:18px;height:12px;border-radius:2px;flex:none}
+#m-fr .m-head{align-items:flex-end}
+.dfr{display:flex;flex-direction:column}
+.dfr-r{display:grid;grid-template-columns:44px 40px minmax(0,1fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none;color:inherit}
+.dfr-r:first-child{border-top:0;padding-top:2px}
+.dfr-r .d{text-align:center;font:600 10.5px Inter,sans-serif;color:#98989D;text-transform:uppercase}.dfr-r .d b{display:block;font:700 26px/1 Antonio,"Arial Narrow",sans-serif;color:#F5F5F7}
+.dfr-r img,.dfr-r .ph{width:40px;height:56px;border-radius:6px;object-fit:cover;background:#38383B;display:block}
+.dfr-r .t{min-width:0}.dfr-r .t b{display:block;font:700 16px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dfr-r .t small{font-size:12px;color:#98989D}.dfr-r:hover .t b{text-decoration:underline}
+.jp .t a{color:inherit;text-decoration:none}.jp .t a:hover{text-decoration:underline}
+.dsec{margin-top:28px}
+.dsh{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.dsh small{display:flex;align-items:center;gap:6px;font:600 12px Inter,sans-serif;color:#98989D;margin-bottom:4px}
+.dsh h2{margin:0;font:700 30px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.dsh>a{font:600 14px Inter,sans-serif;color:#4C9BFF;text-decoration:none}.dsh>span{font:600 12.5px Inter,sans-serif;color:#98989D}
+.djp{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}.djp-c:nth-child(n+7){display:none}
+.djp-c{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;min-width:0}
+.djp-c span{position:relative;display:block;border-radius:12px;overflow:hidden;background:#000}
+.djp-c img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;transition:transform .25s}.djp-c:hover img{transform:scale(1.03)}
+.djp-c em{position:absolute;left:8px;bottom:8px;height:24px;padding:0 8px;border-radius:7px;background:rgba(0,0,0,.82);font:700 12px/24px Inter,sans-serif;font-style:normal;color:#F5F5F7}
+.djp-c b{font:700 16px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.djp-c small{font-size:12px;color:#98989D;margin-top:-4px}
+.dduo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;margin-top:20px}
+.dcxw{position:relative;display:block;min-height:230px;border-radius:20px;overflow:hidden;background:#000;color:#F5F5F7;text-decoration:none;isolation:isolate}
+.dcxw .map{position:absolute;inset:0 30% 0 0;background:url(/img/carte-cxw.jpg) 0 0/auto 100% repeat-x;opacity:.4;-webkit-mask-image:linear-gradient(90deg,#000 55%,transparent);mask-image:linear-gradient(90deg,#000 55%,transparent)}
+@media (prefers-reduced-motion:no-preference){.dcxw .map{animation:dMap 45s linear infinite}}
+@keyframes dMap{to{background-position:-646px 0}}
+.dcxw::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.78) 0,rgba(0,0,0,.15) 70%);z-index:0}
+.dcxw .chars{position:absolute;right:-6px;bottom:0;display:flex;align-items:flex-end;height:100%;z-index:1}
+.dcxw .chars img{height:96%;width:auto;margin-left:-50px}
+.dcxw .t{position:absolute;z-index:2;left:26px;bottom:22px;display:flex;flex-direction:column;gap:6px}
+.dcxw small{font:700 12px Inter,sans-serif;color:#4CD07D;text-transform:uppercase;letter-spacing:.06em}
+.dcxw b{font:700 54px/.92 Antonio,"Arial Narrow",sans-serif}.dcxw b i{color:#E5483A;font-style:normal;margin:0 .12em}
+.dcxw em{font-style:normal;font-size:14px;color:#CFCFD4;max-width:240px}
+.dav{display:flex;flex-direction:column;gap:12px;text-decoration:none;color:inherit}
+.dav .dsh{margin:0}.dav-n{display:flex;align-items:baseline;gap:8px}.dav-n b{font:700 60px/1 Antonio,"Arial Narrow",sans-serif}.dav-n span{font-size:15px;color:#CFCFD4}
+.dav-g{display:grid;grid-template-columns:repeat(15,1fr);gap:4px}.dav-g i{height:16px;border-radius:4px;background:#2C2C2F}.dav-g i.on{background:#4CD07D}
+.dav .m-note{margin:0}.dav .m-note b{color:#F5F5F7}
+.dmb-r{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.dmb-r a{display:flex;flex-direction:column;align-items:center;gap:6px;color:#CFCFD4;text-decoration:none;font-size:12.5px;min-width:0}
+.dmb-r img,.dmb-r i{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#38383B;display:grid;place-items:center;font:700 20px Inter,sans-serif;font-style:normal;color:#fff}
+.dmb-r span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dmb-r span.ph{width:44px;height:10px;border-radius:5px;background:#38383B}
+.dmb-go{width:100%;height:44px;margin-top:16px;border:0;border-radius:22px;background:#305887;color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
+.dmk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.dmk a{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:16px;background:#1C1C1E;color:#F5F5F7;text-decoration:none;text-align:center;min-width:0}
+.dmk a:hover{background:#2A2A2D}
+.dmk i{width:58px;height:58px;border-radius:50%;background:#38383B;display:grid;place-items:center;font:700 24px "Noto Sans JP",sans-serif;font-style:normal}
+.dmk b{font:700 15px/1.05 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}.dmk small{font-size:11.5px;color:#98989D;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#d-ecran{margin-top:20px}
+.dfilms{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:14px}
+.df{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.df img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:10px;background:#1C1C1E;display:block}
+.df b{font:700 14.5px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.df small{font-size:11.5px;color:#98989D}
+@media (max-width:1099px){.dfilms{grid-template-columns:repeat(5,minmax(0,1fr))}.djp{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:979px){.dduo{grid-template-columns:1fr}}
 /* ===== Accueil téléphone (site/home-m.js) ===== */
 .mh{display:none}
 @media (max-width:719px){
@@ -484,19 +539,9 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
     </main>
 
     <aside class="side" id="side">
-      <section class="box mod" id="m-av" data-slot="0">
-        <div class="m-head"><h3>Avancement</h3><a class="m-sub" href="/avancement/">Tout voir</a></div>
-        <a class="av" href="/avancement/" aria-label="Voir l'avancement du site">
-          <span class="av-n"><b id="av-on">50</b><span>/ <span id="av-tot">603</span> séries</span><em id="av-pct">8,3 %</em></span>
-          <span class="av-bar"><i id="av-bar" style="width:8.3%"></i></span>
-          <span class="av-kpi"><span><b id="av-wk">+0</b>cette semaine</span><span><b id="av-left">553</b>à faire</span><span><b id="av-prep">0</b>prêtes à publier</span></span>
-        </a>
-        <p class="m-note" id="av-last">De nouvelles fiches chaque semaine.</p>
-      </section>
-      <section class="box mod" id="m-membres" data-slot="0">
-        <div class="m-head"><h3>Derniers membres</h3><span class="m-sub" id="mbr-n">Le gang</span></div>
-        <ul class="mbr" id="mbr"><li><span class="m-note">Chargement…</span></li></ul>
-        <a class="mbr-cta" href="/membres/">Voir tous les membres<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <section class="box" id="m-fr">
+        <div class="m-head"><div><small class="m-eye"><svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>En France</small><h3>Prochaines sorties</h3></div><a class="m-sub" href="/calendrier/#france">Calendrier</a></div>
+        <div class="dfr" id="dfr"><p class="m-note">Chargement…</p></div>
       </section>
       <section class="box mod" id="m-jp" data-slot="0">
         <div class="m-head"><h3>Direct Japon</h3><a class="m-sub" href="/?vue=magazines">Tout voir</a></div>
@@ -508,87 +553,26 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
         </ul>
         <p class="m-note">Prochain Monthly Champion le 6 oct. · <a href="https://bigcomics.jp/episodes/d4caca9984016">Lire Kujou no Taizai en ligne (JP) ↗</a></p>
       </section>
-
-      <section class="box mod" id="m-top" data-slot="1">
-        <div class="m-head"><h3>Populaires</h3><span class="m-sub">Votes de la semaine</span></div>
-        <ol class="rank" id="rank">
-          <li data-v="412"><span class="ph" lang="ja">グリコ</span><span class="t">WORST Gaiden Guriko<small>Akita Shoten · en cours</small></span><button class="vote" aria-pressed="false" aria-label="Voter pour WORST Gaiden Guriko"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4 3 15h6v5h6v-5h6z"/></svg><b>412</b></button></li>
-          <li data-v="388"><span class="ph" lang="ja">ダスト</span><span class="t">Dustland<small>Akita Shoten · en cours</small></span><button class="vote" aria-pressed="false" aria-label="Voter pour Dustland"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4 3 15h6v5h6v-5h6z"/></svg><b>388</b></button></li>
-          <li data-v="301"><span class="ph" lang="ja">我妻涼</span><span class="t">QP Azuma Ryou - Desperado<small>Shōnen Gahōsha · terminé</small></span><button class="vote" aria-pressed="false" aria-label="Voter pour QP Azuma Ryou - Desperado"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4 3 15h6v5h6v-5h6z"/></svg><b>301</b></button></li>
-          <li data-v="257"><span class="ph" lang="ja">ゼットン</span><span class="t">WORST Gaiden Zetton Sensei<small>Akita Shoten · en cours</small></span><button class="vote" aria-pressed="false" aria-label="Voter pour WORST Gaiden Zetton Sensei"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4 3 15h6v5h6v-5h6z"/></svg><b>257</b></button></li>
-          <li data-v="198"><span class="ph" lang="ja">鳳仙花</span><span class="t">Crows Gaiden Housenka<small>Akita Shoten · terminé</small></span><button class="vote" aria-pressed="false" aria-label="Voter pour Crows Gaiden Housenka"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4 3 15h6v5h6v-5h6z"/></svg><b>198</b></button></li>
-        </ol>
-        <p class="m-note">Exemple · un vote par série et par semaine</p>
-      </section>
-
-      <section class="box mod" id="m-lic" data-slot="2">
-        <div class="m-head"><h3>Nouvelles licences</h3><span class="m-sub">En France</span></div>
-        <ul class="lic">
-          <li><span class="pub">Kana</span><span class="t">CROWS<small>Dark Kana · réédition annoncée · exemple</small></span></li>
-          <li><span class="pub">Panini</span><span class="t">WORST<small>Reprise de la série · exemple</small></span></li>
-          <li><span class="pub">Éditeur</span><span class="t">QP<small>Inédit en France · exemple</small></span></li>
-        </ul>
-      </section>
-
-      <section class="box mod" id="m-ann" data-slot="3">
-        <div class="m-head"><h3>Annonces</h3><span class="m-sub">Japon</span></div>
-        <ul class="ann">
-          <li><time>2026</time><span>Dustland, nouvelle série de Hiroshi Takahashi dans l'univers de CROWS et WORST</span></li>
-          <li><time>Exemple</time><span>Un nouveau spin-off de WORST annoncé dans le magazine</span></li>
-          <li><time>Exemple</time><span>Shinsōban d'une série culte, 1er tome le mois prochain</span></li>
-        </ul>
-      </section>
-
-      <section class="box mod" id="m-auteurs" data-slot="4">
-        <div class="m-head"><h3>Mangakas</h3><a class="m-sub" href="/auteurs/">Tous →</a></div>
-        <ul class="authors" id="authors">
-          <li><a href="/auteurs/hayato-komainu"><span class="av" lang="ja">狛</span><span class="t">Hayato Komainu<small lang="ja">狛犬はやと · Barefaced</small></span></a></li>
-          <li><a href="/auteurs/hiroshi-takahashi"><span class="av" lang="ja">高</span><span class="t">Hiroshi Takahashi<small lang="ja">高橋ヒロシ · CROWS, WORST, QP</small></span></a></li>
-          <li><a href="/auteurs/"><span class="av" lang="ja">鈴</span><span class="t">Dai Suzuki<small>Exemple · Zetton Sensei</small></span></a></li>
-        </ul>
-      </section>
-
-      <section class="box mod" id="m-ecran" data-slot="4">
-        <div class="m-head"><h3>À l'écran</h3><span class="m-sub">Films, drama, OAV, TV</span></div>
-        <div class="ecran-tabs" role="group" aria-label="Type d'adaptation">
-          <button data-e="all" aria-pressed="true">Tout</button><button data-e="Film" aria-pressed="false">Films</button><button data-e="Drama" aria-pressed="false">Drama</button><button data-e="OAV" aria-pressed="false">OAV</button><button data-e="TV" aria-pressed="false">TV spé</button>
-        </div>
-        <ul class="ecran" id="ecran">
-          <li data-e="Film"><span class="yr">2007</span><span class="t">Crows Zero<small>Film · Takashi Miike</small></span><span class="kind">Film</span></li>
-          <li data-e="Film"><span class="yr">2009</span><span class="t">Crows Zero II<small>Film · Takashi Miike</small></span><span class="kind">Film</span></li>
-          <li data-e="Drama"><span class="yr">2011</span><span class="t">QP<small>Drama · Nippon TV · 12 épisodes</small></span><span class="kind">Drama</span></li>
-          <li data-e="Film"><span class="yr">2014</span><span class="t">Crows Explode<small>Film</small></span><span class="kind">Film</span></li>
-          <li data-e="Film"><span class="yr">2019</span><span class="t">HiGH&amp;LOW THE WORST<small>Film · crossover</small></span><span class="kind">Film</span></li>
-          <li data-e="OAV"><span class="yr">—</span><span class="t">Exemple d'OAV<small>À remplir depuis Notion</small></span><span class="kind">OAV</span></li>
-          <li data-e="TV"><span class="yr">—</span><span class="t">Exemple de TV spécial<small>À remplir depuis Notion</small></span><span class="kind">TV</span></li>
-        </ul>
-      </section>
-
-      <section class="box mod" id="sorties" data-slot="5">
-        <div class="m-head"><h3>Cette semaine</h3><a class="m-sub" href="/calendrier/">Calendrier →</a></div>
-        <ul class="rel">
-          <li><span class="d">06<small>Oct.</small></span><span class="t">WORST Gaiden Guriko<small>Tome 40 · exemple</small></span><span class="flag">JP</span></li>
-          <li><span class="d">08<small>Oct.</small></span><span class="t">WORST Gaiden Zetton Sensei<small>Tome 19 · exemple</small></span><span class="flag">JP</span></li>
-          <li><span class="d">09<small>Oct.</small></span><span class="t">Série au catalogue français<small>Tome 3 · exemple</small></span><span class="flag">FR</span></li>
-        </ul>
-      </section>
-
-      <a class="box promo mod" id="m-chrono" data-slot="6" href="/crows-x-worst/" target="_blank" rel="noopener">
-        <img src="/crows-x-worst/img/char-hana.png" alt="">
-        <h3>CROWS × WORST</h3>
-        <p>Toutes les œuvres de l'univers de Hiroshi Takahashi, dans l'ordre de lecture.</p>
-        <span class="go">Voir la chronologie →</span>
-      </a>
-
-      <section class="box mod shop" id="m-shop" data-slot="7">
-        <div class="m-head"><h3>Figurines &amp; goodies</h3><span class="m-sub">Boutique</span></div>
-        <div class="goods">
-          <a href="#" class="good"><img src="/crows-x-worst/img/char-boya.png" alt=""><span>Figurine Bōya<small>Exemple · bientôt</small></span></a>
-          <a href="#" class="good"><img src="/crows-x-worst/img/char-ishida.png" alt=""><span>Figurine Ishida<small>Exemple · bientôt</small></span></a>
-        </div>
-      </section>
     </aside>
   </div>
+
+  <!-- Sections pleine largeur (Will, 05/10/2026) : sorties au Japon en grandes couvertures, carte CROWS × WORST + base, membres + mangakas, à l'écran -->
+  <section class="dsec" id="d-jp" hidden>
+    <div class="dsh"><div><small><svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>Au Japon</small><h2>Prochaines sorties</h2></div><a href="/calendrier/#japon">Calendrier</a></div>
+    <div class="djp" id="djp"></div>
+  </section>
+  <div class="dduo">
+    <a class="dcxw" href="/crows-x-worst/" target="_blank" rel="noopener"><span class="map" aria-hidden="true"></span><span class="chars"><img src="/crows-x-worst/img/char-hana.png" alt=""><img src="/crows-x-worst/img/char-boya.png" alt=""></span><span class="t"><small>Carte interactive</small><b>CROWS<i>×</i>WORST</b><em>Toutes les œuvres de l'univers de Hiroshi Takahashi</em></span></a>
+    <a class="box dav" href="/avancement/" id="d-av"><div class="dsh"><div><h2>La base FuryoGang</h2></div><span>Mise à jour chaque semaine</span></div><div class="dav-n"><b id="dav-on">–</b><span id="dav-tot">fiches en ligne</span></div><div class="dav-g" id="dav-g"></div><p class="m-note" id="dav-last">De nouvelles fiches chaque semaine.</p></a>
+  </div>
+  <div class="dduo">
+    <section class="box" id="d-mbr"><div class="dsh"><div><small>Derniers membres</small><h2>Ils ont rejoint le gang</h2></div><a href="/membres/">Membres</a></div><div class="dmb" id="dmb"><p class="m-note">Chargement…</p></div></section>
+    <section class="box" id="d-mk"><div class="dsh"><div><h2>Mangakas</h2></div><a href="/auteurs/">Tous</a></div><div class="dmk" id="dmk"><p class="m-note">Chargement…</p></div></section>
+  </div>
+  <section class="box dsec" id="d-ecran">
+    <div class="dsh"><div><small>À l'écran</small><h2>Les films à voir absolument</h2></div></div>
+    <div class="dfilms"><figure class="df"><img src="/affiches/crows-zero.jpg" alt="Affiche de Crows Zero" loading="lazy"><figcaption><b>Crows Zero</b><small>Film · 2007</small></figcaption></figure><figure class="df"><img src="/affiches/crows-zero-2.jpg" alt="Affiche de Crows Zero II" loading="lazy"><figcaption><b>Crows Zero II</b><small>Film · 2009</small></figcaption></figure><figure class="df"><img src="/affiches/crows-explode.jpg" alt="Affiche de Crows Explode" loading="lazy"><figcaption><b>Crows Explode</b><small>Film · 2014</small></figcaption></figure><figure class="df"><img src="/affiches/high-low-the-worst.jpg" alt="Affiche de HiGH&amp;LOW THE WORST" loading="lazy"><figcaption><b>HiGH&amp;LOW THE WORST</b><small>Film · 2019</small></figcaption></figure><figure class="df"><img src="/affiches/the-fable-2019.jpg" alt="Affiche de The Fable" loading="lazy"><figcaption><b>The Fable</b><small>Film · 2019</small></figcaption></figure><figure class="df"><img src="/affiches/shinjuku-swan-2015.jpg" alt="Affiche de Shinjuku Swan" loading="lazy"><figcaption><b>Shinjuku Swan</b><small>Film · 2015</small></figcaption></figure><figure class="df"><img src="/affiches/hell-dogs-2022.jpg" alt="Affiche de Hell Dogs" loading="lazy"><figcaption><b>Hell Dogs</b><small>Film · 2022</small></figcaption></figure><figure class="df"><img src="/affiches/out-2023.jpg" alt="Affiche de OUT" loading="lazy"><figcaption><b>OUT</b><small>Film · 2023</small></figcaption></figure><figure class="df"><img src="/affiches/tokyo-revengers-2-destiny-2023.jpg" alt="Affiche de Tokyo Revengers 2" loading="lazy"><figcaption><b>Tokyo Revengers 2</b><small>Film · 2023</small></figcaption></figure><figure class="df"><img src="/affiches/yamikin-ushijima-kun-part-2-2014.jpg" alt="Affiche de Ushijima Part 2" loading="lazy"><figcaption><b>Ushijima Part 2</b><small>Film · 2014</small></figcaption></figure></div>
+  </section>
 </div>
 
 <script>
@@ -661,9 +645,11 @@ function renderN() {
   else if (DT.signets == null) html = note("Chargement de tes signets…");
   else list = news.filter(it => DT.signets.includes(it.id));
   if (list) {
-    const max = DT.all || DT.cat || DT.tab !== "toutes" ? list.length : 8;
+    const max = DT.all || DT.cat || DT.tab !== "toutes" ? list.length : 5;
     html = list.length ? list.slice(0, max).map((it, i) => i === 0 ? heroN(it) : rowN(it)).join("") : note(DT.tab === "signets" && !DT.cat ? "Aucun signet pour l'instant : clique sur l'icône signet d'une news pour la garder ici." : "Aucune actualité dans cette catégorie pour l'instant.");
+    // « Voir toutes les actualités » toujours présent sous les 5 news de l'accueil (Will, 05/10/2026).
     if (list.length > max) html += `<button type="button" class="box dmore" data-all>Voir toutes les actualités<small>${list.length - max} de plus</small></button>`;
+    else if (!DT.all && !DT.cat && DT.tab === "toutes" && list.length) html += `<a class="box dmore" href="/?vue=actus">Voir toutes les actualités</a>`;
     loadStatsN(list.slice(0, max));
   }
   feed.innerHTML = html;
@@ -769,65 +755,51 @@ function magsViewN() {
 }
 init();
 function init(){
-// Votes (maquette : compteur local)
-document.getElementById("rank").addEventListener("click", e => {
-  const b = e.target.closest(".vote"); if (!b) return;
-  const li = b.closest("li"), on = b.getAttribute("aria-pressed") !== "true";
-  b.setAttribute("aria-pressed", on); li.dataset.v = +li.dataset.v + (on ? 1 : -1); b.querySelector("b").textContent = li.dataset.v;
-});
-// À l'écran : filtre par type
-document.querySelector(".ecran-tabs").addEventListener("click", e => {
-  const b = e.target.closest("button"); if (!b) return;
-  document.querySelectorAll(".ecran-tabs button").forEach(x => x.setAttribute("aria-pressed", x === b));
-  document.querySelectorAll("#ecran li").forEach(li => li.hidden = b.dataset.e !== "all" && li.dataset.e !== b.dataset.e);
-});
-
-// Données en direct depuis Notion (sur le site seulement)
-const esc2 = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+if (!/^https?:$/.test(location.protocol)) return;
+const esc2 = escN, J = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
 const fmtD = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "";
-// Derniers membres inscrits (5 plus récents) avec leurs badges.
-{
-  const ago = d => { const m = Math.round((Date.now() - new Date(d)) / 6e4);
-    return m < 60 ? `il y a ${Math.max(1, m)} min` : m < 1440 ? `il y a ${Math.round(m / 60)} h` : m < 2880 ? "hier" : `il y a ${Math.round(m / 1440)} j`; };
-  const ul = document.getElementById("mbr");
-  fetch("/api/membres").then(r => r.ok ? r.json() : null).then(j => {
-    if (j && j.locked) {
-      // Pas connecté : il faut être membre pour voir les membres.
-      const n = j.total || 0; document.getElementById("mbr-n").textContent = `${n} membre${n > 1 ? "s" : ""}`;
-      ul.outerHTML = `<div class="mbr-lock" id="mbr">${[70, 55, 62].map(w => `<span><i></i><b style="width:${w}%"></b></span>`).join("")}<p>Réservé aux membres : connecte-toi pour découvrir qui fait partie du gang.</p></div>`;
-      const cta = document.querySelector(".mbr-cta"); if (cta) cta.outerHTML = `<button type="button" class="mbr-cta" onclick="window.FG_LOGIN && FG_LOGIN()">Se connecter pour voir les membres</button>`;
-      return;
-    }
-    if (!j || !j.items) throw 0;
-    const n = j.total || j.items.length; document.getElementById("mbr-n").textContent = `${n} membre${n > 1 ? "s" : ""}`;
-    const l = j.items.slice().sort((a, b) => new Date(b.inscrit) - new Date(a.inscrit)).slice(0, 5);
-    ul.innerHTML = l.map(m => `<li><a href="${m.slug ? "/membres/" + encodeURIComponent(m.slug) : "/membres/"}">${m.photo ? `<img src="${esc2(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="ph"></span>`}<span class="t">${esc2(m.pseudo || "Membre")}<small>n°${m.num ?? "?"} · ${ago(m.inscrit)}</small></span><span class="bs">${(m.badges || []).slice(0, 3).map(b => `<i title="${esc2(b.n)}" style="background:${b.c}22;color:${b.c}">${window.FG_BADGES ? FG_BADGES.icone(b) : ""}</i>`).join("")}</span></a></li>`).join("") || `<li><span class="m-note">Sois le premier à rejoindre le gang.</span></li>`;
-  }).catch(() => { ul.innerHTML = `<li><span class="m-note">Rejoins le gang en te connectant avec Google.</span></li>`; });
-}
-
-if (/^https?:$/.test(location.protocol)) {
-  fetch("/api/prepub").then(r => r.ok ? r.json() : null).then(j => {
-    if (!j || j.error || !j.items) return;
-    const ul = document.querySelector("#m-jp .jp"); if (!ul) return;
-    ul.innerHTML = j.items.slice(0, 5).map(it => `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${esc2(it.entry.split(" · ")[0])}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
-    const note = document.querySelector("#m-jp .m-note"); if (note) note.outerHTML = `<a class="m-all" href="/?vue=magazines">Voir tous les magazines<small>${j.items.length} chapitres</small></a>`;
-  }).catch(() => {});
-  fetch("/api/avancement").then(r => r.ok ? r.json() : null).then(j => {
-    if (!j || j.error || !j.total) return;
-    const nf = n => n.toLocaleString("fr-FR"), $ = id => document.getElementById(id);
-    $("av-on").textContent = nf(j.enLigne); $("av-tot").textContent = nf(j.total);
-    $("av-pct").textContent = j.pct.toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " %"; $("av-bar").style.width = j.pct + "%";
-    $("av-wk").textContent = "+" + j.semaine; $("av-left").textContent = nf(j.reste); $("av-prep").textContent = nf(j.enPreparation);
-    const last = (j.recentes || [])[0];
-    if (last) $("av-last").innerHTML = `Dernière fiche : <a href="/series/${esc2(last.slug)}">${esc2(last.fr || last.t)}</a> · n°${last.rang}`;
-  }).catch(() => {});
-  fetch("/api/auteurs").then(r => r.ok ? r.json() : null).then(j => {
-    if (!j || j.error || !j.authors || !j.authors.length) return;
-    const top = j.authors.slice().sort((a, b) => b.series.length - a.series.length).slice(0, 6);
-    document.getElementById("authors").innerHTML = top.map(a => `<li><a href="/auteurs/${a.slug}"><span class="av" lang="ja">${esc2((a.jp || a.name).charAt(0))}</span><span class="t">${esc2(a.name)}<small lang="ja">${esc2([a.jp, a.series.map(s => s.t).slice(0, 3).join(", ")].filter(Boolean).join(" · "))}</small></span></a></li>`).join("");
-  }).catch(() => {});
-}
-
+const tn = n => n == null ? "" : " T." + String(n).padStart(2, "0");
+// Prochaines sorties : en France dans la colonne (date, couverture, tome, éditeur), au Japon en grandes couvertures sous le fil.
+getN("/api/calendrier").then(j => {
+  const t = new Date().toLocaleDateString("sv"), all = (j && j.items) || [];
+  const lien = x => x.fiche ? "/series/" + slugN(x.fr || x.series) + "#tomes" : "/calendrier/#t-" + x.id;
+  const fr = all.filter(x => x.pays === "France" && x.date >= t).slice(0, 6);
+  document.getElementById("dfr").innerHTML = fr.length ? fr.map(x => { const d = new Date(x.date + "T12:00:00");
+    return `<a class="dfr-r" href="${escN(lien(x))}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${x.cover ? `<img src="${escN(couvN(x.cover, 120))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span class="t"><b>${escN((x.fr || x.series) + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
+  const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 8);
+  if (jp.length) { document.getElementById("d-jp").hidden = false;
+    document.getElementById("djp").innerHTML = jp.map(x => `<a class="djp-c" href="${escN(lien(x))}"><span><img src="${escN(couvN(x.cover, 400))}" alt="Couverture ${escN(x.series + tn(x.n))}" loading="lazy" onerror="this.closest('.djp-c').remove()"><em>${escN(fmtD(x.date))}</em></span><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></a>`).join(""); }
+});
+// Direct du Japon (colonne) : 5 lignes puis « Voir tous les magazines ».
+getN("/api/prepub").then(j => {
+  if (!j || !j.items) return;
+  const ul = document.querySelector("#m-jp .jp"); if (!ul) return;
+  ul.innerHTML = j.items.slice(0, 5).map(it => { const u = it.read || it.page; return `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${u ? `<a href="${esc2(u)}" target="_blank" rel="noopener">${esc2(it.entry.split(" · ")[0])}</a>` : esc2(it.entry.split(" · ")[0])}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`; }).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
+  const note = document.querySelector("#m-jp .m-note"); if (note) note.outerHTML = `<a class="m-all" href="/?vue=magazines">Voir tous les magazines<small>${j.items.length} chapitres</small></a>`;
+});
+// La base FuryoGang : une case = un paquet de fiches, la dernière fiche en ligne.
+getN("/api/avancement").then(a => {
+  if (!a || !a.total) return;
+  const cells = 30, per = Math.ceil(a.total / cells), on = Math.max(1, Math.round(a.enLigne / per));
+  document.getElementById("dav-on").textContent = a.enLigne.toLocaleString("fr-FR");
+  document.getElementById("dav-tot").textContent = "/ " + a.total.toLocaleString("fr-FR") + " fiches en ligne";
+  document.getElementById("dav-g").innerHTML = Array.from({ length: cells }, (_, i) => `<i${i < on ? ' class="on"' : ""}></i>`).join("");
+  const last = (a.recentes || [])[0];
+  document.getElementById("dav-last").innerHTML = `Une case = ${per} fiches.` + (last ? ` Dernière fiche : <b>${esc2(last.fr || last.t)}</b> (n°${last.rang}).` : "");
+});
+// Ils ont rejoint le gang
+getN("/api/membres").then(m => {
+  const box = document.getElementById("dmb"); if (!m) { box.innerHTML = '<p class="m-note">Rejoins le gang en te connectant avec Google.</p>'; return; }
+  const list = (m.items || []).slice().sort((a, b) => new Date(b.inscrit) - new Date(a.inscrit)).slice(0, 6);
+  box.innerHTML = (list.length ? `<div class="dmb-r">${list.map(x => `<a href="${x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/membres/"}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((x.pseudo || "?").charAt(0).toUpperCase())}</i>`}<span>${esc2(x.pseudo || "Membre")}</span></a>`).join("")}</div>`
+    : `<div class="dmb-r">${Array.from({ length: 6 }, () => '<a aria-hidden="true"><i></i><span class="ph"></span></a>').join("")}</div><p class="m-note">${m.total || 0} membres dans le gang. Connecte-toi pour voir qui en fait partie.</p>`) +
+    (DT.me && DT.me.user ? "" : '<button type="button" class="dmb-go" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button>');
+});
+// Mangakas : les 4 qui ont le plus de séries
+getN("/api/auteurs").then(j => {
+  const a = ((j && j.authors) || []).slice().sort((x, y) => y.series.length - x.series.length).slice(0, 4);
+  document.getElementById("dmk").innerHTML = a.map(x => `<a href="/auteurs/${esc2(x.slug)}"><i lang="ja">${esc2((x.jp || x.name).charAt(0))}</i><b>${esc2(x.name)}</b><small>${esc2(x.series.slice(0, 2).map(s => s.fr || s.t).join(" · "))}${x.series.length > 2 ? " +" + (x.series.length - 2) : ""}</small></a>`).join("");
+});
 }
 </script>
 </body>
