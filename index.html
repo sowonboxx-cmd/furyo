@@ -279,14 +279,14 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dh .da{padding:6px 20px 12px;margin:0}
 .dh .da button,.dh .da a,.dh .da span:not(.sp){color:#CFCFD4}
 /* Liste */
-.dr{background:#000;border-radius:20px;padding:14px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:start}
+.dr{background:#000;border-radius:20px;padding:14px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:stretch}
 .dr-i{display:block;line-height:0}
 .dr-i img,.dr-i span{width:112px;aspect-ratio:7/10;object-fit:cover;border-radius:10px;background:#38383B;display:block}
 .dr.wide .dr-i img{object-fit:contain;background:#1C1C1E}
-.dr-b{display:flex;flex-direction:column;gap:4px;min-width:0}
+.dr-b{display:flex;flex-direction:column;gap:4px;min-width:0}.dr-b>.da{margin-top:auto}
 .dr-a{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}
 .dr h3{margin:0;font:700 26px/1.02 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
-.dr p{margin:6px 0 0;color:#CFCFD4;font-size:16.5px;line-height:1.42;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dr p{margin:6px 0 0;max-width:calc(100% - 80px);color:#CFCFD4;font-size:16.5px;line-height:1.42;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .dh-a:hover h2,.dr-a:hover h3{color:#fff;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
 /* Actions : signet et commentaires à gauche, likes et vues à droite (comme sur téléphone) */
 .da{display:flex;align-items:center;gap:2px;margin:0 -8px}
@@ -705,12 +705,36 @@ function heroN(it) {
   const t = it.fr || it.titre, img = couvN(it.cover, 1200), pos = it.pos == null ? 0 : it.pos;
   return `<article class="dh${img ? "" : " noimg"}" data-id="${escN(it.id)}"><a class="dh-a" href="${escN(linkN(it))}">` +
     (img ? `<img class="dh-img" src="${escN(img)}" alt="Image de la news : ${escN(t)}" style="object-position:center ${pos}%">${it.credit ? `<span class="cr">${escN(it.credit)}</span>` : ""}` : "") +
-    `<span class="dh-tx"><span class="dh-date">${escN(relN(it.date))}</span><div class="dm">${catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>")}</div><h2>${escN(t)}</h2>${it.jp ? `<span class="dh-jp" lang="ja">${escN(it.jp)}</span>` : ""}<p>${escN(it.texte)}</p></span></a>${actsN(it)}</article>`;
+    `<span class="dh-tx"><span class="dh-date">${escN(relN(it.date))}</span><div class="dm">${catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>")}</div><h2>${escN(t)}</h2>${it.jp ? `<span class="dh-jp" lang="ja">${escN(it.jp)}</span>` : ""}<p data-full="${escN(it.texte)}" data-l="2" data-first="1">${escN(it.texte)}</p></span></a>${actsN(it)}</article>`;
 }
+// Descriptions (Will, 05/10/2026) : jamais de « … » au milieu d'une phrase. On garde les phrases entières qui tiennent
+// en 2 lignes (la première phrase peut aller jusqu'à 3 lignes) ; la grande news n'affiche que sa première phrase.
+const SENT = t => {
+  // Fin de phrase : ponctuation suivie d'une majuscule ; un morceau trop court (« Genkai! ») reste collé à la suite.
+  const raw = String(t || "").replace(/\s+/g, " ").trim().split(/(?<=[.!?…]["»”)]?)\s+(?=[A-ZÀ-ÖØ-Þ«"0-9])/), out = [];
+  raw.forEach(x => { if (out.length && out[out.length - 1].length < 25) out[out.length - 1] += " " + x; else out.push(x); });
+  return out;
+};
+function fitP(p){
+  const full = p.dataset.full || "", max = +p.dataset.l || 2, first = p.dataset.first === "1";
+  const s = SENT(full).map(x => x.trim()).filter(Boolean); if (!s.length) return;
+  const lh = parseFloat(getComputedStyle(p).lineHeight) || 22, fits = n => p.scrollHeight <= lh * n + 3;
+  p.style.webkitLineClamp = "unset"; p.style.display = "block";
+  let k = 0; p.textContent = s[0];
+  if (!first) { while (k + 1 < s.length) { p.textContent = s.slice(0, k + 2).join(" "); if (fits(max)) k++; else { p.textContent = s.slice(0, k + 1).join(" "); break; } } }
+  if (fits(max + 1)) return;
+  // Première phrase trop longue : on la coupe à la dernière virgule qui tient, terminée par un point.
+  const parts = s[0].split(/,\s*/); let txt = "";
+  for (let i = 1; i < parts.length; i++) { const c = parts.slice(0, i).join(", ").replace(/[\s;:—-]+$/, "") + "."; p.textContent = c; if (fits(max)) txt = c; else break; }
+  if (txt) p.textContent = txt; else { p.textContent = s[0]; p.style.display = ""; p.style.webkitLineClamp = ""; }
+}
+function fitN(root){ (root || document).querySelectorAll("p[data-full]").forEach(fitP); }
+addEventListener("resize", () => { clearTimeout(fitN.t); fitN.t = setTimeout(() => fitN(document.getElementById("feed")), 150); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitN(document.getElementById("feed")));
 function rowN(it) {
   const t = it.fr || it.titre, img = couvN(it.cover, 360);
   return `<article class="dr" data-img data-id="${escN(it.id)}"><a class="dr-i" href="${escN(linkN(it))}" tabindex="-1">${img ? `<img src="${escN(img)}" alt="" loading="lazy" onload="${wideN}">` : "<span></span>"}</a>` +
-    `<div class="dr-b"><a class="dr-a" href="${escN(linkN(it))}">${metaN(it)}<h3>${escN(t)}</h3><p>${escN(it.texte)}</p></a>${actsN(it)}</div></article>`;
+    `<div class="dr-b"><a class="dr-a" href="${escN(linkN(it))}">${metaN(it)}<h3>${escN(t)}</h3><p data-full="${escN(it.texte)}" data-l="2">${escN(it.texte)}</p></a>${actsN(it)}</div></article>`;
 }
 function tabsN() {
   const n = k => (DT.news || []).filter(it => it.cat === k || (it.cats || []).some(c => c.k === k)).length;
@@ -784,6 +808,7 @@ function renderN() {
     loadStatsN(list.slice(0, max));
   }
   feed.innerHTML = html;
+  fitN(feed);
   viewsN();
 }
 function loadStatsN(list) {
