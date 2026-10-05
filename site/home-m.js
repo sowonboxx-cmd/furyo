@@ -108,10 +108,16 @@
     var titre = "Prochaines sorties", sous = I.fr + "En France";
     if (!it.length) { var t = new Date().toISOString().slice(0, 10); it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t; }).slice(0, 8); titre = "Prochaines sorties"; sous = I.fr + "En France"; }
     if (!it.length) return "";
-    return '<section class="mh-sec" aria-label="Sorties en France">' + headGo("Prochaines sorties en France", "/calendrier/#france").replace('class="mh-h2"', 'class="mh-h2 mh-blue"') + '<div class="mh-car">' + it.map(function (x) {
-      var t = (x.fr || x.series) + (x.n != null ? " T." + String(x.n).padStart(2, "0") : "");
-      return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/") + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(dd(x.date)) + "</em></span><b>" + esc(t) + "</b></a>";
-    }).join("") + "</div></section>";
+    // La prochaine sortie en grand, façon affiche comme sur ordinateur (option A, Will, 06/10/2026), puis les suivantes en carrousel.
+    var f = it[0], fd = new Date(f.date + "T12:00:00"), JL = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], ML = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+    var nj = Math.round((fd - new Date(new Date().toLocaleDateString("sv") + "T12:00:00")) / 864e5), dans = nj <= 0 ? "aujourd'hui" : nj === 1 ? "demain" : "dans " + nj + " jours";
+    var lien = function (x) { return x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/"; };
+    var une = '<a class="mh-ff" data-tome="' + esc(f.id) + '" href="' + lien(f) + '">' + (f.cover ? '<img src="' + esc(couv(f.cover, 300)) + '" alt="">' : '<span class="mh-noimg"></span>') +
+      '<span class="x"><span class="pill">' + JL[fd.getDay()] + " " + fd.getDate() + (fd.getDate() === 1 ? "er" : "") + " " + ML[fd.getMonth()] + "</span><b>" + esc(f.fr || f.series) + "</b>" + (f.n != null ? '<i class="tn">Tome ' + esc(f.n) + "</i>" : "") + "<em>" + [f.pub, dans].filter(Boolean).map(esc).join(" · ") + "</em></span></a>";
+    return '<section class="mh-sec" aria-label="Sorties en France">' + headGo("Prochaines sorties en France", "/calendrier/#france").replace('class="mh-h2"', 'class="mh-h2 mh-blue"') + une + (it.length > 1 ? '<div class="mh-car">' + it.slice(1).map(function (x) {
+      // Titre coupé avec « … » si trop long, le numéro de tome (T.10) toujours visible à côté (Will, 06/10/2026).
+      return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + lien(x) + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(dd(x.date)) + '</em></span><b class="mh-ct"><span>' + esc(x.fr || x.series) + "</span>" + (x.n != null ? "<i>T." + esc(x.n) + "</i>" : "") + "</b></a>";
+    }).join("") + "</div>" : "") + "</section>";
   }
   function sortiesJP() {
     var w = semaine(), it = (D.cal || []).filter(function (x) { return x.pays === "Japon" && x.date >= w[0] && x.date <= w[1]; });
