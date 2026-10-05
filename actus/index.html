@@ -129,6 +129,7 @@ a{color:inherit}
 .nd-cm b{font-size:14px}.nd-cm small{margin-left:8px;color:#8E8E93;font-size:12.5px}.nd-cm p{margin:4px 0 0;font-size:14.5px;line-height:1.5;color:#E5E5EA;white-space:pre-line;overflow-wrap:anywhere}
 .nd-none{margin:6px 0 0;color:var(--paper-3);font-size:14px}
 .nd-lv{align-items:start}.nd-lt{padding-top:2px}.nd-l3{margin-top:2px}.nd-l4{margin-top:6px}
+.nd-btn.on{background:#141416;color:#AEAEB2}.nd-btn.on:hover{background:#1C1C1E;color:#F5F5F7}.nd-btn .ck{width:17px;height:17px}
 .arr{width:13px;height:13px;flex:none;margin-left:2px}
 .nd-src a{display:inline-flex;align-items:center;gap:4px}
 .nd-main .na-acts .a-com .lbl{margin-left:-2px}
@@ -206,6 +207,8 @@ a{color:inherit}
   }
 
   // ---------- Ordinateur ----------
+  // Série suivie : discret, coche verte dans un rond (Will, 05/10/2026).
+  var CHECK = '<svg class="ck" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#30D158"/><path d="M7.5 12.3l3 3 6-6.3" fill="none" stroke="#0B2614" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ARR = '<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg>';
   var X_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L2 3h6.4l4.4 5.8zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg>';
   var MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
@@ -233,7 +236,7 @@ a{color:inherit}
       (s.resume ? "<p>" + esc(s.resume) + "</p>" : "") + "</div></div>" +
       '<dl class="nd-dl">' + rows.map(function (r) { return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + "</dl>" +
       (s.visible ? '<a class="nd-btn blue" href="/series/' + esc(s.slug) + '">Voir la fiche</a>' : '<span class="nd-btn blue off">Fiche bientôt en ligne</span>') +
-      '<div class="nd-two"><button type="button" class="nd-btn' + (FOLLOW ? " blue" : "") + '" data-soon="suivre">' + (FOLLOW ? "✓ Série suivie" : I.heart + " Suivre la série") + '</button><button type="button" class="nd-btn" data-soon="liste">' + I.book + " Ma liste</button></div></section>";
+      '<div class="nd-two"><button type="button" class="nd-btn' + (FOLLOW ? " on" : "") + '" data-soon="suivre">' + (FOLLOW ? CHECK + "Série suivie" : I.heart + " Suivre la série") + '</button><button type="button" class="nd-btn" data-soon="liste">' + I.book + " Ma liste</button></div></section>";
   }
   function dernier() {
     var d = CTX && CTX.dernier; if (!d) return "";
