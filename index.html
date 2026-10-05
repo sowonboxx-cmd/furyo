@@ -391,6 +391,19 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .dser:hover .dser-c img:nth-child(1){transform:rotate(-14deg) translateX(-4px)}.dser:hover .dser-c img:nth-child(3){transform:rotate(14deg) translateX(4px)}
 .dser-t small{display:block;font:600 12px Inter,sans-serif;color:#98989D}.dser-t b{display:block;font:700 26px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;margin:3px 0 6px}.dser-t em{font-style:normal;font-size:13px;color:#CFCFD4}
 .dser-go{grid-column:1/-1;display:flex;align-items:center;justify-content:center;height:42px;border-radius:21px;background:#38383B;font:700 14px Inter,sans-serif}.dser:hover .dser-go{background:#48484C}
+.sj{overflow:hidden}.sj-track{display:flex;transition:transform .5s ease}
+.sj-s{flex:0 0 100%;display:grid;grid-template-columns:78px minmax(0,1fr);gap:14px;align-items:start;min-width:0}
+.sj-c img,.sj-c .ph{width:78px;aspect-ratio:7/10;object-fit:cover;border-radius:8px;background:#305887;display:grid;place-items:center;color:#fff;font:700 18px Antonio,sans-serif}
+.sj-t{min-width:0}.sj-t small{display:block;font:600 12px Inter,sans-serif;color:#98989D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.sj-t small a{color:#CFCFD4;text-decoration:none}.sj-t small a:hover{color:#fff;text-decoration:underline}
+.sj-t ul{list-style:none;margin:0;padding:0}
+.sj-t li{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px dashed #38383B;font:600 13.5px Inter,sans-serif}
+.sj-t li:first-child{border-top:0}
+.sj-t li>a,.sj-t li>span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:inherit;text-decoration:none}.sj-t li>a:hover{text-decoration:underline}
+.sj-t em{flex:none;font:700 12.5px Inter,sans-serif;font-style:normal;color:#CFCFD4}.sj-t em.p{color:#8E8E93;font-weight:600}
+.sj-t i{flex:none;font-style:normal;height:20px;padding:0 7px;border-radius:6px;background:#E5483A;color:#fff;font:700 10.5px/20px Inter,sans-serif;text-transform:uppercase}
+.sj-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}.sj-dots button{width:7px;height:7px;padding:0;border:0;border-radius:4px;background:#48484C;cursor:pointer;transition:width .2s,background .2s}
+.sj-dots button[aria-current]{width:20px;background:#F5F5F7}
 /* ===== Accueil téléphone (site/home-m.js) ===== */
 .mh{display:none}
 @media (max-width:719px){
@@ -556,6 +569,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
         <div class="m-head"><div><small class="m-eye"><svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>En France</small><h3>Prochaines sorties</h3></div><a class="m-sub" href="/calendrier/#france">Calendrier</a></div>
         <div class="dfr" id="dfr"><p class="m-note">Chargement…</p></div>
       </section>
+      <a class="box dser" href="/series/" id="m-ser"><span class="dser-c" id="dser-c"></span><span class="dser-t"><small>La base de données</small><b>Toutes les séries</b><em id="dser-n">Furyō, yakuza, crime : toutes les fiches</em></span><span class="dser-go">Voir toutes les séries</span></a>
       <section class="box" id="m-com" hidden>
         <div class="m-head"><div><h3>Derniers commentaires</h3></div></div>
         <div class="dcm" id="dcm"></div>
@@ -570,7 +584,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
         </ul>
         <p class="m-note">Prochain Monthly Champion le 6 oct. · <a href="https://bigcomics.jp/episodes/d4caca9984016">Lire Kujou no Taizai en ligne (JP) ↗</a></p>
       </section>
-      <a class="box dser" href="/series/" id="m-ser"><span class="dser-c" id="dser-c"></span><span class="dser-t"><small>Le catalogue</small><b>Toutes les séries</b><em id="dser-n">Furyō, yakuza, crime : toutes les fiches</em></span><span class="dser-go">Voir toutes les séries</span></a>
+
     </aside>
   </div>
 
@@ -810,11 +824,30 @@ getN("/api/series").then(j => {
   document.getElementById("dser-c").innerHTML = pick.map(x => `<img src="${escN(couvN(x.cover, 200))}" alt="" loading="lazy">`).join("");
   document.getElementById("dser-n").textContent = ((j.items || []).length) + " fiches en ligne : furyō, yakuza, crime";
 });
-// Direct du Japon (colonne) : 5 lignes puis « Voir tous les magazines ».
+// Direct du Japon (colonne) : un magazine à la fois (couverture, date · magazine, chapitres), qui défile toutes les 4 secondes,
+// du plus récent au plus ancien, les séries en ligne regroupées (Will, 05/10/2026).
 getN("/api/prepub").then(j => {
   if (!j || !j.items) return;
-  const ul = document.querySelector("#m-jp .jp"); if (!ul) return;
-  ul.innerHTML = j.items.slice(0, 5).map(it => { const u = it.read || it.page; return `<li><span class="mz">${esc2(it.mag)} · ${esc2(fmtD(it.date))}</span><span class="t">${u ? `<a href="${esc2(u)}" target="_blank" rel="noopener">${esc2(it.entry.split(" · ")[0])}</a>` : esc2(it.entry.split(" · ")[0])}<small lang="ja">${esc2(it.jp)}${it.ch ? " · ch. " + it.ch : ""}</small></span><span class="st ${it.status === "Paru" ? "ok" : "off"}">${esc2(it.status)}</span></li>`; }).join("") || `<li><span class="t">Aucune sortie validée pour l'instant.</span></li>`;
+  const box = document.querySelector("#m-jp .jp"); if (!box) return;
+  const mags = magsN(j.items).sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 6);
+  if (!mags.length) return;
+  const issue = v => { v = String(v || ""); const m = v.match(/No\.?\s*(\d+)/i) || v.match(/第?(\d+)号/); if (m) return "n°" + m[1]; const k = v.match(/(\d+\/\d+)号/); return k ? k[1] : v; };
+  const card = m => {
+    const t = new Date().toLocaleDateString("sv"), paru = !m.date || m.date <= t;
+    const head = m.web ? `Mis à jour le ${escN(ddN(m.date))} · Séries en ligne` : `${paru ? "Sorti le" : "Sort le"} ${escN(ddN(m.date))} · ${m.link ? `<a href="${escN(m.link)}" target="_blank" rel="noopener">${escN(m.mag)} ${escN(issue(m.issue))}</a>` : `${escN(m.mag)} ${escN(issue(m.issue))}`}`;
+    const rows = m.items.map(it => { const u = it.read || it.page, nm = escN(it.entry.split(" · ")[0]), right = it.status === "Pause" ? '<em class="p">Pause</em>' : it.ch ? `<em>Ch. ${escN(it.ch)}</em>` : "";
+      return `<li>${u ? `<a href="${escN(u)}" target="_blank" rel="noopener">${nm}</a>` : `<span>${nm}</span>`}${right}${(it.hl || []).includes("Dernier chapitre") ? "<i>Fin</i>" : ""}</li>`; }).join("");
+    const cov = m.cover ? `<img src="${escN(couvN(m.cover, 200))}" alt="" loading="lazy">` : `<span class="ph">WEB</span>`;
+    return `<div class="sj-s"><div class="sj-c">${m.link ? `<a href="${escN(m.link)}" target="_blank" rel="noopener">${cov}</a>` : cov}</div><div class="sj-t"><small>${head}</small><ul>${rows}</ul></div></div>`;
+  };
+  box.outerHTML = `<div class="sj" id="sj"><div class="sj-track">${mags.map(card).join("")}</div><div class="sj-dots">${mags.map((_, i) => `<button type="button" aria-label="Magazine ${i + 1}"${i ? "" : ' aria-current="true"'}></button>`).join("")}</div></div>`;
+  const sj = document.getElementById("sj"), track = sj.querySelector(".sj-track"), dots = [...sj.querySelectorAll(".sj-dots button")];
+  let cur = 0, timer = null;
+  const go = i => { cur = (i + mags.length) % mags.length; track.style.transform = `translateX(-${cur * 100}%)`; dots.forEach((d, k) => d.toggleAttribute("aria-current", k === cur)); };
+  const play = () => { clearInterval(timer); if (!matchMedia("(prefers-reduced-motion: reduce)").matches && mags.length > 1) timer = setInterval(() => go(cur + 1), 4000); };
+  dots.forEach((d, i) => d.addEventListener("click", () => { go(i); play(); }));
+  sj.addEventListener("mouseenter", () => clearInterval(timer)); sj.addEventListener("mouseleave", play);
+  play();
   const note = document.querySelector("#m-jp .m-note"); if (note) note.outerHTML = `<a class="m-all" href="/?vue=magazines">Voir tous les magazines<small>${j.items.length} chapitres</small></a>`;
 });
 // La base FuryoGang : une case = un paquet de fiches, la dernière fiche en ligne.
