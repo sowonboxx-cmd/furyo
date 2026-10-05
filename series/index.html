@@ -410,9 +410,8 @@ function mainCover(s, eds){
   const first = p => eds.filter(e => e.pays === p).flatMap(e => e.tomes).filter(t => t.cover).sort((a, b) => (a.n ?? 999) - (b.n ?? 999))[0];
   const any = eds.flatMap(e => e.tomes).find(t => t.cover);
   const c = (first("France") || first("Japon"))?.cover || s.cover1 || any?.cover;
-  const cr = s.credit ? (first("France") ? s.credit.fr : s.credit.jp) : "";
   const ph = `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`;
-  return c ? `<img src="${couv(c, 720)}" alt="" fetchpriority="high" decoding="async" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">${cr ? `<span class="cr b">${esc(cr)}</span>` : ""}` : ph;
+  return c ? `<img src="${couv(c, 720)}" alt="" fetchpriority="high" decoding="async" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">` : ph;
 }
 // Statut par pays, en texte : drapeau + « en cours », « terminé », « en pause », « abandonné »…
 // Statut avec une majuscule : « En cours », « Terminé », « Annoncé »…
@@ -706,8 +705,7 @@ function tlShow(i){
   const { serie: s } = DATA, other = PAYS === "France" ? "Japon" : "France";
   // Seulement la date du pays affiché (France ou Japon), sans drapeau : plus clair.
   const date = t => t && t.date ? `<p class="tb-d"><span>${esc(dTxt(t))}</span></p>` : "";
-  const cr = x.t.cover && s.credit ? (PAYS === "France" ? s.credit.fr : s.credit.jp) : "";
-  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}">${cr ? `<span class="cr b">${esc(cr)}</span>` : ""}` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
     <p class="tb-t">${esc(tLab(x.t))}${x.t.titre && x.t.n != null ? ` <em>${esc(x.t.titre)}</em>` : ""}</p>
     <div class="tb-ds">${date(x.t)}</div>`;
   document.getElementById("tb-c").textContent = `${i + 1} / ${TL.length}`;
