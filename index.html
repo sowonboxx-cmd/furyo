@@ -390,7 +390,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .dser:hover .dser-c img:nth-child(1){transform:rotate(-14deg) translateX(-4px)}.dser:hover .dser-c img:nth-child(3){transform:rotate(14deg) translateX(4px)}
 .dser-t small{display:block;font:600 12px Inter,sans-serif;color:#98989D}.dser-t b{display:block;font:700 26px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;margin:3px 0 6px}.dser-t em{font-style:normal;font-size:13px;color:#CFCFD4}
 .dser-go{grid-column:1/-1;display:flex;align-items:center;justify-content:center;height:42px;border-radius:21px;background:#38383B;font:700 14px Inter,sans-serif}.dser:hover .dser-go{background:#48484C}
-.sj{overflow:hidden}.sj-track{display:flex;transition:transform .5s ease}
+.sj{overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}.sj-track{display:flex;transition:transform .5s ease}
 .sj-s{flex:0 0 100%;display:grid;grid-template-columns:78px minmax(0,1fr);gap:14px;align-items:start;min-width:0}
 .sj-c img,.sj-c .ph{width:78px;aspect-ratio:7/10;object-fit:cover;border-radius:8px;background:#305887;display:grid;place-items:center;color:#fff;font:700 18px Antonio,sans-serif}
 .sj-t{min-width:0}.sj-t small{display:block;font:600 12px Inter,sans-serif;color:#98989D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
@@ -962,6 +962,18 @@ getN("/api/prepub").then(j => {
   const play = () => { clearInterval(timer); if (!matchMedia("(prefers-reduced-motion: reduce)").matches && mags.length > 1) timer = setInterval(() => go(cur + 1), 4000); };
   dots.forEach((d, i) => d.addEventListener("click", () => { go(i); play(); }));
   sj.addEventListener("mouseenter", () => clearInterval(timer)); sj.addEventListener("mouseleave", play);
+  // Glisser au doigt (ou à la souris) : la carte suit le geste, puis passe à la suivante / précédente.
+  let x0 = null, y0 = 0, dx = 0, drag = false, moved = false;
+  sj.addEventListener("pointerdown", e => { if (mags.length < 2 || (e.pointerType === "mouse" && e.button)) return; x0 = e.clientX; y0 = e.clientY; dx = 0; drag = false; moved = false; clearInterval(timer); });
+  sj.addEventListener("pointermove", e => {
+    if (x0 == null) return; dx = e.clientX - x0;
+    if (!drag) { if (Math.abs(dx) < 8) return; if (Math.abs(e.clientY - y0) > Math.abs(dx)) { x0 = null; return; } drag = moved = true; track.style.transition = "none"; try { sj.setPointerCapture(e.pointerId); } catch (_) {} }
+    track.style.transform = `translateX(calc(-${cur * 100}% + ${dx}px))`;
+  });
+  const end = () => { if (x0 == null) return; x0 = null; track.style.transition = ""; if (drag) { const w = sj.offsetWidth || 1; go(Math.abs(dx) > w * .18 ? cur + (dx < 0 ? 1 : -1) : cur); } drag = false; if (!sj.matches(":hover")) play(); };
+  sj.addEventListener("pointerup", end); sj.addEventListener("pointercancel", end);
+  sj.addEventListener("click", e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+  sj.addEventListener("dragstart", e => e.preventDefault());
   play();
   const note = document.querySelector("#m-jp .m-note"); if (note) note.outerHTML = `<a class="m-all" href="/?vue=magazines">Voir tous les magazines<small>${j.items.length} chapitres</small></a>`;
 });
