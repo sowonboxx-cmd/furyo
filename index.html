@@ -635,7 +635,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=28"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=34" defer></script>
+<script src="/site/home-m.js?v=35" defer></script>
 <div class="page">
 
 
@@ -754,7 +754,7 @@ function fitP(p){
   const lines = () => Math.round(p.scrollHeight / lh);
   const fill = () => { const r = document.createRange(); r.selectNodeContents(p); const rs = r.getClientRects(), b = p.getBoundingClientRect(); return rs.length ? (rs[rs.length - 1].right - b.left) / p.clientWidth : 1; };
   const ok = t => { p.textContent = t; const n = lines(); return n <= max && !(n === max && max > 1 && p.dataset.f !== "1" && fill() > 0.85); };
-  const coupe = (base, phrase) => { const parts = phrase.split(/,\s*/); let best = ""; for (let i = 1; i < parts.length; i++) { const c = (base ? base + " " : "") + parts.slice(0, i).join(", ").replace(/[\s;:—-]+$/, "") + "."; if (ok(c)) best = c; else break; } return best; };
+  const coupe = (base, phrase) => { const parts = phrase.split(/,\s*/); let best = ""; for (let i = 1; i < parts.length; i++) { const c = (base ? base + " " : "") + parts.slice(0, i).join(", ").replace(/[\s;:—-]+$/, "") + "."; if (ok(c)) { if (c.length >= 40) best = c; } else break; } return best; };
   let best = "";
   if (first) best = ok(s[0]) ? s[0] : coupe("", s[0]);
   else {
@@ -763,6 +763,10 @@ function fitP(p){
     if (best) { p.textContent = best; if (lines() < 2) { const k2 = SENT(full).findIndex(x => !best.includes(x.trim())); const nx = k2 >= 0 ? SENT(full)[k2].trim() : ""; const c = nx ? coupe(best, nx) : ""; if (c) best = c; } }
     else best = coupe("", s[0]);
   }
+  // Mobile (Will, 05/10/2026) : sans phrase entière qui tient, on prend l'Accroche, sinon la première phrase sur une ligne de plus.
+  const alt = p.dataset.alt || "";
+  if ((!best || best.length < 40) && alt && ok(alt)) best = alt;
+  if (!best && p.dataset.f === "1") { const m0 = max; p.dataset.l = m0 + 1; const ok2 = t => { p.textContent = t; return lines() <= m0 + 1; }; if (ok2(s[0])) best = s[0]; else if (alt && ok2(alt)) best = alt; p.dataset.l = m0; }
   if (best) p.textContent = best; else { p.textContent = full; p.style.display = ""; p.style.webkitLineClamp = ""; }
 }
 function fitN(root){ (root || document).querySelectorAll("p[data-full]").forEach(fitP); }

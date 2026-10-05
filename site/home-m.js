@@ -48,18 +48,18 @@
   }
   // Carte « O » : texte à gauche, image à droite
   // Descriptions sans « … » (Will, 05/10/2026) : phrases entières sur 2 lignes, coupées à une virgule si besoin (fitN de la page).
-  function pf(t) { return '<p data-full="' + esc(t) + '" data-l="2" data-f="1">' + esc(t) + "</p>"; }
+  function pf(t, a) { return '<p data-full="' + esc(t) + '" data-alt="' + esc(a || "") + '" data-l="2" data-f="1">' + esc(t) + "</p>"; }
   function fitM(r) { if (window.fitN) window.fitN(r || root); }
   addEventListener("resize", function () { clearTimeout(fitM.t); fitM.t = setTimeout(function () { fitM(); }, 150); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitM(); });
   function cardO(it) {
-    return '<article class="mh-o"><a class="mh-hit" href="' + esc(link(it)) + '"><div class="mh-ot">' + meta(it) + '<h3>' + esc(it.fr || it.titre) + '</h3>' + pf(it.texte) + "</div>" +
+    return '<article class="mh-o"><a class="mh-hit" href="' + esc(link(it)) + '"><div class="mh-ot">' + meta(it) + '<h3>' + esc(it.fr || it.titre) + '</h3>' + pf(it.texte, it.accroche) + "</div>" +
       (it.cover ? '<img src="' + esc(couv(it.cover, 240)) + '" alt="" loading="lazy">' : "") + "</a>" + acts(it) + "</article>";
   }
   // Carte de liste (toutes les actus / catégorie) : image à gauche, même détail
   function cardR(it) {
     return '<article class="mh-r"><a class="mh-hit" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 240)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') +
-      '<div class="mh-rt">' + meta(it) + "<h3>" + esc(it.fr || it.titre) + "</h3>" + pf(it.texte) + "</div></a>" + acts(it) + "</article>";
+      '<div class="mh-rt">' + meta(it) + "<h3>" + esc(it.fr || it.titre) + "</h3>" + pf(it.texte, it.accroche) + "</div></a>" + acts(it) + "</article>";
   }
   // La plus récente en grand
   function hero(it) {
