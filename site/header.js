@@ -102,7 +102,10 @@
     "@media (min-width:720px){.sh-nav{background:transparent;padding:0;gap:6px}" +
     ".sh-nav a{height:44px;padding:0 12px;border-radius:0;background:none!important;color:#F5F5F7}.sh-nav a:hover{color:#fff}" +
     ".sh-nav a:hover::after{content:'';display:block;position:absolute;left:12px;right:12px;bottom:4px;height:4px;border-radius:2px;background:rgba(188,0,45,.45)}" +
-    ".sh-nav a[aria-current=page]::after{content:'';display:block;position:absolute;left:12px;right:12px;bottom:4px;height:4px;border-radius:2px;background:#BC002D}}";
+    ".sh-nav a[aria-current=page]::after{content:'';display:block;position:absolute;left:12px;right:12px;bottom:4px;height:4px;border-radius:2px;background:#BC002D}}" +
+    /* Fonds (Will, 05/10/2026) : ordinateur, toute la barre en noir pur ; téléphone, la ligne du logo en noir pur, la bande du menu garde le gris. */
+    "@media (min-width:720px){.sh{background:#000}}" +
+    "@media (max-width:719px){.sh{background:linear-gradient(#000 0,#000 calc(env(safe-area-inset-top,0px) + 54px),#141416 calc(env(safe-area-inset-top,0px) + 54px))}}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
   var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
