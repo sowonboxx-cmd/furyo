@@ -403,6 +403,20 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .sj-t i{flex:none;font-style:normal;height:20px;padding:0 7px;border-radius:6px;background:#E5483A;color:#fff;font:700 10.5px/20px Inter,sans-serif;text-transform:uppercase}
 .sj-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}.sj-dots button{width:7px;height:7px;padding:0;border:0;border-radius:4px;background:#48484C;cursor:pointer;transition:width .2s,background .2s}
 .sj-dots button[aria-current]{width:20px;background:#F5F5F7}
+.tp{position:fixed;inset:0;z-index:90;background:rgba(10,10,12,.86);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;font-family:Inter,system-ui,sans-serif}.tp[hidden]{display:none}
+.tp-b{width:min(460px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#000;border-radius:22px;padding:16px 18px 18px;display:flex;flex-direction:column;gap:12px;color:#F5F5F7}
+.tp-top{display:flex;align-items:center;gap:10px}.tp-top span{flex:1;font:600 12.5px Inter,sans-serif;color:#98989D}.tp-top b{font:700 13px Inter,sans-serif;color:#CFCFD4;font-variant-numeric:tabular-nums}
+.tp-x{width:34px;height:34px;border:0;border-radius:17px;background:#38383B;color:#fff;font-size:21px;line-height:1;cursor:pointer}
+.tp-m{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:8px}
+.tp-m img,.tp-ph{width:100%;max-height:56vh;aspect-ratio:2/3;object-fit:contain;border-radius:12px;background:#1C1C1E;display:block;animation:tpIn .25s ease}
+@keyframes tpIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.tp-nav{width:40px;height:40px;border:0;border-radius:20px;background:#1C1C1E;color:#fff;display:grid;place-items:center;cursor:pointer}.tp-nav:hover{background:#38383B}.tp-nav svg{width:18px;height:18px}.tp-nav[hidden]{visibility:hidden;display:grid}
+.tp-t{text-align:center}.tp-t h2{margin:0;font:700 28px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}.tp-t b{display:block;margin-top:4px;font:700 20px Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:#F2B33D}
+.tp-t p{margin:6px 0 0;font-size:14px;color:#CFCFD4}.tp-t p::first-letter{text-transform:uppercase}
+.tp-a{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.tp-btn{height:44px;border:0;border-radius:22px;background:#1C1C1E;color:#F5F5F7;display:flex;align-items:center;justify-content:center;gap:6px;font:700 12.5px Inter,sans-serif;text-decoration:none;cursor:pointer;padding:0 8px;text-align:center}
+.tp-btn:hover{background:#38383B}.tp-btn svg{width:16px;height:16px;flex:none}.tp-btn.blue{background:#305887;color:#fff}.tp-btn.off{opacity:.5;cursor:default}
+.tp-btn.on{color:#FF4D67}.tp-btn.on svg{fill:currentColor}.tp-btn.on span{color:#fff}
 /* ===== Accueil téléphone (site/home-m.js) ===== */
 .mh{display:none}
 @media (max-width:719px){
@@ -571,7 +585,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
       <a class="box dser" href="/series/" id="m-ser"><span class="dser-c" id="dser-c"></span><span class="dser-t"><small>La base de données</small><b>Toutes les séries</b><em id="dser-n">Furyō, yakuza, crime : toutes les fiches</em></span><span class="dser-go">Voir toutes les séries</span></a>
 
       <section class="box mod" id="m-jp" data-slot="0">
-        <div class="m-head"><h3>Direct Japon</h3><a class="m-sub" href="/?vue=magazines">Tout voir</a></div>
+        <div class="m-head"><h3>Direct Japon</h3></div>
         <ul class="jp">
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">WORST Gaiden Zetton Sensei<small lang="ja">WORST外伝 ゼットン先生 · ch. ?</small></span><span class="st ok">Paru</span></li>
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">Gabu<small lang="ja">ガブ · ch. ?</small></span><span class="st ok">Paru</span></li>
@@ -790,6 +804,49 @@ function magsViewN() {
     box.innerHTML = list.length ? list.map(magCardN).join("") : '<div class="box dn"><p>Aucun magazine pour l\'instant.</p></div>';
   });
 }
+
+// ---------- Fenêtre d'un tome à paraître (Will, 05/10/2026) : couverture en grand, tome, date, éditeur ; précédent / suivant
+// entre les prochaines sorties de la même liste ; Suivre la série, Voir la fiche, Ajouter au panier (bientôt).
+const TP = { fr: [], jp: [], list: null, i: 0 };
+const TPI = {
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>',
+  cart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.3 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>',
+  prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>'
+};
+const tpSlug = x => slugN(x.fr || x.series);
+function tpDraw(){
+  const box = document.getElementById("tp"), x = TP.list[TP.i], n = TP.list.length; if (!x) return;
+  const jp = x.pays === "Japon", titre = jp ? x.series : (x.fr || x.series);
+  const d = x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "";
+  box.innerHTML = `<div class="tp-b" role="dialog" aria-label="${escN(titre)}"><div class="tp-top"><span>${jp ? "Prochaines sorties · Au Japon" : "Prochaines sorties · En France"}</span><b>${TP.i + 1} / ${n}</b><button type="button" class="tp-x" aria-label="Fermer">×</button></div>
+    <div class="tp-m"><button type="button" class="tp-nav" data-tpn="-1" aria-label="Précédent"${n > 1 ? "" : " hidden"}>${TPI.prev}</button>
+    ${x.cover ? `<img src="${escN(couvN(x.cover, 700))}" alt="Couverture ${escN(titre)}">` : '<span class="tp-ph"></span>'}
+    <button type="button" class="tp-nav" data-tpn="1" aria-label="Suivant"${n > 1 ? "" : " hidden"}>${TPI.next}</button></div>
+    <div class="tp-t"><h2>${escN(titre)}</h2>${x.n != null ? `<b>Tome ${escN(x.n)}</b>` : ""}<p>${escN(d)}${x.pub ? " · " + escN(x.pub) : ""}</p></div>
+    <div class="tp-a"><button type="button" class="tp-btn" data-tpf>${TPI.heart}<span>Suivre la série</span></button>${x.fiche ? `<a class="tp-btn blue" href="/series/${escN(tpSlug(x))}">Voir la fiche</a>` : '<span class="tp-btn off">Fiche bientôt</span>'}<button type="button" class="tp-btn" data-tpc>${TPI.cart}<span>Ajouter au panier</span></button></div></div>`;
+  box.hidden = false; document.body.style.overflow = "hidden";
+  if (/^https?:$/.test(location.protocol)) getN("/api/follow?s=" + encodeURIComponent(tpSlug(x))).then(j => { const b = box.querySelector("[data-tpf]"); if (b && j && j.ok) { TP.membre = j.membre; tpFol(b, j.on); } });
+}
+function tpFol(b, on){ b.classList.toggle("on", !!on); b.querySelector("span").textContent = on ? "Série suivie" : "Suivre la série"; }
+function tpClose(){ const b = document.getElementById("tp"); if (b) b.hidden = true; document.body.style.overflow = ""; }
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-tp]");
+  if (a && TP[a.dataset.tp] && TP[a.dataset.tp].length) {
+    e.preventDefault(); TP.list = TP[a.dataset.tp].slice(0, a.dataset.tp === "fr" ? 4 : 6); TP.i = +a.dataset.i || 0;
+    let box = document.getElementById("tp"); if (!box) { box = document.createElement("div"); box.id = "tp"; box.className = "tp"; document.body.appendChild(box); }
+    tpDraw(); return;
+  }
+  const box = document.getElementById("tp"); if (!box || box.hidden) return;
+  if (e.target === box || e.target.closest(".tp-x")) { tpClose(); return; }
+  const nv = e.target.closest("[data-tpn]"); if (nv) { TP.i = (TP.i + +nv.dataset.tpn + TP.list.length) % TP.list.length; tpDraw(); return; }
+  const f = e.target.closest("[data-tpf]");
+  if (f) { if (!(DT.me && DT.me.user)) { tpClose(); if (window.FG_LOGIN) FG_LOGIN(); return; }
+    fetch("/api/follow", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ s: tpSlug(TP.list[TP.i]) }) }).then(r => r.json()).then(j => { if (j.ok && j.stored) tpFol(f, j.on); }).catch(() => {}); return; }
+  const c = e.target.closest("[data-tpc]"); if (c) { c.querySelector("span").textContent = "Panier : bientôt"; return; }
+});
+addEventListener("keydown", e => { const box = document.getElementById("tp"); if (!box || box.hidden) return;
+  if (e.key === "Escape") tpClose(); else if (e.key === "ArrowRight" || e.key === "ArrowLeft") { TP.i = (TP.i + (e.key === "ArrowRight" ? 1 : -1) + TP.list.length) % TP.list.length; tpDraw(); } });
 init();
 function init(){
 if (!/^https?:$/.test(location.protocol)) return;
@@ -805,10 +862,11 @@ getN("/api/calendrier").then(j => {
   const fr = all.filter(x => x.pays === "France" && x.date >= t && x.date.slice(0, 7) === mois).slice(0, 4);
 
   document.getElementById("dfr").innerHTML = fr.length ? fr.map(x => { const d = new Date(x.date + "T12:00:00");
-    return `<a class="dfr-r" href="${escN(lien(x))}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${x.cover ? `<img src="${escN(couvN(x.cover, 120))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span class="t"><b>${escN((x.fr || x.series) + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
+    return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="fr" data-i="${fr.indexOf(x)}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${x.cover ? `<img src="${escN(couvN(x.cover, 120))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span class="t"><b>${escN((x.fr || x.series) + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
+  TP.fr = fr; TP.jp = jp;
   if (jp.length) { document.getElementById("d-jp").hidden = false;
-    document.getElementById("djp").innerHTML = jp.map(x => `<a class="djp-c" href="${escN(lien(x))}"><span><img src="${escN(couvN(x.cover, 400))}" alt="Couverture ${escN(x.series + tn(x.n))}" loading="lazy" onerror="this.closest('.djp-c').remove()"><em>${escN(fmtD(x.date))}</em></span><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></a>`).join(""); }
+    document.getElementById("djp").innerHTML = jp.map((x, i) => `<a class="djp-c" href="${escN(lien(x))}" data-tp="jp" data-i="${i}"><span><img src="${escN(couvN(x.cover, 400))}" alt="Couverture ${escN(x.series + tn(x.n))}" loading="lazy" onerror="this.closest('.djp-c').remove()"><em>${escN(fmtD(x.date))}</em></span><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></a>`).join(""); }
 });
 // Derniers commentaires : 5 plus récents, avec l'article et la série ; clic sur le commentaire → section commentaires de l'article.
 const comN = () => {
