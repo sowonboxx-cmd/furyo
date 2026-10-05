@@ -104,7 +104,9 @@
     ".sh-nav a:hover::after{content:'';display:block;position:absolute;left:12px;right:12px;bottom:4px;height:4px;border-radius:2px;background:rgba(188,0,45,.45)}" +
     ".sh-nav a[aria-current=page]::after{content:'';display:block;position:absolute;left:12px;right:12px;bottom:4px;height:4px;border-radius:2px;background:#BC002D}}" +
     /* Téléphone : un trait gris très léger sépare la ligne du logo (avatar, logo, recherche) du menu (Will, 05/10/2026). */
-    "@media (max-width:719px){.sh-top{border-bottom:1px solid rgba(255,255,255,.07)}}";
+    "@media (max-width:719px){.sh-top{border-bottom:1px solid rgba(255,255,255,.07)}}" +
+    /* Ordinateur : logo, menu, recherche et avatar un peu en retrait des bords du contenu (Will, 05/10/2026). */
+    "@media (min-width:980px){.sh-in{padding:0 48px!important}}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
   var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
