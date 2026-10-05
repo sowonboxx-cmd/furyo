@@ -485,7 +485,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
   .mh-meta{display:flex;gap:6px;align-items:center;white-space:nowrap;min-width:0;font:600 12px Inter,system-ui,sans-serif;color:#98989D}
   .mh-meta span{font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
   .mh-o{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-bottom:1px solid #2C2C2F}
-  .mh-ot{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+  .mh-ot{display:flex;flex-direction:column;gap:9px;min-width:0;flex:1}
   .mh-o h3,.mh-r h3{font:700 21px/1.05 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em}
   .mh-o p,.mh-r p,.mh-hero p{margin:0;font-size:14.5px;line-height:1.4;color:#D8D8DC;font-weight:500;letter-spacing:-.005em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .mh-o img{width:84px;height:84px;border-radius:14px;object-fit:cover;object-position:top;flex:none}
@@ -613,7 +613,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
   .mh-at nav [aria-current=true]::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:3px;border-radius:2px;background:#4C9BFF}
   .mh-at nav button[aria-current=true]::after{right:15px}
   .mh-at nav svg{width:13px;height:13px}
-  .mh-rt{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+  .mh-rt{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
   .mh-r h3{font-size:19px}
   .mh-r .mh-acts{gap:18px}
   .mh-tp{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center}
@@ -635,7 +635,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=28"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=33" defer></script>
+<script src="/site/home-m.js?v=34" defer></script>
 <div class="page">
 
 
@@ -753,7 +753,7 @@ function fitP(p){
   const lh = parseFloat(getComputedStyle(p).lineHeight) || 22;
   const lines = () => Math.round(p.scrollHeight / lh);
   const fill = () => { const r = document.createRange(); r.selectNodeContents(p); const rs = r.getClientRects(), b = p.getBoundingClientRect(); return rs.length ? (rs[rs.length - 1].right - b.left) / p.clientWidth : 1; };
-  const ok = t => { p.textContent = t; const n = lines(); return n <= max && !(n === max && max > 1 && fill() > 0.85); };
+  const ok = t => { p.textContent = t; const n = lines(); return n <= max && !(n === max && max > 1 && p.dataset.f !== "1" && fill() > 0.85); };
   const coupe = (base, phrase) => { const parts = phrase.split(/,\s*/); let best = ""; for (let i = 1; i < parts.length; i++) { const c = (base ? base + " " : "") + parts.slice(0, i).join(", ").replace(/[\s;:—-]+$/, "") + "."; if (ok(c)) best = c; else break; } return best; };
   let best = "";
   if (first) best = ok(s[0]) ? s[0] : coupe("", s[0]);
