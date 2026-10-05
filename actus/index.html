@@ -117,7 +117,7 @@ a{color:inherit}
 .nd-mks{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 14px}.nd-mks a,.nd-mks span{background:#1C1C1E;border-radius:9px;padding:7px 11px;font:600 14px Inter,sans-serif;color:#E5E5EA;text-decoration:none}.nd-mks a:hover{background:var(--ink-3)}
 .nd-o{display:grid;grid-template-columns:66px minmax(0,1fr);gap:12px;align-items:start;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none}
 .nd-o img,.nd-o .ph{width:66px;aspect-ratio:7/10;object-fit:cover;border-radius:7px;background:var(--ink-3)}
-.nd-o span{font:600 11.5px Inter,sans-serif;color:var(--paper-3);min-width:0}.nd-o>span{display:flex;flex-direction:column;max-height:94px;overflow:hidden}
+.nd-o span{font:600 11.5px Inter,sans-serif;color:var(--paper-3);min-width:0}.nd-o>span{display:flex;flex-direction:column;max-height:94px;overflow:hidden}.nd-o .om{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:15px}
 .nd-o b{display:block;margin-top:2px;font:700 17px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nd-o p{margin:4px 0 0;font:500 12.5px/1.32 Inter,sans-serif;color:var(--paper-2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .nd-o:hover b{text-decoration:underline}
@@ -261,7 +261,7 @@ a{color:inherit}
     return '<section class="nd-box"><div class="nd-bh"><h2>Autres actualités</h2></div>' + o.map(function (it) {
       var c = (it.cats && it.cats[0]) || { nom: it.catNom || "News", c: it.catC || "#D4D4D8" };
       return '<a class="nd-o" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 160)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
-        '<span><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "<b>" + esc(it.fr || it.titre) + "</b><p>" + esc(it.texte || "") + "</p></span></a>";
+        '<span><i class="om"><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "</i><b>" + esc(it.fr || it.titre) + "</b><p>" + esc(it.texte || "") + "</p></span></a>";
     }).join("") + '<a class="nd-btn nd-more" href="/?vue=actus">Toutes les actualités</a></section>';
   }
   function comD() {
