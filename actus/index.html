@@ -32,6 +32,7 @@ a{color:inherit}
 .na-text{margin:0;font-size:16.5px;line-height:1.65;color:#E4E4E8;white-space:pre-line}
 .na-vid{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}.na-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .na-links{display:flex;flex-wrap:wrap;gap:8px}
+.na-fol{height:38px;padding:0 15px;border:0;border-radius:19px;display:inline-flex;align-items:center;gap:7px;background:#000;color:var(--paper);font:600 13.5px Inter,sans-serif;cursor:pointer}.na-fol svg{width:16px;height:16px}.na-fol.on{color:#AEAEB2}
 .na-links a{height:38px;padding:0 15px;border-radius:19px;display:inline-flex;align-items:center;background:#000;text-decoration:none;font-size:13.5px;font-weight:600}
 .na-acts{display:flex;align-items:center;gap:22px;padding:6px 0;color:var(--paper-3);font-size:13.5px;font-weight:600}
 .na-acts button,.na-acts span{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:inherit;font:inherit;padding:6px 0;cursor:pointer}
@@ -202,7 +203,8 @@ a{color:inherit}
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
       '<div class="na-body"><span class="na-meta">' + esc(dLong(N.date) || "") + "</span>" +
       '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
-      '<div class="na-links"><a href="/series/' + esc(slug(N.titre)) + '">Fiche ' + esc(titre) + "</a>" + (N.src ? '<a href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(N.srcName || "officielle") + "<svg class='arr' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true' style='display:inline-block;vertical-align:-1px;margin-left:3px'><path d='M8 16 16 8M9.5 8H16v6.5'/></svg></a>" : "") + "</div>" +
+      '<div class="na-links"><a href="/series/' + esc(slug(N.titre)) + '">Fiche ' + esc(titre) + "</a>" +
+        (CTX && CTX.serie ? '<button type="button" class="na-fol' + (FOLLOW ? " on" : "") + '" data-soon="suivre">' + (FOLLOW ? HEART_ON + "Série suivie" : I.heart + "Suivre la série") + "</button>" : "") + (N.src ? '<a href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(N.srcName || "officielle") + "<svg class='arr' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true' style='display:inline-block;vertical-align:-1px;margin-left:3px'><path d='M8 16 16 8M9.5 8H16v6.5'/></svg></a>" : "") + "</div>" +
       acts() + preview() + "</div>";
   }
 
@@ -350,8 +352,8 @@ a{color:inherit}
     if (!N) { root.innerHTML = '<p class="na-empty">Cette actualité n\'existe plus. <a href="/">Retour aux actualités</a></p>'; return; }
     if (!avant || JSON.stringify(avant) !== JSON.stringify(N)) render();
     if (location.hash === "#commentaires") { if (DESK.matches) { var cbox = document.getElementById("commentaires"); if (cbox) cbox.scrollIntoView(); } else sheet(); }
-    get("/api/actu?id=" + N.id).then(function (c) { if (c && !c.error) { CTX = c; if (DESK.matches) render();
-      if (c.serie) get("/api/follow?s=" + encodeURIComponent(c.serie.slug)).then(function (f) { if (f && f.ok) { FOLLOW = !!f.on; if (DESK.matches) render(); } }); } });
+    get("/api/actu?id=" + N.id).then(function (c) { if (c && !c.error) { CTX = c; render();
+      if (c.serie) get("/api/follow?s=" + encodeURIComponent(c.serie.slug)).then(function (f) { if (f && f.ok) { FOLLOW = !!f.on; render(); } }); } });
     // Une vue par news et par session
     try { if (!sessionStorage.getItem("v-" + N.id)) { sessionStorage.setItem("v-" + N.id, "1"); fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, act: "view" }) }); } } catch (e) {}
     get("/api/stats?ids=" + N.id).then(function (s) { if (s && s.stats) { ST = s.stats[N.id] || {}; STORED = s.stored !== false; render(); } });
