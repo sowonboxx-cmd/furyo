@@ -48,6 +48,8 @@ button{font:inherit;color:inherit}
 @media (min-width:720px){.head{grid-template-columns:246px minmax(0,1fr);gap:28px;margin-top:28px}}
 .main-cv{width:100%;aspect-ratio:5/7;border-radius:8px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
 @media (min-width:720px){.main-cv{border-radius:14px}}
+/* Pas de bouton du navigateur (partager, recherche visuelle) ni de menu au survol / appui long sur les images (Will, 05/10/2026) : le clic passe au cadre. */
+body img{pointer-events:none;-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none}
 .main-cv img{width:100%;height:100%;object-fit:cover;display:block}
 .main-cv.zoom{cursor:zoom-in}
 .ph{writing-mode:vertical-rl;text-orientation:upright;font-weight:700;font-size:13px;color:var(--paper-3);letter-spacing:.08em}
