@@ -256,7 +256,7 @@
     var tp = e.target.closest("[data-tome]");
     if (tp) { var x = (D.cal || []).filter(function (c) { return c.id === tp.dataset.tome; })[0]; if (x) { e.preventDefault(); tomePop(x); return; } }
     var tb = e.target.closest("[data-tab]");
-    if (tb && tb.dataset.tab === "feed" && D.me && D.me.user && D.follow == null) get("/api/follow").then(function (j) { D.follow = (j && j.slugs) || []; render(); });
+    if (tb && tb.dataset.tab === "feed" && D.me && D.me.user) get("/api/follow").then(function (j) { D.follow = (j && j.slugs) || []; render(); });
     if (tb) { TAB = tb.dataset.tab; if (TAB === "signets" && D.me && D.me.user && D.signets == null) get("/api/stats?mine=b").then(function (j) { D.signets = (j && j.ids) || []; render(); }); render(); return; }
     var cb = e.target.closest(".mh-catb");
     if (cb) { var m = root.querySelector(".mh-menu"); m.hidden = !m.hidden; cb.setAttribute("aria-expanded", !m.hidden); return; }
