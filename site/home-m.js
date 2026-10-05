@@ -179,7 +179,7 @@
   // Page « Toutes les actualités » : le titre devient les onglets Toutes / Mon feed / Signets / Catégories, dans la police des titres (Will, 05/10/2026).
   function atabs(v) {
     var cur = v.cat ? "cat" : v.tab, catNom = v.cat ? (TL[v.cat] || ["", "Catégorie"])[1] : "Catégories";
-    return '<div class="mh-at"><a class="mh-atb" href="/" data-home aria-label="Retour à l\'accueil">' + I.back + '</a><nav aria-label="Actualités">' +
+    return '<div class="mh-at"><nav aria-label="Actualités">' +
       [["toutes", "Toutes", "/?vue=actus"], ["feed", "Mon feed", "/?vue=actus&tab=feed"], ["signets", "Signets", "/?vue=actus&tab=signets"]].map(function (t) { return '<a href="' + t[2] + '" aria-current="' + (cur === t[0]) + '">' + t[1] + "</a>"; }).join("") +
       '<button type="button" class="mh-catb" aria-haspopup="listbox" aria-expanded="false" aria-current="' + (cur === "cat") + '">' + esc(catNom) + I.chev + "</button></nav></div>" + catMenu(v.cat);
   }
