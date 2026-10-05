@@ -179,7 +179,8 @@ body{background:#000}
 .na-seg>*+*{border-left:1px solid #2C2C2E}.na-seg svg{width:19px;height:19px}.na-seg .p{color:#4C9BFF}.na-seg .on{color:#AEAEB2}
 .na-srcs{background:#1C1C1E;border-radius:14px;overflow:hidden}
 .na-srcs .h{padding:12px 14px 4px;font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8E8E93}
-.na-srcs a{display:flex;align-items:center;gap:11px;min-height:52px;padding:6px 14px;color:#F5F5F7;text-decoration:none;font:600 14.5px/1.25 Inter,sans-serif}
+.na-srcs img{width:22px;height:22px;border-radius:5px;flex:none;background:#2C2C2E}
+.na-srcs a{display:flex;align-items:center;gap:12px;min-height:50px;padding:6px 14px;color:#F5F5F7;text-decoration:none;font:600 14.5px/1.25 Inter,sans-serif}
 .na-srcs a+a{border-top:1px solid #2C2C2E}
 .na-srcs a span{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}.na-srcs small{font:500 13px Inter,sans-serif;color:#8E8E93;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .na-srcs i{flex:none;width:30px;height:30px;border-radius:8px;background:#2C2C2E;display:grid;place-items:center;font:700 12.5px Inter,sans-serif;font-style:normal}.na-srcs i svg{width:14px;height:14px}
@@ -191,13 +192,15 @@ body{background:#000}
 .na-add{background:#1C1C1E;border:0;height:50px}
 .na-ao .nd-box{background:#1C1C1E;border-radius:22px;padding:18px}
 .na-ao .nd-bh h2{font-size:24px}
-.na-ao .nd-o{border-top:0}
+.na-ao .nd-o{border-top:1px solid #2C2C2E}.na-ao .nd-bh+.nd-o{border-top:0}
+.na-ao .nd-o p{display:block;-webkit-line-clamp:unset;color:#D8D8DC}.na-ao .nd-o>span{max-height:none}
 .na-ao .nd-more{background:#2C2C2E}
 }
 </style>
 </head>
 <body>
 <script src="/site/header.js?v=28"></script>
+<script src="/site/fit2.js?v=1"></script>
 <main class="na" id="na"><p class="na-empty">Chargement…</p></main>
 <script>
 (function () {
@@ -250,17 +253,15 @@ body{background:#000}
     var m = String(u || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
     return m ? '<div class="na-vid"><iframe src="https://www.youtube-nocookie.com/embed/' + m[1] + '" title="Vidéo de la news" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>' : "";
   }
-  // Bloc « Sources » (une ligne par source, comme les réglages iPhone) ; la vidéo officielle y figure aussi.
+  // Bloc « Sources » : une ligne par source, favicon + nom du site (x.com, youtube.com…) ; la vidéo de la news n'y est pas répétée (Will, 05/10/2026).
   function srcsM() {
-    var L = (N.srcs && N.srcs.length ? N.srcs : (N.src ? [{ u: N.src, n: N.srcName }] : [])).map(function (x) {
-      var h = handle(x.u), host = ""; try { host = new URL(x.u).hostname.replace(/^www\./, ""); } catch (e) {}
-      return { u: x.u, ic: /x\.com|twitter\.com/.test(host) ? X_ICON : esc((x.n || host || "?").charAt(0).toUpperCase()), t: h ? "Compte X" : (x.n || host || "Source officielle"), d: h || host };
-    });
-    var m = String(N.video || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
-    if (m && !L.some(function (x) { return x.u.indexOf(m[1]) >= 0; })) L.push({ u: "https://www.youtube.com/watch?v=" + m[1], ic: "▶", t: "Vidéo officielle", d: "YouTube" });
+    var L = (N.srcs && N.srcs.length ? N.srcs : (N.src ? [{ u: N.src }] : [])).map(function (x) {
+      var host = ""; try { host = new URL(x.u).hostname.replace(/^www\./, "").replace(/^twitter\.com$/, "x.com"); } catch (e) {}
+      return { u: x.u, h: host };
+    }).filter(function (x) { return x.h; });
     if (!L.length) return "";
     return '<div class="na-srcs"><div class="h">' + (L.length > 1 ? "Sources · " + L.length : "Source") + "</div>" + L.map(function (x) {
-      return '<a href="' + esc(x.u) + '" target="_blank" rel="noopener"><i>' + x.ic + "</i><span>" + esc(x.t) + "<small>" + esc(x.d) + "</small></span>" + ARR + "</a>"; }).join("") + "</div>";
+      return '<a href="' + esc(x.u) + '" target="_blank" rel="noopener"><img src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(x.h) + '&amp;sz=64" alt="" loading="lazy"><span>' + esc(x.h) + "</span>" + ARR + "</a>"; }).join("") + "</div>";
   }
   function render() {
     if (!N) return;
@@ -269,7 +270,7 @@ body{background:#000}
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "") +
-      '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a>' + (N.cover && N.credit ? '<span class="cr" lang="' + (/^©[^ ]/.test(N.credit) ? "ja" : "fr") + '">' + esc(N.credit) + "</span>" : "") +
+      (N.cover && N.credit ? '<span class="cr" lang="' + (/^©[^ ]/.test(N.credit) ? "ja" : "fr") + '">' + esc(N.credit) + "</span>" : "") +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
         (N.jp ? '<span class="na-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<span class="na-meta">' + esc(dLong(N.date) || "") + "</span></div></div>" +
       // Page news mobile, maquette A validée par Will (05/10/2026) : fond noir, barre d'actions plate, bloc Sources, stats et autres actualités en blocs.
@@ -278,6 +279,7 @@ body{background:#000}
         '<a class="p" href="/series/' + esc(CTX && CTX.serie && CTX.serie.slug || slug(N.titre)) + '">' + I.fiche + "Voir la fiche</a>" +
         '<button type="button" data-soon="liste">' + I.book + "Ma liste</button></div>" +
       srcsM() + '<div class="na-stc">' + acts() + "</div>" + preview() + '<div class="na-ao">' + autres() + "</div></div>";
+    if (window.FG_FIT2) FG_FIT2(root);
   }
 
   // ---------- Ordinateur ----------
@@ -342,7 +344,7 @@ body{background:#000}
     return '<section class="nd-box"><div class="nd-bh"><h2>Autres actualités</h2></div>' + o.map(function (it) {
       var c = (it.cats && it.cats[0]) || { nom: it.catNom || "News", c: it.catC || "#D4D4D8" };
       return '<a class="nd-o" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 160)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
-        '<span><i class="om"><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "</i><b>" + esc(it.fr || it.titre) + "</b><p>" + esc(it.texte || "") + "</p></span></a>";
+        '<span><i class="om"><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "</i><b>" + esc(it.fr || it.titre) + '</b><p data-full="' + esc(it.texte || "") + '">' + esc(it.texte || "") + "</p></span></a>";
     }).join("") + '<a class="nd-btn nd-more" href="/?vue=actus">Toutes les actualités</a></section>';
   }
   function comD() {

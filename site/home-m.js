@@ -48,18 +48,16 @@
   }
   // Carte « O » : texte à gauche, image à droite
   // Descriptions sans « … » (Will, 05/10/2026) : phrases entières sur 2 lignes, coupées à une virgule si besoin (fitN de la page).
-  function pf(t, a) { return '<p data-full="' + esc(t) + '" data-alt="' + esc(a || "") + '" data-l="2" data-f="1">' + esc(t) + "</p>"; }
-  function fitM(r) { if (window.fitN) window.fitN(r || root); }
-  addEventListener("resize", function () { clearTimeout(fitM.t); fitM.t = setTimeout(function () { fitM(); }, 150); });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitM(); });
+  function pf(t) { return '<p data-full="' + esc(t) + '">' + esc(t) + "</p>"; }
+  function fitM(r) { if (window.FG_FIT2) window.FG_FIT2(r || root); }
   function cardO(it) {
-    return '<article class="mh-o"><a class="mh-hit" href="' + esc(link(it)) + '"><div class="mh-ot">' + meta(it) + '<h3>' + esc(it.fr || it.titre) + '</h3>' + pf(it.texte, it.accroche) + "</div>" +
+    return '<article class="mh-o"><a class="mh-hit" href="' + esc(link(it)) + '"><div class="mh-ot">' + meta(it) + '<h3>' + esc(it.fr || it.titre) + '</h3>' + pf(it.texte) + "</div>" +
       (it.cover ? '<img src="' + esc(couv(it.cover, 240)) + '" alt="" loading="lazy">' : "") + "</a>" + acts(it) + "</article>";
   }
   // Carte de liste (toutes les actus / catégorie) : image à gauche, même détail
   function cardR(it) {
     return '<article class="mh-r"><a class="mh-hit" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 240)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') +
-      '<div class="mh-rt">' + meta(it) + "<h3>" + esc(it.fr || it.titre) + "</h3>" + pf(it.texte, it.accroche) + "</div></a>" + acts(it) + "</article>";
+      '<div class="mh-rt">' + meta(it) + "<h3>" + esc(it.fr || it.titre) + "</h3>" + pf(it.texte) + "</div></a>" + acts(it) + "</article>";
   }
   // La plus récente en grand
   function hero(it) {
@@ -95,6 +93,10 @@
 
   // ---------- Sections ----------
   function semaine() { var d = new Date(), j = (d.getDay() + 6) % 7, a = new Date(d); a.setDate(d.getDate() - j); var b = new Date(a); b.setDate(a.getDate() + 6); var f = function (x) { return x.toISOString().slice(0, 10); }; return [f(a), f(b), a, b]; }
+  // Titre cliquable avec une petite flèche, sans lien à droite (Will, 05/10/2026).
+  function headGo(t, href) {
+    return '<div class="mh-h2"><div><h2><a class="mh-go" href="' + href + '">' + t + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a></h2></div></div>';
+  }
   function head2(t, sub, href, lab) {
     return '<div class="mh-h2"><div>' + (sub ? "<small>" + sub + "</small>" : "") + "<h2>" + t + "</h2></div>" + (href ? '<a href="' + href + '">' + (lab || "Tout voir") + "</a>" : "") + "</div>";
   }
@@ -116,7 +118,7 @@
     if (!it.length) { var t = new Date().toISOString().slice(0, 10); it = (D.cal || []).filter(function (x) { return x.pays === "Japon" && x.date >= t; }).slice(0, 5); titre = "Prochaines sorties"; }
     if (!it.length) return "";
     var J = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
-    return '<section class="mh-jpbox" aria-label="Sorties au Japon">' + head2(titre, I.jp + "Au Japon", "/calendrier/#japon", "Calendrier") + it.slice(0, 6).map(function (x) {
+    return '<section class="mh-jpbox" aria-label="Sorties au Japon">' + headGo(titre + " au Japon", "/calendrier/#japon") + it.slice(0, 6).map(function (x) {
       var d = new Date(x.date + "T12:00:00"), t = (x.series) + (x.n != null ? " T." + String(x.n).padStart(2, "0") : "");
       return '<a class="mh-jprow" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span class="d"><b>' + String(d.getDate()).padStart(2, "0") + "</b>" + J[d.getDay()] + "</span>" + (x.cover ? '<img src="' + esc(couv(x.cover, 120)) + '" alt="" loading="lazy">' : '<span class="mh-noimg s"></span>') + '<span class="t"><b>' + esc(t) + "</b><small>" + esc(x.pub || "") + "</small></span></a>";
     }).join("") + "</section>";
@@ -151,7 +153,7 @@
   }
   function direct() {
     var m = mags(); if (!m.length) return "";
-    return '<section class="mh-sec" aria-label="Les prépublications au Japon">' + head2("Les prépublications au Japon", '<span class="live">● En direct</span>', "/?vue=magazines", "Tous les magazines") + '<div class="mh-car">' + m.slice(0, 6).map(magCard).join("") + "</div></section>";
+    return '<section class="mh-sec" aria-label="Les prépublications au Japon">' + headGo("Les prépublications au Japon", "/?vue=magazines") + '<div class="mh-car">' + m.slice(0, 6).map(magCard).join("") + "</div></section>";
   }
   function crows() {
     return '<a class="mh-cxw" href="/crows-x-worst/" target="_blank" rel="noopener"><span class="map" aria-hidden="true"></span><span class="chars"><img src="/crows-x-worst/img/char-hana.png" alt=""><img src="/crows-x-worst/img/char-boya.png" alt=""></span><span class="t"><small>Carte interactive</small><b>CROWS<i>×</i>WORST</b><em>Toutes les œuvres de l\'univers de Hiroshi Takahashi</em></span></a>';
