@@ -686,6 +686,8 @@ function tabsN() {
 }
 // « Toutes les actualités » (Will, 05/10/2026) : la colonne montre les nouvelles licences France, les nouvelles séries
 // au Japon et l'anime, puis Toutes les séries et En direct du Japon (plus de prochaines sorties ni de commentaires).
+const FLAG_FR = '<svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>';
+const FLAG_JP = '<svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>';
 const SIDE_CATS = [["licence-fr", "Nouvelles licences", "En France"], ["licence-jp", "Nouvelles séries", "Au Japon"], ["anime", "Anime", "Saisons, films et bandes-annonces"]];
 function sideN() {
   const mode = !!(DT.all || VUE_N === "actus"), box = document.getElementById("m-cats"); if (!box) return;
@@ -696,7 +698,8 @@ function sideN() {
   const news = DT.news.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   box.innerHTML = SIDE_CATS.map(([k, t, sub]) => {
     const l = news.filter(it => has(it, k)).slice(0, 4);
-    return `<section class="box"><div class="m-head"><div><small class="m-eye">${escN(sub)}</small><h3><a class="h3a" href="/?cat=${k}" data-cat-go="${k}">${escN(t)}</a></h3></div></div>` +
+    const fl = k === "licence-fr" ? FLAG_FR : k === "licence-jp" ? FLAG_JP : "";
+    return `<section class="box"><div class="m-head"><div><small class="m-eye">${fl}${escN(sub)}</small><h3><a class="h3a" href="/?cat=${k}" data-cat-go="${k}">${escN(t)}</a></h3></div></div>` +
       (l.length ? `<div class="sc">${l.map(it => `<a class="sc-r" href="${escN(linkN(it))}">${it.cover ? `<img src="${escN(couvN(it.cover, 160))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span><b>${escN(it.fr || it.titre)}</b><small>${escN(relN(it.date))}</small></span></a>`).join("")}</div>` : '<p class="m-note">Rien de nouveau pour l\'instant.</p>') + "</section>";
   }).join("");
 }
