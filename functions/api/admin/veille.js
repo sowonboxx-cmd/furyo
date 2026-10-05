@@ -6,7 +6,7 @@
 import { text, date, num, rel, list, queryAll, slugSerie } from "../../../lib/notion.js";
 import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
-import { CATEGORIES, categorie, categoriesDe } from "../../../lib/categories.js";
+import { CATEGORIES, categorie, categoriesDe, pays } from "../../../lib/categories.js";
 
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
@@ -257,7 +257,6 @@ async function appliquerFiche(env, newsId) {
     { property: "Type", select: { equals: "Mise à jour fiche" } },
     { or: [{ property: "Statut", select: { equals: "À valider" } }, { property: "Statut", select: { equals: "À appliquer à la fiche" } }] },
   ] } } });
-  if (!rows.length) return [];
   const serie = await (await fetch(`https://api.notion.com/v1/pages/${sid}`, { headers: H })).json();
   const sp = serie.properties || {}, done = [];
   for (const row of rows) {
@@ -276,6 +275,16 @@ async function appliquerFiche(env, newsId) {
     if (!u.ok) continue;
     await fetch(`https://api.notion.com/v1/pages/${row.id}`, { method: "PATCH", headers: H, body: JSON.stringify({ properties: { "Statut": { select: { name: "Appliqué" } } } }) });
     done.push(champ + " → " + val);
+  }
+  // Filet de sécurité : une news « Fin de série » publiée sans proposition de fiche met quand même la série en « Terminé ».
+  const np = news.properties || {}, cats = (np["Catégorie"] && np["Catégorie"].multi_select || []).map(x => x.name);
+  if (cats.includes("Fin de série") && !done.some(d => /^Statut /.test(d))) {
+    const champ = pays(text(np["Proposition"]), text(np["Source officielle"])) === "fr" ? "Statut France" : "Statut Japon", prop = sp[champ];
+    const cur = prop && (prop.select || prop.status || {}).name;
+    if (prop && (prop.type === "select" || prop.type === "status") && !/termin/i.test(cur || "")) {
+      const u = await fetch(`https://api.notion.com/v1/pages/${sid}`, { method: "PATCH", headers: H, body: JSON.stringify({ properties: { [champ]: { [prop.type]: { name: "Terminé" } } } }) });
+      if (u.ok) done.push(champ + " → Terminé");
+    }
   }
   return done;
 }
