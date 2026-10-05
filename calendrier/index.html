@@ -35,12 +35,12 @@ button{font:inherit;color:inherit}
 h1{margin:18px 0 2px;font-family:var(--f-display);font-weight:700;font-size:clamp(44px,12vw,72px);line-height:.95;text-transform:uppercase;letter-spacing:.01em}
 .sub{margin:0;color:var(--paper-2)}
 .bar{display:flex;gap:8px;align-items:center;margin-top:8px;padding:8px 0;position:sticky;top:var(--sh-h,0px);z-index:5;background:var(--ink)}
-.seg{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--ink-3);border-radius:14px}
+.seg{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:#000;border-radius:14px}
 .seg button{height:40px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font-weight:600;font-size:14px;cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
-.views{display:flex;gap:4px;padding:4px;background:var(--ink-3);border-radius:14px}
+.seg button:hover{background:#1C1C1E;color:var(--paper)}.seg button[aria-pressed="true"]{background:var(--ink-3);color:var(--paper)}
+.views{display:flex;gap:4px;padding:4px;background:#000;border-radius:14px}
 .views button{width:40px;height:40px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);display:grid;place-items:center;cursor:pointer}
-.views button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
+.views button:hover{background:#1C1C1E;color:var(--paper)}.views button[aria-pressed="true"]{background:var(--ink-3);color:var(--paper)}
 .month{margin:26px 0 10px;font-family:var(--f-display);font-weight:700;font-size:26px;text-transform:uppercase;letter-spacing:.01em;display:flex;align-items:baseline;gap:10px}
 .month small{font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--paper-3);letter-spacing:.04em;text-transform:none}
 /* Liste */
@@ -221,8 +221,14 @@ function applyPays(){
   const none = document.getElementById("none");
   if (none) { none.hidden = !!firstNext; none.textContent = !SHOWN.length ? `Aucune sortie pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.` : `Aucune sortie annoncée pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.`; }
   fitAll();
-  goToday();
+  goToday(); settle();
 }
+// Les images et polices du dessus finissent de charger après le premier placement : on se recale sur le mois en cours
+// tant que le visiteur n'a pas fait défiler lui-même (bug iPad : on voyait la fin de septembre, Will 05/10/2026).
+let moved = false;
+["wheel", "touchstart", "keydown", "mousedown"].forEach(ev => addEventListener(ev, () => { moved = true; }, { passive: true, once: true }));
+function settle(){ [200, 600, 1200, 2500].forEach(t => setTimeout(() => { if (!moved) goToday(); }, t)); }
+addEventListener("load", () => { if (!moved) goToday(); });
 // Titre sur deux lignes au plus : s'il dépasse, on le coupe avec « … » pour que le tome reste toujours visible.
 function fit(el){
   const n = el.querySelector(".ct-n"); if (!n) return;
