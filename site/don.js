@@ -12,7 +12,7 @@
     ".fgd .ch{position:absolute;bottom:0;z-index:2;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55));pointer-events:none;width:auto}" +
     ".fgd .tx{position:relative;z-index:3;width:56%;display:flex;flex-direction:column;align-items:flex-start;gap:12px}" +
     ".fgd .tag{align-self:flex-start;display:inline-block;transform:rotate(-4deg);background:#BC002D;color:#fff;font:800 11px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:4px;white-space:nowrap}" +
-    ".fgd .msg{margin:0;font:700 30px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase}.fgd .msg em{font-style:normal;color:#F2B33D}" +
+    ".fgd .msg{margin:0;font:700 29px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase}.fgd .msg em{font-style:normal;color:#F2B33D}" +
     ".fgd .sub{margin:0;font:500 14px/1.45 Inter,sans-serif;color:#D8D8DC;letter-spacing:-.005em}" +
     ".fgd .pp{display:inline-flex;align-items:center;gap:7px;height:44px;padding:0 18px;border:0;border-radius:22px;background:#305887;color:#fff;font:800 14.5px Inter,sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}" +
     ".fgd .pp.y{background:#F2B33D;color:#000}.fgd .pp .arr{width:15px;height:15px}" +
@@ -31,7 +31,7 @@
   var tag = '<span class="tag">Message du gang</span>';
   var B = {
     haru: function () { return '<div class="fgd">' + img("haru", "right:4px;height:300px") + '<div class="tx">' + tag + '<p class="msg">Toi.<br>Oui, <em>toi.</em></p><p class="sub">Le gang a besoin de 2 €.</p>' + bouton("Filer 2 € ") + "</div></div>"; },
-    jinnai: function () { return '<div class="fgd">' + img("jinnai", "right:-6px;height:290px") + '<div class="tx">' + tag + '<p class="msg">On rackette pas.<br><em>On propose.</em></p><p class="sub">Mais on insiste.</p>' + bouton("PayPal ") + "</div></div>"; },
+    jinnai: function () { return '<div class="fgd">' + img("jinnai", "right:-10px;height:280px") + '<div class="tx" style="width:62%">' + tag + '<p class="msg">On rackette pas.<br><em>On propose.</em></p><p class="sub">Mais on insiste.</p>' + bouton("PayPal ") + "</div></div>"; },
     duo: function () { return '<div class="fgd"><span class="bul" style="right:16px;top:-46px">On t’attend à la sortie.</span>' + img("duo", "right:-6px;height:250px") + '<div class="tx" style="width:48%">' + tag + '<p class="msg">La <em>cotisation</em>, c’est maintenant.</p>' + bouton("Cotiser ") + "</div></div>"; },
     bandeau: function () { return '<div class="fgd bn">' + img("duo", "left:16px;height:240px") + '<div class="tx">' + tag + '<p class="msg">Tes potes lisent gratos.<br>Sois pas <em>comme tes potes.</em></p></div>' + bouton("Filer 2 € ", true) + "</div>"; }
   };
