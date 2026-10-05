@@ -94,7 +94,15 @@
     /* Rubriques en onglets plats dans un cadre noir, comme la maquette T (Will, 05/10/2026) */
     "@media (min-width:720px){.sh-nav{flex:none;background:#000;border-radius:16px;padding:5px;gap:4px;overflow:visible}" +
     ".sh-nav a{height:40px;padding:0 18px;border-radius:12px;font:700 17px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em;color:#98989D}" +
-    ".sh-nav a:hover{color:#F5F5F7;background:#1C1C1E}.sh-nav a[aria-current=page]{background:#38383B;color:#F5F5F7}.sh-nav a[aria-current=page]::after{display:none}}";
+    ".sh-nav a:hover{color:#F5F5F7;background:#1C1C1E}.sh-nav a[aria-current=page]{background:#38383B;color:#F5F5F7}.sh-nav a[aria-current=page]::after{display:none}}" +
+    /* Piste D validée (Will, 05/10/2026) : plus de cadre, rubriques en blanc, rubrique active soulignée du rouge du logo (#BC002D). */
+    "@media (max-width:719px){.sh-nav{background:transparent!important;margin:2px 12px 4px!important;padding:0!important;justify-content:space-around!important}" +
+    ".sh-nav a{flex:none!important;height:44px!important;padding:0 4px!important;border-radius:0!important;background:none!important;color:#F5F5F7!important}" +
+    ".sh-nav a[aria-current=page]::after{display:block!important;left:2px!important;right:2px!important;bottom:3px!important;height:4px!important;border-radius:2px!important;background:#BC002D!important}}" +
+    "@media (min-width:720px){.sh-nav{background:transparent;padding:0;gap:6px}" +
+    ".sh-nav a{height:44px;padding:0 12px;border-radius:0;background:none!important;color:#F5F5F7}.sh-nav a:hover{color:#fff}" +
+    ".sh-nav a:hover::after{content:'';display:block;position:absolute;left:12px;right:12px;bottom:4px;height:4px;border-radius:2px;background:rgba(188,0,45,.45)}" +
+    ".sh-nav a[aria-current=page]::after{content:'';display:block;position:absolute;left:12px;right:12px;bottom:4px;height:4px;border-radius:2px;background:#BC002D}}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
   var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
