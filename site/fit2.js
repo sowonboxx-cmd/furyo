@@ -5,7 +5,7 @@
    Utilisation : <p data-full="texte complet">, puis FG_FIT2(racine). */
 (function () {
   var BRK = /^(sur|de|du|des|d'|d’|à|au|aux|pour|dans|avec|qui|que|qu'|qu’|par|en|et|est|sont|chez|sous|lié|liée|liés|dont|où|après|avant|depuis|entre|vers|contre|sans|mais|car|ou|grâce|selon|lors|via|comme)$/i;
-  var STOP = /^(le|la|les|l'|l’|un|une|des|du|de|d'|d’|à|au|aux|sur|pour|dans|avec|par|en|et|ou|qui|que|son|sa|ses|leur|leurs|ce|cette|ces|est|a)$/i;
+  var STOP = /^(le|la|les|l'|l’|un|une|des|du|de|d'|d’|à|au|aux|sur|pour|dans|avec|par|en|et|ou|qui|que|son|sa|ses|leur|leurs|ce|cette|ces|est|a|partir|près|cours|travers|lors|auprès|afin|fin|début|suite|jusqu'|jusqu’|plus|moins|très|tout|toute)$/i;
   function sent(t) {
     var raw = String(t || "").replace(/\s+/g, " ").trim().split(/(?<=[.!?…]["»”)]?)\s+(?=[A-ZÀ-ÖØ-Þ«"0-9])/), out = [];
     raw.forEach(function (x) { if (out.length && out[out.length - 1].length < 25) out[out.length - 1] += " " + x; else out.push(x); });
