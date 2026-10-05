@@ -183,7 +183,8 @@
     var feed;
     if (TAB === "toutes") feed = news.length ? news.slice(0, 2).map(cardO).join("") : '<p class="mh-note">' + (D.news ? "Pas encore d'actualité." : "Chargement…") + "</p>";
     else if (!(D.me && D.me.user)) feed = '<div class="mh-lock"><b>' + (TAB === "feed" ? "Ton fil personnalisé" : "Tes signets") + "</b><p>" + (TAB === "feed" ? "Les news des séries que tu suis, rien que pour toi." : "Retrouve toutes les news que tu as gardées.") + ' Réservé aux membres.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button></div>';
-    else if (TAB === "feed") feed = '<p class="mh-note">Bientôt : les news des séries que tu suis apparaîtront ici. Pour l\'instant, ajoute des news à tes signets.</p>';
+    else if (TAB === "feed") { var fl = D.follow; var mine = fl ? news.filter(function (it) { return fl.indexOf(slug(it.fr || it.titre)) >= 0 || fl.indexOf(slug(it.titre)) >= 0; }) : [];
+      feed = fl == null ? '<p class="mh-note">Chargement…</p>' : mine.length ? mine.map(cardO).join("") : '<p class="mh-note">' + (fl.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton + en haut de leur fiche : leurs news apparaîtront ici.") + "</p>"; }
     else { var ids = D.signets || []; var sig = news.filter(function (it) { return ids.indexOf(newsId(it)) >= 0; }); feed = D.signets == null ? '<p class="mh-note">Chargement…</p>' : sig.length ? sig.map(cardO).join("") : '<p class="mh-note">Aucun signet pour l\'instant : touche l\'icône signet d\'une news pour la garder ici.</p>'; }
     // « Voir toutes les actualités » dans le bloc noir des news, pour qu'on voie qu'il en fait partie (Will, 04/10/2026).
     root.innerHTML = xtabs() + catMenu("") + '<div class="mh-feed">' + feed +
@@ -255,6 +256,7 @@
     var tp = e.target.closest("[data-tome]");
     if (tp) { var x = (D.cal || []).filter(function (c) { return c.id === tp.dataset.tome; })[0]; if (x) { e.preventDefault(); tomePop(x); return; } }
     var tb = e.target.closest("[data-tab]");
+    if (tb && tb.dataset.tab === "feed" && D.me && D.me.user && D.follow == null) get("/api/follow").then(function (j) { D.follow = (j && j.slugs) || []; render(); });
     if (tb) { TAB = tb.dataset.tab; if (TAB === "signets" && D.me && D.me.user && D.signets == null) get("/api/stats?mine=b").then(function (j) { D.signets = (j && j.ids) || []; render(); }); render(); return; }
     var cb = e.target.closest(".mh-catb");
     if (cb) { var m = root.querySelector(".mh-menu"); m.hidden = !m.hidden; cb.setAttribute("aria-expanded", !m.hidden); return; }

@@ -35,6 +35,10 @@ button{font:inherit;color:inherit}
 
 /* Fil d'Ariane */
 .crumb{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--paper-3);white-space:nowrap;overflow:hidden}
+.fol{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 9px;border:0;border-radius:16px;background:#000;color:var(--paper-2);font:600 13px var(--f-body);cursor:pointer}
+.fol svg{width:15px;height:15px}.fol:hover{background:var(--ink-3);color:var(--paper)}
+.fol[aria-pressed=true]{background:#305887;color:#fff}
+@media (max-width:719px){.fol{width:32px;padding:0;justify-content:center}.fol span{display:none}}
 .crumb a{color:var(--paper-2);text-decoration:none;font-weight:600}
 .crumb a:hover{color:var(--paper)}
 .crumb [aria-current]{overflow:hidden;text-overflow:ellipsis;color:var(--paper-3)}
@@ -340,6 +344,8 @@ input,select,textarea{font-size:16px!important}
   .fx-sub button{flex:none}
   .fx-h2{font-size:26px!important}
 }
+/* Mobile aussi (Will, 05/10/2026) : le bloc principal de la fiche sur fond noir, comme sur ordinateur */
+@media (max-width:899px){.head{background:var(--ink-2);border-radius:20px;padding:14px}}
 /* Ordinateur : bloc principal sur fond noir, synopsis et genres à côté de la couverture */
 @media (min-width:900px){
   .head{background:var(--ink-2);border-radius:24px;padding:32px;gap:36px;grid-template-columns:260px minmax(0,1fr)}
@@ -512,9 +518,24 @@ function crumb(titre){
       else if (r.pathname.startsWith("/auteurs")) from = { href: r.pathname, label: "Mangakas" };
     }
   } catch (e) {}
-  return `<nav class="crumb" aria-label="Fil d'Ariane"><a href="${from.href}" data-back>${from.label}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(titre)}</span></nav>`;
+  return `<nav class="crumb" aria-label="Fil d'Ariane"><a href="${from.href}" data-back>${from.label}</a><span aria-hidden="true">/</span><span aria-current="page">${esc(titre)}</span>${folBtn()}</nav>`;
 }
+// Suivre la série (Will, 05/10/2026) : petit bouton « + » discret en haut à droite de la fiche ; réservé aux membres.
+let FOL = { on: false, ready: false };
+const FOL_I = { plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>', ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' };
+function folBtn(){ return `<button type="button" class="fol" id="fol" aria-pressed="${FOL.on}" aria-label="${FOL.on ? "Ne plus suivre la série" : "Suivre la série"}" title="${FOL.on ? "Série suivie" : "Suivre la série"}">${FOL.on ? FOL_I.ok : FOL_I.plus}<span>${FOL.on ? "Suivie" : "Suivre"}</span></button>`; }
+function folPaint(){ const b = document.getElementById("fol"); if (b) b.outerHTML = folBtn(); }
+function folSlug(){ return (DATA && DATA.serie && DATA.serie.slug) || slug; }
+function folLoad(){ if (FOL.ready || !/^https?:$/.test(location.protocol)) return; FOL.ready = true;
+  fetch("/api/follow?s=" + encodeURIComponent(folSlug()), { credentials: "same-origin" }).then(r => r.ok ? r.json() : null).then(j => { if (j && j.ok) { FOL.on = !!j.on; FOL.membre = j.membre; folPaint(); } }).catch(() => {}); }
+document.addEventListener("click", e => {
+  if (!e.target.closest("#fol")) return;
+  if (FOL.membre === false) { if (window.FG_LOGIN) FG_LOGIN(); return; }
+  fetch("/api/follow", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ s: folSlug() }) })
+    .then(r => r.json()).then(j => { if (!j.ok) { if (window.FG_LOGIN) FG_LOGIN(); return; } if (!j.stored) return; FOL.on = j.on; folPaint(); }).catch(() => {});
+});
 function render(){
+  setTimeout(folLoad, 0);
   const { serie: s, editions: eds } = DATA;
   const titre = shown(s);
   document.title = `${titre} (manga) – tomes, sorties, extraits | FuryoGang`;

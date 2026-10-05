@@ -155,6 +155,7 @@ a{color:inherit}
     stat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>',
     book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>'
   };
+  var FOLLOW = false;
   var root = document.getElementById("na"), N = null, ME = null, ST = {}, CM = [], STORED = true, ALL = [], CTX = null;
   var DESK = matchMedia("(min-width:980px)");
   var key = (location.pathname.replace(/^\/actus\/?/, "").replace(/\/$/, "").split("-").pop() || new URLSearchParams(location.search).get("id") || "").toLowerCase();
@@ -232,7 +233,7 @@ a{color:inherit}
       (s.resume ? "<p>" + esc(s.resume) + "</p>" : "") + "</div></div>" +
       '<dl class="nd-dl">' + rows.map(function (r) { return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") + "</dl>" +
       (s.visible ? '<a class="nd-btn blue" href="/series/' + esc(s.slug) + '">Voir la fiche</a>' : '<span class="nd-btn blue off">Fiche bientôt en ligne</span>') +
-      '<div class="nd-two"><button type="button" class="nd-btn" data-soon="suivre">' + I.heart + ' Suivre la série</button><button type="button" class="nd-btn" data-soon="liste">' + I.book + " Ma liste</button></div></section>";
+      '<div class="nd-two"><button type="button" class="nd-btn' + (FOLLOW ? " blue" : "") + '" data-soon="suivre">' + (FOLLOW ? "✓ Série suivie" : I.heart + " Suivre la série") + '</button><button type="button" class="nd-btn" data-soon="liste">' + I.book + " Ma liste</button></div></section>";
   }
   function dernier() {
     var d = CTX && CTX.dernier; if (!d) return "";
@@ -318,7 +319,9 @@ a{color:inherit}
   root.addEventListener("click", function (e) {
     if (e.target.closest("[data-open]")) { sheet(); return; }
     var so = e.target.closest("[data-soon]");
-    if (so) { if (!member()) { if (window.FG_LOGIN) FG_LOGIN(); return; } so.textContent = so.dataset.soon === "suivre" ? "Bientôt disponible" : "Bientôt disponible"; return; }
+    if (so) { if (!member()) { if (window.FG_LOGIN) FG_LOGIN(); return; }
+      if (so.dataset.soon === "suivre" && CTX && CTX.serie) { fetch("/api/follow", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ s: CTX.serie.slug }) }).then(function (r) { return r.json(); }).then(function (j) { if (j.ok && j.stored) { FOLLOW = j.on; render(); } }); return; }
+      so.textContent = "Bientôt disponible"; return; }
     if (e.target.closest("#na-share")) { var u = location.href; if (navigator.share) navigator.share({ title: document.title, url: u }).catch(function () {}); else if (navigator.clipboard) navigator.clipboard.writeText(u); return; }
     var a = e.target.closest("[data-act]"); if (!a) return;
     if (!member()) { if (window.FG_LOGIN) FG_LOGIN(); return; }
@@ -343,7 +346,8 @@ a{color:inherit}
     if (!N) { root.innerHTML = '<p class="na-empty">Cette actualité n\'existe plus. <a href="/">Retour aux actualités</a></p>'; return; }
     if (!avant || JSON.stringify(avant) !== JSON.stringify(N)) render();
     if (location.hash === "#commentaires") { if (DESK.matches) { var cbox = document.getElementById("commentaires"); if (cbox) cbox.scrollIntoView(); } else sheet(); }
-    get("/api/actu?id=" + N.id).then(function (c) { if (c && !c.error) { CTX = c; if (DESK.matches) render(); } });
+    get("/api/actu?id=" + N.id).then(function (c) { if (c && !c.error) { CTX = c; if (DESK.matches) render();
+      if (c.serie) get("/api/follow?s=" + encodeURIComponent(c.serie.slug)).then(function (f) { if (f && f.ok) { FOLLOW = !!f.on; if (DESK.matches) render(); } }); } });
     // Une vue par news et par session
     try { if (!sessionStorage.getItem("v-" + N.id)) { sessionStorage.setItem("v-" + N.id, "1"); fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, act: "view" }) }); } } catch (e) {}
     get("/api/stats?ids=" + N.id).then(function (s) { if (s && s.stats) { ST = s.stats[N.id] || {}; STORED = s.stored !== false; render(); } });

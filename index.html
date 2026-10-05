@@ -553,7 +553,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=22"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=21" defer></script>
+<script src="/site/home-m.js?v=22" defer></script>
 <div class="page">
 
 
@@ -613,7 +613,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 const VUE_N = new URLSearchParams(location.search).get("vue");
 const DT = {
   types: [["licence-fr","Nouvelle licence (France)","#529CCA"],["licence-jp","Nouvelle série (Japon)","#FF7369"],["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]],
-  news: null, me: null, stats: {}, cn: {}, signets: null, tab: "toutes", cat: new URLSearchParams(location.search).get("cat") || "", all: VUE_N === "actus"
+  news: null, me: null, stats: {}, cn: {}, signets: null, follow: null, tab: "toutes", cat: new URLSearchParams(location.search).get("cat") || "", all: VUE_N === "actus"
 };
 DT.TL = Object.fromEntries(DT.types.map(t => [t[0], t])); DT.TL.annonce = DT.TL.news;
 try { const c = JSON.parse(localStorage.getItem("fg-news") || "null"); if (c && c.length) DT.news = c; } catch (e) {}
@@ -675,7 +675,9 @@ function renderN() {
   else if (DT.cat) list = news.filter(it => it.cat === DT.cat || (it.cats || []).some(c => c.k === DT.cat));
   else if (DT.tab === "toutes") list = news;
   else if (!(DT.me && DT.me.user)) html = note(DT.tab === "feed" ? "<b>Ton fil personnalisé</b>Les news des séries que tu suis, rien que pour toi. Réservé aux membres." : "<b>Tes signets</b>Retrouve toutes les news que tu as gardées. Réservé aux membres.", true);
-  else if (DT.tab === "feed") html = note("<b>Ton fil personnalisé</b>Bientôt : les news des séries que tu suis apparaîtront ici. Pour l'instant, ajoute des news à tes signets.");
+  else if (DT.tab === "feed" && DT.follow == null) html = note("Chargement de ton fil…");
+  else if (DT.tab === "feed") { list = news.filter(it => DT.follow.includes(slugN(it.fr || it.titre)) || DT.follow.includes(slugN(it.titre)));
+    if (!list.length) { list = null; html = note("<b>Ton fil personnalisé</b>" + (DT.follow.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton « + Suivre » en haut de leur fiche : leurs news apparaîtront ici.")); } }
   else if (DT.signets == null) html = note("Chargement de tes signets…");
   else list = news.filter(it => DT.signets.includes(it.id));
   if (list) {
@@ -734,6 +736,7 @@ document.getElementById("fil").addEventListener("click", e => {
   const tb = e.target.closest("[data-tab]");
   if (tb) { DT.tab = tb.dataset.tab; DT.cat = ""; DT.all = false;
     if (DT.tab === "signets" && DT.me && DT.me.user && DT.signets == null) getN("/api/stats?mine=b").then(j => { DT.signets = (j && j.ids) || []; renderN(); });
+    if (DT.tab === "feed" && DT.me && DT.me.user && DT.follow == null) getN("/api/follow").then(j => { DT.follow = (j && j.slugs) || []; renderN(); });
     renderN(); return; }
   if (e.target.closest(".dt-cat")) { menu.hidden = !menu.hidden; e.target.closest(".dt-cat").setAttribute("aria-expanded", !menu.hidden); return; }
   const c = e.target.closest("[data-cat]");
