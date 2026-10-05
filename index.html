@@ -348,6 +348,18 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .dfr{display:flex;flex-direction:column}.h3a{color:inherit;text-decoration:none}.h3a:hover{text-decoration:underline;text-underline-offset:3px}
 .dfr-r{display:grid;grid-template-columns:44px 40px minmax(0,1fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none;color:inherit}
 .dfr-r:first-child{border-top:0;padding-top:2px}
+/* Prochaine sortie en vedette (option A « L'affiche ») */
+.dfr-f{display:grid;grid-template-columns:118px minmax(0,1fr);gap:16px;align-items:center;padding:6px 0 18px;text-decoration:none;color:inherit}
+.dfr-f img,.dfr-f .ph{width:118px;aspect-ratio:2/3;object-fit:cover;border-radius:8px;transform:rotate(-4deg);box-shadow:0 10px 24px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06);transition:transform .25s;display:block;background:#2C2C2F}
+.dfr-f .ph{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;text-orientation:upright;font:700 15px/1.05 "Noto Sans JP",sans-serif;color:#AEAEB2}
+.dfr-f:hover img,.dfr-f:hover .ph{transform:rotate(-1deg) scale(1.03)}
+.dfr-f .x{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+.dfr-f .pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;background:#F2B33D;color:#000;font:700 11px Inter,sans-serif;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.dfr-f b{font:700 30px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;text-wrap:balance;overflow-wrap:anywhere}
+.dfr-f:hover b{text-decoration:underline}
+.dfr-f .tn{font:700 19px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;color:#F2B33D}
+.dfr-f em{font:500 12.5px Inter,sans-serif;font-style:normal;color:#98989D}
+.dfr-f+.dfr-r{border-top:1px solid #1C1C1E}
 .dfr-r .d{text-align:center;font:600 10.5px Inter,sans-serif;color:#98989D;text-transform:uppercase}.dfr-r .d b{display:block;font:700 26px/1 Antonio,"Arial Narrow",sans-serif;color:#F5F5F7}
 .dfr-r img,.dfr-r .ph{width:40px;height:56px;border-radius:6px;object-fit:cover;background:#38383B;display:block}
 .dfr-r .ph{display:flex;align-items:center;justify-content:center;overflow:hidden;writing-mode:vertical-rl;text-orientation:upright;font:700 9.5px/1.05 "Noto Sans JP",sans-serif;letter-spacing:.04em;color:#AEAEB2;background:#2C2C2F;box-sizing:border-box;padding:3px 0}
@@ -758,9 +770,9 @@ addEventListener("resize", () => { clearTimeout(fitN.t); fitN.t = setTimeout(() 
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitN(document.getElementById("feed")));
 // Vignette d'un tome : la couverture, sinon (pas encore dévoilée ou lien cassé) le titre japonais à la verticale et « à venir »,
 // comme sur les fiches séries (Will, 05/10/2026).
-function phN(x){
+function phN(x, w = 120){
   const ph = `<span class="ph" lang="ja" title="Couverture à venir">${escN(String(x.jp || x.series || "").replace(/\s+/g, "").slice(0, 5))}</span>`;
-  return x.cover ? `<img src="${escN(couvN(x.cover, 120))}" alt="" loading="lazy" data-ph="${escN(ph)}" onerror="this.outerHTML=this.dataset.ph">` : ph;
+  return x.cover ? `<img src="${escN(couvN(x.cover, w))}" alt="" loading="lazy" data-ph="${escN(ph)}" onerror="this.outerHTML=this.dataset.ph">` : ph;
 }
 function rowN(it) {
   const t = it.fr || it.titre, img = couvN(it.cover, 360);
@@ -1013,7 +1025,12 @@ getN("/api/calendrier").then(j => {
   const mois = t.slice(0, 7), M = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][+t.slice(5, 7) - 1];
   const fr = all.filter(x => x.pays === "France" && x.date >= t && x.date.slice(0, 7) === mois).slice(0, 4);
 
-  if (VUE_N !== "magazines") document.getElementById("dfr").innerHTML = fr.length ? fr.map(x => { const d = new Date(x.date + "T12:00:00");
+  // La prochaine sortie en grand, façon affiche (option A, Will, 05/10/2026) ; date avec le mois en entier.
+  const JL = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"], ML = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  const dans = x => { const n = Math.round((new Date(x.date + "T12:00:00") - new Date(t + "T12:00:00")) / 864e5); return n <= 0 ? "aujourd'hui" : n === 1 ? "demain" : "dans " + n + " jours"; };
+  const une = x => { const d = new Date(x.date + "T12:00:00");
+    return `<a class="dfr-f" href="${escN(lien(x))}" data-tp="fr" data-i="0">${phN(x, 300)}<span class="x"><span class="pill">${JL[d.getDay()]} ${d.getDate()}${d.getDate() === 1 ? "er" : ""} ${ML[d.getMonth()]}</span><b>${escN(x.fr || x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}<em>${[x.pub, dans(x)].filter(Boolean).map(escN).join(" · ")}</em></span></a>`; };
+  if (VUE_N !== "magazines") document.getElementById("dfr").innerHTML = fr.length ? une(fr[0]) + fr.slice(1).map(x => { const d = new Date(x.date + "T12:00:00");
     return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="fr" data-i="${fr.indexOf(x)}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.fr || x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
   // Page « En direct du Japon » : la colonne affiche les 6 prochaines sorties japonaises (Will, 05/10/2026).
