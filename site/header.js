@@ -115,7 +115,7 @@
     ".sk,img.sk-i{background:linear-gradient(90deg,#1C1C1E 25%,#2A2A2D 50%,#1C1C1E 75%) 0 0/200% 100%!important;animation:fgsk 1.3s ease-in-out infinite}" +
     ".sk{display:block;border-radius:10px;color:transparent!important}" +
     "img.sk-i{color:transparent}img.sk-f{opacity:0}img.sk-in{opacity:1;transition:opacity .35s ease}" +
-    ".skw{display:flex;flex-direction:column;gap:14px;padding:16px}.skr{display:flex;gap:12px;align-items:center}.skg{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:12px}" +
+    ".skw{display:flex;flex-direction:column;gap:14px;padding:16px}.skr{display:flex;gap:12px;align-items:center}.skg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}" +
     "@media (min-width:980px){.skw{max-width:1240px;margin:0 auto;padding:24px 20px}.skg{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:18px}}" +
     "@media (prefers-reduced-motion:reduce){.sk,img.sk-i{animation:none}}";
   document.head.appendChild(skc);
