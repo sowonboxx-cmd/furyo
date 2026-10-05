@@ -87,7 +87,7 @@
     // Pas assez de sorties pour une semaine : les prochaines sorties du mois en cours, à partir d'aujourd'hui (Will, 05/10/2026).
     var now = new Date(), t0 = now.toISOString().slice(0, 10), fin = new Date(now.getFullYear(), now.getMonth() + 1, 0), t1 = fin.getFullYear() + "-" + String(fin.getMonth() + 1).padStart(2, "0") + "-" + String(fin.getDate()).padStart(2, "0");
     var it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t0 && x.date <= t1; });
-    var titre = "Prochaines sorties", sous = I.fr + "En France · " + ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][now.getMonth()];
+    var titre = "Prochaines sorties", sous = I.fr + "En France";
     if (!it.length) { var t = new Date().toISOString().slice(0, 10); it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t; }).slice(0, 8); titre = "Prochaines sorties"; sous = I.fr + "En France"; }
     if (!it.length) return "";
     return '<section class="mh-sec" aria-label="Sorties en France">' + head2(titre, sous, "/calendrier/#france", "Calendrier") + '<div class="mh-car">' + it.map(function (x) {
@@ -254,7 +254,15 @@
       return;
     }
     var tp = e.target.closest("[data-tome]");
-    if (tp) { var x = (D.cal || []).filter(function (c) { return c.id === tp.dataset.tome; })[0]; if (x) { e.preventDefault(); tomePop(x); return; } }
+    if (tp) {
+      // Même fenêtre que sur ordinateur (précédent / suivant, glisser, Suivre la série · Voir la fiche · Au panier),
+      // avec la liste de la rangée touchée (sorties FR ou JP).
+      var sec = tp.closest("section"), ids = sec ? [].map.call(sec.querySelectorAll("[data-tome]"), function (n) { return n.dataset.tome; }) : [tp.dataset.tome];
+      var lst = ids.map(function (id) { return (D.cal || []).filter(function (c) { return c.id === id; })[0]; }).filter(Boolean);
+      var k = ids.indexOf(tp.dataset.tome);
+      if (lst.length && window.FG_TP) { e.preventDefault(); window.FG_TP(lst, Math.max(0, k)); return; }
+      var x = (D.cal || []).filter(function (c) { return c.id === tp.dataset.tome; })[0]; if (x) { e.preventDefault(); tomePop(x); return; }
+    }
     var tb = e.target.closest("[data-tab]");
     if (tb && tb.dataset.tab === "feed" && D.me && D.me.user) get("/api/follow").then(function (j) { D.follow = (j && j.slugs) || []; render(); });
     if (tb) { TAB = tb.dataset.tab; if (TAB === "signets" && D.me && D.me.user && D.signets == null) get("/api/stats?mine=b").then(function (j) { D.signets = (j && j.ids) || []; render(); }); render(); return; }
