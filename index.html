@@ -578,7 +578,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=22"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=24" defer></script>
+<script src="/site/home-m.js?v=25" defer></script>
 <div class="page">
 
 
@@ -850,7 +850,7 @@ function magCardN(m) {
 }
 function magsViewN() {
   const fil = document.getElementById("fil");
-  fil.innerHTML = `<div class="box dgh"><div><small><span class="live">●</span> En direct · Prépublication</small><h1>Direct du Japon</h1><p>Les derniers numéros des magazines japonais et les chapitres de nos séries.</p></div><a href="/">← Actualités</a></div><div class="dgs" id="dgs"><div class="box dn"><p>Chargement des magazines…</p></div></div>`;
+  fil.innerHTML = `<div class="box dgh"><div><small><span class="live">●</span> En direct · Prépublication</small><h1>En direct du Japon</h1><p>Les derniers numéros des magazines japonais et les chapitres de nos séries.</p></div><a href="/">← Actualités</a></div><div class="dgs" id="dgs"><div class="box dn"><p>Chargement des magazines…</p></div></div>`;
   const side = document.getElementById("m-jp"); if (side) side.hidden = true;
   getN("/api/prepub").then(j => {
     const box = document.getElementById("dgs"), list = magsN((j && j.items) || []);

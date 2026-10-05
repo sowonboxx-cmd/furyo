@@ -136,7 +136,7 @@
   }
   function direct() {
     var m = mags(); if (!m.length) return "";
-    return '<section class="mh-sec" aria-label="Direct du Japon">' + head2("Direct du Japon", '<span class="live">● En direct</span> · Prépublication', "/?vue=magazines", "Tous les magazines") + '<div class="mh-car">' + m.slice(0, 6).map(magCard).join("") + "</div></section>";
+    return '<section class="mh-sec" aria-label="En direct du Japon">' + head2("En direct du Japon", '<span class="live">● En direct</span> · Prépublication', "/?vue=magazines", "Tous les magazines") + '<div class="mh-car">' + m.slice(0, 6).map(magCard).join("") + "</div></section>";
   }
   function crows() {
     return '<a class="mh-cxw" href="/crows-x-worst/" target="_blank" rel="noopener"><span class="map" aria-hidden="true"></span><span class="chars"><img src="/crows-x-worst/img/char-hana.png" alt=""><img src="/crows-x-worst/img/char-boya.png" alt=""></span><span class="t"><small>Carte interactive</small><b>CROWS<i>×</i>WORST</b><em>Toutes les œuvres de l\'univers de Hiroshi Takahashi</em></span></a>';
