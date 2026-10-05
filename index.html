@@ -261,6 +261,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dt-menu button:hover{background:#2A2A2D}.dt-menu button[aria-selected=true]{background:#38383B}.dt-menu button.vide{color:#6E6E73}
 .dt-menu i{width:8px;height:8px;border-radius:50%;flex:none}.dt-menu small{margin-left:auto;color:#8E8E93;font-size:12.5px}
 .feed{display:flex;flex-direction:column;gap:12px}
+.vmag #d-jp,.vmag .dduo,.vmag #d-ecran{display:none!important}
 .dg-mi{display:inline-block;white-space:nowrap}
 .smk{display:flex;flex-direction:column;gap:2px}
 .smk a{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:8px;border-radius:12px;color:#F5F5F7;text-decoration:none}.smk a:hover{background:#1C1C1E}
@@ -921,6 +922,7 @@ function magCardN(m) {
 }
 function magsViewN() {
   const fil = document.getElementById("fil"), mk = document.getElementById("m-mk"); if (mk) mk.hidden = false;
+  document.body.classList.add("vmag"); // pas les sections du bas de l'accueil sur cette page (Will, 05/10/2026)
   fil.innerHTML = `<div class="box dgh"><div><small><span class="live">●</span> En direct · Prépublication</small><h1>En direct du Japon</h1><p>Les derniers numéros des magazines japonais et les chapitres de nos séries.</p></div></div><div class="dgs" id="dgs"><div class="box dn"><p>Chargement des magazines…</p></div></div>`;
   const side = document.getElementById("m-jp"); if (side) side.hidden = true;
   getN("/api/prepub").then(j => {
