@@ -36,7 +36,7 @@
     ".adm-pop{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);font-family:Inter,system-ui,sans-serif}.adm-pop[hidden]{display:none}" +
     ".adm-box{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 60px);width:min(320px,calc(100% - 24px));box-sizing:border-box;padding:16px;background:#1C1C1E;border-radius:20px;display:flex;flex-direction:column;gap:10px;color:#F5F5F7}" +
     ".adm-u{display:flex;align-items:center;gap:12px;padding-bottom:6px;text-decoration:none;color:inherit}.adm-u img,.adm-u i{width:48px;height:48px;border-radius:24px;background:#38383B;object-fit:cover;display:block}.adm-u b{display:block;font-size:17px}.adm-u small{font-size:13px;color:#98989D}" +
-    ".adm-b{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 16px;border-radius:14px;background:#38383B;color:#F5F5F7;text-decoration:none}.adm-b.v{background:#305887;color:#fff}" +
+    ".adm-b{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 16px;border-radius:14px;background:#38383B;color:#F5F5F7;text-decoration:none}.adm-b.v{background:#305887;color:#fff}.adm-b.f{background:#2E7D4F;color:#fff}.adm-b.s{background:#6A4BC4;color:#fff}.adm-b.f small,.adm-b.s small{color:rgba(255,255,255,.78)!important}" +
     ".adm-b strong{display:block;font:700 20px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em}.adm-b small{display:block;margin-top:3px;font-size:12.5px;color:#C9D6E6}.adm-b:not(.v) small{color:#98989D}" +
     ".adm-b em{font-style:normal;min-width:40px;height:32px;padding:0 10px;box-sizing:border-box;border-radius:16px;background:#fff;color:#305887;font-weight:700;font-size:15px;display:grid;place-items:center}" +
     ".adm-out{height:44px;border:0;border-radius:12px;background:transparent;color:#98989D;font:600 14px Inter,system-ui,sans-serif;cursor:pointer}" +
@@ -264,7 +264,7 @@ a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
     if (window.google && google.accounts && google.accounts.id) return cb();
     var sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true; sc.onload = cb; document.head.appendChild(sc);
   }
-  // Téléphone, administrateur : l'avatar ouvre une petite fenêtre avec Validation et Back-office.
+  // L'avatar ouvre une petite fenêtre : Validation et Back-office pour l'admin, Mon feed et Signets pour tous.
   function admPop() {
     var pop = document.getElementById("adm-pop");
     if (!pop) {
@@ -274,9 +274,12 @@ a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
     }
     var n = (document.querySelector(".sh-val") || { getAttribute: function () { return "0"; } }).getAttribute("data-n") || "0";
     pop.innerHTML = '<div class="adm-box" role="dialog" aria-label="Mon compte">' +
-      '<a class="adm-u" href="/profil/">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "<i></i>") + '<span><b>' + esc(ME.user.name || "Membre") + '</b><small>Administrateur · Voir mon profil</small></span></a>' +
-      '<a class="adm-b v" href="/admin/#validation"><span><strong>Validation</strong><small>À relire avant publication</small></span><em>' + esc(n) + '</em></a>' +
-      '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' +
+      '<a class="adm-u" href="/profil/">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "<i></i>") + '<span><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + ' · Voir mon profil</small></span></a>' +
+      (ME.admin ? '<a class="adm-b v" href="/admin/#validation"><span><strong>Validation</strong><small>À relire avant publication</small></span><em>' + esc(n) + '</em></a>' +
+      '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' : "") +
+      // Mon feed et Signets pour tous les membres (Will, 05/10/2026) : sous Validation et Back-office pour l'admin, seuls pour les autres.
+      '<a class="adm-b f" href="/?vue=actus&tab=feed"><span><strong>Mon feed</strong><small>Les news des séries que tu suis</small></span><span aria-hidden="true">→</span></a>' +
+      '<a class="adm-b s" href="/?vue=actus&tab=signets"><span><strong>Signets</strong><small>Les news que tu as gardées</small></span><span aria-hidden="true">→</span></a>' +
       '<button class="adm-out" type="button">Se déconnecter</button></div>';
     pop.querySelector(".adm-out").onclick = function () { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); };
     // Ordinateur : même fenêtre que sur téléphone, ouverte sous l'avatar, sans assombrir la page (Will, 04/10/2026).
@@ -290,8 +293,7 @@ a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
     pop.hidden = false;
   }
   function openMe() {
-    if (ME && ME.user && ME.admin) { admPop(); return; }
-    if (ME && ME.user) { location.href = "/profil/"; return; }
+    if (ME && ME.user) { admPop(); return; }
     if (false) {
       meInner.innerHTML = '<div class="me-u">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "") + '<div><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + "</small></div></div>" +
         (ME.admin ? '<a class="go2" href="/admin/">Ouvrir le back-office</a>' : "") +

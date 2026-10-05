@@ -564,11 +564,24 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
   .mh-pill{height:24px;padding:0 9px;white-space:nowrap;border-radius:7px;color:#000;font:700 11.5px/24px Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em}
   .mh-hero h2{font:700 34px/.95 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}
   .mh-hero p{color:#E4E4E8}
-  .mh-r{display:flex;flex-direction:column;gap:8px;padding:14px;background:#000;border-radius:18px}
-  .mh-r img,.mh-r .mh-noimg{width:84px;height:84px;border-radius:14px;object-fit:cover;object-position:top;flex:none}
+  /* Liste des actualités : image au format 4:5 à gauche, sur toute la hauteur de la carte ; texte et actions à droite (Will, 05/10/2026). */
+  .mh-r{display:grid;grid-template-columns:88px minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:14px;row-gap:6px;padding:12px;background:#000;border-radius:18px}
+  .mh-r .mh-hit{display:contents}
+  .mh-r img,.mh-r .mh-noimg{grid-row:1 / span 2;align-self:start;width:88px;aspect-ratio:4/5;height:auto;border-radius:12px;object-fit:cover;object-position:top}
+  .mh-r .mh-rt{grid-column:2;grid-row:1}
+  .mh-r .mh-acts{grid-column:2;grid-row:2;align-self:end;padding-left:0!important}
+  .mh-at{display:flex;align-items:center;gap:4px;height:56px;padding:0 0 0 6px;position:relative}
+  .mh-atb{flex:none;width:40px;height:40px;display:grid;place-items:center;color:#F5F5F7}.mh-atb svg{width:20px;height:20px}
+  .mh-at nav{flex:1;min-width:0;display:flex;align-items:center;gap:18px;overflow-x:auto;scrollbar-width:none;padding:0 16px 0 4px;-webkit-mask:linear-gradient(90deg,#000 calc(100% - 22px),transparent)}
+  .mh-at nav::-webkit-scrollbar{display:none}
+  .mh-at nav a,.mh-at nav button{position:relative;flex:none;display:inline-flex;align-items:center;gap:3px;padding:10px 0;border:0;background:none;color:#6E6E73;font:700 20px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;text-decoration:none;white-space:nowrap;cursor:pointer}
+  .mh-at nav [aria-current=true]{color:#F5F5F7}
+  .mh-at nav [aria-current=true]::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:3px;border-radius:2px;background:#4C9BFF}
+  .mh-at nav button[aria-current=true]::after{right:15px}
+  .mh-at nav svg{width:13px;height:13px}
   .mh-rt{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
   .mh-r h3{font-size:19px}
-  .mh-r .mh-acts{padding-left:98px;gap:18px}
+  .mh-r .mh-acts{gap:18px}
   .mh-tp{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center}
   .mh-tpb{position:relative;width:100%;max-height:92vh;overflow-y:auto;background:#1C1C1E;border-radius:22px 22px 0 0;padding:22px 20px calc(env(safe-area-inset-bottom,0px) + 20px);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
   .mh-tpb img,.mh-tpb .mh-noimg{width:min(62vw,250px);aspect-ratio:2/3;object-fit:cover;border-radius:10px;margin-bottom:10px}
@@ -585,10 +598,10 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 
 </head>
 <body>
-<script src="/site/header.js?v=22"></script>
+<script src="/site/header.js?v=23"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=26" defer></script>
+<script src="/site/home-m.js?v=27" defer></script>
 <div class="page">
 
 
@@ -649,7 +662,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 const VUE_N = new URLSearchParams(location.search).get("vue");
 const DT = {
   types: [["licence-fr","Nouvelle licence (France)","#529CCA"],["licence-jp","Nouvelle série (Japon)","#FF7369"],["couv-fr","Couverture française","#9A6DD7"],["couv-jp","Couverture japonaise","#4DAB9A"],["sortie-fr","Sortie française","#E255A1"],["sortie-jp","Sortie japonaise","#FFA344"],["fin","Fin de série","#BA856F"],["pause","Pause","#9B9A97"],["anime","Anime","#FFDC49"],["adaptation","Adaptation","#9B9A97"],["bande-annonce","Bande Annonce","#9A6DD7"],["tirage","Tomes en circulation","#529CCA"],["news","News","#D4D4D8"]],
-  news: null, me: null, stats: {}, cn: {}, signets: null, follow: null, tab: "toutes", cat: new URLSearchParams(location.search).get("cat") || "", all: VUE_N === "actus"
+  news: null, me: null, stats: {}, cn: {}, signets: null, follow: null, tab: (t => t === "feed" || t === "signets" ? t : "toutes")(new URLSearchParams(location.search).get("tab")), cat: new URLSearchParams(location.search).get("cat") || "", all: VUE_N === "actus"
 };
 DT.TL = Object.fromEntries(DT.types.map(t => [t[0], t])); DT.TL.annonce = DT.TL.news;
 try { const c = JSON.parse(localStorage.getItem("fg-news") || "null"); if (c && c.length) DT.news = c; } catch (e) {}
@@ -829,7 +842,9 @@ if (!matchMedia("(max-width:719px)").matches && VUE_N === "magazines") magsViewN
 else if (!matchMedia("(max-width:719px)").matches) {
   renderN();
   if (/^https?:$/.test(location.protocol)) {
-    getN("/api/auth/me").then(j => { DT.me = j; if (DT.tab !== "toutes") renderN(); });
+    getN("/api/auth/me").then(j => { DT.me = j; if (DT.tab !== "toutes") renderN();
+      if (j && j.user && DT.tab === "feed") getN("/api/follow").then(f => { DT.follow = (f && f.slugs) || []; renderN(); });
+      if (j && j.user && DT.tab === "signets") getN("/api/stats?mine=b").then(f => { DT.signets = (f && f.ids) || []; renderN(); }); });
     getN("/api/news").then(j => { if (!j) return; DT.news = j.items || []; try { localStorage.setItem("fg-news", JSON.stringify(DT.news)); } catch (e) {} renderN(); licN(); });
   }
   licN();

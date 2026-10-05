@@ -175,18 +175,38 @@
   }
 
   // ---------- Vues ----------
-  function q() { var p = new URLSearchParams(location.search); return { vue: p.get("vue") || "", cat: p.get("cat") || "" }; }
+  function q() { var p = new URLSearchParams(location.search), t = p.get("tab") || ""; return { vue: p.get("vue") || "", cat: p.get("cat") || "", tab: t === "feed" || t === "signets" ? t : "toutes" }; }
+  // Page « Toutes les actualités » : le titre devient les onglets Toutes / Mon feed / Signets / Catégories, dans la police des titres (Will, 05/10/2026).
+  function atabs(v) {
+    var cur = v.cat ? "cat" : v.tab, catNom = v.cat ? (TL[v.cat] || ["", "Catégorie"])[1] : "Catégories";
+    return '<div class="mh-at"><a class="mh-atb" href="/" data-home aria-label="Retour à l\'accueil">' + I.back + '</a><nav aria-label="Actualités">' +
+      [["toutes", "Toutes", "/?vue=actus"], ["feed", "Mon feed", "/?vue=actus&tab=feed"], ["signets", "Signets", "/?vue=actus&tab=signets"]].map(function (t) { return '<a href="' + t[2] + '" aria-current="' + (cur === t[0]) + '">' + t[1] + "</a>"; }).join("") +
+      '<button type="button" class="mh-catb" aria-haspopup="listbox" aria-expanded="false" aria-current="' + (cur === "cat") + '">' + esc(catNom) + I.chev + "</button></nav></div>" + catMenu(v.cat);
+  }
+  function lock(tab) { return '<div class="mh-lock"><b>' + (tab === "feed" ? "Ton feed personnalisé" : "Tes signets") + "</b><p>" + (tab === "feed" ? "Les news des séries que tu suis, rien que pour toi." : "Retrouve toutes les news que tu as gardées.") + ' Réservé aux membres.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button></div>'; }
   var PAGE = 0, LIST = [];
   function top(t) { return '<div class="mh-top"><a href="/" data-home aria-label="Retour à l\'accueil">' + I.back + "</a><h1>" + esc(t) + "</h1></div>"; }
   function render() {
     var v = q(), news = (D.news || []).slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); });
     if (v.vue === "magazines") { root.innerHTML = top("Tous les magazines") + '<div class="mh-mags">' + (D.prepub ? mags().map(magCard).join("") || '<p class="mh-note">Aucun magazine pour l\'instant.</p>' : '<p class="mh-note">Chargement…</p>') + "</div>"; return; }
     if (v.vue === "actus" || v.cat) {
-      LIST = v.cat ? news.filter(function (it) { return it.cat === v.cat || (it.cats || []).some(function (c) { return c.k === v.cat; }); }) : news; PAGE = 0;
       var chips = v.cat ? '<div class="mh-chips">' + TYPES.map(function (t) { return '<a href="/?cat=' + t[0] + '" aria-current="' + (t[0] === v.cat) + '"><i style="background:' + t[2] + '"></i>' + t[1] + "</a>"; }).join("") + "</div>" : "";
-      root.innerHTML = top(v.cat ? (TL[v.cat] || ["", "Catégorie"])[1] : "Toutes les actualités") + chips + '<div class="mh-list" id="mh-list"></div><div id="mh-more" class="mh-note"></div>';
+      var head = atabs(v) + chips, membre = D.me && D.me.user, vide = "Aucune actualité dans cette catégorie pour l'instant.";
+      if (v.cat || v.tab === "toutes") LIST = v.cat ? news.filter(function (it) { return it.cat === v.cat || (it.cats || []).some(function (c) { return c.k === v.cat; }); }) : news;
+      else if (!membre) { root.innerHTML = head + (D.me ? lock(v.tab) : '<p class="mh-note">Chargement…</p>'); return; }
+      else if (v.tab === "feed") {
+        if (D.follow == null) { root.innerHTML = head + '<p class="mh-note">Chargement de ton feed…</p>'; get("/api/follow").then(function (j) { D.follow = (j && j.slugs) || []; render(); }); return; }
+        LIST = news.filter(function (it) { return D.follow.indexOf(slug(it.fr || it.titre)) >= 0 || D.follow.indexOf(slug(it.titre)) >= 0; });
+        vide = D.follow.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le cœur en haut de leur fiche : leurs news apparaîtront ici.";
+      } else {
+        if (D.signets == null) { root.innerHTML = head + '<p class="mh-note">Chargement de tes signets…</p>'; get("/api/stats?mine=b").then(function (j) { D.signets = (j && j.ids) || []; render(); }); return; }
+        LIST = news.filter(function (it) { return D.signets.indexOf(newsId(it)) >= 0; });
+        vide = "Aucun signet pour l'instant : touche l'icône signet d'une news pour la garder ici.";
+      }
+      PAGE = 0;
+      root.innerHTML = head + '<div class="mh-list" id="mh-list"></div><div id="mh-more" class="mh-note"></div>';
       if (!D.news) { document.getElementById("mh-more").textContent = "Chargement…"; return; }
-      if (!LIST.length) { document.getElementById("mh-more").textContent = "Aucune actualité dans cette catégorie pour l'instant."; return; }
+      if (!LIST.length) { document.getElementById("mh-more").textContent = vide; return; }
       more(); return;
     }
     // Accueil
@@ -197,7 +217,7 @@
       feed = fl == null ? '<p class="mh-note">Chargement…</p>' : mine.length ? mine.map(cardO).join("") : '<p class="mh-note">' + (fl.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton + en haut de leur fiche : leurs news apparaîtront ici.") + "</p>"; }
     else { var ids = D.signets || []; var sig = news.filter(function (it) { return ids.indexOf(newsId(it)) >= 0; }); feed = D.signets == null ? '<p class="mh-note">Chargement…</p>' : sig.length ? sig.map(cardO).join("") : '<p class="mh-note">Aucun signet pour l\'instant : touche l\'icône signet d\'une news pour la garder ici.</p>'; }
     // « Voir toutes les actualités » dans le bloc noir des news, pour qu'on voie qu'il en fait partie (Will, 04/10/2026).
-    root.innerHTML = xtabs() + catMenu("") + '<div class="mh-feed">' + feed +
+    root.innerHTML = '<div class="mh-feed">' + feed +
       (TAB === "toutes" && news.length ? '<a class="mh-all" href="/?vue=actus">Voir toutes les actualités</a>' : "") + "</div>" +
       sortiesFR() + sortiesJP() + direct() + crows() + avance() + membres() + mangakas();
   }
@@ -206,7 +226,7 @@
   function more() {
     var box = document.getElementById("mh-list"), m = document.getElementById("mh-more"); if (!box) return;
     var part = LIST.slice(PAGE * 10, PAGE * 10 + 10);
-    box.insertAdjacentHTML("beforeend", part.map(function (it, i) { return PAGE === 0 && i === 0 ? hero(it) : cardR(it); }).join(""));
+    box.insertAdjacentHTML("beforeend", part.map(function (it, i) { return cardR(it); }).join(""));
     PAGE++;
     var fini = PAGE * 10 >= LIST.length;
     m.textContent = fini ? (LIST.length > 1 ? "Tu as tout vu." : "") : "Chargement…";
@@ -292,7 +312,7 @@
   function refresh(k) {
     var v = q();
     if (v.vue === "magazines") { if (k === "prepub") render(); return; }
-    if (v.vue === "actus" || v.cat) { if (k === "news") render(); return; }
+    if (v.vue === "actus" || v.cat) { if (k === "news" || k === "me") render(); return; }
     render();
   }
   function start() {
