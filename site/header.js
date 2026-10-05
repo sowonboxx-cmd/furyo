@@ -97,7 +97,7 @@
     ".sh-nav a:hover{color:#F5F5F7;background:#1C1C1E}.sh-nav a[aria-current=page]{background:#38383B;color:#F5F5F7}.sh-nav a[aria-current=page]::after{display:none}}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   var p = location.pathname;
-  var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (p === "/" || p === "/index.html" || /^\/actus/.test(p)) ? "actu" : "";
+  var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
   if (/vue=magazines/.test(location.search)) cur = "jp";
   var a = function (k, href, label, d, nw) { return '<a href="' + href + '"' + (d ? ' class="sh-d"' : "") + (nw ? ' target="_blank" rel="noopener"' : "") + (cur === k ? ' aria-current="page"' : "") + ">" + label + "</a>"; };
   var ICON_S = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
@@ -105,7 +105,7 @@
     '<div class="sh-top"><button class="sh-btn sh-me" id="sh-me" aria-label="Mon compte"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.3 4.2-7 8.5-7s7.7 2.7 8.5 7z"/></svg></span></button>' +
     '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
-    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", /^\/actus/.test(p) ? "/?vue=actus" : "/", "Actualités") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") +
+    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") +
 a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
   var me = document.currentScript;
   me.insertAdjacentHTML("beforebegin", html);
@@ -378,4 +378,10 @@ a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
   }
   function legal() { pied(); banniere(false); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", legal); else legal();
+  // Navigation sans rechargement (accueil mobile) : « Actualités » s'allume seulement sur les pages d'actualités, pas sur l'accueil.
+  window.FG_NAV = function () {
+    var l = document.querySelector('.sh-nav a[href="/?vue=actus"]'); if (!l) return;
+    var on = /^\/actus/.test(location.pathname) || /[?&](vue=actus|cat=)/.test(location.search);
+    if (on) l.setAttribute("aria-current", "page"); else l.removeAttribute("aria-current");
+  };
 })();

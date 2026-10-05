@@ -187,6 +187,7 @@
   var PAGE = 0, LIST = [];
   function top(t) { return '<div class="mh-top"><a href="/" data-home aria-label="Retour à l\'accueil">' + I.back + "</a><h1>" + esc(t) + "</h1></div>"; }
   function render() {
+    if (window.FG_NAV) FG_NAV();
     var v = q(), news = (D.news || []).slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); });
     if (v.vue === "magazines") { root.innerHTML = top("Tous les magazines") + '<div class="mh-mags">' + (D.prepub ? mags().map(magCard).join("") || '<p class="mh-note">Aucun magazine pour l\'instant.</p>' : '<p class="mh-note">Chargement…</p>') + "</div>"; return; }
     if (v.vue === "actus" || v.cat) {
