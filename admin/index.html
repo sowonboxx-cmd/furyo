@@ -530,7 +530,7 @@ function vopen(id){
     <div class="act">${i.enLigne ? `
       <button class="go" data-vsave style="grid-column:1/3">Enregistrer les changements</button>
       <button class="rej" data-vs="Vu" style="grid-column:1/3">Retirer du site</button>` : `
-      <button class="go" data-vs="${news ? "Publié sur le site" : pp ? "Validé" : "À appliquer à la fiche"}">${news ? "Publier sur le site" : pp ? "Publier sur le site" : "Appliquer à la fiche"}</button>
+      <button class="go" data-vs="${news ? "Publié sur le site" : pp ? "Validé" : "À appliquer à la fiche"}">${news ? "Publier sur le site" : pp ? "Mettre à jour les magazines" : "Appliquer à la fiche"}</button>
       ${pp ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : i.vu ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Rejeter</button>` : `<button data-vs="Vu">${news ? "Vu, pas sur le site" : "Vu, rien à faire"}</button>
       <button class="rej" data-vs="Rejeté">Rejeter</button>`}`}
     </div></div>`;
@@ -736,7 +736,7 @@ async function vsend(btn, statut){
   // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
   if (statut === "Vu" && i.news) { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
   m.remove(); vdraw();
-  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Prépublication en ligne ✓" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? (i.news ? "Rangée dans « Vu, pas sur le site »" : "Marqué comme vu") : i.base === "prepub" ? "Écartée" : "Rejeté");
+  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? (i.news ? "Rangée dans « Vu, pas sur le site »" : "Marqué comme vu") : i.base === "prepub" ? "Écartée" : "Rejeté");
 }
 // Catégorie changée dans la fiche : couleur, puis légendes régénérées avec le nouveau nom.
 document.addEventListener("change", e => {
