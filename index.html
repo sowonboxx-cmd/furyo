@@ -262,7 +262,11 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dt-menu i{width:8px;height:8px;border-radius:50%;flex:none}.dt-menu small{margin-left:auto;color:#8E8E93;font-size:12.5px}
 .feed{display:flex;flex-direction:column;gap:12px}
 .vmag #d-jp,.vmag .dduo,.vmag #d-ecran{display:none!important}
-#m-fr h3{display:flex;align-items:center;gap:10px}.fl-h{width:26px;height:18px;border-radius:3px;flex:none}
+#m-fr h3{display:flex;align-items:center;gap:12px}.fl-h{width:34px;height:23px;border-radius:3px;flex:none}
+/* Titres des cadres de la colonne en bleu (essai de Will, 05/10/2026) ; « Toutes les séries » reste en blanc. */
+.side .m-head h3,.side .m-head h3 a{color:#305887}
+.vmag .dgh p{color:#305887;font-weight:600}
+.dser-k{display:block;margin-top:3px;font-weight:700;letter-spacing:.06em}
 .dg-mi{display:inline-block;white-space:nowrap}
 .smk{display:flex;flex-direction:column;gap:2px}
 .smk a{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:8px;border-radius:12px;color:#F5F5F7;text-decoration:none}.smk a:hover{background:#1C1C1E}
@@ -631,7 +635,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
         <div class="m-head"><div><small class="m-eye"><svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>En France</small><h3><a class="h3a" href="/calendrier/#france">Prochaines sorties</a></h3></div></div>
         <div class="dfr" id="dfr"><p class="m-note">Chargement…</p></div>
       </section>
-      <a class="box dser" href="/series/" id="m-ser"><span class="dser-c" id="dser-c"></span><span class="dser-t"><b>Toutes les séries</b><em id="dser-n">Furyō, yakuza, crime : toutes les fiches</em></span><span class="dser-go">Voir toutes les séries</span></a>
+      <a class="box dser" href="/series/" id="m-ser"><span class="dser-c" id="dser-c"></span><span class="dser-t"><b>Toutes les séries</b><em id="dser-n">Toutes les fiches.<span class="dser-k">FURYŌ · YAKUZA · CRIME</span></em></span><span class="dser-go">Voir toutes les séries</span></a>
       <section class="box" id="m-mk" hidden><div class="m-head"><div><h3><a class="h3a" href="/auteurs/">Mangakas</a></h3></div></div><div class="smk" id="smk"></div></section>
 
       <section class="box mod" id="m-jp" data-slot="0">
@@ -1039,7 +1043,7 @@ getN("/api/series").then(j => {
   const it = ((j && j.items) || []).filter(x => x.cover); if (!it.length) return;
   const pick = it.slice().sort(() => Math.random() - .5).slice(0, 3);
   document.getElementById("dser-c").innerHTML = pick.map(x => `<img src="${escN(couvN(x.cover, 200))}" alt="" loading="lazy">`).join("");
-  document.getElementById("dser-n").textContent = ((j.items || []).length) + " fiches en ligne : furyō, yakuza, crime";
+  document.getElementById("dser-n").innerHTML = ((j.items || []).length) + " fiches en ligne.<span class=\"dser-k\">FURYŌ · YAKUZA · CRIME</span>";
 });
 // Direct du Japon (colonne) : un magazine à la fois (couverture, date · magazine, chapitres), qui défile toutes les 4 secondes,
 // du plus récent au plus ancien, les séries en ligne regroupées (Will, 05/10/2026).
