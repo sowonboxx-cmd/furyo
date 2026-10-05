@@ -269,6 +269,8 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .vmag .dgh p{color:#D8D8DC}
 .dser-k{display:block;margin-top:3px;font-weight:700;letter-spacing:.06em}
 .dsh-go{display:inline-flex;align-items:center;gap:8px;color:inherit;text-decoration:none}.dsh-go svg{width:22px;height:22px;flex:none}.dsh-go:hover{text-decoration:underline;text-underline-offset:4px}
+/* Prochaines sorties : « Tome N » en jaune sous le titre, comme dans la fenêtre du tome (Will, 05/10/2026) */
+.dfr-r .t .tn{display:block;margin-top:3px;font:700 15px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;color:#F2B33D}
 .dg-mi{display:inline-block;white-space:nowrap}
 .smk{display:flex;flex-direction:column;gap:2px}
 .smk a{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:8px;border-radius:12px;color:#F5F5F7;text-decoration:none}.smk a:hover{background:#1C1C1E}
@@ -1012,7 +1014,7 @@ getN("/api/calendrier").then(j => {
   const fr = all.filter(x => x.pays === "France" && x.date >= t && x.date.slice(0, 7) === mois).slice(0, 4);
 
   if (VUE_N !== "magazines") document.getElementById("dfr").innerHTML = fr.length ? fr.map(x => { const d = new Date(x.date + "T12:00:00");
-    return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="fr" data-i="${fr.indexOf(x)}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN((x.fr || x.series) + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
+    return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="fr" data-i="${fr.indexOf(x)}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.fr || x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
   // Page « En direct du Japon » : la colonne affiche les 6 prochaines sorties japonaises (Will, 05/10/2026).
   if (VUE_N === "magazines") {
@@ -1021,7 +1023,7 @@ getN("/api/calendrier").then(j => {
     const h3 = document.querySelector("#m-fr h3"); if (h3) { const f = h3.querySelector(".fl"); if (f) f.remove(); } if (h3) h3.insertAdjacentHTML("beforeend", '<svg class="fl fl-h" viewBox="0 0 22 15" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>');
     const h = document.querySelector("#m-fr .h3a"); if (h) h.href = "/calendrier/#japon";
     document.getElementById("dfr").innerHTML = jps.length ? jps.map((x, i) => { const d = new Date(x.date + "T12:00:00");
-      return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="jps" data-i="${i}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
+      return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="jps" data-i="${i}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   }
   TP.fr = fr; TP.jp = jp;
   if (jp.length) { document.getElementById("d-jp").hidden = false;
