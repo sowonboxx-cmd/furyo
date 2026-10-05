@@ -237,6 +237,13 @@
       sortiesFR() + sortiesJP() + direct() + crows() + avance() + membres() + mangakas();
     fitM();
   }
+  // Bloc don en bas du fil (maquette 4 « Bangers », validée par Will le 06/10/2026). Lien PayPal à venir.
+  var PAYPAL = "";
+  function ble() {
+    return '<div class="mh-ble"><span class="bulle">T’as lu, t’as aimé&nbsp;? Alors aboule.</span><img src="/img/jinnai.png" alt="" loading="lazy" class="no-sk">' +
+      '<div class="tx"><span class="tag">Message du gang</span><p>Si t’es encore là, autant filer <span>ton blé.</span></p>' +
+      (PAYPAL ? '<a class="pp" href="' + PAYPAL + '" target="_blank" rel="noopener">PayPal ↗</a>' : '<button type="button" class="pp" onclick="this.textContent=\'Bientôt dispo\'">PayPal ↗</button>') + "</div></div>";
+  }
   // Chargement au fur et à mesure (10 par 10)
   var io = null;
   function more() {
@@ -246,7 +253,8 @@
     fitM(box);
     PAGE++;
     var fini = PAGE * 10 >= LIST.length;
-    m.textContent = fini ? (LIST.length > 1 ? "Reviens plus tard, t’as tout lu bâtard." : "") : "Chargement…";
+    if (fini && LIST.length > 1) m.innerHTML = '<p class="mh-endt">Reviens plus tard, t’as tout lu bâtard.</p>' + ble();
+    else m.textContent = fini ? "" : "Chargement…";
     if (io) io.disconnect();
     if (!fini) { io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) more(); }, { rootMargin: "400px" }); io.observe(m); }
     loadStats(part);
