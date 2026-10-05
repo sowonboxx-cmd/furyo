@@ -395,9 +395,10 @@ body{font-size:16px}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=28"></script>
+<script src="/site/header.js?v=29"></script>
 <div class="page">
   <div id="app"><p class="empty">Chargement…</p></div>
+  <script>(function () { var a = document.getElementById("app"), f = /^\/series\/[^/]+/.test(location.pathname) || new URLSearchParams(location.search).get("s"); if (window.FG_SK) a.innerHTML = f ? FG_SK.fiche() : FG_SK.grid(12); })();</script>
 </div>
 <script>
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));

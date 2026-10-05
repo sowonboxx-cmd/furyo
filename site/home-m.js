@@ -214,13 +214,13 @@
       }
       PAGE = 0;
       root.innerHTML = head + '<div class="mh-list" id="mh-list"></div><div id="mh-more" class="mh-note"></div>';
-      if (!D.news) { document.getElementById("mh-more").textContent = "Chargement…"; return; }
+      if (!D.news) { if (window.FG_SK) document.getElementById("mh-list").innerHTML = FG_SK.cards(4); else document.getElementById("mh-more").textContent = "Chargement…"; return; }
       if (!LIST.length) { document.getElementById("mh-more").textContent = vide; return; }
       more(); return;
     }
     // Accueil
     var feed;
-    if (TAB === "toutes") feed = news.length ? heroH(news[0]) + news.slice(1, 3).map(cardO).join("") : '<p class="mh-note">' + (D.news ? "Pas encore d'actualité." : "Chargement…") + "</p>";
+    if (TAB === "toutes") feed = news.length ? heroH(news[0]) + news.slice(1, 3).map(cardO).join("") : D.news ? '<p class="mh-note">Pas encore d\'actualité.</p>' : (window.FG_SK ? FG_SK.b("100%", 0, 0).replace("height:0px", "height:min(52.7vh,408px)") + FG_SK.cards(2) : '<p class="mh-note">Chargement…</p>');
     else if (!(D.me && D.me.user)) feed = '<div class="mh-lock"><b>' + (TAB === "feed" ? "Ton fil personnalisé" : "Tes signets") + "</b><p>" + (TAB === "feed" ? "Les news des séries que tu suis, rien que pour toi." : "Retrouve toutes les news que tu as gardées.") + ' Réservé aux membres.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button></div>';
     else if (TAB === "feed") { var fl = D.follow; var mine = fl ? news.filter(function (it) { return fl.indexOf(slug(it.fr || it.titre)) >= 0 || fl.indexOf(slug(it.titre)) >= 0; }) : [];
       feed = fl == null ? '<p class="mh-note">Chargement…</p>' : mine.length ? mine.map(cardO).join("") : '<p class="mh-note">' + (fl.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton + en haut de leur fiche : leurs news apparaîtront ici.") + "</p>"; }

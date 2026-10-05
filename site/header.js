@@ -108,6 +108,37 @@
     /* Ordinateur : logo, menu, recherche et avatar un peu en retrait des bords du contenu (Will, 05/10/2026). */
     "@media (min-width:980px){.sh-in{padding:0 48px!important}}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
+  // Squelettes de chargement (Will, 06/10/2026) : des blocs gris qui pulsent à la place du contenu, puis la page finale.
+  // .sk = bloc gris animé ; les images pas encore chargées pulsent aussi, puis apparaissent en fondu.
+  var skc = document.createElement("style");
+  skc.textContent = "@keyframes fgsk{0%{background-position:100% 0}100%{background-position:-100% 0}}" +
+    ".sk,img.sk-i{background:linear-gradient(90deg,#1C1C1E 25%,#2A2A2D 50%,#1C1C1E 75%) 0 0/200% 100%!important;animation:fgsk 1.3s ease-in-out infinite}" +
+    ".sk{display:block;border-radius:10px;color:transparent!important}" +
+    "img.sk-i{color:transparent}img.sk-f{opacity:0}img.sk-in{opacity:1;transition:opacity .35s ease}" +
+    ".skw{display:flex;flex-direction:column;gap:14px;padding:16px}.skr{display:flex;gap:12px;align-items:center}.skg{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:12px}" +
+    "@media (min-width:980px){.skw{max-width:1240px;margin:0 auto;padding:24px 20px}.skg{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:18px}}" +
+    "@media (prefers-reduced-motion:reduce){.sk,img.sk-i{animation:none}}";
+  document.head.appendChild(skc);
+  function skImg(im) {
+    if (im.dataset.sk || im.closest(".site-head,.sh,header,.no-sk")) return;
+    im.dataset.sk = "1";
+    if (im.complete && im.naturalWidth) return;
+    im.classList.add("sk-i", "sk-f");
+    var done = function () { im.classList.remove("sk-i"); im.classList.add("sk-in"); im.classList.remove("sk-f"); };
+    im.addEventListener("load", done, { once: true }); im.addEventListener("error", function () { im.classList.remove("sk-i", "sk-f"); }, { once: true });
+  }
+  if (window.MutationObserver) new MutationObserver(function (ms) {
+    ms.forEach(function (m) { m.addedNodes.forEach(function (n) { if (n.nodeType !== 1) return; if (n.tagName === "IMG") skImg(n); else if (n.querySelectorAll) n.querySelectorAll("img").forEach(skImg); }); });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  var B = function (w, h, r) { return '<i class="sk" style="width:' + w + ";height:" + h + "px" + (r ? ";border-radius:" + r + "px" : "") + '"></i>'; };
+  // Gabarits réutilisés par les pages : grille de couvertures, liste de cartes, fiche, article.
+  window.FG_SK = {
+    b: B,
+    grid: function (n) { var h = ""; for (var i = 0; i < (n || 12); i++) h += '<div style="display:flex;flex-direction:column;gap:8px">' + B("100%", 0).replace("height:0px", "aspect-ratio:2/3;height:auto") + B("80%", 14) + "</div>"; return '<div class="skw"><div class="skr">' + B("100%", 46, 14) + B("96px", 46, 14) + '</div><div class="skr">' + B("70px", 34, 17) + B("70px", 34, 17) + B("70px", 34, 17) + B("70px", 34, 17) + '</div><div class="skg">' + h + "</div></div>"; },
+    cards: function (n) { var h = ""; for (var i = 0; i < (n || 4); i++) h += '<div class="skr" style="padding:12px;border-radius:18px;background:#0B0B0C">' + B("88px", 110, 12) + '<div style="flex:1;display:flex;flex-direction:column;gap:9px">' + B("40%", 11) + B("75%", 20) + B("100%", 13) + B("85%", 13) + "</div></div>"; return '<div class="skw">' + h + "</div>"; },
+    fiche: function () { return '<div class="skw"><div class="skr" style="align-items:flex-start;gap:20px;flex-wrap:wrap">' + B("min(260px,40%)", 0).replace("height:0px", "aspect-ratio:2/3;height:auto;flex:none") + '<div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:12px">' + B("70%", 46) + B("30%", 16) + B("45%", 16) + B("100%", 14) + B("100%", 14) + B("90%", 14) + B("60%", 14) + "</div></div>" + B("100%", 52, 16) + '<div class="skr">' + B("25%", 70, 14) + B("25%", 70, 14) + B("25%", 70, 14) + B("25%", 70, 14) + "</div></div>"; },
+    article: function () { return B("100%", 0, 0).replace("height:0px", "height:min(58vh,460px)") + '<div class="skw">' + B("30%", 14) + B("100%", 16) + B("100%", 16) + B("92%", 16) + B("70%", 16) + B("100%", 0, 16).replace("height:0px", "aspect-ratio:16/9;height:auto") + B("100%", 64, 14) + "</div>"; }
+  };
   var p = location.pathname;
   var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
   if (/vue=magazines/.test(location.search)) cur = "jp";

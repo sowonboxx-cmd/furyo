@@ -635,11 +635,11 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 
 </head>
 <body>
-<script src="/site/header.js?v=28"></script>
+<script src="/site/header.js?v=29"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
-<script src="/site/home-m.js?v=38" defer></script>
+<script src="/site/home-m.js?v=39" defer></script>
 <div class="page">
 
 
@@ -841,7 +841,7 @@ function renderN() {
   const news = (DT.news || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   const note = (t, cta) => `<div class="box dn"><p>${t}</p>${cta ? '<button type="button" class="dn-go" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button>' : ""}</div>`;
   let list = null, html = "";
-  if (!DT.news) html = note("Chargement des actualités…");
+  if (!DT.news) html = window.FG_SK ? FG_SK.cards(4) : note("Chargement des actualités…");
   else if (DT.cat) list = news.filter(it => it.cat === DT.cat || (it.cats || []).some(c => c.k === DT.cat));
   else if (DT.tab === "toutes") list = news;
   else if (!(DT.me && DT.me.user)) html = note(DT.tab === "feed" ? "<b>Ton feed personnalisé</b>Les news des séries que tu suis, rien que pour toi. Réservé aux membres." : "<b>Tes signets</b>Retrouve toutes les news que tu as gardées. Réservé aux membres.", true);
