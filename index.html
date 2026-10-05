@@ -422,6 +422,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .sc-r img,.sc-r .ph{width:42px;aspect-ratio:7/10;object-fit:cover;border-radius:6px;background:#38383B;display:block}
 .sc-r b{display:block;font:700 16px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sc-r small{font-size:12px;color:#98989D}.sc-r:hover b{text-decoration:underline}
 .sv{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#1C1C1E}.sv iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.sv-snd{position:absolute;right:8px;bottom:8px;z-index:2;width:36px;height:36px;border:0;border-radius:18px;background:rgba(0,0,0,.7);color:#fff;display:grid;place-items:center;cursor:pointer}.sv-snd:hover{background:#000}.sv-snd[aria-pressed=true]{color:#4C9BFF}
 .sv-ok{position:absolute;inset:0;border:0;padding:0;background:none;cursor:pointer}.sv-ok img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85}
 .sv-p{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,.65);display:grid;place-items:center}
 .sv-ok em{position:absolute;left:8px;right:8px;bottom:8px;font:600 11.5px Inter,sans-serif;font-style:normal;color:#fff;text-shadow:0 1px 6px #000}
@@ -699,10 +700,17 @@ const ytId = u => (String(u || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\
 function vidN(it) {
   const id = ytId(it.video), t = it.fr || it.titre, lab = (it.cats || []).some(c => c.k === "bande-annonce") ? "Bande-annonce" : "Vidéo";
   const ok = window.FG_CONSENT && FG_CONSENT.video();
-  const media = ok ? `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&playsinline=1&rel=0" title="${escN(t)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`
+  const media = ok ? `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&playsinline=1&rel=0&enablejsapi=1" title="${escN(t)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe><button type="button" class="sv-snd" data-snd aria-pressed="false" aria-label="Activer le son">${SND.off}</button>`
     : `<button type="button" class="sv-ok" data-vok aria-label="Lire la vidéo"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span class="sv-p"><svg viewBox="0 0 24 24" width="22" height="22" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span><em>Lire la vidéo (accepte les cookies YouTube)</em></button>`;
   return `<div class="sv">${media}</div><a class="sv-t" href="${escN(linkN(it))}"><b>${escN(t)}</b><small>${lab} · ${escN(relN(it.date))}</small></a>`;
 }
+// Bouton son (coupé par défaut) : commande envoyée au lecteur YouTube.
+const SND = { off: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>', on: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>' };
+document.addEventListener("click", e => { const b = e.target.closest("[data-snd]"); if (!b) return;
+  const f = b.parentNode.querySelector("iframe"); if (!f) return; const on = b.getAttribute("aria-pressed") !== "true";
+  const cmd = (func, args) => f.contentWindow.postMessage(JSON.stringify({ event: "command", func, args: args || [] }), "*");
+  if (on) { cmd("unMute"); cmd("setVolume", [80]); } else cmd("mute");
+  b.setAttribute("aria-pressed", on); b.setAttribute("aria-label", on ? "Couper le son" : "Activer le son"); b.innerHTML = on ? SND.on : SND.off; });
 document.addEventListener("click", e => { if (e.target.closest("[data-vok]")) { if (window.FG_CONSENT) FG_CONSENT.accepter(); sideN(); } });
 function sideN() {
   const mode = !!(DT.all || VUE_N === "actus"), box = document.getElementById("m-cats"); if (!box) return;
