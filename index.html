@@ -262,6 +262,7 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dt-menu i{width:8px;height:8px;border-radius:50%;flex:none}.dt-menu small{margin-left:auto;color:#8E8E93;font-size:12.5px}
 .feed{display:flex;flex-direction:column;gap:12px}
 .vmag #d-jp,.vmag .dduo,.vmag #d-ecran{display:none!important}
+#m-fr h3{display:flex;align-items:center;gap:10px}.fl-h{width:26px;height:18px;border-radius:3px;flex:none}
 .dg-mi{display:inline-block;white-space:nowrap}
 .smk{display:flex;flex-direction:column;gap:2px}
 .smk a{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding:8px;border-radius:12px;color:#F5F5F7;text-decoration:none}.smk a:hover{background:#1C1C1E}
@@ -614,7 +615,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=27"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=30" defer></script>
+<script src="/site/home-m.js?v=31" defer></script>
 <div class="page">
 
 
@@ -634,7 +635,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
       <section class="box" id="m-mk" hidden><div class="m-head"><div><h3><a class="h3a" href="/auteurs/">Mangakas</a></h3></div></div><div class="smk" id="smk"></div></section>
 
       <section class="box mod" id="m-jp" data-slot="0">
-        <div class="m-head"><h3>En direct du Japon</h3></div>
+        <div class="m-head"><h3>Les prépublications au Japon</h3></div>
         <ul class="jp">
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">WORST Gaiden Zetton Sensei<small lang="ja">WORST外伝 ゼットン先生 · ch. ?</small></span><span class="st ok">Paru</span></li>
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">Gabu<small lang="ja">ガブ · ch. ?</small></span><span class="st ok">Paru</span></li>
@@ -930,7 +931,7 @@ function magCardN(m) {
 function magsViewN() {
   const fil = document.getElementById("fil"), mk = document.getElementById("m-mk"); if (mk) mk.hidden = false;
   document.body.classList.add("vmag"); // pas les sections du bas de l'accueil sur cette page (Will, 05/10/2026)
-  fil.innerHTML = `<div class="box dgh"><div><small><span class="live">●</span> En direct · Prépublication</small><h1>En direct du Japon</h1><p>Les derniers numéros des magazines japonais et les chapitres de nos séries.</p></div></div><div class="dgs" id="dgs"><div class="box dn"><p>Chargement des magazines…</p></div></div>`;
+  fil.innerHTML = `<div class="box dgh"><div><h1>Les prépublications au Japon</h1><p>Les derniers numéros des magazines japonais et les chapitres de nos séries.</p></div></div><div class="dgs" id="dgs"><div class="box dn"><p>Chargement des magazines…</p></div></div>`;
   const side = document.getElementById("m-jp"); if (side) side.hidden = true;
   getN("/api/prepub").then(j => {
     const box = document.getElementById("dgs"), list = magsN((j && j.items) || []);
@@ -1010,7 +1011,9 @@ getN("/api/calendrier").then(j => {
   // Page « En direct du Japon » : la colonne affiche les 6 prochaines sorties japonaises (Will, 05/10/2026).
   if (VUE_N === "magazines") {
     const jps = all.filter(x => x.pays === "Japon" && x.date >= t).slice(0, 6); TP.jps = jps;
-    const head = document.querySelector("#m-fr .m-eye"); if (head) head.innerHTML = `<svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>Au Japon`;
+    // Titre « Prochaines sorties » avec le drapeau japonais à droite, sans la ligne « Au Japon » au-dessus (Will, 05/10/2026).
+    const head = document.querySelector("#m-fr .m-eye"); if (head) head.remove();
+    const h3 = document.querySelector("#m-fr h3"); if (h3 && !h3.querySelector(".fl")) h3.insertAdjacentHTML("beforeend", '<svg class="fl fl-h" viewBox="0 0 22 15" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>');
     const h = document.querySelector("#m-fr .h3a"); if (h) h.href = "/calendrier/#japon";
     document.getElementById("dfr").innerHTML = jps.length ? jps.map((x, i) => { const d = new Date(x.date + "T12:00:00");
       return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="jps" data-i="${i}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.series + tn(x.n))}</b><small>${escN(x.pub || "")}</small></span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';

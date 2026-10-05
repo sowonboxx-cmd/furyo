@@ -146,7 +146,7 @@
   }
   function direct() {
     var m = mags(); if (!m.length) return "";
-    return '<section class="mh-sec" aria-label="En direct du Japon">' + head2("En direct du Japon", '<span class="live">● En direct</span> · Prépublication', "/?vue=magazines", "Tous les magazines") + '<div class="mh-car">' + m.slice(0, 6).map(magCard).join("") + "</div></section>";
+    return '<section class="mh-sec" aria-label="Les prépublications au Japon">' + head2("Les prépublications au Japon", '<span class="live">● En direct</span>', "/?vue=magazines", "Tous les magazines") + '<div class="mh-car">' + m.slice(0, 6).map(magCard).join("") + "</div></section>";
   }
   function crows() {
     return '<a class="mh-cxw" href="/crows-x-worst/" target="_blank" rel="noopener"><span class="map" aria-hidden="true"></span><span class="chars"><img src="/crows-x-worst/img/char-hana.png" alt=""><img src="/crows-x-worst/img/char-boya.png" alt=""></span><span class="t"><small>Carte interactive</small><b>CROWS<i>×</i>WORST</b><em>Toutes les œuvres de l\'univers de Hiroshi Takahashi</em></span></a>';
@@ -189,7 +189,7 @@
   function render() {
     if (window.FG_NAV) FG_NAV();
     var v = q(), news = (D.news || []).slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); });
-    if (v.vue === "magazines") { root.innerHTML = top("Tous les magazines") + '<div class="mh-mags">' + (D.prepub ? mags().map(magCard).join("") || '<p class="mh-note">Aucun magazine pour l\'instant.</p>' : '<p class="mh-note">Chargement…</p>') + "</div>"; return; }
+    if (v.vue === "magazines") { root.innerHTML = top("Les prépublications au Japon") + '<div class="mh-mags">' + (D.prepub ? mags().map(magCard).join("") || '<p class="mh-note">Aucun magazine pour l\'instant.</p>' : '<p class="mh-note">Chargement…</p>') + "</div>"; return; }
     if (v.vue === "actus" || v.cat) {
       var chips = v.cat ? '<div class="mh-chips">' + TYPES.map(function (t) { return '<a href="/?cat=' + t[0] + '" aria-current="' + (t[0] === v.cat) + '"><i style="background:' + t[2] + '"></i>' + t[1] + "</a>"; }).join("") + "</div>" : "";
       var head = atabs(v) + chips, membre = D.me && D.me.user, vide = "Aucune actualité dans cette catégorie pour l'instant.";
