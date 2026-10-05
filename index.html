@@ -635,7 +635,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/header.js?v=28"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
-<script src="/site/home-m.js?v=35" defer></script>
+<script src="/site/home-m.js?v=36" defer></script>
 <div class="page">
 
 
@@ -766,7 +766,7 @@ function fitP(p){
   // Mobile (Will, 05/10/2026) : sans phrase entière qui tient, on prend l'Accroche, sinon la première phrase sur une ligne de plus.
   const alt = p.dataset.alt || "";
   if ((!best || best.length < 40) && alt && ok(alt)) best = alt;
-  if (!best && p.dataset.f === "1") { const m0 = max; p.dataset.l = m0 + 1; const ok2 = t => { p.textContent = t; return lines() <= m0 + 1; }; if (ok2(s[0])) best = s[0]; else if (alt && ok2(alt)) best = alt; p.dataset.l = m0; }
+  if (!best && p.dataset.f === "1") { const m0 = max; p.dataset.l = m0 + 1; const ok2 = t => { p.textContent = t; return lines() <= m0 + 1; }; if (ok2(s[0])) best = s[0]; else if (alt && ok2(alt)) best = alt; else best = alt || s[0]; p.dataset.l = m0; }
   if (best) p.textContent = best; else { p.textContent = full; p.style.display = ""; p.style.webkitLineClamp = ""; }
 }
 function fitN(root){ (root || document).querySelectorAll("p[data-full]").forEach(fitP); }
