@@ -21,7 +21,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
   // Pas de reconstruction forcée pour Will (elle rendait les pages news lentes) : le back-office vide le cache à chaque changement.
-  return cached(request, waitUntil, "/api/news?v=6", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=7", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -59,6 +59,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         titre: s.t || prop, fr: s.fr, jp: s.jp, pub, label, t1, cover, pos: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null, texte: text(p["Résumé site"]), accroche: text(p["Accroche"]),
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),
+        // Plusieurs sources possibles dans « Source officielle » (liens séparés par un espace ou un retour à la ligne).
+        srcs: String(src || "").split(/[\s,]+/).filter(u => /^https?:\/\//.test(u)).map(u => ({ u, n: sourceName(u) })),
         // Vidéo (trailer, PV) jouée dans la page de la news : propriété « Vidéo », sinon un lien YouTube de « Valeur proposée ».
         video: text(p["Vidéo"]) || (val.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}\S*/) || [])[0] || "",
         // Crédit de l'image (Will, 05/10/2026) : en français pour une news française, en japonais sinon.

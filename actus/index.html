@@ -164,6 +164,36 @@ a{color:inherit}
 .nd-o p,.na-ao .nd-o p,.nd-fc p,.na-com p{color:#D8D8DC;letter-spacing:-.005em;font-weight:500}
 .nd-o p,.na-ao .nd-o p{font-size:15px}.nd-fc p{font-size:14.5px}.na-com p{font-size:15px}
 .nd-l2{font-size:14.5px}.nd-l4{font-size:15px}.nd-jp{font-size:16px}
+/* Page news mobile, maquette A (Will, 05/10/2026) : fond noir façon Apple, l'image fond dans le noir. */
+@media (max-width:979px){
+body{background:#000}
+.na-hero{height:min(58vh,460px);background:#000}
+.na-hero::after{background:linear-gradient(180deg,rgba(0,0,0,0) 36%,rgba(0,0,0,.55) 62%,#000 97%)}
+.na-ht{bottom:4px;gap:9px}
+.na-jp{font:500 13.5px "Noto Sans JP",sans-serif;color:#D8D8DC;margin-top:-3px}
+.na-ht .na-meta{font:500 13.5px Inter,sans-serif;color:#8E8E93}
+.na-body{gap:18px;padding:14px 18px 0}
+.na-text{font-size:17px;line-height:1.55;font-weight:500;letter-spacing:-.005em;color:#F5F5F7}
+.na-seg{display:grid;grid-template-columns:1fr 1fr 1fr;background:#1C1C1E;border-radius:14px;overflow:hidden}
+.na-seg>*{height:64px;border:0;background:none;color:#F5F5F7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font:600 12.5px Inter,sans-serif;text-decoration:none;cursor:pointer;padding:0 4px}
+.na-seg>*+*{border-left:1px solid #2C2C2E}.na-seg svg{width:19px;height:19px}.na-seg .p{color:#4C9BFF}.na-seg .on{color:#AEAEB2}
+.na-srcs{background:#1C1C1E;border-radius:14px;overflow:hidden}
+.na-srcs .h{padding:12px 14px 4px;font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8E8E93}
+.na-srcs a{display:flex;align-items:center;gap:11px;min-height:52px;padding:6px 14px;color:#F5F5F7;text-decoration:none;font:600 14.5px/1.25 Inter,sans-serif}
+.na-srcs a+a{border-top:1px solid #2C2C2E}
+.na-srcs a span{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}.na-srcs small{font:500 13px Inter,sans-serif;color:#8E8E93;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.na-srcs i{flex:none;width:30px;height:30px;border-radius:8px;background:#2C2C2E;display:grid;place-items:center;font:700 12.5px Inter,sans-serif;font-style:normal}.na-srcs i svg{width:14px;height:14px}
+.na-srcs .arr{width:14px;height:14px;color:#8E8E93;flex:none}
+.na-stc{background:#1C1C1E;border-radius:18px;padding:4px 16px}
+.na-acts{color:#D8D8DC;font-size:15px}
+.na-com{border-top:0;padding-top:4px}.na-com h2{font-size:24px}
+.na-com p{font-size:15px;color:#D8D8DC}
+.na-add{background:#1C1C1E;border:0;height:50px}
+.na-ao .nd-box{background:#1C1C1E;border-radius:22px;padding:18px}
+.na-ao .nd-bh h2{font-size:24px}
+.na-ao .nd-o{border-top:0}
+.na-ao .nd-more{background:#2C2C2E}
+}
 </style>
 </head>
 <body>
@@ -182,6 +212,7 @@ a{color:inherit}
     heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>',
     com: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4A8 8 0 1 1 20 12z"/></svg>',
     stat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>',
+    fiche: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>',
     book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>'
   };
   var FOLLOW = false;
@@ -219,6 +250,18 @@ a{color:inherit}
     var m = String(u || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
     return m ? '<div class="na-vid"><iframe src="https://www.youtube-nocookie.com/embed/' + m[1] + '" title="Vidéo de la news" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>' : "";
   }
+  // Bloc « Sources » (une ligne par source, comme les réglages iPhone) ; la vidéo officielle y figure aussi.
+  function srcsM() {
+    var L = (N.srcs && N.srcs.length ? N.srcs : (N.src ? [{ u: N.src, n: N.srcName }] : [])).map(function (x) {
+      var h = handle(x.u), host = ""; try { host = new URL(x.u).hostname.replace(/^www\./, ""); } catch (e) {}
+      return { u: x.u, ic: /x\.com|twitter\.com/.test(host) ? X_ICON : esc((x.n || host || "?").charAt(0).toUpperCase()), t: h ? "Compte X" : (x.n || host || "Source officielle"), d: h || host };
+    });
+    var m = String(N.video || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+    if (m && !L.some(function (x) { return x.u.indexOf(m[1]) >= 0; })) L.push({ u: "https://www.youtube.com/watch?v=" + m[1], ic: "▶", t: "Vidéo officielle", d: "YouTube" });
+    if (!L.length) return "";
+    return '<div class="na-srcs"><div class="h">' + (L.length > 1 ? "Sources · " + L.length : "Source") + "</div>" + L.map(function (x) {
+      return '<a href="' + esc(x.u) + '" target="_blank" rel="noopener"><i>' + x.ic + "</i><span>" + esc(x.t) + "<small>" + esc(x.d) + "</small></span>" + ARR + "</a>"; }).join("") + "</div>";
+  }
   function render() {
     if (!N) return;
     if (DESK.matches) return renderD();
@@ -227,13 +270,14 @@ a{color:inherit}
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "") +
       '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a>' + (N.cover && N.credit ? '<span class="cr" lang="' + (/^©[^ ]/.test(N.credit) ? "ja" : "fr") + '">' + esc(N.credit) + "</span>" : "") +
-      '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
-      '<div class="na-body"><span class="na-meta">' + esc(dLong(N.date) || "") + "</span>" +
-      '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
-      '<div class="na-three"><button type="button" class="na-b' + (FOLLOW ? " on" : "") + '" data-soon="suivre">' + (FOLLOW ? HEART_ON + "Série suivie" : I.heart + "Suivre la série") + "</button>" +
-        '<a class="na-b blue" href="/series/' + esc(CTX && CTX.serie && CTX.serie.slug || slug(N.titre)) + '">Voir la fiche</a><button type="button" class="na-b" data-soon="liste">' + I.book + "Ma liste</button></div>" +
-        (N.src ? '<div class="na-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") +
-      acts() + preview() + '<div class="na-ao">' + autres() + "</div></div>";
+      '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
+        (N.jp ? '<span class="na-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<span class="na-meta">' + esc(dLong(N.date) || "") + "</span></div></div>" +
+      // Page news mobile, maquette A validée par Will (05/10/2026) : fond noir, barre d'actions plate, bloc Sources, stats et autres actualités en blocs.
+      '<div class="na-body"><p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
+      '<div class="na-seg"><button type="button" class="' + (FOLLOW ? "on" : "") + '" data-soon="suivre">' + (FOLLOW ? HEART_ON + "Suivie" : I.heart + "Suivre") + "</button>" +
+        '<a class="p" href="/series/' + esc(CTX && CTX.serie && CTX.serie.slug || slug(N.titre)) + '">' + I.fiche + "Voir la fiche</a>" +
+        '<button type="button" data-soon="liste">' + I.book + "Ma liste</button></div>" +
+      srcsM() + '<div class="na-stc">' + acts() + "</div>" + preview() + '<div class="na-ao">' + autres() + "</div></div>";
   }
 
   // ---------- Ordinateur ----------
