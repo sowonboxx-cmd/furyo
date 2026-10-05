@@ -200,7 +200,7 @@ a{color:inherit}
     root.innerHTML = '<div class="na-hero">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '">' : "") +
       '<a class="na-back" href="/?vue=actus" aria-label="Retour aux actualités">' + I.back + '</a>' +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1></div></div>" +
-      '<div class="na-body"><span class="na-meta">' + esc([N.pub, dLong(N.date)].filter(Boolean).join(" · ")) + "</span>" +
+      '<div class="na-body"><span class="na-meta">' + esc(dLong(N.date) || "") + "</span>" +
       '<p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
       '<div class="na-links"><a href="/series/' + esc(slug(N.titre)) + '">Fiche ' + esc(titre) + "</a>" + (N.src ? '<a href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(N.srcName || "officielle") + "<svg class='arr' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true' style='display:inline-block;vertical-align:-1px;margin-left:3px'><path d='M8 16 16 8M9.5 8H16v6.5'/></svg></a>" : "") + "</div>" +
       acts() + preview() + "</div>";
