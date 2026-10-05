@@ -102,7 +102,7 @@
     '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
     '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", /^\/actus/.test(p) ? "/?vue=actus" : "/", "Actualités") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") +
-    a("jp", "/?vue=magazines", "Direct du Japon", 1) + a("cxw", "/crows-x-worst/", "CROWS X WORST", 1, 1) + a("sjp", "/calendrier/#japon", "Sorties du Japon", 1) + a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
+    a("jp", "/?vue=magazines", "Direct du Japon", 1) + a("cxw", "/crows-x-worst/", "CROWS X WORST", 1, 1) + a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
   var me = document.currentScript;
   me.insertAdjacentHTML("beforebegin", html);
   var set = function () { var h = document.getElementById("sh"); if (h) document.documentElement.style.setProperty("--sh-h", h.offsetHeight + "px"); };

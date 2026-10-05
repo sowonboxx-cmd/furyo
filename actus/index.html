@@ -115,9 +115,11 @@ a{color:inherit}
 .nd-x{display:flex;align-items:center;gap:12px;margin:16px 0 12px;padding:12px 14px;border-radius:14px;background:#1C1C1E;text-decoration:none}.nd-x:hover{background:var(--ink-3)}
 .nd-x svg{width:20px;height:20px;flex:none}.nd-x span{font:700 15px Inter,sans-serif;min-width:0}.nd-x small{display:block;font:500 13px Inter,sans-serif;color:var(--paper-3)}
 .nd-mks{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 14px}.nd-mks a,.nd-mks span{background:#1C1C1E;border-radius:9px;padding:7px 11px;font:600 14px Inter,sans-serif;color:#E5E5EA;text-decoration:none}.nd-mks a:hover{background:var(--ink-3)}
-.nd-o{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none}
-.nd-o img,.nd-o .ph{width:52px;aspect-ratio:7/10;object-fit:cover;border-radius:7px;background:var(--ink-3)}
-.nd-o span{font:600 11.5px Inter,sans-serif;color:var(--paper-3);min-width:0}.nd-o b{display:block;margin-top:2px;font:700 17px/1.05 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:var(--paper)}
+.nd-o{display:grid;grid-template-columns:66px minmax(0,1fr);gap:12px;align-items:start;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none}
+.nd-o img,.nd-o .ph{width:66px;aspect-ratio:7/10;object-fit:cover;border-radius:7px;background:var(--ink-3)}
+.nd-o span{font:600 11.5px Inter,sans-serif;color:var(--paper-3);min-width:0}.nd-o>span{display:flex;flex-direction:column;max-height:94px;overflow:hidden}
+.nd-o b{display:block;margin-top:2px;font:700 17px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nd-o p{margin:4px 0 0;font:500 12.5px/1.32 Inter,sans-serif;color:var(--paper-2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .nd-o:hover b{text-decoration:underline}
 .nd-more{margin-top:12px}
 .nd-com{display:flex;flex-direction:column}
@@ -136,7 +138,7 @@ a{color:inherit}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=20"></script>
+<script src="/site/header.js?v=21"></script>
 <main class="na" id="na"><p class="na-empty">Chargement…</p></main>
 <script>
 (function () {
@@ -222,7 +224,7 @@ a{color:inherit}
       ["En France", s.pubFR ? s.pubFR + (s.volFR ? " · " + s.volFR + " tomes" : "") + (partie1 ? " (partie 1)" : "") : (s.stFR || "Inédit")],
       ["Anime", String(s.anime || "").replace(/\s*;\s*/g, " · ")]].filter(function (r) { return r[1]; });
     var img = s.cover || N.cover;
-    return '<section class="nd-box"><div class="nd-bh"><small>La série</small><h2>' + esc(titre) + "</h2></div>" +
+    return '<section class="nd-box"><div class="nd-bh"><h2>' + esc(titre) + "</h2></div>" +
       '<div class="nd-fc">' + (img ? '<img src="' + esc(couv(img, 300)) + '" alt="">' : '<span class="ph"></span>') + "<div>" +
       (s.genres && s.genres.length ? '<div class="nd-tags">' + s.genres.slice(0, 3).map(function (g) { return "<span>" + esc(g) + "</span>"; }).join("") + "</div>" : "") +
       (s.resume ? "<p>" + esc(s.resume) + "</p>" : "") + "</div></div>" +
@@ -233,7 +235,7 @@ a{color:inherit}
   function dernier() {
     var d = CTX && CTX.dernier; if (!d) return "";
     var t = new Date().toLocaleDateString("sv"), lire = d.read || d.page;
-    return '<section class="nd-box nd-live"><div class="nd-bh"><small><span class="nd-dot">●</span> En direct du Japon</small><h2>Dernier chapitre</h2></div>' +
+    return '<section class="nd-box nd-live"><div class="nd-bh"><h2>Dernier chapitre</h2></div>' +
       '<div class="nd-lv">' + (d.cover ? '<img src="' + esc(couv(d.cover, 200)) + '" alt="Couverture ' + esc(d.mag) + '">' : '<span class="ph">WEB</span>') + '<div class="nd-lt">' +
       '<span class="nd-l1">' + (!d.date || d.date <= t ? "Sorti le " : "Sort le ") + esc(dDay(d.date)) + "</span>" +
       '<span class="nd-l2">' + esc(d.mag.replace(/\s*\(en ligne\)/i, "")) + (d.issue && !/\(en ligne\)/i.test(d.mag) ? " " + esc(issue(d.issue)) : "") + "</span>" +
@@ -246,7 +248,7 @@ a{color:inherit}
     var list = CTX.auteurs || [];
     return list.map(function (a, i) {
       var x = a.x || (i === 0 && s ? s.x : ""), xLabel = a.x ? "Compte officiel du mangaka" : "Compte officiel de la série";
-      return '<section class="nd-box"><div class="nd-bh"><small>Le mangaka</small></div>' +
+      return '<section class="nd-box">' +
         '<a class="nd-mkh" href="/auteurs/' + esc(a.slug) + '">' + (a.photo ? '<img src="' + esc(a.photo) + '" alt="">' : '<i lang="ja">' + esc((a.jp || a.name).charAt(0)) + "</i>") + "<div><b>" + esc(a.name) + "</b>" + (a.jp ? '<small lang="ja">' + esc(a.jp) + "</small>" : "") + "</div></a>" +
         (x && handle(x) ? '<a class="nd-x" href="' + esc(x) + '" target="_blank" rel="noopener">' + X_ICON + "<span>" + esc(handle(x)) + "<small>" + xLabel + "</small></span></a>" : "") +
         (a.series && a.series.length ? '<div class="nd-mks">' + a.series.map(function (z) { var t = z.fr || z.t; return z.visible ? '<a href="/series/' + esc(z.slug) + '">' + esc(t) + "</a>" : "<span>" + esc(t) + "</span>"; }).join("") + "</div>" : "") +
@@ -256,10 +258,10 @@ a{color:inherit}
   function autres() {
     var o = ALL.filter(function (it) { return it.id !== N.id; }).sort(function (a, b) { return (b.date || "").localeCompare(a.date || ""); }).slice(0, 4);
     if (!o.length) return "";
-    return '<section class="nd-box"><div class="nd-bh"><small>À lire aussi</small><h2>Autres actualités</h2></div>' + o.map(function (it) {
+    return '<section class="nd-box"><div class="nd-bh"><h2>Autres actualités</h2></div>' + o.map(function (it) {
       var c = (it.cats && it.cats[0]) || { nom: it.catNom || "News", c: it.catC || "#D4D4D8" };
       return '<a class="nd-o" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 160)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
-        '<span><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "<b>" + esc(it.fr || it.titre) + "</b></span></a>";
+        '<span><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "<b>" + esc(it.fr || it.titre) + "</b><p>" + esc(it.texte || "") + "</p></span></a>";
     }).join("") + '<a class="nd-btn nd-more" href="/?vue=actus">Toutes les actualités</a></section>';
   }
   function comD() {
