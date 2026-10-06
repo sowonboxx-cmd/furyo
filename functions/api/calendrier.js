@@ -2,7 +2,7 @@
 // Sources Notion : Tomes → Édition (pays, éditeur) → Série (titres, visuel).
 import { text, num, date, rel, queryAll, cached } from "../../lib/notion.js";
 import { isAdmin } from "../../lib/admin.js";
-import { estVisible } from "../../lib/site.js";
+import { estVisible, filtreVisible } from "../../lib/site.js";
 
 const TOMES = { dataSource: "bb621014-699d-4209-b488-18f5e53dd3df", database: "8bebb5bd70554da9b2801c132181a521" };
 const EDITIONS = { dataSource: "ab76d47e-6580-4eab-abb5-87012c3b81a9", database: "c87f41f89f8142e5b45bb21f66416f6f" };
@@ -26,7 +26,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
         sorts: [{ property: "Date de sortie", direction: "ascending" }],
       } }),
       queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
-      queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: { property: "Éditions", relation: { is_not_empty: true } } } }),
+      // Seulement les séries « En ligne · public » : les éditions et tomes référencés pour la bibliothèque (séries pas encore
+      // validées) ne doivent pas apparaître dans le calendrier (Will, 06/10/2026).
+      queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: filtreVisible() } }),
     ]);
     const series = {};
     for (const r of sRows) {
@@ -54,7 +56,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
         nb: ed.nb || (ed.pays === "Japon" && s.finiJP ? s.tomesJP : null),
         series: s.t || "", seriesId: s.id || "", jp: s.jp || "", fr: s.fr || "", visual: !!s.hasVisual, cover1: s.cover1 || "", resume: s.resume || "", scen: s.scen || "", dess: s.dess || "", auteurs: s.auteurs || "", fiche: s.fiche !== false,
       };
-    }).filter(it => it.date);
+    }).filter(it => it.date && it.seriesId);
     return { items };
   });
 }
