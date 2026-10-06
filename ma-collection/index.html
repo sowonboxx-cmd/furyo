@@ -225,8 +225,10 @@ const slugAdr = () => decodeURIComponent((location.pathname.match(/^\/ma-collect
 
 /* ---------- données ---------- */
 async function detail(id){
-  if (!DET[id]) DET[id] = fetch("/api/biblio?id=" + id).then(r => r.json()).catch(() => ({ error: "x" }));
-  const d = await DET[id]; DET[id + ":v"] = d; return d;
+  // Jusqu'à 4 essais espacés : Notion peut répondre « trop de requêtes » quand la base est très sollicitée. Une erreur n'est pas gardée en mémoire.
+  const get = async () => { for (let k = 0; k < 4; k++) { try { const r = await fetch("/api/biblio?id=" + id + (k ? "&t=" + k : "")); const j = await r.json(); if (r.ok && j && j.editions) return j; } catch (e) {} await new Promise(f => setTimeout(f, 800 + k * 1200)); } return { error: "x" }; };
+  if (!DET[id]) DET[id] = get();
+  const d = await DET[id]; if (d.error) delete DET[id]; else DET[id + ":v"] = d; return d;
 }
 // Séries d'une liste + le nombre de tomes de la série dans la liste.
 function seriesDe(l){ const m = {}; Object.values(L[l]).forEach(s => { m[s] = (m[s] || 0) + 1; }); return m; }
