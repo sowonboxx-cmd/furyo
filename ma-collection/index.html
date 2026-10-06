@@ -85,6 +85,28 @@ a{color:inherit}
 .side .fk i{width:16px;height:16px;border-radius:4px;border:1.5px solid #555;flex:none}
 .side .fk button[aria-pressed=true] i{background:var(--blue);border-color:var(--blue)}
 /* ---------- page série ---------- */
+/* En-tête D3 (Will, 07/10) */
+.sc{position:relative;background:#161618;border-radius:20px;padding:14px;display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px}
+.scv{display:block;width:96px;aspect-ratio:5/7;border-radius:8px;overflow:hidden;background:var(--s1);box-shadow:0 10px 26px rgba(0,0,0,.5)}
+.scv img{width:100%;height:100%;object-fit:cover;display:block}
+.stx{min-width:0;display:contents}
+.stx>div:first-child{min-width:0}
+.sc h1{margin:0;font:700 30px/1 var(--fd);text-transform:uppercase;overflow-wrap:anywhere}
+.jpt{margin:4px 0 0;color:var(--fg2);font-size:13px}
+.cr{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:13px}.cr dt{color:var(--mut)}.cr dd{margin:0;font-weight:600}
+.eds{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
+.eds button{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:14px;border:1.5px solid transparent;background:#1F1F22;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+.eds .flag{width:22px;height:15px;border-radius:2px;flex:none}
+.eds span{display:flex;flex-direction:column;flex:1;min-width:0}.eds b{font-size:14px}.eds em{font-style:normal;color:var(--mut);font-size:12.5px}
+.eds i{font-style:normal;font-weight:600;color:var(--fg)}.eds i.on{color:var(--ok)}.eds i.stop{color:#E5483A}
+.eds .n{flex:none;font:700 20px var(--fd);color:var(--fg2);font-variant-numeric:tabular-nums}
+.eds button[aria-pressed=true]{border-color:var(--blue);background:var(--s3)}
+.pane{grid-column:1/-1;background:#0E0E10;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.big{display:flex;align-items:baseline;gap:8px}.big b{font:700 56px/.85 var(--fd);font-variant-numeric:tabular-nums}.big span{font:700 18px var(--fd);color:var(--mut);text-transform:uppercase}
+.pane .pb{height:6px}
+.pane .btn{display:flex;align-items:center;justify-content:center;gap:10px}
+.ic.st{width:19px;height:19px;fill:currentColor;stroke:none;flex:none}
+
 .hero{position:relative;overflow:hidden;margin:-22px -16px 0;padding:18px 16px 18px}
 .hero .bgi{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(30px) brightness(.42);transform:scale(1.2)}
 .hero .fade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1),#000 96%)}
@@ -149,6 +171,12 @@ a{color:inherit}
   .grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:22px 16px}
   .c b{font-size:14px}.c small{font-size:12.5px}
   .tools{margin-top:0}
+  .sc{grid-template-columns:220px minmax(0,1fr) 300px;gap:32px;padding:28px;border-radius:24px}
+  .scv{width:220px;border-radius:14px}
+  .stx{display:flex;flex-direction:column;justify-content:space-between;gap:18px}
+  .sc h1{font-size:64px;line-height:.95}.jpt{font-size:18px;margin-top:6px}.cr{font-size:16px;margin-top:14px;gap:3px 10px}
+  .eds{grid-column:auto}.eds button{padding:12px 16px}.eds b{font-size:15px}.eds em{font-size:13px}.eds .n{font-size:22px}
+  .pane{grid-column:auto;align-self:end;border-radius:18px;padding:18px;gap:12px}.big b{font-size:72px}.big span{font-size:22px}
   .hero{margin:-30px -32px 0;padding:30px 32px}
   .hero .in{grid-template-columns:170px minmax(0,1fr) 320px;gap:28px}
   .hero .c1{width:170px}
@@ -175,6 +203,11 @@ const I = {
   back: '<svg class="ic" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>',
   arr: '<svg class="arr" viewBox="0 0 24 24"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg>',
   ck: '<svg viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></svg>'
+};
+I.stack = '<svg class="ic st" viewBox="0 0 24 24"><rect x="3" y="5" width="4" height="15" rx="1"/><rect x="8.5" y="3" width="4" height="17" rx="1"/><path d="m14.6 5.6 3.9-1 3.6 14.3-3.9 1z"/></svg>';
+const FLAG = {
+  Japon: '<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>',
+  France: '<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="France"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>'
 };
 const LISTS = [["c", "Collection"], ["p", "Pile à lire"], ["k", "Panier"], ["w", "Wishlist"]];
 const VERBE = { c: "Possédé", p: "À lire", k: "Au panier", w: "Wishlist" };
@@ -285,9 +318,14 @@ function drawSerie(s, d){
   const parus = e.tomes.filter(t => t.paru), has = e.tomes.filter(t => L.c[t.id]).length, total = e.nb || e.tomes.length;
   const inL = e.tomes.filter(t => L[LT][t.id]).length;
   const fiche = d.serie.fiche ? `<a class="btn" href="/series/${esc(d.serie.slug)}">Voir la fiche ${I.arr}</a>` : `<span class="btn g" style="opacity:.6;cursor:default">Fiche bientôt en ligne</span>`;
-  const tout = parus.length ? `<button class="btn g" data-jusqua>+ Jusqu'au T.${esc(parus[parus.length - 1].n)}</button>` : "";
-  const prog = `<div class="prog"><div class="l"><span><b>${has}</b> possédé${has > 1 ? "s" : ""} sur ${parus.length} paru${parus.length > 1 ? "s" : ""}</span><span>${total} au total</span></div><div class="pb"><i style="width:${total ? has / total * 100 : 0}%"></i></div></div>`;
-  const edsw = d.editions.length > 1 ? `<div class="edsw">${d.editions.map(x => `<button data-ed="${x.id}" aria-pressed="${x.id === e.id}"><b>${esc(x.pays)} · ${esc(x.pub)}</b>${x.tomes.filter(t => L.c[t.id]).length}/${x.tomes.filter(t => t.paru).length} parus</button>`).join("")}</div>` : "";
+  // En-tête « D3 » (Will, 07/10) : carte arrondie, éditions en lignes drapeau, panneau compteur à droite.
+  const reste = parus.filter(t => !L.c[t.id]).length;
+  const tout = LT !== "c" || !parus.length ? "" : reste ? `<button class="btn" data-jusqua>${I.stack}Tout ajouter · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Tous les tomes parus sont là ✓</span>`;
+  const pane = `<div class="pane"><div class="big"><b>${has}</b><span>/ ${parus.length} tome${parus.length > 1 ? "s" : ""}${parus.length < total ? ` · ${total} prévus` : ""}</span></div><div class="pb"><i style="width:${parus.length ? has / parus.length * 100 : 0}%"></i></div>${tout}${fiche}</div>`;
+  const st = x => { const v = (x.statut || "").trim(); return v ? ` · <i class="${/cours/i.test(v) ? "on" : /stop|arr/i.test(v) ? "stop" : "end"}">${esc(v)}</i>` : ""; };
+  const eds = `<div class="eds">${d.editions.map(x => { const xp = x.tomes.filter(t => t.paru).length, xh = x.tomes.filter(t => L.c[t.id]).length, xn = x.nb || x.tomes.length;
+    return `<button data-ed="${x.id}" aria-pressed="${x.id === e.id}">${FLAG[x.pays] || ""}<span><b>${esc([x.pays, x.pub, x.label].filter(Boolean).join(" · "))}</b><em>${xn} tome${xn > 1 ? "s" : ""}${st(x)}</em></span><span class="n">${xh}/${xp}</span></button>`; }).join("")}</div>`;
+  const aut = d.serie.auteurs ? `<dl class="cr"><dt>${/,|&| et /.test(d.serie.auteurs) ? "Auteurs" : "Auteur"} :</dt><dd>${esc(d.serie.auteurs)}</dd></dl>` : "";
   const lseg = `<div class="lseg">${LISTS.map(([k, l]) => `<button data-lt="${k}" aria-pressed="${LT === k}">${l}</button>`).join("")}</div>`;
   // Repli (Will, 07/10) : un tome français sans couverture affiche celle du même tome japonais, marquée « Couv. JP ».
   const jpEd = e.pays !== "Japon" ? d.editions.find(x => x.pays === "Japon") : null;
@@ -302,14 +340,13 @@ function drawSerie(s, d){
   };
   const leg = LT === "c" ? `<div class="leg"><span><i style="background:var(--ok)"></i>Possédé</span><span><i style="background:#555"></i>Manquant</span><span><i style="border:1.5px dashed #555"></i>À paraître</span><span>Touche un tome pour le cocher</span></div>`
     : `<div class="leg"><span>${inL} tome${inL > 1 ? "s" : ""} dans « ${esc(LISTS.find(x => x[0] === LT)[1])} » · touche un tome pour l'ajouter ou le retirer</span></div>`;
-  app().innerHTML = `<div class="hero"><div class="bgi" style="background-image:url('${esc(couv(cover, 300))}')"></div><div class="fade"></div>
-    <a class="back" href="/ma-collection/">${I.back}Ma collection</a>
-    <div class="in"><span class="c1">${cover ? `<img src="${esc(couv(cover, 400))}" alt="">` : ""}</span><div class="tx"><div class="hd"><h1>${esc(d.serie.fr || d.serie.t)}</h1>${d.serie.auteurs ? `<p>${esc(d.serie.auteurs)}</p>` : ""}<p>${esc([e.pub, e.label, total ? total + " tomes" : "", (e.statut || "").toLowerCase()].filter(Boolean).join(" · "))}</p></div>${edsw}</div>
-    <div class="acts">${prog}<div class="ctas" style="margin:0">${fiche}${LT === "c" ? tout : ""}</div></div></div></div>
-    <div class="mob">${prog}</div>
+  app().innerHTML = `<a class="back" href="/ma-collection/">${I.back}Ma collection</a>
+    <div class="sc"><span class="scv">${cover ? `<img src="${esc(couv(cover, 400))}" alt="">` : ""}</span>
+      <div class="stx"><div><h1>${esc(d.serie.fr || d.serie.t)}</h1>${d.serie.jp ? `<p class="jpt" lang="ja">${esc(d.serie.jp)}</p>` : ""}${aut}</div>${eds}</div>
+      ${pane}</div>
     <div class="det-tools">${lseg}${leg}</div>
     <div class="tg">${e.tomes.map(tome).join("")}</div>
-    <div class="ctas mob">${fiche}${LT === "c" ? tout : ""}</div>`;
+`;
 }
 
 /* ---------- actions ---------- */
