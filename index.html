@@ -662,7 +662,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
-<script src="/site/home-m.js?v=45" defer></script>
+<script src="/site/home-m.js?v=46" defer></script>
 <div class="page">
 
 
@@ -1063,7 +1063,9 @@ getN("/api/calendrier").then(j => {
   const lien = x => x.fiche ? "/series/" + slugN(x.fr || x.series) + "#tomes" : "/calendrier/#t-" + x.id;
   // Seulement le mois en cours (Will, 05/10/2026) : la date n'affiche pas le mois.
   const mois = t.slice(0, 7), M = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][+t.slice(5, 7) - 1];
-  const fr = all.filter(x => x.pays === "France" && x.date >= t && x.date.slice(0, 7) === mois).slice(0, 4);
+  // Plusieurs sorties le même jour que la prochaine : celle mise en avant change à chaque chargement (Will, 06/10/2026).
+  const auHasard = L => { const n = L.filter(x => x.date === (L[0] || {}).date).length; if (n < 2) return L; const k = Math.floor(Math.random() * n); return [L[k], ...L.filter((_, i) => i !== k)]; };
+  const fr = auHasard(all.filter(x => x.pays === "France" && x.date >= t && x.date.slice(0, 7) === mois)).slice(0, 4);
 
   // La prochaine sortie en grand, façon affiche (option A, Will, 05/10/2026) ; date avec le mois en entier.
   const JL = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"], ML = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
@@ -1075,7 +1077,7 @@ getN("/api/calendrier").then(j => {
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
   // Page « En direct du Japon » : la colonne affiche les 6 prochaines sorties japonaises (Will, 05/10/2026).
   if (VUE_N === "magazines") {
-    const jps = all.filter(x => x.pays === "Japon" && x.date >= t).slice(0, 4); TP.jps = jps;
+    const jps = auHasard(all.filter(x => x.pays === "Japon" && x.date >= t)).slice(0, 4); TP.jps = jps;
     // Titre « Prochaines sorties » avec le drapeau japonais à droite, sans la ligne « Au Japon » au-dessus (Will, 05/10/2026).
     const h3 = document.querySelector("#m-fr h3"); if (h3) { const f = h3.querySelector(".fl"); if (f) f.remove(); } if (h3) h3.insertAdjacentHTML("beforeend", '<svg class="fl fl-h" viewBox="0 0 22 15" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>');
     const h = document.querySelector("#m-fr .h3a"); if (h) h.href = "/calendrier/#japon";

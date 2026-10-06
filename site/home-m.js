@@ -111,6 +111,9 @@
     var titre = "Prochaines sorties", sous = I.fr + "En France";
     if (!it.length) { var t = new Date().toISOString().slice(0, 10); it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t; }).slice(0, 8); titre = "Prochaines sorties"; sous = I.fr + "En France"; }
     if (!it.length) return "";
+    // Plusieurs sorties le même jour que la prochaine : celle mise en avant change à chaque chargement (Will, 06/10/2026).
+    var n0 = it.filter(function (x) { return x.date === it[0].date; }).length;
+    if (n0 > 1) { var k = Math.floor(Math.random() * n0), pick = it[k]; it = [pick].concat(it.filter(function (_, i) { return i !== k; })); }
     // La prochaine sortie en grand, façon affiche comme sur ordinateur (option A, Will, 06/10/2026), puis les suivantes en carrousel.
     var f = it[0], fd = new Date(f.date + "T12:00:00"), JL = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], ML = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
     var nj = Math.round((fd - new Date(new Date().toLocaleDateString("sv") + "T12:00:00")) / 864e5), dans = nj <= 0 ? "aujourd'hui" : nj === 1 ? "demain" : "dans " + nj + " jours";
