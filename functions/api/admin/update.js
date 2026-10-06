@@ -34,7 +34,7 @@ export async function onRequestPost({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // Le site se met à jour tout de suite : on jette les versions en cache des listes publiques.
   const c = caches.default;
-  await Promise.all(["/api/series?v=5", "/api/avancement", "/api/calendrier", "/api/serie-index", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/series?v=5", "/api/series?v=5&admin=1", "/api/avancement", "/api/calendrier", "/api/serie-index", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   const p = (await r.json()).properties || {};
   const st = ((p["Statut"] || {}).select || {}).name || A_VALIDER;
   return json({ ok: true, statut: st, publier: st === PUBLIC, date: ((p["Date de publication"] || {}).date || {}).start || "" });

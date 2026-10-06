@@ -10,8 +10,12 @@ const nid = id => id.replace(/-/g, "");
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
-  // Aperçu admin : aussi les séries « Validé · admins », sans cache.
-  if (await isAdmin(request, env)) return json({ apercu: true, ...(await build(env, true)) });
+  // Aperçu admin : aussi les séries « Validé · admins ». Version à part dans le cache (sinon 5 s à chaque chargement),
+  // vidée dès qu'un statut change depuis le back-office ; jamais gardée par le navigateur.
+  if (await isAdmin(request, env)) {
+    const r = await cached(request, waitUntil, "/api/series?v=5&admin=1", 300, async () => ({ apercu: true, ...(await build(env, true)) }));
+    return new Response(r.body, { status: r.status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "private, no-store" } });
+  }
   return cached(request, waitUntil, "/api/series?v=5", 600, () => build(env, false));
 }
 
