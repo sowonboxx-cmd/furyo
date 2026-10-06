@@ -100,7 +100,11 @@ a{color:inherit}
 .eds span{display:flex;flex-direction:column;flex:1;min-width:0}.eds b{font-size:14px}.eds em{font-style:normal;color:var(--mut);font-size:12.5px}
 .eds i{font-style:normal;font-weight:600;color:var(--fg)}.eds i.on{color:var(--ok)}.eds i.stop{color:#E5483A}
 .eds .n{flex:none;font:700 20px var(--fd);color:var(--fg2);font-variant-numeric:tabular-nums}
-.eds button[aria-pressed=true]{border-color:var(--blue);background:var(--s3)}
+/* Édition choisie (Will, 07/10) : fond noir, trait rouge, sans bordure ; survol des autres plus clair. */
+.eds button{position:relative;border:0;transition:background .15s}
+.eds button[aria-pressed=true]{background:#000;padding-left:24px}
+.eds button[aria-pressed=true]::before{content:"";position:absolute;left:9px;top:12px;bottom:12px;width:4px;border-radius:2px;background:var(--red)}
+.eds button[aria-pressed=false]:hover{background:#2A2A2D}
 .pane{grid-column:1/-1;background:#0E0E10;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .big{display:flex;align-items:baseline;gap:8px}.big b{font:700 56px/.85 var(--fd);font-variant-numeric:tabular-nums}.big span{font:700 18px var(--fd);color:var(--mut);text-transform:uppercase}
 .pane .pb{height:6px}
