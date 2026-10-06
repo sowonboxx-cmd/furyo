@@ -116,6 +116,7 @@ a{color:inherit}
 .t.soon{cursor:default}
 .t small{font:600 11.5px var(--fb);color:var(--fg2);display:flex;justify-content:space-between;gap:4px}
 .t small em{font-style:normal;color:var(--mut);font-weight:500;white-space:nowrap}
+.t .cv .jpc{position:absolute;left:6px;bottom:6px;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,.72);color:#D8D8DC;font:600 10px/1.4 var(--fb,inherit);letter-spacing:.02em}
 .t .cv .n{position:absolute;inset:0;display:grid;place-items:center;font:700 28px var(--fd);color:#48484A}
 .bk-ck{position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;background:var(--ok);display:grid;place-items:center}
 .bk-ck svg{width:14px;height:14px;stroke:#000;fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
@@ -284,11 +285,16 @@ function drawSerie(s, d){
   const prog = `<div class="prog"><div class="l"><span><b>${has}</b> possédé${has > 1 ? "s" : ""} sur ${parus.length} paru${parus.length > 1 ? "s" : ""}</span><span>${total} au total</span></div><div class="pb"><i style="width:${total ? has / total * 100 : 0}%"></i></div></div>`;
   const edsw = d.editions.length > 1 ? `<div class="edsw">${d.editions.map(x => `<button data-ed="${x.id}" aria-pressed="${x.id === e.id}"><b>${esc(x.pays)} · ${esc(x.pub)}</b>${x.tomes.filter(t => L.c[t.id]).length}/${x.tomes.filter(t => t.paru).length} parus</button>`).join("")}</div>` : "";
   const lseg = `<div class="lseg">${LISTS.map(([k, l]) => `<button data-lt="${k}" aria-pressed="${LT === k}">${l}</button>`).join("")}</div>`;
+  // Repli (Will, 07/10) : un tome français sans couverture affiche celle du même tome japonais, marquée « Couv. JP ».
+  const jpEd = e.pays !== "Japon" ? d.editions.find(x => x.pays === "Japon") : null;
+  const jpCov = {}; if (jpEd) jpEd.tomes.forEach(x => { if (x.cover) jpCov[x.n] = x.cover; });
+  const img = (t, op) => t.cover ? `<img src="${esc(couv(t.cover, 300))}" alt="" loading="lazy"${op}>`
+    : jpCov[t.n] ? `<img src="${esc(couv(jpCov[t.n], 300))}" alt="" loading="lazy"${op}><span class="jpc">Couv. JP</span>` : `<span class="n">${esc(t.n)}</span>`;
   const tome = t => {
-    if (!t.paru) return `<div class="t soon"><span class="cv">${t.cover ? `<img src="${esc(couv(t.cover, 300))}" alt="" loading="lazy" style="opacity:.35">` : `<span class="n">${esc(t.n)}</span>`}</span><small>T.${esc(t.n)}<em>À paraître</em></small></div>`;
+    if (!t.paru) return `<div class="t soon"><span class="cv">${img(t, ' style="opacity:.35"')}</span><small>T.${esc(t.n)}<em>À paraître</em></small></div>`;
     const on = !!L[LT][t.id], own = !!L.c[t.id];
     const etat = LT === "c" ? (own ? "Possédé" : "Manquant") : on ? VERBE[LT] : own ? "Possédé" : "";
-    return `<button class="t${LT === "c" && !own ? " miss" : ""}" data-t="${t.id}" aria-pressed="${on}" aria-label="Tome ${esc(t.n)} : ${on ? "retirer de" : "ajouter à"} ${esc(LISTS.find(x => x[0] === LT)[1])}"><span class="cv">${t.cover ? `<img src="${esc(couv(t.cover, 300))}" alt="" loading="lazy">` : `<span class="n">${esc(t.n)}</span>`}${on ? `<span class="bk-ck ${LT}">${I.ck}</span>` : `<span class="plus">+</span>`}</span><small>T.${esc(t.n)}<em>${etat}</em></small></button>`;
+    return `<button class="t${LT === "c" && !own ? " miss" : ""}" data-t="${t.id}" aria-pressed="${on}" aria-label="Tome ${esc(t.n)} : ${on ? "retirer de" : "ajouter à"} ${esc(LISTS.find(x => x[0] === LT)[1])}"><span class="cv">${img(t, "")}${on ? `<span class="bk-ck ${LT}">${I.ck}</span>` : `<span class="plus">+</span>`}</span><small>T.${esc(t.n)}<em>${etat}</em></small></button>`;
   };
   const leg = LT === "c" ? `<div class="leg"><span><i style="background:var(--ok)"></i>Possédé</span><span><i style="background:#555"></i>Manquant</span><span><i style="border:1.5px dashed #555"></i>À paraître</span><span>Touche un tome pour le cocher</span></div>`
     : `<div class="leg"><span>${inL} tome${inL > 1 ? "s" : ""} dans « ${esc(LISTS.find(x => x[0] === LT)[1])} » · touche un tome pour l'ajouter ou le retirer</span></div>`;
