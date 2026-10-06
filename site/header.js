@@ -39,6 +39,9 @@
     ".adm-b{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 16px;border-radius:14px;background:#38383B;color:#F5F5F7;text-decoration:none}.adm-b.v{background:#305887;color:#fff}.adm-b.f{background:#2E7D4F;color:#fff}.adm-b.s{background:#6A4BC4;color:#fff}.adm-b.f small,.adm-b.s small{color:rgba(255,255,255,.78)!important}" +
     ".adm-b strong{display:block;font:700 20px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em}.adm-b small{display:block;margin-top:3px;font-size:12.5px;color:#C9D6E6}.adm-b:not(.v) small{color:#98989D}" +
     ".adm-b em{font-style:normal;min-width:40px;height:32px;padding:0 10px;box-sizing:border-box;border-radius:16px;background:#fff;color:#305887;font-weight:700;font-size:15px;display:grid;place-items:center}" +
+    ".adm-b.j{background:#F2B33D;color:#000}.adm-b.j small{color:rgba(0,0,0,.66)!important}.adm-b.j em{background:#000;color:#F2B33D}" +
+    ".sh-sj{display:inline-flex;align-items:center;gap:4px;color:#F2B33D;text-decoration:none;font:600 13px Inter,system-ui,sans-serif}.sh-sj svg{width:15px;height:15px}.sh-sj b{font-weight:700}.sh-sj[data-n='0']{display:none!important}" +
+    ".sh-adm{display:flex;align-items:center;gap:10px}" +
     ".adm-out{height:44px;border:0;border-radius:12px;background:transparent;color:#98989D;font:600 14px Inter,system-ui,sans-serif;cursor:pointer}" +
 "@media (max-width:719px){.sh-top{height:54px}.sh-logo img{height:34px}.sh-nav{justify-content:space-around;gap:0}.sh-nav a{padding:0 10px;font-size:14px;height:42px}.sh-nav a[aria-current=page]::after{left:10px;right:10px}}" +
     /* Recherche */
@@ -288,14 +291,25 @@ a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
     if (ME && ME.admin && ME.user) {
       var box = document.createElement("div"); box.className = "sh-adm";
       box.innerHTML = '<a class="sh-bo" href="/admin/" aria-label="Back-office"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Back-office</a>' +
-        '<a class="sh-val" href="/admin/#validation" data-n="0" aria-label="Validation">Validation<b>0</b></a>';
+        '<a class="sh-val" href="/admin/#validation" data-n="0" aria-label="Validation">Validation<b>0</b></a>' +
+        // Sorties du jour pas encore postées (Will, 06/10/2026) : icône calendrier + nombre en jaune, à côté du nombre de la veille.
+        '<a class="sh-sj" href="/admin/#sorties" data-n="0" aria-label="Sorties du jour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><b>0</b></a>';
       document.querySelector(".sh-top").appendChild(box);
       valCount();
     }
   }
   // Pastille « Validation » : nombre d'éléments de la veille à relire, mis à jour chaque minute tant que la page est ouverte.
   var valTimer = null;
+  var SJ = { n: 0, fr: 0, jp: 0 };
+  function sjCount() {
+    var a = document.querySelector(".sh-sj"); if (!a) return;
+    fetch("/api/admin/sorties?count=1", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j) return; SJ = j; a.setAttribute("data-n", j.n || 0); a.querySelector("b").textContent = j.n || 0;
+      a.setAttribute("aria-label", "Sorties du jour : " + (j.n || 0) + " à poster");
+    }).catch(function () {});
+  }
   function valCount() {
+    sjCount();
     var a = document.querySelector(".sh-val"); if (!a) return;
     fetch("/api/admin/veille?count=1", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
       if (!j) return; var n = j.n || 0; a.setAttribute("data-n", n); a.querySelector("b").textContent = n > 99 ? "99+" : n;
@@ -319,6 +333,7 @@ a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
     pop.innerHTML = '<div class="adm-box" role="dialog" aria-label="Mon compte">' +
       '<a class="adm-u" href="/profil/">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "<i></i>") + '<span><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + ' · Voir mon profil</small></span></a>' +
       (ME.admin ? '<a class="adm-b v" href="/admin/#validation"><span><strong>Validation</strong><small>À relire avant publication</small></span><em>' + esc(n) + '</em></a>' +
+      (SJ.n ? '<a class="adm-b j" href="/admin/#sorties"><span><strong>Sorties du jour</strong><small>' + [SJ.fr ? SJ.fr + " France" : "", SJ.jp ? SJ.jp + " Japon" : ""].filter(Boolean).join(" · ") + ' à poster</small></span><em>' + SJ.n + '</em></a>' : "") +
       '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' : "") +
       // Mon feed et Signets pour tous les membres (Will, 05/10/2026) : sous Validation et Back-office pour l'admin, seuls pour les autres.
       '<a class="adm-b f" href="/?vue=actus&tab=feed"><span><strong>Mon feed</strong><small>Les news des séries que tu suis</small></span><span aria-hidden="true">→</span></a>' +

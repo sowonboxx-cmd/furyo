@@ -157,6 +157,35 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .tile.val{background:linear-gradient(160deg,#1E3A2A,#000 70%);border-color:#2E7D4F}
 .tile.val .ic{background:#2E7D4F}
 .tile.val .n{background:#2E7D4F;color:#fff}
+.tile.sj{background:linear-gradient(160deg,#3A2E10,#000 70%);border-color:#F2B33D}
+.tile.sj .ic{background:#F2B33D;color:#000}
+.tile.sj .n{background:#F2B33D;color:#000}
+/* Sorties du jour */
+.sj-day{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:4px 0 12px}
+.sj-day b{font-family:var(--f-display);font-size:30px;line-height:1;text-transform:uppercase}.sj-day small{color:var(--paper-3);font-size:13px}
+.sj-l{list-style:none;margin:0 0 6px;padding:0;display:flex;flex-direction:column;gap:10px}
+.sj-c{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;padding:10px;background:var(--ink-2);border-radius:14px;align-items:center}
+.sj-c img,.sj-c .ph{width:64px;aspect-ratio:2/3;object-fit:cover;border-radius:6px;display:block;background:var(--ink-3)}
+.sj-c .t{min-width:0;display:flex;flex-direction:column;gap:2px}
+.sj-c .t b{font-family:var(--f-display);font-size:19px;line-height:1.05;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sj-c .t i{font-style:normal;font-family:var(--f-display);font-size:15px;color:#F2B33D}
+.sj-c .t small{color:var(--paper-3);font-size:12.5px;display:flex;align-items:center;gap:6px}
+.sj-a{display:flex;align-items:center;gap:6px;margin-top:6px}
+.sj-a button{height:32px;padding:0 11px;border:0;border-radius:16px;background:var(--ink-3);color:var(--paper);font:600 12.5px var(--f-body,Inter),sans-serif;display:inline-flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+.sj-a button svg{width:13px;height:13px}
+.sj-a .ok{margin-left:auto;width:36px;height:36px;padding:0;border-radius:50%;justify-content:center;background:#F2B33D;color:#000}
+.sj-a .ok svg{width:18px;height:18px}
+.sj-c.done{opacity:.5}.sj-c.done .ok{background:#2E7D4F;color:#fff}
+.sj-a button.busy{opacity:.5;pointer-events:none}
+.fl{width:18px;height:12px;border-radius:2px;display:inline-block;flex:none}
+.fl.fr{background:linear-gradient(90deg,#305887 33%,#F5F5F7 33% 66%,#BC002D 66%)}
+.fl.jp{background:radial-gradient(circle at 50% 50%,#BC002D 32%,#F5F5F7 34%)}
+.sj-h{display:flex;justify-content:space-between;margin:20px 0 8px;font-family:var(--f-display);font-size:17px;text-transform:uppercase;color:var(--paper-3)}
+.sj-h em{font-style:normal;font:500 12.5px var(--f-body,Inter),sans-serif;text-transform:none}
+.sj-day2{margin:14px 0 8px;font-family:var(--f-display);font-size:19px;text-transform:uppercase}
+.sj-seg{display:flex;background:var(--ink-3);border-radius:10px;padding:3px;margin-bottom:12px}
+.sj-seg button{flex:1;border:0;background:transparent;color:var(--paper-2);font:600 13px var(--f-body,Inter),sans-serif;padding:7px 0;border-radius:8px;cursor:pointer}
+.sj-seg button[aria-pressed=true]{background:#000;color:var(--paper)}
 .back{border:0;background:transparent;color:var(--paper-2);font-size:14px;font-weight:600;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:4px;text-decoration:none}
 /* ---------- Validation (veille) ---------- */
 .vl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
@@ -453,23 +482,78 @@ function route(){
   document.querySelectorAll(".vm").forEach(m => m.remove());
   if (h === "mangas") return ITEMS.length ? (shell(), draw()) : load();
   if (h === "validation") return veille();
+  if (h === "sorties") return sorties();
   hub();
 }
 addEventListener("hashchange", route);
 const ICO_BASE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H9v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M9 4h4.5A1.5 1.5 0 0 1 15 5.5V20H9z"/><path d="M15.5 6.2l3-.8a1.5 1.5 0 0 1 1.8 1l3 11.2"/></svg>`;
+const ICO_CAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>`;
 const ICO_VAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11.5l2.2 2.2L16 9"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>`;
 async function hub(){
   root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="home" href="/" title="Retour au site"><b>FuryoGang<span>Back-office</span></b></a><button class="out" id="out">Déconnexion</button></div></div></header>
     <div class="hub">
       <a class="tile val" href="#validation"><span class="n" id="hub-n">…</span><span class="ic">${ICO_VAL}</span><div><h2>Validation</h2><p>News, couvertures, sorties, fins de série : tout ce que la veille a trouvé et qui attend ton avis.</p></div></a>
-      <a class="tile" href="#mangas"><span class="ic">${ICO_BASE}</span><div><h2>Base mangas</h2><p>Les fiches séries : avancement, publication, résumés, légendes et images des réseaux.</p></div></a>
+      <a class="tile sj" href="#sorties"><span class="n" id="hub-sj">…</span><span class="ic">${ICO_CAL}</span><div><h2>Sorties du jour</h2><p>Les tomes France et Japon qui sortent aujourd'hui, à poster sur les réseaux.</p></div></a>
+      <a class="tile" href="#mangas"><span class="ic">${ICO_BASE}</span><div><h2>Base mangas</h2><p>Les fiches séries : statut sur le site, résumés, légendes et images des réseaux.</p></div></a>
     </div>`;
   document.getElementById("out").onclick = async () => { await fetch("/api/admin/login", { method: "DELETE" }); login(); };
   const r = await fetch("/api/admin/veille?count=1").catch(() => null);
   if (r && r.status === 401) return login();
   const j = r && r.ok ? await r.json() : null;
   document.getElementById("hub-n").textContent = j ? j.n : "?";
+  fetch("/api/admin/sorties?count=1").then(r => r.ok ? r.json() : null).then(k => { const el = document.getElementById("hub-sj"); if (el) el.textContent = k ? k.n : "?"; }).catch(() => {});
 }
+
+/* ---------- Sorties du jour : les tomes qui sortent aujourd'hui, à poster (Will, 06/10/2026) ---------- */
+let SJ = { today: "", items: [] }, SJF = "tout";
+const ICO_SJOK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>`;
+const JL = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"], ML = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const jourLong = d => { const x = new Date(d + "T12:00:00"); return `${JL[x.getDay()]} ${x.getDate()}${x.getDate() === 1 ? "er" : ""} ${ML[x.getMonth()]}`; };
+async function sorties(){
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Sorties</b></div></div></header><main id="sjm"><p class="vhint">Chargement…</p></main>`;
+  const r = await fetch("/api/admin/sorties");
+  if (r.status === 401) return login("Session expirée, reconnecte-toi.");
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { document.getElementById("sjm").innerHTML = `<p class="vhint">${esc(j.error || "Impossible de charger les sorties.")}</p>`; return; }
+  SJ = j; sjDraw();
+}
+function sjCard(x){
+  const fl = x.pays === "Japon" ? "jp" : "fr", titre = x.pays === "France" ? (x.fr || x.series) : x.series;
+  return `<li class="sj-c${x.poste ? " done" : ""}" data-sj="${x.id}">${x.cover ? `<img src="/api/couv?u=${encodeURIComponent(x.cover)}&w=200" alt="" loading="lazy" onerror="this.outerHTML='<span class=ph></span>'">` : `<span class="ph"></span>`}
+    <div class="t"><b>${esc(titre)}</b><i>Tome ${esc(x.n ?? "")}</i><small><span class="fl ${fl}"></span>${esc(x.pub || x.pays)}</small>
+    <div class="sj-a">${x.cover ? `<button data-sjimg="post">${ICO_DL}Post 3:4</button><button data-sjimg="story">${ICO_DL}Story</button>` : `<small style="color:var(--paper-3)">Pas de couverture</small>`}<button class="ok" data-sjok aria-label="${x.poste ? "Posté (annuler)" : "Marquer posté"}" title="${x.poste ? "Posté · toucher pour annuler" : "Marquer posté"}">${ICO_SJOK}</button></div></div></li>`;
+}
+function sjDraw(){
+  const m = document.getElementById("sjm"); if (!m) return;
+  const keep = x => SJF === "tout" || x.pays === SJF;
+  const auj = SJ.items.filter(x => x.date === SJ.today), todo = auj.filter(x => !x.poste && keep(x)), done = auj.filter(x => x.poste && keep(x));
+  const n = (p) => auj.filter(x => p === "tout" || x.pays === p).length;
+  const next = SJ.items.filter(x => x.date > SJ.today && keep(x)), jours = [...new Set(next.map(x => x.date))].slice(0, 7);
+  m.innerHTML = `<div class="sj-day"><b>${jourLong(SJ.today)}</b><small>${auj.filter(x => !x.poste).length} à poster</small></div>
+    <div class="sj-seg">${[["tout","Tout"],["France","France"],["Japon","Japon"]].map(([k,l]) => `<button data-sjf="${k}" aria-pressed="${SJF === k}">${l} · ${n(k)}</button>`).join("")}</div>
+    ${todo.length ? `<ul class="sj-l">${todo.map(sjCard).join("")}</ul>` : `<p class="vhint">${auj.length ? "Tout est posté pour aujourd'hui ✓" : "Aucune sortie aujourd'hui."}</p>`}
+    ${done.length ? `<div class="sj-h">Déjà posté<em>${done.length}</em></div><ul class="sj-l">${done.map(sjCard).join("")}</ul>` : ""}
+    ${jours.length ? `<div class="sj-h">Prochaines sorties<em>Poster en avance</em></div>` + jours.map(d => `<div class="sj-day2">${jourLong(d)}</div><ul class="sj-l">${next.filter(x => x.date === d).map(sjCard).join("")}</ul>`).join("") : ""}`;
+}
+document.addEventListener("click", async e => {
+  const f = e.target.closest("[data-sjf]"); if (f) { SJF = f.dataset.sjf; sjDraw(); return; }
+  const c = e.target.closest("[data-sj]"); if (!c) return;
+  const x = SJ.items.find(y => y.id === c.dataset.sj); if (!x) return;
+  const im = e.target.closest("[data-sjimg]");
+  if (im) {
+    const i = { serie: { t: x.pays === "France" ? (x.fr || x.series) : x.series, jp: x.jp, slug: slugify(x.fr || x.series), scen: x.scen, dess: x.dess }, tome: { n: x.n, pays: x.pays }, sortie: x.date, prec: x.prec, image: x.cover };
+    imageTome(i, "creme", im.dataset.sjimg, im); return;
+  }
+  const ok = e.target.closest("[data-sjok]"); if (!ok) return;
+  ok.classList.add("busy");
+  try {
+    const r = await fetch("/api/admin/sorties", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: x.id, poste: !x.poste }) });
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401) return login("Session expirée, reconnecte-toi.");
+    if (!r.ok) throw new Error(j.error || "Erreur");
+    x.poste = j.poste ? 1 : 0; toast(x.poste ? "Posté ✓" : "Remis à poster"); sjDraw();
+  } catch (err) { toast(err.message.slice(0, 80)); ok.classList.remove("busy"); }
+});
 
 /* ---------- Validation : la veille à relire ---------- */
 // Catégories et couleurs : celles de Notion, envoyées par /api/admin/veille (lib/categories.js).
