@@ -42,8 +42,9 @@ a{color:inherit}
 .chips::-webkit-scrollbar{display:none}
 /* Validation sur téléphone : menu déroulant à la place des pastilles */
 .vselw{display:none;position:relative;margin-top:10px}
+.vselw::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:12px 0 0 12px;background:var(--g,transparent);pointer-events:none;z-index:1}
 .vselw::after{content:"";position:absolute;right:16px;top:50%;width:8px;height:8px;border-right:2px solid var(--paper-2);border-bottom:2px solid var(--paper-2);transform:translateY(-70%) rotate(45deg);pointer-events:none}
-.vsel{width:100%;height:44px;border:1px solid var(--line);border-left:6px solid var(--c,transparent);border-radius:12px;background:var(--ink-2,#1C1C1E);color:var(--paper);font:600 16px Inter,sans-serif;padding:0 40px 0 14px;-webkit-appearance:none;appearance:none;cursor:pointer}
+.vsel{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--ink-2,#1C1C1E);color:var(--paper);font:600 16px Inter,sans-serif;padding:0 40px 0 20px;-webkit-appearance:none;appearance:none;cursor:pointer}
 @media (max-width:700px){#vchips{display:none}.vselw{display:block}html,body{overflow-x:hidden}}
 .chip{flex:none;height:32px;padding:0 12px;border:1px solid var(--line);border-radius:16px;background:transparent;color:var(--paper-2);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .chip[aria-pressed=true]{background:#305887;border-color:#305887;color:#fff}
@@ -502,7 +503,10 @@ function vdraw(){
   const opts = [["tout", "Tout", actifs.length], ...Object.keys(VCATS).filter(k => counts[k]).map(k => [k, VCATS[k], counts[k]]),
     ...(gardes.length ? [["vu", "Vu, pas sur le site", gardes.length]] : []), ...(pubs.length ? [["pub", "Publiées", pubs.length]] : [])];
   const vs = document.getElementById("vsel");
-  if (vs) { vs.innerHTML = opts.map(([k, l, n]) => `<option value="${esc(k)}"${VF === k ? " selected" : ""}>${esc(l)} (${n})</option>`).join(""); vs.style.setProperty("--c", VF === "tout" ? "transparent" : VF === "vu" ? "#9A6DD7" : VF === "pub" ? "#4DAB9A" : (VCOL[VF] || "transparent")); }
+  if (vs) { vs.innerHTML = opts.map(([k, l, n]) => `<option value="${esc(k)}"${VF === k ? " selected" : ""}>${esc(l)} (${n})</option>`).join(""); // Trait de couleur : celle de la catégorie choisie ; pour « Tout », un dégradé de toutes les catégories présentes.
+    const cs = [...Object.keys(VCATS).filter(k => counts[k]).map(k => VCOL[k]), gardes.length ? "#9A6DD7" : "", pubs.length ? "#4DAB9A" : ""].filter(Boolean);
+    const g = VF === "tout" ? (cs.length > 1 ? `linear-gradient(180deg,${cs.join(",")})` : cs[0] || "transparent") : VF === "vu" ? "#9A6DD7" : VF === "pub" ? "#4DAB9A" : (VCOL[VF] || "transparent");
+    vs.parentNode.style.setProperty("--g", g); }
   const list = VF === "pub" ? pubs : VF === "vu" ? gardes : actifs.filter(i => VF === "tout" || i.cat === VF);
   document.getElementById("vhint").textContent = VF === "pub" ? `${list.length} news en ligne · touche une ligne pour changer le texte, l'image ou la vidéo` : VF === "vu" ? `${list.length} news gardées de côté · tu peux encore les publier` : actifs.length ? `${list.length} à relire · touche une ligne pour voir le détail` : "Rien à relire pour l'instant 👌";
   document.getElementById("vl").innerHTML = list.map(i => `<li class="vi" data-vid="${i.id}"><time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
