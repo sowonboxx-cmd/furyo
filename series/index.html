@@ -396,6 +396,7 @@ body{font-size:16px}
 </head>
 <body>
 <script src="/site/header.js?v=30"></script>
+<script src="/site/yt.js?v=1"></script>
 <div class="page">
   <div id="app"><p class="empty">Chargement…</p></div>
   <script>(function () { var a = document.getElementById("app"), f = /^\/series\/[^/]+/.test(location.pathname) || new URLSearchParams(location.search).get("s"); if (window.FG_SK) a.innerHTML = f ? FG_SK.fiche() : FG_SK.grid(12); })();</script>
@@ -536,7 +537,7 @@ function vidSpec(u){ const y = ytId(u); if (y) return "yt:" + y; const m = Strin
 function vidClose(){ const d = document.querySelector(".vid"); if (d) d.remove(); document.documentElement.style.overflow = ""; }
 function ytId(u){ const m = String(u).match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; }
 function ytHTML(t){ const id = ytId(t.url); if (!id) return "";
-  return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce"><img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy"><span><i><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></i></span>${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>`; }
+  return `<button class="yt" data-yt="${id}" aria-label="Lire la bande-annonce">${FG_YT.img(id)}${FG_YT.play}${t.nom ? `<small>${esc(t.nom)}</small>` : ""}</button><a class="yt-l" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Voir sur YouTube<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>`; }
 // Onglet d'arrivée : /series/<nom>#news ouvre directement les news (liens des posts « sortie de tome »), idem #info, #ad.
 const HASH_TAB = ["syn", "info", "ex", "news", "ad"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "";
 let TAB = HASH_TAB || "syn", ASC = true, HASH_DONE = false;
