@@ -19,6 +19,8 @@
     '.fgt.story{height:1920px;--top:250px;--cy:850px}',
     '.fgt .blur{position:absolute;inset:-80px;background-size:cover;background-position:center;filter:blur(60px) saturate(1.3);opacity:.5}',
     '.fgt.creme .blur{opacity:.28}',
+    // Crème : le haut reste uni derrière le logo (plus d'ombre de la couverture floutée au-dessus du logo, Will 06/10/2026).
+    '.fgt.creme .shade{background:linear-gradient(180deg,var(--bg) 0%,var(--bg) calc(var(--top) + 90px),color-mix(in srgb,var(--bg) 70%,transparent) calc(var(--top) + 330px),color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 76%)}',
     '.fgt .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 35%,transparent) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 48%,var(--bg) 76%)}',
     '.fgt .sun{position:absolute;width:calc(var(--r) * 2);height:calc(var(--r) * 2);border-radius:50%;background:var(--red);left:50%;top:calc(var(--cy) - var(--r));transform:translateX(-50%)}',
     '.fgt .logo{position:absolute;left:50%;top:var(--top);transform:translateX(-50%);width:290px}',
@@ -79,7 +81,7 @@
     var t = d.titre || "", j = jpOf(d.jp), n = d.n != null ? String(d.n).padStart(2, "0") : "";
     var js = Math.min(56, Math.floor(640 / (Math.max(1, Array.from(j).length) * 1.12))) + "px";
     var who = (d.auteurs || []).filter(Boolean).slice(0, 2).map(esc).join("<i>·</i>");
-    var c = couv(d.cover);
+    var c = d._img || couv(d.cover);
     return '<div class="fgt ' + (theme === "creme" ? "creme" : "sombre") + " " + fmt + '">' +
       (c ? '<div class="blur" style="background-image:url(\'' + c + '\')"></div>' : "") + '<div class="shade"></div><div class="sun"></div>' +
       '<img class="logo" src="/img/social/logo-' + (theme === "creme" ? "noir" : "blanc") + '.png" alt="">' +
@@ -110,9 +112,11 @@
     o = o || {}; var theme = o.theme || "sombre", fmt = o.fmt || "post", wh = SIZE[fmt];
     var box = document.createElement("div");
     box.style.cssText = "position:fixed;left:-20000px;top:0;width:" + wh[0] + "px;height:" + wh[1] + "px;overflow:hidden;pointer-events:none";
-    box.innerHTML = card(d, theme, fmt); document.body.appendChild(box);
     var lib = window.htmlToImage ? Promise.resolve() : charger("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js");
-    return lib.then(function () { return fonts(d.jp); }).then(function (fcss) {
+    // La couverture est intégrée en data URL avant le dessin : sinon, en enchaînant plusieurs exports, Safari pouvait
+    // ressortir l'image du tome précédent (Will, 06/10/2026).
+    var img = d.cover ? dataUrl(couv(d.cover)).catch(function () { return null; }) : Promise.resolve(null);
+    return Promise.all([lib, img]).then(function (r) { box.innerHTML = card(Object.assign({}, d, { _img: r[1] }), theme, fmt); document.body.appendChild(box); return fonts(d.jp); }).then(function (fcss) {
       var names = ['700 40px "FGAntonio"', '500 40px "FGInter"'].concat(jpOf(d.jp) ? ['900 40px "FGNotoJP"'] : []);
       return Promise.all(names.map(function (f) { return document.fonts.load(f, jpOf(d.jp) || "A"); })).then(function () { return images(box); }).then(function () { ajuster(box.firstChild); return fcss; });
     }).then(function (fcss) {

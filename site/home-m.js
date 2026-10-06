@@ -213,6 +213,8 @@
     if (v.vue === "actus" || v.cat) {
       var chips = v.cat ? '<div class="mh-chips">' + TYPES.map(function (t) { return '<a href="/?cat=' + t[0] + '" aria-current="' + (t[0] === v.cat) + '"><i style="background:' + t[2] + '"></i>' + t[1] + "</a>"; }).join("") + "</div>" : "";
       var head = atabs(v) + chips, membre = D.me && D.me.user, vide = "Aucune actualité dans cette catégorie pour l'instant.";
+      // Bloc don seulement dans l'onglet « Toutes » (Will, 06/10/2026).
+      DON_OK = !v.cat && v.tab === "toutes";
       if (v.cat || v.tab === "toutes") LIST = v.cat ? news.filter(function (it) { return it.cat === v.cat || (it.cats || []).some(function (c) { return c.k === v.cat; }); }) : news;
       else if (!membre) { root.innerHTML = head + (D.me ? lock(v.tab) : '<p class="mh-note">Chargement…</p>'); return; }
       else if (v.tab === "feed") {
@@ -251,7 +253,7 @@
       (PAYPAL ? '<a class="pp" href="' + PAYPAL + '" target="_blank" rel="noopener">PayPal <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>' : '<button type="button" class="pp" onclick="this.textContent=\'Bientôt dispo\'">PayPal <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></button>') + "</div></div>";
   }
   // Chargement au fur et à mesure (10 par 10)
-  var io = null;
+  var io = null, DON_OK = true;
   function more() {
     var box = document.getElementById("mh-list"), m = document.getElementById("mh-more"); if (!box) return;
     var part = LIST.slice(PAGE * 10, PAGE * 10 + 10);
@@ -259,7 +261,7 @@
     fitM(box);
     PAGE++;
     var fini = PAGE * 10 >= LIST.length;
-    if (fini && LIST.length > 1) m.innerHTML = '<p class="mh-endt">Reviens plus tard, t’as tout lu bâtard.</p>' + (window.FG_DON ? FG_DON("jinnai") : ble());
+    if (fini && LIST.length > 1) m.innerHTML = '<p class="mh-endt">Reviens plus tard, t’as tout lu bâtard.</p>' + (!DON_OK ? "" : window.FG_DON ? FG_DON("jinnai") : ble());
     else m.textContent = fini ? "" : "Chargement…";
     if (io) io.disconnect();
     if (!fini) { io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) more(); }, { rootMargin: "400px" }); io.observe(m); }
