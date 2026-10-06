@@ -140,7 +140,7 @@
     article: function () { return B("100%", 0, 0).replace("height:0px", "height:min(58vh,460px)") + '<div class="skw">' + B("30%", 14) + B("100%", 16) + B("100%", 16) + B("92%", 16) + B("70%", 16) + B("100%", 0, 16).replace("height:0px", "aspect-ratio:16/9;height:auto") + B("100%", 64, 14) + "</div>"; }
   };
   var p = location.pathname;
-  var cur = /^\/series/.test(p) ? "series" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
+  var cur = /^\/series/.test(p) ? "series" : /^\/films/.test(p) ? "ecran" : /^\/calendrier/.test(p) ? "cal" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
   if (/vue=magazines/.test(location.search)) cur = "jp";
   var a = function (k, href, label, d, nw) { return '<a href="' + href + '"' + (d ? ' class="sh-d"' : "") + (nw ? ' target="_blank" rel="noopener"' : "") + (cur === k ? ' aria-current="page"' : "") + ">" + label + "</a>"; };
   var ICON_S = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
@@ -148,7 +148,7 @@
     '<div class="sh-top"><button class="sh-btn sh-me" id="sh-me" aria-label="Mon compte"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.3 4.2-7 8.5-7s7.7 2.7 8.5 7z"/></svg></span></button>' +
     '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
-    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("cal", "/calendrier/", "Calendrier") +
+    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("ecran", "/films/", "À l'écran") + a("cal", "/calendrier/", "Calendrier") +
 a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
   var me = document.currentScript;
   me.insertAdjacentHTML("beforebegin", html);

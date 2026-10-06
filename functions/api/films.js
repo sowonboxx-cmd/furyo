@@ -5,13 +5,13 @@
 import { text, num, check, rel, queryAll, cached, slugify } from "../../lib/notion.js";
 
 const FILMS = { dataSource: "dfca009b-7891-49a4-8a1d-fd665dcacd77", database: "fe4b3db3d00c411ca3c1a25aff6bfadb" };
-// Fiches affichées sur le site, selon la colonne « Statut ». (Will, 06/10/2026 : les 10 premières sont encore « À valider ».)
-const STATUTS = new Set(["À valider", "Validé", "En ligne"]);
+// Fiches affichées sur le site, selon la colonne « Statut » : seulement « Validé » et « En ligne » (Will, 06/10/2026).
+const STATUTS = new Set(["Validé", "En ligne"]);
 const nid = id => id.replace(/-/g, "");
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
-  return cached(request, waitUntil, "/api/films?v=1", 600, () => build(env, request));
+  return cached(request, waitUntil, "/api/films?v=2", 600, () => build(env, request));
 }
 
 // Une affiche du site (https://furyogang.com/affiches/…) est servie depuis le même domaine.
