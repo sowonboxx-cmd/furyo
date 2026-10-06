@@ -88,7 +88,9 @@ a{color:inherit}
 .hero{position:relative;overflow:hidden;margin:-22px -16px 0;padding:18px 16px 18px}
 .hero .bgi{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(30px) brightness(.42);transform:scale(1.2)}
 .hero .fade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1),#000 96%)}
-.hero .in{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:start}
+.hero .in{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:stretch}
+.hero .tx{display:flex;flex-direction:column;gap:12px;min-width:0}.hero .tx .edsw{margin-top:auto}
+.hero .acts{align-self:end}.hero .c1{align-self:start}
 .hero .c1{width:96px;aspect-ratio:2/3;border-radius:6px;overflow:hidden;background:var(--s1);box-shadow:0 10px 26px rgba(0,0,0,.6)}
 .hero .c1 img{width:100%;height:100%;object-fit:cover;display:block}
 .back{display:inline-flex;align-items:center;gap:4px;color:var(--blue);font-weight:600;text-decoration:none;position:relative;margin-bottom:12px}
@@ -302,7 +304,7 @@ function drawSerie(s, d){
     : `<div class="leg"><span>${inL} tome${inL > 1 ? "s" : ""} dans « ${esc(LISTS.find(x => x[0] === LT)[1])} » · touche un tome pour l'ajouter ou le retirer</span></div>`;
   app().innerHTML = `<div class="hero"><div class="bgi" style="background-image:url('${esc(couv(cover, 300))}')"></div><div class="fade"></div>
     <a class="back" href="/ma-collection/">${I.back}Ma collection</a>
-    <div class="in"><span class="c1">${cover ? `<img src="${esc(couv(cover, 400))}" alt="">` : ""}</span><div><h1>${esc(d.serie.fr || d.serie.t)}</h1>${d.serie.auteurs ? `<p>${esc(d.serie.auteurs)}</p>` : ""}<p>${esc([e.pub, e.label, total ? total + " tomes" : "", (e.statut || "").toLowerCase()].filter(Boolean).join(" · "))}</p>${edsw}</div>
+    <div class="in"><span class="c1">${cover ? `<img src="${esc(couv(cover, 400))}" alt="">` : ""}</span><div class="tx"><div class="hd"><h1>${esc(d.serie.fr || d.serie.t)}</h1>${d.serie.auteurs ? `<p>${esc(d.serie.auteurs)}</p>` : ""}<p>${esc([e.pub, e.label, total ? total + " tomes" : "", (e.statut || "").toLowerCase()].filter(Boolean).join(" · "))}</p></div>${edsw}</div>
     <div class="acts">${prog}<div class="ctas" style="margin:0">${fiche}${LT === "c" ? tout : ""}</div></div></div></div>
     <div class="mob">${prog}</div>
     <div class="det-tools">${lseg}${leg}</div>
