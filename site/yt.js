@@ -5,7 +5,7 @@
 (function () {
   var css = document.createElement("style");
   css.textContent =
-    ".yt .ytp{position:absolute;inset:auto;display:grid;left:50%;top:50%;:absolute;left:50%;top:50%;width:72px;height:50px;margin:-25px 0 0 -36px;border-radius:14px;background:rgba(28,28,30,.72);" +
+    ".yt .ytp{position:absolute;inset:auto;display:grid;left:50%;top:50%;width:72px;height:50px;margin:-25px 0 0 -36px;border-radius:14px;background:rgba(28,28,30,.72);" +
     "-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;display:grid;place-items:center;transition:background .15s,transform .15s;z-index:2}" +
     ".yt .ytp svg{width:26px;height:26px;fill:#fff;margin-left:2px}" +
     ".yt:hover .ytp,.yt:focus-visible .ytp{background:rgba(0,0,0,.88);transform:scale(1.05)}" +
