@@ -477,7 +477,8 @@ let VCOL = {};
 const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "news"];
 let VITEMS = [], VCATS = {}, VF = "tout";
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
-async function veille(){
+async function veille(garder){
+  if (!garder) VF = "tout"; // En arrivant sur Validation : toujours « Tout » (Will, 06/10/2026).
   root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Validation</b></div>
     <div class="chips" id="vchips"></div><label class="vselw"><select class="vsel" id="vsel" aria-label="Filtrer les propositions"></select></label></div></header><main><p class="vhint" id="vhint">Chargement…</p><ul class="vl" id="vl"></ul></main>`;
   const r = await fetch("/api/admin/veille");
@@ -761,7 +762,7 @@ async function vsend(btn, statut){
   if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } m.remove(); vdraw(); toast("Publié sur le site ✓" + ficheMsg); if (ficheMsg) { toast.t && clearTimeout(toast.t); toast.t = setTimeout(() => document.getElementById("toast").classList.remove("on"), 5000); } return; }
   // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
   // Prépublication publiée aussi en news : la news créée arrive dans la liste, à relire et publier comme les autres.
-  if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(); return; }
+  if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(true); return; }
   if (statut === "Vu" && i.base !== "prepub") { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
   m.remove(); vdraw();
   toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? "Rangée dans « Vu, pas sur le site »" : i.base === "prepub" ? "Écartée" : "Rejeté");
