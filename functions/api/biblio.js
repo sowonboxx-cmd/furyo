@@ -60,7 +60,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   const id = new URL(request.url).searchParams.get("id");
   if (id) {
     if (!/^[0-9a-f]{32}$/.test(id)) return json({ error: "série inconnue" }, 400);
-    return cached(request, waitUntil, "/api/biblio?v=1&id=" + id, 1800, () => detail(env, id));
+    return cached(request, waitUntil, "/api/biblio?v=1&id=" + id, 120, () => detail(env, id));
   }
-  return cached(request, waitUntil, "/api/biblio?v=1", 1800, () => catalogue(env));
+  return cached(request, waitUntil, "/api/biblio?v=1", 600, () => catalogue(env));
 }
