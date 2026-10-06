@@ -131,6 +131,8 @@ a{color:inherit}
 .gate b{font:700 32px/1.05 var(--fd);text-transform:uppercase}
 .gate p{margin:0;color:var(--fg2);max-width:32ch}
 .gate .btn{align-self:stretch}
+.pay.gp>.gate{margin:0;position:relative;background:var(--s1);border-radius:20px;padding:28px 22px 22px;max-width:400px;width:100%}
+.gx{position:absolute;right:10px;top:8px;width:32px;height:32px;border:0;border-radius:50%;background:var(--s2);color:var(--fg2);font:600 20px/1 var(--fb);cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%) translateY(20px);background:#F5F5F7;color:#000;font:600 14px var(--fb);padding:10px 16px;border-radius:12px;opacity:0;transition:.2s;z-index:99;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .pay{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px}
@@ -344,12 +346,26 @@ document.addEventListener("click", async e => {
 addEventListener("popstate", route);
 
 /* ---------- accès ---------- */
+// Visiteur non connecté (Will, 07/10) : il voit la page et peut défiler, mais tout clic ouvre cette fenêtre.
+let GUEST = false;
 function gate(){
+  if (document.querySelector(".pay.gp")) return;
   const pile = CAT.filter(s => s.cover).slice(0, 3);
-  app().innerHTML = `<div class="gate"><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes, ce qu'il te manque, ta pile à lire et ta wishlist. Réservé aux membres, gratuit jusqu'à 25 tomes.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
-  const go = () => { const b = document.getElementById("sh-me"); if (b) b.click(); };
-  document.getElementById("join").onclick = go; document.getElementById("join2").onclick = go;
+  const p = document.createElement("div"); p.className = "pay gp";
+  p.innerHTML = `<div class="gate"><button class="gx" aria-label="Fermer">×</button><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes, ce qu'il te manque, ta pile à lire et ta wishlist. Réservé aux membres, gratuit jusqu'à 25 tomes.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
+  document.body.appendChild(p);
+  const go = () => { p.remove(); const b = document.getElementById("sh-me"); if (b) b.click(); };
+  p.querySelector("#join").onclick = go; p.querySelector("#join2").onclick = go;
+  p.onclick = e => { if (e.target === p || e.target.closest(".gx")) p.remove(); };
 }
+// Capture : bloque tout clic, saisie ou focus dans la page tant qu'on n'est pas connecté.
+["click", "focusin", "keydown"].forEach(ev => document.addEventListener(ev, e => {
+  if (!GUEST || !e.target.closest || !e.target.closest("#app")) return;
+  if (ev === "keydown" && !/^(Enter| )$/.test(e.key) && !e.target.matches("input,select,textarea")) return;
+  e.preventDefault(); e.stopPropagation();
+  if (e.target.blur) e.target.blur();
+  gate();
+}, true));
 async function route(){
   const sl = slugAdr();
   if (sl) await serie(sl); else await home();
@@ -360,7 +376,7 @@ async function route(){
     fetch("/api/collection", { credentials: "same-origin" }).then(r => r.status === 401 ? { gate: 1 } : r.json()).catch(() => ({ gate: 1 })),
   ]);
   CAT = cat.items || []; CAT.forEach(s => { BYID[s.id] = s; BYSLUG[s.slug] = s; });
-  if (col.gate || !col.ok) { gate(); return; }
+  if (col.gate || !col.ok) { GUEST = true; route(); return; }
   L = { c: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max;
   // Les détails des séries de la collection, pour les « 7/9 tomes ».
   const ids = [...new Set(Object.values(L).flatMap(x => Object.values(x)))];
