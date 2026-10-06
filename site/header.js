@@ -39,6 +39,7 @@
     ".adm-b{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 16px;border-radius:14px;background:#38383B;color:#F5F5F7;text-decoration:none}.adm-b.v{background:#305887;color:#fff}.adm-b.f{background:#2E7D4F;color:#fff}.adm-b.s{background:#6A4BC4;color:#fff}.adm-b.f small,.adm-b.s small{color:rgba(255,255,255,.78)!important}" +
     ".adm-b strong{display:block;font:700 20px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em}.adm-b small{display:block;margin-top:3px;font-size:12.5px;color:#C9D6E6}.adm-b:not(.v) small{color:#98989D}" +
     ".adm-b em{font-style:normal;min-width:40px;height:32px;padding:0 10px;box-sizing:border-box;border-radius:16px;background:#fff;color:#305887;font-weight:700;font-size:15px;display:grid;place-items:center}" +
+    ".adm-b.c{background:#1F2A38;color:#fff}.adm-b.c small{color:#C9D6E6!important}" +
     ".adm-b.j{background:#F2B33D;color:#000}.adm-b.j small{color:rgba(0,0,0,.66)!important}.adm-b.j em{background:#000;color:#F2B33D}" +
     ".sh-sj{display:inline-flex;align-items:center;gap:4px;color:#F2B33D;text-decoration:none;font:600 13px Inter,system-ui,sans-serif}.sh-sj svg{width:15px;height:15px}.sh-sj b{font-weight:700}.sh-sj[data-n='0']{display:none!important}" +
     ".sh-adm{display:flex;align-items:center;gap:10px}" +
@@ -335,6 +336,8 @@ a("mk", "/auteurs/", "Mangakas", 1) + "</nav></div></header>";
       (ME.admin ? '<a class="adm-b v" href="/admin/#validation"><span><strong>Validation</strong><small>À relire avant publication</small></span><em>' + esc(n) + '</em></a>' +
       (SJ.n ? '<a class="adm-b j" href="/admin/#sorties"><span><strong>Sorties du jour</strong><small>' + [SJ.fr ? SJ.fr + " France" : "", SJ.jp ? SJ.jp + " Japon" : ""].filter(Boolean).join(" · ") + ' à poster</small></span><em>' + SJ.n + '</em></a>' : "") +
       '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' : "") +
+      // Ma collection : la bibliothèque des membres (Will, 06/10/2026).
+      '<a class="adm-b c" href="/ma-collection/"><span><strong>Ma collection</strong><small>Tes tomes, ta pile à lire, ta wishlist</small></span><span aria-hidden="true">→</span></a>' +
       // Mon feed et Signets pour tous les membres (Will, 05/10/2026) : sous Validation et Back-office pour l'admin, seuls pour les autres.
       '<a class="adm-b f" href="/?vue=actus&tab=feed"><span><strong>Mon feed</strong><small>Les news des séries que tu suis</small></span><span aria-hidden="true">→</span></a>' +
       '<a class="adm-b s" href="/?vue=actus&tab=signets"><span><strong>Signets</strong><small>Les news que tu as gardées</small></span><span aria-hidden="true">→</span></a>' +
