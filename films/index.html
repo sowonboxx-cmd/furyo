@@ -119,6 +119,7 @@ h1,h2{font-family:var(--f-display);font-weight:700;text-transform:uppercase;lett
 .saga h2{font-size:clamp(28px,6vw,36px);line-height:1}
 .saga .sh2 span{color:var(--paper-3);font-size:14px}
 .saga .grid .pc.on .im{outline:3px solid var(--blue);outline-offset:3px}
+.pc{position:relative}.adm-pill{position:absolute;top:8px;left:8px;z-index:3;background:#6A4BC4;color:#fff;font:800 11px Inter,sans-serif;letter-spacing:.04em;padding:4px 8px;border-radius:6px}.tag.adm{background:#6A4BC4;color:#fff}
 </style>
 </head>
 <body>
@@ -138,7 +139,7 @@ let DATA = null, TYPE = "", TRI = "recent";
 
 const titreS = s => s ? (s.t && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) ? s.t : (s.fr || s.t)) : "";
 const ytId = u => { const m = String(u || "").match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; };
-const card = (f, on) => `<a class="pc${on ? " on" : ""}" href="/films/${esc(f.slug)}">${f.must && !on ? '<span class="star">À voir</span>' : ""}<span class="im">${f.img ? `<img src="${esc(f.img)}" alt="Affiche de ${esc(f.t)}" loading="lazy">` : ""}</span><b>${esc(f.t)}</b><small><span class="ty ${esc(f.type)}"></span>${esc(f.type)}${f.y ? " · " + f.y : ""}${on ? " · tu es ici" : ""}</small></a>`;
+const card = (f, on) => `<a class="pc${on ? " on" : ""}" href="/films/${esc(f.slug)}">${f.adm ? '<span class="adm-pill" title="Validé, visible seulement par les admins">Admins</span>' : ""}${f.must && !on ? '<span class="star">À voir</span>' : ""}<span class="im">${f.img ? `<img src="${esc(f.img)}" alt="Affiche de ${esc(f.t)}" loading="lazy">` : ""}</span><b>${esc(f.t)}</b><small><span class="ty ${esc(f.type)}"></span>${esc(f.type)}${f.y ? " · " + f.y : ""}${on ? " · tu es ici" : ""}</small></a>`;
 
 // ---------- Liste : grille d'affiches, onglets par type, tris ----------
 function liste() {
@@ -177,7 +178,7 @@ function fiche(f) {
     </div>
     <div class="wide">
       ${f.res ? `<p class="res">${esc(f.res)}</p>` : ""}
-      <div class="tags"><span class="tag b">${esc(f.type)}</span>${f.must ? '<span class="tag">À voir absolument</span>' : ""}${f.manga ? '<span class="tag">D\'après un manga</span>' : ""}</div>
+      <div class="tags">${f.adm ? '<span class="tag adm" title="Validé, visible seulement par les admins">Admins</span>' : ""}<span class="tag b">${esc(f.type)}</span>${f.must ? '<span class="tag">À voir absolument</span>' : ""}${f.manga ? '<span class="tag">D\'après un manga</span>' : ""}</div>
       <div class="acts">${id ? `<a class="btn b" href="#ba">${PLAY}Bande-annonce</a>` : ""}${mLien ? `<a class="btn" href="${mLien}">${f.manga ? "Le manga" : "Aussi en manga"} ${esc(titreS(m))}${ARR}</a>` : ""}</div>
     </div>
   </article>

@@ -185,8 +185,8 @@ body.tb-open{overflow:hidden}
 .wk-l{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .wk-l a{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;background:var(--ink-3);color:var(--paper-2);font-size:12px;font-weight:600;text-decoration:none}
 .wk-l button{display:inline-flex;align-items:center;height:26px;padding:0 10px;border:0;border-radius:13px;background:var(--blue);color:#fff;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
-.apercu{margin:0 0 14px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,var(--amber,#F2B33D) 18%,var(--ink-3));color:#F2B33D;font-size:13.5px;font-weight:600}
-.cv .ap{position:absolute;left:6px;top:6px;padding:2px 8px;border-radius:8px;background:#F2B33D;color:#000;font-size:11px;font-weight:800}
+.apercu{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:10px 14px;border-radius:12px;background:color-mix(in srgb,#6A4BC4 22%,var(--ink-3));color:#CDBDFF;font-size:13.5px;font-weight:600}.apercu b{flex:none;height:22px;padding:0 8px;border-radius:6px;background:#6A4BC4;color:#fff;font:700 10.5px/22px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.cv .ap{position:absolute;left:6px;top:6px;padding:2px 8px;border-radius:6px;background:#6A4BC4;color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .wk-mere{margin-top:22px;padding-top:14px;border-top:1px solid var(--ink-3)}
 .wk-mere:first-child{margin-top:0;padding-top:0;border-top:0}
 .wk-mh{margin:0 0 10px;font-size:14px;font-weight:700;color:var(--paper-2)}
@@ -593,7 +593,7 @@ function render(){
   if (DESK && TAB === "syn") TAB = "info";
   document.getElementById("app").innerHTML = `
   ${crumb(titre)}
-  ${s.apercu ? `<p class="apercu">Aperçu administrateur · cette fiche n'est pas encore publiée, toi seul la vois.</p>` : ""}
+  ${s.apercu ? `<p class="apercu"><b>Admins</b>Validée, visible seulement par les admins. Coche « Publier » pour la mettre en ligne pour tout le monde.</p>` : ""}
   <div class="head">
     ${folBtn()}
     <div class="main-cv zoom" role="button" aria-label="Voir les couvertures en grand">${mainCover(s, eds)}</div>
@@ -878,7 +878,7 @@ function renderList(items){
     sl.innerHTML = list.map(s => lv
       ? `<li><a class="row" href="/series/${s.slug}" data-pre="${pre(s)}"><span class="thumb">${s.cover ? `<img src="${couv(s.cover, 200)}" alt="" loading="lazy" decoding="async">` : esc((s.jp || "").slice(0, 5))}</span><div><div class="r-t">${esc(shown(s))}</div>${s.jp ? `<span class="r-jp" lang="ja">${esc(s.jp)}</span>` : ""}
         <div class="r-meta">${s.type ? `<span class="pill">${esc(s.type)}</span>` : ""}${s.y1 ? `<span class="pill">${s.y1}</span>` : ""}${s.pubFR ? `<span class="pill fr">${esc(s.pubFR.replace(/\s*\([^)]*\)/g, ""))}</span>` : `<span class="pill jp">Inédit en France</span>`}${s.apercu ? `<span class="pill">Aperçu</span>` : ""}</div></div></a></li>`
-      : `<li><a class="t" href="/series/${s.slug}" data-pre="${pre(s)}"><div class="cv">${s.cover ? `<img src="${couv(s.cover, 360)}" alt="" loading="lazy">` : ph(s)}${s.apercu ? `<span class="ap">Aperçu</span>` : ""}</div>
+      : `<li><a class="t" href="/series/${s.slug}" data-pre="${pre(s)}"><div class="cv">${s.cover ? `<img src="${couv(s.cover, 360)}" alt="" loading="lazy">` : ph(s)}${s.apercu ? `<span class="ap">Admins</span>` : ""}</div>
       <span class="t-n">${esc(shown(s))}</span>${(SORT === "new" || SORT === "old") && s.y1 ? `<span class="t-d">${s.y1}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   const q = document.getElementById("q");

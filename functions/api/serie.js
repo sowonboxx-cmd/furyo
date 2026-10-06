@@ -3,7 +3,7 @@
 // puis la page série, ses éditions et ses tomes sont lus en parallèle.
 // Les sources restent dans Notion : elles ne sont pas renvoyées.
 import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
-import { estVisible, FILTRE_PUBLIER } from "../../lib/site.js";
+import { estVisible, FILTRE_PUBLIER, estValidee } from "../../lib/site.js";
 import { isAdmin } from "../../lib/admin.js";
 import { sourceName } from "../../lib/source.js";
 import { categorie } from "../../lib/categories.js";
@@ -73,7 +73,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     if (!id) return { error: "introuvable" };
     const row = await page(env.NOTION_TOKEN, id);
     const p = row.properties || {};
-    if (!estVisible(p) && !(admin && rel(p["Éditions"]).length)) return { error: "introuvable" };
+    if (!estVisible(p) && !(admin && estValidee(p))) return { error: "introuvable" };
     const edIds = rel(p["Éditions"]);
     const [eRows, tRows, nRows, bRows] = await Promise.all([
       edIds.length ? queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } }) : [],

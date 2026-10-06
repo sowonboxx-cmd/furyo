@@ -405,8 +405,9 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .dmk i{overflow:hidden;width:58px;height:58px;border-radius:50%;background:#38383B;display:grid;place-items:center;font:700 24px "Noto Sans JP",sans-serif;font-style:normal}
 .dmk b{font:700 15px/1.05 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}.dmk small{font-size:11.5px;color:#98989D;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #d-ecran{margin-top:20px}
+.df{position:relative}.adm-pill{position:absolute;z-index:2;left:6px;top:6px;display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 7px;border-radius:6px;background:#6A4BC4;color:#fff;font:700 10px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase}
 .dfilms{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:14px}
-.df{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.df{margin:0;color:inherit;text-decoration:none;display:flex;flex-direction:column;gap:6px;min-width:0}
 .df img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:10px;background:#1C1C1E;display:block}
 .df b{font:700 14.5px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.df small{font-size:11.5px;color:#98989D}
 @media (max-width:1099px){.dfilms{grid-template-columns:repeat(5,minmax(0,1fr))}.djp{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -709,7 +710,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
   </div>
   <section class="box dsec" id="d-ecran">
     <div class="dsh"><div><small>À l'écran</small><h2>Les films à voir absolument</h2></div></div>
-    <div class="dfilms"><figure class="df"><img src="/affiches/crows-zero.jpg" alt="Affiche de Crows Zero" loading="lazy"><figcaption><b>Crows Zero</b><small>Film · 2007</small></figcaption></figure><figure class="df"><img src="/affiches/crows-zero-2.jpg" alt="Affiche de Crows Zero II" loading="lazy"><figcaption><b>Crows Zero II</b><small>Film · 2009</small></figcaption></figure><figure class="df"><img src="/affiches/crows-explode.jpg" alt="Affiche de Crows Explode" loading="lazy"><figcaption><b>Crows Explode</b><small>Film · 2014</small></figcaption></figure><figure class="df"><img src="/affiches/high-low-the-worst.jpg" alt="Affiche de HiGH&amp;LOW THE WORST" loading="lazy"><figcaption><b>HiGH&amp;LOW THE WORST</b><small>Film · 2019</small></figcaption></figure><figure class="df"><img src="/affiches/the-fable-2019.jpg" alt="Affiche de The Fable" loading="lazy"><figcaption><b>The Fable</b><small>Film · 2019</small></figcaption></figure><figure class="df"><img src="/affiches/shinjuku-swan-2015.jpg" alt="Affiche de Shinjuku Swan" loading="lazy"><figcaption><b>Shinjuku Swan</b><small>Film · 2015</small></figcaption></figure><figure class="df"><img src="/affiches/hell-dogs-2022.jpg" alt="Affiche de Hell Dogs" loading="lazy"><figcaption><b>Hell Dogs</b><small>Film · 2022</small></figcaption></figure><figure class="df"><img src="/affiches/out-2023.jpg" alt="Affiche de OUT" loading="lazy"><figcaption><b>OUT</b><small>Film · 2023</small></figcaption></figure><figure class="df"><img src="/affiches/tokyo-revengers-2-destiny-2023.jpg" alt="Affiche de Tokyo Revengers 2" loading="lazy"><figcaption><b>Tokyo Revengers 2</b><small>Film · 2023</small></figcaption></figure><figure class="df"><img src="/affiches/yamikin-ushijima-kun-part-2-2014.jpg" alt="Affiche de Ushijima Part 2" loading="lazy"><figcaption><b>Ushijima Part 2</b><small>Film · 2014</small></figcaption></figure></div>
+    <div class="dfilms" id="dfilms"></div>
   </section>
   <div class="dduo">
     <section class="box" id="d-mbr"><div class="dsh"><div><small>Derniers membres</small><h2>Ils ont rejoint le gang</h2></div><a href="/membres/">Membres</a></div><div class="dmb" id="dmb"><p class="m-note">Chargement…</p></div></section>
@@ -1050,6 +1051,13 @@ const esc2 = escN, J = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
 const fmtD = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "";
 const tn = n => n == null ? "" : " T." + String(n).padStart(2, "0");
 // Prochaines sorties : en France dans la colonne (date, couverture, tome, éditeur), au Japon en grandes couvertures sous le fil.
+// « À l'écran » : les films lus dans Notion (Will, 06/10/2026). « Validé · admins » n'apparaît que pour les admins, avec une pastille violette.
+getN("/api/films").then(j => {
+  const box = document.getElementById("dfilms"), sec = document.getElementById("d-ecran"), L = ((j && j.items) || []).filter(f => f.must).sort((a, b) => (a.y || 0) - (b.y || 0));
+  if (!box || !sec) return;
+  if (!L.length) { sec.hidden = true; return; }
+  box.innerHTML = L.map(f => `<a class="df" href="/films/${escN(f.slug)}">${f.adm ? '<span class="adm-pill" title="Validé, visible seulement par les admins">Admins</span>' : ""}<img src="${escN(f.img)}" alt="Affiche de ${escN(f.t)}" loading="lazy"><figcaption><b>${escN(f.fr || f.t)}</b><small>${escN(f.type)}${f.y ? " · " + f.y : ""}</small></figcaption></a>`).join("");
+});
 getN("/api/calendrier").then(j => {
   const t = new Date().toLocaleDateString("sv"), all = (j && j.items) || [];
   const lien = x => x.fiche ? "/series/" + slugN(x.fr || x.series) + "#tomes" : "/calendrier/#t-" + x.id;
