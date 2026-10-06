@@ -80,10 +80,10 @@ a{color:inherit}
 .side .lk button{display:flex;justify-content:space-between;padding:9px 12px;border-radius:10px;border:0;background:none;font-weight:600;color:var(--fg2);cursor:pointer;text-align:left}
 .side .lk button[aria-pressed=true]{background:var(--s1);color:var(--fg)}
 .side .lk em{font-style:normal;color:var(--mut);font-size:13px;font-variant-numeric:tabular-nums}
-.side .ck{display:flex;flex-direction:column;gap:7px}
-.side .ck button{display:flex;align-items:center;gap:9px;border:0;background:none;color:var(--fg2);font-size:14px;cursor:pointer;padding:0;text-align:left}
-.side .ck i{width:16px;height:16px;border-radius:4px;border:1.5px solid #555;flex:none}
-.side .ck button[aria-pressed=true] i{background:var(--blue);border-color:var(--blue)}
+.side .fk{display:flex;flex-direction:column;gap:7px}
+.side .fk button{display:flex;align-items:center;gap:9px;border:0;background:none;color:var(--fg2);font-size:14px;cursor:pointer;padding:0;text-align:left}
+.side .fk i{width:16px;height:16px;border-radius:4px;border:1.5px solid #555;flex:none}
+.side .fk button[aria-pressed=true] i{background:var(--blue);border-color:var(--blue)}
 /* ---------- page série ---------- */
 .hero{position:relative;overflow:hidden;margin:-22px -16px 0;padding:18px 16px 18px}
 .hero .bgi{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(30px) brightness(.42);transform:scale(1.2)}
@@ -117,9 +117,9 @@ a{color:inherit}
 .t small{font:600 11.5px var(--fb);color:var(--fg2);display:flex;justify-content:space-between;gap:4px}
 .t small em{font-style:normal;color:var(--mut);font-weight:500;white-space:nowrap}
 .t .cv .n{position:absolute;inset:0;display:grid;place-items:center;font:700 28px var(--fd);color:#48484A}
-.ck{position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;background:var(--ok);display:grid;place-items:center}
-.ck svg{width:14px;height:14px;stroke:#000;fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
-.ck.k{background:var(--yel)}.ck.w{background:#E58AD1}.ck.p{background:var(--blue)}
+.bk-ck{position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;background:var(--ok);display:grid;place-items:center}
+.bk-ck svg{width:14px;height:14px;stroke:#000;fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.bk-ck.k{background:var(--yel)}.bk-ck.w{background:#E58AD1}.bk-ck.p{background:var(--blue)}
 .plus{position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;color:#fff;font:700 16px/1 var(--fb)}
 .t.busy{opacity:.5;pointer-events:none}
 /* ---------- accès ---------- */
@@ -242,9 +242,9 @@ function drawHome(){
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Il me manque des tomes") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
   const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div></div>` : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}
     <div><h4>Ma bibliothèque</h4><div class="lk">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}">${l}<em>${k === "c" ? n.tomes : n[k]}</em></button>`).join("")}</div></div>
-    ${TAB === "c" ? `<div><h4>Statut</h4><div class="ck">${[["complete", "Complètes"], ["manque", "Il me manque des tomes"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
-    <div><h4>Pays</h4><div class="ck">${["France", "Japon"].map(v => `<button data-f="pays" data-v="${v}" aria-pressed="${F.pays.has(v)}"><i></i>${v}</button>`).join("")}</div></div>
-    <div><h4>Genre</h4><div class="ck">${genres.map(v => `<button data-f="genre" data-v="${esc(v)}" aria-pressed="${F.genre.has(v)}"><i></i>${esc(v)}</button>`).join("")}</div></div></aside>`;
+    ${TAB === "c" ? `<div><h4>Statut</h4><div class="fk">${[["complete", "Complètes"], ["manque", "Il me manque des tomes"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
+    <div><h4>Pays</h4><div class="fk">${["France", "Japon"].map(v => `<button data-f="pays" data-v="${v}" aria-pressed="${F.pays.has(v)}"><i></i>${v}</button>`).join("")}</div></div>
+    <div><h4>Genre</h4><div class="fk">${genres.map(v => `<button data-f="genre" data-v="${esc(v)}" aria-pressed="${F.genre.has(v)}"><i></i>${esc(v)}</button>`).join("")}</div></div></aside>`;
   const nomTab = LISTS.find(x => x[0] === TAB)[1];
   const grille = listeF.length ? `<div class="grid">${listeF.map(s => card(s, TAB)).join("")}</div>`
     : vide && !cherche ? `<p class="empty">${TAB === "c" ? "Ta collection est vide. Cherche une série ci-dessus, ouvre-la et coche les tomes que tu as." : `Rien dans « ${nomTab} » pour l'instant. Ouvre une série et choisis « ${nomTab} » pour y ajouter des tomes.`}</p>`
@@ -287,7 +287,7 @@ function drawSerie(s, d){
     if (!t.paru) return `<div class="t soon"><span class="cv">${t.cover ? `<img src="${esc(couv(t.cover, 300))}" alt="" loading="lazy" style="opacity:.35">` : `<span class="n">${esc(t.n)}</span>`}</span><small>T.${esc(t.n)}<em>À paraître</em></small></div>`;
     const on = !!L[LT][t.id], own = !!L.c[t.id];
     const etat = LT === "c" ? (own ? "Possédé" : "Manquant") : on ? VERBE[LT] : own ? "Possédé" : "";
-    return `<button class="t${LT === "c" && !own ? " miss" : ""}" data-t="${t.id}" aria-pressed="${on}" aria-label="Tome ${esc(t.n)} : ${on ? "retirer de" : "ajouter à"} ${esc(LISTS.find(x => x[0] === LT)[1])}"><span class="cv">${t.cover ? `<img src="${esc(couv(t.cover, 300))}" alt="" loading="lazy">` : `<span class="n">${esc(t.n)}</span>`}${on ? `<span class="ck ${LT}">${I.ck}</span>` : `<span class="plus">+</span>`}</span><small>T.${esc(t.n)}<em>${etat}</em></small></button>`;
+    return `<button class="t${LT === "c" && !own ? " miss" : ""}" data-t="${t.id}" aria-pressed="${on}" aria-label="Tome ${esc(t.n)} : ${on ? "retirer de" : "ajouter à"} ${esc(LISTS.find(x => x[0] === LT)[1])}"><span class="cv">${t.cover ? `<img src="${esc(couv(t.cover, 300))}" alt="" loading="lazy">` : `<span class="n">${esc(t.n)}</span>`}${on ? `<span class="bk-ck ${LT}">${I.ck}</span>` : `<span class="plus">+</span>`}</span><small>T.${esc(t.n)}<em>${etat}</em></small></button>`;
   };
   const leg = LT === "c" ? `<div class="leg"><span><i style="background:var(--ok)"></i>Possédé</span><span><i style="background:#555"></i>Manquant</span><span><i style="border:1.5px dashed #555"></i>À paraître</span><span>Touche un tome pour le cocher</span></div>`
     : `<div class="leg"><span>${inL} tome${inL > 1 ? "s" : ""} dans « ${esc(LISTS.find(x => x[0] === LT)[1])} » · touche un tome pour l'ajouter ou le retirer</span></div>`;
