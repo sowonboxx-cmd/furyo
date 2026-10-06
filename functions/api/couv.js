@@ -16,6 +16,21 @@ const sniff = buf => { const b = new Uint8Array(buf.slice(0, 12));
   if (b[0] === 0x52 && b[1] === 0x49 && b[8] === 0x57 && b[9] === 0x45) return "image/webp";
   if (b[0] === 0x47 && b[1] === 0x49) return "image/gif";
   return ""; };
+// Dimensions en pixels (JPEG, PNG, WebP, GIF) : pour repérer les couvertures en basse définition.
+const dims = buf => { const b = new Uint8Array(buf), n = b.length;
+  try {
+    if (b[0] === 0x89 && b[1] === 0x50) return [(b[16] << 24 | b[17] << 16 | b[18] << 8 | b[19]) >>> 0, (b[20] << 24 | b[21] << 16 | b[22] << 8 | b[23]) >>> 0];
+    if (b[0] === 0x47 && b[1] === 0x49) return [b[6] | b[7] << 8, b[8] | b[9] << 8];
+    if (b[0] === 0x52 && b[8] === 0x57) { const c = String.fromCharCode(b[12], b[13], b[14], b[15]);
+      if (c === "VP8 ") return [(b[26] | b[27] << 8) & 0x3fff, (b[28] | b[29] << 8) & 0x3fff];
+      if (c === "VP8L") return [1 + ((b[22] << 8 | b[21]) & 0x3fff), 1 + (((b[24] & 0xf) << 10) | b[23] << 2 | (b[22] >> 6))];
+      if (c === "VP8X") return [1 + (b[24] | b[25] << 8 | b[26] << 16), 1 + (b[27] | b[28] << 8 | b[29] << 16)]; }
+    if (b[0] === 0xFF && b[1] === 0xD8) { let i = 2;
+      while (i < n - 9) { if (b[i] !== 0xFF) { i++; continue; } const m = b[i + 1], len = b[i + 2] << 8 | b[i + 3];
+        if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) return [b[i + 7] << 8 | b[i + 8], b[i + 5] << 8 | b[i + 6]];
+        i += 2 + len; } }
+  } catch (e) {}
+  return [0, 0]; };
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 
 export async function onRequestGet({ request, waitUntil }) {
@@ -28,7 +43,8 @@ export async function onRequestGet({ request, waitUntil }) {
     if (!r.ok || !ct) return Response.json({ ok: false, status: r.status, type: r.headers.get("content-type") || "", verdict: "pas une image" });
     const sha = hex(await crypto.subtle.digest("SHA-256", buf));
     const ph = PLACEHOLDERS.has(sha) || buf.byteLength < 3000;
-    return Response.json({ ok: !ph, placeholder: ph, bytes: buf.byteLength, type: ct, sha256: sha, verdict: ph ? "image provisoire (NOW PRINTING ou vide) : refuser" : "image valide" });
+    const [width, height] = dims(buf);
+    return Response.json({ ok: !ph, placeholder: ph, bytes: buf.byteLength, type: ct, width, height, basseDef: width > 0 && width < 400, sha256: sha, verdict: ph ? "image provisoire (NOW PRINTING ou vide) : refuser" : "image valide" });
   }
   let t; try { t = new URL(self.searchParams.get("u")); } catch (e) { return new Response("u invalide", { status: 400 }); }
   if (t.protocol !== "https:" && t.protocol !== "http:") return new Response("u invalide", { status: 400 });
