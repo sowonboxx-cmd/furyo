@@ -106,6 +106,7 @@ a{color:inherit}
 .pane .pb{height:6px}
 .pane .btn{display:flex;align-items:center;justify-content:center;gap:10px}
 .ic.st{width:19px;height:19px;fill:currentColor;stroke:none;flex:none}
+@media (max-width:979px){.pane .big,.pane .pb{display:none}.pane{padding:12px}}
 
 .hero{position:relative;overflow:hidden;margin:-22px -16px 0;padding:18px 16px 18px}
 .hero .bgi{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(30px) brightness(.42);transform:scale(1.2)}
@@ -320,7 +321,7 @@ function drawSerie(s, d){
   const fiche = d.serie.fiche ? `<a class="btn" href="/series/${esc(d.serie.slug)}">Voir la fiche ${I.arr}</a>` : `<span class="btn g" style="opacity:.6;cursor:default">Fiche bientôt en ligne</span>`;
   // En-tête « D3 » (Will, 07/10) : carte arrondie, éditions en lignes drapeau, panneau compteur à droite.
   const reste = parus.filter(t => !L.c[t.id]).length;
-  const tout = LT !== "c" || !parus.length ? "" : reste ? `<button class="btn" data-jusqua>${I.stack}Tout ajouter · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Tous les tomes parus sont là ✓</span>`;
+  const tout = LT !== "c" || !parus.length ? "" : reste ? `<button class="btn" data-jusqua>${I.stack}Tout ajouter · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Tous les tomes parus sont là</span>`;
   const pane = `<div class="pane"><div class="big"><b>${has}</b><span>/ ${parus.length} tome${parus.length > 1 ? "s" : ""}${parus.length < total ? ` · ${total} prévus` : ""}</span></div><div class="pb"><i style="width:${parus.length ? has / parus.length * 100 : 0}%"></i></div>${tout}${fiche}</div>`;
   const st = x => { const v = (x.statut || "").trim(); return v ? ` · <i class="${/cours/i.test(v) ? "on" : /stop|arr/i.test(v) ? "stop" : "end"}">${esc(v)}</i>` : ""; };
   const eds = `<div class="eds">${d.editions.map(x => { const xp = x.tomes.filter(t => t.paru).length, xh = x.tomes.filter(t => L.c[t.id]).length, xn = x.nb || x.tomes.length;
