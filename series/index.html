@@ -594,7 +594,7 @@ function render(){
   if (DESK && TAB === "syn") TAB = "info";
   document.getElementById("app").innerHTML = `
   ${crumb(titre)}
-  ${s.apercu ? `<p class="apercu"><b>Admins</b>Validée, visible seulement par les admins. Coche « Publier » pour la mettre en ligne pour tout le monde.</p>` : ""}
+  ${s.apercu ? `<p class="apercu"><b>Admins</b>Statut « Validé · admins » : visible seulement par les admins. Passe-la en « En ligne · public » pour la montrer à tout le monde.</p>` : ""}
   <div class="head">
     ${folBtn()}
     <div class="main-cv zoom" role="button" aria-label="Voir les couvertures en grand">${mainCover(s, eds)}</div>

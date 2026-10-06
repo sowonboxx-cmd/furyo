@@ -2,7 +2,7 @@
 // Une fiche n'est jamais déclarée « complète » toute seule : la liste dit ce qui est fait, Will valide.
 import { text, num, date, check, rel, list, queryAll, slugify, slugSerie } from "../../../lib/notion.js";
 import { json, isAdmin } from "../../../lib/admin.js";
-import { estVisible } from "../../../lib/site.js";
+import { estVisible, statut, PUBLIC } from "../../../lib/site.js";
 import { handle, mentionList, syncMentions } from "../../../lib/mentions.js";
 import { BASES, contexte, obligatoires, reseaux, extraitFR } from "../../../lib/oblig.js";
 
@@ -52,7 +52,7 @@ export async function onRequestGet({ request, env, waitUntil }) {
     if (Object.keys(maj).length) aMettreAJour.push([r.id, maj]);
     return {
       id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p),
-      etat: text(p["Avancement"]) || "À faire", publier: check(p["Publier"]), visible: estVisible(p), date: date(p["Date de publication"]),
+      statut: statut(p), publier: statut(p) === PUBLIC, visible: estVisible(p), date: date(p["Date de publication"]),
       leg,
       coeur: check(p["Prochaine à traiter"]), editions: rel(p["Éditions"]).length,
       // Pour générer l'image « Nouvelle fiche » depuis le back-office.

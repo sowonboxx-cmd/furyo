@@ -1,25 +1,24 @@
 // GET /api/avancement : où en est le site. Total = toutes les séries de la base ; en ligne = celles visibles sur le site.
 // Sert au module « Avancement » (Actualités), à la page /avancement/ et aux visuels « Nouvelle fiche » du Studio.
 import { text, num, date, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
-import { estVisible } from "../../lib/site.js";
+import { estVisible, statut, STATUTS } from "../../lib/site.js";
 import { chargerContexte, estPrete } from "../../lib/oblig.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
-const ETATS = ["À faire", "En cours", "À valider", "Validée"];
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   return cached(request, waitUntil, "/api/avancement", 600, async () => {
     const [rows, { ctx }] = await Promise.all([queryAll(env.NOTION_TOKEN, { ...SERIES }), chargerContexte(env.NOTION_TOKEN)]);
     const today = new Date(); const d7 = new Date(today - 7 * 864e5).toISOString().slice(0, 10);
-    const etats = Object.fromEntries(ETATS.map(e => [e, 0]));
+    const etats = Object.fromEntries(STATUTS.map(e => [e, 0]));
     const enLigne = [], prepa = [];
     for (const r of rows) {
       const p = r.properties || {}, t = text(p["SERIES"]); if (!t) continue;
-      const etat = text(p["Avancement"]) || "À faire";
+      const etat = statut(p);
       if (etats[etat] !== undefined) etats[etat]++;
       if (estVisible(p)) enLigne.push({ id: r.id, fixe: num(p["N° fiche"]), t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), date: date(p["Date de publication"]), type: text(p["Type"]), genres: list(p["Genre"]).slice(0, 3) });
-      // Prêtes à publier : tous les éléments ★ faits, pas encore cochées « Publier » (même règle que le back-office).
+      // Prêtes à publier : tous les éléments ★ faits, pas encore « En ligne · public » (même règle que le back-office).
       if (estPrete(p, r.id.replace(/-/g, ""), ctx)) prepa.push(t);
     }
     const total = rows.filter(r => text((r.properties || {})["SERIES"])).length;

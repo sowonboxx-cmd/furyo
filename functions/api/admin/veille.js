@@ -239,7 +239,7 @@ export async function onRequestPost({ request, env }) {
   if (b.statut === "Publié sur le site") fiche = await appliquerFiche(env, b.id).catch(() => []);
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
-  await Promise.all(["/api/news?v=8", "/api/crows", "/api/series", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/news?v=8", "/api/crows", "/api/series?v=5", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   return json({ ok: true, fiche });
 }
 

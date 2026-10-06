@@ -1,8 +1,8 @@
-// POST /api/admin/update {id, publier?, etat?, coeur? (= Prochaine à traiter), resume?, legIG?, legTT?, legX?} : modifie la série dans Notion (back-office, connecté seulement).
-// Publier coche aussi « Avancement = Validée » et remplit la date de publication si elle est vide. Les caches publics sont vidés.
+// POST /api/admin/update {id, statut?, coeur? (= Prochaine à traiter), resume?, legIG?, legTT?, legX?} : modifie la série dans Notion (back-office, connecté seulement).
+// statut = « À valider » | « Validé · admins » | « En ligne · public » (colonne Statut). Passer « En ligne · public » remplit
+// la date de publication si elle est vide. Les caches publics sont vidés.
 import { json, isAdmin } from "../../../lib/admin.js";
-
-const ETATS = ["À faire", "En cours", "À valider", "Validée"];
+import { STATUTS, PUBLIC, A_VALIDER } from "../../../lib/site.js";
 const rt = s => ({ rich_text: s ? [{ type: "text", text: { content: String(s).slice(0, 1900) } }] : [] });
 
 export async function onRequestPost({ request, env }) {
@@ -10,14 +10,10 @@ export async function onRequestPost({ request, env }) {
   let b = {}; try { b = await request.json(); } catch (e) {}
   if (!/^[0-9a-f]{32}$/.test(b.id || "")) return json({ error: "série inconnue" }, 400);
   const props = {};
-  if (typeof b.publier === "boolean") {
-    props["Publier"] = { checkbox: b.publier };
-    if (b.publier) {
-      props["Avancement"] = { select: { name: "Validée" } };
-      if (!b.date) props["Date de publication"] = { date: { start: new Date().toISOString().slice(0, 10) } };
-    }
+  if (STATUTS.includes(b.statut)) {
+    props["Statut"] = { select: { name: b.statut } };
+    if (b.statut === PUBLIC && !b.date) props["Date de publication"] = { date: { start: new Date().toISOString().slice(0, 10) } };
   }
-  if (b.etat && ETATS.includes(b.etat)) props["Avancement"] = { select: b.etat === "À faire" ? null : { name: b.etat } };
   if (typeof b.resume === "string") props["Résumé"] = rt(b.resume);
   // N° de fiche choisi par Will (vide = numéro attribué automatiquement).
   if ("num" in b) { const n = Number(b.num); props["N° fiche"] = { number: b.num === "" || b.num === null || !(n > 0) ? null : Math.round(n) }; }
@@ -38,7 +34,8 @@ export async function onRequestPost({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // Le site se met à jour tout de suite : on jette les versions en cache des listes publiques.
   const c = caches.default;
-  await Promise.all(["/api/series?v=4", "/api/avancement", "/api/calendrier", "/api/serie-index", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/series?v=5", "/api/avancement", "/api/calendrier", "/api/serie-index", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   const p = (await r.json()).properties || {};
-  return json({ ok: true, publier: !!(p["Publier"] || {}).checkbox, etat: ((p["Avancement"] || {}).select || {}).name || "À faire", date: ((p["Date de publication"] || {}).date || {}).start || "" });
+  const st = ((p["Statut"] || {}).select || {}).name || A_VALIDER;
+  return json({ ok: true, statut: st, publier: st === PUBLIC, date: ((p["Date de publication"] || {}).date || {}).start || "" });
 }

@@ -96,7 +96,14 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .chip .hi{width:13px;height:13px;fill:var(--red);vertical-align:-2px;margin-right:4px}
 .next{height:26px;border:1px dashed var(--line);border-radius:7px;background:transparent;color:var(--paper-3);font-size:12px;font-weight:700;padding:0 8px;cursor:pointer}
 .next[aria-pressed=true]{border:0;background:color-mix(in srgb,var(--blue) 26%,var(--ink-3));color:var(--blue-2)}
-/* Interrupteur Publier */
+/* Statut sur le site : À valider / Admins / En ligne */
+.stw{display:flex;align-items:center}.stw.busy{opacity:.5;pointer-events:none}
+.st{height:30px;border:0;border-radius:15px;padding:0 12px;font:700 12px Inter,sans-serif;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:center;background:var(--ink-3);color:var(--paper-2)}
+.st[data-v="À valider"]{background:color-mix(in srgb,var(--amber) 20%,var(--ink-3));color:var(--amber)}
+.st[data-v="Validé · admins"]{background:#6A4BC4;color:#fff}
+.st[data-v="En ligne · public"]{background:color-mix(in srgb,var(--ok) 22%,var(--ink-3));color:var(--ok)}
+.st option{background:#1C1C1E;color:#fff}
+/* Interrupteur (autres écrans) */
 .sw{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--paper-3);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .sw input{position:absolute;opacity:0;pointer-events:none}
 .sw i{position:relative;width:48px;height:28px;border-radius:14px;background:var(--ink-3);transition:background .15s}
@@ -253,16 +260,19 @@ const NOMS = { ig: "Instagram", tt: "TikTok", x: "X" };
 const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>`;
 // Prête = tous les éléments ★ obligatoires sont faits, pas encore publiée : c'est là qu'on pioche chaque semaine.
 const pret = s => !s.publier && s.oblig.length > 0 && s.manque.length === 0;
+// Statut de la série (colonne « Statut » dans Notion, Will 06/10/2026) : À valider / Validé · admins / En ligne · public.
+const ST = [["À valider", "À valider"], ["Validé · admins", "Admins"], ["En ligne · public", "En ligne"]];
 const FILTRES = [
-  ["socle", "Socle", s => s.editions > 0 && !s.publier && !pret(s)],
+  ["valider", "À valider", s => s.statut === "À valider" && !pret(s)],
   ["pretes", "Prêtes à publier", pret],
+  ["admins", "Admins", s => s.statut === "Validé · admins"],
   ["coeur", HEART.replace("<svg ", '<svg class="hi" ') + "Coups de cœur", s => s.coeur && !s.publier],
   ["ligne", "En ligne", s => s.publier],
   ["tout", "Tout", () => true],
 ];
 // Tri : A→Z, presque finies d'abord (le moins à faire), ou à travailler d'abord (le plus à faire).
 const TRIS = [["az", "A → Z"], ["peu", "Presque finies"], ["beaucoup", "À travailler"]];
-let ITEMS = [], F = "socle", Q = "", T = "az";
+let ITEMS = [], F = "valider", Q = "", T = "az";
 const slugify = s => String(s || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1800); }
 
@@ -292,7 +302,7 @@ async function load(){
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { root.innerHTML = `<p class="empty">${esc(j.error || "Impossible de charger.")}</p>`; return; }
   ITEMS = j.items || [];
-  if (!ITEMS.some(s => s.editions && !s.publier)) F = "tout";
+  F = ITEMS.some(s => s.statut === "Validé · admins") ? "admins" : ITEMS.some(pret) ? "pretes" : "valider";
   shell(); draw();
 }
 function shell(){
@@ -323,7 +333,7 @@ function row(s){
   return `<li class="it" data-id="${s.id}">
     <span class="th">${s.cover ? `<img src="/api/couv?u=${encodeURIComponent(s.cover)}" alt="" loading="lazy">` : esc((s.jp || "").slice(0, 2))}</span>
     <span class="nm"><b>${esc(s.fr && s.fr !== s.t ? s.fr : s.t)}</b><small>${esc([s.fr && s.fr !== s.t ? s.t : "", s.jp].filter(Boolean).join(" · "))}</small></span>
-    <label class="sw"><input type="checkbox" data-pub ${s.publier ? "checked" : ""}><i></i><span>${s.publier ? "En ligne" : "Publier"}</span></label>
+    <label class="stw"><select class="st" data-st data-v="${esc(s.statut)}" aria-label="Statut sur le site">${ST.map(([v, l]) => `<option value="${v}"${s.statut === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
     <div class="meta">
       <button class="heart" data-coeur aria-pressed="${s.coeur}" aria-label="Coup de cœur : à traiter en premier">${HEART}</button>
       ${(() => { const ok = s.oblig.length - s.manque.length, r = s.oblig.length ? ok / s.oblig.length : 0;
@@ -357,9 +367,9 @@ async function send(s, patch, el){
     const j = await r.json().catch(() => ({}));
     if (r.status === 401) return login("Session expirée, reconnecte-toi.");
     if (!r.ok) throw new Error(j.error || "Erreur");
-    Object.assign(s, patch, { etat: j.etat, publier: j.publier, date: j.date || s.date });
+    Object.assign(s, patch, { statut: j.statut, publier: j.publier, date: j.date || s.date });
     if (textes) { toast("Enregistré ✓"); return; }
-    toast(patch.publier === true ? "En ligne ✓" : patch.publier === false ? "Retirée du site" : "Enregistré ✓");
+    toast(patch.statut === "En ligne · public" ? "En ligne pour tout le monde ✓" : patch.statut === "Validé · admins" ? "Visible seulement par les admins ✓" : patch.statut ? "À valider : retirée du site" : "Enregistré ✓");
   } catch (e) { toast(e.message.slice(0, 80)); }
   finally { if (!textes) draw(); else el && el.classList.remove("busy"); }
 }
@@ -428,8 +438,7 @@ async function imageFiche(s, fmt, li, btn){
 document.addEventListener("change", e => {
   const li = e.target.closest(".it"); if (!li) return;
   const s = ITEMS.find(x => x.id === li.dataset.id);
-  if (e.target.matches("[data-pub]")) send(s, { publier: e.target.checked }, e.target.closest(".sw"));
-  if (e.target.matches(".etat")) send(s, { etat: e.target.value });
+  if (e.target.matches("[data-st]")) send(s, { statut: e.target.value }, e.target.closest(".stw"));
 });
 
 /* ---------- Navigation : accueil (#), base mangas (#mangas), validation (#validation) ---------- */

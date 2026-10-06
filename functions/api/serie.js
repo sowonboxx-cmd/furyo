@@ -3,7 +3,7 @@
 // puis la page série, ses éditions et ses tomes sont lus en parallèle.
 // Les sources restent dans Notion : elles ne sont pas renvoyées.
 import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
-import { estVisible, FILTRE_PUBLIER, estValidee } from "../../lib/site.js";
+import { estVisible, estValidee } from "../../lib/site.js";
 import { isAdmin } from "../../lib/admin.js";
 import { sourceName } from "../../lib/source.js";
 import { categorie } from "../../lib/categories.js";
@@ -65,7 +65,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   const slug = slugify(new URL(request.url).searchParams.get("s") || "");
   if (!slug) return json({ error: "série manquante" }, 400);
   const estAdmin = await isAdmin(request, env).catch(() => false);
-  const admin = FILTRE_PUBLIER && estAdmin;
+  const admin = estAdmin;
   const build = async () => {
     let map = await index(env, request, waitUntil, false);
     if (!map[slug]) map = await index(env, request, waitUntil, true); // série toute neuve : on relit l'index

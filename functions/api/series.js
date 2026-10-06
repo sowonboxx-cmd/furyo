@@ -1,6 +1,6 @@
-// GET /api/series : liste des séries qui ont au moins une édition, avec la couverture de leur tome 1 (France d'abord).
+// GET /api/series : liste des séries « En ligne · public » (colonne Statut), avec la couverture de leur tome 1 (France d'abord).
 import { text, num, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
-import { filtreVisible, filtreApercu, estVisible, FILTRE_PUBLIER } from "../../lib/site.js";
+import { filtreVisible, filtreApercu, estVisible } from "../../lib/site.js";
 import { isAdmin, json } from "../../lib/admin.js";
 
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
@@ -10,9 +10,9 @@ const nid = id => id.replace(/-/g, "");
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
-  // Aperçu admin (après le lancement) : toutes les séries, sans cache.
-  if (FILTRE_PUBLIER && await isAdmin(request, env)) return json({ apercu: true, ...(await build(env, true)) });
-  return cached(request, waitUntil, "/api/series?v=4", 600, () => build(env, false));
+  // Aperçu admin : aussi les séries « Validé · admins », sans cache.
+  if (await isAdmin(request, env)) return json({ apercu: true, ...(await build(env, true)) });
+  return cached(request, waitUntil, "/api/series?v=5", 600, () => build(env, false));
 }
 
 async function build(env, admin) {
