@@ -52,8 +52,9 @@ export async function onRequestGet({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   const [all, pRows] = await Promise.all([lister(env), listerPrepub(env)]);
   const vu = r => text(r.properties["Statut"]) === "Vu", pub = r => text(r.properties["Statut"]) === "Publié sur le site";
-  // Gardées de côté : seulement les news (une mise à jour de fiche « Vu, rien à faire » est classée pour de bon).
-  const rows = all.filter(r => (!vu(r) && !pub(r)) || text(r.properties["Catégorie"]) || text(r.properties["Type"]) === "News")
+  // Gardées de côté (« Vu, pas sur le site ») : les news et aussi les propositions internes marquées « Vu, rien à faire »,
+  // pour pouvoir les reprendre plus tard (Will, 06/10/2026).
+  const rows = all
     .filter((r, n, a) => !pub(r) || a.filter(pub).indexOf(r) < 40);
   if (new URL(request.url).searchParams.has("count")) return json({ n: rows.filter(r => !vu(r) && !pub(r)).length + pRows.length });
   // Séries liées : une seule requête sur la base Séries (pas une lecture par série : Cloudflare limite

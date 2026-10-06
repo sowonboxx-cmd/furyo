@@ -762,9 +762,9 @@ async function vsend(btn, statut){
   // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
   // Prépublication publiée aussi en news : la news créée arrive dans la liste, à relire et publier comme les autres.
   if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(); return; }
-  if (statut === "Vu" && i.news) { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
+  if (statut === "Vu" && i.base !== "prepub") { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
   m.remove(); vdraw();
-  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? (i.news ? "Rangée dans « Vu, pas sur le site »" : "Marqué comme vu") : i.base === "prepub" ? "Écartée" : "Rejeté");
+  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? "Rangée dans « Vu, pas sur le site »" : i.base === "prepub" ? "Écartée" : "Rejeté");
 }
 // Catégorie changée dans la fiche : couleur, puis légendes régénérées avec le nouveau nom.
 document.addEventListener("change", e => {
