@@ -89,6 +89,10 @@
     ".sh-me img{width:30px;height:30px;border-radius:50%;display:block}" +
     /* Ordinateur (Will, 05/10/2026) : une seule ligne. Logo à gauche, rubriques, puis loupe, nombre à valider et avatar tout à droite. */
     "@media (max-width:719px){.sh-d{display:none!important}}" +
+    /* Téléphone (Will, 07/10/2026) : comme sur ordinateur, logo à gauche ; à droite, de droite à gauche : avatar, nombre à valider, loupe. */
+    "@media (max-width:719px){.sh-top{justify-content:flex-start;gap:2px;padding:0 6px 0 16px}.sh-logo{margin-right:auto}.sh-logo img{height:36px}" +
+    ".sh-btn{position:static;transform:none;flex:none}.sh-search{order:2}.sh-adm{order:3;position:static!important;transform:none;margin:0 2px}.sh-me{order:4}" +
+    ".adm-box{left:auto!important;right:12px}}" +
     "@media (min-width:720px){.sh-in{display:flex;align-items:center;gap:8px;max-width:1240px;margin:0 auto;padding:0 20px;height:68px}" +
     ".sh-top{display:contents}.sh-logo{order:0;flex:none;margin-right:14px}.sh-logo img{height:38px}" +
     ".sh-nav{order:1;flex:1;min-width:0;margin:0;padding:0;border:0;justify-content:flex-start;gap:2px;overflow-x:auto;scrollbar-width:none}.sh-nav::-webkit-scrollbar{display:none}" +
