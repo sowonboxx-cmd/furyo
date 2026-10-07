@@ -140,7 +140,9 @@ let DATA = null, TYPE = "", TRI = "recent";
 
 const titreS = s => s ? (s.t && s.t === s.t.toUpperCase() && /[A-Z]/.test(s.t) ? s.t : (s.fr || s.t)) : "";
 const ytId = u => { const m = String(u || "").match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m ? m[1] : ""; };
-const card = (f, on) => `<a class="pc${on ? " on" : ""}" href="/films/${esc(f.slug)}">${f.adm ? '<span class="adm-pill" title="Validé, visible seulement par les admins">Admins</span>' : ""}${f.must && !on ? '<span class="star">À voir</span>' : ""}<span class="im">${f.img ? `<img src="${esc(f.img)}" alt="Affiche de ${esc(f.t)}" loading="lazy">` : ""}</span><b>${esc(f.t)}</b><small><span class="ty ${esc(f.type)}"></span>${esc(f.type)}${f.y ? " · " + f.y : ""}${on ? " · tu es ici" : ""}</small></a>`;
+// Affiches en version réduite (redimensionnées et converties par Cloudflare, gardées en cache) : Will, 07/10/2026.
+const aff = (u, w) => !u ? "" : "/api/couv?w=" + w + "&u=" + encodeURIComponent(/^https?:/.test(u) ? u : location.origin + u);
+const card = (f, on) => `<a class="pc${on ? " on" : ""}" href="/films/${esc(f.slug)}">${f.adm ? '<span class="adm-pill" title="Validé, visible seulement par les admins">Admins</span>' : ""}${f.must && !on ? '<span class="star">À voir</span>' : ""}<span class="im">${f.img ? `<img src="${esc(aff(f.img, 400))}" loading="lazy" alt="Affiche de ${esc(f.t)}" loading="lazy">` : ""}</span><b>${esc(f.t)}</b><small><span class="ty ${esc(f.type)}"></span>${esc(f.type)}${f.y ? " · " + f.y : ""}${on ? " · tu es ici" : ""}</small></a>`;
 
 // ---------- Liste : grille d'affiches, onglets par type, tris ----------
 function liste() {
@@ -171,7 +173,7 @@ function fiche(f) {
   const mLien = m && m.on ? `/series/${esc(m.slug)}` : "";
   app.innerHTML = `<nav class="crumb" aria-label="Fil d'Ariane"><a href="/films/">À l'écran</a>›<span aria-current="page">${esc(f.t)}</span></nav>
   <article class="fc">
-    <div class="poster">${f.img ? `<img src="${esc(f.img)}" alt="Affiche de ${esc(f.t)}">` : ""}</div>
+    <div class="poster">${f.img ? `<img src="${esc(aff(f.img, 800))}" alt="Affiche de ${esc(f.t)}">` : ""}</div>
     <div>
       <h1>${esc(f.t)}</h1>${f.jp && f.jp !== f.t ? `<p class="jp" lang="ja">${esc(f.jp)}</p>` : ""}${f.fr && f.fr !== f.t ? `<p class="jp">En France : ${esc(f.fr)}</p>` : ""}
       ${meta ? `<p class="meta">${meta}</p>` : ""}
