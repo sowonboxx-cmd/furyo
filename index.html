@@ -1160,7 +1160,7 @@ getN("/api/avancement").then(a => {
 getN("/api/membres").then(m => {
   const box = document.getElementById("dmb"); if (!m) { box.innerHTML = '<p class="m-note">Rejoins le gang en te connectant avec Google.</p>'; return; }
   const list = (m.items || []).slice().sort((a, b) => new Date(b.inscrit) - new Date(a.inscrit)).slice(0, 6);
-  box.innerHTML = (list.length ? `<div class="dmb-r">${list.map(x => `<a href="${x.slug ? "/communaute/" + encodeURIComponent(x.slug) : "/communaute/"}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((x.pseudo || "?").charAt(0).toUpperCase())}</i>`}<span>${esc2(x.pseudo || "Membre")}</span></a>`).join("")}</div>`
+  box.innerHTML = (list.length ? `<div class="dmb-r">${list.map(x => `<a href="${x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/"}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((x.pseudo || "?").charAt(0).toUpperCase())}</i>`}<span>${esc2(x.pseudo || "Membre")}</span></a>`).join("")}</div>`
     : `<div class="dmb-r">${Array.from({ length: 6 }, () => '<a aria-hidden="true"><i></i><span class="ph"></span></a>').join("")}</div><p class="m-note">${m.total || 0} membres dans le gang. Connecte-toi pour voir qui en fait partie.</p>`) +
     (DT.me && DT.me.user ? "" : '<button type="button" class="dmb-go" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button>');
 });

@@ -1,6 +1,4 @@
-// /communaute/<identifiant> : la page d'un membre (membres-fiche/index.html), qui lit l'identifiant dans l'adresse.
-export async function onRequestGet({ request, env }) {
-  const u = new URL(request.url);
-  u.pathname = "/membres-fiche/";
-  return env.ASSETS.fetch(new Request(u.toString(), request));
+// /communaute/<identifiant> : adresse d'un jour, la page d'un membre est sur /membres/<identifiant> (Will, 07/10/2026).
+export function onRequestGet({ params }) {
+  return new Response(null, { status: 301, headers: { location: "/membres/" + encodeURIComponent(params.slug || "") } });
 }

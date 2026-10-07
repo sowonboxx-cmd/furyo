@@ -181,7 +181,7 @@
   function membres() {
     var m = D.mbr; if (!m) return "";
     var list = (m.items || []).slice().sort(function (a, b) { return new Date(b.inscrit) - new Date(a.inscrit); }).slice(0, 5);
-    var body = list.length ? '<div class="mh-mbr">' + list.map(function (x) { return '<a href="' + (x.slug ? "/communaute/" + encodeURIComponent(x.slug) : "/communaute/") + '">' + (x.photo ? '<img src="' + esc(x.photo) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : "<i>" + esc((x.pseudo || x.nom || "?").charAt(0).toUpperCase()) + "</i>") + "<span>" + esc(x.pseudo || x.nom || "Membre") + "</span></a>"; }).join("") + "</div>"
+    var body = list.length ? '<div class="mh-mbr">' + list.map(function (x) { return '<a href="' + (x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/") + '">' + (x.photo ? '<img src="' + esc(x.photo) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : "<i>" + esc((x.pseudo || x.nom || "?").charAt(0).toUpperCase()) + "</i>") + "<span>" + esc(x.pseudo || x.nom || "Membre") + "</span></a>"; }).join("") + "</div>"
       : '<p class="mh-note">' + (m.total || 0) + " membre" + ((m.total || 0) > 1 ? "s" : "") + " dans le gang. Connecte-toi pour voir qui en fait partie.</p>";
     return '<section class="mh-sec" aria-label="Derniers membres">' + head2("Ils ont rejoint le gang", "Derniers membres", "/communaute/", "Communauté") + body +
       (D.me && D.me.user ? "" : '<button type="button" class="mh-join" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button>') + "</section>";

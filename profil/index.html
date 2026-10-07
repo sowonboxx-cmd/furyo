@@ -24,6 +24,8 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .stats b{display:block;font-family:Antonio,sans-serif;font-size:30px;line-height:1.1}
 .stats span{font-size:12px;color:var(--paper-3)}
 .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.badges [hidden]{display:none!important}
+.bmore{margin-top:10px;width:100%;height:42px;border:0;border-radius:21px;background:var(--ink-3);color:var(--paper);font:inherit;font-weight:700;cursor:pointer}
 .bd{background:var(--ink-2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
 .bd i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-style:normal}
 .bd b{font-size:14px}.bd small{color:var(--paper-3);font-size:12px}
@@ -69,13 +71,12 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
     <h2>Mon pseudo</h2>
     <form class="soc" id="ps">
       <label>Pseudo<input name="pseudo" value="${esc(m.pseudo)}" minlength="3" maxlength="20" placeholder="3 à 20 caractères" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
-      <span class="hint">Ta page publique : <b id="url">furyogang.com/communaute/${esc(m.slug || "…")}</b></span>
+      <span class="hint">Ta page publique : <b id="url">furyogang.com/membres/${esc(m.slug || "…")}</b></span>
       <button>Changer mon pseudo</button><p class="msg" id="pmsg"></p>
     </form>
-    <h2>Classement</h2>
-    <div class="stats"><div><b>${m.num || "—"}</b><span>N° de membre</span></div><div><b>${m.points}</b><span>Points</span></div><div><b>0</b><span>Séries suivies</span></div></div>
     <h2>Badges</h2>
-    <div class="badges">${cat.map(b => FG_BADGES.carte(b, ont.has(b.id))).join("")}</div>
+    ${(() => { const l = cat.slice().sort((a, b) => (ont.has(b.id) ? 1 : 0) - (ont.has(a.id) ? 1 : 0)); // ceux qu'il a d'abord, puis ceux à gagner
+      return `<div class="badges">${l.map((b, i) => FG_BADGES.carte(b, ont.has(b.id)).replace(/^<(\w+)/, `<$1${i >= 4 ? " data-plus hidden" : ""}`)).join("")}</div>${l.length > 4 ? `<button type="button" class="bmore" id="bmore">Voir tous les badges (${l.length})</button>` : ""}`; })()}
     <h2>Mes réseaux</h2>
     <form class="soc" id="soc">
       <label>Instagram<input name="instagram" value="${esc(r.instagram)}" placeholder="ton compte, sans @" autocomplete="off"></label>
@@ -84,8 +85,9 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
       <label class="sw"><input type="checkbox" name="public" ${m.public ? "checked" : ""}><span>Afficher mes réseaux sur la page Membres</span></label>
       <button>Enregistrer</button><p class="msg" id="msg"></p>
     </form>
-    <div class="acts">${m.slug ? `<a href="/communaute/${esc(m.slug)}" class="sec" id="pub">Voir ma page publique</a>` : ""}<a href="/communaute/" class="sec">Voir la communauté</a>${me.admin ? `<a href="/admin/">Ouvrir le back-office</a>` : ""}<button id="out">Se déconnecter</button></div>`;
+    <div class="acts">${m.slug ? `<a href="/membres/${esc(m.slug)}" class="sec" id="pub">Voir ma page publique</a>` : ""}<a href="/communaute/" class="sec">Voir la communauté</a>${me.admin ? `<a href="/admin/">Ouvrir le back-office</a>` : ""}<button id="out">Se déconnecter</button></div>`;
   document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; });
+  const bm = document.getElementById("bmore"); if (bm) bm.onclick = () => { document.querySelectorAll("[data-plus]").forEach(x => x.hidden = false); bm.remove(); };
   document.getElementById("soc").onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target), msg = document.getElementById("msg"); msg.textContent = "Enregistrement…";
     const x = await fetch("/api/profil", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ instagram: f.get("instagram"), x: f.get("x"), discord: f.get("discord"), public: f.get("public") === "on" }) });
     msg.textContent = x.ok ? "Enregistré ✓" : "Erreur, réessaie."; };
@@ -97,8 +99,8 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
     if (!x.ok) { msg.className = "msg err"; msg.textContent = k.error || "Erreur, réessaie."; return; }
     msg.textContent = "Pseudo enregistré ✓";
     document.querySelector(".hero h1").textContent = pseudo;
-    document.getElementById("url").textContent = "furyogang.com/communaute/" + k.slug;
-    const pub = document.getElementById("pub"); if (pub) pub.href = "/communaute/" + k.slug; };
+    document.getElementById("url").textContent = "furyogang.com/membres/" + k.slug;
+    const pub = document.getElementById("pub"); if (pub) pub.href = "/membres/" + k.slug; };
 })();
 </script>
 </body>

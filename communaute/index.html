@@ -103,7 +103,7 @@ const CROWN = '<svg class="crown" viewBox="0 0 24 18" fill="currentColor" aria-h
 const COULEURS = ["#F2B33D", "#E58FA8", "#7FA7C9", "#7BC67E", "#A48CD6", "#E0955F", "#9C978A", "#E5483A"];
 const av = (m, extra = "") => m.photo ? `<span class="av" style="${extra}"><img src="${esc(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>` : `<span class="av" style="background:${COULEURS[(m.num || 0) % COULEURS.length]};${extra}">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
 const mv = d => d === null ? `<span class="mv up" title="Nouveau dans le classement">▲</span>` : d > 0 ? `<span class="mv up" title="${d} place${d > 1 ? "s" : ""} gagnée${d > 1 ? "s" : ""}">▲${d}</span>` : d < 0 ? `<span class="mv dn" title="${-d} place${d < -1 ? "s" : ""} perdue${d < -1 ? "s" : ""}">▼${-d}</span>` : `<span class="mv eq" title="Pas de changement">=</span>`;
-const lien = m => m.slug ? `/communaute/${encodeURIComponent(m.slug)}` : "#";
+const lien = m => m.slug ? `/membres/${encodeURIComponent(m.slug)}` : "#";
 const ONGLETS = [["g", "Général", "BOSS DU GANG", n => `${n} tome${n > 1 ? "s" : ""}`, n => n],
   ["m", "Ce mois-ci", "BOSS DU MOIS", n => `+${n} tome${n > 1 ? "s" : ""} ce mois-ci`, n => "+" + n],
   ["s", "Cette semaine", "BOSS DE LA SEMAINE", n => `+${n} tome${n > 1 ? "s" : ""} cette semaine`, n => "+" + n]];
