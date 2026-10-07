@@ -1,4 +1,5 @@
 // GET /api/series : liste des séries « En ligne · public » (colonne Statut), avec la couverture de leur tome 1 (France d'abord).
+import { toutesEditions } from "../../lib/memo.js";
 import { text, num, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
 import { filtreVisible, filtreApercu, estVisible } from "../../lib/site.js";
 import { isAdmin, json } from "../../lib/admin.js";
@@ -13,17 +14,17 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Aperçu admin : aussi les séries « Validé · admins ». Version à part dans le cache (sinon 5 s à chaque chargement),
   // vidée dès qu'un statut change depuis le back-office ; jamais gardée par le navigateur.
   if (await isAdmin(request, env)) {
-    const r = await cached(request, waitUntil, "/api/series?v=5&admin=1", 300, async () => ({ apercu: true, ...(await build(env, true)) }));
+    const r = await cached(request, waitUntil, "/api/series?v=5&admin=1", 300, async () => ({ apercu: true, ...(await build(env, true, waitUntil)) }));
     return new Response(r.body, { status: r.status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "private, no-store" } });
   }
-  return cached(request, waitUntil, "/api/series?v=5", 600, () => build(env, false));
+  return cached(request, waitUntil, "/api/series?v=5", 600, () => build(env, false, waitUntil));
 }
 
-async function build(env, admin) {
+async function build(env, admin, waitUntil) {
   {
     const [sRows, eRows, tRows] = await Promise.all([
       queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: admin ? filtreApercu() : filtreVisible() } }),
-      queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
+      toutesEditions(env, waitUntil),
       // Seulement les tomes 0 et 1 avec une couverture : la base Tomes dépasse 7 000 lignes (07/10/2026),
       // les lire toutes faisait plus de 70 requêtes Notion et la liste ne se construisait plus.
       queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { property: "N°", number: { less_than_or_equal_to: 1 } }, sorts: [{ property: "N°", direction: "ascending" }] } }),

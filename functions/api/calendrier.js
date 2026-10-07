@@ -1,5 +1,6 @@
 // GET /api/calendrier : tomes à paraître (et sortis depuis 45 jours) avec pays, éditeur, série et couverture.
 // Sources Notion : Tomes → Édition (pays, éditeur) → Série (titres, visuel).
+import { toutesEditions } from "../../lib/memo.js";
 import { text, num, date, rel, queryAll, cached } from "../../lib/notion.js";
 import { isAdmin } from "../../lib/admin.js";
 import { estVisible, filtreVisible } from "../../lib/site.js";
@@ -11,8 +12,10 @@ const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Will connecté : calendrier reconstruit tout de suite (nouvelles couvertures, dates validées).
-  if (await isAdmin(request, env).catch(() => false)) request = new Request(new URL(request.url.replace(/[?&]refresh(=[^&]*)?/, "") + (request.url.includes("?") ? "&" : "?") + "refresh=1"), request);
-  return cached(request, waitUntil, "/api/calendrier", 600, async () => {
+  // Admin : on sert la version prête tout de suite et on la reconstruit en arrière-plan si elle a plus de 30 s
+  // (avant, chaque chargement admin attendait Notion : 6 s).
+  const admin = await isAdmin(request, env).catch(() => false);
+  return cached(request, waitUntil, "/api/calendrier", admin ? 30 : 600, async () => {
     // Fenêtre normale : 45 derniers jours. TEST (oct. 2026) : on affiche aussi depuis le 1er juillet pour vérifier les couvertures ; supprimer SHOW_FROM pour revenir à la normale.
     const SHOW_FROM = "2026-07-01";
     const d45 = new Date(Date.now() - 45 * 864e5).toISOString().slice(0, 10);
@@ -25,7 +28,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
         ] },
         sorts: [{ property: "Date de sortie", direction: "ascending" }],
       } }),
-      queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
+      toutesEditions(env, waitUntil),
       // Seulement les séries « En ligne · public » : les éditions et tomes référencés pour la bibliothèque (séries pas encore
       // validées) ne doivent pas apparaître dans le calendrier (Will, 06/10/2026).
       queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: filtreVisible() } }),

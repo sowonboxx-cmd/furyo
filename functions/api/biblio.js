@@ -3,6 +3,7 @@
 // une édition, même si sa fiche n'est pas encore en ligne (« fiche » dit si le lien « Voir la fiche » existe).
 //   GET /api/biblio          → { items: [{ id, t, fr, jp, slug, cover, genres, type, y1, pays, fiche }] }
 //   GET /api/biblio?id=<id>  → { serie, editions: [{ id, nom, pays, pub, label, nb, statut, tomes: [{ id, n, date, cover, paru }] }] }
+import { toutesEditions } from "../../lib/memo.js";
 import { text, num, date, rel, list, queryAll, cached, slugSerie } from "../../lib/notion.js";
 import { estVisible } from "../../lib/site.js";
 
@@ -15,10 +16,10 @@ const PAYS_ORDRE = p => (p === "France" ? 0 : 1);
 // Les éditions marquées « [À SUPPRIMER] » dans Notion ne comptent pas.
 const ok = e => !/^\[À SUPPRIMER\]/i.test(text(e.properties["Édition"]));
 
-async function catalogue(env) {
+async function catalogue(env, waitUntil) {
   const [sRows, eRows, t1] = await Promise.all([
     queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: { property: "Éditions", relation: { is_not_empty: true } } } }),
-    queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
+    toutesEditions(env, waitUntil),
     queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { property: "N°", number: { equals: 1 } } } }),
   ]);
   const cov = {};
@@ -65,5 +66,5 @@ export async function onRequestGet({ env, request, waitUntil }) {
     if (!/^[0-9a-f]{32}$/.test(id)) return json({ error: "série inconnue" }, 400);
     return cached(request, waitUntil, "/api/biblio?v=2&id=" + id, 120, () => detail(env, id));
   }
-  return cached(request, waitUntil, "/api/biblio?v=2", 600, () => catalogue(env));
+  return cached(request, waitUntil, "/api/biblio?v=2", 600, () => catalogue(env, waitUntil));
 }
