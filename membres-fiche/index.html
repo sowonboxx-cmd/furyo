@@ -88,7 +88,7 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .vid{color:var(--paper-3);font-size:14px;background:var(--ink-2);border-radius:16px;padding:16px;text-align:center}
 .h2r{display:flex;justify-content:space-between;align-items:baseline}.h2r a{font-size:12.5px;color:var(--paper-3);text-decoration:none;font-weight:600;text-transform:none;letter-spacing:0}
 /* Mise en page D1 (Will, 07/10/2026) : carte de profil à gauche, collection / activité / badges à droite, tout encadré en noir */
-main{max-width:1080px}
+main{max-width:1240px;padding-left:20px;padding-right:20px}
 .d1{display:flex;flex-direction:column;gap:14px}
 .rcol{display:flex;flex-direction:column;gap:14px;min-width:0}
 .duo2{display:flex;flex-direction:column;gap:14px}
@@ -113,6 +113,12 @@ main{max-width:1080px}
 .card .bd{background:#1C1C1E}
 .card .links a,.card .links span{background:#1C1C1E}
 .adm{padding:0!important}
+/* Badges en petites pastilles, explication au survol (Will, 07/10/2026) */
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{position:relative;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px 0 8px;border-radius:15px;background:color-mix(in srgb,var(--c) 18%,#000);color:var(--c);font:700 12.5px Inter,sans-serif;cursor:default;outline:none}
+.pill svg{width:15px;height:15px}
+.pill .tip{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:max-content;max-width:220px;background:#F5F5F7;color:#111;font:600 12px/1.4 Inter,sans-serif;padding:7px 10px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .15s;z-index:5;text-align:center}
+.pill:hover .tip,.pill:focus .tip{opacity:1}
 .acts{margin-top:0!important}
 @media (min-width:980px){
   .d1{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start}
@@ -138,7 +144,7 @@ const app = document.getElementById("app");
 let M, CAT = [], ADMIN = false, PF = null, NEWS = {}, SER = {};
 const CROWN = '<svg viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M2 5l5 4 5-7 5 7 5-4-2 11H4z"/></svg>';
 const slugN = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-const quand = d => { const m = (Date.now() - new Date(d)) / 6e4; return m < 60 ? `il y a ${Math.max(1, Math.round(m))} min` : m < 1440 ? `il y a ${Math.round(m / 60)} h` : m < 2880 ? "hier" : `il y a ${Math.round(m / 1440)} jours`; };
+const quand = d => { if (!d) return ""; const m = (Date.now() - new Date(d)) / 6e4; return m < 60 ? `il y a ${Math.max(1, Math.round(m))} min` : m < 1440 ? `il y a ${Math.round(m / 60)} h` : m < 2880 ? "hier" : `il y a ${Math.round(m / 1440)} jours`; };
 function activite(l) {
   if (!l || !l.length) return `<p class="vid">Pas encore d'activité.</p>`;
   return `<div class="actl">${l.slice(0, 12).map(a => {
@@ -157,7 +163,7 @@ function draw() {
   const ont = new Set(m.badges.map(b => b.id)), fixes = new Set(m.badges.filter(b => b.fixe).map(b => b.id));
   const P = PF || {}, rang1 = P.rang === 1;
   const avt = m.photo ? `<img class="avt" src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">` : `<span class="avt" style="background:#F2B33D">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
-  const covs = P.recents && P.recents.length ? `<div class="covs">${P.recents.map(t => `<a class="cv" href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + " · " + t.nb + " tome" + (t.nb > 1 ? "s" : ""))}"><i>${t.cover ? `<img src="/api/couv?w=300&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}<em>${t.nb}</em></i><b>${esc(t.titre || "")}</b></a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`;
+  const covs = P.recents && P.recents.length ? `<div class="covs">${P.recents.map(t => `<a class="cv" href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + (t.seul ? " · tome " + t.n : " · " + t.nb + " tome" + (t.nb > 1 ? "s" : "")))}"><i>${t.cover ? `<img src="/api/couv?w=300&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}<em>${t.seul ? "T." + t.n : t.nb}</em></i><b>${esc(t.titre || "")}</b></a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`;
   const stats = [[P.tot, "Tomes", "var(--paper)"], [P.fr, "FR", "#4C7BD9"], [P.jp, "JP", "var(--red)"], [P.abonnes, "Abonné" + (P.abonnes > 1 ? "s" : ""), "var(--gold)"]];
   app.innerHTML = `<div class="d1">
     <aside class="pcard${rang1 ? " or" : ""}"><section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avt}<h1>${esc(m.pseudo || "Membre")}</h1>
@@ -165,11 +171,11 @@ function draw() {
       ${PF && !P.moi ? `<button class="fbtn" id="suivre" aria-pressed="${!!P.on}">${P.on ? "Suivi" : "Suivre"}</button>` : ""}</section>
       ${PF ? `<div class="st4">${stats.map(([n, l, c]) => `<div><b style="color:${c}">${n}</b><span>${l}</span></div>`).join("")}</div>` : ""}</aside>
     <div class="rcol">
-      ${PF ? `<section class="card"><h2 class="h2r">Collection<a href="${P.moi ? "/ma-collection/" : "#"}">${P.recents.length} série${P.recents.length > 1 ? "s" : ""}${P.moi ? " · Ma collection →" : ""}</a></h2>${covs}</section>` : ""}
+      ${PF ? `<section class="card"><h2 class="h2r">Collection<a href="${P.moi ? "/ma-collection/" : "#"}">${P.series} série${P.series > 1 ? "s" : ""}${P.moi ? " · Ma collection →" : ""}</a></h2>${covs}</section>` : ""}
       <div class="duo2">
         ${PF ? `<section class="card"><h2>Activité</h2>${activite(P.activite)}</section>` : ""}
         <div class="rcol">
-          <section class="card"><h2>Badges</h2>${m.badges.length ? `<div class="badges">${m.badges.map(b => FG_BADGES.carte(b, true)).join("")}</div>` : `<p class="vid">Pas encore de badge.</p>`}</section>
+          <section class="card"><h2>Badges</h2>${m.badges.length ? `<div class="pills">${m.badges.map(b => `<span class="pill" tabindex="0" style="--c:${b.c}">${FG_BADGES.icone(b)}${esc(b.n)}${b.d ? `<span class="tip">${esc(b.d)}</span>` : ""}</span>`).join("")}</div>` : `<p class="vid">Pas encore de badge.</p>`}</section>
           ${liens.length ? `<section class="card"><h2>Réseaux</h2><div class="links">${liens.join("")}</div></section>` : ""}
         </div>
       </div>
@@ -211,7 +217,7 @@ function draw() {
   document.title = `${M.pseudo} · Communauté FuryoGang`;
   draw();
   // Chiffres, collection et activité (Communauté), puis titres des news et des séries citées.
-  const pf = await fetch("/api/communaute?id=" + M.id).then(r => r.ok ? r.json() : null).catch(() => null);
+  const pf = await fetch("/api/communaute?id=" + M.id + "&s=" + encodeURIComponent(M.slug || "")).then(r => r.ok ? r.json() : null).catch(() => null);
   if (pf && pf.ok) { PF = pf; draw();
     const [nw, bb] = await Promise.all([
       pf.activite.some(a => a.k !== "a") ? fetch("/api/news?v=8").then(r => r.json()).catch(() => ({})) : {},
