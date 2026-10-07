@@ -702,6 +702,65 @@ body{font-size:16px}
 .cf-auth{font-size:17px}.cf-f .k{font-size:12px}.cf-f .v{font-size:16px}.cf-pos{font-size:15px}
 .s-res .sj{font-size:13.5px}.result{font-size:13px}
 @media (max-width:560px){.mt-d{font-size:15.5px}.cf-syn{font-size:16.5px}}
+/* Fiche d'une œuvre ouverte depuis la carte : une vraie page, comme les fiches séries du site (Will, 07/10/2026).
+   En-tête du site au-dessus, titre CROWS × WORST, bloc principal noir, infos en cases, puis « Sur la fiche complète ». */
+body.cf-open .sh{position:fixed;left:0;right:0;top:0;z-index:130}
+.cv-modal.cfp{position:fixed;inset:var(--sh-h,64px) 0 0 0;z-index:120;display:block;padding:0;background:var(--ink);overflow:auto;overscroll-behavior:contain;cursor:default;--cf-tile:#1C1C1E}
+:root[data-fyg-light] .cv-modal.cfp{--cf-tile:#F2F2F5}
+.cfp .cf{width:auto;max-width:1240px;max-height:none;margin:0 auto;padding:18px 20px 48px;border-radius:0;background:transparent;overflow:visible;box-sizing:border-box}
+.cfp .cf-hd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px}
+.cfp .cf-brand{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(38px,9vw,84px);line-height:.9;letter-spacing:.01em;color:var(--paper);cursor:pointer;background:none;border:0;padding:0;display:inline-flex;align-items:center}
+.cfp .cf-brand .x{display:inline-flex;align-items:center;height:.72em;font-size:.62em;padding-inline:.1em;color:var(--red);transform:translateY(-.07em)}
+.cfp .cf-back{flex:none;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border:0;border-radius:20px;background:var(--ink-3);color:var(--paper);font:600 14px var(--f-body);cursor:pointer}
+.cfp .cf-head{display:grid;grid-template-columns:260px minmax(0,1fr);gap:32px;align-items:start;padding:32px;border-radius:24px;background:var(--ink-2)}
+.cfp .cf-cover{width:100%;aspect-ratio:var(--ar,5/7);border-radius:14px}
+.cfp .cf-main{display:flex;flex-direction:column;gap:10px;min-width:0;padding:0}
+.cfp .cf-pos{font:600 13px var(--f-body);color:var(--paper-3)}
+.cfp .cf-t{margin:0;font:700 64px/1 var(--f-display);text-transform:uppercase;letter-spacing:.01em;color:var(--paper);display:block;-webkit-line-clamp:unset;overflow:visible}
+.cfp .cf-jp{font:700 18px "Noto Sans JP",sans-serif;color:var(--paper-2);margin-top:-4px}
+.cfp .cf-cred{margin:6px 0 0;font:500 17px/1.4 var(--f-body);color:var(--paper-3)}
+.cfp .cf-cred b{color:var(--paper);font-weight:600;margin-left:6px}
+.cfp .cf-cred i{font-style:normal;margin:0 6px}
+.cfp .cf-st{display:flex;flex-direction:column;gap:6px;font:500 16px var(--f-body);color:var(--paper-2)}
+.cfp .cf-st>span{display:flex;align-items:flex-start;gap:9px}.cfp .cf-st .flag{margin-top:3px}
+.cfp .cf-st .flag{width:20px;height:14px;border-radius:2px;flex:none}
+.cfp .cf-st b{font-weight:600;color:var(--paper)}.cfp .cf-st b.on{color:#4CD07D}
+.cfp .cf-syn{margin:8px 0 0;font:500 16.5px/1.6 var(--f-body);color:var(--read,#D8D8DC);max-width:72ch}
+.cfp .cf-act{margin-top:12px}
+.cfp .cf-box{margin-top:12px;padding:18px;border-radius:22px;background:var(--ink-2)}
+.cfp .cf-box h3{margin:0 0 14px;font:700 26px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em;color:var(--paper)}
+.cfp .cf-facts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:0}
+.cfp .cf-f{gap:6px;padding:16px 18px;border-radius:16px;background:var(--cf-tile)}
+.cfp .cf-f .k{font:700 11px var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--paper-3)}
+.cfp .cf-f .v{font:600 15.5px/1.35 var(--f-body);color:var(--paper)}
+.cfp .cf-sm{display:none}
+.cfp .cf-tz{border:0;padding:18px}
+.cfp .cf-tzh{margin-bottom:14px}.cfp .cf-tzh h3{margin:0}
+.cfp .cf-smb{display:none}
+.cfp .cf-tzc{background:var(--cf-tile)}
+@media (max-width:1100px){.cfp .cf-facts{grid-template-columns:repeat(3,minmax(0,1fr))}.cfp .cf-t{font-size:52px}}
+@media (max-width:699px){
+  .cfp .cf{padding:12px 16px 32px}
+  .cfp .cf-hd{margin-bottom:12px}
+  .cfp .cf-back{height:36px;padding:0 13px;font-size:13px}
+  .cfp .cf-head{grid-template-columns:116px minmax(0,1fr);gap:16px;padding:14px;border-radius:20px}
+  .cfp .cf-cover{border-radius:10px}
+  .cfp .cf-main{gap:6px}
+  .cfp .cf-pos{font-size:11.5px}
+  .cfp .cf-t{font-size:30px;line-height:1.02;overflow-wrap:anywhere}
+  .cfp .cf-jp{font-size:14px;margin-top:-2px}
+  .cfp .cf-cred{font-size:14px;margin-top:2px}.cfp .cf-cred b{margin-left:4px}
+  .cfp .cf-st{font-size:13.5px;gap:4px}.cfp .cf-st .flag{width:17px;height:12px}
+  .cfp .cf-main .cf-syn,.cfp .cf-act{display:none!important}
+  .cfp .cf-smb{display:block}.cfp .cf-tz{padding:12px}
+  .cfp .cf-sm{display:block;margin:0;font:500 15px/1.6 var(--f-body);color:var(--read,#D8D8DC)}
+  .cfp .cf-act2:not([hidden]){display:block;margin-top:12px}
+  .cfp .cf-box{padding:12px;border-radius:18px;margin-top:10px}
+  .cfp .cf-box h3{font-size:22px;margin:4px 4px 12px}
+  .cfp .cf-facts{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .cfp .cf-f{padding:12px 14px;border-radius:14px}
+  .cfp .cf-f .k{font-size:10.5px}.cfp .cf-f .v{font-size:14.5px}
+}
 </style>
 </head>
 <body>
@@ -1364,32 +1423,33 @@ const CF_CACHE = {};
 let CF = null; // { w, data, pays }
 function cfHTML(w){
   const era = DATA.eras[w.era], live = isLive(w), pos = positions(DATA.works)[w.id];
-  const pills = [`<span class="pill type">${esc(w.type)}</span>`, live ? `<span class="pill st-on">En cours</span>` : `<span class="pill st-end">${esc(w.stJP || "Terminé")}</span>`].join("");
-  const authors = w.story === w.art ? `<span>Auteur</span> ${esc(w.story)}` : `<span>Histoire</span> ${esc(w.story)} · <span>Dessin</span> ${esc(w.art)}`;
-  const facts = [
-    ...(w.story === w.art ? [["Auteur", w.story]] : [["Histoire", w.story], ["Dessin", w.art]]),
-    ["Magazine", w.mag], ["Parution", w.years], ["Tomes (Japon)", w.volText],
-    ["Édition française", frLabel(w)], ["Personnages", w.focus], ["Statut au Japon", w.stJP]
-  ].filter(f => f[1]).map(f => `<div class="cf-f"><span class="k">${f[0]}</span><span class="v">${esc(f[1])}</span></div>`).join("");
+  const cred = w.story === w.art ? `Auteur :<b>${esc(w.story)}</b>` : `Histoire :<b>${esc(w.story)}</b><i>·</i>Dessin :<b>${esc(w.art)}</b>`;
+  const yrs = (w.years || "").replace(/\s*[–-]\s*/, "-");
+  const jpLine = [w.volText ? `${esc(w.volText)} tome${/^1$/.test(String(w.volText)) ? "" : "s"}` : "", live ? `<b class="on">En cours</b>` : `<b>${esc(w.stJP || "Terminé")}${yrs ? ` (${esc(yrs)})` : ""}</b>`].filter(Boolean).join(" · ");
+  const frLine = hasFr(w) ? [w.volFr != null ? `${w.volFr} tome${w.volFr > 1 ? "s" : ""}` : "", w.stFR ? `<b${/cours/i.test(w.stFR) ? ' class="on"' : ""}>${esc(w.stFR)}</b>` : ""].filter(Boolean).join(" · ") : "Non licencié en France";
+  // Infos : histoire et dessin sont déjà en haut, pas de personnages (Will, 07/10/2026)
+  const facts = [["Magazine", w.mag], ["Parution", w.years], ["Tomes (Japon)", w.volText], ["Édition française", frLabel(w)], ["Statut au Japon", w.stJP || (live ? "En cours" : "")]]
+    .filter(f => f[1]).map(f => `<div class="cf-f"><span class="k">${f[0]}</span><span class="v">${esc(f[1])}</span></div>`).join("");
   const jpShort = (w.jp || "").replace(/^(クローズ外伝|WORST外伝)\s*/, "").replace(/[\x00-\x7F]+/g, "").slice(0, 6) || era.kanji;
   return `<article class="cf" style="--era:${eraColor(era.k)};--st:var(${live ? "--cv-live" : "--cv-end"})" aria-label="${esc(w.t)}">
-    <button class="cf-x" data-cf-close aria-label="Fermer la fiche"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-    <div class="cf-top">
-      <div class="cf-cover" data-zoom="${w.id}" title="Agrandir la couverture">${w.img ? `<img src="${esc(w.img)}" alt="Couverture de ${esc(w.t)}" referrerpolicy="no-referrer" onerror="this.remove()">` : `<span class="ph" lang="ja">${esc(jpShort)}</span>`}</div>
+    <div class="cf-hd"><button type="button" class="cf-brand" data-cf-home aria-label="Retour à l'accueil CROWS × WORST">CROWS<span class="x">×</span>WORST</button>
+      <button type="button" class="cf-back" data-cf-close><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Carte</button></div>
+    <div class="cf-head">
+      <div class="cf-cover" data-zoom="${w.id}" title="Agrandir la couverture">${w.img ? `<img src="${esc(w.img)}" alt="Couverture de ${esc(w.t)}" referrerpolicy="no-referrer" onload="this.naturalWidth&&this.parentNode.style.setProperty('--ar',this.naturalWidth/this.naturalHeight)" onerror="this.remove()">` : `<span class="ph" lang="ja">${esc(jpShort)}</span>`}</div>
       <div class="cf-main">
-        <span class="cf-pos">${pos ? `#<b>${pos}</b>` : "Hors chrono"} · ${esc(era.name)}</span>
+        <span class="cf-pos">${pos ? `#${pos}` : "Hors chrono"} · ${esc(era.name)}</span>
         <h2 class="cf-t">${esc(w.t)}</h2>
         ${w.jp && w.jp !== w.t ? `<span class="cf-jp" lang="ja">${esc(w.jp)}</span>` : ""}
-        <span class="cf-auth">${authors}</span>
-        <div class="pills">${pills}</div>
+        <p class="cf-cred">${cred}</p>
+        <div class="cf-st"><span>${CF_FLAGS.Japon}<span>${jpLine}</span></span><span>${CF_FLAGS.France}<span>${frLine}</span></span></div>
         ${w.syn ? `<p class="cf-syn">${esc(w.syn)}</p>` : ""}
         <div class="cf-act" id="cfAct" hidden></div>
       </div>
     </div>
-    ${w.syn ? `<p class="cf-sm">${esc(w.syn)}</p>` : ""}
+    ${w.syn ? `<div class="cf-box cf-smb"><p class="cf-sm">${esc(w.syn)}</p></div>` : ""}
     <div class="cf-act2" id="cfAct2" hidden></div>
-    <div class="cf-facts">${facts}</div>
-    <section class="cf-tz" id="cfTz" hidden></section>
+    <div class="cf-box"><h3>Infos</h3><div class="cf-facts">${facts}</div></div>
+    <section class="cf-box cf-tz" id="cfTz" hidden></section>
   </article>`;
 }
 async function cfLoad(w){
@@ -1437,11 +1497,11 @@ async function cfLoad(w){
 function cvOpenCard(id){
   const w = DATA.works.find(x => String(x.id) === String(id)); if (!w) return;
   cvCloseCard();
-  const m = document.createElement("div"); m.className = "cv-modal"; m.id = "cvModal";
+  const m = document.createElement("div"); m.className = "cv-modal cfp"; m.id = "cvModal";
   m.innerHTML = cfHTML(w); CF = { w, data: null, pays: "France" };
-  CV.el.appendChild(m); cfLoad(w);
+  CV.el.appendChild(m); document.body.classList.add("cf-open"); m.scrollTop = 0; cfLoad(w);
 }
-function cvCloseCard(){ const m = document.getElementById("cvModal"); if (m) m.remove(); CF = null; }
+function cvCloseCard(){ const m = document.getElementById("cvModal"); if (m) m.remove(); CF = null; document.body.classList.remove("cf-open"); }
 // Déplacement à la souris (un vrai glisser n'ouvre pas de fiche)
 let cvDrag = null, cvMoved = false;
 const cvPts = new Map(); let cvPinch = null; // doigts posés (téléphone) : deux doigts = zoom
@@ -1480,7 +1540,8 @@ CV.el.addEventListener("click", e => {
   if (cvMoved) { e.stopPropagation(); e.preventDefault(); cvMoved = false; return; }
   const modal = e.target.closest(".cv-modal");
   if (modal) {
-    if (!e.target.closest(".cf") || e.target.closest("[data-cf-close]")) { e.stopPropagation(); cvCloseCard(); return; }
+    if (e.target.closest("[data-cf-home]")) { e.stopPropagation(); cvClose(); scrollTo(0, 0); return; }
+    if (e.target.closest("[data-cf-close]")) { e.stopPropagation(); cvCloseCard(); return; }
     if (e.target.closest("[data-zoom]")) return; // la lightbox du site s'en charge
     e.stopPropagation();
     return;
