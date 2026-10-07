@@ -13,8 +13,9 @@ const nid = id => id.replace(/-/g, "");
 
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
-  // La réponse publique passe par le cache ; celle d'un admin jamais.
-  if (await isAdmin(request, env)) return json({ admin: true, ...(await build(env, request, true)) });
+  // Admin : sa version (avec les films « Validé · admins ») est gardée à part, servie tout de suite et reconstruite
+  // en arrière-plan si elle a plus de 30 s (avant, chaque chargement admin attendait Notion). Will, 07/10/2026.
+  if (await isAdmin(request, env)) return cached(request, waitUntil, "/api/films?v=3&admin=1", 30, async () => ({ admin: true, ...(await build(env, request, true)) }));
   return cached(request, waitUntil, "/api/films?v=3", 600, () => build(env, request, false));
 }
 

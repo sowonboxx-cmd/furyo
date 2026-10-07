@@ -20,8 +20,9 @@ const MAG_LINK = {
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
-  if (await isAdmin(request, env).catch(() => false)) request = new Request(new URL(request.url.replace(/[?&]refresh(=[^&]*)?/, "") + (request.url.includes("?") ? "&" : "?") + "refresh=1"), request);
-  return cached(request, waitUntil, "/api/prepub", 300, async () => {
+  // Admin : version prête servie tout de suite, reconstruite en arrière-plan si elle a plus de 30 s (Will, 07/10/2026 : vitesse).
+  const admin = await isAdmin(request, env).catch(() => false);
+  return cached(request, waitUntil, "/api/prepub", admin ? 30 : 300, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...PREPUB, body: {
       filter: { property: "Validé", checkbox: { equals: true } },
       sorts: [{ property: "Date de sortie", direction: "descending" }],

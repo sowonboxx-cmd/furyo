@@ -144,6 +144,6 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (admin) return new Response(JSON.stringify({ synced: new Date().toISOString(), ...(await build()) }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
   // Avant le lancement, quand l'administrateur ouvre une fiche, on la reconstruit tout de suite et on met à jour
   // le cache de sa région (le cache Cloudflare est propre à chaque centre de données) : il voit toujours la dernière version.
-  const req = estAdmin ? new Request(new URL(request.url.replace(/[?&]refresh(=[^&]*)?/, "") + (request.url.includes("?") ? "&" : "?") + "refresh=1"), request) : request;
-  return cached(req, waitUntil, "/api/serie?s=" + slug, 900, build);
+  // Admin : la fiche prête est servie tout de suite et reconstruite en arrière-plan si elle a plus de 30 s (Will, 07/10/2026).
+  return cached(request, waitUntil, "/api/serie?s=" + slug, estAdmin ? 30 : 900, build);
 }
