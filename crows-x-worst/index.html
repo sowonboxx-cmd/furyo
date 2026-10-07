@@ -737,6 +737,8 @@ body.cf-open .sh{position:fixed;left:0;right:0;top:0;z-index:130}
 .cfp .cf-tz{border:0;padding:18px}
 .cfp .cf-tzh{margin-bottom:14px}.cfp .cf-tzh h3{margin:0}
 .cfp .cf-smb{display:none}
+/* Ordinateur : pas de « Sur la fiche complète », le bouton « Voir la fiche complète » suffit (Will, 07/10/2026) */
+@media (min-width:700px){.cfp .cf-tz{display:none!important}}
 .cfp .cf-tzc{background:var(--cf-tile)}
 @media (max-width:1100px){.cfp .cf-facts{grid-template-columns:repeat(3,minmax(0,1fr))}.cfp .cf-t{font-size:52px}}
 @media (max-width:699px){
