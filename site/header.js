@@ -95,8 +95,9 @@
     ".sh-btn{position:static;transform:none;flex:none}.sh-search{order:1;margin-right:auto}.sh-adm{order:3;position:static!important;transform:none;margin:0 2px}.sh-me{order:4}" +
     ".adm-box{left:auto!important;right:12px}" +
     /* Onglets du téléphone : Actualités, Séries, Calendrier, Ma collection, puis ☰ pour le reste (À l'écran, Mangakas…). */
-    ".sh-nav a.sh-m0{display:none!important}.sh-nav a.sh-d{display:flex!important}.sh-nav a{flex:auto!important;padding:0 6px!important;font-size:16px!important}" +
-    ".sh-plus{flex:none;width:44px;height:40px;border:0;border-radius:10px;background:transparent;color:#8E8E93;display:grid;place-items:center;cursor:pointer}.sh-plus[aria-expanded=true]{background:#38383B;color:#F5F5F7}" +
+    ".sh-nav a.sh-m0{display:none!important}.sh-nav a.sh-d{display:flex!important}.sh-nav a{flex:1 1 auto!important;min-width:0;padding:0 4px!important;font-size:15.5px!important}" +
+    ".sh-plus{flex:none;align-self:stretch;width:44px;margin-left:6px;margin-right:-4px;border:0;padding:0;background:transparent!important;color:#F5F5F7;display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent}" +
+    ".sh-plus .x{display:none}.sh-plus[aria-expanded=true] .x{display:block}.sh-plus[aria-expanded=true] .b{display:none}" +
     ".sh-more{margin:-4px 12px 10px;padding:6px;background:#000;border-radius:14px;display:grid;grid-template-columns:1fr 1fr;gap:4px}.sh-more[hidden]{display:none}" +
     ".sh-more a{height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#CFCFD4;font:700 16px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em;background:#1C1C1E}.sh-more a[aria-current=page]{background:#38383B;color:#F5F5F7}}" +
     "@media (min-width:720px){.sh-plus,.sh-more{display:none!important}}" +
@@ -166,7 +167,7 @@
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
     '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("ecran", "/films/", "À l'écran", 0, 0, "sh-m0") + a("cal", "/calendrier/", "Calendrier") +
 a("col", "/ma-collection/", "Ma collection", 1) +
-    '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
+    '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><svg class="b" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
     "</nav>" +
     '<div class="sh-more" id="sh-more" hidden>' + a("ecran", "/films/", "À l'écran") + a("mk", "/auteurs/", "Mangakas") + a("cm", "/communaute/", "Communauté") + a("cxw", "/crows-x-worst/", "Crows × Worst") + "</div>" +
     "</div></header>";
