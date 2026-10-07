@@ -1,6 +1,8 @@
 // GET /api/couv?u=<url de la couverture officielle>
-// Sert la couverture d'un tome depuis le site de l'éditeur, gardée en cache chez Cloudflare (7 jours) :
-// l'image reste affichée même si l'éditeur bloque l'affichage depuis un autre site.
+// Sert la couverture d'un tome. Depuis le 07/10/2026, chaque couverture est copiée une fois dans le stockage R2
+// de FuryoGang (bucket « furyogang-couvertures », liaison COUV), puis servie depuis chez nous : le site ne dépend plus
+// des serveurs des éditeurs (lenteur, image supprimée, blocage). Clé R2 = SHA-256 de l'adresse d'origine.
+// Les vignettes (&w=) sont fabriquées à partir de la copie R2 (adresse /couv/<clé>) et gardées en cache.
 // Seuls les sites officiels sont relayés ; une autre adresse est simplement redirigée.
 const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","kazemanga.fr","crunchyroll-editions.fr","mangetsu-manga.fr","anime-store.fr","meian-editions.fr","akitashoten.co.jp","bookwalker.jp","kodansha.co.jp","shogakukan.co.jp","shueisha.co.jp","hakusensha.co.jp","kadokawa.co.jp","nihonbungeisha.co.jp","shonengahosha.co.jp","ebookjapan.yahoo.co.jp","cmoa.jp","bigcomicbros.net","championcross.jp","shonenjumpplus.com","comicvine.gamespot.com","yanmaga.jp","kana.fr","pika.fr","ki-oon.com","glenat.com","meian.fr","akata.fr","kurokawa.fr","panini.fr","mangetsu.fr","nabanco.com","vega-dupuis.com","delcourt.fr","doki-doki.fr","soleil.fr","notion.so","notion-static.com","amazonaws.com","furyo.pages.dev","furyogang.com"];
 // Images « NOW PRINTING » / « 画像準備中 » connues (empreinte SHA-256) : ce ne sont pas des couvertures.
@@ -33,7 +35,7 @@ const dims = buf => { const b = new Uint8Array(buf), n = b.length;
   return [0, 0]; };
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 
-export async function onRequestGet({ request, waitUntil }) {
+export async function onRequestGet({ request, env, waitUntil }) {
   const self = new URL(request.url);
   // ?check=1 : vérifie l'image sans la servir (utilisé par la tâche des couvertures).
   if (self.searchParams.has("check")) {
@@ -50,33 +52,44 @@ export async function onRequestGet({ request, waitUntil }) {
   if (t.protocol !== "https:" && t.protocol !== "http:") return new Response("u invalide", { status: 400 });
   if (!OFFICIELS.some(h => t.hostname === h || t.hostname.endsWith("." + h))) return Response.redirect(t.href, 302);
   const cache = caches.default, key = new Request(self.origin + "/api/couv?u=" + encodeURIComponent(t.href));
-  // &w=360 : version réduite (vignettes), en AVIF ou WebP si le navigateur les accepte.
-  // Utilise le redimensionnement d'images de Cloudflare (Images → Transformations) ; s'il n'est pas activé,
-  // on sert simplement l'image d'origine.
+  const rk = hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t.href)));
+  // &w=360 : version réduite (vignettes), en AVIF ou WebP si le navigateur les accepte (Images → Transformations).
   const w = Math.min(1200, Math.max(0, parseInt(self.searchParams.get("w") || "0", 10) || 0));
   const acc = request.headers.get("accept") || "", fmt = /image\/avif/.test(acc) ? "avif" : /image\/webp/.test(acc) ? "webp" : "";
   const key2 = w ? new Request(key.url + "&w=" + w + "&f=" + (fmt || "o")) : null;
   if (key2) { const h2 = await cache.match(key2); if (h2) return h2; }
-  let orig = await cache.match(key);
+  const IMMUABLE = "public, max-age=2592000";
+  let orig = null, enR2 = false;
+  if (env.COUV) {
+    const o = await env.COUV.get(rk).catch(() => null);
+    if (o) { orig = new Response(o.body, { headers: { "content-type": o.httpMetadata?.contentType || "image/jpeg", "cache-control": IMMUABLE, "x-couv": "r2" } }); enR2 = true; }
+  }
+  if (!orig) orig = await cache.match(key);
   if (!orig) {
     const r = await fetch(t.href, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" } });
     const buf = r.ok ? await r.arrayBuffer() : null, ct = buf ? sniff(buf) : "";
     if (!ct) return Response.redirect(t.href, 302);
-    if (PLACEHOLDERS.has(hex(await crypto.subtle.digest("SHA-256", buf)))) return new Response("Couverture provisoire", { status: 404 });
-    orig = new Response(buf, { headers: { "content-type": ct, "cache-control": "public, max-age=604800" } });
-    waitUntil(cache.put(key, orig.clone()));
+    if (PLACEHOLDERS.has(hex(await crypto.subtle.digest("SHA-256", buf))) || buf.byteLength < 3000) return new Response("Couverture provisoire", { status: 404 });
+    if (env.COUV) {
+      try { await env.COUV.put(rk, buf, { httpMetadata: { contentType: ct }, customMetadata: { source: t.href.slice(0, 1000) } }); enR2 = true; } catch (e) {}
+    }
+    orig = new Response(buf, { headers: { "content-type": ct, "cache-control": enR2 ? IMMUABLE : "public, max-age=604800", "x-couv": enR2 ? "r2-nouveau" : "editeur" } });
+    if (!enR2) waitUntil(cache.put(key, orig.clone()));
   }
   if (!w) return orig;
-  try {
-    const rs = await fetch(t.href, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" },
-      cf: { image: { width: w, fit: "scale-down", quality: 78, ...(fmt ? { format: fmt } : {}) } } });
-    const ct = rs.headers.get("content-type") || "";
-    // « cf-resized » : Cloudflare a bien redimensionné (sinon l'option est ignorée et on garde l'original, sans le figer en cache).
-    if (rs.ok && ct.startsWith("image/") && rs.headers.has("cf-resized")) {
-      const out = new Response(rs.body, { headers: { "content-type": ct, "cache-control": "public, max-age=604800", vary: "Accept" } });
-      waitUntil(cache.put(key2, out.clone()));
-      return out;
-    }
-  } catch (e) {}
+  // Source du redimensionnement : notre copie R2 si elle existe, sinon le site de l'éditeur.
+  const sources = enR2 ? [[self.origin + "/couv/" + rk, {}], [t.href, { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" }]] : [[t.href, { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" }]];
+  for (const [src, headers] of sources) {
+    try {
+      const rs = await fetch(src, { headers, cf: { image: { width: w, fit: "scale-down", quality: 78, ...(fmt ? { format: fmt } : {}) } } });
+      const ct = rs.headers.get("content-type") || "";
+      // « cf-resized » : Cloudflare a bien redimensionné (sinon l'option est ignorée et on garde l'original, sans le figer en cache).
+      if (rs.ok && ct.startsWith("image/") && rs.headers.has("cf-resized")) {
+        const out = new Response(rs.body, { headers: { "content-type": ct, "cache-control": "public, max-age=604800", vary: "Accept" } });
+        waitUntil(cache.put(key2, out.clone()));
+        return out;
+      }
+    } catch (e) {}
+  }
   return orig;
 }
