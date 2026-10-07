@@ -76,13 +76,40 @@ a.lnk{color:inherit;text-decoration:none}
 .lock h2{font-family:var(--f-display);text-transform:uppercase;font-size:28px;margin:0 0 8px}
 .lock p{margin:0 0 18px;color:var(--paper-2);font-size:14.5px}
 .lock button{width:100%;height:46px;border:0;border-radius:23px;background:var(--paper);color:#111;font:700 15px var(--f-body);cursor:pointer}
+/* Ordinateur : maquette E2 (Will, 07/10/2026) — bandeau réseaux pleine largeur, puis Classement et Membres
+   dans deux cartes noires de même largeur et de même hauteur (la liste des membres défile dans sa carte). */
+main{max-width:1240px;padding-left:20px;padding-right:20px}
+.banner{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border-radius:18px;padding:10px 12px}
+.banner>span{display:none;font:700 15px var(--f-body)}
+.banner .icons{flex:1;background:transparent;padding:0}
+.cgrid{display:flex;flex-direction:column;gap:14px}
+.ccard{display:flex;flex-direction:column;gap:12px}
+.chead{display:flex;flex-direction:column;gap:10px}
+.chead h2{font-family:var(--f-display);font-size:22px;text-transform:uppercase;margin:0;line-height:1}
+.ccol{display:flex;flex-direction:column;gap:12px}
+@media (min-width:980px){
+  main{gap:20px}
+  .banner{padding:12px 16px}
+  .banner>span{display:block}
+  .banner .icons{flex:none;width:340px}
+  .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}
+  .ccard{background:var(--card);border-radius:22px;padding:18px}
+  .ccard .box,.ccard .duo>a,.ccard .search{background:#111}
+  .ccard .champ{background:linear-gradient(135deg,#3A2A08,#111 70%)}
+  .chead{flex-direction:row;justify-content:space-between;align-items:center;min-height:38px}
+  .chead .seg{width:360px}.chead .seg button{height:34px;font-size:13px}
+  .chead .search{width:250px;height:38px;font-size:14px}
+  .mwrap{position:relative;min-height:400px}
+  .mcard{position:absolute;inset:0}
+  .mlist{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#38383B transparent;border-radius:20px}
+}
 </style>
 </head>
 <body>
 <script src="/site/header.js?v=36"></script>
 <main id="app">
   <h1>Communauté</h1>
-  <div class="icons" id="icons"></div>
+  <div class="banner"><span>Rejoins le gang sur nos réseaux</span><div class="icons" id="icons"></div></div>
   <div id="corps"><p class="vide">Chargement…</p></div>
 </main>
 <script>
@@ -130,12 +157,11 @@ function membres() {
   return `<div class="box">${l.slice(0, NB).map(m => `<div class="lr"><a class="lnk" href="${lien(m)}" style="display:contents">${av(m)}<span class="nm2"><b>${esc(m.pseudo)}</b><small class="mono">Membre n°${m.num ?? "?"} · ${tot[m.id] || 0} tome${(tot[m.id] || 0) > 1 ? "s" : ""}</small></span></a>${m.id === MOI ? "" : `<button class="fbtn" data-suivre="${m.id}" aria-pressed="${SUIVIS.has(m.id)}">${SUIVIS.has(m.id) ? "Suivi" : "Suivre"}</button>`}</div>`).join("") || `<p class="vide">Aucun membre ne s'appelle comme ça.</p>`}</div>${l.length > NB ? `<button class="more" data-plus>Voir plus de membres</button>` : ""}`;
 }
 function draw() {
-  document.getElementById("corps").innerHTML = `<div style="display:flex;flex-direction:column;gap:14px">
-    <div class="seg" role="tablist">${ONGLETS.map(o => `<button data-og="${o[0]}" aria-pressed="${OG === o[0]}">${o[1]}</button>`).join("")}</div>
-    <div id="cl" style="display:flex;flex-direction:column;gap:12px">${classement()}</div>
-    <div class="sub">Tous les membres <small>${LISTE.length} membre${LISTE.length > 1 ? "s" : ""}</small></div>
-    <input class="search" id="q" type="search" placeholder="Chercher un membre" aria-label="Chercher un membre" value="${esc(Q)}">
-    <div id="ml">${membres()}</div></div>`;
+  document.getElementById("corps").innerHTML = `<div class="cgrid">
+    <section class="ccard"><div class="chead"><h2>Classement</h2><div class="seg" role="tablist">${ONGLETS.map(o => `<button data-og="${o[0]}" aria-pressed="${OG === o[0]}">${o[1]}</button>`).join("")}</div></div>
+      <div id="cl" class="ccol">${classement()}</div></section>
+    <div class="mwrap"><section class="ccard mcard"><div class="chead"><h2>Membres · ${LISTE.length}</h2><input class="search" id="q" type="search" placeholder="Chercher un membre" aria-label="Chercher un membre" value="${esc(Q)}"></div>
+      <div id="ml" class="mlist">${membres()}</div></section></div></div>`;
 }
 document.addEventListener("click", async e => {
   const o = e.target.closest("[data-og]"); if (o) { OG = o.dataset.og; TOUT = false; draw(); return; }
