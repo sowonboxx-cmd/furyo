@@ -3,3 +3,5 @@
 /crows-x-worst/en-francais /crows-x-worst/index.html 200
 /auteurs/* /auteurs/index.html 200
 /series/* /series/index.html 200
+/membres /communaute/ 301
+/membres/ /communaute/ 301

@@ -48,7 +48,7 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=34"></script>
+<script src="/site/header.js?v=35"></script>
 <script src="/site/badges.js?v=1"></script>
 <main id="app"><p class="empty">Chargement…</p></main>
 <script>
@@ -57,7 +57,7 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
 (async () => {
   const app = document.getElementById("app");
   const me = await fetch("/api/auth/me").then(r => r.json()).catch(() => ({}));
-  if (!me.user) { app.innerHTML = `<p class="empty">Connecte-toi avec Google (avatar en haut à gauche) pour voir ton profil.<br><br><a href="/membres/" style="color:var(--blue)">Voir les membres</a></p>`; return; }
+  if (!me.user) { app.innerHTML = `<p class="empty">Connecte-toi avec Google (avatar en haut à gauche) pour voir ton profil.<br><br><a href="/communaute/" style="color:var(--blue)">Voir la communauté</a></p>`; return; }
   if (!me.user.member) { app.innerHTML = `<p class="empty">Déconnecte-toi puis reconnecte-toi une fois pour créer ta fiche membre.<br><br><button id="out" style="height:44px;padding:0 20px;border:0;border-radius:22px;background:var(--ink-3);color:var(--paper);font:inherit;font-weight:700">Se déconnecter</button></p>`;
     document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; }); return; }
   const j = await fetch("/api/profil").then(r => r.json()).catch(() => ({}));
@@ -69,7 +69,7 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
     <h2>Mon pseudo</h2>
     <form class="soc" id="ps">
       <label>Pseudo<input name="pseudo" value="${esc(m.pseudo)}" minlength="3" maxlength="20" placeholder="3 à 20 caractères" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
-      <span class="hint">Ta page publique : <b id="url">furyogang.com/membres/${esc(m.slug || "…")}</b></span>
+      <span class="hint">Ta page publique : <b id="url">furyogang.com/communaute/${esc(m.slug || "…")}</b></span>
       <button>Changer mon pseudo</button><p class="msg" id="pmsg"></p>
     </form>
     <h2>Classement</h2>
@@ -84,7 +84,7 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
       <label class="sw"><input type="checkbox" name="public" ${m.public ? "checked" : ""}><span>Afficher mes réseaux sur la page Membres</span></label>
       <button>Enregistrer</button><p class="msg" id="msg"></p>
     </form>
-    <div class="acts">${m.slug ? `<a href="/membres/${esc(m.slug)}" class="sec" id="pub">Voir ma page publique</a>` : ""}<a href="/membres/" class="sec">Voir tous les membres</a>${me.admin ? `<a href="/admin/">Ouvrir le back-office</a>` : ""}<button id="out">Se déconnecter</button></div>`;
+    <div class="acts">${m.slug ? `<a href="/communaute/${esc(m.slug)}" class="sec" id="pub">Voir ma page publique</a>` : ""}<a href="/communaute/" class="sec">Voir la communauté</a>${me.admin ? `<a href="/admin/">Ouvrir le back-office</a>` : ""}<button id="out">Se déconnecter</button></div>`;
   document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; });
   document.getElementById("soc").onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target), msg = document.getElementById("msg"); msg.textContent = "Enregistrement…";
     const x = await fetch("/api/profil", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ instagram: f.get("instagram"), x: f.get("x"), discord: f.get("discord"), public: f.get("public") === "on" }) });
@@ -97,8 +97,8 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
     if (!x.ok) { msg.className = "msg err"; msg.textContent = k.error || "Erreur, réessaie."; return; }
     msg.textContent = "Pseudo enregistré ✓";
     document.querySelector(".hero h1").textContent = pseudo;
-    document.getElementById("url").textContent = "furyogang.com/membres/" + k.slug;
-    const pub = document.getElementById("pub"); if (pub) pub.href = "/membres/" + k.slug; };
+    document.getElementById("url").textContent = "furyogang.com/communaute/" + k.slug;
+    const pub = document.getElementById("pub"); if (pub) pub.href = "/communaute/" + k.slug; };
 })();
 </script>
 </body>

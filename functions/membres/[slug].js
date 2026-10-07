@@ -1,6 +1,4 @@
-// /membres/<identifiant> : sert la page profil public (membres-fiche/index.html), qui lit l'identifiant dans l'adresse.
-export async function onRequestGet({ request, env }) {
-  const u = new URL(request.url);
-  u.pathname = "/membres-fiche/";
-  return env.ASSETS.fetch(new Request(u.toString(), request));
+// Ancienne adresse /membres/<identifiant> : la rubrique s'appelle désormais Communauté (Will, 07/10/2026).
+export function onRequestGet({ params }) {
+  return new Response(null, { status: 301, headers: { location: "/communaute/" + encodeURIComponent(params.slug || "") } });
 }

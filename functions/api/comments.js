@@ -5,6 +5,7 @@
 //   POST /api/comments { id, text }            → ajoute un commentaire (membre connecté), 1 à 600 caractères
 // Stockage : namespace KV « STATS » (le même que les likes). Sans lui, la lecture renvoie une liste vide et l'écriture est refusée.
 import { membre } from "../../lib/auth.js";
+import { activite, uid } from "../../lib/communaute.js";
 const ID = /^[a-z0-9-]{1,80}$/;
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 
@@ -50,5 +51,6 @@ export async function onRequestPost({ env, request }) {
   const recent = JSON.parse((await env.STATS.get("c:recent")) || "[]");
   recent.unshift({ ...item, id });
   await Promise.all([env.STATS.put(`c:${id}`, JSON.stringify(list.slice(-1000))), env.STATS.put(`cn:${id}`, String(list.length)), env.STATS.put("c:recent", JSON.stringify(recent.slice(0, 20)))]);
+  await activite(env, uid(me), { k: "c", id, t: text.slice(0, 160) }).catch(() => {});
   return json({ ok: true, item, n: list.length });
 }

@@ -196,7 +196,7 @@ a{color:inherit}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=34"></script>
+<script src="/site/header.js?v=35"></script>
 <div class="page"><div id="app"><p class="empty">Chargement…</p></div></div>
 <div class="toast" id="toast"></div>
 <script>
@@ -388,9 +388,9 @@ document.addEventListener("click", async e => {
   const ed = e.target.closest("[data-ed]"); if (ed) { ED = ed.dataset.ed; drawSerie(s, d); return; }
   const lt = e.target.closest("[data-lt]"); if (lt) { LT = lt.dataset.lt; drawSerie(s, d); return; }
   const t = e.target.closest("[data-t]");
-  if (t) { const on = !L[LT][t.dataset.t]; if (await envoyer(LT, on, [{ t: t.dataset.t, s: s.id }], t)) { drawSerie(s, d); if (on && LT === "c" && MAX && Object.keys(L.c).length === MAX) toast(`${MAX}/${MAX} : ta collection gratuite est pleine`); } return; }
+  if (t) { const on = !L[LT][t.dataset.t]; if (await envoyer(LT, on, [{ t: t.dataset.t, s: s.id, p: ((d.editions.find(x => x.tomes.some(y => y.id === t.dataset.t)) || {}).pays === "France" ? "F" : "J") }], t)) { drawSerie(s, d); if (on && LT === "c" && MAX && Object.keys(L.c).length === MAX) toast(`${MAX}/${MAX} : ta collection gratuite est pleine`); } return; }
   const j = e.target.closest("[data-jusqua]");
-  if (j) { const ee = d.editions.find(x => x.id === ED) || d.editions[0]; const tomes = ee.tomes.filter(x => x.paru && !L.c[x.id]).map(x => ({ t: x.id, s: s.id }));
+  if (j) { const ee = d.editions.find(x => x.id === ED) || d.editions[0]; const tomes = ee.tomes.filter(x => x.paru && !L.c[x.id]).map(x => ({ t: x.id, s: s.id, p: ee.pays === "France" ? "F" : "J" }));
     if (!tomes.length) { toast("Tu as déjà tous les tomes parus ✓"); return; }
     if (await envoyer("c", true, tomes, j)) { drawSerie(s, d); toast(`${tomes.length} tome${tomes.length > 1 ? "s" : ""} ajouté${tomes.length > 1 ? "s" : ""} ✓`); } }
 });

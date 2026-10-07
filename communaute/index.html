@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Communauté · FuryoGang</title>
+<meta name="description" content="La communauté FuryoGang : nos réseaux, le classement des collections et tous les membres du gang.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Communauté (Will, 07/10/2026) : maquette B1 validée — réseaux en icônes grises, 3 classements (Général / Ce mois-ci /
+   Cette semaine) avec le Boss, le 2e et le 3e, puis la liste, flèches ▲ ▼ partout, puis tous les membres. */
+:root{--ink:#232325;--card:#000;--ink-3:#38383B;--line:#1C1C1E;--paper:#F5F5F7;--paper-2:#D8D8DC;--paper-3:#98989D;
+  --red:#E5483A;--gold:#F2B33D;--silver:#C9CDD6;--bronze:#D08A5A;--green:#7BC67E;
+  --f-display:"Antonio","Arial Narrow",Impact,sans-serif;--f-body:"Inter",system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:var(--f-body);font-weight:500;letter-spacing:-.005em;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+main{max-width:640px;margin:0 auto;padding:18px 16px 64px;display:flex;flex-direction:column;gap:14px}
+h1{font-family:var(--f-display);text-transform:uppercase;font-size:36px;line-height:1;margin:4px 0 0}
+.sub{font-family:var(--f-display);font-size:20px;text-transform:uppercase;margin:8px 2px 0;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.sub small{font-family:var(--f-body);font-size:13px;text-transform:none;color:var(--paper-3);font-weight:600}
+.box{background:var(--card);border-radius:20px;padding:6px 14px}
+.mono{font-variant-numeric:tabular-nums}
+/* réseaux */
+.icons{display:flex;justify-content:space-between;gap:6px;background:var(--card);border-radius:18px;padding:10px 12px}
+.icons a,.icons span{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:var(--line);color:var(--paper-2);text-decoration:none;transition:background .15s,color .15s}
+.icons svg{width:22px;height:22px}
+.icons span{opacity:.35}
+@media (hover:hover){.icons a:hover{color:#fff}.icons a.dc:hover{background:#5865F2}.icons a.xx:hover{background:#333}.icons a.ig:hover{background:#D6249F}.icons a.fb:hover{background:#1877F2}.icons a.yt:hover{background:#F00}.icons a.tt:hover{background:#333}}
+/* onglets */
+.seg{display:flex;gap:6px}
+.seg button{flex:1;height:36px;border-radius:18px;border:0;background:var(--ink-3);color:var(--paper-2);font:600 13.5px var(--f-body);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--paper);color:#111}
+/* avatars */
+.av{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;font-size:14px;color:#111;overflow:hidden;background:var(--ink-3)}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+a.lnk{color:inherit;text-decoration:none}
+.crown{width:22px;height:16px;color:var(--gold);flex:none}
+.mv{font:700 11px var(--f-body);white-space:nowrap}
+.mv.up{color:var(--green)}.mv.dn{color:var(--red)}.mv.eq{color:var(--paper-3)}
+/* Boss */
+.champ{border-radius:22px;padding:16px;background:linear-gradient(135deg,#3A2A08,#000 70%);display:flex;gap:14px;align-items:center;position:relative;overflow:hidden}
+.champ .av{width:62px;height:62px;font-size:22px;box-shadow:0 0 0 3px var(--gold)}
+.champ .big{font-family:var(--f-display);font-size:64px;line-height:.8;color:var(--gold);position:absolute;right:16px;bottom:12px}
+.champ .tx{min-width:0;padding-right:44px}
+.boss{font:800 11.5px var(--f-body);color:var(--red);letter-spacing:.1em}
+.champ .nm{font-family:var(--f-display);font-size:26px;text-transform:uppercase;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.champ small{color:var(--paper-2);display:flex;gap:8px;align-items:center}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.duo>a{background:var(--card);border-radius:18px;display:flex;gap:10px;align-items:center;padding:12px;min-width:0}
+.duo .tx{min-width:0;flex:1}
+.duo b{font-size:13.5px;display:flex;justify-content:space-between;gap:6px}
+.duo b span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.duo small{color:var(--paper-3);white-space:nowrap}
+/* lignes */
+.lr{display:flex;align-items:center;gap:10px;padding:10px 0}
+.lr+.lr{border-top:1px solid var(--line)}
+.rk{width:24px;text-align:center;font-family:var(--f-display);font-size:18px;color:var(--paper-3);flex:none}
+.nm2{flex:1;min-width:0}
+.nm2 b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm2 small{color:var(--paper-3);font-size:12px}
+.lr .mv{width:28px;text-align:right}
+.sc{display:flex;flex-direction:column;align-items:flex-end;line-height:1;width:56px;flex:none}
+.sc b{font-family:var(--f-display);font-size:20px;font-weight:700}
+.sc small{color:var(--paper-3);font-size:10px;font-weight:700;letter-spacing:.1em;margin-top:4px}
+.more{height:42px;border-radius:21px;border:0;background:var(--ink-3);color:var(--paper);font:700 14px var(--f-body);width:100%;cursor:pointer}
+.vide{color:var(--paper-3);text-align:center;padding:22px 8px;font-size:14px}
+.search{height:42px;border-radius:12px;background:var(--card);border:0;color:var(--paper);padding:0 14px;font:500 15px var(--f-body);width:100%;outline:none}
+.fbtn{height:32px;padding:0 14px;border-radius:16px;border:0;background:var(--paper);color:#111;font:700 13px var(--f-body);cursor:pointer;flex:none}
+.fbtn[aria-pressed=true]{background:var(--ink-3);color:var(--paper-2)}
+.fbtn:disabled{opacity:.5}
+@media (hover:hover){a.lnk:hover b{text-decoration:underline}}
+/* verrou */
+.lock{text-align:center;background:var(--card);border-radius:22px;padding:28px 22px}
+.lock h2{font-family:var(--f-display);text-transform:uppercase;font-size:28px;margin:0 0 8px}
+.lock p{margin:0 0 18px;color:var(--paper-2);font-size:14.5px}
+.lock button{width:100%;height:46px;border:0;border-radius:23px;background:var(--paper);color:#111;font:700 15px var(--f-body);cursor:pointer}
+</style>
+</head>
+<body>
+<script src="/site/header.js?v=35"></script>
+<main id="app">
+  <h1>Communauté</h1>
+  <div class="icons" id="icons"></div>
+  <div id="corps"><p class="vide">Chargement…</p></div>
+</main>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ICO = {
+  dc: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 5.3A16.6 16.6 0 0 0 15.5 4l-.5 1a15 15 0 0 0-6 0l-.5-1a16.6 16.6 0 0 0-4.1 1.3C1.8 9.2 1.1 13 1.5 16.7a16.7 16.7 0 0 0 5 2.5l1.1-1.7c-.6-.2-1.2-.5-1.7-.9l.4-.3a11.9 11.9 0 0 0 11.4 0l.4.3c-.5.4-1.1.7-1.7.9l1.1 1.7a16.6 16.6 0 0 0 5-2.5c.5-4.3-.8-8.1-2.9-11.4zM8.5 14.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm7 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg>',
+  xx: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8 8 10.2h-6.3l-4.9-6.4L5.3 21H2.2l7.3-8.3L1.8 3h6.4l4.4 5.9zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg>',
+  ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>',
+  fb: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.5V6.8c0-.8.2-1.3 1.4-1.3H17V2.6c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.1v1.9H8v3.2h2.6V21H14v-9.3h2.6l.4-3.2z"/></svg>',
+  yt: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8zM9.7 15.1V8.9l5.8 3.1z"/></svg>',
+  tt: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 2h-3.3v13.3a2.8 2.8 0 1 1-2-2.7V9.2a6.2 6.2 0 1 0 5.3 6.1V8.6a8 8 0 0 0 4.4 1.4V6.7c-2.4 0-4.4-2-4.4-4.7z"/></svg>' };
+// Réseaux FuryoGang : une adresse vide = icône grisée, pas encore de compte (Facebook, YouTube, TikTok à brancher).
+const RESEAUX = [["dc", "Discord", "http://bit.ly/Furyo-Discord"], ["xx", "X", "https://x.com/FuryoGang"], ["ig", "Instagram", "https://www.instagram.com/furyogang"],
+  ["fb", "Facebook", ""], ["yt", "YouTube", ""], ["tt", "TikTok", ""]];
+document.getElementById("icons").innerHTML = RESEAUX.map(([k, l, u]) => u ? `<a class="${k}" href="${u}" target="_blank" rel="noopener" aria-label="${l}" title="${l}">${ICO[k]}</a>` : `<span aria-label="${l} (bientôt)" title="${l} : bientôt">${ICO[k]}</span>`).join("");
+
+const CROWN = '<svg class="crown" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M2 5l5 4 5-7 5 7 5-4-2 11H4z"/></svg>';
+const COULEURS = ["#F2B33D", "#E58FA8", "#7FA7C9", "#7BC67E", "#A48CD6", "#E0955F", "#9C978A", "#E5483A"];
+const av = (m, extra = "") => m.photo ? `<span class="av" style="${extra}"><img src="${esc(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>` : `<span class="av" style="background:${COULEURS[(m.num || 0) % COULEURS.length]};${extra}">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
+const mv = d => d === null ? `<span class="mv up" title="Nouveau dans le classement">▲</span>` : d > 0 ? `<span class="mv up" title="${d} place${d > 1 ? "s" : ""} gagnée${d > 1 ? "s" : ""}">▲${d}</span>` : d < 0 ? `<span class="mv dn" title="${-d} place${d < -1 ? "s" : ""} perdue${d < -1 ? "s" : ""}">▼${-d}</span>` : `<span class="mv eq" title="Pas de changement">=</span>`;
+const lien = m => m.slug ? `/communaute/${encodeURIComponent(m.slug)}` : "#";
+const ONGLETS = [["g", "Général", "BOSS DU GANG", n => `${n} tome${n > 1 ? "s" : ""}`, n => n],
+  ["m", "Ce mois-ci", "BOSS DU MOIS", n => `+${n} tome${n > 1 ? "s" : ""} ce mois-ci`, n => "+" + n],
+  ["s", "Cette semaine", "BOSS DE LA SEMAINE", n => `+${n} tome${n > 1 ? "s" : ""} cette semaine`, n => "+" + n]];
+let MB = {}, LISTE = [], CL = null, SUIVIS = new Set(), MOI = "", OG = "g", TOUT = false, Q = "", NB = 30;
+
+function classement() {
+  const [k, , lab, txt, court] = ONGLETS.find(o => o[0] === OG);
+  const l = (CL[k] || []).filter(x => MB[x.id]);
+  if (!l.length) return `<p class="vide box">${k === "g" ? "Personne n'a encore rangé de tomes dans sa collection." : k === "m" ? "Aucun tome ajouté ce mois-ci pour l'instant." : "Aucun tome ajouté depuis lundi pour l'instant."} Ajoute les tiens dans <a href="/ma-collection/" style="color:var(--paper)">Ma collection</a>.</p>`;
+  const b = l[0], m = MB[b.id];
+  let h = `<a class="champ lnk" href="${lien(m)}">${av(m)}<div class="tx"><div style="display:flex;align-items:center;gap:6px">${CROWN}<span class="boss">${lab}</span></div><div class="nm">${esc(m.pseudo)}</div><small class="mono">${txt(b.n)} ${mv(b.mv)}</small></div><span class="big mono">1</span></a>`;
+  if (l.length > 1) h += `<div class="duo">${l.slice(1, 3).map((x, i) => { const y = MB[x.id];
+    return `<a class="lnk" href="${lien(y)}">${av(y, `box-shadow:0 0 0 2px ${i ? "var(--bronze)" : "var(--silver)"}`)}<div class="tx"><b><span>${esc(y.pseudo)}</span>${mv(x.mv)}</b><small class="mono">${i + 2}e · ${court(x.n)} tome${x.n > 1 ? "s" : ""}</small></div></a>`; }).join("")}</div>`;
+  const reste = l.slice(3, TOUT ? 100 : 8);
+  if (reste.length) h += `<div class="box">${reste.map((x, i) => { const y = MB[x.id];
+    return `<a class="lr lnk" href="${lien(y)}"><span class="rk">${i + 4}</span>${av(y)}<span class="nm2"><b>${esc(y.pseudo)}</b></span>${mv(x.mv)}<span class="sc mono"><b>${court(x.n)}</b><small>TOMES</small></span></a>`; }).join("")}</div>`;
+  if (!TOUT && l.length > 8) h += `<button class="more" data-tout>Voir plus</button>`;
+  return h;
+}
+function membres() {
+  const q = Q.trim().toLowerCase();
+  const tot = Object.fromEntries((CL.g || []).map(x => [x.id, x.n]));
+  const l = LISTE.filter(m => !q || (m.pseudo || "").toLowerCase().includes(q));
+  return `<div class="box">${l.slice(0, NB).map(m => `<div class="lr"><a class="lnk" href="${lien(m)}" style="display:contents">${av(m)}<span class="nm2"><b>${esc(m.pseudo)}</b><small class="mono">Membre n°${m.num ?? "?"} · ${tot[m.id] || 0} tome${(tot[m.id] || 0) > 1 ? "s" : ""}</small></span></a>${m.id === MOI ? "" : `<button class="fbtn" data-suivre="${m.id}" aria-pressed="${SUIVIS.has(m.id)}">${SUIVIS.has(m.id) ? "Suivi" : "Suivre"}</button>`}</div>`).join("") || `<p class="vide">Aucun membre ne s'appelle comme ça.</p>`}</div>${l.length > NB ? `<button class="more" data-plus>Voir plus de membres</button>` : ""}`;
+}
+function draw() {
+  document.getElementById("corps").innerHTML = `<div style="display:flex;flex-direction:column;gap:14px">
+    <div class="seg" role="tablist">${ONGLETS.map(o => `<button data-og="${o[0]}" aria-pressed="${OG === o[0]}">${o[1]}</button>`).join("")}</div>
+    <div id="cl" style="display:flex;flex-direction:column;gap:12px">${classement()}</div>
+    <div class="sub">Tous les membres <small>${LISTE.length} membre${LISTE.length > 1 ? "s" : ""}</small></div>
+    <input class="search" id="q" type="search" placeholder="Chercher un membre" aria-label="Chercher un membre" value="${esc(Q)}">
+    <div id="ml">${membres()}</div></div>`;
+}
+document.addEventListener("click", async e => {
+  const o = e.target.closest("[data-og]"); if (o) { OG = o.dataset.og; TOUT = false; draw(); return; }
+  if (e.target.closest("[data-tout]")) { TOUT = true; document.getElementById("cl").innerHTML = classement(); return; }
+  if (e.target.closest("[data-plus]")) { NB += 60; document.getElementById("ml").innerHTML = membres(); return; }
+  const f = e.target.closest("[data-suivre]"); if (f) {
+    f.disabled = true;
+    const r = await fetch("/api/communaute", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ suivre: f.dataset.suivre }) }).then(x => x.json()).catch(() => ({}));
+    if (r.ok) { r.on ? SUIVIS.add(f.dataset.suivre) : SUIVIS.delete(f.dataset.suivre); f.setAttribute("aria-pressed", r.on); f.textContent = r.on ? "Suivi" : "Suivre"; }
+    f.disabled = false;
+  }
+});
+document.addEventListener("input", e => { if (e.target.id === "q") { Q = e.target.value; NB = 30; document.getElementById("ml").innerHTML = membres(); } });
+(async () => {
+  const get = (u, n = 3) => fetch(u, { credentials: "same-origin" }).then(async r => { if (r.status >= 500 && n) { await new Promise(t => setTimeout(t, 900)); return get(u, n - 1); } return r; });
+  const [rc, rm] = await Promise.all([get("/api/communaute").catch(() => null), get("/api/membres").catch(() => null)]);
+  if (!rc || rc.status === 401) {
+    const t = rm ? await rm.json().catch(() => ({})) : {};
+    document.getElementById("corps").innerHTML = `<div class="lock"><h2>Réservé aux membres</h2><p>Le classement des collections et la liste des membres sont réservés au gang.${t.total ? ` Déjà <b>${t.total}</b> membre${t.total > 1 ? "s" : ""}.` : ""}<br>Connecte-toi en un clic avec Google, c'est gratuit.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Rejoindre le gang</button></div>`;
+    return;
+  }
+  const c = await rc.json().catch(() => ({})), m = rm ? await rm.json().catch(() => ({})) : {};
+  if (!c.ok) { document.getElementById("corps").innerHTML = `<p class="vide">Impossible de charger la communauté. Recharge la page.</p>`; return; }
+  CL = c.classements; SUIVIS = new Set(c.suivis || []); MOI = c.moi || "";
+  LISTE = (m.items || []).filter(x => x.id); MB = Object.fromEntries(LISTE.map(x => [x.id, x]));
+  draw();
+})();
+</script>
+</body>
+</html>

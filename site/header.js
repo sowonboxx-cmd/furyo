@@ -40,6 +40,7 @@
     ".adm-b strong{display:block;font:700 20px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em}.adm-b small{display:block;margin-top:3px;font-size:12.5px;color:#C9D6E6}.adm-b:not(.v) small{color:#98989D}" +
     ".adm-b em{font-style:normal;min-width:40px;height:32px;padding:0 10px;box-sizing:border-box;border-radius:16px;background:#fff;color:#305887;font-weight:700;font-size:15px;display:grid;place-items:center}" +
     ".adm-b.c{background:#1F2A38;color:#fff}.adm-b.c small{color:#C9D6E6!important}" +
+    ".adm-b.cm{background:#3A2A08;color:#fff}.adm-b.cm small{color:#E9D3A0!important}" +
     ".adm-b.j{background:#F2B33D;color:#000}.adm-b.j small{color:rgba(0,0,0,.66)!important}.adm-b.j em{background:#000;color:#F2B33D}" +
     ".sh-sj{display:inline-flex;align-items:center;gap:4px;color:#F2B33D;text-decoration:none;font:600 13px Inter,system-ui,sans-serif}.sh-sj svg{width:15px;height:15px}.sh-sj b{font-weight:700}.sh-sj[data-n='0']{display:none!important}" +
     ".sh-adm{display:flex;align-items:center;gap:10px}" +
@@ -256,7 +257,7 @@ a("col", "/ma-collection/", "Ma collection", 1) + "</nav></div></header>";
     '<div class="me" id="me" hidden role="dialog" aria-modal="true" aria-label="Compte"><div class="me-box"><h3>Ton compte FuryoGang</h3>' +
     "<p>Connecte-toi en un clic avec Google. Ton compte gratuit te permettra bientôt de :</p>" +
     "<ul><li><i style=\"background:#E5483926;color:#E54839\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 21s-8.5-5.2-8.5-11.6C3.5 6.3 5.8 4 8.6 4c1.5 0 2.7.7 3.4 1.8C12.7 4.7 13.9 4 15.4 4c2.8 0 5.1 2.3 5.1 5.4C20.5 15.8 12 21 12 21z\"/></svg></i>Liker les actus et les séries</li><li><i style=\"background:#F2B33D26;color:#F2B33D\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z\"/></svg></i>Garder tes séries préférées en favoris</li><li><i style=\"background:#4C9BFF26;color:#4C9BFF\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 3l8 9h-5v9H9v-9H4z\"/></svg></i>Voter pour les séries populaires</li><li><i style=\"background:#7BC67E26;color:#7BC67E\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"8\" r=\"4\"/><path d=\"M2 20c0-3.9 3.1-7 7-7s7 3.1 7 7z\"/><circle cx=\"17\" cy=\"7\" r=\"3\"/><path d=\"M17.5 12c2.8.3 4.5 2.6 4.5 5.5V19h-4.2c-.3-2.6-1.5-4.9-3.3-6.4.9-.4 1.9-.6 3-.6z\"/></svg></i>Voir la famille FuryoGang (réservé aux membres)</li></ul>" +
-    '<div id="me-g" class="me-g"></div><p class="me-err" id="me-err"></p><a class="me-mb" href="/membres/">Voir les membres</a><button class="no" id="me-x">Fermer</button></div></div>');
+    '<div id="me-g" class="me-g"></div><p class="me-err" id="me-err"></p><a class="me-mb" href="/communaute/">Voir la communauté</a><button class="no" id="me-x">Fermer</button></div></div>');
   var fs = document.getElementById("fs"), inp = document.getElementById("fs-q"), res = document.getElementById("fs-res"), meBox = document.getElementById("me");
   function open() {
     fs.hidden = false; document.body.classList.add("fs-open"); inp.value = ""; draw(); inp.focus();
@@ -338,6 +339,8 @@ a("col", "/ma-collection/", "Ma collection", 1) + "</nav></div></header>";
       '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' : "") +
       // Ma collection : la bibliothèque des membres (Will, 06/10/2026).
       '<a class="adm-b c" href="/ma-collection/"><span><strong>Ma collection</strong><small>Tes tomes, ta pile à lire, ta wishlist</small></span><span aria-hidden="true">→</span></a>' +
+      // Communauté (Will, 07/10/2026) : réseaux, classement des collections, membres.
+      '<a class="adm-b cm" href="/communaute/"><span><strong>Communauté</strong><small>Le classement du gang et tous les membres</small></span><span aria-hidden="true">→</span></a>' +
       // Mon feed et Signets pour tous les membres (Will, 05/10/2026) : sous Validation et Back-office pour l'admin, seuls pour les autres.
       '<a class="adm-b f" href="/?vue=actus&tab=feed"><span><strong>Mon feed</strong><small>Les news des séries que tu suis</small></span><span aria-hidden="true">→</span></a>' +
       '<a class="adm-b s" href="/?vue=actus&tab=signets"><span><strong>Signets</strong><small>Les news que tu as gardées</small></span><span aria-hidden="true">→</span></a>' +

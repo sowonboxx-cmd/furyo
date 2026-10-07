@@ -4,6 +4,7 @@
 // Likes et favoris sont réservés aux membres connectés : sans compte, la fonction répond 401.
 // Stockage : namespace KV lié au projet Pages sous le nom STATS. Sans lui, tout renvoie 0 sans erreur.
 import { membre } from "../../lib/auth.js";
+import { activite } from "../../lib/communaute.js";
 const ID = /^[a-z0-9-]{1,80}$/;
 const uid = u => String(u.m || u.k || u.e || "").replace(/[^\w@.-]/g, "").slice(0, 80);
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -47,6 +48,7 @@ export async function onRequestPost({ env, request }) {
       if (!was) list.unshift(id);
       await env.STATS.put(lk, JSON.stringify(list.slice(0, 500)));
     }
+    if (k === "l") await activite(env, uid(me), { k: was ? "l-" : "l", id }).catch(() => {});
     return json({ ok: true, stored: true, on: !was, n });
   }
   if (act !== "view") return json({ ok: false, error: "action inconnue" }, 400);
