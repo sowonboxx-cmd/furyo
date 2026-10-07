@@ -1537,7 +1537,7 @@ function mtPreview(force){
   // Aperçu déjà affiché : on garde l'ancien tant que les nouvelles images ne sont pas prêtes (pas de clignotement)
   if (!view.firstChild) return poser();
   const id = mtPreview.id = (mtPreview.id || 0) + 1;
-  Promise.all(imgs.slice(0, 60).map(i => i.decode().catch(() => {}))).then(() => { if (id === mtPreview.id) poser(); });
+  Promise.all(imgs.slice(0, 60).map(i => { const x = new Image(); x.src = i.getAttribute("src"); return x.decode().catch(() => {}); })).then(() => { if (id === mtPreview.id) poser(); });
 }
 mtPreview();
 addEventListener("resize", () => { clearTimeout(mtPreview.t); mtPreview.t = setTimeout(() => mtPreview(), 200); });
