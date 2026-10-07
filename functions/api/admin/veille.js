@@ -48,15 +48,13 @@ async function listerPrepub(env) {
   } }).catch(() => []);
 }
 
-export async function onRequestGet({ request, env }) {
-  if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
+async function construire(request, env) {
   const [all, pRows] = await Promise.all([lister(env), listerPrepub(env)]);
   const vu = r => text(r.properties["Statut"]) === "Vu", pub = r => text(r.properties["Statut"]) === "Publié sur le site";
   // Gardées de côté (« Vu, pas sur le site ») : les news et aussi les propositions internes marquées « Vu, rien à faire »,
   // pour pouvoir les reprendre plus tard (Will, 06/10/2026).
   const rows = all
     .filter((r, n, a) => !pub(r) || a.filter(pub).indexOf(r) < 40);
-  if (new URL(request.url).searchParams.has("count")) return json({ n: rows.filter(r => !vu(r) && !pub(r)).length + pRows.length });
   // Séries liées : une seule requête sur la base Séries (pas une lecture par série : Cloudflare limite
   // le nombre de requêtes par appel, et au-delà les comptes des auteurs / éditeurs sautaient en silence).
   const ids = new Set([...rows, ...pRows].flatMap(r => rel(r.properties["Série"])));
@@ -168,10 +166,10 @@ export async function onRequestGet({ request, env }) {
   items.sort((a, b) => String(b.creeT || b.cree).localeCompare(String(a.creeT || a.cree)));
   const counts = {};
   items.forEach(i => { counts[i.cat] = (counts[i.cat] || 0) + 1; });
-  return json({ items, counts, cats: CATS, cols: COLS });
+  return { items, counts, cats: CATS, cols: COLS };
 }
 
-export async function onRequestPost({ request, env }) {
+async function traiter(request, env) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   let b = {}; try { b = await request.json(); } catch (e) {}
   if (!/^[0-9a-f]{32}$/.test(b.id || "")) return json({ error: "élément inconnu" }, 400);
@@ -288,4 +286,45 @@ async function appliquerFiche(env, newsId) {
     }
   }
   return done;
+}
+
+// Rapidité (Will, 07/10/2026) : construire la liste demande une dizaine de lectures Notion (5 à 10 s).
+// On garde la dernière liste prête dans le cache Cloudflare et on la sert tout de suite ; si elle a plus de 20 s,
+// elle est reconstruite en arrière-plan pour le chargement suivant. Chaque action (valider, rejeter…) la reconstruit aussi.
+// Le cache n'est lu qu'après la vérification admin : la liste n'est jamais servie à quelqu'un d'autre.
+const CLE = "https://furyogang.com/__cache/admin-veille-v1";
+async function reconstruire(request, env) {
+  const data = await construire(request, env);
+  const n = (data.items || []).filter(i => !i.vu && !i.enLigne).length;
+  const body = JSON.stringify({ ...data, n, construit: Date.now() });
+  await caches.default.put(new Request(CLE), new Response(body, { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=86400" } }));
+  return JSON.parse(body);
+}
+export async function onRequestGet({ request, env, waitUntil }) {
+  if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
+  const count = new URL(request.url).searchParams.has("count"), frais = new URL(request.url).searchParams.has("refresh");
+  let data = null;
+  if (!frais) { const hit = await caches.default.match(new Request(CLE)); if (hit) data = await hit.json().catch(() => null); }
+  if (data) { if (Date.now() - (data.construit || 0) > 20e3) waitUntil(reconstruire(request, env).catch(() => {})); }
+  else data = await reconstruire(request, env);
+  return count ? json({ n: data.n }) : json(data);
+}
+export async function onRequestPost({ request, env, waitUntil }) {
+  const b = await request.clone().json().catch(() => ({}));
+  const r = await traiter(request, env);
+  if (r.ok) {
+    // Corrige tout de suite la liste en cache (même règle que l'écran), puis la reconstruit en arrière-plan.
+    try {
+      const hit = await caches.default.match(new Request(CLE));
+      if (hit) {
+        const d = await hit.json();
+        if (b.statut === "Vu" && b.base !== "prepub") d.items.forEach(i => { if (i.id === b.id) { i.vu = true; if (typeof b.texte === "string") i.texte = b.texte; } });
+        else if (b.statut) d.items = d.items.filter(i => i.id !== b.id);
+        d.n = d.items.filter(i => !i.vu && !i.enLigne).length; d.construit = 0;
+        await caches.default.put(new Request(CLE), new Response(JSON.stringify(d), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=86400" } }));
+      }
+    } catch (e) {}
+    waitUntil(reconstruire(request, env).catch(() => {}));
+  }
+  return r;
 }
