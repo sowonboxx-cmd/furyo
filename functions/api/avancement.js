@@ -9,7 +9,7 @@ const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   return cached(request, waitUntil, "/api/avancement", 600, async () => {
-    const [rows, { ctx }] = await Promise.all([queryAll(env.NOTION_TOKEN, { ...SERIES }), chargerContexte(env.NOTION_TOKEN)]);
+    const [rows, { ctx }] = await Promise.all([queryAll(env.NOTION_TOKEN, { ...SERIES }), chargerContexte(env.NOTION_TOKEN, env, waitUntil)]);
     const today = new Date(); const d7 = new Date(today - 7 * 864e5).toISOString().slice(0, 10);
     const etats = Object.fromEntries(STATUTS.map(e => [e, 0]));
     const enLigne = [], prepa = [];

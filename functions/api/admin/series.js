@@ -1,6 +1,7 @@
 // GET /api/admin/series : toutes les séries de la base, avec leur avancement et la liste des éléments obligatoires (back-office, connecté seulement).
 // Une fiche n'est jamais déclarée « complète » toute seule : la liste dit ce qui est fait, Will valide.
-import { text, num, date, check, rel, list, queryAll, slugify, slugSerie } from "../../../lib/notion.js";
+import { tousTomes, toutesEditions } from "../../../lib/memo.js";
+import { text, num, date, check, rel, list, queryAll, slugify, slugSerie, cached } from "../../../lib/notion.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 import { estVisible, statut, PUBLIC } from "../../../lib/site.js";
 import { handle, mentionList, syncMentions } from "../../../lib/mentions.js";
@@ -12,12 +13,19 @@ const EDITEURS = { dataSource: "16e967fc-8e7b-4b7c-ab98-6a25cbdcd75a", database:
 const rt = s => ({ rich_text: s ? [{ type: "text", text: { content: String(s).slice(0, 1900) } }] : [] });
 const nid = id => id.replace(/-/g, "");
 
+// Vitesse (Will, 07/10/2026) : la liste est gardée prête (cache Cloudflare, lu seulement après la vérification admin),
+// servie tout de suite et reconstruite en arrière-plan si elle a plus de 30 s. Une modification de fiche vide ce cache.
+export const CLE_ADMIN_SERIES = "/__cache/admin-series-v1";
 export async function onRequestGet({ request, env, waitUntil }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
+  const r = await cached(request, waitUntil, CLE_ADMIN_SERIES, 30, () => construire(env, waitUntil));
+  return new Response(r.body, { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+}
+async function construire(env, waitUntil) {
   const [rows, eRows, tRows, aRows, pRows] = await Promise.all([
     queryAll(env.NOTION_TOKEN, { ...SERIES }),
-    queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
-    queryAll(env.NOTION_TOKEN, { ...TOMES }),
+    toutesEditions(env, waitUntil),
+    tousTomes(env, waitUntil),
     queryAll(env.NOTION_TOKEN, { ...AUTEURS }),
     queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []),
   ]);
@@ -67,5 +75,5 @@ export async function onRequestGet({ request, env, waitUntil }) {
       body: JSON.stringify({ properties }) }).catch(() => null)));
     waitUntil ? waitUntil(save) : await save;
   }
-  return json({ items });
+  return { items };
 }
