@@ -2,6 +2,7 @@
 // Seuls les badges « Manuel » et « Administrateurs » s'attribuent à la main ; les automatiques ne bougent pas.
 import { json, isAdmin } from "../../../lib/admin.js";
 import { estAdminEmail } from "../../../lib/auth.js";
+import { oublierAcces } from "../../../lib/acces.js";
 import { lirePage, patch, fiche } from "../../../lib/membres.js";
 import { catalogue } from "../../../lib/badges.js";
 export async function onRequestPost({ request, env }) {
@@ -16,6 +17,7 @@ export async function onRequestPost({ request, env }) {
   if (b.points !== undefined && b.points !== "") { const n = Math.round(Number(b.points)); if (Number.isFinite(n)) props["Points"] = { number: Math.max(0, Math.min(n, 1e6)) }; }
   const r = await patch(env.NOTION_TOKEN, id, props);
   if (!r.ok) return json({ error: "Enregistrement impossible" }, 502);
+  oublierAcces(id);
   // La liste publique est en cache : on la vide pour qu'elle suive tout de suite.
   try { await caches.default.delete(new Request(new URL("/api/membres", request.url).toString())); } catch (e) {}
   const page = await lirePage(env.NOTION_TOKEN, id);
