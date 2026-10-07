@@ -175,7 +175,7 @@ a("col", "/ma-collection/", "Ma collection", 1) +
   me.insertAdjacentHTML("beforebegin", html);
   var plus = document.getElementById("sh-plus"), more = document.getElementById("sh-more");
   if (plus && more) {
-    if (more.querySelector("[aria-current]")) { more.hidden = false; plus.setAttribute("aria-expanded", "true"); }
+    // Le menu reste fermé à l'arrivée sur une page, même si elle en fait partie (Will, 07/10/2026).
     plus.addEventListener("click", function () { more.hidden = !more.hidden; plus.setAttribute("aria-expanded", String(!more.hidden)); if (typeof set === "function") set(); });
   }
   var set = function () { var h = document.getElementById("sh"); if (h) document.documentElement.style.setProperty("--sh-h", h.offsetHeight + "px"); };
