@@ -68,8 +68,11 @@ async function profil(env, request, me, id) {
   const b = await lireJ(env, "bib:" + id, {});
   const c = b.c || {}, cp = b.cp || {}, ids = Object.keys(c);
   // Pays des tomes pas encore connus (ajoutés avant le 07/10/2026) : lus dans le catalogue, 15 séries par visite.
-  const recents = ids.slice(-10).reverse();
-  const aLire = [...new Set([...recents.map(t => c[t]), ...ids.filter(t => !cp[t]).map(t => c[t])])].slice(0, 15);
+  // Collection affichée par série (Will, 07/10/2026) : une couverture par série, le plus petit tome possédé,
+  // séries les plus récemment complétées d'abord, 10 séries au plus.
+  const seriesOrd = [...new Set(ids.slice().reverse().map(t => c[t]))].slice(0, 10);
+  const recents = seriesOrd.map(s => ids.filter(t => c[t] === s));
+  const aLire = [...new Set([...seriesOrd, ...ids.filter(t => !cp[t]).map(t => c[t])])].slice(0, 15);
   const det = {};
   await Promise.all(aLire.map(async s => {
     try { const r = await fetch(new URL("/api/biblio?id=" + s, request.url)); if (r.ok) det[s] = await r.json(); } catch (e) {}
@@ -85,7 +88,8 @@ async function profil(env, request, me, id) {
     env.STATS.get("mn:" + id).then(x => +x || 0), lireJ(env, "um:" + uid(me), []), lireJ(env, "ua:" + id, []), classements(env, () => {}).catch(() => null)]);
   const rang = cl ? (cl.classements.g.findIndex(x => x.id === id) + 1) || null : null;
   return { ok: true, tot: ids.length, fr, jp, inconnus: ids.length - fr - jp, abonnes, on: suivis.includes(id), rang, moi: uid(me) === id,
-    recents: recents.map(t => ({ t, ...(tomeInfo[t] || { s: c[t] }) })), activite: act.slice(0, 20) };
+    recents: recents.map(l => { const best = l.map(t => ({ t, ...(tomeInfo[t] || { s: c[l[0]] }) })).sort((a, b) => (a.cover ? 0 : 1) - (b.cover ? 0 : 1) || (a.n ?? 999) - (b.n ?? 999))[0];
+      return { ...best, nb: l.length }; }), activite: act.slice(0, 20) };
 }
 
 export async function onRequestGet({ env, request, waitUntil }) {

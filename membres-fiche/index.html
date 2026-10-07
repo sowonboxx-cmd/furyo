@@ -46,7 +46,7 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .empty{color:var(--paper-3);text-align:center;margin-top:18vh}
 .links{display:flex;flex-wrap:wrap;gap:8px}
 .links a,.links span{height:40px;padding:0 16px;border-radius:20px;background:var(--ink-2);color:var(--paper);text-decoration:none;font-weight:600;font-size:14px;display:inline-flex;align-items:center}
-.adm{background:var(--ink-2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px;border:1.5px solid #4C9BFF55}
+.adm{background:var(--ink-2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
 .adm p{margin:0;font-size:12.5px;color:var(--paper-3)}
 .tg{display:flex;flex-wrap:wrap;gap:8px}
 .tg button{height:36px;padding:0 14px 0 10px;border-radius:18px;border:1.5px solid var(--ink-3);background:transparent;color:var(--paper-2);font:inherit;font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;cursor:pointer}
@@ -68,7 +68,7 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .pf{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding-top:6px}
 .pf .avt{width:88px;height:88px;border-radius:50%;object-fit:cover;background:var(--ink-3);display:grid;place-items:center;font:800 30px Inter,sans-serif;color:#111}
 .pf h1{font-family:Antonio,sans-serif;text-transform:uppercase;font-size:32px;line-height:1;margin:6px 0 0;display:flex;align-items:center;gap:8px}
-.pf h1 svg{width:30px;height:22px;color:var(--gold)}
+.pf .crn{display:block;margin-bottom:-8px;position:relative;z-index:1}.pf .crn svg{width:44px;height:32px;color:var(--gold);display:block}
 .pf .meta{color:var(--paper-3);font-size:13px}
 .pf .fbtn{height:38px;padding:0 24px;border-radius:19px;border:0;background:var(--paper);color:#111;font:700 14px Inter,sans-serif;cursor:pointer;margin-top:6px}
 .pf .fbtn[aria-pressed=true]{background:var(--ink-3);color:var(--paper-2)}
@@ -90,7 +90,7 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=35"></script>
+<script src="/site/header.js?v=36"></script>
 <script src="/site/badges.js?v=1"></script>
 <main id="app"><p class="empty">Chargement…</p></main>
 <script>
@@ -125,12 +125,12 @@ function draw() {
   const P = PF || {}, rang1 = P.rang === 1;
   const avt = m.photo ? `<img class="avt" src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">` : `<span class="avt" style="background:#F2B33D">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
   app.innerHTML = `
-    <section class="pf">${avt}<h1>${rang1 ? CROWN : ""}${esc(m.pseudo || "Membre")}</h1>
+    <section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avt}<h1>${esc(m.pseudo || "Membre")}</h1>
       <span class="meta">Membre n°${m.num || "?"}${P.rang ? ` · ${P.rang === 1 ? "1er" : P.rang + "e"} du classement` : ""}${estAdmin ? " · Administrateur" : ""}</span>
       ${PF && !P.moi ? `<button class="fbtn" id="suivre" aria-pressed="${!!P.on}">${P.on ? "Suivi" : "Suivre"}</button>` : ""}</section>
     ${PF ? `<div class="st4"><div><b>${P.tot}</b><span>Tomes</span></div><div><b>${P.fr}</b><span>FR</span></div><div><b>${P.jp}</b><span>JP</span></div><div><b>${P.abonnes}</b><span>Abonné${P.abonnes > 1 ? "s" : ""}</span></div></div>
     <h2 class="h2r">Collection${P.moi ? ` <a href="/ma-collection/">Ma collection →</a>` : ""}</h2>
-    ${P.recents.length ? `<div class="covs">${P.recents.map(t => `<a href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + (t.n != null ? " T." + t.n : ""))}">${t.cover ? `<img src="/api/couv?w=200&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}</a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`}
+    ${P.recents.length ? `<div class="covs">${P.recents.map(t => `<a href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + " · " + t.nb + " tome" + (t.nb > 1 ? "s" : ""))}">${t.cover ? `<img src="/api/couv?w=200&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}</a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`}
     <h2>Activité</h2>${activite(P.activite)}` : ""}
     ${m.badges.length ? `<h2>Badges</h2><div class="badges">${m.badges.map(b => FG_BADGES.carte(b, true)).join("")}</div>` : ""}
     ${liens.length ? `<h2>Réseaux</h2><div class="links">${liens.join("")}</div>` : ""}

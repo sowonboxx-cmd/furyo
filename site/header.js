@@ -40,7 +40,7 @@
     ".adm-b strong{display:block;font:700 20px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em}.adm-b small{display:block;margin-top:3px;font-size:12.5px;color:#C9D6E6}.adm-b:not(.v) small{color:#98989D}" +
     ".adm-b em{font-style:normal;min-width:40px;height:32px;padding:0 10px;box-sizing:border-box;border-radius:16px;background:#fff;color:#305887;font-weight:700;font-size:15px;display:grid;place-items:center}" +
     ".adm-b.c{background:#1F2A38;color:#fff}.adm-b.c small{color:#C9D6E6!important}" +
-    ".adm-b.cm{background:#3A2A08;color:#fff}.adm-b.cm small{color:#E9D3A0!important}" +
+    ".adm-b.fgcm{background:#3A2A08;color:#fff}.adm-b.fgcm small{color:#E9D3A0!important}" +
     ".adm-b.j{background:#F2B33D;color:#000}.adm-b.j small{color:rgba(0,0,0,.66)!important}.adm-b.j em{background:#000;color:#F2B33D}" +
     ".sh-sj{display:inline-flex;align-items:center;gap:4px;color:#F2B33D;text-decoration:none;font:600 13px Inter,system-ui,sans-serif}.sh-sj svg{width:15px;height:15px}.sh-sj b{font-weight:700}.sh-sj[data-n='0']{display:none!important}" +
     ".sh-adm{display:flex;align-items:center;gap:10px}" +
@@ -340,7 +340,7 @@ a("col", "/ma-collection/", "Ma collection", 1) + "</nav></div></header>";
       // Ma collection : la bibliothèque des membres (Will, 06/10/2026).
       '<a class="adm-b c" href="/ma-collection/"><span><strong>Ma collection</strong><small>Tes tomes, ta pile à lire, ta wishlist</small></span><span aria-hidden="true">→</span></a>' +
       // Communauté (Will, 07/10/2026) : réseaux, classement des collections, membres.
-      '<a class="adm-b cm" href="/communaute/"><span><strong>Communauté</strong><small>Le classement du gang et tous les membres</small></span><span aria-hidden="true">→</span></a>' +
+      '<a class="adm-b fgcm" href="/communaute/"><span><strong>Communauté</strong><small>Tous les membres du gang</small></span><span aria-hidden="true">→</span></a>' +
       // Mon feed et Signets pour tous les membres (Will, 05/10/2026) : sous Validation et Back-office pour l'admin, seuls pour les autres.
       '<a class="adm-b f" href="/?vue=actus&tab=feed"><span><strong>Mon feed</strong><small>Les news des séries que tu suis</small></span><span aria-hidden="true">→</span></a>' +
       '<a class="adm-b s" href="/?vue=actus&tab=signets"><span><strong>Signets</strong><small>Les news que tu as gardées</small></span><span aria-hidden="true">→</span></a>' +

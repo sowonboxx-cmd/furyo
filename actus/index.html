@@ -148,6 +148,16 @@ a{color:inherit}
 .nd-com{display:flex;flex-direction:column}
 .nd-com .na-add{border:0;background:#1C1C1E;height:52px;border-radius:26px;margin-bottom:6px}
 .nd-cm{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;padding:14px 0;border-top:1px solid #1C1C1E}
+/* Modifier (auteur) / Supprimer, anciennes versions (admins) : Will, 07/10/2026 */
+.cmt{display:flex;flex-wrap:wrap;gap:12px;margin-top:5px;font-size:12px}
+.cmt span{color:#8E8E93}
+.cmt button{border:0;background:none;padding:0;color:#8E8E93;font:600 12px Inter,sans-serif;cursor:pointer}
+.cmt button:hover{color:#F5F5F7}.cmt button.del{color:#E5483A}
+.cmh{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:#1C1C1E;font-size:12.5px;color:#A1A1A6}
+.cmh p{margin:0 0 4px!important;font-size:12.5px!important;color:#A1A1A6!important}
+.cme textarea{width:100%;min-height:70px;margin-top:6px;border:0;border-radius:10px;background:#2C2C2E;color:#F5F5F7;font:500 14px Inter,sans-serif;padding:8px 10px;resize:vertical;outline:none}
+.cme div{display:flex;gap:8px;margin-top:6px}
+.cme button{height:32px;padding:0 14px;border-radius:16px;border:0;font:700 13px Inter,sans-serif;cursor:pointer;background:#38383B;color:#F5F5F7}.cme button.ok{background:#F5F5F7;color:#111}
 .nd-cm .cm-av{width:36px;height:36px}
 .nd-cm b{font-size:14px}.nd-cm small{margin-left:8px;color:#8E8E93;font-size:12.5px}.nd-cm p{margin:4px 0 0;font-size:14.5px;line-height:1.5;color:#E5E5EA;white-space:pre-line;overflow-wrap:anywhere}
 .nd-none{margin:6px 0 0;color:var(--paper-3);font-size:14px}
@@ -200,7 +210,7 @@ body{background:#000}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=35"></script>
+<script src="/site/header.js?v=36"></script>
 <script src="/site/fit2.js?v=4"></script>
 <main class="na" id="na"><p class="na-empty">Chargement…</p></main>
 <script>if (window.FG_SK) document.getElementById("na").innerHTML = FG_SK.article();</script>
@@ -350,11 +360,35 @@ body{background:#000}
         '<span><i class="om"><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "</i><b>" + esc(it.fr || it.titre) + '</b><p data-full="' + esc(it.accroche || it.texte || "") + '">' + esc(it.texte || "") + "</p></span></a>";
     }).join("") + '<a class="nd-btn nd-more" href="/?vue=actus">Toutes les actualités</a></section>';
   }
+  var ADMC = false;
+  function outils(c) {
+    var h = (c.e ? "<span>Modifié</span>" : "") + (c.moi ? '<button type="button" data-cedit="' + esc(c.d) + '">Modifier</button>' : "") +
+      (ADMC && c.h ? '<button type="button" data-chist="' + esc(c.d) + '">Versions précédentes</button>' : "") +
+      (ADMC ? '<button type="button" class="del" data-cdel="' + esc(c.d) + '">Supprimer</button>' : "");
+    return h ? '<div class="cmt">' + h + "</div>" : "";
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-cedit],[data-cdel],[data-chist],[data-csave],[data-ccancel]"); if (!b || !N) return;
+    var it = b.closest("[data-cd]"), d = it && it.getAttribute("data-cd"), c = CM.find(function (x) { return x.d === d; }); if (!c) return;
+    if (b.hasAttribute("data-chist")) { var hx = it.querySelector(".cmh"); if (hx) { hx.remove(); return; }
+      it.querySelector(".cmt").insertAdjacentHTML("afterend", '<div class="cmh">' + c.h.slice().reverse().map(function (v) { return "<p>« " + esc(v.t) + " » · " + ago(v.d) + "</p>"; }).join("") + "</div>"); return; }
+    if (b.hasAttribute("data-cedit")) { var p = it.querySelector("p"); p.hidden = true; it.querySelector(".cmt").hidden = true;
+      p.insertAdjacentHTML("afterend", '<div class="cme"><textarea maxlength="600" aria-label="Modifier ton commentaire">' + esc(c.t) + '</textarea><div><button type="button" class="ok" data-csave>Enregistrer</button><button type="button" data-ccancel>Annuler</button></div></div>');
+      it.querySelector("textarea").focus(); return; }
+    if (b.hasAttribute("data-ccancel")) { refaire(); return; }
+    if (b.hasAttribute("data-csave")) { var t = it.querySelector("textarea").value.trim(); if (!t) return; b.disabled = true;
+      fetch("/api/comments", { method: "PATCH", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, d: d, text: t }) })
+        .then(function (r) { return r.json(); }).then(function (j) { if (j.ok) { var i = CM.indexOf(c); CM[i] = Object.assign({}, c, j.item, ADMC ? { h: (c.h || []).concat(c.t !== t ? [{ t: c.t, d: c.e || c.d }] : []) } : {}); refaire(); } else { alert(j.error || "Impossible d'enregistrer."); b.disabled = false; } }); return; }
+    if (b.hasAttribute("data-cdel")) { if (!confirm("Supprimer ce commentaire de " + c.n + " ?")) return;
+      fetch("/api/comments", { method: "DELETE", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, d: d }) })
+        .then(function (r) { return r.json(); }).then(function (j) { if (j.ok) { CM = CM.filter(function (x) { return x.d !== d; }); refaire(); } else alert(j.error || "Impossible de supprimer."); }); }
+  });
+  function refaire() { render(); var o = document.getElementById("cm"); if (o && !o.hidden) sheet(); }
   function comD() {
     if (!STORED) return '<section class="nd-box nd-com"><div class="nd-bh"><h2>Commentaires</h2></div><p class="nd-none">Commentaires bientôt disponibles.</p></section>';
     var last = CM.slice(-3).reverse();
     return '<section class="nd-box nd-com" id="commentaires" aria-label="Commentaires"><div class="nd-bh row"><h2>Commentaires' + (CM.length ? " · " + CM.length : "") + "</h2></div>" + addBox() +
-      last.map(function (c) { return '<div class="nd-cm">' + av(c, "cm-av") + "<div><b>" + esc(c.n) + "</b><small>il y a " + ago(c.d) + "</small><p>" + esc(c.t) + "</p></div></div>"; }).join("") +
+      last.map(function (c) { return '<div class="nd-cm" data-cd="' + esc(c.d) + '">' + av(c, "cm-av") + "<div><b>" + esc(c.n) + "</b><small>il y a " + ago(c.d) + "</small><p>" + esc(c.t) + "</p>" + outils(c) + "</div></div>"; }).join("") +
       (CM.length > 3 ? '<button type="button" class="nd-btn nd-more" data-open>Voir les ' + CM.length + " commentaires</button>" : "") + "</section>";
   }
   function renderD() {
@@ -376,8 +410,8 @@ body{background:#000}
     var box = document.getElementById("cm");
     if (!box) { box = document.createElement("div"); box.className = "cm"; box.id = "cm"; document.body.appendChild(box); box.addEventListener("click", function (e) { if (e.target === box) close(); }); }
     var list = CM.length ? CM.map(function (c) {
-      return '<div class="cm-it">' + av(c, "cm-av") +
-        "<div><small><b>" + esc(c.n) + "</b> · " + ago(c.d) + "</small><p>" + esc(c.t) + "</p></div></div>";
+      return '<div class="cm-it" data-cd="' + esc(c.d) + '">' + av(c, "cm-av") +
+        "<div><small><b>" + esc(c.n) + "</b> · " + ago(c.d) + "</small><p>" + esc(c.t) + "</p>" + outils(c) + "</div></div>";
     }).join("") : '<p class="cm-none">' + (STORED ? "Aucun commentaire pour l'instant." : "Les commentaires arrivent bientôt.") + "</p>";
     var form = !STORED ? "" : member() ? '<form class="cm-form" id="cm-form"><label class="sr" for="cm-in">Ton commentaire</label><input id="cm-in" maxlength="600" placeholder="Ajouter un commentaire…" autocomplete="off"><button type="submit" id="cm-go" disabled>Publier</button></form>'
       : '<button type="button" class="cm-login" id="cm-login">Devenir membre pour commenter</button>';
@@ -435,7 +469,7 @@ body{background:#000}
     // Une vue par news et par session
     try { if (!sessionStorage.getItem("v-" + N.id)) { sessionStorage.setItem("v-" + N.id, "1"); fetch("/api/stats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: N.id, act: "view" }) }); } } catch (e) {}
     get("/api/stats?ids=" + N.id).then(function (s) { if (s && s.stats) { ST = s.stats[N.id] || {}; STORED = s.stored !== false; render(); } });
-    get("/api/comments?id=" + N.id).then(function (c) { if (c) { CM = c.items || []; STORED = c.stored !== false; render(); var o = document.getElementById("cm"); if (o && !o.hidden) sheet(); } });
+    get("/api/comments?id=" + N.id).then(function (c) { if (c) { CM = c.items || []; ADMC = !!c.admin; STORED = c.stored !== false; render(); var o = document.getElementById("cm"); if (o && !o.hidden) sheet(); } });
   });
   get("/api/auth/me").then(function (j) { ME = j; if (N && member()) render(); });
 })();
