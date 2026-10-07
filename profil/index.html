@@ -81,6 +81,8 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
     <form class="soc" id="soc">
       <label>Instagram<input name="instagram" value="${esc(r.instagram)}" placeholder="ton compte, sans @" autocomplete="off"></label>
       <label>X (Twitter)<input name="x" value="${esc(r.x)}" placeholder="ton compte, sans @" autocomplete="off"></label>
+      <label>YouTube<input name="youtube" value="${esc(r.youtube)}" placeholder="ta chaîne, sans @" autocomplete="off"></label>
+      <label>TikTok<input name="tiktok" value="${esc(r.tiktok)}" placeholder="ton compte, sans @" autocomplete="off"></label>
       <label>Discord<input name="discord" value="${esc(r.discord)}" placeholder="ton pseudo Discord" autocomplete="off"></label>
       <label class="sw"><input type="checkbox" name="public" ${m.public ? "checked" : ""}><span>Afficher mes réseaux sur la page Membres</span></label>
       <button>Enregistrer</button><p class="msg" id="msg"></p>
@@ -89,7 +91,7 @@ const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month:
   document.getElementById("out").onclick = () => fetch("/api/auth/me", { method: "DELETE" }).then(() => { location.href = "/"; });
   const bm = document.getElementById("bmore"); if (bm) bm.onclick = () => { document.querySelectorAll("[data-plus]").forEach(x => x.hidden = false); bm.remove(); };
   document.getElementById("soc").onsubmit = async e => { e.preventDefault(); const f = new FormData(e.target), msg = document.getElementById("msg"); msg.textContent = "Enregistrement…";
-    const x = await fetch("/api/profil", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ instagram: f.get("instagram"), x: f.get("x"), discord: f.get("discord"), public: f.get("public") === "on" }) });
+    const x = await fetch("/api/profil", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ instagram: f.get("instagram"), x: f.get("x"), discord: f.get("discord"), youtube: f.get("youtube"), tiktok: f.get("tiktok"), public: f.get("public") === "on" }) });
     msg.textContent = x.ok ? "Enregistré ✓" : "Erreur, réessaie."; };
   // Pseudo : unique ; s'il est déjà pris, le serveur répond 409 et on affiche son message.
   document.getElementById("ps").onsubmit = async e => { e.preventDefault(); const pseudo = new FormData(e.target).get("pseudo").trim(), msg = document.getElementById("pmsg");

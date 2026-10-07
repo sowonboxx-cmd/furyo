@@ -4,7 +4,7 @@ import { membre, estAdminEmail, cookieMembre } from "../../lib/auth.js";
 import { json } from "../../lib/admin.js";
 import { catalogue } from "../../lib/badges.js";
 import { lirePage, fiche, patch, rt, identifiant, prisPar, estReserve } from "../../lib/membres.js";
-const propre = s => String(s || "").trim().replace(/^https?:\/\/(www\.)?(instagram\.com|x\.com|twitter\.com)\//i, "").replace(/^@/, "").replace(/[/?#].*$/, "").slice(0, 60);
+const propre = s => String(s || "").trim().replace(/^https?:\/\/(www\.|m\.)?(instagram\.com|x\.com|twitter\.com|youtube\.com|tiktok\.com)\//i, "").replace(/^@/, "").replace(/^@/, "").replace(/[/?#].*$/, "").slice(0, 60);
 export async function onRequestGet({ request, env }) {
   const u = await membre(request, env);
   if (!u || !u.m) return json({ error: "connexion requise" }, 401);
@@ -21,6 +21,8 @@ export async function onRequestPost({ request, env }) {
   const props = {};
   if ("instagram" in b) props["Instagram"] = rt(propre(b.instagram));
   if ("x" in b) props["X"] = rt(propre(b.x));
+  if ("youtube" in b) props["YouTube"] = rt(propre(b.youtube));
+  if ("tiktok" in b) props["TikTok"] = rt(propre(b.tiktok));
   if ("discord" in b) props["Discord"] = rt(String(b.discord || "").trim().slice(0, 60));
   if ("public" in b) props["Réseaux publics"] = { checkbox: !!b.public };
   // Pseudo : 3 à 20 caractères ; son identifiant (adresse du profil) doit être libre.

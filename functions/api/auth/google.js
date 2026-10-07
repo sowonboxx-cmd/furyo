@@ -9,7 +9,7 @@ export async function onRequestPost({ request, env }) {
   if (!u) return new Response(JSON.stringify({ error: "Connexion Google refusée." }), { status: 401, headers: { "content-type": "application/json" } });
   let parBadge = false;
   try {
-    const m = await enregistrer(env.NOTION_TOKEN, u); u.m = m.id; u.k = m.k; u.n = m.n || u.n; u.s = m.s;
+    const m = await enregistrer(env.NOTION_TOKEN, u); u.m = m.id; u.k = m.k; u.n = m.n || u.n; u.s = m.s; if (m.p) u.p = m.p;
     if (m.b && m.b.length) parBadge = badgeAdmin(await catalogue(env.NOTION_TOKEN, true), m.b);
   } catch (e) { /* la connexion marche même si Notion ne répond pas */ }
   const h = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });

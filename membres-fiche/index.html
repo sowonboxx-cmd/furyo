@@ -153,6 +153,38 @@ main{max-width:1240px;padding-left:20px;padding-right:20px}
 .cs small{font-size:12px;color:var(--paper-3);line-height:1.3}
 .cs small .f{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
 @media (max-width:639px){.colh h1{font-size:26px}.colh .avt{width:46px;height:46px}.colh .back span{display:none}.cseg button{padding:0 11px;font-size:13px}}
+
+/* Haut du profil au téléphone : maquette P4 (Will, 07/10/2026) : bandeau classement, avatar à gauche, pseudo, Premium,
+   icônes des réseaux, Suivre à droite, chiffres dans une barre. L'ordinateur garde la carte de gauche. */
+.p4{display:none}
+.sic{display:flex;gap:6px;flex-wrap:wrap}
+.sic a,.sic span{width:34px;height:34px;border-radius:50%;background:#1C1C1E;color:#CFCFD4;display:grid;place-items:center;cursor:pointer}
+.sic svg{width:16px;height:16px}
+.avw{position:relative;flex:none}
+.cam{position:absolute;right:-2px;bottom:-2px;width:30px;height:30px;border-radius:50%;border:3px solid #000;background:#38383B;color:#F5F5F7;display:grid;place-items:center;padding:0;cursor:pointer}
+.cam svg{width:14px;height:14px}.cam[disabled]{opacity:.5}
+.pf .avw{margin:0 auto}
+@media (max-width:979px){
+  .pcard .pf,.pcard .st4,.pcard .pres{display:none}
+  .pcard{padding-top:0!important;overflow:hidden}
+  .p4{display:block}
+  .p4 .band{margin:0 -18px 14px;height:40px;background:linear-gradient(90deg,#F2B33D33,#000);display:flex;align-items:center;gap:8px;padding:0 18px;color:#F2B33D;font:700 12px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+  .p4 .band.n{background:linear-gradient(90deg,#38383B,#000);color:var(--paper-2)}
+  .p4 .band svg{width:18px;height:14px;display:block}
+  .p4 .top{display:flex;gap:14px;align-items:center}
+  .p4 .avt{width:84px;height:84px;border-radius:50%;object-fit:cover;display:grid;place-items:center;font:800 30px Inter,sans-serif;color:#111;box-shadow:0 0 0 3px var(--gold)}
+  .p4 .avt.n{box-shadow:none}
+  .p4 .id{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .p4 h1{margin:0;font:700 30px/1 Antonio,sans-serif;text-transform:uppercase;overflow-wrap:anywhere}
+  .p4 .prem{margin:0}
+  .p4 .fbtn{height:38px;padding:0 18px;border-radius:19px;border:0;background:var(--paper);color:#111;font:700 14px Inter,sans-serif;cursor:pointer;flex:none;align-self:center}
+  .p4 .fbtn[aria-pressed=true]{background:var(--ink-3);color:var(--paper-2)}
+  .p4 .bar{display:grid;grid-template-columns:repeat(4,1fr);background:#1C1C1E;border-radius:14px;margin-top:16px}
+  .p4 .bar div{padding:10px 4px;text-align:center;border-left:1px solid #2C2C2E}.p4 .bar div:first-child{border:0}
+  .p4 .bar b{display:block;font:700 26px/1 Antonio,sans-serif}
+  .p4 .bar span{display:block;margin-top:4px;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--paper-3)}
+  .p4+.pbad{margin-top:16px}
+}
 </style>
 </head>
 <body>
@@ -170,6 +202,34 @@ const verrou = (total) => `<div class="lock"><i>${LOCK_ICO}</i><h2>Réservé aux
 const app = document.getElementById("app");
 let M, CAT = [], ADMIN = false, PF = null, NEWS = {}, SER = {};
 const PREM = '<svg viewBox="0 0 40 40" aria-hidden="true"><path fill="#0095F6" d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Z"/><path fill="#fff" d="m17.204 27.822-7.1-7.115 2.2-2.193 4.9 4.909 10.396-10.414 2.2 2.193Z"/></svg>';
+const SOC = {
+  instagram: ['Instagram', u => 'https://instagram.com/' + u, '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>'],
+  x: ['X', u => 'https://x.com/' + u, '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8 8 10.2h-6.3l-4.9-6.4L5.3 21H2.2l7.3-8.3L1.8 3h6.4l4.4 5.9zm-1.1 16.2h1.7L7.4 4.7H5.6z"/></svg>'],
+  youtube: ['YouTube', u => 'https://youtube.com/@' + u, '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8zM9.7 15.1V8.9l5.8 3.1z"/></svg>'],
+  tiktok: ['TikTok', u => 'https://tiktok.com/@' + u, '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 2h-3.3v13.3a2.8 2.8 0 1 1-2-2.7V9.2a6.2 6.2 0 1 0 5.3 6.1V8.6a8 8 0 0 0 4.4 1.4V6.7c-2.4 0-4.4-2-4.4-4.7z"/></svg>'],
+  discord: ['Discord', null, '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 5.3A16.6 16.6 0 0 0 15.5 4l-.5 1a15 15 0 0 0-6 0l-.5-1a16.6 16.6 0 0 0-4.1 1.3C1.8 9.2 1.1 13 1.5 16.7a16.7 16.7 0 0 0 5 2.5l1.1-1.7c-.6-.2-1.2-.5-1.7-.9l.4-.3a11.9 11.9 0 0 0 11.4 0l.4.3c-.5.4-1.1.7-1.7.9l1.1 1.7a16.6 16.6 0 0 0 5-2.5c.5-4.3-.8-8-2.9-11.4zM8.7 14.5c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg>']
+};
+// Icônes des réseaux où le membre est présent (Discord : pas d'adresse, le pseudo est copié au clic)
+const socIcons = r => Object.entries(SOC).filter(([k]) => r[k]).map(([k, [nom, url, ico]]) => url
+  ? `<a href="${esc(url(r[k]))}" target="_blank" rel="noopener" title="${nom} · @${esc(r[k])}" aria-label="${nom}">${ico}</a>`
+  : `<span title="${nom} · ${esc(r[k])}" data-copy="${esc(r[k])}" aria-label="${nom}">${ico}</span>`).join("");
+const CAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+// Photo de profil : recadrée en carré (1:1, 512 px) dans le navigateur, puis envoyée (Will, 07/10/2026)
+async function changerAvatar(file, btn) {
+  if (!file || !/^image\//.test(file.type)) return;
+  btn.disabled = true;
+  try {
+    const img = await new Promise((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = ko; i.src = URL.createObjectURL(file); });
+    const c = Math.min(img.naturalWidth, img.naturalHeight), cv = document.createElement("canvas"); cv.width = cv.height = 512;
+    cv.getContext("2d").drawImage(img, (img.naturalWidth - c) / 2, (img.naturalHeight - c) / 2, c, c, 0, 0, 512, 512);
+    const blob = await new Promise(ok => cv.toBlob(ok, "image/jpeg", .88));
+    const r = await fetch("/api/avatar", { method: "POST", headers: { "content-type": "image/jpeg" }, body: blob, credentials: "same-origin" });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || "Envoi impossible, réessaie.");
+    M.photo = j.photo; draw();
+    document.querySelectorAll("#sh-me img").forEach(x => x.src = j.photo);
+  } catch (e) { alert(e.message || "Envoi impossible, réessaie."); btn.disabled = false; }
+}
 const CROWN = '<svg viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M2 5l5 4 5-7 5 7 5-4-2 11H4z"/></svg>';
 const slugN = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const quand = d => { if (!d) return ""; const m = (Date.now() - new Date(d)) / 6e4; return m < 60 ? `il y a ${Math.max(1, Math.round(m))} min` : m < 1440 ? `il y a ${Math.round(m / 60)} h` : m < 2880 ? "hier" : `il y a ${Math.round(m / 1440)} jours`; };
@@ -191,15 +251,24 @@ function draw() {
   const ont = new Set(m.badges.map(b => b.id)), fixes = new Set(m.badges.filter(b => b.fixe).map(b => b.id));
   const P = PF || {}, rang1 = P.rang === 1;
   const avt = m.photo ? `<img class="avt" src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">` : `<span class="avt" style="background:#F2B33D">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
-  const covs = P.recents && P.recents.length ? `<div class="covs">${P.recents.map(t => `<a class="cv" href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + (t.seul ? " · tome " + t.n : " · " + t.nb + " tome" + (t.nb > 1 ? "s" : "")))}"><i>${t.cover ? `<img src="/api/couv?w=300&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}<em>${t.seul ? "T." + t.n : t.nb}</em></i><b>${esc(t.titre || "")}</b></a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`;
   const stats = [[P.tot, "Tomes", "var(--paper)"], [P.fr, "FR", "#4C7BD9"], [P.jp, "JP", "var(--red)"], [P.abonnes, "Abonné" + (P.abonnes > 1 ? "s" : ""), "var(--gold)"]];
+  const cam = P.moi ? `<button type="button" class="cam" data-cam aria-label="Changer ma photo" title="Changer ma photo">${CAM}</button>` : "";
+  const avw = cls => `<div class="avw">${avt.replace('class="avt"', `class="avt${cls}"`)}${cam}</div>`;
+  const prem = m.badges.some(b => b.r === "vip" || b.r === "admin") ? `<span class="prem">${PREM}Premium</span>` : "";
+  const ico = socIcons(r);
+  const p4 = PF ? `<div class="p4">
+      <div class="band${rang1 ? "" : " n"}">${rang1 ? CROWN : ""}<span>${P.rang ? `N°${P.rang} du classement · ` : ""}Membre n°${m.num || "?"}</span></div>
+      <div class="top">${avw(rang1 ? "" : " n")}<div class="id"><h1>${esc(m.pseudo || "Membre")}</h1>${prem}${ico ? `<div class="sic">${ico}</div>` : ""}</div>
+        ${!P.moi ? `<button class="fbtn" data-suivre aria-pressed="${!!P.on}">${P.on ? "Suivi" : "Suivre"}</button>` : ""}</div>
+      <div class="bar">${stats.map(([n, l, c]) => `<div><b style="color:${c}">${n ?? 0}</b><span>${l}</span></div>`).join("")}</div></div>` : "";
+  const covs = P.recents && P.recents.length ? `<div class="covs">${P.recents.map(t => `<a class="cv" href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + (t.seul ? " · tome " + t.n : " · " + t.nb + " tome" + (t.nb > 1 ? "s" : "")))}"><i>${t.cover ? `<img src="/api/couv?w=300&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}<em>${t.seul ? "T." + t.n : t.nb}</em></i><b>${esc(t.titre || "")}</b></a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`;
   app.innerHTML = `<div class="d1">
-    <aside class="pcard"><section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avt}<h1>${esc(m.pseudo || "Membre")}</h1>${m.badges.some(b => b.r === "vip" || b.r === "admin") ? `<span class="prem">${PREM}Premium</span>` : ""}
+    <aside class="pcard">${p4}<section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avw("")}<h1>${esc(m.pseudo || "Membre")}</h1>${m.badges.some(b => b.r === "vip" || b.r === "admin") ? `<span class="prem">${PREM}Premium</span>` : ""}
       <span class="meta">Membre n°${m.num || "?"}${P.rang ? ` · ${P.rang === 1 ? "1er" : P.rang + "e"} du classement` : ""}${estAdmin ? " · Administrateur" : ""}</span>
-      ${PF && !P.moi ? `<button class="fbtn" id="suivre" aria-pressed="${!!P.on}">${P.on ? "Suivi" : "Suivre"}</button>` : ""}</section>
+      ${PF && !P.moi ? `<button class="fbtn" data-suivre aria-pressed="${!!P.on}">${P.on ? "Suivi" : "Suivre"}</button>` : ""}</section>
       ${PF ? `<div class="st4">${stats.map(([n, l, c]) => `<div><b style="color:${c}">${n}</b><span>${l}</span></div>`).join("")}</div>` : ""}
       <div class="pbad"><h2>Badges</h2>${m.badges.length ? `<div class="pills">${m.badges.map(b => `<span class="pill" tabindex="0" style="--c:${b.c}">${FG_BADGES.icone(b)}${esc(b.n)}${b.d ? `<span class="tip">${esc(b.d)}</span>` : ""}</span>`).join("")}</div>` : `<p class="vid">Pas encore de badge.</p>`}</div>
-      ${liens.length ? `<div class="pbad"><h2>Réseaux</h2><div class="links">${liens.join("")}</div></div>` : ""}</aside>
+      ${ico ? `<div class="pbad pres"><h2>Réseaux</h2><div class="sic">${ico}</div></div>` : ""}</aside>
     <div class="rcol">
       ${PF ? `<section class="card"><h2 class="h2r">Collection<a href="/membres/${encodeURIComponent(m.slug || "")}/collection">${P.series} série${P.series > 1 ? "s" : ""} · Voir toute la collection →</a></h2>${covs}</section>` : ""}
       ${PF ? `<section class="card"><h2>Activité</h2>${activite(P.activite)}</section>` : ""}
@@ -213,8 +282,9 @@ function draw() {
       </form></section>` : ""}
       <div class="acts"><a href="/communaute/" class="sec">Voir toute la communauté</a></div>
     </div></div>`;
-  const sb = document.getElementById("suivre");
-  if (sb) sb.onclick = async () => { sb.disabled = true; const r = await fetch("/api/communaute", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ suivre: M.id }) }).then(x => x.json()).catch(() => ({})); if (r.ok) { PF.on = r.on; PF.abonnes = r.abonnes; draw(); } else sb.disabled = false; };
+  app.querySelectorAll("[data-copy]").forEach(x => x.onclick = () => { navigator.clipboard?.writeText(x.dataset.copy); x.title = "Pseudo Discord copié"; });
+  app.querySelectorAll("[data-cam]").forEach(b => b.onclick = () => { const f = document.createElement("input"); f.type = "file"; f.accept = "image/*"; f.onchange = () => changerAvatar(f.files[0], b); f.click(); });
+  app.querySelectorAll("[data-suivre]").forEach(sb => sb.onclick = async () => { sb.disabled = true; const r = await fetch("/api/communaute", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ suivre: M.id }) }).then(x => x.json()).catch(() => ({})); if (r.ok) { PF.on = r.on; PF.abonnes = r.abonnes; draw(); } else sb.disabled = false; });
   if (!ADMIN) return;
   const f = document.getElementById("adm");
   f.querySelectorAll("[data-b]").forEach(bt => bt.onclick = () => {
