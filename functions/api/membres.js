@@ -16,6 +16,11 @@ async function liste({ request, env, waitUntil }) {
   // ?u=<identifiant> : un seul membre (page publique furyogang.com/membres/<identifiant>).
   const one = new URL(request.url).searchParams.get("u");
   if (one) {
+    // Page d'un membre : lue dans la liste gardée en cache (2 min), sans requête Notion (Will, 07/10/2026).
+    try { const l = await (await liste({ request: new Request(new URL("/api/membres", request.url)), env, waitUntil })).json();
+      const m = (l.items || []).find(x => (x.slug || "").toLowerCase() === one.toLowerCase());
+      if (m) return new Response(JSON.stringify({ membre: m, catalogue: l.catalogue || [] }), { headers: { "content-type": "application/json; charset=utf-8" } });
+    } catch (e) {}
     const rows = await queryAll(env.NOTION_TOKEN, { ...MEMBRES, body: { filter: { property: "Identifiant", rich_text: { equals: one.toLowerCase() } } } });
     const r = rows[0], cat = await catalogue(env.NOTION_TOKEN).catch(() => []);
     if (!r || check(r.properties["Masqué"])) return new Response(JSON.stringify({ error: "introuvable" }), { status: 404, headers: { "content-type": "application/json" } });

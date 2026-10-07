@@ -6,6 +6,7 @@
 //   GET  /api/communaute?id=<membre>   → page d'un membre : { tot, fr, jp, abonnes, rang, on, recents, activite }
 //   POST /api/communaute { suivre: <membre> } → suivre / ne plus suivre ce membre → { ok, on, abonnes }
 import { membre } from "../../lib/auth.js";
+import { editionsParSerie } from "../../lib/memo.js";
 import { uid, jourParis, debutSemaine, debutMois, decaler } from "../../lib/communaute.js";
 const ID = /^[0-9a-f]{32}$/;
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -64,7 +65,7 @@ async function garder(env) {
 }
 
 // Page d'un membre : chiffres, derniers tomes ajoutés (avec couverture), activité.
-async function profil(env, request, me, id) {
+async function profil(env, request, me, id, waitUntil) {
   const b = await lireJ(env, "bib:" + id, {});
   const c = b.c || {}, cp = b.cp || {}, ids = Object.keys(c);
   // Pays des tomes pas encore connus (ajoutés avant le 07/10/2026) : lus dans le catalogue, 15 séries par visite.
@@ -73,13 +74,14 @@ async function profil(env, request, me, id) {
   const seriesOrd = [...new Set(ids.slice().reverse().map(t => c[t]))].slice(0, 12);
   const recents = seriesOrd.map(s => ids.filter(t => c[t] === s));
   const aLire = [...new Set([...seriesOrd, ...ids.filter(t => !cp[t]).map(t => c[t])])].slice(0, 15);
-  const det = {};
-  await Promise.all(aLire.map(async s => {
-    try { const r = await fetch(new URL("/api/biblio?id=" + s, request.url)); if (r.ok) det[s] = await r.json(); } catch (e) {}
-  }));
+  // Éditions et tomes lus dans l'index (KV) et le catalogue gardé en cache : plus aucune lecture Notion par série
+  // (Will, 07/10/2026 : la page d'un membre mettait plusieurs secondes à charger).
+  const [idx, cat] = await Promise.all([editionsParSerie(env, waitUntil).catch(() => ({})),
+    fetch(new URL("/api/biblio", request.url)).then(r => r.ok ? r.json() : {}).catch(() => ({}))]);
+  const ser = {}; for (const x of cat.items || []) ser[x.id] = x;
   const tomeInfo = {};
-  for (const [s, d] of Object.entries(det)) for (const e of d.editions || []) for (const t of e.tomes || [])
-    tomeInfo[t.id] = { p: e.pays === "France" ? "F" : "J", cover: t.cover, n: t.n, s, titre: d.serie?.fr || d.serie?.t, slug: d.serie?.fiche ? d.serie?.slug : "" };
+  for (const s of aLire) { const se = ser[s] || {}; for (const e of idx[s] || []) for (const t of e.tomes || [])
+    tomeInfo[t.id] = { p: e.pays === "France" ? "F" : "J", cover: t.cover, n: t.n, s, titre: se.fr || se.t, slug: se.fiche ? se.slug : "" }; }
   let change = false;
   for (const t of ids) if (!cp[t] && tomeInfo[t]) { cp[t] = tomeInfo[t].p; change = true; }
   if (change) { b.cp = cp; await env.STATS.put("bib:" + id, JSON.stringify(b)); }
@@ -140,7 +142,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.STATS) return json({ ok: false, error: "stockage indisponible" }, 503);
   const id = new URL(request.url).searchParams.get("id");
   if (id && new URL(request.url).searchParams.get("col")) return ID.test(id) ? json(await collectionComplete(env, id)) : json({ ok: false, error: "membre inconnu" }, 400);
-  if (id) return ID.test(id) ? json(await profil(env, request, me, id)) : json({ ok: false, error: "membre inconnu" }, 400);
+  if (id) return ID.test(id) ? json(await profil(env, request, me, id, waitUntil)) : json({ ok: false, error: "membre inconnu" }, 400);
   const [cl, suivis] = await Promise.all([classements(env, waitUntil), lireJ(env, "um:" + uid(me), [])]);
   return json({ ok: true, classements: cl.classements, suivis, moi: uid(me) });
 }
