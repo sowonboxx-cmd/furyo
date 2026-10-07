@@ -26,7 +26,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 input,select,textarea{font-size:16px!important}
 a{color:inherit}
 .top{position:sticky;top:0;z-index:10;background:#141416;border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px}
-.top-in{max-width:900px;margin:0 auto}
+.top-in{max-width:868px;margin:0 auto}
 .brand{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand .home{color:inherit;text-decoration:none}
 .brand b{font-family:var(--f-display);font-size:22px;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap}
@@ -40,12 +40,14 @@ a{color:inherit}
 .q::placeholder{color:var(--paper-3)}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:10px -16px 0;padding:0 16px}
 .chips::-webkit-scrollbar{display:none}
-/* Validation sur téléphone : menu déroulant à la place des pastilles */
-.vselw{display:none;position:relative;margin-top:10px}
+/* Validation : menu déroulant à la place des pastilles, sur téléphone et sur ordinateur (Will, 07/10/2026) */
+#vchips{display:none}
+.vselw{display:block;position:relative;margin-top:10px}
 .vselw::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:12px 0 0 12px;background:var(--g,transparent);pointer-events:none;z-index:1}
 .vselw::after{content:"";position:absolute;right:16px;top:50%;width:8px;height:8px;border-right:2px solid var(--paper-2);border-bottom:2px solid var(--paper-2);transform:translateY(-70%) rotate(45deg);pointer-events:none}
-.vsel{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--ink-2,#1C1C1E);color:var(--paper);font:600 16px Inter,sans-serif;padding:0 40px 0 20px;-webkit-appearance:none;appearance:none;cursor:pointer}
-@media (max-width:700px){#vchips{display:none}.vselw{display:block}html,body{overflow-x:hidden}}
+.vsel{width:100%;height:44px;border:0;outline:none;border-radius:12px;background:var(--ink-2,#1C1C1E);color:var(--paper);font:600 16px Inter,sans-serif;padding:0 40px 0 20px;-webkit-appearance:none;appearance:none;cursor:pointer}
+@media (max-width:700px){html,body{overflow-x:hidden}}
+@media (min-width:701px){.chips{margin:10px 0 0;padding:0}}
 .chip{flex:none;height:32px;padding:0 12px;border:1px solid var(--line);border-radius:16px;background:transparent;color:var(--paper-2);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .chip[aria-pressed=true]{background:#305887;border-color:#305887;color:#fff}
 .chip small{font-size:11px;opacity:.75}
