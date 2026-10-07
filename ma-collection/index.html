@@ -197,7 +197,8 @@ a{color:inherit}
 </head>
 <body>
 <script src="/site/header.js?v=40"></script>
-<div class="page"><div id="app"><p class="empty">Chargement…</p></div></div>
+<div class="page"><div id="app"></div></div>
+<script>document.getElementById("app").innerHTML = window.FG_SK ? (/^\/ma-collection\/[^/]+/.test(location.pathname) ? FG_SK.fiche() : FG_SK.grid(12)) : "";</script>
 <div class="toast" id="toast"></div>
 <script>
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -311,7 +312,7 @@ async function serie(slug){
   const s = BYSLUG[slug] || BYID[slug];
   if (!s) { app().innerHTML = `<p class="empty">Série introuvable. <a href="/ma-collection/">Retour à ma collection</a></p>`; return; }
   document.title = (s.fr || s.t) + " · Ma collection · FuryoGang";
-  app().innerHTML = `<p class="empty">Chargement…</p>`;
+  app().innerHTML = window.FG_SK ? FG_SK.fiche() : "";
   const d = await detail(s.id); DET[s.id + ":v"] = d;
   if (!d || d.error) { app().innerHTML = `<p class="empty">Impossible de charger cette série.</p>`; return; }
   // Édition affichée : celle où le membre a déjà des tomes, sinon la française, sinon la première.
@@ -431,8 +432,12 @@ async function route(){
   if (col.gate || !col.ok) { GUEST = true; route(); return; }
   L = { c: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max;
   // Les détails des séries de la collection, pour les « 7/9 tomes ».
+  // Une seule requête pour toutes les séries de la collection (lue dans l'index, sans Notion) : Will, 07/10/2026.
   const ids = [...new Set(Object.values(L).flatMap(x => Object.values(x)))];
-  await Promise.all(ids.map(detail));
+  for (let i = 0; i < ids.length; i += 150) {
+    const j = await fetch("/api/biblio?ids=" + ids.slice(i, i + 150).join(",")).then(r => r.json()).catch(() => ({}));
+    for (const [id, d] of Object.entries(j.details || {})) if (!DET[id + ":v"]) DET[id + ":v"] = d;
+  }
   route();
 })();
 </script>

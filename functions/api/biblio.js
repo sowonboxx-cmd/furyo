@@ -3,7 +3,7 @@
 // une édition, même si sa fiche n'est pas encore en ligne (« fiche » dit si le lien « Voir la fiche » existe).
 //   GET /api/biblio          → { items: [{ id, t, fr, jp, slug, cover, genres, type, y1, pays, fiche }] }
 //   GET /api/biblio?id=<id>  → { serie, editions: [{ id, nom, pays, pub, label, nb, statut, tomes: [{ id, n, date, cover, paru }] }] }
-import { toutesEditions } from "../../lib/memo.js";
+import { toutesEditions, editionsParSerie } from "../../lib/memo.js";
 import { text, num, date, rel, list, queryAll, cached, slugSerie } from "../../lib/notion.js";
 import { estVisible } from "../../lib/site.js";
 
@@ -41,10 +41,15 @@ async function catalogue(env, waitUntil) {
   return { items, stats: { series: items.length, tomes } };
 }
 
-async function detail(env, id) {
+async function detail(env, id, waitUntil) {
   const r = await fetch(`https://api.notion.com/v1/pages/${id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } });
   if (!r.ok) return { error: "introuvable" };
   const p = (await r.json()).properties || {};
+  const serie = { id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), fiche: estVisible(p) ? 1 : 0,
+    auteurs: [...new Set([text(p["Scénariste"]), text(p["Dessinateur"])].filter(Boolean))].join(" & "), cover1: text(p["Couverture T1"]) };
+  // Éditions et tomes lus dans l'index (KV) : une seule lecture Notion au lieu d'une par édition (Will, 07/10/2026).
+  const idx = await editionsParSerie(env, waitUntil).catch(() => null);
+  if (idx && idx[id] && idx[id].length) return { serie, editions: idx[id] };
   const eRows = (await queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } })).filter(ok);
   if (!eRows.length) return { error: "introuvable" };
   const editions = await Promise.all(eRows.map(async e => {
@@ -64,7 +69,14 @@ export async function onRequestGet({ env, request, waitUntil }) {
   const id = new URL(request.url).searchParams.get("id");
   if (id) {
     if (!/^[0-9a-f]{32}$/.test(id)) return json({ error: "série inconnue" }, 400);
-    return cached(request, waitUntil, "/api/biblio?v=2&id=" + id, 120, () => detail(env, id));
+    return cached(request, waitUntil, "/api/biblio?v=3&id=" + id, 120, () => detail(env, id, waitUntil));
+  }
+  // ?ids=a,b,c : éditions et tomes de plusieurs séries d'un coup, sans lire Notion (compteurs « 7/9 tomes » de Ma collection).
+  const ids = (new URL(request.url).searchParams.get("ids") || "").split(",").filter(x => /^[0-9a-f]{32}$/.test(x)).slice(0, 300);
+  if (ids.length) {
+    const idx = await editionsParSerie(env, waitUntil);
+    const out = {}; for (const i of ids) if (idx[i]) out[i] = { editions: idx[i].map(e => ({ id: e.id, pays: e.pays, nb: e.nb, tomes: e.tomes.map(t => ({ id: t.id, n: t.n, paru: t.paru })) })) };
+    return new Response(JSON.stringify({ details: out }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "private, max-age=60" } });
   }
   return cached(request, waitUntil, "/api/biblio?v=2", 600, () => catalogue(env, waitUntil));
 }
