@@ -24,7 +24,9 @@ async function build(env, admin) {
     const [sRows, eRows, tRows] = await Promise.all([
       queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: admin ? filtreApercu() : filtreVisible() } }),
       queryAll(env.NOTION_TOKEN, { ...EDITIONS }),
-      queryAll(env.NOTION_TOKEN, { ...TOMES, body: { sorts: [{ property: "N°", direction: "ascending" }] } }),
+      // Seulement les tomes 0 et 1 avec une couverture : la base Tomes dépasse 7 000 lignes (07/10/2026),
+      // les lire toutes faisait plus de 70 requêtes Notion et la liste ne se construisait plus.
+      queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { property: "N°", number: { less_than_or_equal_to: 1 } }, sorts: [{ property: "N°", direction: "ascending" }] } }),
     ]);
     const eds = {};
     for (const e of eRows) eds[nid(e.id)] = { pays: text(e.properties["Pays"]), serie: rel(e.properties["Série"])[0] };
