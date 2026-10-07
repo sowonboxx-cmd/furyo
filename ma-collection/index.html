@@ -216,7 +216,7 @@ const FLAG = {
 };
 const LISTS = [["c", "Collection"], ["p", "Pile à lire"], ["k", "Panier"], ["w", "Wishlist"]];
 const VERBE = { c: "Possédé", p: "À lire", k: "Au panier", w: "Wishlist" };
-let CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, p: {}, k: {}, w: {} }, MAX = 25, TAB = "c", Q = "", SORT = "az", DET = {};
+let STATS = {}, CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, p: {}, k: {}, w: {} }, MAX = 25, TAB = "c", Q = "", SORT = "az", DET = {};
 const F = { statut: new Set(), pays: new Set(), genre: new Set() };
 let SHOWN = 60;
 function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2000); }
@@ -284,10 +284,10 @@ function drawHome(){
   const tabs = `<div class="tabs mob">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}">${l}<em>${k === "c" ? n.tomes : n[k]}</em></button>`).join("")}</div>`;
   const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Wishlist</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
-  const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Il me manque des tomes") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
+  const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
   const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div></div>` : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}
     <div><h4>Ma bibliothèque</h4><div class="lk">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}">${l}<em>${k === "c" ? n.tomes : n[k]}</em></button>`).join("")}</div></div>
-    ${TAB === "c" ? `<div><h4>Statut</h4><div class="fk">${[["complete", "Complètes"], ["manque", "Il me manque des tomes"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
+    ${TAB === "c" ? `<div><h4>Statut</h4><div class="fk">${[["complete", "Complètes"], ["manque", "Tome manquant"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
     <div><h4>Pays</h4><div class="fk">${["France", "Japon"].map(v => `<button data-f="pays" data-v="${v}" aria-pressed="${F.pays.has(v)}"><i></i>${v}</button>`).join("")}</div></div>
     <div><h4>Genre</h4><div class="fk">${genres.map(v => `<button data-f="genre" data-v="${esc(v)}" aria-pressed="${F.genre.has(v)}"><i></i>${esc(v)}</button>`).join("")}</div></div></aside>`;
   const nomTab = LISTS.find(x => x[0] === TAB)[1];
@@ -296,7 +296,7 @@ function drawHome(){
     : cherche ? "" : `<p class="empty">Aucune série ne correspond à ces filtres.</p>`;
   const RESTE = cherche ? [] : filtre(CAT.filter(s => !m[s.id]).map(s => ({ ...s, _n: 0 }))), LIM = vide ? SHOWN : SHOWN - 30; // 30 d'abord sous la collection, puis +60 à chaque « Voir plus »
   const catalogue = cherche ? `<div class="sh2">Toute la base<small>${base.length} série${base.length > 1 ? "s" : ""}</small></div>${base.length ? `<div class="grid">${base.slice(0, SHOWN).map(s => card(s, TAB)).join("")}</div>${base.length > SHOWN ? `<div class="more"><button class="btn g" data-more>Voir plus</button></div>` : ""}` : `<p class="empty">Aucune série trouvée dans la base.</p>`}`
-    : `<div class="sh2">Toute la base<small>${CAT.length} séries à collectionner</small></div><div class="grid">${RESTE.slice(0, LIM).map(s => card(s, TAB)).join("")}</div>${RESTE.length > LIM ? `<div class="more"><button class="btn g" data-more>Voir plus</button></div>` : ""}`;
+    : `<div class="sh2">Toute la base<small>${STATS.series || CAT.length} séries · ${(STATS.tomes || 0).toLocaleString("fr-FR")} tomes</small></div><div class="grid">${RESTE.slice(0, LIM).map(s => card(s, TAB)).join("")}</div>${RESTE.length > LIM ? `<div class="more"><button class="btn g" data-more>Voir plus</button></div>` : ""}`;
   app().innerHTML = `<div class="lay">${side}<div><div class="mtop mob"><h1 class="h1">Ma collection</h1>${tabs}${stats}${quota}</div>
     <div class="tools"><label class="search">${I.s}<input id="q" type="search" placeholder="Chercher une série" value="${esc(Q)}" autocomplete="off"></label><select class="sort" id="sort" aria-label="Trier"><option value="az"${SORT === "az" ? " selected" : ""}>A → Z</option><option value="za"${SORT === "za" ? " selected" : ""}>Z → A</option><option value="new"${SORT === "new" ? " selected" : ""}>Plus récentes</option></select></div>
     ${chips}<div class="cnt"><span>${nomTab} · ${mine.length} série${mine.length > 1 ? "s" : ""}${TAB === "c" ? " · " + n.tomes + " tome" + (n.tomes > 1 ? "s" : "") : ""}</span></div>${grille}${catalogue}</div></div>`;
@@ -427,7 +427,7 @@ async function route(){
     fetch("/api/biblio").then(r => r.json()).catch(() => ({})),
     fetch("/api/collection", { credentials: "same-origin" }).then(r => r.status === 401 ? { gate: 1 } : r.json()).catch(() => ({ gate: 1 })),
   ]);
-  CAT = cat.items || []; CAT.forEach(s => { BYID[s.id] = s; BYSLUG[s.slug] = s; });
+  CAT = cat.items || []; STATS = cat.stats || {}; CAT.forEach(s => { BYID[s.id] = s; BYSLUG[s.slug] = s; });
   if (col.gate || !col.ok) { GUEST = true; route(); return; }
   L = { c: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max;
   // Les détails des séries de la collection, pour les « 7/9 tomes ».

@@ -24,7 +24,7 @@ async function catalogue(env) {
   const cov = {};
   for (const t of t1) { const c = text(t.properties["Couverture"]); if (c) rel(t.properties["Édition"]).forEach(e => { cov[e] = cov[e] || c; }); }
   const parSerie = {};
-  for (const e of eRows.filter(ok)) { const p = e.properties; for (const s of rel(p["Série"])) (parSerie[s] = parSerie[s] || []).push({ id: nid(e.id), pays: text(p["Pays"]) }); }
+  for (const e of eRows.filter(ok)) { const p = e.properties; for (const s of rel(p["Série"])) (parSerie[s] = parSerie[s] || []).push({ id: nid(e.id), pays: text(p["Pays"]), nb: num(p["Nb tomes"]) || 0 }); }
   const items = [];
   for (const r of sRows) {
     const p = r.properties || {}, id = nid(r.id), eds = (parSerie[id] || []).sort((a, b) => PAYS_ORDRE(a.pays) - PAYS_ORDRE(b.pays));
@@ -34,7 +34,10 @@ async function catalogue(env) {
       genres: list(p["Genre"]), type: text(p["Type"]), y1: num(p["Année Début"]), pays: [...new Set(eds.map(e => e.pays))], fiche: estVisible(p) ? 1 : 0 });
   }
   items.sort((a, b) => (a.fr || a.t).localeCompare(b.fr || b.t, "fr"));
-  return { items };
+  // Chiffres de la base (Will, 07/10) : séries collectionnables et tomes (toutes éditions confondues).
+  const ids = new Set(items.map(i => i.id));
+  const tomes = Object.entries(parSerie).filter(([s]) => ids.has(s)).reduce((n, [, eds]) => n + eds.reduce((m, e) => m + e.nb, 0), 0);
+  return { items, stats: { series: items.length, tomes } };
 }
 
 async function detail(env, id) {
