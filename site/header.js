@@ -90,9 +90,16 @@
     /* Ordinateur (Will, 05/10/2026) : une seule ligne. Logo à gauche, rubriques, puis loupe, nombre à valider et avatar tout à droite. */
     "@media (max-width:719px){.sh-d{display:none!important}}" +
     /* Téléphone (Will, 07/10/2026) : comme sur ordinateur, logo à gauche ; à droite, de droite à gauche : avatar, nombre à valider, loupe. */
-    "@media (max-width:719px){.sh-top{justify-content:flex-start;gap:2px;padding:0 6px 0 16px}.sh-logo{margin-right:auto}.sh-logo img{height:36px}" +
-    ".sh-btn{position:static;transform:none;flex:none}.sh-search{order:2}.sh-adm{order:3;position:static!important;transform:none;margin:0 2px}.sh-me{order:4}" +
-    ".adm-box{left:auto!important;right:12px}}" +
+    /* Logo de nouveau au centre (Will, 07/10/2026, 15 h 30) ; loupe à gauche ; à droite : nombre à valider puis avatar. */
+    "@media (max-width:719px){.sh-top{justify-content:flex-end;gap:2px;padding:0 6px}.sh-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}.sh-logo img{height:32px}" +
+    ".sh-btn{position:static;transform:none;flex:none}.sh-search{order:1;margin-right:auto}.sh-adm{order:3;position:static!important;transform:none;margin:0 2px}.sh-me{order:4}" +
+    ".adm-box{left:auto!important;right:12px}" +
+    /* Onglets du téléphone : Actualités, Séries, Calendrier, Ma collection, puis ☰ pour le reste (À l'écran, Mangakas…). */
+    ".sh-nav a.sh-m0{display:none!important}.sh-nav a.sh-d{display:flex!important}.sh-nav a{flex:auto!important;padding:0 6px!important;font-size:16px!important}" +
+    ".sh-plus{flex:none;width:44px;height:40px;border:0;border-radius:10px;background:transparent;color:#8E8E93;display:grid;place-items:center;cursor:pointer}.sh-plus[aria-expanded=true]{background:#38383B;color:#F5F5F7}" +
+    ".sh-more{margin:-4px 12px 10px;padding:6px;background:#000;border-radius:14px;display:grid;grid-template-columns:1fr 1fr;gap:4px}.sh-more[hidden]{display:none}" +
+    ".sh-more a{height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#CFCFD4;font:700 16px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em;background:#1C1C1E}.sh-more a[aria-current=page]{background:#38383B;color:#F5F5F7}}" +
+    "@media (min-width:720px){.sh-plus,.sh-more{display:none!important}}" +
     "@media (min-width:720px){.sh-in{display:flex;align-items:center;gap:8px;max-width:1240px;margin:0 auto;padding:0 20px;height:68px}" +
     ".sh-top{display:contents}.sh-logo{order:0;flex:none;margin-right:14px}.sh-logo img{height:38px}" +
     ".sh-nav{order:1;flex:1;min-width:0;margin:0;padding:0;border:0;justify-content:flex-start;gap:2px;overflow-x:auto;scrollbar-width:none}.sh-nav::-webkit-scrollbar{display:none}" +
@@ -149,18 +156,27 @@
     article: function () { return B("100%", 0, 0).replace("height:0px", "height:min(58vh,460px)") + '<div class="skw">' + B("30%", 14) + B("100%", 16) + B("100%", 16) + B("92%", 16) + B("70%", 16) + B("100%", 0, 16).replace("height:0px", "aspect-ratio:16/9;height:auto") + B("100%", 64, 14) + "</div>"; }
   };
   var p = location.pathname;
-  var cur = /^\/series/.test(p) ? "series" : /^\/films/.test(p) ? "ecran" : /^\/calendrier/.test(p) ? "cal" : /^\/ma-collection/.test(p) ? "col" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
+  var cur = /^\/series/.test(p) ? "series" : /^\/films/.test(p) ? "ecran" : /^\/calendrier/.test(p) ? "cal" : /^\/ma-collection/.test(p) ? "col" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : /^\/(communaute|membres)/.test(p) ? "cm" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
   if (/vue=magazines/.test(location.search)) cur = "jp";
-  var a = function (k, href, label, d, nw) { return '<a href="' + href + '"' + (d ? ' class="sh-d"' : "") + (nw ? ' target="_blank" rel="noopener"' : "") + (cur === k ? ' aria-current="page"' : "") + ">" + label + "</a>"; };
+  var a = function (k, href, label, d, nw, cl) { return '<a href="' + href + '"' + (d ? ' class="sh-d"' : cl ? ' class="' + cl + '"' : "") + (nw ? ' target="_blank" rel="noopener"' : "") + (cur === k ? ' aria-current="page"' : "") + ">" + label + "</a>"; };
   var ICON_S = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
   var html = '<header class="sh" id="sh"><div class="sh-in">' +
     '<div class="sh-top"><button class="sh-btn sh-me" id="sh-me" aria-label="Mon compte"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.3 4.2-7 8.5-7s7.7 2.7 8.5 7z"/></svg></span></button>' +
     '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
-    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("ecran", "/films/", "À l'écran") + a("cal", "/calendrier/", "Calendrier") +
-a("col", "/ma-collection/", "Ma collection", 1) + "</nav></div></header>";
+    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("ecran", "/films/", "À l'écran", 0, 0, "sh-m0") + a("cal", "/calendrier/", "Calendrier") +
+a("col", "/ma-collection/", "Ma collection", 1) +
+    '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
+    "</nav>" +
+    '<div class="sh-more" id="sh-more" hidden>' + a("ecran", "/films/", "À l'écran") + a("mk", "/auteurs/", "Mangakas") + a("cm", "/communaute/", "Communauté") + a("cxw", "/crows-x-worst/", "Crows × Worst") + "</div>" +
+    "</div></header>";
   var me = document.currentScript;
   me.insertAdjacentHTML("beforebegin", html);
+  var plus = document.getElementById("sh-plus"), more = document.getElementById("sh-more");
+  if (plus && more) {
+    if (more.querySelector("[aria-current]")) { more.hidden = false; plus.setAttribute("aria-expanded", "true"); }
+    plus.addEventListener("click", function () { more.hidden = !more.hidden; plus.setAttribute("aria-expanded", String(!more.hidden)); if (typeof set === "function") set(); });
+  }
   var set = function () { var h = document.getElementById("sh"); if (h) document.documentElement.style.setProperty("--sh-h", h.offsetHeight + "px"); };
   set(); addEventListener("resize", set); addEventListener("load", set);
 

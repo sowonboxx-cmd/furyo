@@ -40,15 +40,15 @@ h1,h2{font-family:var(--f-display);font-weight:700;text-transform:uppercase;lett
 /* ---------- Liste ---------- */
 .lh{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin:6px 0 18px}
 .lh h1{font-size:clamp(38px,9vw,56px);line-height:1}
-.lh p{margin:6px 0 0;color:var(--paper-3)}
+.lh p{margin:6px 0 0;color:var(--paper-3);white-space:nowrap;font-size:clamp(13px,3.6vw,15px)}
 .tabs{display:flex;gap:4px;background:#000;border-radius:16px;padding:5px;overflow-x:auto;scrollbar-width:none;max-width:100%}
 .tabs button{flex:none;border:0;background:none;padding:9px 16px;border-radius:11px;font-weight:600;color:var(--paper-3);cursor:pointer}
 .tabs button[aria-pressed=true]{background:var(--ink-3);color:var(--paper)}
 .tabs button:hover{color:var(--paper)}
 .tabs i{font-style:normal;font-size:12px;color:var(--paper-3);margin-left:6px}
-.sorts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
-.sorts button{height:34px;padding:0 13px;border:0;border-radius:9px;background:var(--ink-3);color:var(--paper-2);font-weight:600;font-size:14px;cursor:pointer}
-.sorts button[aria-pressed=true]{background:var(--blue);color:#fff}
+.sorts{display:flex;gap:4px;margin:0 0 20px;padding:4px;background:#000;border-radius:14px;max-width:520px}
+.sorts button{flex:1;height:36px;padding:0 8px;border:0;border-radius:10px;background:transparent;color:var(--paper-3);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
+.sorts button[aria-pressed=true]{background:var(--ink-3);color:var(--paper)}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}
 @media (min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:900px){.grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:26px 20px}}
@@ -123,7 +123,7 @@ h1,h2{font-family:var(--f-display);font-weight:700;text-transform:uppercase;lett
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=38"></script>
+<script src="/site/header.js?v=39"></script>
 <script src="/site/yt.js?v=3"></script>
 <div class="page">
   <div id="app"><p class="empty">Chargement…</p></div>
@@ -153,8 +153,8 @@ function liste() {
   if (TRI === "manga") v = v.filter(f => f.manga);
   v = [...v].sort(TRI === "az" ? (a, b) => a.t.localeCompare(b.t, "fr") : (a, b) => (b.y || 0) - (a.y || 0) || a.t.localeCompare(b.t, "fr"));
   const tabs = [["", "Tout", all.length], ...TYPES.map(([k, l]) => [k, l, n(k)]).filter(x => x[2])];
-  const tris = [["recent", "Plus récents"], ["must", "À voir absolument"], ["az", "A → Z"], ["manga", "D'après un manga"]];
-  app.innerHTML = `<div class="lh"><div><h1>À l'écran</h1><p>Films, dramas, OAV et anime tirés des mangas furyō, yakuza et crime.</p></div>
+  const tris = [["recent", "Récents"], ["must", "À voir"], ["az", "A → Z"], ["manga", "Mangas"]];
+  app.innerHTML = `<div class="lh"><div><h1>À l'écran</h1><p>L'univers furyō, yakuza et underground à l'écran.</p></div>
     ${tabs.length > 2 ? `<div class="tabs" role="group" aria-label="Type">${tabs.map(([k, l, c]) => `<button type="button" data-type="${k}" aria-pressed="${TYPE === k}">${l}<i>${c}</i></button>`).join("")}</div>` : ""}</div>
     <div class="sorts" role="group" aria-label="Tri">${tris.map(([k, l]) => `<button type="button" data-tri="${k}" aria-pressed="${TRI === k}">${l}</button>`).join("")}</div>
     ${v.length ? `<div class="grid">${v.map(f => card(f)).join("")}</div>` : `<p class="empty">Rien pour l'instant dans cette catégorie.</p>`}`;
