@@ -1514,21 +1514,33 @@ addEventListener("resize", () => { if (!CV.el.hidden) cvFit(); });
 CV.el.addEventListener("scroll", () => { if (CV.el.scrollLeft || CV.el.scrollTop) { CV.el.scrollLeft = 0; CV.el.scrollTop = 0; } });
 document.getElementById("mapTeaser").addEventListener("click", cvOpen);
 // Aperçu vivant de la carte dans la grande carte cliquable : la vraie carte, en tout petit, qui défile doucement
-function mtPreview(){
+function mtPreview(force){
   const view = document.querySelector(".mt-view"), mt = document.getElementById("mapTeaser"); if (!view || !mt) return;
   if (!CV.built) cvBuild();
   const h = mt.clientHeight, w = mt.clientWidth, mob = w < 700;
+  // Sur iPhone, la page envoie « resize » à chaque défilement (barre d'adresse) : on ne refait l'aperçu
+  // que si la largeur change, sinon les images disparaissent et réapparaissent sans arrêt.
+  if (!force && view.firstChild && mtPreview.w === w) return;
+  mtPreview.w = w;
   const s = (mob ? 170 * 0.98 : h * 1.0) / CV.H, gap = 220, step = (CV.W + gap) * s;
   // Deux copies côte à côte (trois si l'écran est large) qui défilent en boucle : la carte ne s'arrête jamais
   const n = Math.max(2, Math.ceil(w / step) + 1);
   let html = "";
   for (let i = 0; i < n; i++) html += `<span class="mt-world" style="width:${CV.W}px;height:${CV.H}px;transform:translate(${i * step}px,0) scale(${s})">${CV.world.innerHTML}</span>`;
-  view.innerHTML = `<span class="mt-loop" style="top:${mob ? 8 : 18}px;left:${mob ? 14 : Math.round(w * 0.42)}px;--mt-dx:${-step}px;--mt-t:${Math.round(step / 18)}s">${html}</span>`;
-  // Images de l'aperçu : petites vignettes servies par FuryoGang (copie R2), chargées tout de suite
-  view.querySelectorAll("img").forEach(i => { i.loading = "eager"; const u = i.getAttribute("src") || ""; if (/^https?:/.test(u) && !u.includes(location.host)) i.src = cfCouv(u, 120); });
+  // Préparé hors de la page (aucune image ne part encore), puis images remplacées par les petites vignettes
+  // FuryoGang (copie R2), chargées tout de suite.
+  const tpl = document.createElement("template");
+  tpl.innerHTML = `<span class="mt-loop" style="top:${mob ? 8 : 18}px;left:${mob ? 14 : Math.round(w * 0.42)}px;--mt-dx:${-step}px;--mt-t:${Math.round(step / 18)}s">${html}</span>`;
+  const imgs = [...tpl.content.querySelectorAll("img")];
+  imgs.forEach(i => { i.loading = "eager"; i.decoding = "async"; const u = i.getAttribute("src") || ""; if (/^https?:/.test(u) && !u.includes(location.host)) i.setAttribute("src", cfCouv(u, 120)); });
+  const poser = () => view.replaceChildren(tpl.content);
+  // Aperçu déjà affiché : on garde l'ancien tant que les nouvelles images ne sont pas prêtes (pas de clignotement)
+  if (!view.firstChild) return poser();
+  const id = mtPreview.id = (mtPreview.id || 0) + 1;
+  Promise.all(imgs.slice(0, 60).map(i => i.decode().catch(() => {}))).then(() => { if (id === mtPreview.id) poser(); });
 }
 mtPreview();
-addEventListener("resize", () => { clearTimeout(mtPreview.t); mtPreview.t = setTimeout(mtPreview, 200); });
+addEventListener("resize", () => { clearTimeout(mtPreview.t); mtPreview.t = setTimeout(() => mtPreview(), 200); });
 // En-tête sur cette page : pas de rubriques ni de back-office, et la loupe du site cherche dans l'univers CROWS x WORST
 (function cxHeader(){
   const nav = document.querySelector(".sh-nav"); if (nav) nav.remove();
@@ -1573,7 +1585,7 @@ async function syncNotion(){
   DATA.works.sort((a, b) => a.o - b.o || a.id - b.id);
   const d2 = new Date(j.synced);
   (document.getElementById("updated") || {}).textContent = "Synchronisé avec la base FuryoGang le " + d2.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
-  if (changed) { paintStats(); render(); observe(); CV.built = false; cvBuild(); mtPreview(); }
+  if (changed) { paintStats(); render(); observe(); CV.built = false; cvBuild(); mtPreview(true); }
 }
 syncNotion();
 </script>
