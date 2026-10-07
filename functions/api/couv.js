@@ -64,7 +64,9 @@ export async function onRequestGet({ request, env, waitUntil }) {
     const o = await env.COUV.get(rk).catch(() => null);
     if (o) { orig = new Response(o.body, { headers: { "content-type": o.httpMetadata?.contentType || "image/jpeg", "cache-control": IMMUABLE, "x-couv": "r2" } }); enR2 = true; }
   }
-  if (!orig) orig = await cache.match(key);
+  if (!orig) { orig = await cache.match(key);
+    // Déjà en cache Cloudflare mais pas encore dans R2 : on l'y copie aussi.
+    if (orig && env.COUV) { const c2 = orig.clone(); waitUntil((async () => { const buf = await c2.arrayBuffer(); const ct = sniff(buf); if (ct) await env.COUV.put(rk, buf, { httpMetadata: { contentType: ct }, customMetadata: { source: t.href.slice(0, 1000) } }); })().catch(() => {})); } }
   if (!orig) {
     const r = await fetch(t.href, { headers: { "user-agent": "Mozilla/5.0 (FuryoGang)", referer: t.origin + "/" } });
     const buf = r.ok ? await r.arrayBuffer() : null, ct = buf ? sniff(buf) : "";
