@@ -4,7 +4,7 @@
 //   GET  /api/comments?recent=5&ids=a,b   → { ok, items: [{ id, n, p, t, d }] } (les plus récents du site)
 //   POST /api/comments { id, text }            → ajoute un commentaire (membre connecté), 1 à 600 caractères
 // Stockage : namespace KV « STATS » (le même que les likes). Sans lui, la lecture renvoie une liste vide et l'écriture est refusée.
-import { membre } from "../../lib/auth.js";
+import { membre, estAdminEmail } from "../../lib/auth.js";
 import { activite, uid } from "../../lib/communaute.js";
 const ID = /^[a-z0-9-]{1,80}$/;
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -45,6 +45,17 @@ export async function onRequestPost({ env, request }) {
   const id = String(body.id || ""), text = String(body.text || "").replace(/\s+\n/g, "\n").trim();
   if (!ID.test(id)) return json({ ok: false, error: "id invalide" }, 400);
   if (!text || text.length > 600) return json({ ok: false, error: "Commentaire vide ou trop long (600 caractères maximum)." }, 400);
+  // Limite de vitesse (Will, 07/10/2026) : un commentaire toutes les 20 secondes, 50 par jour et par membre (les admins n'ont pas de limite).
+  const rk = "cr:" + uid(me), now = Date.now(), jour = new Date().toISOString().slice(0, 10);
+  let rl = {}; try { rl = JSON.parse((await env.STATS.get(rk)) || "{}"); } catch (e) {}
+  if (rl.j !== jour) rl = { j: jour, n: 0, t: rl.t || 0 };
+  if (!(await estAdminEmail(me.e, env))) {
+    const attente = Math.ceil((20e3 - (now - (rl.t || 0))) / 1000);
+    if (attente > 0) return json({ ok: false, error: `Doucement : attends encore ${attente} seconde${attente > 1 ? "s" : ""} avant ton prochain commentaire.` }, 429);
+    if (rl.n >= 50) return json({ ok: false, error: "Tu as atteint la limite de 50 commentaires pour aujourd'hui. Reviens demain !" }, 429);
+  }
+  rl.t = now; rl.n++;
+  await env.STATS.put(rk, JSON.stringify(rl), { expirationTtl: 172800 });
   const list = JSON.parse((await env.STATS.get(`c:${id}`)) || "[]");
   const item = { n: String(me.n || "Membre").slice(0, 40), s: me.s || "", p: me.p || "", t: text, d: new Date().toISOString() };
   list.push(item);
