@@ -907,7 +907,10 @@ if (!slug) {
   } catch (e) {}
 }
 document.addEventListener("click", e => { const a = e.target.closest("a[data-pre]"); if (a) try { sessionStorage.setItem("fg-pre-" + a.getAttribute("href").split("/").pop(), a.dataset.pre); } catch (er) {} });
-if (slug) fetch("/api/serie?s=" + encodeURIComponent(slug)).then(r => r.json()).then(j => {
+// Notion sature parfois (trop de demandes d'un coup) : on réessaie 3 fois avant d'afficher une erreur (Will, 07/10/2026).
+const serieFetch = (n = 0) => fetch("/api/serie?s=" + encodeURIComponent(slug)).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .catch(e => { if (n >= 3) throw e; return new Promise(ok => setTimeout(ok, 1200 * (n + 1))).then(() => serieFetch(n + 1)); });
+if (slug) serieFetch().then(j => {
   if (!j || j.error || !j.serie) { document.getElementById("app").innerHTML = `<p class="empty">Série introuvable. <a href="/series/">Voir toutes les séries</a></p>`; return; }
   DATA = j; render();
   // Ancienne adresse (titre japonais) : on affiche l'adresse officielle, celle du titre français s'il existe.
