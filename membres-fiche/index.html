@@ -94,7 +94,7 @@ main{max-width:1240px;padding-left:20px;padding-right:20px}
 .duo2{display:flex;flex-direction:column;gap:14px}
 .card,.pcard{background:var(--ink-2);border-radius:22px;padding:18px}
 .pcard{padding:24px 18px}
-.pcard.or{background:linear-gradient(180deg,#3A2A08,#000 55%)}
+.pbad{margin-top:18px;padding-top:16px;border-top:1px solid #1C1C1E}.pbad h2{margin:0 0 10px;font-size:12px;letter-spacing:.1em;color:var(--paper-3)}.pbad .links{justify-content:center}.pbad .links a,.pbad .links span{background:#1C1C1E}
 .card h2{margin:0 0 12px;font-family:Antonio,sans-serif;font-size:20px;letter-spacing:0;color:var(--paper)}
 .card .h2r a{font-family:Inter,sans-serif}
 .st4{grid-template-columns:1fr 1fr!important;margin-top:16px!important}
@@ -123,6 +123,7 @@ main{max-width:1240px;padding-left:20px;padding-right:20px}
 @media (min-width:980px){
   .d1{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start}
   .pcard{position:sticky;top:84px}
+  .pcard .pills{justify-content:center}
   .covs{grid-template-columns:repeat(6,1fr)!important}
   .duo2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:start}
 }
@@ -147,7 +148,7 @@ const slugN = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, 
 const quand = d => { if (!d) return ""; const m = (Date.now() - new Date(d)) / 6e4; return m < 60 ? `il y a ${Math.max(1, Math.round(m))} min` : m < 1440 ? `il y a ${Math.round(m / 60)} h` : m < 2880 ? "hier" : `il y a ${Math.round(m / 1440)} jours`; };
 function activite(l) {
   if (!l || !l.length) return `<p class="vid">Pas encore d'activité.</p>`;
-  return `<div class="actl">${l.slice(0, 12).map(a => {
+  return `<div class="actl">${l.slice(0, 6).map(a => {
     const n = NEWS[a.id], titreN = n ? esc(n.fr || n.titre) : "une news", lienN = n ? "/actus/" + slugN(n.fr || n.titre) + "-" + String(n.id).slice(-8) : "#";
     if (a.k === "c") return `<div class="act"><i style="background:#7FA7C926;color:#7FA7C9">“</i><div>A commenté <a href="${lienN}">${titreN}</a><small>« ${esc(a.t)} » · ${quand(a.d)}</small></div></div>`;
     if (a.k === "l") return `<div class="act"><i style="background:#E5483A26;color:#E5483A">♥</i><div>A aimé <a href="${lienN}">${titreN}</a><small>${quand(a.d)}</small></div></div>`;
@@ -166,19 +167,15 @@ function draw() {
   const covs = P.recents && P.recents.length ? `<div class="covs">${P.recents.map(t => `<a class="cv" href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + (t.seul ? " · tome " + t.n : " · " + t.nb + " tome" + (t.nb > 1 ? "s" : "")))}"><i>${t.cover ? `<img src="/api/couv?w=300&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}<em>${t.seul ? "T." + t.n : t.nb}</em></i><b>${esc(t.titre || "")}</b></a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`;
   const stats = [[P.tot, "Tomes", "var(--paper)"], [P.fr, "FR", "#4C7BD9"], [P.jp, "JP", "var(--red)"], [P.abonnes, "Abonné" + (P.abonnes > 1 ? "s" : ""), "var(--gold)"]];
   app.innerHTML = `<div class="d1">
-    <aside class="pcard${rang1 ? " or" : ""}"><section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avt}<h1>${esc(m.pseudo || "Membre")}</h1>
+    <aside class="pcard"><section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avt}<h1>${esc(m.pseudo || "Membre")}</h1>
       <span class="meta">Membre n°${m.num || "?"}${P.rang ? ` · ${P.rang === 1 ? "1er" : P.rang + "e"} du classement` : ""}${estAdmin ? " · Administrateur" : ""}</span>
       ${PF && !P.moi ? `<button class="fbtn" id="suivre" aria-pressed="${!!P.on}">${P.on ? "Suivi" : "Suivre"}</button>` : ""}</section>
-      ${PF ? `<div class="st4">${stats.map(([n, l, c]) => `<div><b style="color:${c}">${n}</b><span>${l}</span></div>`).join("")}</div>` : ""}</aside>
+      ${PF ? `<div class="st4">${stats.map(([n, l, c]) => `<div><b style="color:${c}">${n}</b><span>${l}</span></div>`).join("")}</div>` : ""}
+      <div class="pbad"><h2>Badges</h2>${m.badges.length ? `<div class="pills">${m.badges.map(b => `<span class="pill" tabindex="0" style="--c:${b.c}">${FG_BADGES.icone(b)}${esc(b.n)}${b.d ? `<span class="tip">${esc(b.d)}</span>` : ""}</span>`).join("")}</div>` : `<p class="vid">Pas encore de badge.</p>`}</div>
+      ${liens.length ? `<div class="pbad"><h2>Réseaux</h2><div class="links">${liens.join("")}</div></div>` : ""}</aside>
     <div class="rcol">
       ${PF ? `<section class="card"><h2 class="h2r">Collection<a href="${P.moi ? "/ma-collection/" : "#"}">${P.series} série${P.series > 1 ? "s" : ""}${P.moi ? " · Ma collection →" : ""}</a></h2>${covs}</section>` : ""}
-      <div class="duo2">
-        ${PF ? `<section class="card"><h2>Activité</h2>${activite(P.activite)}</section>` : ""}
-        <div class="rcol">
-          <section class="card"><h2>Badges</h2>${m.badges.length ? `<div class="pills">${m.badges.map(b => `<span class="pill" tabindex="0" style="--c:${b.c}">${FG_BADGES.icone(b)}${esc(b.n)}${b.d ? `<span class="tip">${esc(b.d)}</span>` : ""}</span>`).join("")}</div>` : `<p class="vid">Pas encore de badge.</p>`}</section>
-          ${liens.length ? `<section class="card"><h2>Réseaux</h2><div class="links">${liens.join("")}</div></section>` : ""}
-        </div>
-      </div>
+      ${PF ? `<section class="card"><h2>Activité</h2>${activite(P.activite)}</section>` : ""}
       ${ADMIN ? `<section class="card"><h2>Gérer les badges · admin</h2>
       <form class="adm" id="adm">
         <p>Touche un badge pour l'ajouter ou le retirer, puis enregistre. Les badges grisés sont automatiques. Donner « Administrateur » ouvre l'accès au back-office.</p>
