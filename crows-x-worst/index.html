@@ -534,7 +534,7 @@ footer{padding-block:0 32px!important;margin-top:-28px}
 .mt:hover .mt-go{transform:translateX(4px)}
 .mt:focus-visible{outline:3px solid var(--paper);outline-offset:3px}
 .mt-loop{position:absolute;left:0;top:0;will-change:transform}
-@media (prefers-reduced-motion:no-preference){.mt-loop{animation:mtLoop var(--mt-t,60s) linear infinite}}
+.mt-loop{animation:mtLoop var(--mt-t,60s) linear infinite!important}
 @keyframes mtLoop{from{transform:translateX(0)}to{transform:translateX(var(--mt-dx,0px))}}
 @media (max-width:699px){
   .mt{min-height:0;border-radius:20px}
@@ -1524,7 +1524,8 @@ function mtPreview(){
   let html = "";
   for (let i = 0; i < n; i++) html += `<span class="mt-world" style="width:${CV.W}px;height:${CV.H}px;transform:translate(${i * step}px,0) scale(${s})">${CV.world.innerHTML}</span>`;
   view.innerHTML = `<span class="mt-loop" style="top:${mob ? 8 : 18}px;left:${mob ? 14 : Math.round(w * 0.42)}px;--mt-dx:${-step}px;--mt-t:${Math.round(step / 18)}s">${html}</span>`;
-  view.querySelectorAll("img").forEach(i => i.loading = "eager");
+  // Images de l'aperçu : petites vignettes servies par FuryoGang (copie R2), chargées tout de suite
+  view.querySelectorAll("img").forEach(i => { i.loading = "eager"; const u = i.getAttribute("src") || ""; if (/^https?:/.test(u) && !u.includes(location.host)) i.src = cfCouv(u, 120); });
 }
 mtPreview();
 addEventListener("resize", () => { clearTimeout(mtPreview.t); mtPreview.t = setTimeout(mtPreview, 200); });
