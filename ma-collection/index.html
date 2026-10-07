@@ -378,7 +378,12 @@ document.addEventListener("click", async e => {
   const tb = e.target.closest("[data-tab]"); if (tb) { TAB = tb.dataset.tab; F.statut.clear(); home(); return; }
   const fb = e.target.closest("[data-f]"); if (fb) { const g = F[fb.dataset.f], v = fb.dataset.v; g.has(v) ? g.delete(v) : g.add(v); drawHome(); return; }
   if (e.target.closest("[data-more]")) { SHOWN += 60; drawHome(); return; }
-  const lk = e.target.closest("a.c, a.back"); if (lk && lk.getAttribute("href").startsWith("/ma-collection/")) { e.preventDefault(); history.pushState(null, "", lk.getAttribute("href")); route(); window.scrollTo(0, 0); return; }
+  const lk = e.target.closest("a.c, a.back"); if (lk && lk.getAttribute("href").startsWith("/ma-collection/")) { e.preventDefault();
+    // Retour à la liste (Will, 07/10) : on revient à l'endroit où on était, avec autant de séries affichées.
+    if (lk.matches("a.back") && history.state && history.state.depuis) { history.back(); return; }
+    const surListe = !slugAdr();
+    if (surListe) history.replaceState({ y: scrollY, shown: SHOWN }, "");
+    history.pushState({ depuis: surListe }, "", lk.getAttribute("href")); route(); window.scrollTo(0, 0); return; }
   const s = BYSLUG[slugAdr()]; const d = s && DET[s.id + ":v"]; if (!d) return;
   const ed = e.target.closest("[data-ed]"); if (ed) { ED = ed.dataset.ed; drawSerie(s, d); return; }
   const lt = e.target.closest("[data-lt]"); if (lt) { LT = lt.dataset.lt; drawSerie(s, d); return; }
@@ -389,7 +394,8 @@ document.addEventListener("click", async e => {
     if (!tomes.length) { toast("Tu as déjà tous les tomes parus ✓"); return; }
     if (await envoyer("c", true, tomes, j)) { drawSerie(s, d); toast(`${tomes.length} tome${tomes.length > 1 ? "s" : ""} ajouté${tomes.length > 1 ? "s" : ""} ✓`); } }
 });
-addEventListener("popstate", route);
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+addEventListener("popstate", async e => { const st = e.state || {}; if (!slugAdr() && st.shown) SHOWN = Math.max(SHOWN, st.shown); await route(); window.scrollTo(0, !slugAdr() && st.y ? st.y : 0); });
 
 /* ---------- accès ---------- */
 // Visiteur non connecté (Will, 07/10) : il voit la page et peut défiler, mais tout clic ouvre cette fenêtre.
