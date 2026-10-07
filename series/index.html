@@ -227,11 +227,19 @@ body.tb-open{overflow:hidden}
 .seg button{height:40px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--paper-3);font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
 .seg button[aria-pressed="true"]{background:var(--ink-3);color:var(--paper)}
 .seg small{color:var(--paper-3);font-weight:600}
+@media (max-width:639px){
+  /* Téléphone : TOMES, France / Japon et le tri toujours sur une seule ligne (Will, 07/10/2026) */
+  .sec-h{flex-wrap:nowrap;gap:8px}.sec-h h2{font-size:24px!important;flex:none}.sec-tools{gap:6px;min-width:0}
+  .seg{padding:3px;gap:2px;border-radius:12px;min-width:0}.seg button{height:34px;padding:0 9px;font-size:13px;gap:6px;border-radius:9px;white-space:nowrap}
+  .seg .flag{width:17px;height:12px;border-radius:2px}.sort{width:40px;height:40px;border-radius:12px;flex:none}.sort svg{width:18px;height:18px}}
+@media (max-width:370px){.seg small{display:none}.seg button{padding:0 8px}.sec-h h2{font-size:22px!important}}
 .ed + .ed{margin-top:32px;padding-top:26px;border-top:1px solid #1C1C1E}
 .ed-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 16px}
-.ed-pill{display:inline-flex;align-items:center;height:32px;padding:0 13px;border-radius:9px;background:var(--ink-2);border:1px solid var(--ink-3);color:var(--paper);font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
+.ed-pill{display:inline-flex;align-items:center;height:32px;padding:0 13px;border-radius:9px;background:var(--ink-3);color:var(--paper);font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
 .ed-meta{font-size:14px;font-weight:500;color:var(--paper-2);line-height:1.35}
 .ed-meta b{color:var(--paper);font-weight:600}
+/* Éditeur et label sur une ligne, tomes et années sur la suivante, sauf si tout tient sur une ligne */
+.ed-meta .m2{white-space:nowrap}.ed-meta .m2::before{content:" · "}.ed-meta.br .m2{display:block}.ed-meta.br .m2::before{content:none}
 .grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px}
 @media (min-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 12px}}
 .t{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -785,6 +793,12 @@ function edRatio(img){
   document.querySelectorAll(`#tomes .ed[data-ed="${k}"]`).forEach(e => e.style.setProperty("--ar", o.m));
   TL.forEach(x => { if (x.ed === k) x.ar = o.m; });
 }
+// Si les tomes et années ne tiennent pas sur la ligne de l'éditeur, ils passent proprement à la ligne suivante
+function metaLignes(){
+  document.querySelectorAll("#tomes .ed-meta").forEach(m => { const a = m.querySelector(".m1"), b = m.querySelector(".m2"); if (!a || !b) return;
+    m.classList.remove("br"); const r1 = a.getClientRects(), r2 = b.getBoundingClientRect(); if (r1.length > 1 || r2.top > r1[r1.length - 1].top + 4) m.classList.add("br"); });
+}
+addEventListener("resize", () => { clearTimeout(metaLignes.t); metaLignes.t = setTimeout(metaLignes, 150); });
 function renderTomes(){
   const { serie: s, editions: eds } = DATA;
   const other = PAYS === "France" ? "Japon" : "France";
@@ -797,7 +811,9 @@ function renderTomes(){
     const ans = ys.length ? (ys[0] === ys[ys.length - 1] ? ys[0] : `${ys[0]}–${ys[ys.length - 1]}`) : "";
     const n = e.tomes.length;
     const pill = e.format || (e.nom.split(" — ")[1] || "Édition").replace(/\s*\(.*$/, "");
-    const meta = [e.pub ? `<b>${esc(e.pub)}</b>` : "", e.label && e.label !== e.pub ? esc(e.label) : "", n ? `${n} tome${n > 1 ? "s" : ""}` : "", ans].filter(Boolean).join(" · ");
+    const m1 = [e.pub ? `<b>${esc(e.pub)}</b>` : "", e.label && e.label !== e.pub ? esc(e.label) : ""].filter(Boolean).join(" · ");
+    const m2 = [n ? `${n} tome${n > 1 ? "s" : ""}` : "", ans].filter(Boolean).join(" · ");
+    const meta = m1 && m2 ? `<span class="m1">${m1}</span><span class="m2">${m2}</span>` : (m1 || m2);
     return `<div class="ed-h"><span class="ed-pill">${esc(pill)}</span>${meta ? `<span class="ed-meta">${meta}</span>` : ""}</div>`;
   };
   document.getElementById("tomes").innerHTML = list.map(e => `<section class="ed" data-ed="${e.id}"${ED_AR[e.id] && ED_AR[e.id].m ? ` style="--ar:${ED_AR[e.id].m}"` : ""}>
@@ -807,7 +823,7 @@ function renderTomes(){
       return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="${esc(tLab(t))}" loading="lazy" decoding="async" onload="edRatio(this)">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
         <span class="t-n">${esc(tLab(t))}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}</section>`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
   // Couvertures déjà en mémoire : leur « load » peut passer avant la mise en page
-  requestAnimationFrame(() => document.querySelectorAll("#tomes .ed img").forEach(i => { if (i.complete) edRatio(i); }));
+  requestAnimationFrame(() => { document.querySelectorAll("#tomes .ed img").forEach(i => { if (i.complete) edRatio(i); }); metaLignes(); });
 }
 document.addEventListener("click", e => {
   const bk = e.target.closest("a[data-back]");
