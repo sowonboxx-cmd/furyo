@@ -121,9 +121,9 @@ li.t[data-ti]{cursor:pointer}
 /* Ordinateur : compteur centré au-dessus de la couverture, en grand */
 
 .tb-in{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;min-height:0;flex:1;justify-content:center}
-.tb-cv{position:relative;height:min(66vh,760px);aspect-ratio:5/7;max-width:100%;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.tb-cv{position:relative;height:min(66vh,760px);aspect-ratio:var(--ar,5/7);max-width:100%;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center;box-shadow:0 18px 50px rgba(0,0,0,.6)}
 .tb-cv img{width:100%;height:100%;object-fit:cover;display:block}
-.tb-t,.tb-ds{width:calc(min(66vh,760px) * 5 / 7);max-width:100%}
+.tb-t,.tb-ds{width:calc(min(66vh,760px) * var(--ar,5/7));max-width:100%}
 .tb-t{margin:14px 0 0;font-family:var(--f-display);font-weight:700;font-size:26px;text-transform:uppercase;text-align:left}
 .tb-t em{font-style:normal;color:var(--paper-2);font-size:18px}
 .tb-ds{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:8px}
@@ -214,27 +214,31 @@ body.tb-open{overflow:hidden}
 
 .tabs{scroll-margin-top:calc(var(--sh-h,0px) + 8px)}
 /* Tomes */
-.sec{margin-top:28px}
-.sec-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:var(--sh-h,0px);z-index:5;background:var(--ink);padding:8px 0 10px}
+/* Section Tomes dans un cadre noir comme le bloc du haut (maquette A, Will 07/10/2026) */
+.sec{margin-top:12px;background:var(--ink-2);border-radius:24px;padding:16px 28px 30px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:var(--sh-h,0px);z-index:5;background:var(--ink-2);padding:8px 0 18px}
+@media (max-width:639px){.sec{padding:8px 14px 20px;border-radius:20px}.sec-h{padding:8px 0 14px}}
 .sec-h h2{margin:0}
 .sec-tools{display:flex;gap:8px;align-items:center}
-.sort{width:48px;height:48px;border:0;border-radius:14px;background:var(--ink-3);color:var(--paper);display:grid;place-items:center;cursor:pointer}
+.sort{width:48px;height:48px;border:0;border-radius:14px;background:#1C1C1E;color:var(--paper-2);display:grid;place-items:center;cursor:pointer}
 .sort svg{width:20px;height:20px}
-.seg{display:flex;gap:4px;padding:4px;background:var(--ink-3);border-radius:14px}
-.seg button{height:40px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--paper-2);font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.seg button[aria-pressed="true"]{background:var(--ink-2);color:var(--paper)}
+.sort.on{background:var(--ink-3);color:var(--paper)}
+.seg{display:flex;gap:4px;padding:4px;background:#1C1C1E;border-radius:14px}
+.seg button{height:40px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--paper-3);font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.seg button[aria-pressed="true"]{background:var(--ink-3);color:var(--paper)}
 .seg small{color:var(--paper-3);font-weight:600}
-.ed + .ed{margin-top:36px;padding-top:28px;border-top:1px solid var(--ink-3)}
+.ed + .ed{margin-top:32px;padding-top:26px;border-top:1px solid #1C1C1E}
 .ed-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 16px}
-.ed-pill{display:inline-flex;align-items:center;height:32px;padding:0 13px;border-radius:9px;background:var(--ink-3);color:var(--paper);font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
+.ed-pill{display:inline-flex;align-items:center;height:32px;padding:0 13px;border-radius:9px;background:var(--ink-2);border:1px solid var(--ink-3);color:var(--paper);font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
 .ed-meta{font-size:14px;font-weight:500;color:var(--paper-2);line-height:1.35}
 .ed-meta b{color:var(--paper);font-weight:600}
 .grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px}
 @media (min-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 12px}}
 .t{display:flex;flex-direction:column;gap:6px;min-width:0}
-.cv{position:relative;width:100%;aspect-ratio:5/7;border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
+.cv{position:relative;width:100%;aspect-ratio:var(--ar,5/7);border-radius:10px;overflow:hidden;background:var(--ink-2);display:grid;place-items:center}
 @media (min-width:640px){.cv{border-radius:14px}}
 .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.sec .cv{background:#1C1C1E}
 .cv .wait{position:absolute;left:5px;bottom:5px;right:5px;text-align:center;background:rgba(0,0,0,.8);border-radius:6px;padding:3px 2px;font-size:9.5px;line-height:1.2;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--amber)}
 .t-n{font-family:var(--f-display);font-weight:700;font-size:15px;line-height:1.05;text-transform:uppercase;letter-spacing:.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .t-d{font-size:12.5px;color:var(--paper-2);line-height:1.3}
@@ -612,7 +616,7 @@ function render(){
     <div class="sec-h"><h2 class="fx-h2">Tomes</h2>
       <div class="sec-tools">
         ${pays.length > 1 ? `<div class="seg" role="group" aria-label="Pays">${pays.map(p => `<button data-p="${p}" aria-pressed="${p === PAYS}">${FLAGS[p] || ""}${p} <small>${eds.filter(e => e.pays === p).reduce((n, e) => n + e.tomes.length, 0)}</small></button>`).join("")}</div>` : ""}
-        <button class="sort" id="sort" aria-label="${ASC ? "Afficher le dernier tome en premier" : "Afficher le premier tome en premier"}" title="Ordre de sortie">${ASC
+        <button class="sort${ASC ? "" : " on"}" id="sort" aria-pressed="${!ASC}" aria-label="${ASC ? "Afficher le dernier tome en premier" : "Afficher le premier tome en premier"}" title="Ordre de sortie">${ASC
           ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/></svg>'
           : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20V4M3 8l4-4 4 4M17 4v16M13 16l4 4 4-4"/></svg>'}</button>
       </div>
@@ -726,7 +730,8 @@ function tlShow(i){
   const { serie: s } = DATA, other = PAYS === "France" ? "Japon" : "France";
   // Seulement la date du pays affiché (France ou Japon), sans drapeau : plus clair.
   const date = t => t && t.date ? `<p class="tb-d"><span>${esc(dTxt(t))}</span></p>` : "";
-  document.getElementById("tb-in").innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+  const tin = document.getElementById("tb-in"); tin.style.setProperty("--ar", x.ar || "5/7");
+  tin.innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}" onload="this.naturalWidth&&this.closest('.tb-in').style.setProperty('--ar',this.naturalWidth/this.naturalHeight)">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
     <p class="tb-t">${esc(tLab(x.t))}${x.t.titre && x.t.n != null ? ` <em>${esc(x.t.titre)}</em>` : ""}</p>
     <div class="tb-ds">${date(x.t)}</div>`;
   document.getElementById("tb-c").textContent = `${i + 1} / ${TL.length}`;
@@ -768,6 +773,18 @@ document.addEventListener("click", e => {
   if (TL.length) tbOpen(i);
 });
 addEventListener("keydown", e => { if (TI < 0) return; if (e.key === "Escape") tbClose(); else if (e.key === "ArrowRight" && TI < TL.length - 1) tlShow(TI + 1); else if (e.key === "ArrowLeft" && TI > 0) tlShow(TI - 1); });
+// Les couvertures japonaises sont plus étroites que les françaises : chaque édition prend les proportions
+// de ses vraies couvertures (médiane des premières chargées), la couverture est vue en entier (Will, 07/10/2026).
+const ED_AR = {}; // proportions retenues par édition, gardées d'un affichage à l'autre
+function edRatio(img){
+  const ed = img.closest(".ed"); if (!ed || !img.naturalWidth) return;
+  const k = ed.dataset.ed, o = ED_AR[k] = ED_AR[k] || { rs: [], seen: new Set() };
+  if (o.rs.length >= 5 || o.seen.has(img.src)) return;
+  o.seen.add(img.src); o.rs.push(img.naturalWidth / img.naturalHeight);
+  o.m = [...o.rs].sort()[o.rs.length >> 1].toFixed(4);
+  document.querySelectorAll(`#tomes .ed[data-ed="${k}"]`).forEach(e => e.style.setProperty("--ar", o.m));
+  TL.forEach(x => { if (x.ed === k) x.ar = o.m; });
+}
 function renderTomes(){
   const { serie: s, editions: eds } = DATA;
   const other = PAYS === "France" ? "Japon" : "France";
@@ -783,12 +800,14 @@ function renderTomes(){
     const meta = [e.pub ? `<b>${esc(e.pub)}</b>` : "", e.label && e.label !== e.pub ? esc(e.label) : "", n ? `${n} tome${n > 1 ? "s" : ""}` : "", ans].filter(Boolean).join(" · ");
     return `<div class="ed-h"><span class="ed-pill">${esc(pill)}</span>${meta ? `<span class="ed-meta">${meta}</span>` : ""}</div>`;
   };
-  document.getElementById("tomes").innerHTML = list.map(e => `<section class="ed">
+  document.getElementById("tomes").innerHTML = list.map(e => `<section class="ed" data-ed="${e.id}"${ED_AR[e.id] && ED_AR[e.id].m ? ` style="--ar:${ED_AR[e.id].m}"` : ""}>
     ${edHead(e)}
     ${e.tomes.length ? `<ul class="grid">${(ASC ? e.tomes : [...e.tomes].reverse()).map(t => {
-      const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub });
-      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="${esc(tLab(t))}" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
+      const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub, ed: e.id, ar: ED_AR[e.id] && ED_AR[e.id].m });
+      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="${esc(tLab(t))}" loading="lazy" decoding="async" onload="edRatio(this)">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
         <span class="t-n">${esc(tLab(t))}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}</section>`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
+  // Couvertures déjà en mémoire : leur « load » peut passer avant la mise en page
+  requestAnimationFrame(() => document.querySelectorAll("#tomes .ed img").forEach(i => { if (i.complete) edRatio(i); }));
 }
 document.addEventListener("click", e => {
   const bk = e.target.closest("a[data-back]");
