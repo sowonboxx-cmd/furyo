@@ -4,7 +4,12 @@
 // des serveurs des éditeurs (lenteur, image supprimée, blocage). Clé R2 = SHA-256 de l'adresse d'origine.
 // Les vignettes (&w=) sont fabriquées à partir de la copie R2 (adresse /couv/<clé>) et gardées en cache.
 // Seuls les sites officiels sont relayés ; une autre adresse est simplement redirigée.
-const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","kazemanga.fr","crunchyroll-editions.fr","mangetsu-manga.fr","anime-store.fr","meian-editions.fr","akitashoten.co.jp","bookwalker.jp","kodansha.co.jp","shogakukan.co.jp","shueisha.co.jp","hakusensha.co.jp","kadokawa.co.jp","nihonbungeisha.co.jp","shonengahosha.co.jp","ebookjapan.yahoo.co.jp","cmoa.jp","bigcomicbros.net","championcross.jp","shonenjumpplus.com","comicvine.gamespot.com","yanmaga.jp","kana.fr","pika.fr","ki-oon.com","glenat.com","meian.fr","akata.fr","kurokawa.fr","panini.fr","mangetsu.fr","nabanco.com","vega-dupuis.com","delcourt.fr","doki-doki.fr","soleil.fr","notion.so","notion-static.com","amazonaws.com","furyo.pages.dev","furyogang.com"];
+const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","kazemanga.fr","crunchyroll-editions.fr","mangetsu-manga.fr","anime-store.fr","meian-editions.fr","akitashoten.co.jp","bookwalker.jp","kodansha.co.jp","shogakukan.co.jp","shueisha.co.jp","hakusensha.co.jp","kadokawa.co.jp","nihonbungeisha.co.jp","shonengahosha.co.jp","ebookjapan.yahoo.co.jp","cmoa.jp","bigcomicbros.net","championcross.jp","shonenjumpplus.com","comicvine.gamespot.com","yanmaga.jp","kana.fr","pika.fr","ki-oon.com","glenat.com","meian.fr","akata.fr","kurokawa.fr","panini.fr","mangetsu.fr","nabanco.com","vega-dupuis.com","delcourt.fr","doki-doki.fr","soleil.fr","notion.so","notion-static.com","amazonaws.com","furyo.pages.dev","furyogang.com",
+  // Sites et CDN officiels d'éditeurs repérés lors du référencement de la bibliothèque (07/10/2026)
+  "leed.co.jp","kdkw.jp","shinchosha.co.jp","square-enix.com","coamix.co.jp","casterman.com","lisez.com","noeve-grafx.com","humano.com","lezardnoir.com","shogakukan-comic.jp","twovirgins.jp",
+  "dosbg3xlm0x1t.cloudfront.net" /* Shūeisha */, "d2l33iqw5tfm1m.cloudfront.net" /* Futabasha */];
+// CDN partagés : seulement le dossier de l'éditeur.
+const DOSSIERS = ["cdn.shopify.com/s/files/1/0770/8049/4404/", "cdn.prod.website-files.com/6a60c0369879c07f7143335d/"];
 // Images « NOW PRINTING » / « 画像準備中 » connues (empreinte SHA-256) : ce ne sont pas des couvertures.
 const PLACEHOLDERS = new Set([
   "517f458418f9ecf80b1c12449843a6584db25f398a70f00080d972fcdc9dc82a", // BookWalker NOW PRINTING
@@ -50,7 +55,7 @@ export async function onRequestGet({ request, env, waitUntil }) {
   }
   let t; try { t = new URL(self.searchParams.get("u")); } catch (e) { return new Response("u invalide", { status: 400 }); }
   if (t.protocol !== "https:" && t.protocol !== "http:") return new Response("u invalide", { status: 400 });
-  if (!OFFICIELS.some(h => t.hostname === h || t.hostname.endsWith("." + h))) return Response.redirect(t.href, 302);
+  if (!OFFICIELS.some(h => t.hostname === h || t.hostname.endsWith("." + h)) && !DOSSIERS.some(d => (t.hostname + t.pathname).startsWith(d))) return Response.redirect(t.href, 302);
   const cache = caches.default, key = new Request(self.origin + "/api/couv?u=" + encodeURIComponent(t.href));
   const rk = hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t.href)));
   // &w=360 : version réduite (vignettes), en AVIF ou WebP si le navigateur les accepte (Images → Transformations).
