@@ -130,6 +130,29 @@ main{max-width:1240px;padding-left:20px;padding-right:20px}
   .covs{grid-template-columns:repeat(6,1fr)!important}
   .duo2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:start}
 }
+/* Toute la collection d'un membre : /membres/<pseudo>/collection (Will, 07/10/2026) */
+.colh{display:flex;align-items:center;gap:14px;margin:4px 0 14px}
+.colh .avt{width:56px;height:56px;margin:0;font:800 22px Inter,sans-serif;flex:none;border-radius:50%;display:grid;place-items:center;object-fit:cover;color:#000}
+.colh h1{margin:0;font:700 34px/1 Antonio,sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.colh p{margin:4px 0 0;color:var(--paper-3);font-size:14px;font-weight:600}
+.colh .back{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:19px;background:var(--ink-3);color:var(--paper);text-decoration:none;font-weight:600;font-size:14px}
+.colbar{display:flex;gap:10px;align-items:center;margin:0 0 16px;flex-wrap:wrap}
+.cseg{display:flex;gap:4px;padding:4px;background:#1C1C1E;border-radius:14px}
+.cseg button{height:36px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--paper-3);font:600 14px Inter,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.cseg button[aria-pressed=true]{background:var(--ink-3);color:var(--paper)}
+.cseg small{font-size:12px;color:var(--paper-3)}
+.csearch{flex:1;min-width:160px;height:44px;border:0;border-radius:14px;background:#1C1C1E;color:var(--paper);padding:0 14px;font:500 15px Inter,sans-serif}
+.cgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 10px}
+@media (min-width:640px){.cgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px 14px}}
+.cs{display:flex;flex-direction:column;gap:5px;min-width:0;color:var(--paper);text-decoration:none}
+.cs i{display:block;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:#1C1C1E;position:relative}
+.cs i img{width:100%;height:100%;object-fit:cover;display:block}
+.cs i em{position:absolute;right:6px;bottom:6px;font:700 11.5px Inter,sans-serif;font-style:normal;background:rgba(0,0,0,.8);color:#fff;padding:2px 8px;border-radius:8px}
+.cs i .ph{position:absolute;inset:0;display:grid;place-items:center;padding:8px;text-align:center;font:700 15px Antonio,sans-serif;text-transform:uppercase;color:var(--paper-3)}
+.cs b{font:700 15px/1.1 Antonio,sans-serif;text-transform:uppercase;letter-spacing:.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cs small{font-size:12px;color:var(--paper-3);line-height:1.3}
+.cs small .f{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+@media (max-width:639px){.colh h1{font-size:26px}.colh .avt{width:46px;height:46px}.colh .back span{display:none}.cseg button{padding:0 11px;font-size:13px}}
 </style>
 </head>
 <body>
@@ -178,7 +201,7 @@ function draw() {
       <div class="pbad"><h2>Badges</h2>${m.badges.length ? `<div class="pills">${m.badges.map(b => `<span class="pill" tabindex="0" style="--c:${b.c}">${FG_BADGES.icone(b)}${esc(b.n)}${b.d ? `<span class="tip">${esc(b.d)}</span>` : ""}</span>`).join("")}</div>` : `<p class="vid">Pas encore de badge.</p>`}</div>
       ${liens.length ? `<div class="pbad"><h2>Réseaux</h2><div class="links">${liens.join("")}</div></div>` : ""}</aside>
     <div class="rcol">
-      ${PF ? `<section class="card"><h2 class="h2r">Collection<a href="${P.moi ? "/ma-collection/" : "#"}">${P.series} série${P.series > 1 ? "s" : ""}${P.moi ? " · Ma collection →" : ""}</a></h2>${covs}</section>` : ""}
+      ${PF ? `<section class="card"><h2 class="h2r">Collection<a href="/membres/${encodeURIComponent(m.slug || "")}/collection">${P.series} série${P.series > 1 ? "s" : ""} · Voir toute la collection →</a></h2>${covs}</section>` : ""}
       ${PF ? `<section class="card"><h2>Activité</h2>${activite(P.activite)}</section>` : ""}
       ${ADMIN ? `<section class="card"><h2>Gérer les badges · admin</h2>
       <form class="adm" id="adm">
@@ -208,14 +231,58 @@ function draw() {
     draw(); const m2 = document.getElementById("amsg"); if (m2) m2.textContent = "Enregistré ✓";
   };
 }
+
+// ---------- Vue « toute la collection » ----------
+const VUE_COL = /\/collection\/?$/.test(location.pathname);
+let COL = null, CF = "tout", CQ = "";
+const FLAG = { F: '<svg class="f" viewBox="0 0 22 15"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>', J: '<svg class="f" viewBox="0 0 22 15"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>' };
+// Numéros de tomes compacts : 1, 2, 3, 5 → « T.1-3, 5 »
+const plage = ns => { const a = [...new Set(ns.filter(n => n != null))].sort((x, y) => x - y), o = []; for (let i = 0; i < a.length; i++) { let j = i; while (j + 1 < a.length && a[j + 1] === a[j] + 1) j++; o.push(j > i ? a[i] + "-" + a[j] : String(a[i])); i = j; } return o.length ? "T." + o.join(", ") : ""; };
+function drawCol() {
+  const m = M, P = COL;
+  const avt = m.photo ? `<img class="avt" src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">` : `<span class="avt" style="background:#F2B33D">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
+  const prof = "/membres/" + encodeURIComponent(m.slug || "");
+  if (!P) { app.innerHTML = `<div class="colh">${avt}<div><h1>Collection</h1><p>${esc(m.pseudo)}</p></div><a class="back" href="${prof}">‹ <span>Profil</span></a></div><p class="empty">Chargement…</p>`; return; }
+  const all = P.series, nF = all.filter(x => x.p.includes("F")).length, nJ = all.filter(x => x.p.includes("J")).length;
+  const q = CQ.trim().toLowerCase();
+  const list = all.filter(x => CF === "tout" || x.p.includes(CF === "fr" ? "F" : "J"))
+    .filter(x => !q || (x.titre + " " + (x.jp || "")).toLowerCase().includes(q));
+  const card = x => {
+    const ns = CF === "tout" ? x.ns : x.ns.filter((n, i) => x.p[i] === (CF === "fr" ? "F" : "J"));
+    const pays = [...new Set(x.p.filter(Boolean))].map(k => FLAG[k]).join("");
+    return `<a class="cs" href="${x.slug ? "/series/" + esc(x.slug) : "#"}"><i>${x.cover ? `<img src="/api/couv?w=300&u=${encodeURIComponent(x.cover)}" alt="" loading="lazy">` : `<span class="ph">${esc(x.titre)}</span>`}<em>${ns.length}</em></i><b>${esc(x.titre)}</b><small>${pays}${esc(plage(ns.map(Number)))}</small></a>`;
+  };
+  app.innerHTML = `<div class="colh">${avt}<div><h1>Collection</h1><p>${esc(m.pseudo)} · ${P.tot} tome${P.tot > 1 ? "s" : ""} · ${all.length} série${all.length > 1 ? "s" : ""}</p></div><a class="back" href="${prof}">‹ <span>Profil</span></a></div>
+    <section class="card"><div class="colbar"><div class="cseg">${[["tout", "Tout", all.length], ["fr", "France", nF], ["jp", "Japon", nJ]].map(([k, l, n]) => `<button data-cf="${k}" aria-pressed="${CF === k}">${l}<small>${n}</small></button>`).join("")}</div>
+      <input class="csearch" id="cq" type="search" placeholder="Chercher une série" value="${esc(CQ)}"></div>
+      ${list.length ? `<div class="cgrid">${list.map(card).join("")}</div>` : `<p class="vid">${all.length ? "Aucune série ne correspond." : "Pas encore de tomes dans sa collection."}</p>`}</section>`;
+  app.querySelectorAll("[data-cf]").forEach(b => b.onclick = () => { CF = b.dataset.cf; drawCol(); });
+  const qi = document.getElementById("cq"); qi.oninput = () => { CQ = qi.value; const pos = qi.selectionStart; drawCol(); const n = document.getElementById("cq"); n.focus(); n.setSelectionRange(pos, pos); };
+}
+async function chargerCol() {
+  drawCol();
+  const [col, cat] = await Promise.all([fetch("/api/communaute?col=1&id=" + M.id).then(r => r.ok ? r.json() : null).catch(() => null), fetch("/api/biblio").then(r => r.json()).catch(() => ({}))]);
+  if (!col || !col.ok) { app.innerHTML = `<p class="empty">Impossible de charger la collection.</p>`; return; }
+  const byId = {}; (cat.items || []).forEach(x => byId[x.id] = x);
+  // Numéros des tomes, lus dans l'index (sans Notion), 150 séries par demande
+  const num = {}, ids = col.series.map(x => x.s);
+  for (let i = 0; i < ids.length; i += 150) {
+    const j = await fetch("/api/biblio?ids=" + ids.slice(i, i + 150).join(",")).then(r => r.json()).catch(() => ({}));
+    for (const d of Object.values(j.details || {})) for (const e of d.editions || []) for (const t of e.tomes || []) num[t.id] = t.n;
+  }
+  col.series.forEach(x => { const c = byId[x.s] || {}; x.titre = c.fr || c.t || "Série"; x.jp = c.jp; x.slug = c.fiche ? c.slug : ""; x.cover = c.cover; x.ns = x.t.map(t => num[t]); });
+  col.series.sort((a, b) => a.titre.localeCompare(b.titre, "fr"));
+  COL = col; drawCol();
+}
 (async () => {
-  const slug = decodeURIComponent(location.pathname.replace(/^\/(membres|communaute)\//, "").replace(/\/$/, ""));
+  const slug = decodeURIComponent(location.pathname.replace(/^\/(membres|communaute)\//, "").replace(/\/collection\/?$/, "").replace(/\/$/, ""));
   const [x, me] = await Promise.all([fetch("/api/membres?u=" + encodeURIComponent(slug)).catch(() => null), fetch("/api/auth/me").then(r => r.json()).catch(() => ({}))]);
   if (x && x.status === 401) { const t = await fetch("/api/membres").then(r => r.json()).catch(() => ({})); app.innerHTML = verrou(t.total); return; }
   const j = x && x.ok ? await x.json() : null;
   if (!j || !j.membre) { document.title = "Membre introuvable · FuryoGang"; app.innerHTML = `<p class="empty">Ce membre n'existe pas (ou a changé de pseudo).<br><br><a href="/communaute/" style="color:var(--blue)">Voir la communauté</a></p>`; return; }
   M = j.membre; CAT = j.catalogue || []; ADMIN = !!me.admin;
   document.title = `${M.pseudo} · Communauté FuryoGang`;
+  if (VUE_COL) { document.title = `Collection de ${M.pseudo} · FuryoGang`; return chargerCol(); }
   draw();
   // Chiffres, collection et activité (Communauté), puis titres des news et des séries citées.
   const pf = await fetch("/api/communaute?id=" + M.id + "&s=" + encodeURIComponent(M.slug || "")).then(r => r.ok ? r.json() : null).catch(() => null);

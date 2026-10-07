@@ -90,7 +90,16 @@ async function profil(env, request, me, id) {
     env.STATS.get("mn:" + id).then(x => +x || 0), lireJ(env, "um:" + uid(me), []), lireJ(env, "ua:" + id, []), classements(env, () => {}).catch(() => null)]);
   const rang = cl ? (cl.classements.g.findIndex(x => x.id === id) + 1) || null : null;
   return { ok: true, tot: ids.length, fr, jp, inconnus: ids.length - fr - jp, abonnes, on: suivis.includes(id), rang, moi: uid(me) === id,
-    series: seriesOrd.length, recents: remplir(recents, tomeInfo, c), activite: act.slice(0, 20) };
+    series: new Set(Object.values(c)).size, recents: remplir(recents, tomeInfo, c), activite: act.slice(0, 20) };
+}
+
+// Toute la collection d'un membre, visible par les autres membres (Will, 07/10/2026) : seulement la Collection
+// (tomes possédés), jamais la pile à lire, le panier ni la wishlist. → { ok, tot, series: [{ s, t: [idTome], p: [F|J|""] }] }
+async function collectionComplete(env, id) {
+  const b = await lireJ(env, "bib:" + id, {});
+  const c = b.c || {}, cp = b.cp || {}, par = {};
+  for (const [t, s] of Object.entries(c)) (par[s] = par[s] || { s, t: [], p: [] }).t.push(t), par[s].p.push(cp[t] || "");
+  return { ok: true, tot: Object.keys(c).length, series: Object.values(par) };
 }
 
 // 12 cases : une couverture par série d'abord, puis d'autres tomes de sa collection, au hasard, pour remplir (Will, 07/10/2026).
@@ -130,6 +139,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!me || !me.m) return json({ ok: false, locked: true, error: "réservé aux membres" }, 401);
   if (!env.STATS) return json({ ok: false, error: "stockage indisponible" }, 503);
   const id = new URL(request.url).searchParams.get("id");
+  if (id && new URL(request.url).searchParams.get("col")) return ID.test(id) ? json(await collectionComplete(env, id)) : json({ ok: false, error: "membre inconnu" }, 400);
   if (id) return ID.test(id) ? json(await profil(env, request, me, id)) : json({ ok: false, error: "membre inconnu" }, 400);
   const [cl, suivis] = await Promise.all([classements(env, waitUntil), lireJ(env, "um:" + uid(me), [])]);
   return json({ ok: true, classements: cl.classements, suivis, moi: uid(me) });
