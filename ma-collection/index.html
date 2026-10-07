@@ -93,7 +93,7 @@ a{color:inherit}
 .stx>div:first-child{min-width:0}
 .sc h1{margin:0;font:700 30px/1 var(--fd);text-transform:uppercase;overflow-wrap:anywhere}
 .jpt{margin:4px 0 0;color:var(--fg2);font-size:13px}
-.cr{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:13px}.cr dt{color:var(--mut)}.cr dd{margin:0;font-weight:600}
+.scr{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:13px}.scr dt{color:var(--mut)}.scr dd{margin:0;font-weight:600}
 .eds{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
 .eds button{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:14px;border:1.5px solid transparent;background:#1F1F22;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
 .eds .flag{width:22px;height:15px;border-radius:2px;flex:none}
@@ -179,7 +179,7 @@ a{color:inherit}
   .sc{grid-template-columns:220px minmax(0,1fr) 300px;gap:32px;padding:28px;border-radius:24px}
   .scv{width:220px;border-radius:14px}
   .stx{display:flex;flex-direction:column;justify-content:space-between;gap:18px}
-  .sc h1{font-size:64px;line-height:.95}.jpt{font-size:18px;margin-top:6px}.cr{font-size:16px;margin-top:14px;gap:3px 10px}
+  .sc h1{font-size:64px;line-height:.95}.jpt{font-size:18px;margin-top:6px}.scr{font-size:16px;margin-top:14px;gap:3px 10px}
   .eds{grid-column:auto}.eds button{padding:12px 16px}.eds b{font-size:15px}.eds em{font-size:13px}.eds .n{font-size:22px}
   .pane{grid-column:auto;align-self:end;border-radius:18px;padding:18px;gap:12px}.big b{font-size:72px}.big span{font-size:22px}
   .hero{margin:-30px -32px 0;padding:30px 32px}
@@ -196,7 +196,7 @@ a{color:inherit}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=33"></script>
+<script src="/site/header.js?v=34"></script>
 <div class="page"><div id="app"><p class="empty">Chargement…</p></div></div>
 <div class="toast" id="toast"></div>
 <script>
@@ -332,7 +332,7 @@ function drawSerie(s, d){
   const st = x => { const v = (x.statut || "").trim(); return v ? ` · <i class="${/cours/i.test(v) ? "on" : /stop|arr/i.test(v) ? "stop" : "end"}">${esc(v)}</i>` : ""; };
   const eds = `<div class="eds">${d.editions.map(x => { const xp = x.tomes.filter(t => t.paru).length, xh = x.tomes.filter(t => L.c[t.id]).length, xn = x.nb || x.tomes.length;
     return `<button data-ed="${x.id}" aria-pressed="${x.id === e.id}">${FLAG[x.pays] || ""}<span><b>${esc([x.pays, x.pub, x.label].filter(Boolean).join(" · "))}</b><em>${xn} tome${xn > 1 ? "s" : ""}${st(x)}</em></span><span class="n">${xh}/${xp}</span></button>`; }).join("")}</div>`;
-  const aut = d.serie.auteurs ? `<dl class="cr"><dt>${/,|&| et /.test(d.serie.auteurs) ? "Auteurs" : "Auteur"} :</dt><dd>${esc(d.serie.auteurs)}</dd></dl>` : "";
+  const aut = d.serie.auteurs ? `<dl class="scr"><dt>${/,|&| et /.test(d.serie.auteurs) ? "Auteurs" : "Auteur"} :</dt><dd>${esc(d.serie.auteurs)}</dd></dl>` : "";
   const lseg = `<div class="lseg">${LISTS.map(([k, l]) => `<button data-lt="${k}" aria-pressed="${LT === k}">${l}</button>`).join("")}</div>`;
   // Repli (Will, 07/10) : un tome français sans couverture affiche celle du même tome japonais, marquée « Couv. JP ».
   const jpEd = e.pays !== "Japon" ? d.editions.find(x => x.pays === "Japon") : null;
