@@ -9,7 +9,7 @@ const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","k
   "leed.co.jp","kdkw.jp","shinchosha.co.jp","square-enix.com","coamix.co.jp","casterman.com","lisez.com","noeve-grafx.com","humano.com","lezardnoir.com","shogakukan-comic.jp","twovirgins.jp",
   "dosbg3xlm0x1t.cloudfront.net" /* Shūeisha */, "d2l33iqw5tfm1m.cloudfront.net" /* Futabasha */];
 // CDN partagés : seulement le dossier de l'éditeur.
-const DOSSIERS = ["cdn.shopify.com/s/files/1/0770/8049/4404/", "cdn.prod.website-files.com/6a60c0369879c07f7143335d/"];
+const DOSSIERS = ["cdn.shopify.com/s/files/1/0770/8049/4404/", "cdn.shopify.com/s/files/1/0810/4011/3877/", "cdn.prod.website-files.com/6a60c0369879c07f7143335d/"];
 // Images « NOW PRINTING » / « 画像準備中 » connues (empreinte SHA-256) : ce ne sont pas des couvertures.
 const PLACEHOLDERS = new Set([
   "517f458418f9ecf80b1c12449843a6584db25f398a70f00080d972fcdc9dc82a", // BookWalker NOW PRINTING
