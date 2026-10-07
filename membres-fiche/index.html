@@ -87,6 +87,39 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--pape
 .act small{display:block;color:var(--paper-3);font-size:12px;margin-top:2px}
 .vid{color:var(--paper-3);font-size:14px;background:var(--ink-2);border-radius:16px;padding:16px;text-align:center}
 .h2r{display:flex;justify-content:space-between;align-items:baseline}.h2r a{font-size:12.5px;color:var(--paper-3);text-decoration:none;font-weight:600;text-transform:none;letter-spacing:0}
+/* Mise en page D1 (Will, 07/10/2026) : carte de profil à gauche, collection / activité / badges à droite, tout encadré en noir */
+main{max-width:1080px}
+.d1{display:flex;flex-direction:column;gap:14px}
+.rcol{display:flex;flex-direction:column;gap:14px;min-width:0}
+.duo2{display:flex;flex-direction:column;gap:14px}
+.card,.pcard{background:var(--ink-2);border-radius:22px;padding:18px}
+.pcard{padding:24px 18px}
+.pcard.or{background:linear-gradient(180deg,#3A2A08,#000 55%)}
+.card h2{margin:0 0 12px;font-family:Antonio,sans-serif;font-size:20px;letter-spacing:0;color:var(--paper)}
+.card .h2r a{font-family:Inter,sans-serif}
+.st4{grid-template-columns:1fr 1fr!important;margin-top:16px!important}
+.st4 div{background:#1C1C1E!important;padding:14px 6px!important}
+.st4 b{font-size:32px!important}
+.st4 span{font-size:11px!important;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.covs{grid-template-columns:repeat(4,1fr)!important;gap:12px!important}
+.covs a.cv{display:flex;flex-direction:column;gap:6px;min-width:0;color:var(--paper);text-decoration:none;aspect-ratio:auto;overflow:visible;background:none;border-radius:0}
+.cv i{display:block;aspect-ratio:2/3;border-radius:8px;overflow:hidden;background:var(--ink-3);position:relative;max-width:100%}
+.cv i img{width:100%;height:100%;object-fit:cover;display:block}
+.cv i em{position:absolute;right:6px;bottom:6px;font:700 11px Inter,sans-serif;font-style:normal;background:rgba(0,0,0,.78);color:#fff;padding:2px 7px;border-radius:8px}
+.cv b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.actl{background:transparent!important;padding:0!important}
+.card .vid{background:#1C1C1E}
+.card .badges{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.card .bd{background:#1C1C1E}
+.card .links a,.card .links span{background:#1C1C1E}
+.adm{padding:0!important}
+.acts{margin-top:0!important}
+@media (min-width:980px){
+  .d1{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start}
+  .pcard{position:sticky;top:84px}
+  .covs{grid-template-columns:repeat(6,1fr)!important}
+  .duo2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:start}
+}
 </style>
 </head>
 <body>
@@ -124,25 +157,32 @@ function draw() {
   const ont = new Set(m.badges.map(b => b.id)), fixes = new Set(m.badges.filter(b => b.fixe).map(b => b.id));
   const P = PF || {}, rang1 = P.rang === 1;
   const avt = m.photo ? `<img class="avt" src="${esc(m.photo)}" alt="" referrerpolicy="no-referrer">` : `<span class="avt" style="background:#F2B33D">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
-  app.innerHTML = `
-    <section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avt}<h1>${esc(m.pseudo || "Membre")}</h1>
+  const covs = P.recents && P.recents.length ? `<div class="covs">${P.recents.map(t => `<a class="cv" href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + " · " + t.nb + " tome" + (t.nb > 1 ? "s" : ""))}"><i>${t.cover ? `<img src="/api/couv?w=300&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}<em>${t.nb}</em></i><b>${esc(t.titre || "")}</b></a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`;
+  const stats = [[P.tot, "Tomes", "var(--paper)"], [P.fr, "FR", "#4C7BD9"], [P.jp, "JP", "var(--red)"], [P.abonnes, "Abonné" + (P.abonnes > 1 ? "s" : ""), "var(--gold)"]];
+  app.innerHTML = `<div class="d1">
+    <aside class="pcard${rang1 ? " or" : ""}"><section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avt}<h1>${esc(m.pseudo || "Membre")}</h1>
       <span class="meta">Membre n°${m.num || "?"}${P.rang ? ` · ${P.rang === 1 ? "1er" : P.rang + "e"} du classement` : ""}${estAdmin ? " · Administrateur" : ""}</span>
       ${PF && !P.moi ? `<button class="fbtn" id="suivre" aria-pressed="${!!P.on}">${P.on ? "Suivi" : "Suivre"}</button>` : ""}</section>
-    ${PF ? `<div class="st4"><div><b>${P.tot}</b><span>Tomes</span></div><div><b>${P.fr}</b><span>FR</span></div><div><b>${P.jp}</b><span>JP</span></div><div><b>${P.abonnes}</b><span>Abonné${P.abonnes > 1 ? "s" : ""}</span></div></div>
-    <h2 class="h2r">Collection${P.moi ? ` <a href="/ma-collection/">Ma collection →</a>` : ""}</h2>
-    ${P.recents.length ? `<div class="covs">${P.recents.map(t => `<a href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + " · " + t.nb + " tome" + (t.nb > 1 ? "s" : ""))}">${t.cover ? `<img src="/api/couv?w=200&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}</a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`}
-    <h2>Activité</h2>${activite(P.activite)}` : ""}
-    ${m.badges.length ? `<h2>Badges</h2><div class="badges">${m.badges.map(b => FG_BADGES.carte(b, true)).join("")}</div>` : ""}
-    ${liens.length ? `<h2>Réseaux</h2><div class="links">${liens.join("")}</div>` : ""}
-    ${ADMIN ? `<h2>Gérer les badges · admin</h2>
-    <form class="adm" id="adm">
-      <p>Touche un badge pour l'ajouter ou le retirer, puis enregistre. Les badges grisés sont automatiques. Donner « Administrateur » ouvre l'accès au back-office.</p>
-      <div class="tg">${CAT.map(b => { const on = ont.has(b.id), auto = b.r === "cent" || fixes.has(b.id);
-        return `<button type="button" data-b="${b.id}" aria-pressed="${on}" ${auto ? "disabled" : ""} style="${on ? `background:${b.c}` : ""}" title="${esc(b.d)}">${FG_BADGES.icone(b)}${esc(b.n)}${auto ? " · auto" : ""}</button>`; }).join("")}</div>
-      <label>Points <input type="number" name="points" min="0" step="1" value="${m.points}"></label>
-      <button class="save">Enregistrer</button><div class="msg" id="amsg"></div>
-    </form>` : ""}
-    <div class="acts"><a href="/communaute/" class="sec">Voir toute la communauté</a></div>`;
+      ${PF ? `<div class="st4">${stats.map(([n, l, c]) => `<div><b style="color:${c}">${n}</b><span>${l}</span></div>`).join("")}</div>` : ""}</aside>
+    <div class="rcol">
+      ${PF ? `<section class="card"><h2 class="h2r">Collection<a href="${P.moi ? "/ma-collection/" : "#"}">${P.recents.length} série${P.recents.length > 1 ? "s" : ""}${P.moi ? " · Ma collection →" : ""}</a></h2>${covs}</section>` : ""}
+      <div class="duo2">
+        ${PF ? `<section class="card"><h2>Activité</h2>${activite(P.activite)}</section>` : ""}
+        <div class="rcol">
+          <section class="card"><h2>Badges</h2>${m.badges.length ? `<div class="badges">${m.badges.map(b => FG_BADGES.carte(b, true)).join("")}</div>` : `<p class="vid">Pas encore de badge.</p>`}</section>
+          ${liens.length ? `<section class="card"><h2>Réseaux</h2><div class="links">${liens.join("")}</div></section>` : ""}
+        </div>
+      </div>
+      ${ADMIN ? `<section class="card"><h2>Gérer les badges · admin</h2>
+      <form class="adm" id="adm">
+        <p>Touche un badge pour l'ajouter ou le retirer, puis enregistre. Les badges grisés sont automatiques. Donner « Administrateur » ouvre l'accès au back-office.</p>
+        <div class="tg">${CAT.map(b => { const on = ont.has(b.id), auto = b.r === "cent" || fixes.has(b.id);
+          return `<button type="button" data-b="${b.id}" aria-pressed="${on}" ${auto ? "disabled" : ""} style="${on ? `background:${b.c}` : ""}" title="${esc(b.d)}">${FG_BADGES.icone(b)}${esc(b.n)}${auto ? " · auto" : ""}</button>`; }).join("")}</div>
+        <label>Points <input type="number" name="points" min="0" step="1" value="${m.points}"></label>
+        <button class="save">Enregistrer</button><div class="msg" id="amsg"></div>
+      </form></section>` : ""}
+      <div class="acts"><a href="/communaute/" class="sec">Voir toute la communauté</a></div>
+    </div></div>`;
   const sb = document.getElementById("suivre");
   if (sb) sb.onclick = async () => { sb.disabled = true; const r = await fetch("/api/communaute", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ suivre: M.id }) }).then(x => x.json()).catch(() => ({})); if (r.ok) { PF.on = r.on; PF.abonnes = r.abonnes; draw(); } else sb.disabled = false; };
   if (!ADMIN) return;
