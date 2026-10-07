@@ -387,6 +387,12 @@ async function load(){
   ITEMS = j.items || [];
   F = ITEMS.some(s => s.statut === "Validé · admins") ? "admins" : ITEMS.some(pret) ? "pretes" : "valider";
   shell(); draw();
+  // Liste servie depuis le cache : si elle a plus d'une minute, on la relit tout de suite dans Notion et on la remplace
+  // (une série ajoutée directement dans Notion apparaît donc dès l'ouverture, Will 08/10/2026).
+  if (!j.synced || Date.now() - new Date(j.synced) > 60e3) fetch("/api/admin/series?refresh=1").then(x => x.ok ? x.json() : null).then(k => {
+    if (!k || !k.items || !document.getElementById("list")) return;
+    ITEMS = k.items; draw();
+  }).catch(() => {});
 }
 function shell(){
   root.innerHTML = `<header class="top"><div class="top-in">
