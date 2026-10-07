@@ -285,6 +285,23 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .ed-f button{height:44px;padding:0 18px;border:0;border-radius:22px;font:700 14px Inter,sans-serif;cursor:pointer}
 .ed-f .ok{background:#38383B;color:#F5F5F7}.ed-f .sv{background:#305887;color:#fff}
 .more textarea[data-f],.leg-h b{cursor:pointer}
+.tile.cv{background:linear-gradient(160deg,#3A1E1E,#000 70%);border-color:#7D2E2E}.tile.cv .ic{background:#E5483A}
+.cvstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:4px 0 12px}
+.cvstats div{background:var(--ink-2);border-radius:16px;padding:12px 6px;text-align:center}
+.cvstats b{display:block;font-family:var(--f-display);font-size:28px;line-height:1.1}
+.cvstats span{font-size:11px;color:var(--paper-3);font-weight:600}
+.cvl{display:flex;flex-direction:column;gap:10px}
+.cvs{background:var(--ink-2);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.cvt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.cvt b{font-size:16px}
+.cvtag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:8px;background:var(--ink-3);color:var(--paper-2)}.cvtag.on{background:#2E7D4F;color:#fff}
+.cve{display:flex;gap:10px;align-items:flex-start;padding-top:8px;border-top:1px solid #1C1C1E}
+.cvf{font-size:18px;line-height:1.3}
+.cvx{flex:1;min-width:0}.cvx b{font-size:14px}.cvx small{display:block;color:var(--paper-3);font-size:12px}
+.cvm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:5px;font-size:13.5px;color:var(--paper)}
+.cvm a{color:#9DB8D6;font-size:12.5px;text-decoration:none}
+.cvall{background:#E5483A;color:#fff;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:8px}
+.cvn{color:var(--paper-3);font-size:12.5px;text-decoration:none;white-space:nowrap}
+@media (max-width:600px){.cvstats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -498,6 +515,7 @@ function route(){
   if (h === "mangas") return ITEMS.length ? (shell(), draw()) : load();
   if (h === "validation") return veille();
   if (h === "sorties") return sorties();
+  if (h === "couvertures") return couvertures();
   hub();
 }
 addEventListener("hashchange", route);
@@ -509,6 +527,7 @@ async function hub(){
     <div class="hub">
       <a class="tile val" href="#validation"><span class="n" id="hub-n">…</span><span class="ic">${ICO_VAL}</span><div><h2>Validation</h2><p>News, couvertures, sorties, fins de série : tout ce que la veille a trouvé et qui attend ton avis.</p></div></a>
       <a class="tile sj" href="#sorties"><span class="n" id="hub-sj">…</span><span class="ic">${ICO_CAL}</span><div><h2>Sorties du jour</h2><p>Les tomes France et Japon qui sortent aujourd'hui, à poster sur les réseaux.</p></div></a>
+      <a class="tile cv" href="#couvertures"><span class="n" id="hub-cv">…</span><span class="ic">${ICO_CV}</span><div><h2>Couvertures manquantes</h2><p>Tous les tomes sans couverture, par série et par édition, France et Japon. Envoie-moi les liens ou les images.</p></div></a>
       <a class="tile" href="#mangas"><span class="ic">${ICO_BASE}</span><div><h2>Base mangas</h2><p>Les fiches séries : statut sur le site, résumés, légendes et images des réseaux.</p></div></a>
     </div>`;
   document.getElementById("out").onclick = async () => { await fetch("/api/admin/login", { method: "DELETE" }); login(); };
@@ -516,6 +535,7 @@ async function hub(){
   if (r && r.status === 401) return login();
   const j = r && r.ok ? await r.json() : null;
   document.getElementById("hub-n").textContent = j ? j.n : "?";
+  fetch("/api/admin/couvertures?count=1").then(r => r.ok ? r.json() : null).then(k => { const el = document.getElementById("hub-cv"); if (el) el.textContent = k ? k.n : "?"; }).catch(() => {});
   fetch("/api/admin/sorties?count=1").then(r => r.ok ? r.json() : null).then(k => { const el = document.getElementById("hub-sj"); if (el) el.textContent = k ? k.n : "?"; }).catch(() => {});
 }
 
@@ -524,6 +544,45 @@ let SJ = { today: "", items: [] }, SJF = "tout";
 const ICO_SJOK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>`;
 const JL = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"], ML = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 const jourLong = d => { const x = new Date(d + "T12:00:00"); return `${JL[x.getDay()]} ${x.getDate()}${x.getDate() === 1 ? "er" : ""} ${ML[x.getMonth()]}`; };
+/* ---------- Couvertures manquantes (#couvertures), Will 07/10/2026 ---------- */
+const ICO_CV = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>`;
+let CV = null, CVF = "tout", CVQ = "";
+const plages = l => { const n = l.map(x => x.n).filter(x => x != null).sort((a, b) => a - b), out = []; let a = null, b = null;
+  for (const x of n) { if (a === null) { a = b = x; } else if (x === b + 1) b = x; else { out.push(a === b ? "T." + a : `T.${a}-${b}`); a = b = x; } }
+  if (a !== null) out.push(a === b ? "T." + a : `T.${a}-${b}`); return out.join(", "); };
+async function couvertures(){
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Couvertures</b></div>
+    <label class="vselw"><select class="vsel" id="cvsel" aria-label="Filtrer"></select></label><input class="q" id="cvq" type="search" placeholder="Chercher une série" value="${esc(CVQ)}"></div></header>
+    <main><div id="cvhead"></div><p class="vhint" id="cvhint">Chargement…</p><div id="cvl" class="cvl"></div></main>`;
+  if (!CV) { const r = await fetch("/api/admin/couvertures");
+    if (r.status === 401) return login("Session expirée, reconnecte-toi.");
+    CV = await r.json().catch(() => null);
+    if (!CV || CV.error) { document.getElementById("cvhint").textContent = (CV && CV.error) || "Impossible de charger la liste."; CV = null; return; } }
+  document.getElementById("cvsel").onchange = e => { CVF = e.target.value; cvdraw(); };
+  document.getElementById("cvq").oninput = e => { CVQ = e.target.value; cvdraw(); };
+  cvdraw();
+}
+function cvdraw(){
+  const F = [["tout", `Tout ce qui manque (${CV.total})`], ["fr", `France (${CV.fr})`], ["jp", `Japon (${CV.jp})`], ["futur", `À paraître (${CV.aParaitre})`], ["verif", `À vérifier dans la base (${CV.verifier.length})`]];
+  const sel = document.getElementById("cvsel"); sel.innerHTML = F.map(([k, l]) => `<option value="${k}"${CVF === k ? " selected" : ""}>${l}</option>`).join("");
+  document.getElementById("cvhead").innerHTML = `<div class="cvstats"><div><b>${CV.total}</b><span>Tomes parus sans couverture</span></div><div><b style="color:#4C7BD9">${CV.fr}</b><span>France</span></div><div><b style="color:#E5483A">${CV.jp}</b><span>Japon</span></div><div><b style="color:#98989D">${CV.aParaitre}</b><span>À paraître</span></div></div>`;
+  const hint = document.getElementById("cvhint"), box = document.getElementById("cvl");
+  if (CVF === "verif") {
+    hint.textContent = CV.verifier.length ? "Doublons et éditions à nettoyer : à trancher dans Notion (ou dis-moi quoi garder)." : "Rien à vérifier : la base est propre.";
+    box.innerHTML = CV.verifier.map(v => `<div class="cvs"><div class="cvt"><span class="cvtag">${esc(v.type)}</span><b>${esc(v.texte)}</b></div>${(v.ids || [v.id]).map(i => `<a class="cvn" href="https://www.notion.so/${i}" target="_blank" rel="noopener">Ouvrir dans Notion ↗</a>`).join("")}</div>`).join("");
+    return;
+  }
+  const q = CVQ.trim().toLowerCase();
+  const garde = e => CVF === "fr" ? e.pays === "France" : CVF === "jp" ? e.pays !== "France" : true;
+  const tomes = e => e.manque.filter(x => CVF === "futur" ? x.futur : !x.futur);
+  const l = CV.series.filter(s => !q || (s.t || "").toLowerCase().includes(q)).map(s => ({ ...s, eds: s.eds.filter(e => garde(e) && tomes(e).length) })).filter(s => s.eds.length);
+  hint.textContent = `${l.length} série${l.length > 1 ? "s" : ""} · séries en ligne d'abord, puis celles qui manquent le plus. Les liens « vue sur » montrent où la couverture a déjà été repérée.`;
+  box.innerHTML = l.map(s => `<section class="cvs"><div class="cvt"><b>${esc(s.t)}</b>${s.ligne ? `<span class="cvtag on">En ligne</span>` : `<span class="cvtag">Bibliothèque</span>`}</div>
+    ${s.eds.map(e => { const t = tomes(e), toute = CVF !== "futur" && e.toute;
+      return `<div class="cve"><span class="cvf">${e.pays === "France" ? "🇫🇷" : "🇯🇵"}</span><div class="cvx"><b>${esc(e.nom || e.pub || "Édition")}</b><small>${esc([e.pub, e.nb ? e.nb + " tomes" : ""].filter(Boolean).join(" · "))}</small>
+        <div class="cvm">${toute ? `<span class="cvall">Toute l'édition</span>` : ""}<span>${esc(plages(t))}</span>${t.filter(x => x.vue).map(x => `<a href="${esc(x.vue)}" target="_blank" rel="noopener">T.${x.n} vue sur ↗</a>`).join("")}</div></div>
+        <a class="cvn" href="https://www.notion.so/${e.id}" target="_blank" rel="noopener" title="Ouvrir l'édition dans Notion">Notion ↗</a></div>`; }).join("")}</section>`).join("") || `<p class="vhint">Rien ici.</p>`;
+}
 async function sorties(){
   root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Sorties</b></div></div></header><main id="sjm"><p class="vhint">Chargement…</p></main>`;
   const r = await fetch("/api/admin/sorties");
