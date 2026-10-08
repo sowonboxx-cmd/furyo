@@ -363,7 +363,9 @@ a("col", "/ma-collection/", "Ma collection", 1) +
     pop.innerHTML = '<div class="adm-box" role="dialog" aria-label="Mon compte">' +
       '<a class="adm-u" href="/profil/">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "<i></i>") + '<span><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + ' · Voir mon profil</small></span></a>' +
       (ME.admin ? '<a class="adm-b v" href="/admin/#validation"><span><strong>Validation</strong><small>À relire avant publication</small></span><em>' + esc(n) + '</em></a>' +
-      (SJ.n ? '<a class="adm-b j" href="/admin/#sorties"><span><strong>Sorties du jour</strong><small>' + [SJ.fr ? SJ.fr + " France" : "", SJ.jp ? SJ.jp + " Japon" : ""].filter(Boolean).join(" · ") + ' à poster</small></span><em>' + SJ.n + '</em></a>' : "") +
+      // Sorties du jour et Couvertures manquantes toujours visibles, juste sous Validation (Will, 08/10/2026) : un clic au lieu de deux.
+      '<a class="adm-b j" href="/admin/#sorties"><span><strong>Sorties du jour</strong><small>' + (SJ.n ? [SJ.fr ? SJ.fr + " France" : "", SJ.jp ? SJ.jp + " Japon" : ""].filter(Boolean).join(" · ") + " à poster" : "Rien à poster pour l'instant") + '</small></span>' + (SJ.n ? '<em>' + SJ.n + '</em>' : '<span aria-hidden="true">→</span>') + '</a>' +
+      '<a class="adm-b" href="/admin/#couvertures"><span><strong>Couvertures manquantes</strong><small>Les tomes parus sans couverture</small></span><span aria-hidden="true">→</span></a>' +
       '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' +
       // Statistiques Google (Search Console), réservées à l'admin (Will, 07/10/2026).
       '<a class="adm-b" href="/admin/#stats"><span><strong>Statistiques</strong><small>Clics et recherches Google</small></span><span aria-hidden="true">→</span></a>' : "") +
