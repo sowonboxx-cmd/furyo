@@ -83,8 +83,11 @@ a{color:inherit}
 .chips::-webkit-scrollbar{display:none}
 .chips button{flex:none;height:32px;padding:0 12px;border-radius:16px;border:0;background:var(--s1);color:var(--fg2);font:600 13px var(--fb);cursor:pointer;white-space:nowrap}
 .chips button[aria-pressed=true]{background:var(--fg);color:#000}
-.cnt{color:var(--mut);font-size:12.5px;margin:14px 0 6px;display:flex;justify-content:space-between;gap:10px}
+.cnt{color:var(--mut);font-size:12.5px;margin:14px 0 6px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+/* Raccourci vers « Toute la base » (Will, 09/10/2026) */
+.cnt .gob{color:var(--yel);font-weight:700;font-size:13px;text-decoration:none;white-space:nowrap}.cnt .gob:hover{text-decoration:underline}
 .sh2{margin:24px 0 4px;font:700 20px var(--fd);text-transform:uppercase;display:flex;justify-content:space-between;align-items:baseline}
+#base{scroll-margin-top:calc(var(--sh-h, 64px) + 12px)}
 .sh2 small{font:500 12.5px var(--fb);color:var(--mut);text-transform:none}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 10px;padding-top:6px}
 .c{min-width:0;display:flex;flex-direction:column;gap:5px;text-decoration:none}
@@ -397,10 +400,10 @@ function drawHome(){
     : cherche ? "" : `<p class="empty">Aucune série ne correspond à ces filtres.</p>`;
   const RESTE = cherche ? [] : filtre(CAT.filter(s => !m[s.id]).map(s => ({ ...s, _n: 0 }))), LIM = vide ? SHOWN : SHOWN - 30; // 30 d'abord sous la collection, puis +60 à chaque « Voir plus »
   const catalogue = cherche ? `<div class="sh2">Toute la base<small>${base.length} série${base.length > 1 ? "s" : ""}</small></div>${base.length ? `<div class="grid">${base.slice(0, SHOWN).map(s => card(s, TAB)).join("")}</div>${base.length > SHOWN ? `<div class="more"><button class="btn g" data-more>Voir plus</button></div>` : ""}` : `<p class="empty">Aucune série trouvée dans la base.</p>`}`
-    : `<div class="sh2">Toute la base<small>${STATS.series || CAT.length} séries · ${(STATS.tomes || 0).toLocaleString("fr-FR")} tomes</small></div><div class="grid">${RESTE.slice(0, LIM).map(s => card(s, TAB)).join("")}</div>${RESTE.length > LIM ? `<div class="more"><button class="btn g" data-more>Voir plus</button></div>` : ""}`;
+    : `<div class="sh2" id="base">Toute la base<small>${STATS.series || CAT.length} séries · ${(STATS.tomes || 0).toLocaleString("fr-FR")} tomes</small></div><div class="grid">${RESTE.slice(0, LIM).map(s => card(s, TAB)).join("")}</div>${RESTE.length > LIM ? `<div class="more"><button class="btn g" data-more>Voir plus</button></div>` : ""}`;
   app().innerHTML = `<div class="lay">${side}<div><div class="mtop mob"><h1 class="h1">Ma collection</h1>${tabs}${stats}${quota}</div>
     <div class="tools"><label class="search">${I.s}<input id="q" type="search" placeholder="Chercher une série" value="${esc(Q)}" autocomplete="off"></label><button class="fbtn mob" type="button" data-fsh>${I.fil}Filtres${nbF() ? `<em>${nbF()}</em>` : ""}</button><select class="sort" id="sort" aria-label="Trier"><option value="az"${SORT === "az" ? " selected" : ""}>A → Z</option><option value="za"${SORT === "za" ? " selected" : ""}>Z → A</option><option value="new"${SORT === "new" ? " selected" : ""}>Plus récentes</option></select></div>
-    ${chips}<div class="cnt"><span>${nomTab} · ${mine.length} série${mine.length > 1 ? "s" : ""}${TAB === "c" ? " · " + n.tomes + " tome" + (n.tomes > 1 ? "s" : "") : ""}</span></div>${grille}${catalogue}</div></div>`;
+    ${chips}<div class="cnt"><span>${nomTab} · ${mine.length} série${mine.length > 1 ? "s" : ""}${TAB === "c" ? " · " + n.tomes + " tome" + (n.tomes > 1 ? "s" : "") : ""}</span><a class="gob" href="#base" data-gobase>Toute la base ↓</a></div>${grille}${catalogue}</div></div>`;
   const q = document.getElementById("q");
   q.oninput = () => { Q = q.value; SHOWN = 60; const pos = q.selectionStart; drawHome(); const q2 = document.getElementById("q"); q2.focus(); try { q2.setSelectionRange(pos, pos); } catch (e) {} };
   document.getElementById("sort").onchange = e => { SORT = e.target.value; drawHome(); };
@@ -489,6 +492,7 @@ function premium(){
 document.addEventListener("click", async e => {
   if (e.target.closest("[data-fsh]")) { feuille(); return; }
   if (e.target.closest("[data-lock]")) { premium(); return; }
+  if (e.target.closest("[data-gobase]")) { e.preventDefault(); const bs = document.getElementById("base"); if (bs) bs.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
   const fo = e.target.closest("[data-mfol]"); if (fo) { const sl = fo.dataset.mfol; SUIVI[sl] = !SUIVI[sl]; fo.outerHTML = folHtml(sl);
     fetch("/api/follow", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ s: sl }) }).then(r => r.json()).then(j => { if (j && j.ok) { SUIVI[sl] = !!j.on; const b = document.querySelector(`[data-mfol="${sl}"]`); if (b) b.outerHTML = folHtml(sl); toast(j.on ? "Série suivie ♥" : "Tu ne suis plus la série"); } }).catch(() => toast("Impossible d'enregistrer, réessaie.")); return; }
   const tb = e.target.closest("[data-tab]"); if (tb) { TAB = tb.dataset.tab; F.statut.clear(); home(); return; }
@@ -530,7 +534,7 @@ function gate(){
 ["click", "focusin", "keydown"].forEach(ev => document.addEventListener(ev, e => {
   if (!GUEST || !e.target.closest || !e.target.closest("#app")) return;
   // Visiteur (Will, 08/10/2026) : il peut ouvrir une série, changer d'édition, revenir et voir plus, pour regarder ; tout le reste ouvre le message.
-  if (ev !== "keydown" && e.target.closest("a.c, a.back, [data-ed], [data-more]")) return;
+  if (ev !== "keydown" && e.target.closest("a.c, a.back, [data-ed], [data-more], [data-gobase]")) return;
   if (ev === "keydown" && !/^(Enter| )$/.test(e.key) && !e.target.matches("input,select,textarea")) return;
   e.preventDefault(); e.stopPropagation();
   if (e.target.blur) e.target.blur();
