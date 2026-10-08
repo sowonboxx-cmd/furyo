@@ -41,6 +41,7 @@ a{color:inherit}
 .stats div{background:var(--s1);border-radius:12px;padding:10px 4px;text-align:center}
 .stats b{display:block;font:700 24px/1 var(--fd);color:var(--yel);font-variant-numeric:tabular-nums}
 .stats small{font:700 9.5px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.lck{opacity:.6;margin-left:auto;flex:none}
 .quota{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--fg2);margin-top:12px}
 .quota b{color:var(--fg);font-variant-numeric:tabular-nums}
 .quota .bar{flex:1;height:6px;border-radius:3px;background:var(--s2);overflow:hidden}.quota .bar i{display:block;height:100%;background:var(--yel)}
@@ -230,6 +231,9 @@ const FLAG = {
   France: '<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="France"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>'
 };
 const LISTS = [["c", "Collection"], ["p", "Pile à lire"], ["k", "Panier"], ["w", "Wishlist"]];
+// Pile à lire, Panier et Wishlist : réservés aux membres Premium (Will, 08/10/2026). La Collection est illimitée pour tous.
+const VERROU = '<svg class="lck" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>';
+const ferme = k => k !== "c" && !VIP;
 const VERBE = { c: "Possédé", p: "À lire", k: "Au panier", w: "Wishlist" };
 // Compteur Z1 : ma collection à gauche, base FuryoGang à droite, % en exposant
 function cmpBox(n) {
@@ -237,7 +241,7 @@ function cmpBox(n) {
   const row = (v, tot, lab) => { const p = pc(v, tot); return `<div><div class="cr"><b>${fr(v)}</b><div class="cs"><em>${String(p).replace(".", ",")} %</em><span>${lab}</span></div><i>${fr(tot)}</i></div><div class="cb"><i style="width:${Math.min(100, p)}%"></i></div></div>`; };
   return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Total</span></div>${row(n.tomes, STATS.tomes, "TOMES")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}</div>`;
 }
-let STATS = {}, CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, p: {}, k: {}, w: {} }, MAX = 25, TAB = "c", Q = "", SORT = "az", DET = {};
+let STATS = {}, CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, p: {}, k: {}, w: {} }, MAX = null, VIP = false, TAB = "c", Q = "", SORT = "az", DET = {};
 const F = { statut: new Set(), pays: new Set(), genre: new Set() };
 let SHOWN = 60;
 function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2000); }
@@ -302,12 +306,12 @@ function drawHome(){
   const vide = !mine.length;
   const genres = [...new Set(CAT.flatMap(s => s.genres || []))].sort((a, b) => a.localeCompare(b, "fr")).slice(0, 14);
   const quota = MAX ? `<div class="quota"><b>${n.tomes}/${MAX}</b><span>tomes gratuits</span><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div></div>` : "";
-  const tabs = `<div class="tabs mob">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}">${l}<em>${k === "c" ? n.tomes : n[k]}</em></button>`).join("")}</div>`;
+  const tabs = `<div class="tabs mob">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : `<em>${k === "c" ? n.tomes : n[k]}</em>`}</button>`).join("")}</div>`;
   const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Wishlist</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
   const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}
-    <div><h4>Ma bibliothèque</h4><div class="lk">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}">${l}<em>${k === "c" ? n.tomes : n[k]}</em></button>`).join("")}</div></div>
+    <div><h4>Ma bibliothèque</h4><div class="lk">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : `<em>${k === "c" ? n.tomes : n[k]}</em>`}</button>`).join("")}</div></div>
     ${TAB === "c" ? `<div><h4>Statut</h4><div class="fk">${[["complete", "Complètes"], ["manque", "Tome manquant"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
     <div><h4>Pays</h4><div class="fk">${["France", "Japon"].map(v => `<button data-f="pays" data-v="${v}" aria-pressed="${F.pays.has(v)}"><i></i>${v}</button>`).join("")}</div></div>
     <div><h4>Genre</h4><div class="fk">${genres.map(v => `<button data-f="genre" data-v="${esc(v)}" aria-pressed="${F.genre.has(v)}"><i></i>${esc(v)}</button>`).join("")}</div></div></aside>`;
@@ -354,7 +358,7 @@ function drawSerie(s, d){
   const eds = `<div class="eds">${d.editions.map(x => { const xp = x.tomes.filter(t => t.paru).length, xh = x.tomes.filter(t => L.c[t.id]).length, xn = x.nb || x.tomes.length;
     return `<button data-ed="${x.id}" aria-pressed="${x.id === e.id}">${FLAG[x.pays] || ""}<span><b>${esc([x.pays, x.pub, x.label].filter(Boolean).join(" · "))}</b><em>${xn} tome${xn > 1 ? "s" : ""}${st(x)}</em></span><span class="n">${xh}/${xp}</span></button>`; }).join("")}</div>`;
   const aut = d.serie.auteurs ? `<dl class="scr"><dt>${/,|&| et /.test(d.serie.auteurs) ? "Auteurs" : "Auteur"} :</dt><dd>${esc(d.serie.auteurs)}</dd></dl>` : "";
-  const lseg = `<div class="lseg">${LISTS.map(([k, l]) => `<button data-lt="${k}" aria-pressed="${LT === k}">${l}</button>`).join("")}</div>`;
+  const lseg = `<div class="lseg">${LISTS.map(([k, l]) => `<button data-lt="${k}" aria-pressed="${LT === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : ""}</button>`).join("")}</div>`;
   // Repli (Will, 07/10) : un tome français sans couverture affiche celle du même tome japonais, marquée « Couv. JP ».
   const jpEd = e.pays !== "Japon" ? d.editions.find(x => x.pays === "Japon") : null;
   const jpCov = {}; if (jpEd) jpEd.tomes.forEach(x => { if (x.cover) jpCov[x.n] = x.cover; });
@@ -383,19 +387,20 @@ async function envoyer(l, on, tomes, el){
   try {
     const r = await fetch("/api/collection", { method: "POST", headers: { "content-type": "application/json" }, credentials: "same-origin", body: JSON.stringify({ l, on, tomes }) });
     const j = await r.json().catch(() => ({}));
-    if (r.status === 402 || j.error === "quota") { if (j.lists) L = j.lists; quotaPlein(); return false; }
+    if (r.status === 402 || j.error === "premium") { premium(); return false; }
     if (r.status === 401) { gate(); return false; }
     if (!r.ok || !j.ok) throw new Error(j.error || "Erreur");
-    L = j.lists; MAX = j.max; return true;
+    L = j.lists; MAX = j.max; VIP = !!j.vip; return true;
   } catch (err) { toast("Impossible d'enregistrer, réessaie."); return false; }
   finally { el && el.classList.remove("busy"); }
 }
-function quotaPlein(){
+function premium(){
   const p = document.createElement("div"); p.className = "pay";
-  p.innerHTML = `<div><b>${MAX}/${MAX} tomes</b><p>Ta collection gratuite est pleine. L'offre pour aller plus loin arrive bientôt ; en attendant, tes ${MAX} tomes restent là et tu peux en retirer pour en ajouter d'autres.</p><button class="btn">OK</button></div>`;
+  p.innerHTML = `<div><b>Premium</b><p>La Pile à lire, le Panier et la Wishlist sont réservés aux membres Premium. Ta collection, elle, est illimitée.</p><button class="btn">OK</button></div>`;
   document.body.appendChild(p); p.onclick = e => { if (e.target === p || e.target.closest(".btn")) p.remove(); };
 }
 document.addEventListener("click", async e => {
+  if (e.target.closest("[data-lock]")) { premium(); return; }
   const tb = e.target.closest("[data-tab]"); if (tb) { TAB = tb.dataset.tab; F.statut.clear(); home(); return; }
   const fb = e.target.closest("[data-f]"); if (fb) { const g = F[fb.dataset.f], v = fb.dataset.v; g.has(v) ? g.delete(v) : g.add(v); drawHome(); return; }
   if (e.target.closest("[data-more]")) { SHOWN += 60; drawHome(); return; }
@@ -425,7 +430,7 @@ function gate(){
   if (document.querySelector(".pay.gp")) return;
   const pile = CAT.filter(s => s.cover).slice(0, 3);
   const p = document.createElement("div"); p.className = "pay gp";
-  p.innerHTML = `<div class="gate"><button class="gx" aria-label="Fermer">×</button><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes, ce qu'il te manque, ta pile à lire et ta wishlist. Réservé aux membres, gratuit jusqu'à 25 tomes.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
+  p.innerHTML = `<div class="gate"><button class="gx" aria-label="Fermer">×</button><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes et ce qu'il te manque. Gratuit et illimité pour les membres ; pile à lire, panier et wishlist avec Premium.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
   document.body.appendChild(p);
   const go = () => { p.remove(); const b = document.getElementById("sh-me"); if (b) b.click(); };
   p.querySelector("#join").onclick = go; p.querySelector("#join2").onclick = go;
@@ -450,7 +455,7 @@ async function route(){
   ]);
   CAT = cat.items || []; STATS = cat.stats || {}; CAT.forEach(s => { BYID[s.id] = s; BYSLUG[s.slug] = s; });
   if (col.gate || !col.ok) { GUEST = true; route(); return; }
-  L = { c: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max;
+  L = { c: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max; VIP = !!col.vip;
   // Les détails des séries de la collection, pour les « 7/9 tomes ».
   // Une seule requête pour toutes les séries de la collection (lue dans l'index, sans Notion) : Will, 07/10/2026.
   const ids = [...new Set(Object.values(L).flatMap(x => Object.values(x)))];

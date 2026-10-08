@@ -2,11 +2,12 @@
 //   c = Collection (tomes possédés), p = Pile à lire, k = Panier, w = Wishlist ; chaque liste = { idTome: idSérie }.
 //   GET  /api/collection                      → { ok, lists: {c,p,k,w}, max } (max = limite gratuite de la Collection, null pour l'admin et l'accès complet / VIP)
 //   POST /api/collection { l, on, tomes: [{t, s}] } → ajoute (on) ou retire des tomes d'une liste → { ok, lists, max }
-// Gratuit : 25 tomes dans la Collection (offre payante à venir). Stockage : KV « STATS », clé bib:<membre>.
+// Collection illimitée pour tous les membres (Will, 08/10/2026) ; Pile à lire, Panier et Wishlist réservés au Premium.
+// Stockage : KV « STATS », clé bib:<membre>.
 import { membre } from "../../lib/auth.js";
 import { acces } from "../../lib/acces.js";
 import { activite, jourParis, decaler } from "../../lib/communaute.js";
-const MAX = 25;
+const PREMIUM = "pkw";
 const ID = /^[0-9a-f]{32}$/;
 const uid = u => String(u.m || u.k || u.e || "").replace(/[^\w@.-]/g, "").slice(0, 80);
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -21,7 +22,7 @@ export async function onRequestGet({ env, request }) {
   if (!me) return json({ ok: false, error: "connexion requise" }, 401);
   if (!env.STATS) return json({ ok: false, error: "stockage indisponible" }, 503);
   const { complet } = await acces(me, env);
-  return json({ ok: true, lists: await lire(env, me), max: complet ? null : MAX, vip: complet });
+  return json({ ok: true, lists: await lire(env, me), max: null, vip: complet });
 }
 
 export async function onRequestPost({ env, request }) {
@@ -31,12 +32,12 @@ export async function onRequestPost({ env, request }) {
   let b = {}; try { b = await request.json(); } catch (e) {}
   const l = String(b.l || ""), tomes = (Array.isArray(b.tomes) ? b.tomes : []).filter(x => x && ID.test(x.t) && ID.test(x.s)).slice(0, 200).map(x => ({ t: x.t, s: x.s, p: x.p === "F" || x.p === "J" ? x.p : "" }));
   if (!"cpkw".includes(l) || l.length !== 1 || !tomes.length) return json({ ok: false, error: "demande invalide" }, 400);
-  const { complet } = await acces(me, env), lists = await lire(env, me);
+  const { complet } = await acces(me, env);
+  if (b.on && PREMIUM.includes(l) && !complet) return json({ ok: false, error: "premium" }, 402);
+  const lists = await lire(env, me);
   let delta = 0;
   if (b.on) {
     const nouveaux = tomes.filter(x => !lists[l][x.t]);
-    if (l === "c" && !complet && Object.keys(lists.c).length + nouveaux.length > MAX)
-      return json({ ok: false, error: "quota", max: MAX, lists }, 402);
     nouveaux.forEach(x => { lists[l][x.t] = x.s; });
     // Un tome qu'on possède n'est plus dans le panier ni la wishlist.
     if (l === "c") nouveaux.forEach(x => { delete lists.k[x.t]; delete lists.w[x.t]; if (x.p === "F" || x.p === "J") lists.cp[x.t] = x.p; });
@@ -51,5 +52,5 @@ export async function onRequestPost({ env, request }) {
     const vieux = decaler(j, -62); for (const k of Object.keys(lists.h)) if (k < vieux) delete lists.h[k]; }
   await env.STATS.put("bib:" + uid(me), JSON.stringify(lists));
   if (delta > 0) { const s = tomes.find(x => lists.c[x.t])?.s; if (s) await activite(env, uid(me), { k: "a", s, n: delta }).catch(() => {}); }
-  return json({ ok: true, lists, max: complet ? null : MAX, vip: complet });
+  return json({ ok: true, lists, max: null, vip: complet });
 }
