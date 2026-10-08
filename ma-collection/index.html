@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ma collection · FuryoGang</title>
-<meta name="description" content="Ta bibliothèque de mangas furyō, yakuza et crime : les tomes que tu as, ceux qui te manquent, ta pile à lire et ta wishlist.">
+<meta name="description" content="Ta bibliothèque de mangas furyō, yakuza et crime : les tomes que tu as, ceux qui te manquent, et ceux que tu as envie de lire.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -164,6 +164,11 @@ a{color:inherit}
 .hero .acts{align-self:end}.hero .c1{align-self:start}
 .hero .c1{width:96px;aspect-ratio:2/3;border-radius:6px;overflow:hidden;background:var(--s1);box-shadow:0 10px 26px rgba(0,0,0,.6)}
 .hero .c1 img{width:100%;height:100%;object-fit:cover;display:block}
+/* Cœur « Suivre la série » comme sur les fiches (Will, 09/10/2026). */
+.sc{position:relative}.sc h1{padding-right:44px}
+.mfol{position:absolute;top:0;right:0;z-index:2;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px 0 9px;border:0;border-radius:17px;background:var(--s1);color:var(--fg);font:600 13px var(--fb);cursor:pointer}
+.mfol svg{width:16px;height:16px}.mfol[aria-pressed=true]{color:#FF4D67}.mfol[aria-pressed=true] span{color:var(--fg)}
+@media (max-width:979px){.mfol{width:36px;padding:0;justify-content:center;background:transparent}.mfol svg{width:21px;height:21px}.mfol span{display:none}}
 .back{display:inline-flex;align-items:center;gap:4px;color:var(--blue);font-weight:600;text-decoration:none;position:relative;margin-bottom:12px}
 .hero h1{margin:0;font:700 30px/1 var(--fd);text-transform:uppercase;overflow-wrap:anywhere}
 .hero p{margin:5px 0 0;color:var(--fg2);font-size:13px}
@@ -260,11 +265,12 @@ const FLAG = {
   Japon: '<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="Japon"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>',
   France: '<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="France"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>'
 };
-const LISTS = [["c", "Collection"], ["p", "Pile à lire"], ["k", "Panier"], ["w", "Wishlist"]];
-// Pile à lire, Panier et Wishlist : réservés aux membres Premium (Will, 08/10/2026). La Collection est illimitée pour tous.
+// « Envie de lire » remplace Pile à lire et Wishlist (Will, 09/10/2026) : clé w ; l'ancienne pile (p) y est fusionnée côté serveur.
+const LISTS = [["c", "Collection"], ["w", "Envie de lire"], ["k", "Panier"]];
+// Envie de lire et Panier : réservés aux membres Premium (Will, 08/10/2026). La Collection est illimitée pour tous.
 const VERROU = '<svg class="lck" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>';
 const ferme = k => k !== "c" && !VIP;
-const VERBE = { c: "Possédé", p: "À lire", k: "Au panier", w: "Wishlist" };
+const VERBE = { c: "Possédé", p: "Envie de lire", k: "Au panier", w: "Envie de lire" };
 // Compteur Z1 : ma collection à gauche, base FuryoGang à droite, % en exposant
 function cmpBox(n) {
   const fr = v => v.toLocaleString("fr-FR"), pc = (a, b) => b ? Math.round(a / b * 1000) / 10 : 0;
@@ -377,7 +383,7 @@ function drawHome(){
   const genres = [...new Set(CAT.flatMap(s => s.genres || []))].sort((a, b) => a.localeCompare(b, "fr")).slice(0, 14);
   const quota = MAX ? `<div class="quota"><b>${n.tomes}/${MAX}</b><span>tomes gratuits</span><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div></div>` : "";
   const tabs = `<div class="tabs mob">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : `<em>${k === "c" ? n.tomes : n[k]}</em>`}</button>`).join("")}</div>`;
-  const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Wishlist</small></div></div>`;
+  const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Envie de lire</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
   const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}${rangBox()}
@@ -402,6 +408,12 @@ function drawHome(){
 
 /* ---------- page d'une série ---------- */
 let ED = null, LT = "c";
+// Suivre la série depuis Ma collection : même stockage que le cœur des fiches (/api/follow).
+const COEUR = on => `<svg viewBox="0 0 24 24" fill="${on ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>`;
+const SUIVI = {};
+const folHtml = sl => `<button type="button" class="mfol" data-mfol="${esc(sl)}" aria-pressed="${!!SUIVI[sl]}" aria-label="${SUIVI[sl] ? "Ne plus suivre la série" : "Suivre la série"}">${COEUR(SUIVI[sl])}<span>${SUIVI[sl] ? "Suivie" : "Suivre"}</span></button>`;
+function folCharger(sl){ if (sl in SUIVI) return; SUIVI[sl] = false;
+  fetch("/api/follow?s=" + encodeURIComponent(sl), { credentials: "same-origin" }).then(r => r.ok ? r.json() : null).then(j => { if (j && j.ok) { SUIVI[sl] = !!j.on; const b = document.querySelector(`[data-mfol="${sl}"]`); if (b) b.outerHTML = folHtml(sl); } }).catch(() => {}); }
 async function serie(slug){
   const s = BYSLUG[slug] || BYID[slug];
   if (!s) { app().innerHTML = `<p class="empty">Série introuvable. <a href="/ma-collection/">Retour à ma collection</a></p>`; return; }
@@ -422,10 +434,10 @@ function drawSerie(s, d){
   const fiche = d.serie.fiche ? `<a class="btn" href="/series/${esc(d.serie.slug)}">Voir la fiche ${I.arr}</a>` : `<span class="btn g" style="opacity:.6;cursor:default">Fiche bientôt en ligne</span>`;
   // En-tête « D3 » (Will, 07/10) : carte arrondie, éditions en lignes drapeau, panneau compteur à droite.
   const reste = parus.filter(t => !L.c[t.id]).length;
-  // « Tout ajouter » : Collection, et Pile à lire (Will, 09/10/2026 : on achète parfois toute la série d'un coup).
-  const resteP = parus.filter(t => !L.p[t.id]).length;
-  const tout = !parus.length || !"cp".includes(LT) ? "" : LT === "p"
-    ? (resteP ? `<button class="btn" data-jusqua>${I.stack}Tout mettre à lire · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Toute la série est à lire</span>`)
+  // « Tout ajouter » : Collection, et Envie de lire (Will, 09/10/2026 : on achète parfois toute la série d'un coup).
+  const resteP = parus.filter(t => !L.w[t.id]).length;
+  const tout = !parus.length || !"cw".includes(LT) ? "" : LT === "w"
+    ? (resteP ? `<button class="btn" data-jusqua>${I.stack}Toute la série · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Toute la série est dans Envie de lire</span>`)
     : reste ? `<button class="btn" data-jusqua>${I.stack}Tout ajouter · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Tous les tomes parus sont là</span>`;
   const pane = `<div class="pane"><div class="big"><b>${has}</b><span>/ ${parus.length} tome${parus.length > 1 ? "s" : ""}${parus.length < total ? ` · ${total} prévus` : ""}</span></div><div class="pb"><i style="width:${parus.length ? has / parus.length * 100 : 0}%"></i></div>${tout}${fiche}</div>`;
   const st = x => { const v = (x.statut || "").trim(); return v ? ` · <i class="${/cours/i.test(v) ? "on" : /stop|arr/i.test(v) ? "stop" : "end"}">${esc(v)}</i>` : ""; };
@@ -446,8 +458,9 @@ function drawSerie(s, d){
   };
   const leg = LT === "c" ? `<div class="leg"><span><i style="background:var(--ok)"></i>Possédé</span><span><i style="background:#555"></i>Manquant</span><span><i style="border:1.5px dashed #555"></i>À paraître</span><span>Touche un tome pour le cocher</span></div>`
     : `<div class="leg"><span>${inL} tome${inL > 1 ? "s" : ""} dans « ${esc(LISTS.find(x => x[0] === LT)[1])} » · touche un tome pour l'ajouter ou le retirer</span></div>`;
+  folCharger(d.serie.slug || s.slug);
   app().innerHTML = `<a class="back" href="/ma-collection/">${I.back}Ma collection</a>
-    <div class="sc"><span class="scv">${cover ? `<img src="${esc(couv(cover, 400))}" alt="">` : ""}</span>
+    <div class="sc">${folHtml(d.serie.slug || s.slug)}<span class="scv">${cover ? `<img src="${esc(couv(cover, 400))}" alt="">` : ""}</span>
       <div class="stx"><div><h1>${esc(d.serie.fr || d.serie.t)}</h1>${d.serie.jp ? `<p class="jpt" lang="ja">${esc(d.serie.jp)}</p>` : ""}${aut}</div>${eds}</div>
       ${pane}</div>
     <div class="det-tools">${lseg}${leg}</div>
@@ -470,12 +483,14 @@ async function envoyer(l, on, tomes, el){
 }
 function premium(){
   const p = document.createElement("div"); p.className = "pay";
-  p.innerHTML = `<div><b>Premium</b><p>La Pile à lire, le Panier et la Wishlist sont réservés aux membres Premium. Ta collection, elle, est illimitée.</p><button class="btn">OK</button></div>`;
+  p.innerHTML = `<div><b>Premium</b><p>« Envie de lire » et le Panier sont réservés aux membres Premium. Ta collection, elle, est illimitée.</p><button class="btn">OK</button></div>`;
   document.body.appendChild(p); p.onclick = e => { if (e.target === p || e.target.closest(".btn")) p.remove(); };
 }
 document.addEventListener("click", async e => {
   if (e.target.closest("[data-fsh]")) { feuille(); return; }
   if (e.target.closest("[data-lock]")) { premium(); return; }
+  const fo = e.target.closest("[data-mfol]"); if (fo) { const sl = fo.dataset.mfol; SUIVI[sl] = !SUIVI[sl]; fo.outerHTML = folHtml(sl);
+    fetch("/api/follow", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ s: sl }) }).then(r => r.json()).then(j => { if (j && j.ok) { SUIVI[sl] = !!j.on; const b = document.querySelector(`[data-mfol="${sl}"]`); if (b) b.outerHTML = folHtml(sl); toast(j.on ? "Série suivie ♥" : "Tu ne suis plus la série"); } }).catch(() => toast("Impossible d'enregistrer, réessaie.")); return; }
   const tb = e.target.closest("[data-tab]"); if (tb) { TAB = tb.dataset.tab; F.statut.clear(); home(); return; }
   const fb = e.target.closest("[data-f]"); if (fb) { const g = F[fb.dataset.f], v = fb.dataset.v; g.has(v) ? g.delete(v) : g.add(v); drawHome(); return; }
   if (e.target.closest("[data-more]")) { SHOWN += 60; drawHome(); return; }
@@ -491,9 +506,9 @@ document.addEventListener("click", async e => {
   const t = e.target.closest("[data-t]");
   if (t) { const on = !L[LT][t.dataset.t]; if (await envoyer(LT, on, [{ t: t.dataset.t, s: s.id, p: ((d.editions.find(x => x.tomes.some(y => y.id === t.dataset.t)) || {}).pays === "France" ? "F" : "J") }], t)) { drawSerie(s, d); if (on && LT === "c" && MAX && Object.keys(L.c).length === MAX) toast(`${MAX}/${MAX} : ta collection gratuite est pleine`); } return; }
   const j = e.target.closest("[data-jusqua]");
-  if (j) { const li = LT === "p" ? "p" : "c", ee = d.editions.find(x => x.id === ED) || d.editions[0]; const tomes = ee.tomes.filter(x => x.paru && !L[li][x.id]).map(x => ({ t: x.id, s: s.id, p: ee.pays === "France" ? "F" : "J" }));
-    if (!tomes.length) { toast(li === "p" ? "Toute la série est déjà à lire ✓" : "Tu as déjà tous les tomes parus ✓"); return; }
-    if (await envoyer(li, true, tomes, j)) { drawSerie(s, d); toast(`${tomes.length} tome${tomes.length > 1 ? "s" : ""} ${li === "p" ? "dans ta pile à lire" : "ajouté" + (tomes.length > 1 ? "s" : "")} ✓`); } }
+  if (j) { const li = LT === "w" ? "w" : "c", ee = d.editions.find(x => x.id === ED) || d.editions[0]; const tomes = ee.tomes.filter(x => x.paru && !L[li][x.id]).map(x => ({ t: x.id, s: s.id, p: ee.pays === "France" ? "F" : "J" }));
+    if (!tomes.length) { toast(li === "w" ? "Toute la série est déjà dans Envie de lire ✓" : "Tu as déjà tous les tomes parus ✓"); return; }
+    if (await envoyer(li, true, tomes, j)) { drawSerie(s, d); toast(`${tomes.length} tome${tomes.length > 1 ? "s" : ""} ${li === "w" ? "dans Envie de lire" : "ajouté" + (tomes.length > 1 ? "s" : "")} ✓`); } }
 });
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 addEventListener("popstate", async e => { const st = e.state || {}; if (!slugAdr() && st.shown) SHOWN = Math.max(SHOWN, st.shown); await route(); window.scrollTo(0, !slugAdr() && st.y ? st.y : 0); });
@@ -505,7 +520,7 @@ function gate(){
   if (document.querySelector(".pay.gp")) return;
   const pile = CAT.filter(s => s.cover).slice(0, 3);
   const p = document.createElement("div"); p.className = "pay gp";
-  p.innerHTML = `<div class="gate"><button class="gx" aria-label="Fermer">×</button><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes et ce qu'il te manque. Gratuit et illimité pour les membres ; pile à lire, panier et wishlist avec Premium.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
+  p.innerHTML = `<div class="gate"><button class="gx" aria-label="Fermer">×</button><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes et ce qu'il te manque. Gratuit et illimité pour les membres ; envie de lire et panier avec Premium.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
   document.body.appendChild(p);
   const go = () => { p.remove(); const b = document.getElementById("sh-me"); if (b) b.click(); };
   p.querySelector("#join").onclick = go; p.querySelector("#join2").onclick = go;

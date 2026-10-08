@@ -7,14 +7,17 @@
 import { membre } from "../../lib/auth.js";
 import { acces } from "../../lib/acces.js";
 import { activite, jourParis, decaler } from "../../lib/communaute.js";
-const PREMIUM = "pkw";
+const PREMIUM = "pkw"; // p n'est plus proposée : fusionnée dans w
 const ID = /^[0-9a-f]{32}$/;
 const uid = u => String(u.m || u.k || u.e || "").replace(/[^\w@.-]/g, "").slice(0, 80);
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 const vide = () => ({ c: {}, p: {}, k: {}, w: {}, h: {}, cp: {} });
 
 async function lire(env, me) {
-  try { return { ...vide(), ...JSON.parse((await env.STATS.get("bib:" + uid(me))) || "{}") }; } catch (e) { return vide(); }
+  let l; try { l = { ...vide(), ...JSON.parse((await env.STATS.get("bib:" + uid(me))) || "{}") }; } catch (e) { return vide(); }
+  // « Envie de lire » (w) remplace Pile à lire (p) et Wishlist (Will, 09/10/2026) : l'ancienne pile y est fusionnée.
+  if (Object.keys(l.p).length) { l.w = { ...l.p, ...l.w }; l.p = {}; }
+  return l;
 }
 
 export async function onRequestGet({ env, request }) {
