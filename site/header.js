@@ -351,7 +351,8 @@ a("col", "/ma-collection/", "Ma collection", 1) +
     if (window.google && google.accounts && google.accounts.id) return cb();
     var sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true; sc.onload = cb; document.head.appendChild(sc);
   }
-  // L'avatar ouvre une petite fenêtre : Validation et Back-office pour l'admin, Mon feed et Signets pour tous.
+  // L'avatar ouvre une petite fenêtre : Validation, raccourcis et Back-office pour l'admin, Communauté pour tous.
+  // Mon feed, Signets et Ma collection retirés (Will, 08/10/2026) : déjà accessibles depuis le site.
   function admPop() {
     var pop = document.getElementById("adm-pop");
     if (!pop) {
@@ -369,13 +370,8 @@ a("col", "/ma-collection/", "Ma collection", 1) +
       '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' +
       // Statistiques Google (Search Console), réservées à l'admin (Will, 07/10/2026).
       '<a class="adm-b" href="/admin/#stats"><span><strong>Statistiques</strong><small>Clics et recherches Google</small></span><span aria-hidden="true">→</span></a>' : "") +
-      // Ma collection : la bibliothèque des membres (Will, 06/10/2026).
-      '<a class="adm-b c" href="/ma-collection/"><span><strong>Ma collection</strong><small>Tes tomes, ta pile à lire, ta wishlist</small></span><span aria-hidden="true">→</span></a>' +
       // Communauté (Will, 07/10/2026) : réseaux, classement des collections, membres.
       '<a class="adm-b fgcm" href="/communaute/"><span><strong>Communauté</strong><small>Tous les membres du gang</small></span><span aria-hidden="true">→</span></a>' +
-      // Mon feed et Signets pour tous les membres (Will, 05/10/2026) : sous Validation et Back-office pour l'admin, seuls pour les autres.
-      '<a class="adm-b f" href="/?vue=actus&tab=feed"><span><strong>Mon feed</strong><small>Les news des séries que tu suis</small></span><span aria-hidden="true">→</span></a>' +
-      '<a class="adm-b s" href="/?vue=actus&tab=signets"><span><strong>Signets</strong><small>Les news que tu as gardées</small></span><span aria-hidden="true">→</span></a>' +
       '<button class="adm-out" type="button">Se déconnecter</button></div>';
     pop.querySelector(".adm-out").onclick = function () { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); };
     // Ordinateur : même fenêtre que sur téléphone, ouverte sous l'avatar, sans assombrir la page (Will, 04/10/2026).
