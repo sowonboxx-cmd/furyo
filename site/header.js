@@ -203,7 +203,7 @@ a("col", "/ma-collection/", "Ma collection", 1) +
   function load() {
     if (DATA || loading) return loading;
     var j = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
-    loading = Promise.all([j("/api/series"), j("/api/auteurs"), j("/api/calendrier"), j("/api/news")]).then(function (r) {
+    loading = Promise.all([j("/api/series"), j("/api/auteurs"), j("/api/calendrier"), j("/api/news"), j("/api/biblio")]).then(function (r) {
       var today = new Date().toISOString().slice(0, 10), from = new Date(Date.now() - 45 * 864e5).toISOString().slice(0, 10);
       DATA = {
         series: (r[0].items || []).map(function (s) { return { t: shown(s), alt: [s.t, s.fr, s.jp].join(" "), d: [s.jp, s.type, s.y1].filter(Boolean).join(" · "), u: "/series/" + s.slug, img: s.cover }; }),
@@ -212,6 +212,13 @@ a("col", "/ma-collection/", "Ma collection", 1) +
           var t = it.fr && !(it.series && it.series === it.series.toUpperCase() && /[A-Z]/.test(it.series) && it.series.toLowerCase() === it.fr.toLowerCase()) ? it.fr : it.series;
           return { t: t + (it.n != null ? " T." + tn(it.n) : ""), alt: [it.series, it.fr, it.jp, it.pub].join(" "), d: [it.pays, it.pub, (it.date < today ? "sorti le " : "") + dc(it.date)].filter(Boolean).join(" · "), u: "/calendrier/#t-" + it.id, img: it.cover, date: it.date };
         }),
+        // Séries de la base sans fiche en ligne (Will, 08/10/2026) : trouvables quand même, elles ouvrent Ma collection.
+        collection: (function () {
+          var avec = {}; (r[0].items || []).forEach(function (s) { avec[s.slug] = 1; });
+          return (r[4].items || []).filter(function (s) { return s.slug && !avec[s.slug]; }).map(function (s) {
+            return { t: shown(s), alt: [s.t, s.fr, s.jp].join(" "), d: [s.jp, "Fiche bientôt en ligne"].filter(Boolean).join(" · "), u: "/ma-collection/" + s.slug, img: s.cover };
+          });
+        })(),
         news: (r[3].items || []).map(function (n) { return { t: n.fr || n.titre, alt: [n.titre, n.fr, n.jp, n.pub, n.texte].join(" "), d: [n.type === "licence" ? "Licence FR" : "News", n.pub, dc(n.date)].filter(Boolean).join(" · "), u: "/#n-" + n.id, ini: n.type === "licence" ? "FR" : "!" }; }),
       };
       return DATA;
@@ -247,7 +254,7 @@ a("col", "/ma-collection/", "Ma collection", 1) +
       : '<span class="ic ' + (kind === "auteurs" ? "rd" : "sq") + '">' + esc(x.ic || x.ini || "") + "</span>";
     return '<a class="fs-r" href="' + esc(x.u) + '" role="option">' + ic + '<span class="tx"><b>' + hl(x.t, q) + "</b>" + (x.d ? "<small>" + esc(x.d) + "</small>" : "") + "</span></a>";
   }
-  var GROUPS = [["series", "Séries", 6, "/series/"], ["auteurs", "Mangakas", 4, "/auteurs/"], ["sorties", "Sorties", 5, "/calendrier/"], ["news", "Actualités", 4, "/"]];
+  var GROUPS = [["series", "Séries", 6, "/series/"], ["collection", "Dans la collection", 5, "/ma-collection/"], ["auteurs", "Mangakas", 4, "/auteurs/"], ["sorties", "Sorties", 5, "/calendrier/"], ["news", "Actualités", 4, "/"]];
   function draw() {
     var raw = inp.value.trim(), q = norm(raw), out = "";
     if (!q) {
