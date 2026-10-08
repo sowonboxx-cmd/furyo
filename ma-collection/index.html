@@ -74,6 +74,9 @@ a{color:inherit}
 .side .sbox{background:var(--s1);border-radius:14px;padding:14px}
 .side .sbox b{display:block;font:700 26px var(--fd);color:var(--yel)}
 .side .sbox small{color:var(--fg2);font-size:13px}
+/* Total de la base à côté de sa collection, pour comparer d'un coup d'œil (Will, 08/10/2026) */
+.side .sbox b em{font-style:normal;color:var(--fg2);font-size:18px;font-weight:700}
+.side .sbox small.base{display:block;margin-top:8px}
 .side .sbox .bar{height:6px;border-radius:3px;background:var(--s2);overflow:hidden;margin-top:8px}.side .sbox .bar i{display:block;height:100%;background:var(--yel)}
 .side h4{margin:0 0 8px;font:700 12px var(--fb);text-transform:uppercase;letter-spacing:.08em;color:var(--mut)}
 .side .lk{display:flex;flex-direction:column;gap:2px}
@@ -286,7 +289,7 @@ function drawHome(){
   const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Wishlist</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
-  const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div></div>` : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}
+  const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : `<div class="sbox"><b>${n.tomes}${STATS.tomes ? `<em> / ${STATS.tomes.toLocaleString("fr-FR")}</em>` : ""}</b><small>tomes · ${n.series}${STATS.series ? ` / ${STATS.series}` : ""} séries</small></div>`}
     <div><h4>Ma bibliothèque</h4><div class="lk">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}">${l}<em>${k === "c" ? n.tomes : n[k]}</em></button>`).join("")}</div></div>
     ${TAB === "c" ? `<div><h4>Statut</h4><div class="fk">${[["complete", "Complètes"], ["manque", "Tome manquant"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
     <div><h4>Pays</h4><div class="fk">${["France", "Japon"].map(v => `<button data-f="pays" data-v="${v}" aria-pressed="${F.pays.has(v)}"><i></i>${v}</button>`).join("")}</div></div>
