@@ -235,7 +235,7 @@ const VERBE = { c: "Possédé", p: "À lire", k: "Au panier", w: "Wishlist" };
 function cmpBox(n) {
   const fr = v => v.toLocaleString("fr-FR"), pc = (a, b) => b ? Math.round(a / b * 1000) / 10 : 0;
   const row = (v, tot, lab) => { const p = pc(v, tot); return `<div><div class="cr"><b>${fr(v)}</b><div class="cs"><em>${String(p).replace(".", ",")} %</em><span>${lab}</span></div><i>${fr(tot)}</i></div><div class="cb"><i style="width:${Math.min(100, p)}%"></i></div></div>`; };
-  return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Base</span></div>${row(n.tomes, STATS.tomes, "TOMES")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}</div>`;
+  return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Total</span></div>${row(n.tomes, STATS.tomes, "TOMES")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}</div>`;
 }
 let STATS = {}, CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, p: {}, k: {}, w: {} }, MAX = 25, TAB = "c", Q = "", SORT = "az", DET = {};
 const F = { statut: new Set(), pays: new Set(), genre: new Set() };
