@@ -429,6 +429,28 @@ async function serie(slug){
   ED = (r && r.has ? r.e : d.editions[0]).id; LT = TAB;
   drawSerie(s, d);
 }
+// Mise à jour sans tout redessiner (Will, 09/10/2026 : ça clignotait sur mobile en cochant un tome).
+// On ne remplace que ce qui a changé : les couvertures déjà affichées restent en place.
+function morph(el, html){
+  const tpl = document.createElement("template"); tpl.innerHTML = html;
+  if (!el.firstChild) { el.replaceChildren(tpl.content); return; }
+  const sync = (a, b) => {
+    const an = [...a.childNodes], bn = [...b.childNodes];
+    for (let i = 0; i < bn.length; i++) {
+      const x = an[i], y = bn[i];
+      if (!x) { a.appendChild(y); continue; }
+      if (x.nodeType !== y.nodeType || x.nodeName !== y.nodeName || (x.nodeName === "IMG" && x.getAttribute("src") !== y.getAttribute("src"))) { a.replaceChild(y, x); continue; }
+      if (x.nodeType === 3) { if (x.nodeValue !== y.nodeValue) x.nodeValue = y.nodeValue; continue; }
+      if (x.nodeType !== 1) continue;
+      if (x.isEqualNode(y)) continue;
+      for (const at of [...x.attributes]) if (!y.hasAttribute(at.name)) x.removeAttribute(at.name);
+      for (const at of [...y.attributes]) if (x.getAttribute(at.name) !== at.value) x.setAttribute(at.name, at.value);
+      sync(x, y);
+    }
+    for (let i = an.length - 1; i >= bn.length; i--) an[i].remove();
+  };
+  sync(el, tpl.content);
+}
 function drawSerie(s, d){
   const e = d.editions.find(x => x.id === ED) || d.editions[0];
   const cover = (e.tomes.find(t => t.cover) || {}).cover || s.cover;
@@ -462,13 +484,13 @@ function drawSerie(s, d){
   const leg = LT === "c" ? `<div class="leg"><span><i style="background:var(--ok)"></i>Possédé</span><span><i style="background:#555"></i>Manquant</span><span><i style="border:1.5px dashed #555"></i>À paraître</span><span>Touche un tome pour le cocher</span></div>`
     : `<div class="leg"><span>${inL} tome${inL > 1 ? "s" : ""} dans « ${esc(LISTS.find(x => x[0] === LT)[1])} » · touche un tome pour l'ajouter ou le retirer</span></div>`;
   folCharger(d.serie.slug || s.slug);
-  app().innerHTML = `<a class="back" href="/ma-collection/">${I.back}Ma collection</a>
+  morph(app(), `<a class="back" href="/ma-collection/">${I.back}Ma collection</a>
     <div class="sc">${folHtml(d.serie.slug || s.slug)}<span class="scv">${cover ? `<img src="${esc(couv(cover, 400))}" alt="">` : ""}</span>
       <div class="stx"><div><h1>${esc(d.serie.fr || d.serie.t)}</h1>${d.serie.jp ? `<p class="jpt" lang="ja">${esc(d.serie.jp)}</p>` : ""}${aut}</div>${eds}</div>
       ${pane}</div>
     <div class="det-tools">${lseg}${leg}</div>
     <div class="tg">${e.tomes.map(tome).join("")}</div>
-`;
+`);
 }
 
 /* ---------- actions ---------- */
