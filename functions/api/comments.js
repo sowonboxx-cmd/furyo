@@ -36,11 +36,11 @@ export async function onRequestGet({ env, request }) {
   const items = env.STATS ? JSON.parse((await env.STATS.get(`c:${id}`)) || "[]") : [];
   // moi : le membre connecté a écrit ce commentaire (il peut le modifier) ; h (anciennes versions) : visible des admins seulement.
   const me = await membre(request, env).catch(() => null), admin = me ? await estAdminEmail(me.e, env) || await isAdmin(request, env) : false;
-  return json({ ok: true, stored: !!env.STATS, admin, items: items.map(c => { const { h, u, ...r } = c; return { ...r, ...(me && auteur(c, me) ? { moi: 1 } : {}), ...(admin && h ? { h } : {}) }; }) });
+  return json({ ok: true, stored: !!env.STATS, admin, items: items.map(c => { const { h, u, ...r } = c; return { ...r, ...(admin && me && auteur(c, me) ? { moi: 1 } : {}), ...(admin && h ? { h } : {}) }; }) });
 }
 const auteur = (c, me) => c.u ? c.u === uid(me) : !!(c.s && me.s && c.s === me.s);
 
-// PATCH /api/comments { id, d, text } : l'auteur modifie son commentaire (d = sa date, qui sert d'identifiant).
+// PATCH /api/comments { id, d, text } : un admin modifie son propre commentaire (réservé aux admins depuis le 09/10/2026) (d = sa date, qui sert d'identifiant).
 // L'ancienne version est gardée dans h (les admins la voient), e = date de la modification.
 export async function onRequestPatch({ env, request }) {
   const me = await membre(request, env).catch(() => null);
@@ -53,6 +53,8 @@ export async function onRequestPatch({ env, request }) {
   const list = JSON.parse((await env.STATS.get(`c:${id}`)) || "[]"), c = list.find(x => x.d === b.d);
   if (!c) return json({ ok: false, error: "Commentaire introuvable." }, 404);
   if (!auteur(c, me)) return json({ ok: false, error: "Tu ne peux modifier que tes commentaires." }, 403);
+  // Modification réservée aux admins (Will, 09/10/2026).
+  if (!(await estAdminEmail(me.e, env)) && !(await isAdmin(request, env))) return json({ ok: false, error: "La modification des commentaires est réservée aux admins." }, 403);
   if (c.t === text) return json({ ok: true, item: { ...c, h: undefined, u: undefined, moi: 1 } });
   c.h = [...(c.h || []), { t: c.t, d: c.e || c.d }].slice(-10); c.t = text; c.e = new Date().toISOString(); c.u = c.u || uid(me);
   const recent = JSON.parse((await env.STATS.get("c:recent")) || "[]").map(x => x.id === id && x.d === c.d ? { ...x, t: text } : x);
