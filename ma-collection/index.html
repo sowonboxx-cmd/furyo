@@ -309,7 +309,7 @@ function resume(d, l){
 
 /* ---------- accueil ---------- */
 async function home(){
-  document.title = "Ma collection · FuryoGang";
+  document.title = "Ma collection manga · FuryoGang";
   const ids = Object.keys(seriesDe(TAB));
   await Promise.all(ids.map(detail));
   drawHome();
@@ -420,7 +420,7 @@ function folCharger(sl){ if (sl in SUIVI) return; SUIVI[sl] = false;
 async function serie(slug){
   const s = BYSLUG[slug] || BYID[slug];
   if (!s) { app().innerHTML = `<p class="empty">Série introuvable. <a href="/ma-collection/">Retour à ma collection</a></p>`; return; }
-  document.title = (s.fr || s.t) + " · Ma collection · FuryoGang";
+  document.title = (s.fr || s.t) + " : ma collection manga | FuryoGang";
   app().innerHTML = window.FG_SK ? FG_SK.fiche() : "";
   const d = await detail(s.id); DET[s.id + ":v"] = d;
   if (!d || d.error) { app().innerHTML = `<p class="empty">Impossible de charger cette série.</p>`; return; }
