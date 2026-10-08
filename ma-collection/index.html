@@ -510,6 +510,8 @@ function gate(){
 // Capture : bloque tout clic, saisie ou focus dans la page tant qu'on n'est pas connecté.
 ["click", "focusin", "keydown"].forEach(ev => document.addEventListener(ev, e => {
   if (!GUEST || !e.target.closest || !e.target.closest("#app")) return;
+  // Visiteur (Will, 08/10/2026) : il peut ouvrir une série, changer d'édition, revenir et voir plus, pour regarder ; tout le reste ouvre le message.
+  if (ev !== "keydown" && e.target.closest("a.c, a.back, [data-ed], [data-more]")) return;
   if (ev === "keydown" && !/^(Enter| )$/.test(e.key) && !e.target.matches("input,select,textarea")) return;
   e.preventDefault(); e.stopPropagation();
   if (e.target.blur) e.target.blur();
