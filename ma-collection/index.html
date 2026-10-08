@@ -51,6 +51,21 @@ a{color:inherit}
 .search input::placeholder{color:var(--mut)}
 .sort{height:42px;border-radius:10px;background:var(--s1);border:0;color:var(--fg2);font:600 13px var(--fb);padding:0 10px;cursor:pointer}
 /* Mobile (Will, 08/10/2026) : plus de pastilles ni de menu A → Z, un seul bouton « Filtres » qui ouvre une feuille avec tous les tris et filtres. */
+/* Mini classement sous le compteur (Will, 08/10/2026) : les 3 premiers du classement général, puis « Voir plus » vers Communauté. */
+.side .rkb{background:var(--s1);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;zoom:1.05}
+.side .rkb .ch{display:flex;justify-content:space-between;font:700 10.5px var(--fb);text-transform:uppercase;letter-spacing:.08em;color:var(--mut)}
+.side .rkb .ch span:first-child{color:var(--fg)}
+.side .rkb a.r{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--fg);min-width:0}
+.side .rkb .n{width:14px;font:700 15px var(--fd);color:var(--mut);text-align:center;flex:none}
+.side .rkb .av{width:26px;height:26px;border-radius:50%;flex:none;overflow:hidden;display:grid;place-items:center;font:700 12px var(--fb);color:#000}
+.side .rkb .av img{width:100%;height:100%;object-fit:cover}
+.side .rkb .ps{flex:1;min-width:0;font:600 13.5px var(--fb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side .rkb .t{font:700 15px var(--fd);color:var(--fg2)}
+.side .rkb .r1 .n,.side .rkb .r1 .t{color:#F2B33D}.side .rkb .r1 .av{box-shadow:0 0 0 2px #F2B33D}
+.side .rkb .r2 .av{box-shadow:0 0 0 2px #C9CED6}.side .rkb .r3 .av{box-shadow:0 0 0 2px #C98A55}
+.side .rkb .r1 .ps{font-weight:700}
+.side .rkb .crn{width:12px;height:10px;color:#F2B33D;flex:none;margin-left:-3px}
+.side .rkb .vp{margin-top:2px;height:32px;border-radius:16px;background:var(--s2);color:var(--fg);font:600 13px var(--fb);display:grid;place-items:center;text-decoration:none}
 .fbtn{flex:none;height:42px;border-radius:10px;border:0;background:var(--s1);color:var(--fg);font:600 13.5px var(--fb);padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 .fbtn svg{width:17px;height:17px}.fbtn em{font-style:normal;min-width:18px;height:18px;border-radius:9px;background:#0A84FF;color:#fff;font-size:11px;display:grid;place-items:center;padding:0 5px}
 @media (max-width:979px){.tools .sort,.chips{display:none!important}}
@@ -334,6 +349,24 @@ function feuille(){
     <h5>Genre</h5><div class="ops">${genres.map(g => op("genre", g, g)).join("")}</div>
     <button class="btn go">Voir ${esc(n.split("·")[1] ? n.split("·")[1].trim() : "les séries")}</button></div>`;
 }
+// Mini classement (général) : chargé une fois, après la collection.
+let RANG = null;
+const RCOUL = ["#F2B33D", "#E58FA8", "#7FA7C9", "#7BC67E", "#A48CD6", "#E0955F", "#9C978A", "#E5483A"];
+function rangBox(){
+  if (!RANG || !RANG.length) return "";
+  const av = m => m.photo ? `<span class="av"><img src="${esc(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>` : `<span class="av" style="background:${RCOUL[(m.num || 0) % RCOUL.length]}">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
+  return `<div class="rkb"><div class="ch"><span>Classement</span><span>Tomes</span></div>${RANG.map((x, i) => `<a class="r r${i + 1}" href="${x.m.slug ? "/membres/" + encodeURIComponent(x.m.slug) : "/communaute/"}"><span class="n">${i + 1}</span>${av(x.m)}<span class="ps">${esc(x.m.pseudo || "Membre")}</span>${i === 0 ? '<svg class="crn" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M2 5l5 4 5-7 5 7 5-4-2 11H4z"/></svg>' : ""}<span class="t">${x.n.toLocaleString("fr-FR")}</span></a>`).join("")}<a class="vp" href="/communaute/">Voir plus</a></div>`;
+}
+async function chargerRang(){
+  try {
+    const [c, m] = await Promise.all([fetch("/api/communaute", { credentials: "same-origin" }).then(r => r.ok ? r.json() : null), fetch("/api/membres").then(r => r.ok ? r.json() : null)]);
+    if (!c || !c.ok || !m) return;
+    const MB = Object.fromEntries((m.items || []).filter(x => x.id).map(x => [x.id, x]));
+    RANG = ((c.classements || {}).g || []).filter(x => MB[x.id] && x.n > 0).slice(0, 3).map(x => ({ n: x.n, m: MB[x.id] }));
+    const sd = document.querySelector(".side"), w = sd && sd.querySelector(".cmp, .sbox");
+    if (RANG.length && w && !sd.querySelector(".rkb")) w.insertAdjacentHTML("afterend", rangBox());
+  } catch (e) {}
+}
 function drawHome(){
   const n = counts(), m = seriesDe(TAB);
   const mine = Object.keys(m).map(id => BYID[id]).filter(Boolean).map(s => ({ ...s, _n: m[s.id], _r: resume(DET[s.id + ":v"], TAB) }));
@@ -347,7 +380,7 @@ function drawHome(){
   const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Wishlist</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
-  const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}
+  const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}${rangBox()}
     <div><h4>Ma bibliothèque</h4><div class="lk">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : `<em>${k === "c" ? n.tomes : n[k]}</em>`}</button>`).join("")}</div></div>
     ${TAB === "c" ? `<div><h4>Statut</h4><div class="fk">${[["complete", "Complètes"], ["manque", "Tome manquant"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
     <div><h4>Pays</h4><div class="fk">${["France", "Japon"].map(v => `<button data-f="pays" data-v="${v}" aria-pressed="${F.pays.has(v)}"><i></i>${v}</button>`).join("")}</div></div>
@@ -493,7 +526,7 @@ async function route(){
   ]);
   CAT = cat.items || []; STATS = cat.stats || {}; CAT.forEach(s => { BYID[s.id] = s; BYSLUG[s.slug] = s; });
   if (col.gate || !col.ok) { GUEST = true; route(); return; }
-  L = { c: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max; VIP = !!col.vip;
+  L = { c: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max; VIP = !!col.vip; chargerRang();
   // Les détails des séries de la collection, pour les « 7/9 tomes ».
   // Une seule requête pour toutes les séries de la collection (lue dans l'index, sans Notion) : Will, 07/10/2026.
   const ids = [...new Set(Object.values(L).flatMap(x => Object.values(x)))];
