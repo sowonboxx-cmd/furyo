@@ -422,7 +422,11 @@ function drawSerie(s, d){
   const fiche = d.serie.fiche ? `<a class="btn" href="/series/${esc(d.serie.slug)}">Voir la fiche ${I.arr}</a>` : `<span class="btn g" style="opacity:.6;cursor:default">Fiche bientôt en ligne</span>`;
   // En-tête « D3 » (Will, 07/10) : carte arrondie, éditions en lignes drapeau, panneau compteur à droite.
   const reste = parus.filter(t => !L.c[t.id]).length;
-  const tout = LT !== "c" || !parus.length ? "" : reste ? `<button class="btn" data-jusqua>${I.stack}Tout ajouter · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Tous les tomes parus sont là</span>`;
+  // « Tout ajouter » : Collection, et Pile à lire (Will, 09/10/2026 : on achète parfois toute la série d'un coup).
+  const resteP = parus.filter(t => !L.p[t.id]).length;
+  const tout = !parus.length || !"cp".includes(LT) ? "" : LT === "p"
+    ? (resteP ? `<button class="btn" data-jusqua>${I.stack}Tout mettre à lire · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Toute la série est à lire</span>`)
+    : reste ? `<button class="btn" data-jusqua>${I.stack}Tout ajouter · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Tous les tomes parus sont là</span>`;
   const pane = `<div class="pane"><div class="big"><b>${has}</b><span>/ ${parus.length} tome${parus.length > 1 ? "s" : ""}${parus.length < total ? ` · ${total} prévus` : ""}</span></div><div class="pb"><i style="width:${parus.length ? has / parus.length * 100 : 0}%"></i></div>${tout}${fiche}</div>`;
   const st = x => { const v = (x.statut || "").trim(); return v ? ` · <i class="${/cours/i.test(v) ? "on" : /stop|arr/i.test(v) ? "stop" : "end"}">${esc(v)}</i>` : ""; };
   const eds = `<div class="eds">${d.editions.map(x => { const xp = x.tomes.filter(t => t.paru).length, xh = x.tomes.filter(t => L.c[t.id]).length, xn = x.nb || x.tomes.length;
@@ -487,9 +491,9 @@ document.addEventListener("click", async e => {
   const t = e.target.closest("[data-t]");
   if (t) { const on = !L[LT][t.dataset.t]; if (await envoyer(LT, on, [{ t: t.dataset.t, s: s.id, p: ((d.editions.find(x => x.tomes.some(y => y.id === t.dataset.t)) || {}).pays === "France" ? "F" : "J") }], t)) { drawSerie(s, d); if (on && LT === "c" && MAX && Object.keys(L.c).length === MAX) toast(`${MAX}/${MAX} : ta collection gratuite est pleine`); } return; }
   const j = e.target.closest("[data-jusqua]");
-  if (j) { const ee = d.editions.find(x => x.id === ED) || d.editions[0]; const tomes = ee.tomes.filter(x => x.paru && !L.c[x.id]).map(x => ({ t: x.id, s: s.id, p: ee.pays === "France" ? "F" : "J" }));
-    if (!tomes.length) { toast("Tu as déjà tous les tomes parus ✓"); return; }
-    if (await envoyer("c", true, tomes, j)) { drawSerie(s, d); toast(`${tomes.length} tome${tomes.length > 1 ? "s" : ""} ajouté${tomes.length > 1 ? "s" : ""} ✓`); } }
+  if (j) { const li = LT === "p" ? "p" : "c", ee = d.editions.find(x => x.id === ED) || d.editions[0]; const tomes = ee.tomes.filter(x => x.paru && !L[li][x.id]).map(x => ({ t: x.id, s: s.id, p: ee.pays === "France" ? "F" : "J" }));
+    if (!tomes.length) { toast(li === "p" ? "Toute la série est déjà à lire ✓" : "Tu as déjà tous les tomes parus ✓"); return; }
+    if (await envoyer(li, true, tomes, j)) { drawSerie(s, d); toast(`${tomes.length} tome${tomes.length > 1 ? "s" : ""} ${li === "p" ? "dans ta pile à lire" : "ajouté" + (tomes.length > 1 ? "s" : "")} ✓`); } }
 });
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 addEventListener("popstate", async e => { const st = e.state || {}; if (!slugAdr() && st.shown) SHOWN = Math.max(SHOWN, st.shown); await route(); window.scrollTo(0, !slugAdr() && st.y ? st.y : 0); });
