@@ -473,7 +473,7 @@ function drawSerie(s, d){
   // Repli (Will, 07/10) : un tome français sans couverture affiche celle du même tome japonais, marquée « Couv. JP ».
   const jpEd = e.pays !== "Japon" ? d.editions.find(x => x.pays === "Japon") : null;
   const jpCov = {}; if (jpEd) jpEd.tomes.forEach(x => { if (x.cover) jpCov[x.n] = x.cover; });
-  const img = (t, op) => t.cover ? `<img src="${esc(couv(t.cover, 300))}" alt="" loading="lazy"${op}>`
+  const img = (t, op) => t.cover ? `<img src="${esc(couv(t.cover, 300))}" alt="" loading="lazy"${op}>${t.dig ? '<span class="jpc">Numérique</span>' : ""}`
     : jpCov[t.n] ? `<img src="${esc(couv(jpCov[t.n], 300))}" alt="" loading="lazy"${op}><span class="jpc">Couv. JP</span>` : `<span class="n">${esc(t.n)}</span>`;
   const tome = t => {
     if (!t.paru) return `<div class="t soon"><span class="cv">${img(t, ' style="opacity:.35"')}</span><small>T.${esc(t.n)}<em>À paraître</em></small></div>`;

@@ -252,6 +252,8 @@ body.tb-open{overflow:hidden}
 @media (min-width:640px){.cv{border-radius:14px}}
 .cv img{width:100%;height:100%;object-fit:cover;display:block}
 .sec .cv{background:#1C1C1E}
+.cv .dig,.tb-cv .dig{position:absolute;left:6px;bottom:6px;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,.72);color:#D8D8DC;font-size:10px;line-height:1.4;font-weight:600;letter-spacing:.02em}
+.tb-cv .dig{left:10px;bottom:10px;font-size:12px;padding:4px 9px}
 .cv .wait{position:absolute;left:5px;bottom:5px;right:5px;text-align:center;background:rgba(0,0,0,.8);border-radius:6px;padding:3px 2px;font-size:9.5px;line-height:1.2;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--amber)}
 .t-n{font-family:var(--f-display);font-weight:700;font-size:15px;line-height:1.05;text-transform:uppercase;letter-spacing:.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .t-d{font-size:12.5px;color:var(--paper-2);line-height:1.3}
@@ -747,7 +749,7 @@ function tlShow(i){
   // Seulement la date du pays affiché (France ou Japon), sans drapeau : plus clair.
   const date = t => t && t.date ? `<p class="tb-d"><span>${esc(dTxt(t))}</span></p>` : "";
   const tin = document.getElementById("tb-in"); tin.style.setProperty("--ar", x.ar || "5/7");
-  tin.innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}" onload="this.naturalWidth&&this.closest('.tb-in').style.setProperty('--ar',this.naturalWidth/this.naturalHeight)">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
+  tin.innerHTML = `<div class="tb-cv">${x.t.cover ? `<img src="${couv(x.t.cover, 1000)}" alt="${esc(tLab(x.t))}" onload="this.naturalWidth&&this.closest('.tb-in').style.setProperty('--ar',this.naturalWidth/this.naturalHeight)">${x.t.dig ? '<span class="dig">Couverture de la version numérique</span>' : ""}` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`}</div>
     <p class="tb-t">${esc(tLab(x.t))}${x.t.titre && x.t.n != null ? ` <em>${esc(x.t.titre)}</em>` : ""}</p>
     <div class="tb-ds">${date(x.t)}</div>`;
   document.getElementById("tb-c").textContent = `${i + 1} / ${TL.length}`;
@@ -828,7 +830,7 @@ function renderTomes(){
     ${edHead(e)}
     ${e.tomes.length ? `<ul class="grid">${(ASC ? e.tomes : [...e.tomes].reverse()).map(t => {
       const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub, ed: e.id, ar: ED_AR[e.id] && ED_AR[e.id].m });
-      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="${esc(tLab(t))}" loading="lazy" decoding="async" onload="edRatio(this)">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
+      return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="${esc(tLab(t))}" loading="lazy" decoding="async" onload="edRatio(this)">${t.dig ? '<span class="dig" title="Couverture de la version numérique">Numérique</span>' : ""}` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
         <span class="t-n">${esc(tLab(t))}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}</section>`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
   // Couvertures déjà en mémoire : leur « load » peut passer avant la mise en page
   requestAnimationFrame(() => { document.querySelectorAll("#tomes .ed img").forEach(i => { if (i.complete) edRatio(i); }); metaLignes(); });
