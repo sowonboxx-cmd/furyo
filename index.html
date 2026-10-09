@@ -346,7 +346,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .m-eye{display:flex;align-items:center;gap:6px;font:600 12px Inter,sans-serif;color:#98989D;margin-bottom:4px}.fl{width:18px;height:12px;border-radius:2px;flex:none}
 #m-fr .m-head{align-items:flex-end}
 .dfr{display:flex;flex-direction:column}.h3a{color:inherit;text-decoration:none}.h3a:hover{text-decoration:underline;text-underline-offset:3px}
-.dfr-r{display:grid;grid-template-columns:44px 40px minmax(0,1fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none;color:inherit}
+.dfr-r{display:grid;grid-template-columns:54px 40px minmax(0,1fr);gap:12px;align-items:center;padding:10px 0;border-top:1px solid #1C1C1E;text-decoration:none;color:inherit}
 .dfr-r:first-child{border-top:0;padding-top:2px}
 /* Prochaine sortie en vedette (option A « L'affiche ») */
 .dfr-f{display:grid;grid-template-columns:118px minmax(0,1fr);gap:16px;align-items:center;padding:6px 0 18px;text-decoration:none;color:inherit}
@@ -360,6 +360,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .dfr-f .tn{font:700 19px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;color:#F2B33D}
 .dfr-f em{font:500 12.5px Inter,sans-serif;font-style:normal;color:#98989D}
 .dfr-f+.dfr-r{border-top:1px solid #1C1C1E}
+.dfr-r .d.rel{font:700 11px/1.2 Inter,sans-serif;color:#F5F5F7;text-transform:none}
 .dfr-r .d{text-align:center;font:600 10.5px Inter,sans-serif;color:#98989D;text-transform:uppercase}.dfr-r .d b{display:block;font:700 26px/1 Antonio,"Arial Narrow",sans-serif;color:#F5F5F7}
 .dfr-r img,.dfr-r .ph{width:40px;height:56px;border-radius:6px;object-fit:cover;background:#38383B;display:block}
 .dfr-r .ph{display:flex;align-items:center;justify-content:center;overflow:hidden;writing-mode:vertical-rl;text-orientation:upright;font:700 9.5px/1.05 "Noto Sans JP",sans-serif;letter-spacing:.04em;color:#AEAEB2;background:#2C2C2F;box-sizing:border-box;padding:3px 0}
@@ -662,7 +663,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
-<script src="/site/home-m.js?v=47" defer></script>
+<script src="/site/home-m.js?v=48" defer></script>
 <div class="page">
 
 
@@ -1069,11 +1070,13 @@ getN("/api/calendrier").then(j => {
 
   // La prochaine sortie en grand, façon affiche (option A, Will, 05/10/2026) ; date avec le mois en entier.
   const JL = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"], ML = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  // Aujourd'hui / Demain / Après-demain à la place de la date (Will, 09/10/2026), sinon la date normale.
+  const rel = x => { const n = Math.round((new Date(x.date + "T12:00:00") - new Date(t + "T12:00:00")) / 864e5); return n <= 0 ? "Aujourd'hui" : n === 1 ? "Demain" : n === 2 ? "Après-demain" : ""; };
   const dans = x => { const n = Math.round((new Date(x.date + "T12:00:00") - new Date(t + "T12:00:00")) / 864e5); return n <= 0 ? "aujourd'hui" : n === 1 ? "demain" : "dans " + n + " jours"; };
   const une = (x, tp = "fr", nom = x.fr || x.series) => { const d = new Date(x.date + "T12:00:00");
-    return `<a class="dfr-f" href="${escN(lien(x))}" data-tp="${tp}" data-i="0">${phN(x, 300)}<span class="x"><span class="pill">${JL[d.getDay()]} ${d.getDate()}${d.getDate() === 1 ? "er" : ""} ${ML[d.getMonth()]}</span><b>${escN(nom)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}<em>${[x.pub, dans(x)].filter(Boolean).map(escN).join(" · ")}</em></span></a>`; };
+    return `<a class="dfr-f" href="${escN(lien(x))}" data-tp="${tp}" data-i="0">${phN(x, 300)}<span class="x"><span class="pill">${rel(x) || `${JL[d.getDay()]} ${d.getDate()}${d.getDate() === 1 ? "er" : ""} ${ML[d.getMonth()]}`}</span><b>${escN(nom)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}<em>${[x.pub, rel(x) ? "" : dans(x)].filter(Boolean).map(escN).join(" · ")}</em></span></a>`; };
   if (VUE_N !== "magazines") document.getElementById("dfr").innerHTML = fr.length ? une(fr[0]) + fr.slice(1).map(x => { const d = new Date(x.date + "T12:00:00");
-    return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="fr" data-i="${fr.indexOf(x)}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.fr || x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
+    return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="fr" data-i="${fr.indexOf(x)}">${rel(x) ? `<span class="d rel">${rel(x).replace("Après-", "Après-<br>")}</span>` : `<span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>`}${phN(x)}<span class="t"><b>${escN(x.fr || x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   const jp = all.filter(x => x.pays === "Japon" && x.date >= t && x.cover).slice(0, 12);
   // Page « En direct du Japon » : la colonne affiche les 6 prochaines sorties japonaises (Will, 05/10/2026).
   if (VUE_N === "magazines") {
@@ -1083,7 +1086,7 @@ getN("/api/calendrier").then(j => {
     const h = document.querySelector("#m-fr .h3a"); if (h) h.href = "/calendrier/#japon";
     // Même mise en avant que les sorties françaises : la prochaine en grand, façon affiche (Will, 05/10/2026).
     document.getElementById("dfr").innerHTML = jps.length ? une(jps[0], "jps", jps[0].series) + jps.slice(1).map((x, k) => { const i = k + 1, d = new Date(x.date + "T12:00:00");
-      return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="jps" data-i="${i}"><span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>${phN(x)}<span class="t"><b>${escN(x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
+      return `<a class="dfr-r" href="${escN(lien(x))}" data-tp="jps" data-i="${i}">${rel(x) ? `<span class="d rel">${rel(x).replace("Après-", "Après-<br>")}</span>` : `<span class="d"><b>${String(d.getDate()).padStart(2, "0")}</b>${J[d.getDay()]}</span>`}${phN(x)}<span class="t"><b>${escN(x.series)}</b>${x.n != null ? `<small class="tn">Tome ${escN(x.n)}</small>` : ""}</span></a>`; }).join("") : '<p class="m-note">Pas de sortie annoncée pour l\'instant.</p>';
   }
   TP.fr = fr; TP.jp = jp;
   if (jp.length) { document.getElementById("d-jp").hidden = false;
