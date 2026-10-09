@@ -124,9 +124,9 @@ ${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf
   const hx = [...new Set((d.genres || []).map(g => tagOf(g)).filter(h => h.length > 1))];
   const h = d.handles || {}, autX = (h.auteurs || []).map(a => a.x), frX = (h.editeurs || []).filter(e => e.type === "Éditeur FR").map(e => e.x);
   const xLen = t => t.replace(url, "x".repeat(23)).length;
-  const xBase = (r, hs, ats) => `Nouvelle fiche : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${ats.length ? "\nX " + ats.map(a => "@" + a).join(" · ") : ""}`;
+  const xBase = (r, hs, ats) => `Nouvelle fiche : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${ats.length ? "\n" + ats.map(a => "@" + a).join(" · ") : ""}`;
   const choix = (r, hs) => { const f = [...new Set(frX.filter(Boolean))].slice(0, 1), a = [...new Set(autX.filter(Boolean))].filter(x => !f.includes(x));
-    for (let k = a.length; k >= 0; k--) { const l = [...a.slice(0, k), ...f]; if (("X " + l.map(x => "@" + x).join(" · ")).length <= 42 && xLen(xBase(r, hs, l)) <= 280) return l; }
+    for (let k = a.length; k >= 0; k--) { const l = [...a.slice(0, k), ...f]; if (l.map(x => "@" + x).join(" · ").length <= 42 && xLen(xBase(r, hs, l)) <= 280) return l; }
     return f; };
   const ph = (String(d.resumeLong || d.resume || "").replace(/\s+/g, " ").match(/[^.!?…]+(?:[.!?…]+|$)(?=\s|$)/g) || []).map(t => t.trim()).filter(Boolean);
   const cands = ph.map((_, n) => ph.slice(0, n + 1).join(" ")).reverse(); // toujours depuis la 1re phrase (sinon « Il suit… » ne veut rien dire)

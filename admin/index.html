@@ -895,7 +895,7 @@ const poidsX = t => [...String(t).replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-
 const LIGNE_X = 42;
 function choixX(aut, fr, tient){
   const f = [...new Set((fr || []).filter(Boolean))].slice(0, 1), a = [...new Set((aut || []).filter(Boolean))].filter(h => !f.includes(h));
-  const ligne = hs => ("X " + hs.map(h => "@" + h).join(" · ")).length;
+  const ligne = hs => hs.map(h => "@" + h).join(" · ").length;
   for (let k = a.length; k >= 0; k--) { const hs = [...a.slice(0, k), ...f]; if (!hs.length) return []; if (ligne(hs) <= LIGNE_X && tient(hs)) return hs; }
   return f;
 }
@@ -903,8 +903,8 @@ function postX(i, rs){
   const s = i.serie || {}, c = i.comptes || {};
   // Règle simplifiée (Will, 03/10/2026) : le résumé directement, sans « Résumé : », et plus de ligne « Fiche complète ».
   const base = `${catLigne(i)}${i.titre}\n${ligneSortie(i)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
-  const hs = choixX(c.x, c.xFR, h => poidsX(base + "\nX " + h.map(x => "@" + x).join(" · ")) <= 280);
-  return base + (hs.length ? "\nX " + hs.map(h => "@" + h).join(" · ") : "");
+  const hs = choixX(c.x, c.xFR, h => poidsX(base + "\n" + h.map(x => "@" + x).join(" · ")) <= 280);
+  return base + (hs.length ? "\n" + hs.map(h => "@" + h).join(" · ") : "");
 }
 // Résumé sortie proposé quand le champ est vide : la plus longue suite de phrases entières qui tient dans le post X
 // avec tous les comptes ; sinon avec moins de comptes ; sinon la phrase la plus courte (Will retouche).
@@ -916,7 +916,7 @@ function resumeAuto(i){
   // On cherche d'abord le résumé le plus long qui laisse passer tous les comptes retenus sur la ligne X, puis avec moins d'auteurs.
   const c = i.comptes || {}, plein = choixX(c.x, c.xFR, () => true);
   for (let k = plein.length; k >= 0; k--) {
-    const ok = u.find(r => { const p = postX(i, r); return poidsX(p) <= 280 && (p.match(/\nX (.*)$/) || ["", ""])[1].split(" · ").filter(Boolean).length >= k; });
+    const ok = u.find(r => { const p = postX(i, r); return poidsX(p) <= 280 && (p.match(/\n(@\S.*)$/) || ["", ""])[1].split(" · ").filter(Boolean).length >= k; });
     if (ok) return ok;
   }
   return u[u.length - 1];
@@ -926,11 +926,14 @@ const tagOf = s => "#" + String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, ""
 function ligneSortie(i){
   const t = i.tome || {}, d = i.sortie;
   let q = "";
-  if (d) { const o = new Date(d + "T12:00:00"); q = o.toLocaleDateString("fr-FR", { day: "numeric", month: "long", ...(o.getFullYear() !== new Date().getFullYear() ? { year: "numeric" } : {}) }); q = q.replace(/^1 /, "1er "); }
-  return (q ? `Sortie le ${q}` : "Sortie") + (t.pub ? ` chez ${t.pub}` : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
+  // Le jour même : « Sortie aujourd'hui chez … » (Will, 09/10/2026).
+  const auj = d && d === new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10);
+  if (d && !auj) { const o = new Date(d + "T12:00:00"); q = o.toLocaleDateString("fr-FR", { day: "numeric", month: "long", ...(o.getFullYear() !== new Date().getFullYear() ? { year: "numeric" } : {}) }); q = q.replace(/^1 /, "1er "); }
+  return (auj ? "Sortie aujourd'hui" : q ? `Sortie le ${q}` : "Sortie") + (t.pub ? ` chez ${t.pub}` : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
 }
 // Catégorie en première ligne des posts : la même que sur le site et dans Notion (Will, 04/10/2026).
-function catLigne(i){ const k = i.catChoisie || i.cat, k2 = i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2; return NEWS_CATS.includes(k) ? `${[VCATS[k], ...(k2 && k2 !== k && NEWS_CATS.includes(k2) ? [VCATS[k2]] : [])].join(" · ")}\n` : ""; }
+// Plus de « Sortie française / japonaise » en tête des posts de sortie (Will, 09/10/2026).
+function catLigne(i){ if (/^sortie/.test(i.catChoisie || i.cat)) return ""; const k = i.catChoisie || i.cat, k2 = i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2; return NEWS_CATS.includes(k) ? `${[VCATS[k], ...(k2 && k2 !== k && NEWS_CATS.includes(k2) ? [VCATS[k2]] : [])].join(" · ")}\n` : ""; }
 function captions(i, rs){
   const s = i.serie || {}, c = i.comptes || {}, url = s.slug ? `furyogang.com/series/${s.slug}` : "furyogang.com";
   const tags = [...new Set([tagOf(s.t), ...(s.genres || []).slice(0, 2).map(tagOf), "#manga", "#FuryoGang", ...(/-fr$/.test(i.cat) ? ["#mangafr"] : [])])].filter(x => x.length > 1);
@@ -945,7 +948,7 @@ function captions(i, rs){
   const txt = (i.texte || "").trim();
   // Prépublication : le brouillon de tweet de la base sert de légende X.
   if (i.cat === "prepub" && i.tweet) return {
-    x: `${i.tweet}${s.slug ? `\n↗ ${url}` : ""}${(c.x || []).length || (c.xFR || []).length ? "\nX " + choixX(c.x, c.xFR, () => true).map(h => "@" + h).join(" · ") : ""}`,
+    x: `${i.tweet}${s.slug ? `\n↗ ${url}` : ""}${(c.x || []).length || (c.xFR || []).length ? "\n" + choixX(c.x, c.xFR, () => true).map(h => "@" + h).join(" · ") : ""}`,
     ig: `📖 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n${i.tweet}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
     tt: `📖 ${i.titre}\n\n${i.tweet}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
   };
@@ -959,14 +962,14 @@ function captions(i, rs){
   trouve: for (const min of [nbC, 0]) for (const r of resumes) for (const t of titres) {
     const b = `${catLigne(i)}${t}${r ? `\n${r}` : ""}\n\n↗ ${url}`;
     if (poidsX(b) > 280) continue;
-    let h = choixX(c.x, c.xFR, l => poidsX(b + "\nX " + l.map(x => "@" + x).join(" · ")) <= 280);
-    if (h.length && poidsX(b + "\nX " + h.map(x => "@" + x).join(" · ")) > 280) h = [];
+    let h = choixX(c.x, c.xFR, l => poidsX(b + "\n" + l.map(x => "@" + x).join(" · ")) <= 280);
+    if (h.length && poidsX(b + "\n" + h.map(x => "@" + x).join(" · ")) > 280) h = [];
     if (h.length >= min) { xBase = b; hs = h; break trouve; }
   }
   if (!xBase) xBase = `${catLigne(i)}${titres[titres.length - 1]}\n\n↗ ${url}`;
   const igL = (c.ig || []).length ? `\n📣 ${c.ig.map(h => "@" + h).join(" ")}` : "", ttL = (c.tt || []).length ? `\n📣 ${c.tt.map(h => "@" + h).join(" ")}` : "";
   return {
-    x: xBase + (hs.length ? "\nX " + hs.map(h => "@" + h).join(" · ") : ""),
+    x: xBase + (hs.length ? "\n" + hs.map(h => "@" + h).join(" · ") : ""),
     ig: `${catLigne(i)}🆕 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).${igL}\n\n${tags.join(" ")}`,
     tt: `${catLigne(i)}🆕 ${i.titre}${txt ? `\n\n${resumeCourt(txt)}` : ""}\n\n📖 Infos sur furyogang.com${ttL}\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
   };
