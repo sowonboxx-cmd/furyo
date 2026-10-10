@@ -57,7 +57,7 @@ async function detail(env, id, waitUntil) {
     const today = new Date().toISOString().slice(0, 10);
     return { id: nid(e.id), nom: text(q["Édition"]), pays: text(q["Pays"]), pub: text(q["Éditeur"]), label: text(q["Collection / Label"]), nb: num(q["Nb tomes"]), statut: text(q["Statut"]),
       tomes: tRows.map(t => { const x = t.properties, d = date(x["Date de sortie"]); return { id: nid(t.id), n: num(x["N°"]), date: d, cover: text(x["Couverture"]),
-        paru: text(x["Statut"]) === "Paru" || (!!d && d <= today) ? 1 : 0, ...(x["Couverture digitale"]?.checkbox ? { dig: 1 } : {}) }; }).filter(t => t.n != null) };
+        paru: text(x["Statut"]) === "Paru" || (!!d && d <= today) ? 1 : 0, ...(x["Couverture digitale"]?.checkbox ? { dig: 1 } : {}) }; }).map((t, _, a) => t.n == null && a.length === 1 ? { ...t, n: 1 } : t).filter(t => t.n != null) };
   }));
   editions.sort((a, b) => PAYS_ORDRE(a.pays) - PAYS_ORDRE(b.pays));
   return { serie: { id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), fiche: estVisible(p) ? 1 : 0,
