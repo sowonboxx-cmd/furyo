@@ -249,7 +249,15 @@ a("col", "/ma-collection/", "Ma collection", 1) +
     }
     return out;
   }
+  // Recherches récentes (Will, 10/10/2026) : les 4 derniers résultats ouverts, gardés sur l'appareil, affichés en premier quand la recherche est vide.
+  var RK = "fg-recherches", SEEN = {};
+  function recents() { try { var l = JSON.parse(localStorage.getItem(RK) || "[]"); return Array.isArray(l) ? l.slice(0, 4) : []; } catch (e) { return []; } }
+  function retenir(u) {
+    var x = SEEN[u]; if (!x) return;
+    try { var l = recents().filter(function (y) { return y.u !== u; }); l.unshift({ t: x.t, d: x.d, u: x.u, img: x.img, ic: x.ic, ini: x.ini, k: x.k }); localStorage.setItem(RK, JSON.stringify(l.slice(0, 4))); } catch (e) {}
+  }
   function row(x, q, kind) {
+    SEEN[x.u] = { t: x.t, d: x.d, u: x.u, img: x.img, ic: x.ic, ini: x.ini, k: kind };
     var ic = x.img ? '<span class="ic"><img src="' + couv(x.img) + '" alt="" loading="lazy"></span>'
       : '<span class="ic ' + (kind === "auteurs" ? "rd" : "sq") + '">' + esc(x.ic || x.ini || "") + "</span>";
     return '<a class="fs-r" href="' + esc(x.u) + '" role="option">' + ic + '<span class="tx"><b>' + hl(x.t, q) + "</b>" + (x.d ? "<small>" + esc(x.d) + "</small>" : "") + "</span></a>";
@@ -258,6 +266,8 @@ a("col", "/ma-collection/", "Ma collection", 1) +
   function draw() {
     var raw = inp.value.trim(), q = norm(raw), out = "";
     if (!q) {
+      var rc = recents();
+      if (rc.length) out += '<div class="fs-g">Recherches récentes<a href="#" id="fs-clr">Effacer</a></div>' + rc.map(function (x) { return row(x, "", x.k); }).join("");
       out += '<div class="fs-g">Raccourcis</div>' + PAGES.slice(0, 7).map(function (x) { return row(x, "", "pages"); }).join("");
       if (DATA) {
         var today = new Date().toISOString().slice(0, 10);
@@ -295,12 +305,16 @@ a("col", "/ma-collection/", "Ma collection", 1) +
   document.getElementById("sh-search").addEventListener("click", function (e) { e.preventDefault(); open(); });
   document.getElementById("fs-x").addEventListener("click", close);
   fs.addEventListener("click", function (e) { if (e.target === fs) close(); });
-  res.addEventListener("click", function (e) { if (e.target.closest(".fs-r, .fs-g a")) close(); });
+  res.addEventListener("click", function (e) {
+    if (e.target.id === "fs-clr") { e.preventDefault(); try { localStorage.removeItem(RK); } catch (x) {} draw(); return; }
+    var r = e.target.closest(".fs-r"); if (r) retenir(r.getAttribute("href"));
+    if (e.target.closest(".fs-r, .fs-g a")) close();
+  });
   inp.addEventListener("input", draw);
   inp.addEventListener("keydown", function (e) {
     if (e.key === "ArrowDown") { e.preventDefault(); sel = Math.min(flat.length - 1, sel + 1); mark(); }
     else if (e.key === "ArrowUp") { e.preventDefault(); sel = Math.max(0, sel - 1); mark(); }
-    else if (e.key === "Enter" && flat[sel]) { e.preventDefault(); var u = flat[sel].getAttribute("href"); close(); location.href = u; }
+    else if (e.key === "Enter" && flat[sel]) { e.preventDefault(); var u = flat[sel].getAttribute("href"); retenir(u); close(); location.href = u; }
   });
   addEventListener("keydown", function (e) {
     var typing = /input|textarea|select/i.test((document.activeElement || {}).tagName || "");
