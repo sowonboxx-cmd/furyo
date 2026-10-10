@@ -243,8 +243,9 @@ body.tb-open{overflow:hidden}
 .ed-pill{display:inline-flex;align-items:center;height:32px;padding:0 13px;border-radius:9px;background:var(--ink-3);color:var(--paper);font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
 .ed-meta{font-size:14px;font-weight:500;color:var(--paper-2);line-height:1.35}
 .ed-meta b{color:var(--paper);font-weight:600}
-/* Éditeur et label sur une ligne, tomes et années sur la suivante, sauf si tout tient sur une ligne */
-.ed-meta .m2{white-space:nowrap}.ed-meta .m2::before{content:" · "}.ed-meta.br .m2{display:block}.ed-meta.br .m2::before{content:none}
+/* Ordinateur : éditeur, label, tomes et années sur une seule ligne. Téléphone : tomes et années toujours sur une 2e ligne (Will, 10/10/2026) */
+.ed-meta .m2::before{content:" · "}
+@media (max-width:639px){.ed-meta .m2{display:block}.ed-meta .m2::before{content:none}}
 .grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px}
 @media (min-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 12px}}
 .t{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -803,11 +804,7 @@ function edRatio(img){
   document.querySelectorAll(`#tomes .ed[data-ed="${k}"]`).forEach(e => e.style.setProperty("--ar", o.m));
   TL.forEach(x => { if (x.ed === k) x.ar = o.m; });
 }
-// Si les tomes et années ne tiennent pas sur la ligne de l'éditeur, ils passent proprement à la ligne suivante
-function metaLignes(){
-  document.querySelectorAll("#tomes .ed-meta").forEach(m => { const a = m.querySelector(".m1"), b = m.querySelector(".m2"); if (!a || !b) return;
-    m.classList.remove("br"); const r1 = a.getClientRects(), r2 = b.getBoundingClientRect(); if (r1.length > 1 || r2.top > r1[r1.length - 1].top + 4) m.classList.add("br"); });
-}
+function metaLignes(){ /* mise en page gérée en CSS (ordinateur une ligne, téléphone deux lignes) */ }
 addEventListener("resize", () => { clearTimeout(metaLignes.t); metaLignes.t = setTimeout(metaLignes, 150); });
 function renderTomes(){
   const { serie: s, editions: eds } = DATA;
