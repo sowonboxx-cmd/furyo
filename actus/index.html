@@ -186,7 +186,7 @@ body{background:#000}
 .na-text{font-size:17px;line-height:1.55;font-weight:500;letter-spacing:-.005em;color:#F5F5F7}
 .na-seg{display:grid;grid-template-columns:1fr 1fr 1fr;background:#1C1C1E;border-radius:14px;overflow:hidden}
 .na-seg>*{height:64px;border:0;background:none;color:#F5F5F7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font:600 12.5px Inter,sans-serif;text-decoration:none;cursor:pointer;padding:0 4px}
-.na-seg>*+*{border-left:1px solid #2C2C2E}.na-seg svg{width:19px;height:19px}.na-seg .p{color:#4C9BFF}.na-seg .on{color:#AEAEB2}
+.na-seg>*+*{border-left:1px solid #2C2C2E}.na-seg svg{width:19px;height:19px}.na-seg .p{color:#4C9BFF}.na-seg .p.off{color:#2F5F99;cursor:default;text-align:center;line-height:1.2}.na-seg .on{color:#AEAEB2}
 .na-srcs{background:#1C1C1E;border-radius:14px;overflow:hidden}
 .na-srcs .h{padding:12px 14px 4px;font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8E8E93}
 .na-srcw{display:flex;flex-direction:column;gap:8px}.na-srch{padding:0 4px;font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8E8E93}
@@ -289,7 +289,9 @@ body{background:#000}
       // Page news mobile, maquette A validée par Will (05/10/2026) : fond noir, barre d'actions plate, bloc Sources, stats et autres actualités en blocs.
       '<div class="na-body"><p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
       '<div class="na-seg"><button type="button" class="' + (FOLLOW ? "on" : "") + '" data-soon="suivre">' + (FOLLOW ? HEART_ON + "Suivie" : I.heart + "Suivre") + "</button>" +
-        '<a class="p" href="/series/' + esc(CTX && CTX.serie && CTX.serie.slug || slug(N.titre)) + '">' + I.fiche + "Voir la fiche</a>" +
+        // Fiche pas encore en ligne : bouton grisé « Fiche bientôt en ligne », comme sur ordinateur (Will, 11/10/2026).
+        (CTX && CTX.serie && !CTX.serie.visible ? '<span class="p off">' + I.fiche + "Fiche bientôt en ligne</span>" :
+        '<a class="p" href="/series/' + esc(CTX && CTX.serie && CTX.serie.slug || slug(N.titre)) + '">' + I.fiche + "Voir la fiche</a>") +
         '<button type="button" data-soon="liste">' + I.book + "Ma liste</button></div>" +
       srcsM() + '<div class="na-stc">' + acts() + "</div>" + preview() + '<div class="na-ao">' + autres() + "</div></div>";
     if (window.FG_FIT2) FG_FIT2(root);
