@@ -166,9 +166,9 @@
     '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
     '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("ecran", "/films/", "À l'écran", 0, 0, "sh-m0") + a("cal", "/calendrier/", "Calendrier") +
-a("col", "/ma-collection/", "Ma collection", 1) +
-    // « Au Japon » (Will, 12/10/2026) : ordinateur seulement, ouvre le Direct du Japon (magazines et séries en ligne).
+    // « Au Japon » (Will, 12/10/2026) : ordinateur seulement, juste avant Ma collection qui reste à droite, ouvre le Direct du Japon (magazines et séries en ligne).
     a("jp", "/?vue=magazines", "Au Japon", 0, 0, "sh-m0") +
+a("col", "/ma-collection/", "Ma collection", 1) +
     '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><svg class="b" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
     "</nav>" +
     '<div class="sh-more" id="sh-more" hidden>' + a("ecran", "/films/", "À l'écran") + a("mk", "/auteurs/", "Mangakas") + a("cm", "/communaute/", "Communauté") + a("cxw", "/crows-x-worst/", "Crows × Worst") + "</div>" +
