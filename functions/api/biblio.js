@@ -80,5 +80,5 @@ export async function onRequestGet({ env, request, waitUntil }) {
     const out = {}; for (const i of ids) if (idx[i]) out[i] = { editions: idx[i].map(e => ({ id: e.id, pays: e.pays, nb: e.nb, tomes: e.tomes.map(t => ({ id: t.id, n: t.n, paru: t.paru })) })) };
     return new Response(JSON.stringify({ details: out }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "private, max-age=60" } });
   }
-  return cached(request, waitUntil, "/api/biblio?v=2", 600, () => catalogue(env, waitUntil));
+  return cached(request, waitUntil, "/api/biblio?v=3", 600, () => catalogue(env, waitUntil));
 }
