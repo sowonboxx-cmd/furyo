@@ -32,7 +32,9 @@ async function catalogue(env, waitUntil) {
     if (!eds.length || !text(p["SERIES"])) continue;
     const cover = (eds.map(e => cov[e.id]).find(Boolean)) || text(p["Couverture T1"]);
     items.push({ id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), cover,
-      genres: list(p["Genre"]), type: text(p["Type"]), y1: num(p["Année Début"]), pays: [...new Set(eds.map(e => e.pays))], fiche: estVisible(p) ? 1 : 0 });
+      genres: list(p["Genre"]), type: text(p["Type"]), y1: num(p["Année Début"]), pays: [...new Set(eds.map(e => e.pays))], fiche: estVisible(p) ? 1 : 0,
+      // Auteurs pour le filtre de Ma collection (Will, 11/10/2026)
+      au: [...new Set([text(p["Scénariste"]), text(p["Dessinateur"])].flatMap(x => (x || "").split(/\s*[,&]\s*/)).map(x => x.trim()).filter(Boolean))] });
   }
   items.sort((a, b) => (a.fr || a.t).localeCompare(b.fr || b.t, "fr"));
   // Chiffres de la base (Will, 07/10) : séries collectionnables et tomes (toutes éditions confondues).
