@@ -297,7 +297,8 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dr{background:#000;border-radius:20px;padding:14px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:stretch}
 .dr-i{display:block;line-height:0}
 .dr-i img,.dr-i span{width:112px;aspect-ratio:7/10;object-fit:cover;border-radius:10px;background:#38383B;display:block}
-.dr.wide .dr-i img{object-fit:contain;background:#1C1C1E}
+/* Images larges (16:9) : zoomées pour remplir la vignette, centrées (Will, 12/10/2026) */
+.dr.wide .dr-i img{object-fit:cover;object-position:50% 50%}
 .dr-b{display:flex;flex-direction:column;gap:4px;min-width:0}.dr-b>.da{margin-top:auto}
 .dr-a{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}
 .dr h3{margin:0;font:700 26px/1.02 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
