@@ -815,7 +815,8 @@ function renderTomes(){
   // En-tête d'édition : le format en pastille (Tankōbon, Kanzenban…), puis éditeur, collection, nombre de tomes et années.
   const edHead = e => {
     const ys = e.tomes.map(t => (t.date || "").slice(0, 4)).filter(Boolean).sort();
-    const ans = ys.length ? (ys[0] === ys[ys.length - 1] ? ys[0] : `${ys[0]}–${ys[ys.length - 1]}`) : "";
+    // Édition en cours : seulement l'année de début, pas de fin (Will, 12/10/2026).
+    const ans = ys.length ? (ys[0] === ys[ys.length - 1] || /en cours/i.test(e.statut || "") ? ys[0] : `${ys[0]}–${ys[ys.length - 1]}`) : "";
     const n = e.tomes.length;
     const pill = e.format || (e.nom.split(" — ")[1] || "Édition").replace(/\s*\(.*$/, "");
     const m1 = [e.pub ? `<b>${esc(e.pub)}</b>` : "", e.label && e.label !== e.pub ? esc(e.label) : ""].filter(Boolean).join(" · ");
