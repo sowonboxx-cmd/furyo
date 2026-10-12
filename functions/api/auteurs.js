@@ -29,9 +29,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
       const p = r.properties || {};
       const name = text(p["Auteur"]);
       const members = check(p["Réseaux réservés aux membres"]);
-      const links = members ? {} : { x: text(p["X (Twitter)"]), ig: text(p["Instagram"]), site: text(p["Site officiel"]) };
+      const links = members ? {} : { x: text(p["X (Twitter)"]), ig: text(p["Instagram"]), site: text(p["Site officiel"]), edit: text(p["Page éditeur"]) };
       return {
-        id: r.id.replace(/-/g, ""), slug: slugify(name), name, jp: text(p["Nom japonais"]), photo: photoPath(text(p["Photo"])), roles: list(p["Rôle"]),
+        id: r.id.replace(/-/g, ""), slug: slugify(name), name, jp: text(p["Nom japonais"]), photo: photoPath(text(p["Photo"])), roles: list(p["Rôle"]), bio: text(p["Bio"]),
         members, ...links, mu: text(p["MangaUpdates"]), anilist: text(p["AniList"]), checked: date(p["Réseaux vérifiés le"]),
         series: rel(p["Séries"]).map(id => series[id]).filter(Boolean),
       };
