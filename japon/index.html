@@ -97,6 +97,8 @@ details[open] .chev{transform:rotate(180deg)}
 .seo p{margin:0 0 14px;font-size:16px;line-height:1.65;color:rgba(255,255,255,.8)}
 .seo ul{list-style:none;margin:0;padding:0}.seo li{display:grid;grid-template-columns:1fr auto;gap:0 10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
 .seo li b{font-weight:600}.seo li span{grid-column:1;font-size:12px;color:var(--mut)}.seo li em{grid-row:1/3;grid-column:2;align-self:center;font-style:normal;font-size:12.5px;color:var(--mut);text-align:right}
+.page .sh{margin:60px 0 20px!important}
+@media (max-width:760px){.page .sh{margin:42px 0 14px!important}}
 .ph{display:grid;place-items:center;min-height:120px;color:var(--mut)}
 /* Téléphone */
 @media (max-width:760px){
@@ -128,7 +130,7 @@ details[open] .chev{transform:rotate(180deg)}
  <div class="ht"><span class="kick"><svg class="fl" viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" rx="2" fill="#fff"/><circle cx="11" cy="7.5" r="4.4" fill="#BC002D"/></svg>En direct du Japon</span>
  <h1>L'actualité<br>manga <em>au Japon</em></h1>
  <p>Les chapitres de nos séries furyō, yakuza et crime dans les magazines japonais, numéro après numéro : sommaires, couvertures, pauses et dernières annonces.</p>
- <a class="how" href="#prepublication">Au Japon, un manga paraît d'abord en magazine, chapitre par chapitre : comment ça marche<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+ <a class="how" href="#prepublication">Au Japon, un manga sort d'abord en magazine : comment ça marche<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
  <div class="cta"><a class="b1" href="#numeros">Les derniers numéros</a><a class="b2" href="#series">Nos séries</a></div></div>
  <div class="fan" id="fan" aria-hidden="true"></div></section>
 <section class="stats" id="stats"><div><b>9</b><span>Magazines suivis</span></div><div><b id="st-s">–</b><span>Séries suivies</span></div><div><b class="r" id="st-c">–</b><span>Chapitres en 30 jours</span></div><div><b id="st-u">–</b><span>Tomes à venir</span></div></section>
@@ -210,7 +212,7 @@ Promise.all([get("/api/prepub"), get("/api/biblio"), get("/api/calendrier")]).th
   const scard = x => { const s = ser(x), img = s.cover || x.cover;
     const rd = x.read ? `<a class="rd" href="${esc(x.read)}" target="_blank" rel="noopener">Lire en ligne${ARR}</a>` : '<span class="rd off">Magazine papier</span>';
     return `<article class="sc">${lien(x, `<img src="${esc(cv(img, 300))}" alt="" loading="lazy">`)}<div>${lien(x, `<h4>${esc(nom(x))}</h4>`, "t")}<p lang="ja">${esc(x.jp)}</p><div class="sm"><b>${chap(x) || "Nouveau chapitre"}</b><span>${dm(x.date)}</span></div>${badges(x.hl)}${rd}</div></article>`; };
-  document.getElementById("acc").innerHTML = groups.map(([m, l]) => `<details><summary><div class="mini">${l.slice(0, 5).map(x => `<img src="${esc(cv(ser(x).cover || x.cover, 120))}" alt="" loading="lazy">`).join("")}</div><div class="sm1"><small lang="ja">${esc(MAG[m][0])}</small><b>${esc(m)}</b><em>${l.length} série${l.length > 1 ? "s" : ""} · ${esc(MAG[m][2])}</em></div>${CHEV}</summary><div class="sc-g">${l.map(scard).join("")}</div></details>`).join("");
+  document.getElementById("acc").innerHTML = groups.map(([m, l]) => `<details><summary><div class="mini">${l.slice(0, 5).map(x => `<img src="${esc(cv(ser(x).cover || x.cover, 120))}" alt="">`).join("")}</div><div class="sm1"><small lang="ja">${esc(MAG[m][0])}</small><b>${esc(m)}</b><em>${l.length} série${l.length > 1 ? "s" : ""} · ${esc(MAG[m][2])}</em></div>${CHEV}</summary><div class="sc-g">${l.map(scard).join("")}</div></details>`).join("");
 
   // En-tête : couvertures de nos séries (pas les couvertures des magazines)
   const covs = [...new Set(latest.map(x => ser(x).cover).filter(Boolean))].slice(0, 12);
@@ -218,7 +220,7 @@ Promise.all([get("/api/prepub"), get("/api/biblio"), get("/api/calendrier")]).th
 
   // Prochaines sorties au Japon : seulement les tomes dont la couverture est sortie (l'image refusée disparaît)
   const up = (c && c.items || []).filter(t => t.pays === "Japon" && t.date >= today && t.cover).sort((a, z) => a.date.localeCompare(z.date));
-  document.getElementById("up").innerHTML = up.slice(0, 18).map(t => `<a class="up" href="/calendrier/#japon"><div><img src="${esc(cv(t.cover, 400))}" alt="" loading="lazy" onerror="this.closest('.up').remove()"><span class="dt">${dm(t.date)}</span></div><b>${esc(t.series)} T.${t.n ?? ""}</b><small>${esc(t.pub || "")}</small></a>`).join("");
+  document.getElementById("up").innerHTML = up.slice(0, 18).map(t => `<a class="up" href="/calendrier/#japon"><div><img src="${esc(cv(t.cover, 400))}" alt="" onerror="this.closest('.up').remove()"><span class="dt">${dm(t.date)}</span></div><b>${esc(t.series)} T.${t.n ?? ""}</b><small>${esc(t.pub || "")}</small></a>`).join("");
   setTimeout(() => { const g = document.getElementById("up"); [...g.children].slice(12).forEach(n => n.remove()); }, 2500);
 
   const month = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
