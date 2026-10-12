@@ -158,7 +158,7 @@
   };
   var p = location.pathname;
   var cur = /^\/series/.test(p) ? "series" : /^\/films/.test(p) ? "ecran" : /^\/calendrier/.test(p) ? "cal" : /^\/ma-collection/.test(p) ? "col" : /^\/auteurs/.test(p) ? "mk" : /^\/crows-x-worst/.test(p) ? "cxw" : /^\/(communaute|membres)/.test(p) ? "cm" : (/^\/actus/.test(p) || ((p === "/" || p === "/index.html") && /[?&](vue=actus|cat=)/.test(location.search))) ? "actu" : "";
-  if (/vue=magazines/.test(location.search)) cur = "jp";
+  if (/vue=magazines/.test(location.search) || /^\/japon/.test(p)) cur = "jp";
   var a = function (k, href, label, d, nw, cl) { return '<a href="' + href + '"' + (d ? ' class="sh-d"' : cl ? ' class="' + cl + '"' : "") + (nw ? ' target="_blank" rel="noopener"' : "") + (cur === k ? ' aria-current="page"' : "") + ">" + label + "</a>"; };
   var ICON_S = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
   var html = '<header class="sh" id="sh"><div class="sh-in">' +
@@ -167,7 +167,7 @@
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
     '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("ecran", "/films/", "À l'écran", 0, 0, "sh-m0") + a("cal", "/calendrier/", "Calendrier") +
     // « Au Japon » (Will, 12/10/2026) : ordinateur seulement, juste avant Ma collection qui reste à droite, ouvre le Direct du Japon (magazines et séries en ligne).
-    a("jp", "/?vue=magazines", "Au Japon", 0, 0, "sh-m0") +
+    a("jp", "/japon/", "Au Japon", 0, 0, "sh-m0") +
 a("col", "/ma-collection/", "Ma collection", 1) +
     '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><svg class="b" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
     "</nav>" +
@@ -195,6 +195,7 @@ a("col", "/ma-collection/", "Ma collection", 1) +
     { t: "Actualités", d: "Les dernières news furyō, yakuza et crime", u: "/", ic: "◉" },
     { t: "Séries", d: "Toutes les fiches séries", u: "/series/", ic: "▦" },
     { t: "Calendrier", d: "Les prochaines sorties", u: "/calendrier/", ic: "31" },
+    { t: "Au Japon", d: "Prépublications et magazines japonais", u: "/japon/", ic: "誌", k: "japon magazine magazines prepublication prépublication chapitre" },
     { t: "Calendrier Japon", d: "Les sorties au Japon", u: "/calendrier/#japon", ic: "日", k: "japon jp" },
     { t: "Calendrier France", d: "Les sorties en France", u: "/calendrier/#france", ic: "FR", k: "france fr" },
     { t: "Mangakas", d: "Les auteurs et leurs séries", u: "/auteurs/", ic: "筆", k: "auteurs auteur dessinateur scenariste" },

@@ -658,7 +658,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 
 </head>
 <body>
-<script src="/site/header.js?v=47"></script>
+<script src="/site/header.js?v=48"></script>
 <script src="/site/badges.js?v=1"></script>
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
@@ -683,7 +683,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
       <section class="box" id="m-mk" hidden><div class="m-head"><div><h3><a class="h3a" href="/auteurs/">Les mangakas</a></h3></div></div><div class="smk" id="smk"></div></section>
 
       <section class="box mod" id="m-jp" data-slot="0">
-        <div class="m-head"><h3><a class="h3a" href="/?vue=magazines">Les prépublications au Japon</a></h3></div>
+        <div class="m-head"><h3><a class="h3a" href="/japon/">Les prépublications au Japon</a></h3></div>
         <ul class="jp">
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">WORST Gaiden Zetton Sensei<small lang="ja">WORST外伝 ゼットン先生 · ch. ?</small></span><span class="st ok">Paru</span></li>
           <li><span class="mz">Monthly Shōnen Champion · 4 sept.</span><span class="t">Gabu<small lang="ja">ガブ · ch. ?</small></span><span class="st ok">Paru</span></li>
@@ -1147,7 +1147,7 @@ getN("/api/prepub").then(j => {
   sj.addEventListener("click", e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
   sj.addEventListener("dragstart", e => e.preventDefault());
   play();
-  const note = document.querySelector("#m-jp .m-note"); if (note) note.outerHTML = `<a class="m-all" href="/?vue=magazines">Voir tous les magazines<small>${j.items.length} chapitres</small></a>`;
+  const note = document.querySelector("#m-jp .m-note"); if (note) note.outerHTML = `<a class="m-all" href="/japon/">Voir tous les magazines<small>${j.items.length} chapitres</small></a>`;
 });
 // La base FuryoGang : une case = un paquet de fiches, la dernière fiche en ligne.
 getN("/api/avancement").then(a => {
