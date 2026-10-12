@@ -124,6 +124,7 @@ h1,h2{font-family:var(--f-display);font-weight:700;text-transform:uppercase;lett
 </head>
 <body>
 <script src="/site/header.js?v=48"></script>
+<script src="/site/statut.js?v=1"></script>
 <script src="/site/yt.js?v=3"></script>
 <div class="page">
   <div id="app"><p class="empty">Chargement…</p></div>
@@ -181,7 +182,7 @@ function fiche(f) {
     </div>
     <div class="wide">
       ${f.res ? `<p class="res">${esc(f.res)}</p>` : ""}
-      <div class="tags">${f.adm ? '<span class="tag adm" title="Validé, visible seulement par les admins">Admins</span>' : ""}<span class="tag b">${esc(f.type)}</span>${f.must ? '<span class="tag">À voir absolument</span>' : ""}${f.manga ? '<span class="tag">D\'après un manga</span>' : ""}</div>
+      ${ADMIN && window.FG_STATUT_BAR ? FG_STATUT_BAR("film", f.id, f.adm ? "Validé · admins" : "En ligne · public") : ""}<div class="tags">${f.adm ? '<span class="tag adm" title="Validé, visible seulement par les admins">Admins</span>' : ""}<span class="tag b">${esc(f.type)}</span>${f.must ? '<span class="tag">À voir absolument</span>' : ""}${f.manga ? '<span class="tag">D\'après un manga</span>' : ""}</div>
       <div class="acts">${id ? `<a class="btn b" href="#ba">${PLAY}Bande-annonce</a>` : ""}${mLien ? `<a class="btn" href="${mLien}">${f.manga ? "Le manga" : "Aussi en manga"} ${esc(titreS(m))}${ARR}</a>` : ""}</div>
     </div>
   </article>
@@ -222,9 +223,10 @@ function jouer(y) {
   y.removeAttribute("data-yt");
 }
 
+var ADMIN = false; // version admin de /api/films : bandeau de statut sur la fiche (Will, 12/10/2026)
 fetch("/api/films").then(r => r.json()).then(j => {
   if (!j || !j.items) throw new Error(j && j.error || "vide");
-  DATA = j; render();
+  DATA = j; ADMIN = !!j.admin; render();
 }).catch(() => { app.innerHTML = `<p class="empty">Impossible de charger les films pour l'instant.</p>`; });
 </script>
 </body>

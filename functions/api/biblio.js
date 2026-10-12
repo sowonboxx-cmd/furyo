@@ -47,7 +47,7 @@ async function detail(env, id, waitUntil) {
   const r = await fetch(`https://api.notion.com/v1/pages/${id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } });
   if (!r.ok) return { error: "introuvable" };
   const p = (await r.json()).properties || {};
-  const serie = { id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), fiche: estVisible(p) ? 1 : 0,
+  const serie = { id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), fiche: estVisible(p) ? 1 : 0, statut: text(p["Statut"]) || "À valider",
     auteurs: [...new Set([text(p["Scénariste"]), text(p["Dessinateur"])].filter(Boolean))].join(" & "), cover1: text(p["Couverture T1"]) };
   // Éditions et tomes lus dans l'index (KV) : une seule lecture Notion au lieu d'une par édition (Will, 07/10/2026).
   const idx = await editionsParSerie(env, waitUntil).catch(() => null);
@@ -62,7 +62,7 @@ async function detail(env, id, waitUntil) {
         paru: text(x["Statut"]) === "Paru" || (!!d && d <= today) ? 1 : 0, ...(x["Couverture digitale"]?.checkbox ? { dig: 1 } : {}) }; }).map((t, _, a) => t.n == null && a.length === 1 ? { ...t, n: 1 } : t).filter(t => t.n != null) };
   }));
   editions.sort((a, b) => PAYS_ORDRE(a.pays) - PAYS_ORDRE(b.pays));
-  return { serie: { id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), fiche: estVisible(p) ? 1 : 0,
+  return { serie: { id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), fiche: estVisible(p) ? 1 : 0, statut: text(p["Statut"]) || "À valider",
     auteurs: [...new Set([text(p["Scénariste"]), text(p["Dessinateur"])].filter(Boolean))].join(" & "), cover1: text(p["Couverture T1"]) }, editions };
 }
 

@@ -9,6 +9,16 @@ export async function onRequestPost({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   let b = {}; try { b = await request.json(); } catch (e) {}
   if (!/^[0-9a-f]{32}$/.test(b.id || "")) return json({ error: "série inconnue" }, 400);
+  // Film (page « À l'écran ») : seul le statut change, depuis le site (Will, 12/10/2026).
+  if (b.kind === "film") {
+    if (!STATUTS.includes(b.statut)) return json({ error: "statut inconnu" }, 400);
+    const rf = await fetch(`https://api.notion.com/v1/pages/${b.id}`, { method: "PATCH",
+      headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" },
+      body: JSON.stringify({ properties: { "Statut": { select: { name: b.statut } } } }) });
+    if (!rf.ok) return json({ error: "Notion a refusé : " + (await rf.text()).slice(0, 300) }, 502);
+    await Promise.all(["/api/films?v=3", "/api/films?v=3&admin=1"].map(k => caches.default.delete(new Request(new URL(k, request.url).toString()))));
+    return json({ ok: true, statut: b.statut });
+  }
   const props = {};
   if (STATUTS.includes(b.statut)) {
     props["Statut"] = { select: { name: b.statut } };
@@ -34,7 +44,7 @@ export async function onRequestPost({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // Le site se met à jour tout de suite : on jette les versions en cache des listes publiques.
   const c = caches.default;
-  await Promise.all(["/api/series?v=5", "/api/series?v=5&admin=1", "/__cache/admin-series-v1", "/api/avancement", "/api/calendrier", "/api/serie-index", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/series?v=5", "/api/series?v=5&admin=1", "/__cache/admin-series-v1", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   const p = (await r.json()).properties || {};
   const st = ((p["Statut"] || {}).select || {}).name || A_VALIDER;
   return json({ ok: true, statut: st, publier: st === PUBLIC, date: ((p["Date de publication"] || {}).date || {}).start || "" });

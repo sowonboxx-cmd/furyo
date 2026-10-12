@@ -250,6 +250,7 @@ a{color:inherit}
 </head>
 <body>
 <script src="/site/header.js?v=48"></script>
+<script src="/site/statut.js?v=1"></script>
 <div class="page"><div id="app"></div></div>
 <script>document.getElementById("app").innerHTML = window.FG_SK ? (/^\/ma-collection\/[^/]+/.test(location.pathname) ? FG_SK.fiche() : FG_SK.grid(12)) : "";</script>
 <div class="toast" id="toast"></div>
@@ -372,6 +373,9 @@ function feuille(){
 }
 // Mini classement (général) : chargé une fois, après la collection.
 let RANG = null;
+// Admin connecté ? (bandeau de statut sur la page d'une série, Will 12/10/2026)
+let ADMIN_ME = false;
+fetch("/api/admin/me", { credentials: "same-origin" }).then(r => r.ok ? r.json() : {}).then(j => { if (j && j.admin) { ADMIN_ME = true; if (typeof route === "function" && /\/ma-collection\/[^/]+/.test(location.pathname)) route(); } }).catch(() => {});
 const RCOUL = ["#F2B33D", "#E58FA8", "#7FA7C9", "#7BC67E", "#A48CD6", "#E0955F", "#9C978A", "#E5483A"];
 function rangBox(){
   if (!RANG || !RANG.length) return "";
@@ -470,6 +474,8 @@ function drawSerie(s, d){
   const parus = e.tomes.filter(t => t.paru), has = e.tomes.filter(t => L.c[t.id]).length, total = e.nb || e.tomes.length;
   const inL = e.tomes.filter(t => L[LT][t.id]).length;
   const fiche = d.serie.fiche ? `<a class="btn" href="/series/${esc(d.serie.slug)}">Voir la fiche ${I.arr}</a>` : `<span class="btn g" style="opacity:.6;cursor:default">Fiche bientôt en ligne</span>`;
+  // Admin : changer le statut de la série d'ici (Will, 12/10/2026).
+  const adminBar = ADMIN_ME && window.FG_STATUT_BAR ? FG_STATUT_BAR("serie", d.serie.id, d.serie.statut || (d.serie.fiche ? "En ligne · public" : "À valider"), d.serie.slug) : "";
   // En-tête « D3 » (Will, 07/10) : carte arrondie, éditions en lignes drapeau, panneau compteur à droite.
   const reste = parus.filter(t => !L.c[t.id]).length;
   // « Tout ajouter » : Collection, et Envie de lire (Will, 09/10/2026 : on achète parfois toute la série d'un coup).
@@ -497,7 +503,7 @@ function drawSerie(s, d){
   const leg = LT === "c" ? `<div class="leg"><span><i style="background:var(--ok)"></i>Possédé</span><span><i style="background:#555"></i>Manquant</span><span><i style="border:1.5px dashed #555"></i>À paraître</span><span>Touche un tome pour le cocher</span></div>`
     : `<div class="leg"><span>${inL} tome${inL > 1 ? "s" : ""} dans « ${esc(LISTS.find(x => x[0] === LT)[1])} » · touche un tome pour l'ajouter ou le retirer</span></div>`;
   folCharger(d.serie.slug || s.slug);
-  morph(app(), `<a class="back" href="/ma-collection/">${I.back}Ma collection</a>
+  morph(app(), `<a class="back" href="/ma-collection/">${I.back}Ma collection</a>${adminBar}
     <div class="sc">${folHtml(d.serie.slug || s.slug)}<span class="scv">${cover ? `<img src="${esc(couv(cover, 400))}" alt="">` : ""}</span>
       <div class="stx"><div><h1>${esc(d.serie.fr || d.serie.t)}</h1>${d.serie.jp ? `<p class="jpt" lang="ja">${esc(d.serie.jp)}</p>` : ""}${aut}</div>${eds}</div>
       ${pane}</div>
