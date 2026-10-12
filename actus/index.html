@@ -31,7 +31,7 @@ a{color:inherit}
 .na-ht h1{margin:0;font:700 clamp(38px,11vw,56px)/.95 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em}
 .na-body{display:flex;flex-direction:column;gap:16px;padding:12px 20px 0}
 .na-meta{font-size:13px;color:var(--paper-3)}
-.na-text{margin:0;font-size:16.5px;line-height:1.65;color:#E4E4E8;white-space:pre-line}
+.na-text{margin:0;font-size:16.5px;line-height:1.65;color:#E4E4E8;white-space:pre-line}.na-text p{margin:0 0 1em}.na-text p:last-child{margin-bottom:0}.na-acc{background:#1C1C1E;border-radius:14px;margin:0 0 8px;white-space:normal}.na-acc+p{margin-top:1em}.na-acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 16px;font-weight:700;color:#fff}.na-acc summary::-webkit-details-marker{display:none}.na-acc summary span{flex:1}.na-acc summary em{font-style:normal;font-size:13px;font-weight:600;color:#9A9AA0;white-space:nowrap}.na-acc summary em::after{content:" ▾"}.na-acc[open] summary em{font-size:0}.na-acc[open] summary em::after{font-size:13px;content:"Masquer ▴"}.na-acc>div{padding:0 16px 14px;white-space:pre-line;color:#D4D4D8;font-size:15.5px}
 .na-vid{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}.na-vid.mp4{aspect-ratio:auto;max-width:420px;margin:16px auto 0}.na-vid.mp4 video{display:block;width:100%;max-height:80vh;background:#000}.na-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .na-links{display:flex;flex-wrap:wrap;gap:8px}
 .na-fol{height:38px;padding:0 15px;border:0;border-radius:19px;display:inline-flex;align-items:center;gap:7px;background:#000;color:var(--paper);font:600 13.5px Inter,sans-serif;cursor:pointer}.na-fol svg{width:16px;height:16px}.na-fol.on{color:#AEAEB2}
@@ -261,6 +261,15 @@ body{background:#000}
       (CM.length > 2 ? '<button type="button" class="open" data-open>Afficher les ' + CM.length + " commentaires</button>" : "") + addBox() + "</section>";
   }
   // Vidéo YouTube jouée dans la page (trailer, PV d'anime…).
+  // Texte de news : un bloc qui commence par « ▸ Titre » devient un accordéon (titre visible, détail au clic).
+  // Les lignes suivantes, jusqu'à la ligne vide, forment le détail (Will, 12/10/2026).
+  function txt(t) {
+    return String(t || "").split(/\n{2,}/).map(function (b) {
+      var m = b.match(/^▸\s*(.+)(?:\n([\s\S]*))?$/);
+      if (!m) return '<p>' + esc(b) + '</p>';
+      return '<details class="na-acc"><summary><span>' + esc(m[1]) + '</span><em>Voir le détail</em></summary><div>' + esc(m[2] || "") + '</div></details>';
+    }).join("");
+  }
   function vid(u) {
     // Vidéo hébergée sur le site (.mp4, souvent verticale) : lecteur natif (Will, 12/10/2026).
     if (/\.mp4(\?|$)/i.test(String(u || ""))) return '<div class="na-vid mp4"><video src="' + esc(u) + '" controls playsinline preload="metadata"></video></div>';
@@ -289,7 +298,7 @@ body{background:#000}
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
         (N.jp ? '<span class="na-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<span class="na-meta">' + esc(dLong(N.date) || "") + "</span></div></div>" +
       // Page news mobile, maquette A validée par Will (05/10/2026) : fond noir, barre d'actions plate, bloc Sources, stats et autres actualités en blocs.
-      '<div class="na-body"><p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
+      '<div class="na-body"><div class="na-text">' + txt(N.texte) + "</div>" + vid(N.video) +
       '<div class="na-seg"><button type="button" class="' + (FOLLOW ? "on" : "") + '" data-soon="suivre">' + (FOLLOW ? HEART_ON + "Suivie" : I.heart + "Suivre") + "</button>" +
         // Fiche pas encore en ligne : bouton grisé « Fiche bientôt en ligne », comme sur ordinateur (Will, 11/10/2026).
         (CTX && CTX.serie && !CTX.serie.visible ? '<span class="p off">' + I.fiche + "Fiche bientôt en ligne</span>" :
@@ -404,7 +413,7 @@ body{background:#000}
       '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' +
       '<div class="nd-tx"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
       (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div></div>" +
-      '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><p class="na-text">' + esc(N.texte) + "</p>" + vid(N.video) +
+      '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><div class="na-text">' + txt(N.texte) + "</div>" + vid(N.video) +
       (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
       '<aside class="nd-col">' + fiche() + dernier() + autres() + mangakas() + "</aside></div>";
   }
