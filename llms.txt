@@ -8,6 +8,7 @@ Les informations viennent uniquement de sources officielles (éditeurs japonais 
 
 - [Accueil – actualité manga furyō, yakuza et crime](https://furyogang.com/): fil d'actualité (nouveaux tomes, couvertures, annonces, nouvelles licences françaises) et prépublication japonaise.
 - [Toutes les séries](https://furyogang.com/series/): catalogue des mangas furyō, yakuza, crime et underground suivis, avec filtres par type, genre et décennie.
+- [Actualité manga au Japon](https://furyogang.com/japon/): prépublications en direct du Japon, derniers numéros des magazines (Young Champion, Young King, Goraku, Young Magazine…), chapitres de nos séries classés par magazine, rythme de parution et explication de la prépublication.
 - [Calendrier des sorties](https://furyogang.com/calendrier/): prochaines sorties de tomes, au Japon et en France.
 - [Mangakas](https://furyogang.com/auteurs/): les auteurs et leurs séries.
 - [CROWS × WORST, chronologie](https://furyogang.com/crows-x-worst/): l'univers de Hiroshi Takahashi dans l'ordre de lecture (CROWS, WORST, QP, spin-offs).

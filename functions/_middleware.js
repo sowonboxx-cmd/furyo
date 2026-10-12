@@ -43,7 +43,7 @@ function seo(res, url) {
         end.before(balises({
           titre: titre.trim() || "FuryoGang", desc, url: canon, prive,
           image: (fiche && fiche.image) || (info && info.i ? SITE + info.i : ""), type: fiche && fiche.type, carte: fiche && fiche.carte,
-          jsonld: fiche ? fiche.jsonld : url.pathname === "/" ? jsonSite() : null,
+          jsonld: fiche ? fiche.jsonld : url.pathname === "/" ? jsonSite() : (info && info.j) || null,
         }), { html: true });
       });
     } })
