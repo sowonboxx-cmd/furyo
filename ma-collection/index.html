@@ -282,7 +282,8 @@ const VERBE = { c: "Possédé", r: "Lu", p: "Envie de lire", k: "Au panier", w: 
 function cmpBox(n) {
   const fr = v => v.toLocaleString("fr-FR"), pc = (a, b) => b ? Math.round(a / b * 1000) / 10 : 0;
   const row = (v, tot, lab) => { const p = pc(v, tot); return `<div><div class="cr"><b>${fr(v)}</b><div class="cs"><em>${String(p).replace(".", ",")} %</em><span>${lab}</span></div><i>${fr(tot)}</i></div><div class="cb"><i style="width:${Math.min(100, p)}%"></i></div></div>`; };
-  return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Total</span></div>${row(n.tomes, STATS.tomes, "TOMES")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}${n.r ? row(n.r, STATS.tomes, "TOMES LUS") : ""}</div>`;
+  // Tomes possédés, tomes lus, puis séries (Will, 13/10/2026).
+  return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Total</span></div>${row(n.tomes, STATS.tomes, "TOMES POSSÉDÉS")}${row(n.r, STATS.tomes, "TOMES LUS")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}</div>`;
 }
 let STATS = {}, CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, r: {}, p: {}, k: {}, w: {} }, MAX = null, VIP = false, TAB = "c", Q = "", SORT = "az", DET = {};
 const F = { statut: new Set(), pays: new Set(), genre: new Set() };
@@ -407,7 +408,7 @@ function drawHome(){
   const genres = [...new Set(CAT.flatMap(s => s.genres || []))].sort((a, b) => a.localeCompare(b, "fr")).slice(0, 14);
   const quota = MAX ? `<div class="quota"><b>${n.tomes}/${MAX}</b><span>tomes gratuits</span><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div></div>` : "";
   const tabs = `<div class="tabs mob">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : `<em>${k === "c" ? n.tomes : n[k]}</em>`}</button>`).join("")}</div>`;
-  const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.r}</b><small>Lus</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Envie de lire</small></div></div>`;
+  const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Possédés</small></div><div><b>${n.r}</b><small>Lus</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Envie de lire</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
   const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}${rangBox()}
