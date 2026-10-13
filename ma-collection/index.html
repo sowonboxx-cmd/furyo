@@ -250,7 +250,7 @@ a{color:inherit}
 </head>
 <body>
 <script src="/site/header.js?v=48"></script>
-<script src="/site/statut.js?v=1"></script>
+<script src="/site/statut.js?v=2"></script>
 <div class="page"><div id="app"></div></div>
 <script>document.getElementById("app").innerHTML = window.FG_SK ? (/^\/ma-collection\/[^/]+/.test(location.pathname) ? FG_SK.fiche() : FG_SK.grid(12)) : "";</script>
 <div class="toast" id="toast"></div>
@@ -375,7 +375,10 @@ function feuille(){
 let RANG = null;
 // Admin connecté ? (bandeau de statut sur la page d'une série, Will 12/10/2026)
 let ADMIN_ME = false;
-fetch("/api/admin/me", { credentials: "same-origin" }).then(r => r.ok ? r.json() : {}).then(j => { if (j && j.admin) { ADMIN_ME = true; if (typeof route === "function" && /\/ma-collection\/[^/]+/.test(location.pathname)) route(); } }).catch(() => {});
+fetch("/api/admin/me", { credentials: "same-origin" }).then(r => r.ok ? r.json() : {}).then(j => { if (j && j.admin) { ADMIN_ME = true;
+  // On ajoute seulement le bandeau admin à la fiche déjà affichée, sans tout recharger (ça faisait un flash, Will 13/10/2026).
+  // Si la fiche n'est pas encore affichée, elle prendra le bandeau toute seule.
+  const s = typeof BYSLUG !== "undefined" && BYSLUG[slugAdr()], d = s && DET[s.id + ":v"]; if (d && !d.error && document.querySelector("#app .back")) drawSerie(s, d); } }).catch(() => {});
 const RCOUL = ["#F2B33D", "#E58FA8", "#7FA7C9", "#7BC67E", "#A48CD6", "#E0955F", "#9C978A", "#E5483A"];
 function rangBox(){
   if (!RANG || !RANG.length) return "";

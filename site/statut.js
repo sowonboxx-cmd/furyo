@@ -25,6 +25,7 @@
   document.addEventListener("click", function (e) {
     var b = e.target.closest(".fgst button"); if (!b || b.getAttribute("aria-pressed") === "true") return;
     var g = b.closest(".fgst"), stt = b.dataset.st;
+    if (g.classList.contains("busy")) return;
     if (stt === "En ligne · public" && !confirm("Mettre en ligne pour tout le monde ?")) return;
     g.classList.add("busy");
     fetch("/api/admin/update", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
@@ -32,7 +33,10 @@
       .then(function (r) { return r.json(); })
       .then(function (j) { if (!j.ok) throw new Error(j.error || "erreur");
         // Série : on reconstruit sa fiche Ma collection avant de recharger, pour voir le nouveau statut tout de suite.
-        return (g.dataset.kind === "serie" ? fetch("/api/biblio?id=" + g.dataset.id + "&refresh=1").catch(function () {}) : Promise.resolve()).then(function () { location.reload(); }); })
+        // Le navigateur garde /api/biblio?id=… 60 s en cache : sans le « cache: reload », la page rechargée montrait
+        // encore l'ancien statut et il fallait recliquer 2-3 fois (Will, 13/10/2026).
+        var u = "/api/biblio?id=" + g.dataset.id;
+        return (g.dataset.kind === "serie" ? fetch(u + "&refresh=1", { cache: "no-store" }).then(function () { return fetch(u, { cache: "reload" }); }).catch(function () {}) : Promise.resolve()).then(function () { location.reload(); }); })
       .catch(function (err) { g.classList.remove("busy"); var m = g.parentNode.querySelector(".fgst-msg") || g.insertAdjacentElement("afterend", Object.assign(document.createElement("span"), { className: "fgst-msg" })); m.textContent = "Échec : " + err.message; });
   });
 })();
