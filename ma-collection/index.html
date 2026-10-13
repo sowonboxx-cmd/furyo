@@ -37,9 +37,9 @@ a{color:inherit}
 .tabs button{background:none;border:0;padding:8px 0 11px;color:var(--mut);font-weight:600;white-space:nowrap;border-bottom:2px solid transparent;cursor:pointer}
 .tabs button[aria-pressed=true]{color:var(--fg);border-color:var(--blue)}
 .tabs em{font-style:normal;font-size:12px;margin-left:4px;color:var(--mut)}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:14px}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:14px}
 .stats div{background:var(--s1);border-radius:12px;padding:10px 4px;text-align:center}
-.stats b{display:block;font:700 24px/1 var(--fd);color:var(--yel);font-variant-numeric:tabular-nums}
+.stats b{display:block;font:700 21px/1 var(--fd);color:var(--yel);font-variant-numeric:tabular-nums}
 .stats small{font:700 9.5px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
 .lck{opacity:.6;margin-left:auto;flex:none}
 .quota{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--fg2);margin-top:12px}
@@ -202,7 +202,7 @@ a{color:inherit}
 .t .cv .n{position:absolute;inset:0;display:grid;place-items:center;font:700 28px var(--fd);color:#48484A}
 .bk-ck{position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;background:var(--ok);display:grid;place-items:center}
 .bk-ck svg{width:14px;height:14px;stroke:#000;fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
-.bk-ck.k{background:var(--yel)}.bk-ck.w{background:#E58AD1}.bk-ck.p{background:var(--blue)}
+.bk-ck.r{background:#5B9BE6}.bk-ck.k{background:var(--yel)}.bk-ck.w{background:#E58AD1}.bk-ck.p{background:var(--blue)}
 .plus{position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;color:#fff;font:700 16px/1 var(--fb)}
 .t.busy{opacity:.5;pointer-events:none}
 /* ---------- accès ---------- */
@@ -271,18 +271,19 @@ const FLAG = {
   France: '<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="France"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>'
 };
 // « Envie de lire » remplace Pile à lire et Wishlist (Will, 09/10/2026) : clé w ; l'ancienne pile (p) y est fusionnée côté serveur.
-const LISTS = [["c", "Collection"], ["w", "Envie de lire"], ["k", "Panier"]];
+// « Lu » (Will, 13/10/2026) : ce que le membre a lu, possédé ou non. Gratuit comme la Collection.
+const LISTS = [["c", "Collection"], ["r", "Lu"], ["w", "Envie de lire"], ["k", "Panier"]];
 // Envie de lire et Panier : réservés aux membres Premium (Will, 08/10/2026). La Collection est illimitée pour tous.
 const VERROU = '<svg class="lck" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>';
-const ferme = k => k !== "c" && !VIP;
-const VERBE = { c: "Possédé", p: "Envie de lire", k: "Au panier", w: "Envie de lire" };
+const ferme = k => !"cr".includes(k) && !VIP;
+const VERBE = { c: "Possédé", r: "Lu", p: "Envie de lire", k: "Au panier", w: "Envie de lire" };
 // Compteur Z1 : ma collection à gauche, base FuryoGang à droite, % en exposant
 function cmpBox(n) {
   const fr = v => v.toLocaleString("fr-FR"), pc = (a, b) => b ? Math.round(a / b * 1000) / 10 : 0;
   const row = (v, tot, lab) => { const p = pc(v, tot); return `<div><div class="cr"><b>${fr(v)}</b><div class="cs"><em>${String(p).replace(".", ",")} %</em><span>${lab}</span></div><i>${fr(tot)}</i></div><div class="cb"><i style="width:${Math.min(100, p)}%"></i></div></div>`; };
-  return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Total</span></div>${row(n.tomes, STATS.tomes, "TOMES")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}</div>`;
+  return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Total</span></div>${row(n.tomes, STATS.tomes, "TOMES")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}${n.r ? row(n.r, STATS.tomes, "TOMES LUS") : ""}</div>`;
 }
-let STATS = {}, CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, p: {}, k: {}, w: {} }, MAX = null, VIP = false, TAB = "c", Q = "", SORT = "az", DET = {};
+let STATS = {}, CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, r: {}, p: {}, k: {}, w: {} }, MAX = null, VIP = false, TAB = "c", Q = "", SORT = "az", DET = {};
 const F = { statut: new Set(), pays: new Set(), genre: new Set() };
 let AUT = ""; // Filtre auteur, menu déroulant sur ordinateur seulement (Will, 11/10/2026)
 let SHOWN = 60;
@@ -347,7 +348,7 @@ function selAut(mine){
 }
 function counts(){
   const sc = Object.keys(seriesDe("c")).length;
-  return { tomes: Object.keys(L.c).length, series: sc, p: Object.keys(L.p).length, k: Object.keys(L.k).length, w: Object.keys(L.w).length };
+  return { tomes: Object.keys(L.c).length, series: sc, r: Object.keys(L.r || {}).length, p: Object.keys(L.p).length, k: Object.keys(L.k).length, w: Object.keys(L.w).length };
 }
 // Feuille « Filtres » (mobile) : tri + statut + pays + genres, appliqués tout de suite.
 const TRIS = [["az", "A → Z"], ["za", "Z → A"], ["new", "Plus récentes"], ["old", "Plus anciennes"], ["tomes", "Plus de tomes"]];
@@ -405,7 +406,7 @@ function drawHome(){
   const genres = [...new Set(CAT.flatMap(s => s.genres || []))].sort((a, b) => a.localeCompare(b, "fr")).slice(0, 14);
   const quota = MAX ? `<div class="quota"><b>${n.tomes}/${MAX}</b><span>tomes gratuits</span><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div></div>` : "";
   const tabs = `<div class="tabs mob">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : `<em>${k === "c" ? n.tomes : n[k]}</em>`}</button>`).join("")}</div>`;
-  const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Envie de lire</small></div></div>`;
+  const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Tomes</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.r}</b><small>Lus</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Envie de lire</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
   const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}${rangBox()}
@@ -482,8 +483,10 @@ function drawSerie(s, d){
   // En-tête « D3 » (Will, 07/10) : carte arrondie, éditions en lignes drapeau, panneau compteur à droite.
   const reste = parus.filter(t => !L.c[t.id]).length;
   // « Tout ajouter » : Collection, et Envie de lire (Will, 09/10/2026 : on achète parfois toute la série d'un coup).
-  const resteP = parus.filter(t => !L.w[t.id]).length;
-  const tout = !parus.length || !"cw".includes(LT) ? "" : LT === "w"
+  const resteP = parus.filter(t => !L.w[t.id]).length, resteR = parus.filter(t => !(L.r || {})[t.id]).length;
+  const tout = !parus.length || !"cwr".includes(LT) ? "" : LT === "r"
+    ? (resteR ? `<button class="btn" data-jusqua>${I.stack}Toute la série lue · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Toute la série est lue</span>`)
+    : LT === "w"
     ? (resteP ? `<button class="btn" data-jusqua>${I.stack}Toute la série · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Toute la série est dans Envie de lire</span>`)
     : reste ? `<button class="btn" data-jusqua>${I.stack}Tout ajouter · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Tous les tomes parus sont là</span>`;
   const pane = `<div class="pane"><div class="big"><b>${has}</b><span>/ ${parus.length} tome${parus.length > 1 ? "s" : ""}${parus.length < total ? ` · ${total} prévus` : ""}</span></div><div class="pb"><i style="width:${parus.length ? has / parus.length * 100 : 0}%"></i></div>${tout}${fiche}</div>`;
@@ -554,9 +557,9 @@ document.addEventListener("click", async e => {
   const t = e.target.closest("[data-t]");
   if (t) { const on = !L[LT][t.dataset.t]; if (await envoyer(LT, on, [{ t: t.dataset.t, s: s.id, p: ((d.editions.find(x => x.tomes.some(y => y.id === t.dataset.t)) || {}).pays === "France" ? "F" : "J") }], t)) { drawSerie(s, d); if (on && LT === "c" && MAX && Object.keys(L.c).length === MAX) toast(`${MAX}/${MAX} : ta collection gratuite est pleine`); } return; }
   const j = e.target.closest("[data-jusqua]");
-  if (j) { const li = LT === "w" ? "w" : "c", ee = d.editions.find(x => x.id === ED) || d.editions[0]; const tomes = ee.tomes.filter(x => x.paru && !L[li][x.id]).map(x => ({ t: x.id, s: s.id, p: ee.pays === "France" ? "F" : "J" }));
-    if (!tomes.length) { toast(li === "w" ? "Toute la série est déjà dans Envie de lire ✓" : "Tu as déjà tous les tomes parus ✓"); return; }
-    if (await envoyer(li, true, tomes, j)) { drawSerie(s, d); toast(`${tomes.length} tome${tomes.length > 1 ? "s" : ""} ${li === "w" ? "dans Envie de lire" : "ajouté" + (tomes.length > 1 ? "s" : "")} ✓`); } }
+  if (j) { const li = "wr".includes(LT) ? LT : "c", ee = d.editions.find(x => x.id === ED) || d.editions[0]; const tomes = ee.tomes.filter(x => x.paru && !L[li][x.id]).map(x => ({ t: x.id, s: s.id, p: ee.pays === "France" ? "F" : "J" }));
+    if (!tomes.length) { toast(li === "r" ? "Toute la série est déjà marquée lue ✓" : li === "w" ? "Toute la série est déjà dans Envie de lire ✓" : "Tu as déjà tous les tomes parus ✓"); return; }
+    if (await envoyer(li, true, tomes, j)) { drawSerie(s, d); toast(`${tomes.length} tome${tomes.length > 1 ? "s" : ""} ${li === "r" ? "marqué" + (tomes.length > 1 ? "s" : "") + " lu" + (tomes.length > 1 ? "s" : "") : li === "w" ? "dans Envie de lire" : "ajouté" + (tomes.length > 1 ? "s" : "")} ✓`); } }
 });
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 addEventListener("popstate", async e => { const st = e.state || {}; if (!slugAdr() && st.shown) SHOWN = Math.max(SHOWN, st.shown); await route(); window.scrollTo(0, !slugAdr() && st.y ? st.y : 0); });
@@ -595,7 +598,7 @@ async function route(){
   ]);
   CAT = cat.items || []; STATS = cat.stats || {}; CAT.forEach(s => { BYID[s.id] = s; BYSLUG[s.slug] = s; });
   if (col.gate || !col.ok) { GUEST = true; route(); return; }
-  L = { c: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max; VIP = !!col.vip; chargerRang();
+  L = { c: {}, r: {}, p: {}, k: {}, w: {}, ...col.lists }; MAX = col.max; VIP = !!col.vip; chargerRang();
   // Les détails des séries de la collection, pour les « 7/9 tomes ».
   // Une seule requête pour toutes les séries de la collection (lue dans l'index, sans Notion) : Will, 07/10/2026.
   const ids = [...new Set(Object.values(L).flatMap(x => Object.values(x)))];

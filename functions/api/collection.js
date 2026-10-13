@@ -1,5 +1,5 @@
 // « Ma collection » d'un membre (Will, 06/10/2026) : ses tomes dans 4 listes.
-//   c = Collection (tomes possédés), p = Pile à lire, k = Panier, w = Wishlist ; chaque liste = { idTome: idSérie }.
+//   c = Collection (tomes possédés), r = Lu (gratuit, 13/10/2026), p = Pile à lire, k = Panier, w = Wishlist ; chaque liste = { idTome: idSérie }.
 //   GET  /api/collection                      → { ok, lists: {c,p,k,w}, max } (max = limite gratuite de la Collection, null pour l'admin et l'accès complet / VIP)
 //   POST /api/collection { l, on, tomes: [{t, s}] } → ajoute (on) ou retire des tomes d'une liste → { ok, lists, max }
 // Collection illimitée pour tous les membres (Will, 08/10/2026) ; Pile à lire, Panier et Wishlist réservés au Premium.
@@ -11,7 +11,7 @@ const PREMIUM = "pkw"; // p n'est plus proposée : fusionnée dans w
 const ID = /^[0-9a-f]{32}$/;
 const uid = u => String(u.m || u.k || u.e || "").replace(/[^\w@.-]/g, "").slice(0, 80);
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
-const vide = () => ({ c: {}, p: {}, k: {}, w: {}, h: {}, cp: {} });
+const vide = () => ({ c: {}, r: {}, p: {}, k: {}, w: {}, h: {}, cp: {} });
 
 async function lire(env, me) {
   let l; try { l = { ...vide(), ...JSON.parse((await env.STATS.get("bib:" + uid(me))) || "{}") }; } catch (e) { return vide(); }
@@ -34,7 +34,7 @@ export async function onRequestPost({ env, request }) {
   if (!env.STATS) return json({ ok: false, error: "stockage indisponible" }, 503);
   let b = {}; try { b = await request.json(); } catch (e) {}
   const l = String(b.l || ""), tomes = (Array.isArray(b.tomes) ? b.tomes : []).filter(x => x && ID.test(x.t) && ID.test(x.s)).slice(0, 200).map(x => ({ t: x.t, s: x.s, p: x.p === "F" || x.p === "J" ? x.p : "" }));
-  if (!"cpkw".includes(l) || l.length !== 1 || !tomes.length) return json({ ok: false, error: "demande invalide" }, 400);
+  if (!"cpkwr".includes(l) || l.length !== 1 || !tomes.length) return json({ ok: false, error: "demande invalide" }, 400);
   const { complet } = await acces(me, env);
   if (b.on && PREMIUM.includes(l) && !complet) return json({ ok: false, error: "premium" }, 402);
   const lists = await lire(env, me);
@@ -44,6 +44,8 @@ export async function onRequestPost({ env, request }) {
     nouveaux.forEach(x => { lists[l][x.t] = x.s; });
     // Un tome qu'on possède n'est plus dans le panier ni la wishlist.
     if (l === "c") nouveaux.forEach(x => { delete lists.k[x.t]; delete lists.w[x.t]; if (x.p === "F" || x.p === "J") lists.cp[x.t] = x.p; });
+    // Un tome lu sort de « Envie de lire » (Will, 13/10/2026). Il peut rester dans la Collection : lu et possédé.
+    if (l === "r") nouveaux.forEach(x => { delete lists.w[x.t]; });
     if (l === "c") delta = nouveaux.length;
   } else {
     const partis = tomes.filter(x => lists[l][x.t]);
