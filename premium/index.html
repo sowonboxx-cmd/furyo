@@ -132,12 +132,16 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
 .sg article:nth-child(2) .ch{height:175px;right:4px}
 .sg article div{width:52%}
 @media (max-width:760px){.don .dt{min-height:0}.don .dj{height:190px;top:-70px}.don .dk{right:96px;top:-50px;font-size:13px}}
+/* En-tête : les persos de QP en noir et blanc, ordinateur seulement (Will, 13/10/2026, version C3-a) */
+.hero .qp{position:absolute;top:16px;right:-40px;height:130%;opacity:.6;filter:grayscale(1) contrast(1.1);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%);mask-image:linear-gradient(90deg,transparent 0,#000 30%);pointer-events:none}
+.hero h1 em{color:#ff2a55}.hero .kick,.hero h1,.hero p{position:relative;z-index:2}
+@media (max-width:760px){.hero .qp{display:none}}
 </style>
 </head>
 <body>
 <script src="/site/header.js?v=48"></script>
 <main>
-  <section class="hero"><div class="kj" lang="ja">会員</div>
+  <section class="hero"><img class="qp" src="/img/qp/qp.webp" alt="" aria-hidden="true">
     <span class="kick">FuryoGang Premium</span>
     <h1>L'expérience <em>communautaire</em> complète</h1>
     <p>Le site reste gratuit pour tout le monde : actus, fiches, calendrier, et tes tomes possédés sans limite. Premium débloque tout ce qui donne envie de participer.</p>
