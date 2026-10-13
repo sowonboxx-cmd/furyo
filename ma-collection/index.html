@@ -272,7 +272,8 @@ const FLAG = {
 };
 // « Envie de lire » remplace Pile à lire et Wishlist (Will, 09/10/2026) : clé w ; l'ancienne pile (p) y est fusionnée côté serveur.
 // « Lu » (Will, 13/10/2026) : ce que le membre a lu, possédé ou non. Gratuit comme la Collection.
-const LISTS = [["c", "Collection"], ["r", "Lu"], ["w", "Envie de lire"], ["k", "Panier"]];
+// « Collection » renommé « Posséder » dans les onglets (Will, 13/10/2026).
+const LISTS = [["c", "Posséder"], ["r", "Lu"], ["w", "Envie de lire"], ["k", "Panier"]];
 // Envie de lire et Panier : réservés aux membres Premium (Will, 08/10/2026). La Collection est illimitée pour tous.
 const VERROU = '<svg class="lck" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>';
 const ferme = k => !"cr".includes(k) && !VIP;
