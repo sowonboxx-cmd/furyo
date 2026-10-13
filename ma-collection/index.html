@@ -271,12 +271,13 @@ const FLAG = {
   France: '<svg class="flag" viewBox="0 0 22 15" role="img" aria-label="France"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>'
 };
 // « Envie de lire » remplace Pile à lire et Wishlist (Will, 09/10/2026) : clé w ; l'ancienne pile (p) y est fusionnée côté serveur.
-// « Lu » (Will, 13/10/2026) : ce que le membre a lu, possédé ou non. Gratuit comme la Collection.
+// « Lu » (Will, 13/10/2026) : ce que le membre a lu, possédé ou non. Premium.
 // « Collection » renommé « Posséder » dans les onglets (Will, 13/10/2026).
 const LISTS = [["c", "Possédés"], ["r", "Lu"], ["w", "Envie de lire"], ["k", "Panier"]];
 // Envie de lire et Panier : réservés aux membres Premium (Will, 08/10/2026). La Collection est illimitée pour tous.
 const VERROU = '<svg class="lck" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>';
-const ferme = k => !"cr".includes(k) && !VIP;
+// Sans Premium : seulement « Possédés ». Lu, Envie de lire et Panier sont Premium (Will, 13/10/2026).
+const ferme = k => k !== "c" && !VIP;
 const VERBE = { c: "Possédé", r: "Lu", p: "Envie de lire", k: "Au panier", w: "Envie de lire" };
 // Compteur Z1 : ma collection à gauche, base FuryoGang à droite, % en exposant
 function cmpBox(n) {
@@ -540,7 +541,7 @@ async function envoyer(l, on, tomes, el){
 }
 function premium(){
   const p = document.createElement("div"); p.className = "pay";
-  p.innerHTML = `<div><b>Premium</b><p>« Envie de lire » et le Panier sont réservés aux membres Premium. Ta collection, elle, est illimitée.</p><button class="btn">OK</button></div>`;
+  p.innerHTML = `<div><b>Premium</b><p>« Lu », « Envie de lire » et le Panier sont réservés aux membres Premium. Tes tomes possédés, eux, sont illimités.</p><button class="btn">OK</button></div>`;
   document.body.appendChild(p); p.onclick = e => { if (e.target === p || e.target.closest(".btn")) p.remove(); };
 }
 document.addEventListener("click", async e => {
@@ -578,7 +579,7 @@ function gate(){
   if (document.querySelector(".pay.gp")) return;
   const pile = CAT.filter(s => s.cover).slice(0, 3);
   const p = document.createElement("div"); p.className = "pay gp";
-  p.innerHTML = `<div class="gate"><button class="gx" aria-label="Fermer">×</button><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes et ce qu'il te manque. Gratuit et illimité pour les membres ; envie de lire et panier avec Premium.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
+  p.innerHTML = `<div class="gate"><button class="gx" aria-label="Fermer">×</button><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes et ce qu'il te manque. Gratuit et illimité pour les membres ; lu, envie de lire et panier avec Premium.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
   document.body.appendChild(p);
   const go = () => { p.remove(); const b = document.getElementById("sh-me"); if (b) b.click(); };
   p.querySelector("#join").onclick = go; p.querySelector("#join2").onclick = go;

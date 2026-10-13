@@ -1,5 +1,5 @@
 // « Ma collection » d'un membre (Will, 06/10/2026) : ses tomes dans 4 listes.
-//   c = Collection (tomes possédés), r = Lu (gratuit, 13/10/2026), p = Pile à lire, k = Panier, w = Wishlist ; chaque liste = { idTome: idSérie }.
+//   c = Collection (tomes possédés), r = Lu (Premium, 13/10/2026), p = Pile à lire, k = Panier, w = Wishlist ; chaque liste = { idTome: idSérie }.
 //   GET  /api/collection                      → { ok, lists: {c,p,k,w}, max } (max = limite gratuite de la Collection, null pour l'admin et l'accès complet / VIP)
 //   POST /api/collection { l, on, tomes: [{t, s}] } → ajoute (on) ou retire des tomes d'une liste → { ok, lists, max }
 // Collection illimitée pour tous les membres (Will, 08/10/2026) ; Pile à lire, Panier et Wishlist réservés au Premium.
@@ -7,7 +7,7 @@
 import { membre } from "../../lib/auth.js";
 import { acces } from "../../lib/acces.js";
 import { activite, jourParis, decaler } from "../../lib/communaute.js";
-const PREMIUM = "pkw"; // p n'est plus proposée : fusionnée dans w
+const PREMIUM = "pkwr"; // p n'est plus proposée : fusionnée dans w ; r (Lu) Premium aussi (Will, 13/10/2026)
 const ID = /^[0-9a-f]{32}$/;
 const uid = u => String(u.m || u.k || u.e || "").replace(/[^\w@.-]/g, "").slice(0, 80);
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
