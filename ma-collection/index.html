@@ -273,7 +273,7 @@ const FLAG = {
 // « Envie de lire » remplace Pile à lire et Wishlist (Will, 09/10/2026) : clé w ; l'ancienne pile (p) y est fusionnée côté serveur.
 // « Lu » (Will, 13/10/2026) : ce que le membre a lu, possédé ou non. Gratuit comme la Collection.
 // « Collection » renommé « Posséder » dans les onglets (Will, 13/10/2026).
-const LISTS = [["c", "Posséder"], ["r", "Lu"], ["w", "Envie de lire"], ["k", "Panier"]];
+const LISTS = [["c", "Possédés"], ["r", "Lu"], ["w", "Envie de lire"], ["k", "Panier"]];
 // Envie de lire et Panier : réservés aux membres Premium (Will, 08/10/2026). La Collection est illimitée pour tous.
 const VERROU = '<svg class="lck" viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V7a3 3 0 0 0-6 0z"/></svg>';
 const ferme = k => !"cr".includes(k) && !VIP;
@@ -283,7 +283,7 @@ function cmpBox(n) {
   const fr = v => v.toLocaleString("fr-FR"), pc = (a, b) => b ? Math.round(a / b * 1000) / 10 : 0;
   const row = (v, tot, lab) => { const p = pc(v, tot); return `<div><div class="cr"><b>${fr(v)}</b><div class="cs"><em>${String(p).replace(".", ",")} %</em><span>${lab}</span></div><i>${fr(tot)}</i></div><div class="cb"><i style="width:${Math.min(100, p)}%"></i></div></div>`; };
   // Tomes possédés, tomes lus, puis séries (Will, 13/10/2026).
-  return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Total</span></div>${row(n.tomes, STATS.tomes, "TOMES POSSÉDÉS")}${row(n.r, STATS.tomes, "TOMES LUS")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}</div>`;
+  return `<div class="cmp"><div class="ch"><span>Ma collection</span><span>Total</span></div>${row(n.tomes, STATS.tomes, "TOMES POSSÉDÉS")}${row(n.r, n.rTot || n.r, "TOMES LUS")}${STATS.series ? row(n.series, STATS.series, "SÉRIES") : ""}</div>`;
 }
 let STATS = {}, CAT = [], BYID = {}, BYSLUG = {}, L = { c: {}, r: {}, p: {}, k: {}, w: {} }, MAX = null, VIP = false, TAB = "c", Q = "", SORT = "az", DET = {};
 const F = { statut: new Set(), pays: new Set(), genre: new Set() };
@@ -321,9 +321,10 @@ async function home(){
   drawHome();
 }
 function card(s, l){
-  const r = s._r, inList = s._n || 0, full = l === "c" && r && r.parus > 0 && r.has >= r.parus;
-  const sub = !inList ? `<small class="add">+ Ajouter</small>` : l === "c" && r ? `<small class="${full ? "full" : ""}">${r.has}/${r.parus || r.total} tome${(r.parus || r.total) > 1 ? "s" : ""}</small>` : `<small>${inList} tome${inList > 1 ? "s" : ""}</small>`;
-  return `<a class="c" href="/ma-collection/${esc(s.slug)}"><span class="cv">${s.cover ? `<img src="${esc(couv(s.cover))}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 8))}</span>`}${full ? '<span class="tag">Complète</span>' : ""}</span><b>${esc(s.fr || s.t)}</b>${sub}</a>`;
+  const r = s._r, inList = s._n || 0, full = "cr".includes(l) && r && r.parus > 0 && r.has >= r.parus;
+  // Onglet Lu : tomes lus / tomes sortis de l'édition (Will, 13/10/2026).
+  const sub = !inList ? `<small class="add">+ Ajouter</small>` : l === "r" && r ? `<small class="${full ? "full" : ""}">${r.has}/${r.parus || r.total} lu${r.has > 1 ? "s" : ""}</small>` : l === "c" && r ? `<small class="${full ? "full" : ""}">${r.has}/${r.parus || r.total} tome${(r.parus || r.total) > 1 ? "s" : ""}</small>` : `<small>${inList} tome${inList > 1 ? "s" : ""}</small>`;
+  return `<a class="c" href="/ma-collection/${esc(s.slug)}"><span class="cv">${s.cover ? `<img src="${esc(couv(s.cover))}" alt="" loading="lazy">` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 8))}</span>`}${full ? `<span class="tag">${l === "r" ? "Tout lu" : "Complète"}</span>` : ""}</span><b>${esc(s.fr || s.t)}</b>${sub}</a>`;
 }
 function filtre(list){
   const q = norm(Q);
@@ -348,9 +349,12 @@ function selAut(mine){
   if (!l.length) return "";
   return `<select class="sort aut" id="aut" aria-label="Filtrer par auteur"><option value="">Tous les auteurs</option>${l.map(a => `<option value="${esc(a)}"${a === AUT ? " selected" : ""}>${esc(a)}${n[a] ? ` (${n[a]})` : ""}</option>`).join("")}</select>`;
 }
+// Tomes sortis des séries possédées ou lues (édition de référence) : base du « tomes lus » (Will, 13/10/2026).
+function lusSur(){ const ids = new Set([...Object.values(L.c), ...Object.values(L.r || {})]); let n = 0;
+  for (const id of ids) { const d = DET[id + ":v"]; if (!d) continue; const a = resume(d, "r"), b = resume(d, "c"); const x = a && a.has ? a : b; if (x) n += x.parus; } return n; }
 function counts(){
   const sc = Object.keys(seriesDe("c")).length;
-  return { tomes: Object.keys(L.c).length, series: sc, r: Object.keys(L.r || {}).length, p: Object.keys(L.p).length, k: Object.keys(L.k).length, w: Object.keys(L.w).length };
+  return { tomes: Object.keys(L.c).length, series: sc, r: Object.keys(L.r || {}).length, rTot: lusSur(), p: Object.keys(L.p).length, k: Object.keys(L.k).length, w: Object.keys(L.w).length };
 }
 // Feuille « Filtres » (mobile) : tri + statut + pays + genres, appliqués tout de suite.
 const TRIS = [["az", "A → Z"], ["za", "Z → A"], ["new", "Plus récentes"], ["old", "Plus anciennes"], ["tomes", "Plus de tomes"]];
@@ -491,7 +495,8 @@ function drawSerie(s, d){
     : LT === "w"
     ? (resteP ? `<button class="btn" data-jusqua>${I.stack}Toute la série · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Toute la série est dans Envie de lire</span>`)
     : reste ? `<button class="btn" data-jusqua>${I.stack}Tout ajouter · ${parus.length} tome${parus.length > 1 ? "s" : ""}</button>` : `<span class="btn g" style="cursor:default">Tous les tomes parus sont là</span>`;
-  const pane = `<div class="pane"><div class="big"><b>${has}</b><span>/ ${parus.length} tome${parus.length > 1 ? "s" : ""}${parus.length < total ? ` · ${total} prévus` : ""}</span></div><div class="pb"><i style="width:${parus.length ? has / parus.length * 100 : 0}%"></i></div>${tout}${fiche}</div>`;
+  const lus = e.tomes.filter(t => (L.r || {})[t.id]).length, big = LT === "r" ? lus : has;
+  const pane = `<div class="pane"><div class="big"><b>${big}</b><span>/ ${parus.length} tome${parus.length > 1 ? "s" : ""}${LT === "r" ? " lus" : ""}${parus.length < total ? ` · ${total} prévus` : ""}</span></div><div class="pb"><i style="width:${parus.length ? big / parus.length * 100 : 0}%"></i></div>${tout}${fiche}</div>`;
   const st = x => { const v = (x.statut || "").trim(); return v ? ` · <i class="${/cours/i.test(v) ? "on" : /stop|arr/i.test(v) ? "stop" : "end"}">${esc(v)}</i>` : ""; };
   const eds = `<div class="eds">${d.editions.map(x => { const xp = x.tomes.filter(t => t.paru).length, xh = x.tomes.filter(t => L.c[t.id]).length, xn = x.nb || x.tomes.length;
     return `<button data-ed="${x.id}" aria-pressed="${x.id === e.id}">${FLAG[x.pays] || ""}<span><b>${esc([x.pays, x.pub, x.label].filter(Boolean).join(" · "))}</b><em>${xn} tome${xn > 1 ? "s" : ""}${st(x)}</em></span><span class="n">${xh}/${xp}</span></button>`; }).join("")}</div>`;
