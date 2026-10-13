@@ -7,6 +7,7 @@ import { text, date, num, rel, list, queryAll, slugSerie } from "../../../lib/no
 import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 import { CATEGORIES, categorie, categoriesDe, pays } from "../../../lib/categories.js";
+import { proposerCouvertures } from "../../../lib/couvprops.js";
 
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
@@ -50,6 +51,12 @@ async function listerPrepub(env) {
 
 async function construire(request, env) {
   const [all, pRows] = await Promise.all([lister(env), listerPrepub(env)]);
+  // Couvertures à paraître sans proposition : on les ajoute (au plus toutes les 5 minutes), voir lib/couvprops.js.
+  const MARQ = new Request("https://furyogang.com/__cache/couvprops-v1");
+  if (!(await caches.default.match(MARQ))) {
+    await caches.default.put(MARQ, new Response("1", { headers: { "Cache-Control": "max-age=300" } }));
+    try { all.push(...(await proposerCouvertures(env, all))); } catch (e) {}
+  }
   const vu = r => text(r.properties["Statut"]) === "Vu", pub = r => text(r.properties["Statut"]) === "Publié sur le site";
   // Gardées de côté (« Vu, pas sur le site ») : les news et aussi les propositions internes marquées « Vu, rien à faire »,
   // pour pouvoir les reprendre plus tard (Will, 06/10/2026).
@@ -100,8 +107,8 @@ async function construire(request, env) {
   const edById = Object.fromEntries(eds.map(e => [e.id, e]));
   const besoins = [];
   for (const i of tomeItems) if (i._n != null) for (const e of eds) if (e.serie === i.serie.id) besoins.push({ e: e.id, n: i._n });
-  const tRows = besoins.length ? await queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { or: besoins.slice(0, 100).map(b => ({ and: [{ property: "Édition", relation: { contains: b.e } }, { property: "N°", number: { equals: b.n } }] })) } } }).catch(() => []) : [];
-  for (const t of tRows) { const q = t.properties || {}, e = edById[rel(q["Édition"])[0]]; if (e) e.tomes.push({ n: num(q["N°"]), date: date(q["Date de sortie"]), prec: text(q["Précision date"]) || "Jour", cover: text(q["Couverture"]) }); }
+  const tRows = besoins.length ? await queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { or: besoins.slice(0, 100).map(b => ({ and: [{ property: "Édition", relation: { contains: b.e } }, { property: "N°", number: b.n === 1 ? { less_than_or_equal_to: 1 } : { equals: b.n } }] })) } } }).catch(() => []) : [];
+  for (const t of tRows) { const q = t.properties || {}, e = edById[rel(q["Édition"])[0]]; if (e) e.tomes.push({ n: num(q["N°"]) || 1, date: date(q["Date de sortie"]), prec: text(q["Précision date"]) || "Jour", cover: text(q["Couverture"]) }); }
   // Comptes des éditeurs (pour la ligne « X @… » et le 📣 d'Instagram / TikTok).
   // Comptes chargés dès qu'une ligne est reliée à une série : toutes les news (et prépublications) citent auteurs et éditeur (Will, 05/10/2026).
   const avecSerie = items.some(i => i.serie) || pRows.some(r => rel(r.properties["Série"]).length);
