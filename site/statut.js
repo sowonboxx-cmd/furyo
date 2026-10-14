@@ -30,7 +30,9 @@
     g.classList.add("busy");
     fetch("/api/admin/update", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kind: g.dataset.kind, id: g.dataset.id, slug: g.dataset.slug, statut: stt }) })
-      .then(function (r) { return r.json(); })
+      .then(function (r) { return r.text().then(function (t) { try { return JSON.parse(t); } catch (e) {
+        // Réponse pas en JSON (page d'erreur Cloudflare, coupure réseau) : on dit ce qui est arrivé au lieu de l'erreur Safari.
+        throw new Error("le serveur a répondu " + r.status + (r.status === 403 ? " (bloqué par Cloudflare)" : "") + ", réessaie"); } }); })
       .then(function (j) { if (!j.ok) throw new Error(j.error || "erreur");
         // Série : on reconstruit sa fiche Ma collection avant de recharger, pour voir le nouveau statut tout de suite.
         // Le navigateur garde /api/biblio?id=… 60 s en cache : sans le « cache: reload », la page rechargée montrait

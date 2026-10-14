@@ -5,7 +5,12 @@ import { json, isAdmin } from "../../../lib/admin.js";
 import { STATUTS, PUBLIC, A_VALIDER } from "../../../lib/site.js";
 const rt = s => ({ rich_text: s ? [{ type: "text", text: { content: String(s).slice(0, 1900) } }] : [] });
 
-export async function onRequestPost({ request, env }) {
+// Toute erreur repart en JSON : avant, une exception renvoyait la page d'erreur HTML de Cloudflare et Safari affichait
+// « The string did not match the expected pattern » sans la vraie cause (Will, 14/10/2026).
+export async function onRequestPost(ctx) {
+  try { return await maj(ctx); } catch (e) { return json({ error: "erreur serveur : " + String(e && e.message || e).slice(0, 200) }, 500); }
+}
+async function maj({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   let b = {}; try { b = await request.json(); } catch (e) {}
   if (!/^[0-9a-f]{32}$/.test(b.id || "")) return json({ error: "série inconnue" }, 400);
@@ -44,8 +49,8 @@ export async function onRequestPost({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // Le site se met à jour tout de suite : on jette les versions en cache des listes publiques.
   const c = caches.default;
-  await Promise.all(["/api/series?v=5", "/api/series?v=5&admin=1", "/__cache/admin-series-v1", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", "/api/biblio?v=3", "/api/biblio?v=3&id=" + b.id, ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
-  const p = (await r.json()).properties || {};
+  await Promise.all(["/api/series?v=5", "/api/series?v=5&admin=1", "/__cache/admin-series-v1", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", "/api/biblio?v=3", "/api/biblio?v=3&id=" + b.id, ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString())))).catch(() => {});
+  const p = ((await r.json().catch(() => ({}))).properties) || {};
   const st = ((p["Statut"] || {}).select || {}).name || A_VALIDER;
   return json({ ok: true, statut: st, publier: st === PUBLIC, date: ((p["Date de publication"] || {}).date || {}).start || "" });
 }
