@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Studio · Quoi de neuf dans le gang · FuryoGang</title>
+<style>
+/* Studio « Quoi de neuf dans le gang ? » (Will, 15/10/2026) : le carrousel Instagram de fin de semaine.
+   Une image par catégorie (Japon, France, Actus, À l'écran, Fiches, Gang), remplie toute seule avec les données
+   de la semaine choisie. Une catégorie vide n'apparaît pas ; une catégorie trop pleine garde l'essentiel.
+   Chaque texte se modifie d'un clic avant de télécharger, et chaque image peut être retirée. */
+@font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+:root{--ink:#232325;--ink-2:#000;--ink-3:#38383B;--paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;--red:#BC002D;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:"FGInter",system-ui,sans-serif;font-weight:500}
+.page{max-width:1240px;margin:0 auto;padding:20px 16px 60px}
+h1{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:44px;text-transform:uppercase;margin:0 0 4px}
+.sub{margin:0 0 16px;color:var(--paper-2);line-height:1.45}
+.pick{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+select,button,input{font:inherit;height:42px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);padding:0 14px}
+label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--paper-2)}
+button{font-weight:700;cursor:pointer}
+button.main{background:var(--red)}
+button:disabled{opacity:.5;cursor:default}
+#msg{font-size:13px;color:var(--paper-3)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px;align-items:start}
+.slot>h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.slot>h2 label{text-transform:none;letter-spacing:0}
+.slot.off .frame{opacity:.25}
+.frame{width:100%;aspect-ratio:3/4;position:relative;overflow:hidden;border-radius:10px;background:#000}
+.frame>.sc{position:absolute;left:0;top:0;transform-origin:0 0}
+.cap{margin-top:28px}
+.cap>h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.cap textarea{width:100%;min-height:320px;border:0;border-radius:14px;background:var(--ink-2);color:var(--paper);font:inherit;font-size:14px;line-height:1.5;padding:14px;resize:vertical}
+.cap button{height:34px;font-size:12px}
+[contenteditable]:hover{outline:3px dashed rgba(255,255,255,.35);outline-offset:4px}
+[contenteditable]:focus{outline:3px solid #fff;outline-offset:4px}
+
+/* ——— Les images (1080 × 1440) ——— */
+.qn{--bg:#0c0c0e;--bg2:#17171a;--line:#2a2a2e;--cr:#F2EFE9;--mut:#9a968f;--red:#BC002D;width:1080px;height:1440px;position:relative;overflow:hidden;background:var(--bg);color:var(--cr);font-family:"FGInter",sans-serif;line-height:normal;text-align:left}
+.qn *{box-sizing:border-box;margin:0;padding:0}
+.qn .top{position:absolute;left:64px;right:64px;top:52px;height:60px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+.qn .top img{height:56px;margin-left:-36px}
+.qn .top .r{font:500 28px/1 "FGAntonio";letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
+.qn .top .r b{color:var(--cr);font-weight:700}
+.qn .bot{position:absolute;left:64px;right:64px;bottom:52px;display:flex;justify-content:space-between;align-items:center;font:600 24px "FGInter";color:var(--mut);z-index:5}
+.qn .bot .go{color:var(--cr);font:700 26px "FGAntonio";letter-spacing:.14em;text-transform:uppercase}
+.qn .kanji{position:absolute;right:52px;top:150px;writing-mode:vertical-rl;font:900 150px/1 "FGNotoJP";color:var(--red);z-index:1}
+.qn .head{position:absolute;left:64px;top:170px;right:240px;z-index:3}
+.qn .chip{display:inline-flex;align-items:center;gap:14px;font:700 24px "FGInter";letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.qn .chip i{width:18px;height:18px;border-radius:50%;display:block}
+.qn h2{font:700 150px/.9 "FGAntonio";text-transform:uppercase;letter-spacing:-.01em;margin-top:18px}
+.qn .body{position:absolute;left:64px;right:64px;top:430px;bottom:140px;display:flex;flex-direction:column;gap:56px;z-index:3}
+.qn .body.nar{right:230px}
+.qn .lbl{font:700 22px "FGInter";letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin-bottom:22px}
+.qn .cov{border:6px solid #fff;border-radius:4px;display:block;object-fit:cover;box-shadow:0 18px 40px rgba(0,0,0,.55);background:#222}
+.qn .pill{display:inline-block;padding:9px 18px;border-radius:999px;font:700 21px "FGInter";letter-spacing:.06em;text-transform:uppercase;color:#0c0c0e}
+.qn .tag{display:inline-block;padding:12px 22px;border-radius:12px;background:var(--bg2);border:2px solid var(--line);font:600 27px "FGInter";color:var(--cr);margin:0 10px 12px 0;white-space:nowrap}
+.qn .tag.hot{border-color:var(--red)}.qn .tag.more{color:var(--mut)}
+.qn .date{position:absolute;left:-14px;top:22px;background:var(--red);color:#fff;font:700 26px/1 "FGAntonio";letter-spacing:.06em;padding:12px 16px;border-radius:6px;text-transform:uppercase;z-index:2}
+.qn .t{font:700 40px/1.05 "FGAntonio";text-transform:uppercase;margin-top:22px}
+.qn .s{font:500 24px "FGInter";color:var(--mut);margin-top:8px}
+.qn .big{font:700 210px/.85 "FGAntonio";color:var(--cr)}
+.qn .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.qn .row3>div{position:relative;min-width:0}
+.qn .card{background:var(--bg2);border-radius:20px;padding:30px;display:flex;gap:30px;align-items:center}
+.qn .clamp{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+.qn .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}
+.qn .tiles>div{background:var(--bg2);border-radius:16px;padding:22px 0}
+.qn .tiles b{display:block;font:700 64px/1 "FGAntonio"}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Quoi de neuf dans le gang ?</h1>
+  <p class="sub">Le carrousel Instagram de fin de semaine, rempli tout seul avec les données de la semaine. Les catégories vides n'apparaissent pas.
+    Clique sur un texte pour le modifier, décoche une image pour la retirer, puis télécharge.</p>
+  <div class="pick">
+    <button id="prev" aria-label="Semaine précédente">←</button>
+    <input id="du" type="date" aria-label="Lundi de la semaine">
+    <button id="next" aria-label="Semaine suivante">→</button>
+    <label><input id="pseudos" type="checkbox" checked style="width:auto;height:auto"> Citer les pseudos du top</label>
+    <button class="main" id="dl" disabled>Télécharger les images</button>
+    <span id="msg">Chargement…</span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="cap"><h2>Légende Instagram <button id="cp">Copier</button></h2><textarea id="leg"></textarea></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+(function () {
+  var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  var MC = ["janv","févr","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"];
+  var KANJI = "日本仏国速報映画新着仲間";
+  var LOGO = "/img/logo-furyogang.png";
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var couv = function (u) { if (!u) return ""; if (/^\//.test(u)) return u; return "/api/couv?u=" + encodeURIComponent(u); };
+  var J = function (d) { return d.toISOString().slice(0, 10); };
+  var dec = function (j, n) { var d = new Date(j + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return J(d); };
+  var lundi = function (j) { var d = new Date(j + "T12:00:00Z"); return dec(j, -((d.getUTCDay() + 6) % 7)); };
+  var jour = function (j) { return Number(j.slice(8, 10)) + (j.slice(8, 10) === "01" ? "er" : "") + " " + MOIS[Number(j.slice(5, 7)) - 1]; };
+  var court = function (j) { return Number(j.slice(8, 10)) + " " + MC[Number(j.slice(5, 7)) - 1]; };
+  var semaineISO = function (j) { var d = new Date(j + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + 3 - (d.getUTCDay() + 6) % 7); var y = new Date(Date.UTC(d.getUTCFullYear(), 0, 4)); return 1 + Math.round(((d - y) / 864e5 - 3 + (y.getUTCDay() + 6) % 7) / 7); };
+  var nn = function (n) { return n == null ? "" : "T." + String(n).padStart(2, "0"); };
+  var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
+
+  // Semaine par défaut : celle en cours à partir du jeudi, sinon la précédente (le récap se poste en fin de semaine).
+  var auj = new Date().toLocaleDateString("sv", { timeZone: "Europe/Paris" });
+  var wd = (new Date(auj + "T12:00:00Z").getUTCDay() + 6) % 7;
+  $("#du").value = wd >= 3 ? lundi(auj) : dec(lundi(auj), -7);
+
+  // Données publiques chargées une fois ; les chiffres privés (membres, collections, films) à chaque semaine.
+  var pub = Promise.all(["/api/calendrier", "/api/prepub", "/api/news", "/api/avancement", "/api/series"].map(get));
+  var D = null, slides = [], tour = 0;
+  var VIDE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+  function charger() {
+    var du = lundi($("#du").value || auj), au = dec(du, 6); $("#du").value = du;
+    var moi = ++tour; $("#msg").textContent = "Chargement…"; $("#dl").disabled = true;
+    return Promise.all([pub, get("/api/admin/semaine?du=" + du + "&au=" + au)]).then(function (r) {
+      var p = r[0], cal = (p[0].items || []), news = (p[2].items || []).filter(function (n) { return n.date >= du && n.date <= au; });
+      var ids = news.map(function (n) { return n.id; }).join(",");
+      return (ids ? get("/api/stats?ids=" + ids) : Promise.resolve({})).then(function (st) {
+        if (moi !== tour) return; // une autre semaine a été demandée entre-temps
+        var vues = (st && st.stats) || {};
+        news.forEach(function (n) { n.v = (vues[n.id] || {}).v || 0; });
+        news.sort(function (a, b) { return b.v - a.v; });
+        D = { du: du, au: au, cal: cal, prepub: p[1].items || [], news: news, av: p[3] || {}, series: {}, adm: r[1] && r[1].ok ? r[1] : null };
+        (p[4].items || []).forEach(function (s) { D.series[s.slug] = s; });
+        construire();
+      });
+    });
+  }
+
+  // ——— Gabarits ———
+  function cadre(k, kanji, couleur, chip, titre, corps, bas, nar) {
+    return '<div class="qn"><div class="top"><img src="' + LOGO + '" alt=""><div class="r">Quoi de neuf · <b data-n></b></div></div>' +
+      (kanji ? '<div class="kanji">' + kanji + "</div>" : "") +
+      '<div class="head"><div class="chip"><i style="background:' + couleur + '"></i><span contenteditable>' + chip + '</span></div><h2 contenteditable>' + titre + "</h2></div>" +
+      '<div class="body' + (nar === false ? "" : " nar") + '">' + corps + "</div>" +
+      '<div class="bot"><span contenteditable>' + (bas || "Le détail : furyogang.com · lien en bio") + '</span><span class="go">→</span></div></div>';
+  }
+  function grille(items, max) {
+    // items : [{ img, date, t, s }] ; 1 = en grand, 2-3 = rangée de 3, au-delà : les 3 premiers + « +N ».
+    if (items.length === 1) { var x = items[0];
+      return '<div style="display:flex;gap:40px;align-items:center"><div style="position:relative;flex:none"><img class="cov" src="' + couv(x.img) + '" style="width:290px;height:435px">' + (x.date ? '<div class="date">' + court(x.date) + "</div>" : "") + "</div>" +
+        '<div><div class="lbl">En librairie</div><div class="t" style="font-size:62px;margin:0" contenteditable>' + esc(x.t) + '</div><div style="font:700 44px FGAntonio;color:var(--red);margin-top:12px" contenteditable>' + esc(x.n) + '</div><div class="s" contenteditable>' + esc(x.s) + "</div></div></div>"; }
+    var vis = items.slice(0, max || 3), reste = items.length - vis.length;
+    return '<div class="row3">' + vis.map(function (x) {
+      return '<div data-cell><img class="cov" src="' + couv(x.img) + '" style="width:100%;height:390px">' + (x.date ? '<div class="date">' + court(x.date) + "</div>" : "") +
+        '<div class="t clamp" style="font-size:34px;-webkit-line-clamp:2" contenteditable>' + esc(x.t) + '</div><div class="s" contenteditable>' + esc([x.n, x.s].filter(Boolean).join(" · ")) + "</div></div>";
+    }).join("") + "</div>" + (reste > 0 ? '<div class="tag more" style="align-self:flex-start;margin-top:-30px" contenteditable>+ ' + reste + " autre" + (reste > 1 ? "s" : "") + "</div>" : "");
+  }
+  function carteNews(n, pill) {
+    return '<div class="card"><img class="cov" src="' + couv(n.cover) + '" style="width:150px;height:225px;border-width:4px;flex:none"><div style="min-width:0"><span class="pill" style="background:' + (n.catC || "#D4D4D8") + '">' + esc(pill || n.catNom || "News") + '</span>' +
+      '<div class="t clamp" style="font-size:46px;-webkit-line-clamp:3" contenteditable>' + esc(titreNews(n)) + "</div></div></div>";
+  }
+  function titreNews(n) { var a = (n.accroche || "").trim(); return a && a.length <= 95 ? a.replace(/\.$/, "") : (n.fr || n.titre); }
+  var tomeItem = function (x, fr) { return { img: x.cover, date: x.date, t: fr ? (x.fr || x.series) : x.series, n: nn(x.n), s: x.pub || "" }; };
+  var unique = function (l, f) { var vu = {}; return l.filter(function (x) { var k = f(x); if (vu[k]) return false; vu[k] = 1; return true; }); };
+
+  function construire() {
+    var du = D.du, au = D.au, dans = function (d) { return d && d >= du && d <= au; };
+    var cal = D.cal.filter(function (x) { return dans(x.date) && x.cover; });
+    var jp = cal.filter(function (x) { return x.pays === "Japon"; }), fr = cal.filter(function (x) { return x.pays === "France"; });
+    var pp = D.prepub.filter(function (x) { return dans(x.date); });
+    var chap = pp.filter(function (x) { return x.status === "Paru"; }), pauses = pp.filter(function (x) { return x.status === "Pause"; });
+    var mags = unique(chap, function (x) { return x.mag; });
+    var used = {};
+    var newsDe = function (cats) { var n = D.news.find(function (x) { return !used[x.id] && (x.cats || []).some(function (c) { return cats.indexOf(c.k) >= 0; }); }); if (n) used[n.id] = 1; return n; };
+    var nJP = newsDe(["licence-jp", "couv-jp", "fin"]), nFR = newsDe(["licence-fr", "couv-fr"]);
+    var ecranNews = D.news.filter(function (x) { return !used[x.id] && (x.cats || []).some(function (c) { return ["anime", "adaptation", "bande-annonce"].indexOf(c.k) >= 0 && x.cat !== "sortie-fr" && x.cat !== "sortie-jp"; }); });
+    var films = (D.adm && D.adm.films) || [];
+    var fiches = (D.av.recentes || []).filter(function (x) { return dans(x.date); }).map(function (x) { var s = D.series[x.slug] || {}; return { t: x.fr || x.t, img: s.cover }; });
+    var proch = unique(D.cal.filter(function (x) { return x.date > au && x.date <= dec(au, 7) && x.cover; }), function (x) { return x.seriesId; });
+    var out = [];
+
+    // 2 · Japon
+    if (jp.length || chap.length) {
+      var c = "";
+      if (jp.length) c += grille(jp.map(function (x) { return tomeItem(x, false); }));
+      if (chap.length) {
+        var hot = function (x) { return (x.ch && x.ch % 50 === 0) || /arc|fin|dernier|début|couleur|anniversaire|final/i.test((x.hl || []).join(" ")); };
+        var titres = unique(chap.slice().sort(function (a, b) { return (hot(b) ? 1 : 0) - (hot(a) ? 1 : 0); }), function (x) { return x.entry.split(" · ")[0]; });
+        var vis = titres.slice(0, jp.length > 1 ? 4 : 6), reste = titres.length - vis.length;
+        c += '<div><div style="display:flex;align-items:flex-end;gap:26px;margin-bottom:26px"><div class="big" style="font-size:150px">' + chap.length + '</div>' +
+          '<div style="padding-bottom:12px"><div style="font:700 46px/1 FGAntonio;text-transform:uppercase">chapitre' + (chap.length > 1 ? "s" : "") + ' paru' + (chap.length > 1 ? "s" : "") + '</div><div class="s">dans ' + mags.length + " magazine" + (mags.length > 1 ? "s" : "") + "</div></div>" +
+          '<div style="margin-left:auto;display:flex;gap:12px">' + mags.filter(function (m) { return m.cover; }).slice(0, 3).map(function (m) { return '<img class="cov" src="' + couv(m.cover) + '" style="width:92px;height:132px;border-width:4px">'; }).join("") + "</div></div>" +
+          vis.map(function (x) { var t = x.entry.split(" · ")[0]; return '<span class="tag' + (hot(x) ? " hot" : "") + '" contenteditable>' + esc(t) + (x.ch && x.ch % 50 === 0 ? " · ch. " + x.ch : "") + "</span>"; }).join("") +
+          (reste > 0 ? '<span class="tag more">+' + reste + "</span>" : "") +
+          (pauses.length && jp.length < 2 ? '<div class="s" style="font-size:26px;margin-top:6px" contenteditable>En pause : ' + pauses.length + " série" + (pauses.length > 1 ? "s" : "") + "</div>" : "") + "</div>";
+      }
+      if (nJP && jp.length <= 1 && chap.length < 7) c += carteNews(nJP);
+      out.push({ k: "japon", nom: "Japon", html: cadre("japon", "日本", "#FFA344", "Japon", "Au Japon", c) });
+    }
+    // 3 · France
+    if (fr.length || nFR) {
+      var c3 = fr.length ? grille(fr.map(function (x) { return tomeItem(x, true); })) : "";
+      if (nFR) c3 += carteNews(nFR);
+      out.push({ k: "france", nom: "France", html: cadre("france", "仏国", "#E255A1", "France", "En France", c3) });
+    }
+    // 4 · Actus (les plus vues de la semaine)
+    var actus = D.news.filter(function (x) { return !used[x.id] && ecranNews.indexOf(x) < 0; }).slice(0, 2);
+    if (actus.length) {
+      out.push({ k: "actus", nom: "Actus", html: cadre("actus", "速報", "#D4D4D8", "Actus", "À ne pas<br>rater",
+        '<div style="display:flex;flex-direction:column;gap:34px;margin-top:130px">' + actus.map(function (n) {
+          return '<div style="display:flex;gap:30px;align-items:center"><img class="cov" src="' + couv(n.cover) + '" style="width:250px;height:340px;flex:none"><div style="min-width:0"><span class="pill" style="background:' + (n.catC || "#D4D4D8") + '">' + esc(n.catNom || "News") +
+            '</span><div class="t clamp" style="font-size:54px;-webkit-line-clamp:4" contenteditable>' + esc(titreNews(n)) + "</div></div></div>"; }).join("") + "</div>", "Toutes les actus : furyogang.com") });
+    }
+    // 5 · À l'écran
+    if (films.length || ecranNews.length) {
+      var c5 = "";
+      if (films.length) { var fv = films.slice(0, 4), h = fv.length <= 2 ? 470 : 300;
+        c5 += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">' + fv.map(function (f) { return '<div data-cell><img class="cov" src="' + couv(f.img) + '" style="width:100%;height:' + h + 'px"><div class="t clamp" style="font-size:34px;-webkit-line-clamp:1" contenteditable>' + esc(f.t) + '</div><div class="s">' + esc([f.type, f.y].filter(Boolean).join(" · ")) + "</div></div>"; }).join("") + "</div>"; }
+      if (ecranNews.length) c5 += carteNews(ecranNews[0]);
+      out.push({ k: "ecran", nom: "À l'écran", html: cadre("ecran", "映画", "#FFDC49", "Nouveau", "À l'écran", c5, "furyogang.com · lien en bio") });
+    }
+    // 6 · Nouvelles fiches
+    if (fiches.length) {
+      var vis6 = fiches.slice(0, fiches.length > 8 ? 7 : 8), r6 = fiches.length - vis6.length;
+      var cases = vis6.map(function (x) { return '<img data-cell class="cov" src="' + couv(x.img) + '" style="width:100%;height:270px;border-width:4px">'; }).join("") +
+        (r6 > 0 ? '<div style="display:flex;align-items:center;justify-content:center;font:700 64px FGAntonio;color:var(--red);border:3px dashed var(--line);border-radius:6px">+' + r6 + "</div>" : "");
+      var on = D.av.enLigne || 0, pct = D.av.pct || 0, pleines = Math.max(1, Math.round(pct / 5));
+      out.push({ k: "fiches", nom: "Fiches", html: cadre("fiches", "新着", "var(--red)", "La base", '<span style="color:var(--red)">+' + fiches.length + "</span> fiche" + (fiches.length > 1 ? "s" : ""),
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">' + cases + "</div>" +
+        '<div style="margin-top:auto;margin-right:-166px"><div style="display:flex;justify-content:space-between;font:700 34px FGAntonio;text-transform:uppercase;margin-bottom:16px"><span>' + on + ' fiches en ligne</span><span style="color:var(--mut)">' + String(pct).replace(".", ",") + " %</span></div>" +
+        '<div style="display:grid;grid-template-columns:repeat(20,1fr);gap:6px">' + Array.from({ length: 20 }, function (_, i) { return '<i style="display:block;height:22px;border-radius:3px;background:' + (i < pleines ? "var(--red)" : "#2a2a2e") + '"></i>'; }).join("") + "</div>" +
+        '<div style="font:700 46px FGAntonio;text-transform:uppercase;margin-top:44px" contenteditable>Tu les as dans ta collection ?</div></div>', "Ajoute-les sur furyogang.com") });
+    }
+    // 7 · Le gang
+    var adm = D.adm;
+    if (adm && (adm.membres.total || adm.gang.ajoutes)) {
+      var nv = adm.membres.nouveaux.length, top = $("#pseudos").checked ? adm.gang.top : [];
+      var c7 = '<div style="display:flex;align-items:flex-end;gap:26px"><div class="big">' + adm.membres.total + '</div><div style="padding-bottom:20px"><div style="font:700 50px/1 FGAntonio;text-transform:uppercase">membres</div><div class="s" style="font-size:28px" contenteditable>' +
+        (nv ? "+" + nv + " cette semaine, bienvenue !" : "Merci d'être là") + "</div></div></div>";
+      if (adm.gang.ajoutes) c7 += '<div style="font:700 46px/1.1 FGAntonio;text-transform:uppercase" contenteditable><span style="color:var(--red)">' + adm.gang.ajoutes + "</span> tomes ajoutés aux collections</div>";
+      if (top.length) c7 += '<div><div class="lbl">Top collectionneurs de la semaine</div><div style="display:flex;flex-direction:column;gap:16px">' + top.map(function (m, i) {
+        return '<div style="display:flex;align-items:center;gap:24px;background:var(--bg2);border-radius:18px;padding:20px 28px' + (i ? "" : ";border:2px solid var(--red)") + '"><div style="font:700 60px/1 FGAntonio;width:44px' + (i ? "" : ";color:var(--red)") + '">' + (i + 1) + "</div>" +
+          (m.photo ? '<img src="' + esc(m.photo) + '" style="width:78px;height:78px;border-radius:50%;object-fit:cover">' : '<div style="width:78px;height:78px;border-radius:50%;background:#3a3a40"></div>') +
+          '<div style="font:700 40px FGAntonio;text-transform:uppercase;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" contenteditable>' + esc(m.pseudo) + '</div><div style="font:700 40px FGAntonio">+' + m.n + " tomes</div></div>"; }).join("") + "</div></div>";
+      c7 += '<div style="font:700 44px FGAntonio;text-transform:uppercase;margin-top:auto" contenteditable>Et toi, t\'es à combien ?</div>';
+      out.push({ k: "gang", nom: "Le gang", html: cadre("gang", "仲間", "#529CCA", "Communauté", "Le gang", c7, "Le classement : furyogang.com") });
+    }
+    // 1 · Couverture (après coup : elle résume ce qui a été retenu)
+    var coll = unique(fr.concat(jp).map(function (x) { return x.cover; }).concat(fiches.map(function (x) { return x.img; })).filter(Boolean), function (u) { return u; }).slice(0, 5);
+    var tuiles = [[fr.length + jp.length, "sortie"], [chap.length, "chapitre JP", "chapitres JP"], [fiches.length, "fiche", "fiches", 1], [films.length, "film"], [D.news.length, "actu"], [adm ? adm.membres.nouveaux.length : 0, "nouveau membre", "nouveaux membres", 1]]
+      .filter(function (t) { return t[0] > 0; }).slice(0, 4);
+    var pos = [["left:120px;top:330px;width:300px;height:450px;transform:rotate(-11deg)"], ["right:120px;top:330px;width:300px;height:450px;transform:rotate(10deg)"], ["left:250px;top:250px;width:330px;height:495px;transform:rotate(-4deg)"], ["right:250px;top:255px;width:330px;height:495px;transform:rotate(5deg)"], ["left:360px;top:230px;width:360px;height:540px"]];
+    var ordre = coll.length >= 5 ? [1, 2, 3, 4, 0] : coll.length === 4 ? [0, 1, 2, 3] : coll.length === 3 ? [2, 3, 4] : coll.length === 2 ? [2, 3] : [4];
+    var cover = '<div class="qn"><div class="top"><img src="' + LOGO + '" alt=""><div class="r"><b>S' + semaineISO(du) + "</b> · <span data-n></span></div></div>" +
+      '<div style="position:absolute;left:50%;top:150px;width:760px;height:760px;margin-left:-380px;border-radius:50%;background:var(--red)"></div>' +
+      ordre.map(function (p, i) { return coll[i] ? '<img class="cov" src="' + couv(coll[i]) + '" style="position:absolute;' + pos[p] + '">' : ""; }).join("") +
+      '<div style="position:absolute;left:64px;right:64px;top:850px;text-align:center"><div class="chip" style="justify-content:center"><i style="background:var(--red)"></i><span contenteditable>Semaine du ' + jour(du).replace(/ \S+$/, du.slice(5, 7) === au.slice(5, 7) ? "" : " " + MOIS[Number(du.slice(5, 7)) - 1]) + " au " + jour(au) + "</span></div>" +
+      '<h2 style="font-size:136px;margin-top:20px" contenteditable>Quoi de neuf<br>dans le gang ?</h2></div>' +
+      (tuiles.length ? '<div class="tiles" style="position:absolute;left:64px;right:64px;top:1170px;grid-template-columns:repeat(' + tuiles.length + ',1fr)">' + tuiles.map(function (t) {
+        return '<div><b' + (t[3] ? ' style="color:var(--red)"' : "") + ">" + (t[3] ? "+" : "") + t[0] + '</b><div class="s" style="margin-top:6px">' + (t[0] > 1 ? (t[2] || t[1] + "s") : t[1]) + "</div></div>"; }).join("") + "</div>" : "") +
+      '<div class="bot"><span>furyogang.com</span><span class="go">Glisse →</span></div></div>';
+    out.unshift({ k: "couv", nom: "Couverture", html: cover });
+    // 8 · Fin
+    var c8 = proch.length ? '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:18px">' + proch.slice(0, 5).map(function (x) {
+      return '<div data-cell><img class="cov" src="' + couv(x.cover) + '" style="width:100%;height:265px;border-width:4px"><div class="s" style="font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" contenteditable>' + esc((x.pays === "France" ? x.fr || x.series : x.series).replace(/^WORST Gaiden /, "")) + " " + nn(x.n) + "</div></div>"; }).join("") + "</div>" : "";
+    var fin = '<div class="qn"><div class="top"><img src="' + LOGO + '" alt=""><div class="r">Quoi de neuf · <b data-n></b></div></div>' +
+      (proch.length ? '<div class="head" style="right:64px"><div class="chip"><i style="background:var(--red)"></i><span contenteditable>Semaine prochaine</span></div><h2 style="font-size:120px" contenteditable>Ça arrive</h2></div><div style="position:absolute;left:64px;right:64px;top:400px">' + c8 + "</div>" : "") +
+      '<div style="position:absolute;left:0;right:0;top:' + (proch.length ? 820 : 300) + 'px;bottom:' + (proch.length ? 100 : 300) + 'px;background:var(--red)"></div>' +
+      '<div style="position:absolute;left:64px;right:64px;top:' + (proch.length ? 880 : 420) + 'px"><div style="font:700 112px/.92 FGAntonio;text-transform:uppercase" contenteditable>Tout est sur<br>furyogang.com</div>' +
+      '<div style="font:600 32px/1.4 FGInter;margin-top:28px;max-width:820px" contenteditable>Inscris-toi : ta collection, le classement du gang et le vote de la prochaine fiche.</div>' +
+      '<div style="display:inline-block;margin-top:34px;background:#fff;color:var(--red);font:700 36px FGAntonio;letter-spacing:.12em;text-transform:uppercase;padding:18px 30px;border-radius:12px">Lien en bio</div></div>' +
+      '<div class="bot"><span style="color:var(--cr)">@FuryoGang</span><span class="go">#FuryoGang</span></div></div>';
+    out.push({ k: "fin", nom: "Fin", html: fin });
+
+    slides = out; afficher();
+    legende({ jp: jp, fr: fr, chap: chap, actus: actus, fiches: fiches, films: films, adm: adm });
+  }
+
+  function afficher() {
+    var g = $("#grid"); g.innerHTML = "";
+    slides.forEach(function (s, i) {
+      var el = document.createElement("div"); el.className = "slot";
+      el.innerHTML = '<h2><span>' + esc(s.nom) + '</span><label><input type="checkbox" checked style="width:auto;height:auto"> Garder</label></h2><div class="frame"><div class="sc">' + s.html + "</div></div>";
+      el.querySelector("input").onchange = function (e) { s.off = !e.target.checked; el.classList.toggle("off", s.off); numeroter(); };
+      g.appendChild(el); s.el = el;
+    });
+    var echelle = function () { slides.forEach(function (s) { var f = s.el.querySelector(".frame"); s.el.querySelector(".sc").style.transform = "scale(" + f.clientWidth / 1080 + ")"; }); };
+    g.querySelectorAll(".qn img").forEach(function (im) { im.addEventListener("error", function () { var c = im.closest("[data-cell]"); if (c) c.remove(); else { im.src = VIDE; im.style.visibility = "hidden"; } }); });
+    echelle(); window.onresize = echelle; numeroter();
+    $("#msg").textContent = slides.length + " images pour la semaine du " + jour(D.du) + " au " + jour(D.au) + (D.adm ? "" : " (connecte-toi au back-office pour les chiffres membres et films)");
+    $("#dl").disabled = false;
+  }
+  function numeroter() {
+    var on = slides.filter(function (s) { return !s.off; }), n = on.length;
+    on.forEach(function (s, i) { s.el.querySelectorAll("[data-n]").forEach(function (b) { b.textContent = (i + 1) + "/" + n; }); });
+  }
+  function legende(x) {
+    var L = ["Quoi de neuf dans le gang ? Semaine du " + (D.du.slice(5, 7) === D.au.slice(5, 7) ? String(Number(D.du.slice(8, 10))) : jour(D.du)) + " au " + jour(D.au) + " 🔥", ""];
+    if (x.jp.length || x.chap.length) L.push("🇯🇵 " + [x.jp.length ? x.jp.slice(0, 3).map(function (t) { return t.series + " " + nn(t.n); }).join(", ") : "", x.chap.length ? x.chap.length + " chapitres en magazine" : ""].filter(Boolean).join(" · "));
+    if (x.fr.length) L.push("🇫🇷 " + x.fr.slice(0, 3).map(function (t) { return (t.fr || t.series) + " " + nn(t.n); }).join(", "));
+    if (x.actus.length) L.push("📰 " + x.actus.map(titreNews).join(" · "));
+    if (x.films.length) L.push("🎬 " + x.films.slice(0, 3).map(function (f) { return f.t; }).join(", "));
+    if (x.fiches.length) L.push("🆕 +" + x.fiches.length + " fiches : " + x.fiches.slice(0, 4).map(function (f) { return f.t; }).join(", ") + (x.fiches.length > 4 ? "…" : ""));
+    if (x.adm && x.adm.membres.nouveaux.length) L.push("👊 Bienvenue aux " + x.adm.membres.nouveaux.length + " nouveaux membres du gang");
+    L.push("", "📖 Tout le détail sur furyogang.com (lien en bio). Inscris-toi pour ta collection et le classement du gang.", "", "#FuryoGang #manga #furyo #mangafr #yankee #mangatok");
+    $("#leg").value = L.join("\n").replace("…", "");
+  }
+
+  // ——— Export ———
+  var cache = {};
+  function dataUrl(url) {
+    if (!cache[url]) cache[url] = fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(function (b) {
+      return new Promise(function (ok) { var f = new FileReader(); f.onload = function () { ok(f.result); }; f.readAsDataURL(b); }); });
+    return cache[url];
+  }
+  var polices = null;
+  function fontCSS() {
+    if (polices) return polices;
+    var jp = fetch("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&text=" + encodeURIComponent(KANJI)).then(function (r) { return r.text(); }).then(function (css) {
+      var m = css.match(/url\((https:[^)]+)\)/); if (!m) throw new Error("police"); return dataUrl(m[1]); }).catch(function () { return dataUrl("/fonts/NotoSansJP.ttf"); });
+    polices = Promise.all([dataUrl("/fonts/Antonio.ttf"), dataUrl("/fonts/Inter.ttf"), jp]).then(function (u) {
+      var css = '@font-face{font-family:"FGAntonio";src:url(' + u[0] + ') format("truetype");font-weight:100 700}\n@font-face{font-family:"FGInter";src:url(' + u[1] + ') format("truetype");font-weight:100 900}\n@font-face{font-family:"FGNotoJP";src:url(' + u[2] + ');font-weight:900}\n';
+      var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st); return css; });
+    return polices;
+  }
+  fontCSS();
+  function jpeg(node, fcss) {
+    // Les images passent en data URL avant le dessin (Safari), puis on redessine jusqu'à ce que le résultat soit stable.
+    return Promise.all([].map.call(node.querySelectorAll("img"), function (im) {
+      if (/^data:/.test(im.src)) return null;
+      return dataUrl(im.getAttribute("src")).then(function (u) { im.src = u; return new Promise(function (ok) { if (im.complete) ok(); else im.onload = im.onerror = ok; }); }).catch(function () { im.src = VIDE; im.style.visibility = "hidden"; });
+    })).then(function () {
+      var opts = { width: 1080, height: 1440, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, backgroundColor: "#0c0c0e", imagePlaceholder: VIDE,
+        filter: function () { return true; } };
+      var essai = function (k, prev) { return htmlToImage.toJpeg(node, opts).then(function (u) {
+        if (k >= 4 || (prev && Math.abs(u.length - prev.length) < 300 && k >= 2)) return u;
+        return new Promise(function (ok) { setTimeout(ok, 150); }).then(function () { return essai(k + 1, u); }); }); };
+      return essai(1, null);
+    });
+  }
+  $("#dl").onclick = function () {
+    var on = slides.filter(function (s) { return !s.off; }); if (!on.length) return;
+    var b = $("#dl"); b.disabled = true; $("#msg").textContent = "Préparation des images…";
+    document.activeElement && document.activeElement.blur && document.activeElement.blur();
+    var files = [], nom = "quoi-de-neuf-S" + semaineISO(D.du) + "-";
+    fontCSS().then(function (fcss) {
+      return on.reduce(function (p, s, i) { return p.then(function () {
+        $("#msg").textContent = "Image " + (i + 1) + " / " + on.length + "…";
+        return jpeg(s.el.querySelector(".qn"), fcss).then(function (u) { return fetch(u).then(function (r) { return r.blob(); }); })
+          .then(function (bl) { files.push(new File([bl], nom + String(i + 1).padStart(2, "0") + ".jpg", { type: "image/jpeg" })); });
+      }); }, Promise.resolve());
+    }).then(function () {
+      if (navigator.canShare && navigator.canShare({ files: files }) && /iPhone|iPad|Android/i.test(navigator.userAgent)) {
+        $("#msg").innerHTML = ""; var go = document.createElement("button"); go.className = "main"; go.textContent = "Enregistrer les " + files.length + " images";
+        go.onclick = function () { navigator.share({ files: files }).catch(function () {}); }; $("#msg").appendChild(go); return;
+      }
+      files.forEach(function (f, i) { setTimeout(function () { var a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); }, i * 400); });
+      $("#msg").textContent = files.length + " images téléchargées.";
+    }).catch(function (e) { $("#msg").textContent = "Échec : " + (e && e.message || (e && e.type ? "une image n'a pas pu être chargée" : e)); }).finally(function () { b.disabled = false; });
+  };
+  $("#cp").onclick = function () { navigator.clipboard.writeText($("#leg").value).then(function () { $("#cp").textContent = "Copié"; setTimeout(function () { $("#cp").textContent = "Copier"; }, 1500); }); };
+  $("#du").onchange = charger;
+  $("#prev").onclick = function () { $("#du").value = dec(lundi($("#du").value), -7); charger(); };
+  $("#next").onclick = function () { $("#du").value = dec(lundi($("#du").value), 7); charger(); };
+  $("#pseudos").onchange = function () { if (D) construire(); };
+  charger();
+})();
+</script>
+</body>
+</html>
