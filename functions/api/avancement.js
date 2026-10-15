@@ -21,7 +21,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
       // Prêtes à publier : tous les éléments ★ faits, pas encore « En ligne · public » (même règle que le back-office).
       if (estPrete(p, r.id.replace(/-/g, ""), ctx)) prepa.push(t);
     }
-    const total = rows.filter(r => text((r.properties || {})["SERIES"])).length;
+    // Les séries renommées « [À SUPPRIMER] » (Notion ne permet pas de les effacer) ne comptent pas dans le total (Will, 15/10/2026).
+    const total = rows.filter(r => { const t = text((r.properties || {})["SERIES"]); return t && !/^\[À SUPPRIMER\]/i.test(t); }).length;
     // Numéro de fiche (« Fiche n°001 ») :
     // 1. une série qui a un « N° fiche » dans Notion garde ce numéro (Will choisit les premières, et un numéro publié ne bouge plus) ;
     // 2. les autres prennent les numéros libres : d'abord les fiches du socle (sans date) dans un ordre mélangé mais stable,
