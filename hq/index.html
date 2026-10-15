@@ -63,6 +63,17 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .td .x{border:0;background:transparent;color:var(--mut);cursor:pointer;font-size:18px;line-height:1;padding:0 2px}
 .td .x:hover{color:var(--red)}
 #tdmsg{color:var(--mut);font-size:13px;min-height:18px}
+/* Kit officiel */
+.kit{display:grid;gap:16px}
+.snd{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;grid-template-columns:280px 1fr;gap:22px;align-items:start}
+@media(max-width:820px){.snd{grid-template-columns:1fr}}
+.snd video{width:100%;border-radius:12px;background:#000;aspect-ratio:3/4;object-fit:cover}
+.snd h3{margin:0;font:700 30px/1.05 "FGAntonio";text-transform:uppercase}
+.snd .num{font:700 13px "FGInter";letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.snd p{margin:8px 0 0;color:#cfcac2;line-height:1.55;font-size:15px}
+.snd audio{width:100%;margin-top:14px}
+.snd .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.snd small{display:block;color:var(--mut);margin-top:10px;line-height:1.5}
 /* Faire vivre le site */
 .rv{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .rv .card h3{font-size:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
@@ -92,6 +103,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <h1>Le QG</h1>
     <p class="lead">Tout ce qu'il y a à exploiter et à faire, au même endroit. Réservé à toi.</p>
     <div class="tiles">
+      <a class="tile" href="#kit"><span class="k">公式</span><h2>Kit officiel</h2><p>Les éléments officiels du gang à réutiliser partout : sons, et bientôt logos et gabarits.</p><span class="n" id="n-kit">…</span></a>
       <a class="tile" href="#ressources"><span class="k">資料</span><h2>Ressources</h2><p>Scans de magazines, murs d'affiches, chronologies : là où on puise le contenu du site.</p><span class="n" id="n-res">…</span></a>
       <a class="tile" href="#todo"><span class="k">課題</span><h2>To-do</h2><p>Tout ce qu'il reste à faire, à cocher. Ajoute, modifie, supprime.</p><span class="n" id="n-todo">…</span></a>
       <a class="tile" href="#vivre"><span class="k">活気</span><h2>Faire vivre le site</h2><p>Tous les contenus récurrents à poster sur les réseaux, presque tout seuls : ce qui est en place, ce qui reste à faire, les idées.</p><span class="n">Rendez-vous réseaux</span></a>
@@ -103,6 +115,13 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       <a class="tile" href="/studio/semaine/"><h2>Quoi de neuf dans le gang</h2><p>Le carrousel Instagram de fin de semaine, rempli tout seul.</p></a>
       <a class="tile" href="/premium/"><h2>Page Premium</h2><p>Non référencée, accessible par lien seulement.</p></a>
     </div>
+  </section>
+
+  <section class="sec" id="kit">
+    <h1>Kit officiel</h1>
+    <p class="lead">Les éléments officiels de FuryoGang, à réutiliser à tout moment. Chaque son a un numéro et un usage. On en ajoutera d'autres (sons, logos, gabarits).</p>
+    <div class="lbl">Sons</div>
+    <div class="kit" id="kitl"></div>
   </section>
 
   <section class="sec" id="ressources">
@@ -240,6 +259,19 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
         '<div class="acts"><a class="btn" href="' + esc(x.video || x.img) + '" target="_blank" rel="noopener">Ouvrir en HD ↗</a><a class="btn" href="' + esc(x.video || x.img) + '" download>Télécharger</a></div></div></article>';
     }).join("") || '<p class="lead">Aucune ressource pour l\'instant.</p>';
   }).catch(function () { $("#n-res").textContent = "Indisponible"; });
+
+  // Kit officiel
+  fetch("/ressources/kit.json", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+    var l = d.sons || []; $("#n-kit").textContent = l.length + " son" + (l.length > 1 ? "s" : "") + " officiel" + (l.length > 1 ? "s" : "");
+    $("#kitl").innerHTML = l.map(function (x) {
+      return '<article class="snd">' + (x.exemple ? '<video src="' + esc(x.exemple) + '" poster="' + esc(x.poster || "") + '" controls playsinline preload="none"></video>' : "<div></div>") + '<div>' +
+        '<span class="num">Son n°' + esc(x.numero) + " · " + esc(x.statut) + "</span><h3>" + esc(x.nom) + "</h3>" +
+        '<div class="meta">' + (x.associe || []).map(function (a) { return '<span class="pill r">' + esc(a) + "</span>"; }).join("") + '<span class="pill">' + esc(x.duree) + "</span></div>" +
+        "<p>" + esc(x.desc) + "</p>" + '<audio controls preload="none" src="' + esc(x.fichiers.mp3) + '"></audio>' +
+        "<small><b>Calage :</b> " + esc(x.calage) + "</small><small>" + esc(x.droits) + "</small>" +
+        '<div class="acts" style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><a class="btn r" href="' + esc(x.fichiers.mp3) + '" download>Télécharger le MP3</a><a class="btn" href="' + esc(x.fichiers.wav) + '" download>WAV (qualité max)</a>' + (x.exemple ? '<a class="btn" href="' + esc(x.exemple) + '" download>Vidéo d\'exemple</a>' : "") + "</div></div></article>";
+    }).join("");
+  }).catch(function () { $("#n-kit").textContent = "Indisponible"; });
 
   // To-do
   var items = [], filtre = "Tout";

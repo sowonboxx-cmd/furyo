@@ -1,0 +1,25 @@
+{
+  "maj": "2026-10-15",
+  "sons": [
+    {
+      "id": "son-01",
+      "numero": 1,
+      "nom": "Son n°1 · Sortie d'une couverture",
+      "statut": "Officiel",
+      "associe": [
+        "Sorties de tomes",
+        "Couvertures dévoilées"
+      ],
+      "duree": "4 s",
+      "desc": "Piano doux et feutré sur une nappe légère, en ré mineur : une note grave à l'apparition de la couverture, un petit arpège qui monte pendant que le numéro et le titre japonais arrivent, deux notes pour le titre et la date, puis une cloche et un scintillement au moment du reflet sur la couverture. Calme, classe, sans cliché asiatique : il va avec toutes les séries.",
+      "calage": "0 s cercle rouge · 0,35 s couverture · 1 s numéro et titre japonais · 1,5 s titre, auteur, drapeau et date · 2,9 s reflet · fin en fondu à 4 s",
+      "fichiers": {
+        "mp3": "/ressources/kit/son-01-sortie-couverture.mp3",
+        "wav": "/ressources/kit/son-01-sortie-couverture.wav"
+      },
+      "exemple": "/ressources/kit/exemple-sortie-couverture-crows-t08.mp4",
+      "droits": "Composé et généré pour FuryoGang (15/10/2026), libre de droits pour toutes les publications du site et des réseaux.",
+      "poster": "/ressources/kit/exemple-sortie-couverture-crows-t08.jpg"
+    }
+  ]
+}
