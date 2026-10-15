@@ -7,7 +7,7 @@ import { isAdmin } from "../lib/admin.js";
 
 const OFFICIEL = "furyogang.com";
 const A_REDIRIGER = new Set(["furyo.pages.dev", "www.furyogang.com"]);
-const PRIVE = /^\/(admin|studio|profil|membres-fiche)(\/|$)/;
+const PRIVE = /^\/(admin|studio|profil|membres-fiche|hq)(\/|$)/;
 
 export async function onRequest({ request, next, env }) {
   const url = new URL(request.url);
@@ -16,9 +16,9 @@ export async function onRequest({ request, next, env }) {
     url.hostname = OFFICIEL; url.protocol = "https:"; url.port = "";
     return Response.redirect(url.toString(), 301);
   }
-  // /ressources/ : documents de travail de Will (scans de magazines, murs d'affiches) pour trouver des idées de contenu.
+  // /hq/ : le QG de Will (ressources, to-do, projets). /ressources/ : documents de travail de Will (scans de magazines, murs d'affiches) pour trouver des idées de contenu.
   // Réservés aux admins connectés, jamais indexés (Will, 15/10/2026).
-  if (url.pathname.startsWith("/ressources/")) {
+  if (url.pathname.startsWith("/ressources/") || url.pathname === "/hq" || url.pathname.startsWith("/hq/")) {
     if (!(await isAdmin(request, env).catch(() => false))) return new Response("Introuvable", { status: 404, headers: { "x-robots-tag": "noindex" } });
     const r = await next(); const o = new Response(r.body, r); o.headers.set("x-robots-tag", "noindex, nofollow"); o.headers.set("cache-control", "private, max-age=3600"); return o;
   }

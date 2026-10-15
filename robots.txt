@@ -3,6 +3,7 @@ Allow: /
 Disallow: /admin/
 Disallow: /studio/
 Disallow: /ressources/
+Disallow: /hq/
 Disallow: /profil/
 Disallow: /api/admin/
 Disallow: /api/auth/
