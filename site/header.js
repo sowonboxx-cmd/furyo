@@ -385,6 +385,8 @@ a("col", "/ma-collection/", "Ma collection", 1) +
       '<a class="adm-b j" href="/admin/#sorties"><span><strong>Sorties du jour</strong><small>' + (SJ.n ? [SJ.fr ? SJ.fr + " France" : "", SJ.jp ? SJ.jp + " Japon" : ""].filter(Boolean).join(" · ") + " à poster" : "Rien à poster pour l'instant") + '</small></span>' + (SJ.n ? '<em>' + SJ.n + '</em>' : '<span aria-hidden="true">→</span>') + '</a>' +
       '<a class="adm-b" href="/admin/#couvertures"><span><strong>Couvertures manquantes</strong><small>Les tomes parus sans couverture</small></span><span aria-hidden="true">→</span></a>' +
       '<a class="adm-b" href="/admin/"><span><strong>Back-office</strong><small>Base mangas, fiches, réglages</small></span><span aria-hidden="true">→</span></a>' +
+      // HQ, le QG de Will : ressources, to-do, promo, kit officiel (Will, 15/10/2026).
+      '<a class="adm-b" href="/hq/"><span><strong>HQ</strong><small>Ressources, to-do, promo, kit officiel</small></span><span aria-hidden="true" style="font:900 15px \'Noto Sans JP\',sans-serif;color:#BC002D">本部</span></a>' +
       // Statistiques Google (Search Console), réservées à l'admin (Will, 07/10/2026).
       '<a class="adm-b" href="/admin/#stats"><span><strong>Statistiques</strong><small>Clics et recherches Google</small></span><span aria-hidden="true">→</span></a>' : "") +
       // Communauté (Will, 07/10/2026) : réseaux, classement des collections, membres.
