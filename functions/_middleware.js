@@ -3,17 +3,24 @@
 // dans Notion continuent de marcher. Les déploiements de test (xxx.furyo.pages.dev) ne sont pas touchés.
 // Ensuite, chaque page HTML reçoit ses balises de référencement (voir lib/seo.js).
 import { SITE, balises, infosPage, jsonSite } from "../lib/seo.js";
+import { isAdmin } from "../lib/admin.js";
 
 const OFFICIEL = "furyogang.com";
 const A_REDIRIGER = new Set(["furyo.pages.dev", "www.furyogang.com"]);
 const PRIVE = /^\/(admin|studio|profil|membres-fiche)(\/|$)/;
 
-export async function onRequest({ request, next }) {
+export async function onRequest({ request, next, env }) {
   const url = new URL(request.url);
   if (A_REDIRIGER.has(url.hostname) && (request.method === "GET" || request.method === "HEAD")
       && !url.pathname.startsWith("/api/") && !url.pathname.startsWith("/couvertures/")) {
     url.hostname = OFFICIEL; url.protocol = "https:"; url.port = "";
     return Response.redirect(url.toString(), 301);
+  }
+  // /ressources/ : documents de travail de Will (scans de magazines, murs d'affiches) pour trouver des idées de contenu.
+  // Réservés aux admins connectés, jamais indexés (Will, 15/10/2026).
+  if (url.pathname.startsWith("/ressources/")) {
+    if (!(await isAdmin(request, env).catch(() => false))) return new Response("Introuvable", { status: 404, headers: { "x-robots-tag": "noindex" } });
+    const r = await next(); const o = new Response(r.body, r); o.headers.set("x-robots-tag", "noindex, nofollow"); o.headers.set("cache-control", "private, max-age=3600"); return o;
   }
   const res = await next();
   if (request.method !== "GET" || url.pathname.startsWith("/api/") || !(res.headers.get("content-type") || "").includes("text/html")) return res;
