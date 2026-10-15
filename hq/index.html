@@ -136,6 +136,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       <div class="card"><h3>Les nouvelles fiches <span class="st ok">En place</span></h3><p>En fin de semaine : « Tu les as dans ta collection ? Inscris-toi pour avoir ta collection FuryoGang. » C'est une image du studio « Quoi de neuf ».</p></div>
       <div class="card"><h3>Le classement du mois <span class="st ko">À construire</span></h3><p>Qui a le plus de mangas : la compétition du gang. Variantes possibles par éditeur, Japon / France ou par série. Le classement général existe déjà ; les variantes sont à construire.</p></div>
       <div class="card"><h3>Mettre des membres en avant <span class="st ko">À construire</span></h3><p>Le plus gros collectionneur, le plus gros contributeur, les nouveaux à remercier, les anciens fidèles. Pseudos publics seulement, et il faut d'abord la case « Ne pas me citer sur les réseaux » dans le profil.</p></div>
+      <div class="card"><h3>Présentations manga en vidéo <span class="st id">2027 ou quand j'ai le temps</span></h3><p>Une présentation vidéo par semaine, basée sur les fiches : ce qu'est le manga, l'auteur, l'ambiance, en illustrations animées avec musique (modèle : la vidéo Riku-Do dans Ressources). Faite avec l'IA, sans staff. Pensée mobile d'abord (9:16 pour Instagram, TikTok et X), avec une version 16:9 pour le site et YouTube. Chaque fiche aura sa vidéo.</p><p><a class="btn" href="#ressources">Voir le modèle</a></p></div>
       <div class="card"><h3>Les plus populaires <span class="st id">Idée de Will</span></h3><p>Les news les plus lues, les séries les plus populaires, les séries les plus ajoutées aux collections. À glisser dans le récap quand il y a de la place.</p></div>
     </div>
 
@@ -231,12 +232,12 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   fetch("/ressources/index.json", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
     var l = d.items || []; $("#n-res").textContent = l.length + " ressource" + (l.length > 1 ? "s" : "");
     $("#res").innerHTML = l.map(function (x) {
-      return '<article class="rc"><a class="im" href="' + esc(x.img) + '" target="_blank" rel="noopener" style="background-image:url(\'' + esc(x.img) + '\')"></a><div class="in">' +
+      return '<article class="rc">' + (x.video ? '<video class="im" src="' + esc(x.video) + '" poster="' + esc(x.img) + '" controls preload="none" playsinline style="width:100%;aspect-ratio:16/10;background:#000;object-fit:cover"></video>' : '<a class="im" href="' + esc(x.img) + '" target="_blank" rel="noopener" style="background-image:url(\'' + esc(x.img) + '\')"></a>') + '<div class="in">' +
         '<div class="meta"><span class="pill r">' + esc(x.type) + "</span>" + (x.pour || []).map(function (p) { return '<span class="pill">' + esc(p) + "</span>"; }).join("") + "</div>" +
         "<h3>" + esc(x.titre) + "</h3><p>" + esc(x.desc) + "</p>" +
         (x.titres && x.titres.length ? "<details><summary>" + x.titres.length + " titres repérés</summary><ul>" + x.titres.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ul></details>" : "") +
         (x.idees && x.idees.length ? "<details><summary>Idées de contenu</summary><ul>" + x.idees.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ul></details>" : "") +
-        '<div class="acts"><a class="btn" href="' + esc(x.img) + '" target="_blank" rel="noopener">Ouvrir en HD ↗</a><a class="btn" href="' + esc(x.img) + '" download>Télécharger</a></div></div></article>';
+        '<div class="acts"><a class="btn" href="' + esc(x.video || x.img) + '" target="_blank" rel="noopener">Ouvrir en HD ↗</a><a class="btn" href="' + esc(x.video || x.img) + '" download>Télécharger</a></div></div></article>';
     }).join("") || '<p class="lead">Aucune ressource pour l\'instant.</p>';
   }).catch(function () { $("#n-res").textContent = "Indisponible"; });
 

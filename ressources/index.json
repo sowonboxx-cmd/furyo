@@ -2,44 +2,191 @@
   "maj": "2026-10-15",
   "items": [
     {
-      "id": "bubka-100", "img": "/ressources/yankee-manga-100-bubka.jpg", "ajout": "2026-10-15",
+      "id": "bubka-100",
+      "img": "/ressources/yankee-manga-100-bubka.jpg",
+      "ajout": "2026-10-15",
       "titre": "BUBKA · « ヤンキーマンガ100大集合 »",
-      "type": "Magazine", "pour": ["Base mangas", "Réseaux"],
+      "type": "Magazine",
+      "pour": [
+        "Base mangas",
+        "Réseaux"
+      ],
       "desc": "Double page du magazine BUBKA : 100 mangas yankee classés par genre (sérieux 58, comédie 22, héroïnes 9, faits réels 7, romance 4), top bagarres et top persos préférés des yankees.",
-      "titres": ["BE-BOP-HIGHSCHOOL", "ろくでなしBLUES", "今日から俺は!!", "湘南爆走族", "湘南純愛組!", "カメレオン", "クローズ", "BAD BOYS", "シャコタン☆ブギ", "ヤンキー烈風隊", "疾風伝説 特攻の拓", "エンジェル伝説", "押忍!!空手部", "横浜名物 男片山組!", "工業哀歌バレーボーイズ", "ホットロード"],
-      "idees": ["Carrousel « Les 100 mangas yankee de BUBKA : combien tu en as ? »", "Top persos des années 90 contre un vote du gang aujourd'hui"]
+      "titres": [
+        "BE-BOP-HIGHSCHOOL",
+        "ろくでなしBLUES",
+        "今日から俺は!!",
+        "湘南爆走族",
+        "湘南純愛組!",
+        "カメレオン",
+        "クローズ",
+        "BAD BOYS",
+        "シャコタン☆ブギ",
+        "ヤンキー烈風隊",
+        "疾風伝説 特攻の拓",
+        "エンジェル伝説",
+        "押忍!!空手部",
+        "横浜名物 男片山組!",
+        "工業哀歌バレーボーイズ",
+        "ホットロード"
+      ],
+      "idees": [
+        "Carrousel « Les 100 mangas yankee de BUBKA : combien tu en as ? »",
+        "Top persos des années 90 contre un vote du gang aujourd'hui"
+      ]
     },
     {
-      "id": "films-affiches", "img": "/ressources/films-dramas-yankee-affiches.jpg", "ajout": "2026-10-15",
+      "id": "films-affiches",
+      "img": "/ressources/films-dramas-yankee-affiches.jpg",
+      "ajout": "2026-10-15",
       "titre": "Mur d'affiches · films et dramas yankee",
-      "type": "Films / dramas", "pour": ["À l'écran"],
+      "type": "Films / dramas",
+      "pour": [
+        "À l'écran"
+      ],
       "desc": "Environ 200 affiches de films, V-cinema et dramas live yankee / furyō. Source principale pour la rubrique À l'écran.",
-      "titres": ["クローズZERO / ZERO II / EXPLODE", "HiGH&LOW THE MOVIE 1-3, THE RED RAIN", "ガチバン (série V-cinema)", "ヤンキー女子高生", "THE 暴走族", "ブラックエンペラー", "喧嘩の極意 1-6", "BE-BOP-HIGHSCHOOL (live)", "ろくでなしBLUES 1-2 (live)", "湘南純愛組! (live)", "デメキン", "GTO", "ドロップ", "パッチギ!", "GO", "ごくせん", "ホットロード", "下妻物語", "隣人13号"],
-      "idees": ["Ajouter d'abord les adaptations des séries déjà en ligne (Demekin, Rokudenashi Blues, BE-BOP, Valley Boys)"]
+      "titres": [
+        "クローズZERO / ZERO II / EXPLODE",
+        "HiGH&LOW THE MOVIE 1-3, THE RED RAIN",
+        "ガチバン (série V-cinema)",
+        "ヤンキー女子高生",
+        "THE 暴走族",
+        "ブラックエンペラー",
+        "喧嘩の極意 1-6",
+        "BE-BOP-HIGHSCHOOL (live)",
+        "ろくでなしBLUES 1-2 (live)",
+        "湘南純愛組! (live)",
+        "デメキン",
+        "GTO",
+        "ドロップ",
+        "パッチギ!",
+        "GO",
+        "ごくせん",
+        "ホットロード",
+        "下妻物語",
+        "隣人13号"
+      ],
+      "idees": [
+        "Ajouter d'abord les adaptations des séries déjà en ligne (Demekin, Rokudenashi Blues, BE-BOP, Valley Boys)"
+      ]
     },
     {
-      "id": "chrono-80", "img": "/ressources/furyo-manga-chronologie-1980-1991.jpg", "ajout": "2026-10-15",
+      "id": "chrono-80",
+      "img": "/ressources/furyo-manga-chronologie-1980-1991.jpg",
+      "ajout": "2026-10-15",
       "titre": "« 不良マンガの変遷 » · 1980 → 1991",
-      "type": "Chronologie", "pour": ["Base mangas", "Réseaux"],
+      "type": "Chronologie",
+      "pour": [
+        "Base mangas",
+        "Réseaux"
+      ],
       "desc": "Frise des mangas furyō avec leurs années : des banchō aux tsuppari, puis aux yankee.",
-      "titres": ["BE-BOP-HIGHSCHOOL 1983-2003", "シャコタン☆ブギ 1986-1995", "BADBOYS 1988-1996", "ろくでなしBLUES 1988-1997", "今日から俺は!! 1988-1997", "あいつとララバイ 1981-1989", "湘南爆走族 1982-1987", "バツ&テリー 1982-1987", "たいまんぶるうす 1983-1993", "押忍!!空手部 1985-1996", "ヤンキー烈風隊 1986-1994", "ゴリラーマン 1988-1993"],
-      "idees": ["Carrousel « 40 ans de manga furyō »", "Rendez-vous « Il y a X ans »"]
+      "titres": [
+        "BE-BOP-HIGHSCHOOL 1983-2003",
+        "シャコタン☆ブギ 1986-1995",
+        "BADBOYS 1988-1996",
+        "ろくでなしBLUES 1988-1997",
+        "今日から俺は!! 1988-1997",
+        "あいつとララバイ 1981-1989",
+        "湘南爆走族 1982-1987",
+        "バツ&テリー 1982-1987",
+        "たいまんぶるうす 1983-1993",
+        "押忍!!空手部 1985-1996",
+        "ヤンキー烈風隊 1986-1994",
+        "ゴリラーマン 1988-1993"
+      ],
+      "idees": [
+        "Carrousel « 40 ans de manga furyō »",
+        "Rendez-vous « Il y a X ans »"
+      ]
     },
     {
-      "id": "chrono-92", "img": "/ressources/furyo-manga-chronologie-1992-2003.jpg", "ajout": "2026-10-15",
+      "id": "chrono-92",
+      "img": "/ressources/furyo-manga-chronologie-1992-2003.jpg",
+      "ajout": "2026-10-15",
       "titre": "« 不良マンガの変遷 » · 1992 → 2003",
-      "type": "Chronologie", "pour": ["Base mangas", "Réseaux"],
+      "type": "Chronologie",
+      "pour": [
+        "Base mangas",
+        "Réseaux"
+      ],
       "desc": "Suite de la frise : l'âge d'or Crows, Shonan Junai Gumi, Kamereon, puis WORST, QP, GTO.",
-      "titres": ["クローズ 1990-1998", "湘南純愛組! 1990-1996", "カメレオン 1990-2000", "疾風伝説 特攻の拓 1991-1997", "BØY 1992-1999", "エンジェル伝説 1993-2000", "荒くれKNIGHT 1995-2006", "BADBOYSグレアー 1996-2003", "GTO 1997-2002", "QP 1998-2000", "莫逆家族 1999-2004", "エリートヤンキー三郎 2000-2010", "ナニワトモアレ 2000-2014", "WORST 2001-2013", "爆音列島 2002-2013", "ギャングキング 2003-2013"],
-      "idees": ["Liste « séries à ajouter à la base » en croisant avec Notion"]
+      "titres": [
+        "クローズ 1990-1998",
+        "湘南純愛組! 1990-1996",
+        "カメレオン 1990-2000",
+        "疾風伝説 特攻の拓 1991-1997",
+        "BØY 1992-1999",
+        "エンジェル伝説 1993-2000",
+        "荒くれKNIGHT 1995-2006",
+        "BADBOYSグレアー 1996-2003",
+        "GTO 1997-2002",
+        "QP 1998-2000",
+        "莫逆家族 1999-2004",
+        "エリートヤンキー三郎 2000-2010",
+        "ナニワトモアレ 2000-2014",
+        "WORST 2001-2013",
+        "爆音列島 2002-2013",
+        "ギャングキング 2003-2013"
+      ],
+      "idees": [
+        "Liste « séries à ajouter à la base » en croisant avec Notion"
+      ]
     },
     {
-      "id": "oav-vhs", "img": "/ressources/oav-anime-yankee-vhs.jpg", "ajout": "2026-10-15",
+      "id": "oav-vhs",
+      "img": "/ressources/oav-anime-yankee-vhs.jpg",
+      "ajout": "2026-10-15",
       "titre": "Mur de VHS · OAV et anime yankee",
-      "type": "OAV / anime", "pour": ["À l'écran", "Réseaux"],
+      "type": "OAV / anime",
+      "pour": [
+        "À l'écran",
+        "Réseaux"
+      ],
       "desc": "Jaquettes VHS des adaptations animées des années 80-90 (Toei Video…).",
-      "titres": ["湘南爆走族", "湘南純愛組!", "今日から俺は!!", "ろくでなしBLUES (1993)", "BE-BOP-HIGHSCHOOL", "クローズ", "シャコタン☆ブギ", "ヤンキー烈風隊", "押忍!!空手部", "ぶっちぎり", "カメレオン", "高校鉄拳伝タフ", "バツ&テリー", "エンジェル伝説", "ゴリラーマン", "工業哀歌バレーボーイズ", "ペリカンロード", "硬派銀次郎"],
-      "idees": ["Carrousel nostalgie « Les OAV yankee des années 90 »"]
+      "titres": [
+        "湘南爆走族",
+        "湘南純愛組!",
+        "今日から俺は!!",
+        "ろくでなしBLUES (1993)",
+        "BE-BOP-HIGHSCHOOL",
+        "クローズ",
+        "シャコタン☆ブギ",
+        "ヤンキー烈風隊",
+        "押忍!!空手部",
+        "ぶっちぎり",
+        "カメレオン",
+        "高校鉄拳伝タフ",
+        "バツ&テリー",
+        "エンジェル伝説",
+        "ゴリラーマン",
+        "工業哀歌バレーボーイズ",
+        "ペリカンロード",
+        "硬派銀次郎"
+      ],
+      "idees": [
+        "Carrousel nostalgie « Les OAV yankee des années 90 »"
+      ]
+    },
+    {
+      "id": "presentation-riku-do",
+      "img": "/ressources/presentation-riku-do-exemple.jpg",
+      "video": "/ressources/presentation-riku-do-exemple.mp4",
+      "ajout": "2026-10-15",
+      "titre": "Exemple de présentation vidéo · Riku-Do",
+      "type": "Vidéo (modèle)",
+      "pour": [
+        "Présentations manga",
+        "Réseaux"
+      ],
+      "desc": "Le modèle des présentations vidéo des mangas : 1 minute, intro logo FuryoGang, titre et auteur en bandeau bleu et rouge, illustrations et planches en lents mouvements, crédits © éditeur en bas, logo en haut à droite, musique. Original en 4K 16:9 ; ici une copie 1080p plus légère.",
+      "titres": [
+        "Riku-Do – La rage aux poings (Toshimitsu Matsubara)"
+      ],
+      "idees": [
+        "Une présentation par semaine, à partir des fiches",
+        "Versions 9:16 (Instagram, TikTok, X) et 16:9 (site, YouTube)"
+      ]
     }
   ]
 }
