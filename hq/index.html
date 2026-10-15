@@ -63,6 +63,12 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .td .x{border:0;background:transparent;color:var(--mut);cursor:pointer;font-size:18px;line-height:1;padding:0 2px}
 .td .x:hover{color:var(--red)}
 #tdmsg{color:var(--mut);font-size:13px;min-height:18px}
+/* Faire vivre le site */
+.rv{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.rv .card h3{font-size:22px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.st{font:700 11px "FGInter";letter-spacing:.06em;text-transform:uppercase;padding:5px 9px;border-radius:999px;white-space:nowrap;flex:none}
+.st.ok{background:var(--ok);color:#000}.st.ko{background:#F2B33D;color:#000}.st.id{background:var(--s2);color:var(--cr)}
+.card table{width:100%;border-collapse:collapse;font-size:14px}.card td{padding:10px 8px;border-top:1px solid var(--line);vertical-align:top;color:#cfcac2}.card td:first-child{font-weight:700;color:var(--cr);white-space:nowrap}
 /* Magazine */
 .mag{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
 @media(max-width:820px){.mag{grid-template-columns:1fr}h1{font-size:48px}}
@@ -88,6 +94,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <div class="tiles">
       <a class="tile" href="#ressources"><span class="k">資料</span><h2>Ressources</h2><p>Scans de magazines, murs d'affiches, chronologies : là où on puise le contenu du site.</p><span class="n" id="n-res">…</span></a>
       <a class="tile" href="#todo"><span class="k">課題</span><h2>To-do</h2><p>Tout ce qu'il reste à faire, à cocher. Ajoute, modifie, supprime.</p><span class="n" id="n-todo">…</span></a>
+      <a class="tile" href="#vivre"><span class="k">活気</span><h2>Faire vivre le site</h2><p>Tous les contenus récurrents à poster sur les réseaux, presque tout seuls : ce qui est en place, ce qui reste à faire, les idées.</p><span class="n">Rendez-vous réseaux</span></a>
       <a class="tile" href="#magazine"><span class="k">雑誌</span><h2>FuryoGang Magazine</h2><p>Le magazine du mois pour les Premium : idée, format, inspiration ATOM, étapes.</p><span class="n">Projet en cours</span></a>
     </div>
     <div class="lbl">Raccourcis</div>
@@ -110,6 +117,64 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <form class="add" id="addf"><input id="addt" placeholder="Nouvelle tâche…" autocomplete="off"><select id="addc"></select><button class="btn r" type="submit">Ajouter</button></form>
     <div class="filt" id="filt"></div>
     <div id="tdl"></div><p id="tdmsg"></p>
+  </section>
+
+  <section class="sec" id="vivre">
+    <h1>Faire vivre le site</h1>
+    <p class="lead">Tout ce qui bouge sur le site doit se voir sur les réseaux, pour que les gens se disent « ça vit là-dedans, autant participer ». Ces posts sont faits avec les données du site : ils peuvent sortir presque tout seuls, avec des gabarits. Chaque post finit par un appel à l'action : « Tu l'as dans ta collection ? », « Inscris-toi », « Vote pour la prochaine fiche ».</p>
+
+    <div class="lbl">En place</div>
+    <div class="rv">
+      <div class="card"><h3>Quoi de neuf dans le gang <span class="st ok">En place</span></h3><p>Le carrousel Instagram de fin de semaine (8 images 3:4), rempli tout seul : Japon, France, actus, À l'écran, nouvelles fiches, le gang, la semaine prochaine. Les catégories vides n'apparaissent pas. Les textes se modifient avant de télécharger, et la légende est prête à copier.</p><p><a class="btn r" href="/studio/semaine/">Ouvrir le studio</a></p></div>
+      <div class="card"><h3>Gère. Classe. Domine. <span class="st ko">À valider</span></h3><p>Le carrousel collection (5 images, en version noire, crème ou rouge) et le reel collection. Choisis la version, puis on publie.</p></div>
+    </div>
+
+    <div class="lbl">Les rendez-vous voulus</div>
+    <div class="rv">
+      <div class="card"><h3>Les sorties du mois <span class="st ko">À construire</span></h3><p>Toutes les sorties du mois à venir, France et Japon (« Toutes les sorties de novembre »). Les données du calendrier sont prêtes, il manque le gabarit.</p></div>
+      <div class="card"><h3>La semaine du gang <span class="st ok">En place</span></h3><p>News publiées, nouveaux membres, chapitres sortis au Japon, nouvelles fiches, tomes ajoutés aux collections. C'est le studio « Quoi de neuf ». Une version mensuelle reste à faire.</p></div>
+      <div class="card"><h3>Les nouvelles fiches <span class="st ok">En place</span></h3><p>En fin de semaine : « Tu les as dans ta collection ? Inscris-toi pour avoir ta collection FuryoGang. » C'est une image du studio « Quoi de neuf ».</p></div>
+      <div class="card"><h3>Le classement du mois <span class="st ko">À construire</span></h3><p>Qui a le plus de mangas : la compétition du gang. Variantes possibles par éditeur, Japon / France ou par série. Le classement général existe déjà ; les variantes sont à construire.</p></div>
+      <div class="card"><h3>Mettre des membres en avant <span class="st ko">À construire</span></h3><p>Le plus gros collectionneur, le plus gros contributeur, les nouveaux à remercier, les anciens fidèles. Pseudos publics seulement, et il faut d'abord la case « Ne pas me citer sur les réseaux » dans le profil.</p></div>
+      <div class="card"><h3>Les plus populaires <span class="st id">Idée de Will</span></h3><p>Les news les plus lues, les séries les plus populaires, les séries les plus ajoutées aux collections. À glisser dans le récap quand il y a de la place.</p></div>
+    </div>
+
+    <div class="lbl">Idées en plus</div>
+    <div class="rv">
+      <div class="card"><h3>Collections</h3><ul>
+        <li>Le tome le plus ajouté de la semaine.</li>
+        <li>La série la plus suivie (bouton « + » des fiches).</li>
+        <li>« 34 % du gang a CROWS dans sa collection. Et toi ? »</li>
+        <li>La série complète la plus rare.</li>
+        <li>Le total de tomes du gang, avec un palier fêté à chaque cap.</li>
+      </ul></div>
+      <div class="card"><h3>Sorties</h3><ul>
+        <li>Le compte à rebours : « J-3 avant CROWS T.09 ».</li>
+        <li>« Il y a X ans » : anniversaires de tome 1 ou de fin de série (voir la chronologie dans Ressources).</li>
+        <li>Le planning prépub de la semaine.</li>
+        <li>Le collage des couvertures dévoilées de la semaine.</li>
+      </ul></div>
+      <div class="card"><h3>Communauté</h3><ul>
+        <li>Le vote de la semaine (choix de la prochaine fiche).</li>
+        <li>La question du gang : un sondage simple.</li>
+        <li>La carte collection d'un membre, qu'il poste lui-même.</li>
+        <li>Les badges débloqués dans la semaine.</li>
+        <li>Les paliers du site : 100 fiches, 500 membres.</li>
+        <li>Plus tard, le mur des Soutiens fondateurs (avec leur accord).</li>
+      </ul></div>
+      <div class="card"><h3>Puisés dans les Ressources</h3><ul>
+        <li>« 40 ans de manga furyō » à partir de la chronologie 1980-2003.</li>
+        <li>« Les 100 mangas yankee de BUBKA : combien tu en as ? »</li>
+        <li>Nostalgie : « Les OAV yankee des années 90 ».</li>
+      </ul><p><a class="btn" href="#ressources">Voir les ressources</a></p></div>
+    </div>
+
+    <div class="lbl">Rythme conseillé (jamais annoncé au public)</div>
+    <div class="card"><table>
+      <tr><td>Début de mois</td><td>Les sorties du mois, le classement du mois précédent, les membres mis en avant. Plus tard, FuryoGang Magazine.</td></tr>
+      <tr><td>Fin de semaine</td><td>« Quoi de neuf dans le gang ? » (carrousel) et le vote de la semaine.</td></tr>
+      <tr><td>Au fil de l'eau</td><td>Les nouveaux membres remerciés, les paliers, les comptes à rebours, les anniversaires.</td></tr>
+    </table></div>
   </section>
 
   <section class="sec" id="magazine">
