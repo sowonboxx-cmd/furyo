@@ -29,7 +29,7 @@ async function catalogue(env, waitUntil) {
   const items = [];
   for (const r of sRows) {
     const p = r.properties || {}, id = nid(r.id), eds = (parSerie[id] || []).sort((a, b) => PAYS_ORDRE(a.pays) - PAYS_ORDRE(b.pays));
-    if (!eds.length || !text(p["SERIES"])) continue;
+    if (!eds.length || !text(p["SERIES"]) || /^\[À SUPPRIMER\]/i.test(text(p["SERIES"]))) continue;
     const cover = (eds.map(e => cov[e.id]).find(Boolean)) || text(p["Couverture T1"]);
     items.push({ id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), cover,
       genres: list(p["Genre"]), type: text(p["Type"]), y1: num(p["Année Début"]), pays: [...new Set(eds.map(e => e.pays))], fiche: estVisible(p) ? 1 : 0,
