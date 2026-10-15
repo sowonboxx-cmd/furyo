@@ -2,6 +2,23 @@
   "maj": "2026-10-15",
   "items": [
     {
+      "id": "promo-ma-collection",
+      "img": "/ressources/promo/promo-ma-collection-reel.jpg",
+      "video": "/ressources/promo/promo-ma-collection-reel.mp4",
+      "ajout": "2026-10-15",
+      "titre": "Promotion · Ma collection (reel final)",
+      "type": "Élément promo",
+      "pour": [
+        "Réseaux",
+        "Ma collection"
+      ],
+      "desc": "Le reel validé pour la promo de la collection (9:16, 24,2 s, avec musique). Aussi rangé dans HQ > Éléments promo, avec le carrousel de la même campagne.",
+      "titres": [],
+      "idees": [
+        "Prochaines campagnes : Promotion · News, Promotion · Au Japon"
+      ]
+    },
+    {
       "id": "bubka-100",
       "img": "/ressources/yankee-manga-100-bubka.jpg",
       "ajout": "2026-10-15",

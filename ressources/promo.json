@@ -1,0 +1,23 @@
+{
+  "maj": "2026-10-15",
+  "campagnes": [
+    {
+      "id": "ma-collection",
+      "titre": "Promotion · Ma collection",
+      "sous": "Gère. Classe. Domine. — la collection des mangas de voyous",
+      "statut": "Validé",
+      "valide": "2026-10-15",
+      "lancement": "Semaine du 19 octobre 2026",
+      "reseaux": ["Instagram (reel + carrousel)", "X", "TikTok"],
+      "desc": "Fait la promo de la page Ma collection : gérer ses tomes (possédés, lus, envie de lire, panier), les classer et dominer le classement du gang. Fin sur furyogang.com/ma-collection et le logo.",
+      "elements": [
+        { "type": "video", "nom": "Reel · Ma collection (version finale)", "format": "9:16 · 1080 × 1920 · 24,2 s · musique de la vidéo Riku-Do", "fichier": "/ressources/promo/promo-ma-collection-reel.mp4", "poster": "/ressources/promo/promo-ma-collection-reel.jpg",
+          "notes": "Validé par Will le 15/10/2026 (« reel final v3 »). Pour une retouche : renvoyer la vidéo à Claude, qui garde le projet et la refait." },
+        { "type": "images", "nom": "Carrousel · Ma collection (version noire)", "format": "3:4 · 1080 × 1440 · 5 images", "fichier": "/ressources/promo/promo-ma-collection-carrousel.zip",
+          "images": ["/ressources/promo/promo-ma-collection-carrousel-1.jpg", "/ressources/promo/promo-ma-collection-carrousel-2.jpg", "/ressources/promo/promo-ma-collection-carrousel-3.jpg", "/ressources/promo/promo-ma-collection-carrousel-4.jpg", "/ressources/promo/promo-ma-collection-carrousel-5.jpg"],
+          "notes": "Validé le 15/10/2026. Les versions crème et rouge ont été écartées." }
+      ]
+    }
+  ],
+  "a_venir": ["Promotion · News", "Promotion · Au Japon"]
+}

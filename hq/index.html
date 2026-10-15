@@ -63,6 +63,17 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .td .x{border:0;background:transparent;color:var(--mut);cursor:pointer;font-size:18px;line-height:1;padding:0 2px}
 .td .x:hover{color:var(--red)}
 #tdmsg{color:var(--mut);font-size:13px;min-height:18px}
+/* Éléments promo */
+.camp{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:16px}
+.camp h3{margin:4px 0 0;font:700 34px/1.05 "FGAntonio";text-transform:uppercase}
+.camp .sous{color:var(--mut);margin-top:4px}
+.camp .meta{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.camp>p{color:#cfcac2;line-height:1.55;margin:0 0 16px}
+.els{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.el{background:var(--s2);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.el video{width:100%;max-height:520px;border-radius:10px;background:#000;object-fit:contain}
+.el .imgs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.el .imgs img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px}
+.el b{font:700 20px "FGAntonio";text-transform:uppercase}.el small{color:var(--mut);line-height:1.5}
 /* Kit officiel */
 .kit{display:grid;gap:16px}
 .snd{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;grid-template-columns:280px 1fr;gap:22px;align-items:start}
@@ -103,6 +114,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <h1>Le QG</h1>
     <p class="lead">Tout ce qu'il y a à exploiter et à faire, au même endroit. Réservé à toi.</p>
     <div class="tiles">
+      <a class="tile" href="#promo"><span class="k">宣伝</span><h2>Éléments promo</h2><p>Les vidéos et visuels validés pour la promo sur les réseaux, campagne par campagne, à télécharger à tout moment.</p><span class="n" id="n-promo">…</span></a>
       <a class="tile" href="#kit"><span class="k">公式</span><h2>Kit officiel</h2><p>Les éléments officiels du gang à réutiliser partout : sons, et bientôt logos et gabarits.</p><span class="n" id="n-kit">…</span></a>
       <a class="tile" href="#ressources"><span class="k">資料</span><h2>Ressources</h2><p>Scans de magazines, murs d'affiches, chronologies : là où on puise le contenu du site.</p><span class="n" id="n-res">…</span></a>
       <a class="tile" href="#todo"><span class="k">課題</span><h2>To-do</h2><p>Tout ce qu'il reste à faire, à cocher. Ajoute, modifie, supprime.</p><span class="n" id="n-todo">…</span></a>
@@ -115,6 +127,12 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       <a class="tile" href="/studio/semaine/"><h2>Quoi de neuf dans le gang</h2><p>Le carrousel Instagram de fin de semaine, rempli tout seul.</p></a>
       <a class="tile" href="/premium/"><h2>Page Premium</h2><p>Non référencée, accessible par lien seulement.</p></a>
     </div>
+  </section>
+
+  <section class="sec" id="promo">
+    <h1>Éléments promo</h1>
+    <p class="lead">Ce qui est validé pour faire la promo sur les réseaux, campagne par campagne. Tout se télécharge. Pour une retouche, renvoie la vidéo à Claude.</p>
+    <div id="promol"></div>
   </section>
 
   <section class="sec" id="kit">
@@ -259,6 +277,21 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
         '<div class="acts"><a class="btn" href="' + esc(x.video || x.img) + '" target="_blank" rel="noopener">Ouvrir en HD ↗</a><a class="btn" href="' + esc(x.video || x.img) + '" download>Télécharger</a></div></div></article>';
     }).join("") || '<p class="lead">Aucune ressource pour l\'instant.</p>';
   }).catch(function () { $("#n-res").textContent = "Indisponible"; });
+
+  // Éléments promo
+  fetch("/ressources/promo.json", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+    var l = d.campagnes || []; $("#n-promo").textContent = l.length + " campagne" + (l.length > 1 ? "s" : "");
+    $("#promol").innerHTML = l.map(function (c) {
+      return '<article class="camp"><span class="pill r">' + esc(c.statut) + (c.valide ? " · " + esc(c.valide.split("-").reverse().join("/")) : "") + "</span><h3>" + esc(c.titre) + '</h3><div class="sous">' + esc(c.sous) + "</div>" +
+        '<div class="meta">' + (c.lancement ? '<span class="pill">Lancement : ' + esc(c.lancement) + "</span>" : "") + (c.reseaux || []).map(function (x) { return '<span class="pill">' + esc(x) + "</span>"; }).join("") + "</div><p>" + esc(c.desc) + '</p><div class="els">' +
+        (c.elements || []).map(function (e) {
+          var media = e.type === "video" ? '<video src="' + esc(e.fichier) + '" poster="' + esc(e.poster || "") + '" controls playsinline preload="none"></video>'
+            : '<div class="imgs">' + (e.images || []).map(function (u) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img src="' + esc(u) + '" alt=""></a>'; }).join("") + "</div>";
+          return '<div class="el">' + media + "<b>" + esc(e.nom) + "</b><small>" + esc(e.format) + "</small>" + (e.notes ? "<small>" + esc(e.notes) + "</small>" : "") +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn r" href="' + esc(e.fichier) + '" download>' + (e.type === "video" ? "Télécharger la vidéo" : "Télécharger les images (ZIP)") + "</a></div></div>";
+        }).join("") + "</div></article>";
+    }).join("") + ((d.a_venir || []).length ? '<div class="lbl">À venir</div><div class="meta" style="display:flex;gap:6px;flex-wrap:wrap">' + d.a_venir.map(function (x) { return '<span class="pill">' + esc(x) + "</span>"; }).join("") + "</div>" : "");
+  }).catch(function () { $("#n-promo").textContent = "Indisponible"; });
 
   // Kit officiel
   fetch("/ressources/kit.json", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
