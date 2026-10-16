@@ -798,7 +798,7 @@ function vopen(id){
     <div class="tools"><button data-vcp>${ICO_COPY}Copier</button>${!tomeIt && news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}<span class="cnt" id="vcnt"></span></div>
     ${tomeIt && i.image ? `<div class="vimg"><div class="seg" role="group" aria-label="Thème"><button data-vth="creme" aria-pressed="true">Crème</button><button data-vth="sombre" aria-pressed="false">Sombre</button></div>
       <button data-vimg="post">${ICO_DL}Post 3:4</button><button data-vimg="story">${ICO_DL}Story 9:16</button></div>` : ""}
-    <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">Source officielle ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">Source relais ↗</a>` : ""}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
+    <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">${pp ? "Numéro du magazine" : "Source officielle"} ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">${pp ? "Page de la série" : "Source relais"} ↗</a>` : ""}${(i.liens || []).map(l => `<a href="${esc(l.u)}" target="_blank" rel="noopener">${esc(l.n)} ↗</a>`).join("")}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
     <div class="act">${i.enLigne ? `
       <button class="go" data-vsave style="grid-column:1/3">Enregistrer les changements</button>
       <button class="rej" data-vs="Vu" style="grid-column:1/3">Retirer du site</button>` : `

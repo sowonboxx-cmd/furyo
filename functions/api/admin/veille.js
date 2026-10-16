@@ -76,6 +76,7 @@ async function construire(request, env) {
       editeurs: rel(p["Éditeurs (fiches)"]), auteurs: rel(p["Auteurs"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
       // Comptes X notés directement sur la fiche (souvent remplis alors que la relation Auteurs est vide).
       twX: [text(p["Twitter Author"]), text(p["Twitter Artist"]), text(p["Twitter Serie"])].map(handle).filter(Boolean),
+      essai: text(p["Lecture essai (試し読み)"]),
     };
   }
   const items = rows.map(r => {
@@ -118,7 +119,7 @@ async function construire(request, env) {
   ]) : [[], []];
   const auteurs = {};
   for (const a of auRows) { const q = a.properties || {};
-    auteurs[nid(a.id)] = { x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])) }; }
+    auteurs[nid(a.id)] = { x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])), site: text(q["Site officiel"]) }; }
   const editeurs = {};
   for (const e of edRows) { const q = e.properties || {};
     editeurs[nid(e.id)] = { nom: text(q["Nom"]), type: text(q["Type"]), x: handle(text(q["X (Twitter)"])), ig: handle(text(q["Instagram"])), tt: handle(text(q["TikTok"])) }; }
@@ -171,6 +172,17 @@ async function construire(request, env) {
     const aut = i.serie.auteurs.map(k => auteurs[nid(k)]).filter(Boolean);
     const mag = eds2.find(e => /Magazine|Plateforme/.test(e.type) && e.x);
     i.comptes = { x: uniq([...aut.map(c => c.x), ...(i.serie.twX || [])]), xFR: ed && ed.x ? [ed.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), ed && ed.ig]), tt: uniq([...aut.map(c => c.tt), ed && ed.tt]) };
+  }
+  // Liens directs pour vérifier (Will, 16/10/2026) : lecture en ligne, lecture d'essai, site du magazine / de la plateforme.
+  for (const i of items) {
+    const L = [], vu = new Set([i.src, i.relais].filter(Boolean));
+    const add = (n, u) => { if (u && /^https?:\/\//.test(u) && !vu.has(u)) { vu.add(u); L.push({ n, u }); } };
+    if (i.prepub) add("Lecture en ligne", i.prepub.lire);
+    if (i.serie) {
+      add("Lecture d'essai", i.serie.essai);
+      for (const e of i.serie.editeurs.map(k => editeurs[k]).filter(e => e && /Magazine|Plateforme/.test(e.type))) add(e.nom, e.site);
+    }
+    i.liens = L;
   }
   // Ordre chronologique de repérage (date où la veille a trouvé l'info), jamais la date de sortie (Will, 04/10/2026).
   items.sort((a, b) => String(b.creeT || b.cree).localeCompare(String(a.creeT || a.cree)));
