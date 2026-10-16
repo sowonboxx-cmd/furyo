@@ -904,11 +904,13 @@ function choixX(aut, fr, tient, mag){
   return f;
 }
 function postX(i, rs){
-  const s = i.serie || {}, c = i.comptes || {};
+  const s = i.serie || {}, c = i.comptes || {}, t = i.tome || {};
+  // Sortie française : l'éditeur est @cité dans la ligne « Sortie … chez @… » et n'est plus répété en bas (Will, 16/10/2026).
+  const edAt = t.pays === "France" && t.pub && (c.xFR || [])[0] ? "@" + c.xFR[0] : "";
   // Règle simplifiée (Will, 03/10/2026) : le résumé directement, sans « Résumé : », et plus de ligne « Fiche complète ».
   // Couvertures : plus de « Couverture française / japonaise » en tête du post X, directement le titre et le tome (Will, 16/10/2026).
-  const base = `${/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)}${i.titre}\n${ligneSortie(i)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
-  const hs = choixX(c.x, c.xFR, h => poidsX(base + "\n" + h.map(x => "@" + x).join(" · ")) <= 280, c.xMag);
+  const base = `${/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)}${i.titre}\n${ligneSortie(i, edAt)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
+  const hs = choixX(c.x, edAt ? [] : c.xFR, h => poidsX(base + "\n" + h.map(x => "@" + x).join(" · ")) <= 280, c.xMag);
   return base + (hs.length ? "\n" + hs.map(h => "@" + h).join(" · ") : "");
 }
 // Résumé sortie proposé quand le champ est vide : la plus longue suite de phrases entières qui tient dans le post X
@@ -919,7 +921,7 @@ function resumeAuto(i){
   const u = [...new Set(cands)].sort((a, b) => b.length - a.length);
   if (!u.length) return "";
   // On cherche d'abord le résumé le plus long qui laisse passer tous les comptes retenus sur la ligne X, puis avec moins d'auteurs.
-  const c = i.comptes || {}, plein = choixX(c.x, c.xFR, () => true, c.xMag);
+  const c = i.comptes || {}, t = i.tome || {}, plein = choixX(c.x, t.pays === "France" && t.pub ? [] : c.xFR, () => true, c.xMag);
   for (let k = plein.length; k >= 0; k--) {
     const ok = u.find(r => { const p = postX(i, r); return poidsX(p) <= 280 && (p.match(/\n(@\S.*)$/) || ["", ""])[1].split(" · ").filter(Boolean).length >= k; });
     if (ok) return ok;
@@ -928,13 +930,13 @@ function resumeAuto(i){
 }
 const tagOf = s => "#" + String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9 ]/g, " ").split(" ").filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join("");
 // Ligne de sortie ; « Dernier tome. » sur sa propre ligne (rien pour un premier tome : règle de Will, 03/10/2026).
-function ligneSortie(i){
+function ligneSortie(i, chez){
   const t = i.tome || {}, d = i.sortie;
   let q = "";
   // Le jour même : « Sortie aujourd'hui chez … » (Will, 09/10/2026).
   const auj = d && d === new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10);
   if (d && !auj) { const o = new Date(d + "T12:00:00"); q = o.toLocaleDateString("fr-FR", { day: "numeric", month: "long", ...(o.getFullYear() !== new Date().getFullYear() ? { year: "numeric" } : {}) }); q = q.replace(/^1 /, "1er "); }
-  return (auj ? "Sortie aujourd'hui" : q ? `Sortie le ${q}` : "Sortie") + (t.pub ? ` chez ${t.pub}` : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
+  return (auj ? "Sortie aujourd'hui" : q ? `Sortie le ${q}` : "Sortie") + (chez || t.pub ? ` chez ${chez || t.pub}` : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
 }
 // Catégorie en première ligne des posts : la même que sur le site et dans Notion (Will, 04/10/2026).
 // Plus de « Sortie française / japonaise » en tête des posts de sortie (Will, 09/10/2026).
