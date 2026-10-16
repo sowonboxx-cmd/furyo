@@ -895,17 +895,20 @@ const poidsX = t => [...String(t).replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-
 // Post X d'une sortie : on garde autant de comptes que possible (auteurs puis éditeur) sans dépasser 280.
 // Ligne « X @… » : une seule ligne (42 caractères), auteurs d'abord, éditeur français toujours présent s'il existe.
 const LIGNE_X = 42;
-function choixX(aut, fr, tient){
-  const f = [...new Set((fr || []).filter(Boolean))].slice(0, 1), a = [...new Set((aut || []).filter(Boolean))].filter(h => !f.includes(h));
+function choixX(aut, fr, tient, mag){
+  // Auteurs, puis magazine de prépublication (Will, 16/10/2026), puis éditeur français toujours présent.
+  const f = [...new Set((fr || []).filter(Boolean))].slice(0, 1), m = [...new Set((mag || []).filter(Boolean))].filter(h => !f.includes(h)).slice(0, 1);
+  const a = [...new Set((aut || []).filter(Boolean))].filter(h => !f.includes(h) && !m.includes(h));
   const ligne = hs => hs.map(h => "@" + h).join(" · ").length;
-  for (let k = a.length; k >= 0; k--) { const hs = [...a.slice(0, k), ...f]; if (!hs.length) return []; if (ligne(hs) <= LIGNE_X && tient(hs)) return hs; }
+  for (const mm of [m, []]) for (let k = a.length; k >= 0; k--) { const hs = [...a.slice(0, k), ...mm, ...f]; if (!hs.length) return []; if (ligne(hs) <= LIGNE_X && tient(hs)) return hs; }
   return f;
 }
 function postX(i, rs){
   const s = i.serie || {}, c = i.comptes || {};
   // Règle simplifiée (Will, 03/10/2026) : le résumé directement, sans « Résumé : », et plus de ligne « Fiche complète ».
-  const base = `${catLigne(i)}${i.titre}\n${ligneSortie(i)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
-  const hs = choixX(c.x, c.xFR, h => poidsX(base + "\n" + h.map(x => "@" + x).join(" · ")) <= 280);
+  // Couvertures : plus de « Couverture française / japonaise » en tête du post X, directement le titre et le tome (Will, 16/10/2026).
+  const base = `${/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)}${i.titre}\n${ligneSortie(i)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
+  const hs = choixX(c.x, c.xFR, h => poidsX(base + "\n" + h.map(x => "@" + x).join(" · ")) <= 280, c.xMag);
   return base + (hs.length ? "\n" + hs.map(h => "@" + h).join(" · ") : "");
 }
 // Résumé sortie proposé quand le champ est vide : la plus longue suite de phrases entières qui tient dans le post X
@@ -916,7 +919,7 @@ function resumeAuto(i){
   const u = [...new Set(cands)].sort((a, b) => b.length - a.length);
   if (!u.length) return "";
   // On cherche d'abord le résumé le plus long qui laisse passer tous les comptes retenus sur la ligne X, puis avec moins d'auteurs.
-  const c = i.comptes || {}, plein = choixX(c.x, c.xFR, () => true);
+  const c = i.comptes || {}, plein = choixX(c.x, c.xFR, () => true, c.xMag);
   for (let k = plein.length; k >= 0; k--) {
     const ok = u.find(r => { const p = postX(i, r); return poidsX(p) <= 280 && (p.match(/\n(@\S.*)$/) || ["", ""])[1].split(" · ").filter(Boolean).length >= k; });
     if (ok) return ok;
@@ -950,7 +953,7 @@ function captions(i, rs){
   const txt = (i.texte || "").trim();
   // Prépublication : le brouillon de tweet de la base sert de légende X.
   if (i.cat === "prepub" && i.tweet) return {
-    x: `${i.tweet}${s.slug ? `\n↗ ${url}` : ""}${(c.x || []).length || (c.xFR || []).length ? "\n" + choixX(c.x, c.xFR, () => true).map(h => "@" + h).join(" · ") : ""}`,
+    x: `${i.tweet}${s.slug ? `\n↗ ${url}` : ""}${(c.x || []).length || (c.xFR || []).length || (c.xMag || []).length ? "\n" + choixX(c.x, c.xFR, () => true, c.xMag).map(h => "@" + h).join(" · ") : ""}`,
     ig: `📖 ${i.titre}${txt ? `\n\n${txt}` : ""}\n\n${i.tweet}\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n${tags.join(" ")}`,
     tt: `📖 ${i.titre}\n\n${i.tweet}\n\n📖 Infos sur furyogang.com\n\n${[...tags.slice(0, 4), "#mangatok"].join(" ")}`,
   };
@@ -959,12 +962,12 @@ function captions(i, rs){
   // on enlève les parenthèses du titre si besoin, et on cite au moins un compte quand il y en a un.
   const titres = [...new Set([i.titre, i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news)\s*:\s*/i, ""), String(i.serie && i.serie.t || i.titre)])];
   const ph = phrases(txt), resumes = [...ph.map((_, n) => ph.slice(0, n + 1).join(" ")).reverse(), ""];
-  const nbC = ((c.x || []).length + (c.xFR || []).length) ? 1 : 0;
+  const nbC = ((c.x || []).length + (c.xFR || []).length + (c.xMag || []).length) ? 1 : 0;
   let xBase = "", hs = [];
   trouve: for (const min of [nbC, 0]) for (const r of resumes) for (const t of titres) {
     const b = `${catLigne(i)}${t}${r ? `\n${r}` : ""}\n\n↗ ${url}`;
     if (poidsX(b) > 280) continue;
-    let h = choixX(c.x, c.xFR, l => poidsX(b + "\n" + l.map(x => "@" + x).join(" · ")) <= 280);
+    let h = choixX(c.x, c.xFR, l => poidsX(b + "\n" + l.map(x => "@" + x).join(" · ")) <= 280, c.xMag);
     if (h.length && poidsX(b + "\n" + h.map(x => "@" + x).join(" · ")) > 280) h = [];
     if (h.length >= min) { xBase = b; hs = h; break trouve; }
   }

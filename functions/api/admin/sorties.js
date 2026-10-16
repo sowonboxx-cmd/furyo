@@ -64,7 +64,8 @@ async function ajouterComptes(env, items) {
     x.titre = `${x.serie.t} T.${String(x.n ?? "").padStart(2, "0")}`;
     x.sortie = x.date;
     x.tome = { n: x.n, pays, pub, flag: x.n === 1 ? "premier" : (/termin/i.test(statut || "") && x.n && total && x.n === total) ? "dernier" : "" };
-    x.comptes = { x: uniq([...aut.map(c => c.x), ...(s.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]) };
+    const mag = s.editeurs.map(k => editeurs[k]).find(e => e && /Magazine|Plateforme/.test(e.type) && e.x);
+    x.comptes = { x: uniq([...aut.map(c => c.x), ...(s.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]) };
   }
 }
 
