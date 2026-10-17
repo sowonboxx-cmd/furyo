@@ -135,7 +135,7 @@
     return '<section class="mh-sec" aria-label="Sorties en France">' + head2("Prochaines sorties", I.fr + "France · " + esc(per), "/calendrier/#france", "Calendrier →") + une + (it.length > 1 ? '<div class="mh-car">' + it.slice(1).map(function (x) {
       // Titre coupé avec « … » si trop long, le numéro de tome (T.10) toujours visible à côté (Will, 06/10/2026).
       return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + lien(x) + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(relJ(x.date) || dd(x.date)) + '</em></span><b class="mh-ct"><span>' + esc(x.fr || x.series) + "</span>" + (x.n != null ? "<i>T." + esc(x.n) + "</i>" : "") + "</b></a>";
-    }).join("") + "</div>" : "") + "</section>" + donFR();
+    }).join("") + "</div>" : "") + "</section>"; // plus de bloc don sur l'accueil (Will, 17/10/2026)
   }
   function sortiesJP() {
     var w = semaine(), it = (D.cal || []).filter(function (x) { return x.pays === "Japon" && x.date >= w[0] && x.date <= w[1]; });
@@ -269,7 +269,8 @@
     }).join("") + "</div></section>";
   }
   // Ruban façon scène de crime (Will, 17/10/2026) : « FURYO GANG » et 不良ギャング en boucle sur une bande rouge inclinée.
-  function bande() { var x = ""; for (var i = 0; i < 5; i++) x += '<span>FURYO GANG</span><span class="j" lang="ja">不良ギャング</span>'; return '<div class="mh-band" aria-hidden="true"><div>' + x + "</div></div>"; }
+  // Il défile de gauche à droite en continu, sous les sorties en France (Will, 17/10/2026, 14 h 40).
+  function bande() { var x = ""; for (var i = 0; i < 6; i++) x += '<span>FURYO GANG</span><span class="j" lang="ja">不良ギャング</span>'; return '<div class="mh-band" aria-hidden="true"><div><p>' + x + x + "</p></div></div>"; }
   // Dernières fiches mises en ligne, avec leur numéro.
   function railFiches() {
     var a = D.av, rec = (a && a.recentes) || []; if (!rec.length) return "";
@@ -336,7 +337,7 @@
     // sorties en France (inchangées), sorties au Japon en couvertures, dernières fiches, À lire aussi, puis le reste.
     if (TAB === "toutes" && news.length) {
       root.innerHTML = slider(news.slice(0, SL_N)) + cetteSemaine(news) + grille(news.slice(SL_N, SL_N + 4)) +
-        sortiesFR() + railJP() + bande() + railFiches() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + direct() + crows() + avance() + membres() + mangakas();
+        sortiesFR() + bande() + railJP() + railFiches() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + direct() + crows() + avance() + membres() + mangakas();
       slStart();
     } else root.innerHTML = '<div class="mh-feed">' + feed + "</div>" + sortiesFR() + railJP() + railFiches() + direct() + crows() + avance() + membres() + mangakas();
     fitM();

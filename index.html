@@ -727,7 +727,10 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
   .mh .mh-ff,.mh .fgd,.mh .mh-mk a{background:#1C1C1E}
   /* Ruban « scène de crime » entre les sorties au Japon et les dernières fiches (v9 C, japonais en Zen Antique). */
   .mh-band{position:relative;margin:26px 0 4px;height:64px;overflow:hidden}
-  .mh-band div{position:absolute;left:-20px;right:-20px;top:14px;height:34px;background:#BC002D;transform:rotate(-2.2deg);display:flex;align-items:center;gap:18px;white-space:nowrap;padding-left:10px;font:700 17px Antonio,"Arial Narrow",sans-serif;letter-spacing:.06em;color:#000}
+  .mh-band div{position:absolute;left:-20px;right:-20px;top:14px;height:34px;background:#BC002D;transform:rotate(-2.2deg);overflow:hidden;display:flex;align-items:center;font:700 17px Antonio,"Arial Narrow",sans-serif;letter-spacing:.06em;color:#000}
+  .mh-band p{margin:0;display:flex;align-items:center;gap:18px;padding-right:18px;white-space:nowrap;flex:none;animation:mhBand 26s linear infinite;will-change:transform}
+  @keyframes mhBand{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+  @media (prefers-reduced-motion:reduce){.mh-band p{animation:none}}
   .mh-band .j{font:400 17px/1 "Zen Antique FG","Noto Sans JP",serif;letter-spacing:.02em;color:#F2EFE9}
   body{background:#111!important}
   /* Blocs sur fond noir pour qu'ils ressortent (Will, 17/10/2026, 12 h 37) : Dernières news et sorties au Japon ; « Ils ont rejoint le gang » dans un cadre gris foncé. */
@@ -744,7 +747,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
-<script src="/site/home-m.js?v=50" defer></script>
+<script src="/site/home-m.js?v=51" defer></script>
 <div class="page">
 
 
