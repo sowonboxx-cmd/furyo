@@ -132,7 +132,8 @@ input,select,textarea{font-size:16px!important}
       <button data-view="grid" aria-pressed="false" aria-label="Vue grille"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
     </div>
   </div>
-  <main id="app"></main>
+  <!-- Pas de fondu des couvertures dans le calendrier : il faisait clignoter le passage Tout / Japon / France et liste / grille (Will, 17/10/2026). -->
+  <main id="app" class="no-sk"></main>
   <!-- Fin du calendrier sur téléphone : le duo à la sortie (Will, 06/10/2026) -->
   <div id="fgdon" class="fgdon"></div>
   <script src="/site/don.js?v=2"></script>
