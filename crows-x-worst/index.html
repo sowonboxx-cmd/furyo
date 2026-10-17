@@ -444,8 +444,8 @@ body{font-weight:500}
 .s-res .cover{width:63px!important}
 
 /* ---------- Époques collantes, sans fil sur mobile ---------- */
-.home-seg{top:0!important;padding-top:calc(env(safe-area-inset-top,0px) + 8px)!important;padding-bottom:8px;margin-top:6px;background:var(--ink)}
-.era-head{position:sticky;top:var(--segH,64px);z-index:4;background:var(--ink);margin-bottom:0!important;padding:10px 0 14px}
+.home-seg{top:var(--sh-h,0px)!important;padding-top:8px!important;padding-bottom:8px;margin-top:6px;background:var(--ink)}
+.era-head{position:sticky;top:calc(var(--sh-h,0px) + var(--segH,64px));z-index:4;background:var(--ink);margin-bottom:0!important;padding:10px 0 14px}
 .era-head .era-kanji{top:2px}
 .era .list{position:relative;z-index:1}
 @media (max-width:560px){
@@ -1112,7 +1112,7 @@ function openCard(id){
 }
 // Hauteur des éléments collés en haut (onglets + en-tête d'époque) au-dessus d'une carte
 function stickyOffset(card){
-  let h = 0;
+  let h = (document.getElementById("sh") || {}).offsetHeight || 0;
   const hs = document.querySelector(".home-seg");
   if (hs) h += hs.offsetHeight;
   else { const sg = document.querySelector("#timeline .seg"); if (sg) h += sg.offsetHeight + 8; }
@@ -1227,7 +1227,7 @@ document.addEventListener("click", e => {
     state.order = ord.dataset.order; render(); observe();
     // Rester sur les onglets : la liste commence juste en dessous
     const seg = document.querySelector("#timeline .seg");
-    if (seg) { const holder = seg.closest(".home-seg") || seg; holder.style.position = "static"; const top = holder.getBoundingClientRect().top + scrollY - 8; holder.style.position = ""; scrollTo({ top, behavior: "auto" }); }
+    if (seg) { const holder = seg.closest(".home-seg") || seg; holder.style.position = "static"; const shH = (document.getElementById("sh") || {}).offsetHeight || 0; const top = holder.getBoundingClientRect().top + scrollY - shH - 8; holder.style.position = ""; scrollTo({ top, behavior: "auto" }); }
     return;
   }
   const lineBtn = e.target.closest(".line-btn");
