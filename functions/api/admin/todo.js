@@ -38,6 +38,8 @@ const AJOUTS = [
   { id: "c181024", t: "Badges : don libre de plus de 100 € = badge spécial donateur master « all time », choisir le nom et le design", cat: "Premium" },
   { id: "c181025", t: "Fenêtre Premium (Ma collection, en ligne) : réécrire le texte", cat: "Premium" },
   { id: "c181026", t: "Badges donateurs : partir de Pilier, un niveau entre les deux, Parrain en haut, puis le badge master « all time » (noms à valider)", cat: "Premium", remplace: "Badges : Premium donateur en 3 niveaux (25 € niveau 1, 50 € niveau 2, 100 € niveau 3 = maximum), choisir les noms" },
+  { id: "c181027", t: "À partir du 1er décembre : membres non Premium = bandeau et widget « Devenir Premium » affichés automatiquement partout (maquettes à faire et valider)", cat: "Premium" },
+  { id: "c181028", t: "Encart Premium dans Ma collection : choisir entre A (duo rouge), B (compte à rebours noir) et C (discret)", cat: "Premium" },
   { id: "c181014", t: "Devenir membre : choisir le bandeau accueil (ordi + téléphone) et le widget colonne, à la place du bandeau don", cat: "Site" },
   { id: "c171003", t: "Premium : offert à tous les membres jusqu'au 30 novembre 2026, payant à partir du 1er décembre", cat: "Premium", remplace: "Premium : 30 jours offerts à l'ouverture, données gardées, paiement vers le 15 novembre" },
   { id: "c171004", t: "Premium : surprise à annoncer — abonnement à l'année pris avant le 1er décembre = 2 mois offerts", cat: "Premium" },
