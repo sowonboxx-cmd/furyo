@@ -158,10 +158,13 @@ const JOURS = ["dim.","lun.","mar.","mer.","jeu.","ven.","sam."];
 const d0 = s => new Date(s + "T12:00:00");
 // Titre français dès qu'il existe (même pour une sortie japonaise), sinon le titre officiel ; CROWS, WORST… restent en capitales.
 const title = it => (it.fr && !(it.series && it.series === it.series.toUpperCase() && /[A-Z]/.test(it.series) && it.series.toLowerCase() === it.fr.toLowerCase()) ? it.fr : (it.series || it.tome));
+// Couvertures autour d'aujourd'hui chargées tout de suite : pas de cases vides au changement de vue (Will, 17/10/2026).
+const NEAR_A = new Date(Date.now() - 45 * 864e5).toISOString().slice(0, 10), NEAR_B = new Date(Date.now() + 75 * 864e5).toISOString().slice(0, 10);
+const near = it => it.date >= NEAR_A && it.date <= NEAR_B;
 function img(it){
   // Couverture refusée (image provisoire « NOW PRINTING ») : on affiche le titre japonais à la place.
   const ph = `<span class="ph" lang="ja">${esc((it.jp || it.series || "").slice(0, 6))}</span>`;
-  if (it.cover) return `<img src="/api/couv?u=${encodeURIComponent(it.cover)}&w=360" alt="" loading="lazy" decoding="async" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">`;
+  if (it.cover) return `<img src="/api/couv?u=${encodeURIComponent(it.cover)}&w=360" alt="" loading="${near(it) ? "eager" : "lazy"}" onerror="this.outerHTML=this.dataset.ph" data-ph="${esc(ph)}">`;
   if (it.visual) return `<img src="/api/visuel?s=${it.seriesId}&p=main" alt="" loading="lazy">`;
   return `<span class="ph" lang="ja">${esc((it.jp || it.series || "").slice(0, 6))}</span>`;
 }
@@ -191,37 +194,57 @@ function cardHTML(it){
 }
 let SHOWN = [];
 const NOW_DIV = () => { const d = new Date(); return `<li class="now" id="now"><span>Aujourd'hui · ${d.getDate()} ${MCOURT[d.getMonth()]}</span></li>`; };
-function group(list, cls, desc){
+function group(list, cls, desc, view){
+  view = view || state.view;
   const by = {};
   list.forEach(it => { const d = d0(it.date); const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; (by[k] = by[k] || []).push(it); });
   const keys = Object.keys(by).sort(); if (desc) keys.reverse();
   return keys.map(k => {
     const [y, m] = k.split("-");
     const items = by[k];
-    const one = it => state.view === "grid" ? cardHTML(it) : rowHTML(it);
-    const inner = `<ul class="${state.view === "grid" ? "grid" : "list"}">${items.map(one).join("")}</ul>`;
+    const one = it => view === "grid" ? cardHTML(it) : rowHTML(it);
+    const inner = `<ul class="${view === "grid" ? "grid" : "list"}">${items.map(one).join("")}</ul>`;
     return `<section class="${cls || ""}"><h2 class="month">${MOIS[+m - 1]} ${y}<small></small></h2>${inner}</section>`;
   }).join("");
 }
 // La liste complète (tous pays) n'est construite qu'une fois par affichage (liste / grille) ;
 // changer d'onglet Tout / Japon / France masque ou montre les sorties sans rien redessiner : plus de clignotement.
-let ALL = [];
-function render(){
+let ALL = [], VIEWS = {};
+// Liste et grille sont construites une seule fois chacune puis gardées : passer de l'une à l'autre ne recrée plus les
+// couvertures (elles ne clignotent plus, Will 17/10/2026). Nouvelles données = on reconstruit.
+function render(fresh){
   document.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === state.view));
-  ALL = ITEMS.slice().sort((a, b) => a.date.localeCompare(b.date)); ALL.forEach((it, i) => { it._k = i; });
-  app.innerHTML = ALL.length ? group(ALL) + `<p class="empty" id="none" hidden></p>` : `<p class="empty">Aucune sortie pour l'instant.</p>`;
+  if (fresh !== false || !ALL.length) {
+    ALL = ITEMS.slice().sort((a, b) => a.date.localeCompare(b.date)); ALL.forEach((it, i) => { it._k = i; });
+    VIEWS = {};
+    app.innerHTML = ALL.length ? `<div data-v="list" hidden></div><div data-v="grid" hidden></div><p class="empty" id="none" hidden></p>` : `<p class="empty">Aucune sortie pour l'instant.</p>`;
+  }
+  const box = app.querySelector(`[data-v="${state.view}"]`);
+  if (box && !VIEWS[state.view]) { box.innerHTML = group(ALL); VIEWS[state.view] = 1; }
+  app.querySelectorAll("[data-v]").forEach(v => { v.hidden = v.dataset.v !== state.view; });
   applyPays();
+  // L'autre vue se prépare en arrière-plan : ses couvertures sont déjà là au premier changement.
+  const other = state.view === "grid" ? "list" : "grid";
+  clearTimeout(render.t); render.t = setTimeout(() => { const ob = app.querySelector(`[data-v="${other}"]`); if (ob && !VIEWS[other]) { ob.innerHTML = group(ALL, "", false, other); VIEWS[other] = 1; } }, 1200);
+}
+// Pendant un changement, la page garde sa hauteur : le navigateur ne la raccourcit pas avant qu'on se recale
+// sur aujourd'hui (sur iPhone, cela faisait un flash d'une image avec l'en-tête décalé).
+function hold(fn){
+  app.style.minHeight = app.offsetHeight + "px";
+  fn();
+  requestAnimationFrame(() => requestAnimationFrame(() => { app.style.minHeight = ""; }));
 }
 function applyPays(){
   document.querySelectorAll("[data-pays]").forEach(b => b.setAttribute("aria-pressed", b.dataset.pays === state.pays));
   const old = document.getElementById("now"); if (old) old.remove();
   SHOWN = []; let firstNext = null;
-  app.querySelectorAll("li[data-p]").forEach(li => {
+  const cur = app.querySelector(`[data-v="${state.view}"]`) || app;
+  cur.querySelectorAll("li[data-p]").forEach(li => {
     const on = state.pays === "all" || li.dataset.p === state.pays;
     li.hidden = !on;
     if (on) { li.querySelector("a[data-i]").dataset.i = SHOWN.length; SHOWN.push(ALL[+li.dataset.k]); if (!firstNext && li.dataset.d >= today) firstNext = li; }
   });
-  app.querySelectorAll("section").forEach(sec => {
+  cur.querySelectorAll("section").forEach(sec => {
     const n = sec.querySelectorAll("li[data-p]:not([hidden])").length;
     sec.hidden = !n; const sm = sec.querySelector(".month small"); if (sm) sm.textContent = `${n} sortie${n > 1 ? "s" : ""}`;
   });
@@ -264,8 +287,8 @@ function goToday(){
   scrollTo({ top: Math.max(0, y), behavior: "instant" });
 }
 document.addEventListener("click", e => {
-  const p = e.target.closest("[data-pays]"); if (p) { state.pays = p.dataset.pays; history.replaceState(null, "", state.pays === "all" ? location.pathname : "#" + state.pays.toLowerCase()); applyPays(); return; }
-  const v = e.target.closest("[data-view]"); if (v) { state.view = v.dataset.view; store.set("cal-view", state.view); render(); }
+  const p = e.target.closest("[data-pays]"); if (p) { if (p.dataset.pays === state.pays) return; state.pays = p.dataset.pays; history.replaceState(null, "", state.pays === "all" ? location.pathname : "#" + state.pays.toLowerCase()); hold(applyPays); return; }
+  const v = e.target.closest("[data-view]"); if (v) { if (v.dataset.view === state.view) return; state.view = v.dataset.view; store.set("cal-view", state.view); hold(() => render(false)); }
 });
 // Fenêtre d'une sortie : un clic sur un tome montre la couverture en grand ; flèches (ou glisser) pour la sortie d'avant / d'après.
 const LB = document.getElementById("lb"); let LBI = -1;
