@@ -750,9 +750,24 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
   @media (prefers-reduced-motion:reduce){.mh-band p{animation:none}}
   .mh-band .j{font:400 17px/1 "Zen Antique FG","Noto Sans JP",serif;letter-spacing:.02em;color:#F2EFE9}
   body{background:#111!important}
-  /* Blocs sur fond noir pour qu'ils ressortent (Will, 17/10/2026, 12 h 37) : Dernières news et sorties au Japon ; « Ils ont rejoint le gang » dans un cadre gris foncé. */
-  .mh-sec.mh-blk{background:#000;margin-top:14px;padding:22px 0 20px}
-  .mh-sec.mh-mbs{background:#1C1C1E;margin:22px 12px 0;border-radius:20px;padding:18px 0 16px}
+  /* Accueil en cadres noirs sur fond gris (Will, 17/10/2026, 16 h) : chaque section est une carte noire arrondie ;
+     rails à 3 couvertures entières + l'amorce d'une 4e (5:7) ; prépublications au Japon en cadre gris foncé, magazines noirs ;
+     pastilles « Cette semaine » quasi noires. */
+  body:has(.mh-sec){background:#232325!important}
+  .mh-sec{background:#000;border-radius:22px;margin:14px 12px 0;padding:18px 0 16px}
+  .mh-sec .mh-car{padding:0 16px;scroll-padding-inline:16px}
+  .mh-sec .mh-g4{padding:0 14px}
+  .mh-sec .mh-ff{margin:0 14px 14px}
+  .mh-sec.mh-mbs{background:#000}
+  .mh-jp{margin:26px 0 0;padding:34px 16px}
+  .mh-rc,.mh-rf,.mh-cov{width:calc((100vw - 94px)/3)!important;flex:none!important}
+  .mh-rc>span,.mh-rf>span{aspect-ratio:5/7!important}
+  .mh-cov>span{width:100%!important;height:auto!important;aspect-ratio:5/7!important}
+  .mh-car{gap:10px!important}
+  .mh-sec .mh-mag,.mh-sec .mh-ff{background:#1C1C1E!important}
+  .mh-sec.mh-pp{background:#1C1C1E}
+  .mh-sec.mh-pp .mh-mag{background:#000!important}
+  .mh-wk a{background:#0C0C0D}
   .mh-mbs .mh-join{margin-left:16px;margin-right:16px}
 }
 </style>
@@ -764,7 +779,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
-<script src="/site/home-m.js?v=55" defer></script>
+<script src="/site/home-m.js?v=56" defer></script>
 <div class="page">
 
 
