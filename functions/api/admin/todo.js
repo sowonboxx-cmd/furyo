@@ -32,6 +32,10 @@ const AJOUTS = [
   { id: "c171005", t: "Premium : après le 1er décembre, 2 € par mois", cat: "Premium" },
   { id: "c171006", t: "Stripe : créer le compte et les liens d'abonnement (mensuel 2 €, annuel avec les 2 mois offerts jusqu'au 30/11)", cat: "Premium" },
   { id: "c171009", t: "Premium : tirage au sort chaque mois, un membre Premium gagne un tome (sortie française ou exclu japonaise) — ajouté à la page /premium/, organiser le premier tirage", cat: "Premium" },
+  { id: "c181001", t: "Premium : encart « Premium offert jusqu'au 30 novembre » + compte à rebours dans Ma collection (ordinateur), fenêtre explicative au clic — choisir la maquette", cat: "Premium" },
+  { id: "c181002", t: "Dons : montants 5 / 10 / 20 / 50 / 100 € ou libre, badge Donateur après vérification du don ; au-delà d'un certain montant, Premium inclus en plus (retrouver le palier décidé, la page /premium/ dit 25 € = 1 an, 50 € = 3 ans, 100 € = 5 ans)", cat: "Premium" },
+  { id: "c181003", t: "Badges à collectionner sur le profil (Donateur, Premium, Soutien fondateur, etc.)", cat: "Site" },
+  { id: "c181004", t: "Post réseaux : Premium offert à tous jusqu'au 30 novembre", cat: "Réseaux" },
   { id: "c171007", t: "Promo : vidéo Crows × Worst (univers, carte dynamique, fiche Crows), 20-25 s, son de la BO de Crows Zero à envoyer (vérifier les droits)", cat: "Réseaux" },
   { id: "c171008", t: "Promo : enchaîner les vidéos par page (accueil, calendrier, collection…) pour le lancement", cat: "Réseaux" },
 ];
