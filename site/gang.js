@@ -94,9 +94,9 @@
   /* Membre ou pas ? On retire les blocs « Rejoindre » pour les membres. */
   var clean = function () { if (MEMBRE) document.querySelectorAll("[data-fgm]").forEach(function (e) { e.remove(); }); };
   if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
-    MEMBRE = !!(j && j.user); clean();
+    MEMBRE = !!(j && j.user) && !/[?&]apercu=gang/.test(location.search); clean();
     if (MEMBRE) new MutationObserver(clean).observe(document.body, { childList: true, subtree: true });
-    if (MEMBRE && window.FG_GANG_PREMIUM) window.FG_GANG.premium();
+    if (j && j.user && window.FG_GANG_PREMIUM) window.FG_GANG.premium(/[?&]apercu=premium/.test(location.search));
   }).catch(function () { MEMBRE = false; });
   window.FG_GANG.membre = function () { return MEMBRE; };
 })();
