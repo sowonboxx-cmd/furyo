@@ -805,7 +805,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
-<script src="/site/gang.js?v=4"></script>
+<script src="/site/gang.js?v=5"></script>
 <script src="/site/home-m.js?v=57" defer></script>
 <div class="page">
 
@@ -1272,8 +1272,23 @@ const comN = () => {
     document.getElementById("dcm").innerHTML = it.map(c => { const n = DT.news.find(x => x.id === c.id), u = linkN(n);
       return `<div class="dcm-r">${c.p ? `<img src="${esc2(c.p)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((c.n || "?").charAt(0).toUpperCase())}</i>`}<div><a class="dcm-t" href="${escN(u)}#commentaires"><b>${esc2(c.n)}</b><small>il y a ${ago(c.d)}</small><span>${esc2(c.t)}</span></a><a class="dcm-a" href="${escN(u)}">${esc2(n.fr || n.titre)}</a></div></div>`; }).join("");
     if (VUE_N !== "magazines") document.getElementById("m-com").hidden = false;
+    eqN();
   });
 };
+// Colonne de droite à la même hauteur que le fil (Will, 18/10/2026) : on retire des commentaires (au moins 1) tant qu'elle dépasse.
+function equilibreN() {
+  const fil = document.getElementById("fil"), side = document.getElementById("side"), box = document.getElementById("m-com");
+  if (!fil || !side || !box || box.hidden || innerWidth < 980) return;
+  const rows = [...document.querySelectorAll("#dcm .dcm-r")]; if (!rows.length) return;
+  // Le fil est étiré par la grille : on mesure jusqu'au bas de son dernier bloc visible.
+  const kids = [...fil.children].filter(e => e.offsetHeight), top = fil.getBoundingClientRect().top;
+  const hFil = kids.length ? Math.max(...kids.map(e => e.getBoundingClientRect().bottom)) - top : fil.offsetHeight;
+  rows.forEach(r => r.style.display = "");
+  for (let k = rows.length - 1; k > 0 && side.offsetHeight > hFil + 8; k--) rows[k].style.display = "none";
+}
+let eqT = 0; const eqN = () => { clearTimeout(eqT); eqT = setTimeout(equilibreN, 120); };
+addEventListener("resize", eqN); addEventListener("load", eqN);
+if (window.ResizeObserver) { const ro = new ResizeObserver(eqN); ["fil", "side"].forEach(id => { const e = document.getElementById(id); if (e) ro.observe(e); }); }
 if (DT.news) comN(); else { const w = setInterval(() => { if (DT.news) { clearInterval(w); comN(); } }, 400); setTimeout(() => clearInterval(w), 15000); }
 // Toutes les séries : trois couvertures en éventail et le nombre de fiches.
 getN("/api/series").then(j => {

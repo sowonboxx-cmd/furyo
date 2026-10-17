@@ -27,7 +27,7 @@
     ".fgm .pr{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:10px;background:rgba(242,179,61,.14);color:#F2B33D;font:700 13px Inter,sans-serif}" +
     ".fgm .bul,.fgp .bul{position:absolute;z-index:2;background:#F2B33D;color:#000;font:400 17px/1.05 Bangers,cursive;letter-spacing:.04em;padding:8px 12px;border-radius:16px;transform:rotate(-3deg);white-space:nowrap}" +
     ".fgm.bn{margin:70px 0 0;min-height:210px;padding:26px 26px 26px 250px}" +
-    ".fgm.mo{padding:20px;min-height:300px}.fgm.mo .tx{position:relative;z-index:2;width:66%}" +
+    ".fgm.mo{padding:20px}.fgm.mo .mh{position:relative}.fgm.mo .tx{position:relative;z-index:2;width:62%}.fgm.mo .msg{font-size:30px}" +
     ".fgm.wd{padding:18px}.fgm.wd .hd{position:relative;min-height:220px}.fgm.wd .tx{position:relative;z-index:2;width:58%;padding-top:38px}.fgm.wd .msg{font-size:27px}.fgm.wd .sub{font-size:13px}.fgm.wd .bul{right:110px;top:0;font-size:15px}" +
     /* Fenêtre Premium */
     ".fgp-o{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px;animation:fgpIn .25s ease}" +
@@ -47,7 +47,7 @@
   document.head.appendChild(css);
   if (!document.querySelector('link[href*="family=Bangers"]')) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=Bangers&display=swap"; document.head.appendChild(l); }
 
-  var MEMBRE = null, WD = null; // null = on ne sait pas encore
+  var MEMBRE = null, WD = null, MO = null; // null = on ne sait pas encore
   var img = function (k, st) { return '<img class="ch no-sk" src="/img/don/' + k + '.webp" alt="" loading="lazy" style="' + st + '">'; };
   var bouton = function (lab, google, cls) { return '<button type="button" class="go' + (cls ? " " + cls : "") + '" onclick="window.FG_LOGIN && FG_LOGIN()">' + (google ? G : "") + lab + "</button>"; };
   var pr = function () { return OFFERT ? '<span class="pr">' + ic("p") + "Premium offert jusqu’au 30 novembre</span>" : ""; };
@@ -57,9 +57,20 @@
         '<span class="tag">Message du gang</span><p class="msg">Tes potes sont déjà dedans.<br><em>Et toi, tu fais quoi ?</em></p><div class="chips">' + chips() + "</div>" +
         '<div style="display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap">' + bouton("Rejoindre le gang", true) + pr() + "</div></div>";
     },
+    // Accueil téléphone : Haruyama, Murota « Psst » ou Murota « Toi, là » tirés au hasard (Will, 18/10/2026).
+    // Les personnages restent entiers, au-dessus des pastilles.
     mobile: function () {
-      return '<div class="fgm mo">' + img("haru", "right:16px;top:16px;height:190px") + '<div class="tx"><span class="tag">Message du gang</span><p class="msg">Toi.<br><em>Rejoins le gang.</em></p><p class="sub">Gratuit.' + (OFFERT ? " Premium offert jusqu’au 30 novembre." : "") + "</p></div>" +
-        '<div class="grid" style="position:relative;z-index:2">' + chips() + "</div>" + bouton("Rejoindre le gang", true, "w") + "</div>";
+      var V = [
+        { ch: "haru", h: 184, tag: "Message du gang", l1: "Toi.", l2: "Rejoins le gang.", sub: "Gratuit." + (OFFERT ? " Premium offert jusqu’au 30 novembre." : ""), g: 1 },
+        { ch: "murota", h: 168, tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit, et t’es des nôtres." },
+        { ch: "murota", h: 168, tag: "Toi, là", l1: "Viens manger", l2: "avec le gang.", sub: "Gratuit." + (OFFERT ? " Premium offert jusqu’au 30 novembre." : ""), bul: "Slurp. Assieds-toi." }
+      ];
+      var f = /[?&]v=(\d)/.exec(location.search);
+      if (MO == null) MO = f ? +f[1] % V.length : Math.floor(Math.random() * V.length);
+      var v = V[MO];
+      return '<div class="fgm mo"><div class="mh" style="min-height:' + (v.h + (v.bul ? 30 : 0)) + 'px">' + (v.bul ? '<span class="bul" style="right:96px;top:0;font-size:15px">' + v.bul + "</span>" : "") +
+        img(v.ch, "right:0;bottom:0;height:" + v.h + "px") + '<div class="tx"' + (v.bul ? ' style="padding-top:40px"' : "") + '><span class="tag">' + v.tag + '</span><p class="msg">' + v.l1 + "<br><em>" + v.l2 + '</em></p><p class="sub">' + v.sub + "</p></div></div>" +
+        '<div class="grid">' + chips() + "</div>" + bouton(v.g ? "Rejoindre le gang" : "Rejoindre", !!v.g, "w") + "</div>";
     },
     // Trois versions Murota tirées au hasard à chaque chargement (Will, 18/10/2026).
     widget: function () {
