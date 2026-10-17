@@ -131,12 +131,12 @@
     ".sh-top{display:contents!important}.sh-logo{position:static!important;transform:none!important;order:0;flex:none;line-height:0}" +
     ".sh-logo img{display:none!important}.sh-logo img.sh-lr{display:block!important;width:30px!important;height:30px!important}" +
     ".sh-search,.sh-adm{display:none!important}.sh-me{order:2;position:static!important;transform:none!important;flex:none;width:34px;height:34px}" +
-    ".sh-nav{order:1;flex:1 1 0;min-width:0;overflow:hidden;margin:0!important;padding:0!important;border:0!important;display:flex!important;align-items:center;justify-content:center!important;gap:clamp(6px,2.2vw,11px)!important}" +
-    ".sh-nav a{flex:none!important;height:50px!important;padding:0!important;font:500 clamp(11px,3.05vw,13.5px)/1 Antonio,'Arial Narrow',sans-serif!important;letter-spacing:.03em!important;text-transform:uppercase;color:#D9D6CF!important;white-space:nowrap}" +
+    ".sh-nav{order:1;flex:1 1 0;min-width:0;overflow:hidden;margin:0!important;padding:0!important;border:0!important;display:flex!important;align-items:center;justify-content:center!important;gap:clamp(6px,2.1vw,11px)!important}" +
+    ".sh-nav a{flex:none!important;height:50px!important;padding:0!important;font:500 clamp(12px,3.3vw,14.5px)/1 Antonio,'Arial Narrow',sans-serif!important;letter-spacing:.03em!important;text-transform:uppercase;color:#D9D6CF!important;white-space:nowrap}" +
     ".sh-nav a[aria-current=page]{color:#fff!important}.sh-nav a[aria-current=page]::after{left:0!important;right:0!important;bottom:0!important;height:2px!important;border-radius:0!important}" +
     ".sh-ma{display:none}" +
-    ".sh-plus{flex:none!important;width:clamp(12px,3.2vw,14px)!important;height:50px;margin:0!important;padding:0;align-self:center;color:#D9D6CF}" +
-    ".sh-plus svg.b{display:none!important}.sh-plus .bm{display:flex;flex-direction:column;justify-content:space-between;width:100%;height:clamp(9px,2.4vw,10.5px)}.sh-plus .bm i{display:block;height:1.7px;border-radius:1px;background:currentColor}" +
+    ".sh-plus{flex:none!important;width:clamp(13px,3.5vw,15px)!important;height:50px;margin:0!important;padding:0;align-self:center;color:#D9D6CF}" +
+    ".sh-plus svg.b{display:none!important}.sh-plus .bm{display:flex;flex-direction:column;justify-content:space-between;width:100%;height:clamp(9.5px,2.6vw,11.5px);transform:translateY(.7px)}.sh-plus .bm i{display:block;height:1.7px;border-radius:1px;background:currentColor}" +
     ".sh-plus[aria-expanded=true] .bm{display:none}.sh-plus .x{width:15px;height:15px}" +
     ".sh-more{order:3;flex:0 0 100%;margin:0 -2px 10px!important}}" +
     "@media (min-width:720px){.sh-plus .bm{display:none}}" +

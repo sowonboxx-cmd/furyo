@@ -10,7 +10,11 @@ export async function onRequestGet(ctx) {
   if (u && u.m) { const r = await liste(ctx); const out = new Response(r.body, r); out.headers.set("cache-control", "private, no-store"); return out; }
   if (new URL(ctx.request.url).searchParams.get("u")) return J({ locked: true, error: "réservé aux membres" }, 401);
   const r = await liste(ctx); const j = await r.json().catch(() => ({}));
-  return J({ locked: true, total: j.total || 0 });
+  // Sans connexion : le nombre d'inscrits et les têtes des 8 derniers (pseudo et photo seulement, jamais les membres masqués),
+  // pour l'accueil (Will, 17/10/2026).
+  const recents = (j.items || []).slice().sort((a, b) => String(b.inscrit || "").localeCompare(String(a.inscrit || ""))).slice(0, 8)
+    .map(x => ({ pseudo: x.pseudo || "Membre", photo: x.photo || "", inscrit: x.inscrit || "" }));
+  return J({ locked: true, total: j.total || 0, recents });
 }
 async function liste({ request, env, waitUntil }) {
   // ?u=<identifiant> : un seul membre (page publique furyogang.com/membres/<identifiant>).

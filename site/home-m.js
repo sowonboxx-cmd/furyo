@@ -115,7 +115,8 @@
   function donFR() { if (!window.FG_DON) return ""; if (DON_FR == null) DON_FR = ["haru", "jinnai", "duo"][Math.floor(Math.random() * 3)]; return '<div style="padding:0 16px">' + FG_DON(DON_FR) + "</div>"; }
   function sortiesFR() {
     // Pas assez de sorties pour une semaine : les prochaines sorties du mois en cours, à partir d'aujourd'hui (Will, 05/10/2026).
-    var now = new Date(), t0 = now.toISOString().slice(0, 10), fin = new Date(now.getFullYear(), now.getMonth() + 1, 0), t1 = fin.getFullYear() + "-" + String(fin.getMonth() + 1).padStart(2, "0") + "-" + String(fin.getDate()).padStart(2, "0");
+    // Sur un mois glissant (Will, 17/10/2026) : il y a rarement assez de sorties furyō en une semaine.
+    var now = new Date(), t0 = now.toISOString().slice(0, 10), t1 = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10);
     var it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t0 && x.date <= t1; });
     var titre = "Prochaines sorties", sous = I.fr + "En France";
     if (!it.length) { var t = new Date().toISOString().slice(0, 10); it = (D.cal || []).filter(function (x) { return x.pays === "France" && x.date >= t; }).slice(0, 8); titre = "Prochaines sorties"; sous = I.fr + "En France"; }
@@ -129,7 +130,9 @@
     var lien = function (x) { return x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/"; };
     var une = '<a class="mh-ff" data-tome="' + esc(f.id) + '" href="' + lien(f) + '">' + (f.cover ? '<img src="' + esc(couv(f.cover, 300)) + '" alt="">' : '<span class="mh-noimg"></span>') +
       '<span class="x"><span class="pill">' + (relJ(f.date) || JL[fd.getDay()] + " " + fd.getDate() + (fd.getDate() === 1 ? "er" : "") + " " + ML[fd.getMonth()]) + "</span><b>" + esc(f.fr || f.series) + "</b>" + (f.n != null ? '<i class="tn">Tome ' + esc(f.n) + "</i>" : "") + "<em>" + [f.pub, dans].filter(Boolean).map(esc).join(" · ") + "</em></span></a>";
-    return '<section class="mh-sec" aria-label="Sorties en France">' + headGo("Prochaines sorties en France", "/calendrier/#france").replace('class="mh-h2"', 'class="mh-h2 mh-blue"') + une + (it.length > 1 ? '<div class="mh-car">' + it.slice(1).map(function (x) {
+    // Même titre que les sorties au Japon (Will, 17/10/2026) : « Prochaines sorties » en blanc, drapeau · France · période, lien Calendrier.
+    var last = it[it.length - 1].date, per = dd(it[0].date) + (last !== it[0].date ? " – " + dd(last) : "");
+    return '<section class="mh-sec" aria-label="Sorties en France">' + head2("Prochaines sorties", I.fr + "France · " + esc(per), "/calendrier/#france", "Calendrier →") + une + (it.length > 1 ? '<div class="mh-car">' + it.slice(1).map(function (x) {
       // Titre coupé avec « … » si trop long, le numéro de tome (T.10) toujours visible à côté (Will, 06/10/2026).
       return '<a class="mh-cov" data-tome="' + esc(x.id) + '" href="' + lien(x) + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 260)) + '" alt="" loading="lazy">' : "") + "<em>" + esc(relJ(x.date) || dd(x.date)) + '</em></span><b class="mh-ct"><span>' + esc(x.fr || x.series) + "</span>" + (x.n != null ? "<i>T." + esc(x.n) + "</i>" : "") + "</b></a>";
     }).join("") + "</div>" : "") + "</section>" + donFR();
@@ -167,7 +170,7 @@
   function magCard(m) {
     if (m.web) return webCard(m);
     var t = new Date().toISOString().slice(0, 10), paru = !m.date || m.date <= t;
-    return '<article class="mh-mag"><div class="mh-magc">' + (m.cover ? '<img src="' + esc(couv(m.cover, 200)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') + "</div><div class='mh-magt'><small>" + (paru ? "Sorti le " : "Sort le ") + esc(dd(m.date)) + "</small>" + (m.link ? '<a class="mh-magl" href="' + esc(m.link) + '" target="_blank" rel="noopener"><b>' + esc(m.mag) + " " + esc(m.issue) + " <svg class=\"arr\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 16 16 8M9.5 8H16v6.5\"/></svg></b></a>" : "<b>" + esc(m.mag) + " " + esc(m.issue) + "</b>") +
+    return '<article class="mh-mag"><div class="mh-magc">' + (m.cover ? '<img src="' + esc(couv(m.cover, 200)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') + "</div><div class='mh-magt'><small>" + (paru ? "Sorti le " : "Sort le ") + esc(dd(m.date)) + "</small>" + (m.link ? '<a class="mh-magl" href="' + esc(m.link) + '" target="_blank" rel="noopener"><b>' + esc(m.mag) + ' <span class="nw">' + esc(m.issue) + " <svg class=\"arr\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 16 16 8M9.5 8H16v6.5\"/></svg></span></b></a>" : "<b>" + esc(m.mag) + " " + esc(m.issue) + "</b>") +
       // Juste le titre et le numéro de chapitre (pas de pastille couverture / pause, Will 04/10/2026) ; seule exception : « Fin » pour un dernier chapitre.
       // Chaque série mène à sa lecture en ligne officielle ; le titre du magazine à son site (Will, 05/10/2026).
       m.items.map(function (it) { var u = it.read || it.page, inner = "<span>" + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.status === "Pause" ? "<em class=\"p\">Pause</em>" : it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + ((it.hl || []).indexOf("Dernier chapitre") >= 0 ? "<i>Fin</i>" : "") + (u ? '<b class="go"><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></b>' : "") + "</span>";
@@ -189,10 +192,11 @@
   }
   function membres() {
     var m = D.mbr; if (!m) return "";
-    var list = (m.items || []).slice().sort(function (a, b) { return new Date(b.inscrit) - new Date(a.inscrit); }).slice(0, 5);
-    var body = list.length ? '<div class="mh-mbr">' + list.map(function (x) { return '<a href="' + (x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/") + '">' + (x.photo ? '<img src="' + esc(x.photo) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : "<i>" + esc((x.pseudo || x.nom || "?").charAt(0).toUpperCase()) + "</i>") + "<span>" + esc(x.pseudo || x.nom || "Membre") + "</span></a>"; }).join("") + "</div>"
+    // Les têtes des derniers inscrits visibles par tous (Will, 17/10/2026) : sans connexion, l'API donne « recents » (pseudo et photo seulement).
+    var list = (m.items || m.recents || []).slice().sort(function (a, b) { return new Date(b.inscrit) - new Date(a.inscrit); }).slice(0, 5);
+    var body = list.length ? '<div class="mh-mbr">' + list.map(function (x) { return (m.items ? '<a href="' + (x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/") + '">' : '<span class="mh-mbm">') + (x.photo ? '<img src="' + esc(x.photo) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : "<i>" + esc((x.pseudo || x.nom || "?").charAt(0).toUpperCase()) + "</i>") + "<span>" + esc(x.pseudo || x.nom || "Membre") + "</span>" + (m.items ? "</a>" : "</span>"); }).join("") + "</div>" + (m.total ? '<p class="mh-note mh-mbn">' + m.total + " membre" + (m.total > 1 ? "s" : "") + " dans le gang</p>" : "")
       : '<p class="mh-note">' + (m.total || 0) + " membre" + ((m.total || 0) > 1 ? "s" : "") + " dans le gang. Connecte-toi pour voir qui en fait partie.</p>";
-    return '<section class="mh-sec" aria-label="Derniers membres">' + head2("Ils ont rejoint le gang", "Derniers membres", "/communaute/", "Communauté") + body +
+    return '<section class="mh-sec mh-mbs" aria-label="Derniers membres">' + head2("Ils ont rejoint le gang", "Derniers membres", "/communaute/", "Communauté") + body +
       (D.me && D.me.user ? "" : '<button type="button" class="mh-join" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button>') + "</section>";
   }
   function mangakas() {
@@ -261,9 +265,11 @@
     if (!it.length) return "";
     var span = dd(it[0].date) + (it[it.length - 1].date !== it[0].date ? " – " + dd(it[it.length - 1].date) : "");
     return '<section class="mh-sec" aria-label="Prochaines sorties au Japon">' + head2("Prochaines sorties", I.jp + "Japon · " + esc(span), "/calendrier/#japon", "Calendrier →") + '<div class="mh-car mh-rail">' + it.map(function (x) {
-      return '<a class="mh-rc" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 220)) + '" alt="" loading="lazy">' : '<i class="mh-noimg"></i>') + "<em>JP</em></span><b>" + esc(x.series) + (x.n != null ? " T." + esc(x.n) : "") + "</b><small>" + esc(dd(x.date)) + (x.pub ? " · " + esc(String(x.pub).replace(/ Shoten| Bungeisha|\s*\(.*$/g, "")) : "") + "</small></a>";
+      return '<a class="mh-rc" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span' + (x.cover ? "" : ' class="nc"') + ">" + (x.cover ? '<img src="' + esc(couv(x.cover, 220)) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'nc\');this.remove()">' : "") + '<i class="vj" lang="ja">' + esc(String(x.jp || x.series).split(/[\s　(（]/)[0].slice(0, 9)) + "</i><em>JP</em></span><b>" + esc(x.series) + (x.n != null ? " T." + esc(x.n) : "") + "</b><small>" + esc(dd(x.date)) + (x.pub ? " · " + esc(String(x.pub).replace(/ Shoten| Bungeisha|\s*\(.*$/g, "")) : "") + "</small></a>";
     }).join("") + "</div></section>";
   }
+  // Ruban façon scène de crime (Will, 17/10/2026) : « FURYO GANG » et 不良ギャング en boucle sur une bande rouge inclinée.
+  function bande() { var x = ""; for (var i = 0; i < 5; i++) x += '<span>FURYO GANG</span><span class="j" lang="ja">不良ギャング</span>'; return '<div class="mh-band" aria-hidden="true"><div>' + x + "</div></div>"; }
   // Dernières fiches mises en ligne, avec leur numéro.
   function railFiches() {
     var a = D.av, rec = (a && a.recentes) || []; if (!rec.length) return "";
@@ -330,7 +336,7 @@
     // sorties en France (inchangées), sorties au Japon en couvertures, dernières fiches, À lire aussi, puis le reste.
     if (TAB === "toutes" && news.length) {
       root.innerHTML = slider(news.slice(0, SL_N)) + cetteSemaine(news) + grille(news.slice(SL_N, SL_N + 4)) +
-        sortiesFR() + railJP() + railFiches() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + direct() + crows() + avance() + membres() + mangakas();
+        sortiesFR() + railJP() + bande() + railFiches() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + direct() + crows() + avance() + membres() + mangakas();
       slStart();
     } else root.innerHTML = '<div class="mh-feed">' + feed + "</div>" + sortiesFR() + railJP() + railFiches() + direct() + crows() + avance() + membres() + mangakas();
     fitM();
