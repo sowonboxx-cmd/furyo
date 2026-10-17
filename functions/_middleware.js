@@ -2,7 +2,7 @@
 // (redirection permanente). Les images (/couvertures/…) et l'API restent servies partout : les liens déjà enregistrés
 // dans Notion continuent de marcher. Les déploiements de test (xxx.furyo.pages.dev) ne sont pas touchés.
 // Ensuite, chaque page HTML reçoit ses balises de référencement (voir lib/seo.js).
-import { SITE, balises, infosPage, jsonSite } from "../lib/seo.js";
+import { SITE, balises, infosPage, jsonSite, texteFixe } from "../lib/seo.js";
 import { isAdmin } from "../lib/admin.js";
 
 const OFFICIEL = "furyogang.com";
@@ -24,10 +24,10 @@ export async function onRequest({ request, next, env }) {
   }
   const res = await next();
   if (request.method !== "GET" || url.pathname.startsWith("/api/") || !(res.headers.get("content-type") || "").includes("text/html")) return res;
-  try { return seo(res, url); } catch (e) { return res; }
+  try { return await seo(res, url); } catch (e) { return res; }
 }
 
-function seo(res, url) {
+async function seo(res, url) {
   // Une fiche série a déjà préparé ses infos (titre, résumé, couverture) : on les reprend.
   let fiche = null;
   const h = res.headers.get("x-seo");
@@ -36,6 +36,7 @@ function seo(res, url) {
   const info = fiche ? { t: fiche.titre, d: fiche.desc } : infosPage(url.pathname);
   const canon = fiche && fiche.url ? fiche.url : SITE + url.pathname;
   let titre = info ? info.t : "", desc = info ? info.d : "";
+  const fixe = !fiche && !prive ? await texteFixe(url.pathname, url.origin).catch(() => null) : null;
   const out = new Response(res.body, res);
   out.headers.delete("x-seo");
   return new HTMLRewriter()
@@ -50,10 +51,11 @@ function seo(res, url) {
         end.before(balises({
           titre: titre.trim() || "FuryoGang", desc, url: canon, prive,
           image: (fiche && fiche.image) || (info && info.i ? SITE + info.i : ""), type: fiche && fiche.type, carte: fiche && fiche.carte,
-          jsonld: fiche ? fiche.jsonld : url.pathname === "/" ? jsonSite() : (info && info.j) || null,
+          jsonld: fiche ? fiche.jsonld : url.pathname === "/" ? jsonSite() : (info && info.j) || (fixe && fixe.jsonld) || null,
         }), { html: true });
       });
     } })
-    .on("#app", { element(el) { if (fiche && fiche.html) el.setInnerContent(fiche.html, { html: true }); } })
+    .on("#app, #na", { element(el) { if (fiche && fiche.html) el.setInnerContent(fiche.html, { html: true }); } })
+    .on("body", { element(el) { if (fixe && fixe.html) el.append(fixe.html, { html: true }); } })
     .transform(out);
 }

@@ -5,3 +5,7 @@
 /series/* /series/index.html 200
 /membres /communaute/ 301
 /membres/ /communaute/ 301
+/mangakas /auteurs/ 301
+/mangakas/ /auteurs/ 301
+/videos /?vue=actus 301
+/videos/ /?vue=actus 301

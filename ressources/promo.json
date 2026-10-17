@@ -1,6 +1,34 @@
 {
-  "maj": "2026-10-15",
+  "maj": "2026-10-17",
   "campagnes": [
+    {
+      "id": "carte-partage",
+      "titre": "Carte de partage · FuryoGang",
+      "sous": "Les mangas les plus sombres du Japon · Furyō • Yakuza • Crime • Pègre",
+      "statut": "Validé",
+      "valide": "2026-10-17",
+      "reseaux": [
+        "À envoyer aux contacts, partenaires et éditeurs",
+        "X",
+        "Discord",
+        "WhatsApp"
+      ],
+      "desc": "La carte qui présente FuryoGang : logo, « Les mangas les plus sombres du Japon », bandeau rouge Furyō • Yakuza • Crime • Pègre et les couvertures de Crows (Kana), The Fable (Pika), Racaille Blues, Crows Zero et Nine Peaks. La version « mur » est aussi l'image de partage du site (furyogang.com).",
+      "elements": [
+        {
+          "type": "images",
+          "nom": "Carte de partage · 3 versions (mur, duo, éventail)",
+          "format": "1200 × 630 (format lien) · fichiers en 2400 × 1260",
+          "fichier": "/ressources/promo/carte-partage.zip",
+          "images": [
+            "/ressources/promo/carte-partage-mur.jpg",
+            "/ressources/promo/carte-partage-duo.jpg",
+            "/ressources/promo/carte-partage-eventail.jpg"
+          ],
+          "notes": "Validé par Will le 17/10/2026. La version « mur » sert aussi d'image de partage du site."
+        }
+      ]
+    },
     {
       "id": "ma-collection",
       "titre": "Promotion · Ma collection",
@@ -8,16 +36,40 @@
       "statut": "Validé",
       "valide": "2026-10-15",
       "lancement": "Semaine du 19 octobre 2026",
-      "reseaux": ["Instagram (reel + carrousel)", "X", "TikTok"],
+      "reseaux": [
+        "Instagram (reel + carrousel)",
+        "X",
+        "TikTok"
+      ],
       "desc": "Fait la promo de la page Ma collection : gérer ses tomes (possédés, lus, envie de lire, panier), les classer et dominer le classement du gang. Fin sur furyogang.com/ma-collection et le logo.",
       "elements": [
-        { "type": "video", "nom": "Reel · Ma collection (version finale)", "format": "9:16 · 1080 × 1920 · 24,2 s · musique de la vidéo Riku-Do", "fichier": "/ressources/promo/promo-ma-collection-reel.mp4", "poster": "/ressources/promo/promo-ma-collection-reel.jpg",
-          "notes": "Validé par Will le 15/10/2026 (« reel final v3 »). Pour une retouche : renvoyer la vidéo à Claude, qui garde le projet et la refait." },
-        { "type": "images", "nom": "Carrousel · Ma collection (version noire)", "format": "3:4 · 1080 × 1440 · 5 images", "fichier": "/ressources/promo/promo-ma-collection-carrousel.zip",
-          "images": ["/ressources/promo/promo-ma-collection-carrousel-1.jpg", "/ressources/promo/promo-ma-collection-carrousel-2.jpg", "/ressources/promo/promo-ma-collection-carrousel-3.jpg", "/ressources/promo/promo-ma-collection-carrousel-4.jpg", "/ressources/promo/promo-ma-collection-carrousel-5.jpg"],
-          "notes": "Validé le 15/10/2026. Les versions crème et rouge ont été écartées." }
+        {
+          "type": "video",
+          "nom": "Reel · Ma collection (version finale)",
+          "format": "9:16 · 1080 × 1920 · 24,2 s · musique de la vidéo Riku-Do",
+          "fichier": "/ressources/promo/promo-ma-collection-reel.mp4",
+          "poster": "/ressources/promo/promo-ma-collection-reel.jpg",
+          "notes": "Validé par Will le 15/10/2026 (« reel final v3 »). Pour une retouche : renvoyer la vidéo à Claude, qui garde le projet et la refait."
+        },
+        {
+          "type": "images",
+          "nom": "Carrousel · Ma collection (version noire)",
+          "format": "3:4 · 1080 × 1440 · 5 images",
+          "fichier": "/ressources/promo/promo-ma-collection-carrousel.zip",
+          "images": [
+            "/ressources/promo/promo-ma-collection-carrousel-1.jpg",
+            "/ressources/promo/promo-ma-collection-carrousel-2.jpg",
+            "/ressources/promo/promo-ma-collection-carrousel-3.jpg",
+            "/ressources/promo/promo-ma-collection-carrousel-4.jpg",
+            "/ressources/promo/promo-ma-collection-carrousel-5.jpg"
+          ],
+          "notes": "Validé le 15/10/2026. Les versions crème et rouge ont été écartées."
+        }
       ]
     }
   ],
-  "a_venir": ["Promotion · News", "Promotion · Au Japon"]
+  "a_venir": [
+    "Promotion · News",
+    "Promotion · Au Japon"
+  ]
 }
