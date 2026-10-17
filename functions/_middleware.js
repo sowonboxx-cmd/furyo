@@ -2,7 +2,7 @@
 // (redirection permanente). Les images (/couvertures/…) et l'API restent servies partout : les liens déjà enregistrés
 // dans Notion continuent de marcher. Les déploiements de test (xxx.furyo.pages.dev) ne sont pas touchés.
 // Ensuite, chaque page HTML reçoit ses balises de référencement (voir lib/seo.js).
-import { SITE, balises, infosPage, jsonSite, texteFixe } from "../lib/seo.js";
+import { SITE, balises, infosPage, jsonSite, texteFixe, OG_ACTUS } from "../lib/seo.js";
 import { isAdmin } from "../lib/admin.js";
 
 const OFFICIEL = "furyogang.com";
@@ -50,7 +50,7 @@ async function seo(res, url) {
       el.onEndTag(end => {
         end.before(balises({
           titre: titre.trim() || "FuryoGang", desc, url: canon, prive,
-          image: (fiche && fiche.image) || (info && info.i ? SITE + info.i : ""), type: fiche && fiche.type, carte: fiche && fiche.carte,
+          image: (fiche && fiche.image) || (url.pathname === "/" && url.searchParams.get("vue") === "actus" ? SITE + OG_ACTUS : "") || (info && info.i ? SITE + info.i : ""), type: fiche && fiche.type, carte: fiche && fiche.carte,
           jsonld: fiche ? fiche.jsonld : url.pathname === "/" ? jsonSite() : (info && info.j) || (fixe && fixe.jsonld) || null,
         }), { html: true });
       });
