@@ -261,11 +261,12 @@
   }
   // Prochaines sorties au Japon en couvertures (les sorties françaises ont déjà leur bloc juste au-dessus).
   function railJP() {
-    var t = new Date().toISOString().slice(0, 10), it = (D.cal || []).filter(function (x) { return x.pays === "Japon" && x.date >= t; }).slice(0, 12);
+    // Comme sur ordinateur (Will, 17/10/2026) : seulement les tomes qui ont une couverture ; si l'image ne charge pas, le tome disparaît aussi.
+    var t = new Date().toISOString().slice(0, 10), it = (D.cal || []).filter(function (x) { return x.pays === "Japon" && x.date >= t && x.cover; }).slice(0, 12);
     if (!it.length) return "";
     var span = dd(it[0].date) + (it[it.length - 1].date !== it[0].date ? " – " + dd(it[it.length - 1].date) : "");
     return '<section class="mh-sec" aria-label="Prochaines sorties au Japon">' + head2("Prochaines sorties", I.jp + "Japon · " + esc(span), "/calendrier/#japon", "Calendrier →") + '<div class="mh-car mh-rail">' + it.map(function (x) {
-      return '<a class="mh-rc" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span' + (x.cover ? "" : ' class="nc"') + ">" + (x.cover ? '<img src="' + esc(couv(x.cover, 220)) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'nc\');this.remove()">' : "") + '<i class="vj" lang="ja">' + esc(String(x.jp || x.series).split(/[\s　(（]/)[0].slice(0, 9)) + "</i><em>JP</em></span><b>" + esc(x.series) + (x.n != null ? " T." + esc(x.n) : "") + "</b><small>" + esc(dd(x.date)) + (x.pub ? " · " + esc(String(x.pub).replace(/ Shoten| Bungeisha|\s*\(.*$/g, "")) : "") + "</small></a>";
+      return '<a class="mh-rc" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span' + (x.cover ? "" : ' class="nc"') + ">" + (x.cover ? '<img src="' + esc(couv(x.cover, 220)) + '" alt="" loading="lazy" onerror="this.closest(\'.mh-rc\').remove()">' : "") + '<i class="vj" lang="ja">' + esc(String(x.jp || x.series).split(/[\s　(（]/)[0].slice(0, 9)) + "</i><em>JP</em></span><b>" + esc(x.series) + (x.n != null ? " T." + esc(x.n) : "") + "</b><small>" + esc(dd(x.date)) + (x.pub ? " · " + esc(String(x.pub).replace(/ Shoten| Bungeisha|\s*\(.*$/g, "")) : "") + "</small></a>";
     }).join("") + "</div></section>";
   }
   // Ruban façon scène de crime (Will, 17/10/2026) : « FURYO GANG » et 不良ギャング en boucle sur une bande rouge inclinée.
