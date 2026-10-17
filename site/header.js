@@ -131,12 +131,12 @@
     ".sh-top{display:contents!important}.sh-logo{position:static!important;transform:none!important;order:0;flex:none;line-height:0}" +
     ".sh-logo img{display:none!important}.sh-logo img.sh-lr{display:block!important;width:30px!important;height:30px!important}" +
     ".sh-search,.sh-adm{display:none!important}.sh-me{order:2;position:static!important;transform:none!important;flex:none;width:34px;height:34px}" +
-    ".sh-nav{order:1;flex:1 1 0;min-width:0;overflow:hidden;margin:0!important;padding:0!important;border:0!important;display:flex!important;align-items:center;justify-content:center!important;gap:clamp(6px,2.1vw,11px)!important}" +
-    ".sh-nav a{flex:none!important;height:50px!important;padding:0!important;font:500 clamp(12px,3.3vw,14.5px)/1 Antonio,'Arial Narrow',sans-serif!important;letter-spacing:.03em!important;text-transform:uppercase;color:#D9D6CF!important;white-space:nowrap}" +
+    ".sh-nav{order:1;flex:1 1 0;min-width:0;overflow:hidden;margin:0!important;padding:0!important;border:0!important;display:flex!important;align-items:center;justify-content:center!important;gap:clamp(5.5px,2vw,11px)!important}" +
+    ".sh-nav a{flex:none!important;height:50px!important;padding:0!important;font:500 clamp(12.5px,3.55vw,15.5px)/1 Antonio,'Arial Narrow',sans-serif!important;letter-spacing:.03em!important;text-transform:uppercase;color:#fff!important;white-space:nowrap}" +
     ".sh-nav a[aria-current=page]{color:#fff!important}.sh-nav a[aria-current=page]::after{left:0!important;right:0!important;bottom:0!important;height:2px!important;border-radius:0!important}" +
     ".sh-ma{display:none}" +
-    ".sh-plus{flex:none!important;width:clamp(13px,3.5vw,15px)!important;height:50px;margin:0!important;padding:0;align-self:center;color:#D9D6CF}" +
-    ".sh-plus svg.b{display:none!important}.sh-plus .bm{display:flex;flex-direction:column;justify-content:space-between;width:100%;height:clamp(9.5px,2.6vw,11.5px);transform:translateY(.7px)}.sh-plus .bm i{display:block;height:1.7px;border-radius:1px;background:currentColor}" +
+    ".sh-plus{flex:none!important;width:clamp(13.5px,3.7vw,16px)!important;height:50px;margin:0!important;padding:0;align-self:center;color:#fff}" +
+    ".sh-plus svg.b{display:none!important}.sh-plus .bm{display:flex;flex-direction:column;justify-content:space-between;width:100%;height:clamp(10px,2.8vw,12px);transform:translateY(.7px)}.sh-plus .bm i{display:block;height:1.7px;border-radius:1px;background:currentColor}" +
     ".sh-plus[aria-expanded=true] .bm{display:none}.sh-plus .x{width:15px;height:15px}" +
     ".sh-more{order:3;flex:0 0 100%;margin:0 -2px 10px!important}}" +
     "@media (min-width:720px){.sh-plus .bm{display:none}}" +
@@ -501,12 +501,31 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma </span>collection', 1) +
     ckCss();
     if (document.getElementById("sh-legal")) return;
     var f = document.createElement("nav"); f.className = "sh-legal"; f.id = "sh-legal"; f.setAttribute("aria-label", "Informations légales");
-    f.innerHTML = '<a href="/mentions-legales/">Mentions légales</a><a href="/conditions/">Conditions d\'utilisation</a><a href="/confidentialite/">Confidentialité</a><a href="/cookies/">Cookies</a><button type="button" id="ck-open">Gérer les cookies</button>' +
+    // Trois liens seulement (Will, 17/10/2026) : les quatre pages légales se parcourent ensuite par onglets, et « Gérer les cookies » est dans la page Cookies.
+    f.innerHTML = '<a href="/mentions-legales/">Mentions légales</a><a href="/confidentialite/">Confidentialité</a><a href="/cookies/">Cookies</a>' +
       '<p class="sh-cr">Créé par Sowon, boss du <a href="https://x.com/FuryoSquad" target="_blank" rel="noopener">FuryoSquad</a> et du <a href="https://x.com/FuryoGang" target="_blank" rel="noopener">FuryoGang</a></p>';
     document.body.appendChild(f);
     var montrer = function () { setTimeout(function () { f.classList.add("on"); }, 1200); };
     if (document.readyState === "complete") montrer(); else addEventListener("load", montrer);
-    document.getElementById("ck-open").onclick = function () { banniere(true); };
+    window.FG_CK = function () { banniere(true); };
+    onglets();
+  }
+  // Pages légales : onglets en haut de page pour passer de l'une à l'autre, et bouton « Gérer les cookies » sur la page Cookies.
+  function onglets() {
+    var P = [["/mentions-legales/", "Mentions légales"], ["/conditions/", "Conditions"], ["/confidentialite/", "Confidentialité"], ["/cookies/", "Cookies"]];
+    var here = location.pathname.replace(/index\.html$/, ""), m = document.querySelector("body>main");
+    if (!m || !P.some(function (x) { return x[0] === here; }) || document.getElementById("lg-tabs")) return;
+    var st = document.createElement("style");
+    st.textContent = ".lg-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 22px;padding:4px;background:#000;border-radius:14px}.lg-tabs::-webkit-scrollbar{display:none}" +
+      ".lg-tabs a{flex:1 0 auto;text-align:center;padding:9px clamp(5px,1.6vw,12px);border-radius:10px;color:#98989D!important;text-decoration:none;font:700 clamp(12.5px,3.4vw,15px)/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}" +
+      ".lg-tabs a[aria-current=page]{background:#38383B;color:#F5F5F7!important}" +
+      ".lg-ck{display:inline-flex;align-items:center;height:44px;padding:0 20px;margin:8px 0 4px;border:0;border-radius:22px;background:#305887;color:#fff;font:700 14.5px Inter,system-ui,sans-serif;cursor:pointer}";
+    document.head.appendChild(st);
+    var n = document.createElement("nav"); n.className = "lg-tabs"; n.id = "lg-tabs"; n.setAttribute("aria-label", "Pages légales");
+    n.innerHTML = P.map(function (x) { return '<a href="' + x[0] + '"' + (x[0] === here ? ' aria-current="page"' : "") + ">" + x[1] + "</a>"; }).join("");
+    m.insertBefore(n, m.firstChild);
+    var cur = n.querySelector("[aria-current]"); if (cur && n.scrollWidth > n.clientWidth) n.scrollLeft = cur.offsetLeft - 8;
+    if (here === "/cookies/") { var h = m.querySelector("h1"), b = document.createElement("button"); b.type = "button"; b.className = "lg-ck"; b.textContent = "Gérer les cookies"; b.onclick = function () { banniere(true); }; (h && h.nextElementSibling ? h.nextElementSibling : h).insertAdjacentElement("afterend", b); }
   }
   function legal() { pied(); banniere(false); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", legal); else legal();

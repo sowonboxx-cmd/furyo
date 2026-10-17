@@ -274,8 +274,8 @@
   // (POLICE · 立入禁止 · NE PAS FRANCHIR · 警視庁) qui défile vers la gauche, juste au-dessus des dernières fiches.
   function bande() {
     var a = "", b = "", i;
-    for (i = 0; i < 6; i++) a += '<span>FURYOGANG</span><span class="j" lang="ja">不良ギャング</span>';
-    for (i = 0; i < 4; i++) b += '<span>POLICE</span><span class="j" lang="ja">立入禁止</span><span>NE PAS FRANCHIR</span><span class="j" lang="ja">警視庁</span>';
+    for (i = 0; i < 8; i++) a += '<span>FURYOGANG</span><span class="j" lang="ja">不良ギャング</span>';
+    for (i = 0; i < 6; i++) b += '<span>POLICE</span><span class="j" lang="ja">立入禁止</span><span>NE PAS FRANCHIR</span><span class="j" lang="ja">警視庁</span>';
     return '<div class="mh-mx" aria-hidden="true"><div class="tp b"><p>' + b + b + '</p></div><div class="tp a"><p>' + a + a + "</p></div></div>";
   }
   // Séparateur « La famille » avant la carte Crows × Worst, la base et les membres (Will, 17/10/2026).
