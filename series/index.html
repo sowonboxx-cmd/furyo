@@ -647,7 +647,14 @@ function render(){
   markCut();
   // Arrivée par un lien #news : on amène l'onglet en haut de l'écran, une seule fois.
   // /series/<nom>#tomes (liens de la carte CROWS x WORST) : on descend directement aux tomes
-  if (location.hash === "#tomes" && !HASH_DONE) { HASH_DONE = true; setTimeout(() => { const t = document.getElementById("tomes"); if (t) t.scrollIntoView({ block: "start" }); }, 60); }
+  // On cale le haut du bloc « Tomes » (titre compris) sous l'en-tête du site, avec une marge, et on se recale pendant que
+  // les couvertures chargent tant que le visiteur n'a pas défilé lui-même (Will, 17/10/2026 : les tomes arrivaient coupés).
+  if (location.hash === "#tomes" && !HASH_DONE) { HASH_DONE = true;
+    let moved = false; const stop = () => { moved = true; };
+    ["wheel", "touchstart", "keydown"].forEach(ev => addEventListener(ev, stop, { passive: true, once: true }));
+    const go = () => { if (moved) return; const t = document.getElementById("tomes"); if (!t) return; const box = t.closest("section") || t;
+      const sh = document.getElementById("sh"); scrollTo({ top: Math.max(0, box.getBoundingClientRect().top + scrollY - (sh ? sh.offsetHeight : 0) - 12), behavior: "instant" }); };
+    [60, 300, 800, 1500, 2500].forEach(ms => setTimeout(go, ms)); addEventListener("load", go, { once: true }); }
   if (HASH_TAB && !HASH_DONE) { HASH_DONE = true; requestAnimationFrame(() => { const t = document.querySelector(".fx-bar"); if (t) t.scrollIntoView({ block: "start" }); }); }
 }
 const tagsHTML = s => s.type || (s.genres || []).length ? `<div class="tags">${s.type ? `<b>${esc(s.type)}</b>` : ""}${(s.genres || []).map(g => `<span>${esc(g)}</span>`).join("")}</div>` : "";
