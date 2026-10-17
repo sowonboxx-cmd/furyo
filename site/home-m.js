@@ -351,6 +351,7 @@
       // Dernières fiches juste sous les news ; puis la France, le ruban, et un bloc « Japon » (sorties + prépublications) annoncé par un séparateur (Will, 17/10/2026).
       // Sorties en France, ruban, puis Dernières fiches ; le bloc Mangakas est retiré de l'accueil (Will, 17/10/2026, 14 h 56).
       root.innerHTML = slider(news.slice(0, SL_N)) + cetteSemaine(news) + grille(news.slice(SL_N, SL_N + 4)) +
+        (function () { var x = window.FG_GANG ? FG_GANG("mobile") : ""; return x ? '<div class="mh-gang" data-fgm style="padding:0 16px;margin:24px 0">' + x + "</div>" : ""; })() +
         sortiesFR() + bande() + railFiches() + japon() + railJP() + direct() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + famille() + crows() + avance() + membres();
       slStart();
     } else root.innerHTML = '<div class="mh-feed">' + feed + "</div>" + sortiesFR() + railJP() + railFiches() + direct() + crows() + avance() + membres() + mangakas();

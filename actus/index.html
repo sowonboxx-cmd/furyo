@@ -235,6 +235,7 @@ body{background:#000}
 </head>
 <body>
 <script src="/site/header.js?v=53"></script>
+<script src="/site/gang.js?v=1"></script>
 <script src="/site/fit2.js?v=4"></script>
 <main class="na" id="na"><p class="na-empty">Chargement…</p></main>
 <script>if (window.FG_SK) document.getElementById("na").innerHTML = FG_SK.article();</script>
@@ -454,7 +455,7 @@ body{background:#000}
       (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div></div>" +
       '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><div class="na-text">' + txt(N.texte) + "</div>" + vid(N.video) +
       (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
-      '<aside class="nd-col">' + fiche() + dernier() + autres() + mangakas() + "</aside></div>";
+      '<aside class="nd-col">' + fiche() + (window.FG_GANG ? FG_GANG("widget") : "") + dernier() + autres() + mangakas() + "</aside></div>";
   }
   DESK.addEventListener("change", function () { render(); });
   // Fenêtre des commentaires
