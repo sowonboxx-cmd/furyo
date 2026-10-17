@@ -293,6 +293,32 @@ a.m-sub{text-decoration:none;color:var(--paper-2)}
 .dh p{margin:6px 0 0;color:#E5E5EA;font-size:17.5px;font-weight:500;letter-spacing:-.005em;line-height:1.45;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;max-width:72ch}
 .dh .da{padding:6px 20px 12px;margin:0}
 .dh .da button,.dh .da a,.dh .da span:not(.sp){color:#CFCFD4}
+/* Bannière défilante de l'accueil ordinateur (maquette B validée par Will, 18/10/2026) : 4 news, vignettes dessous sans stats,
+   catégorie et date sur une ligne (la catégorie se coupe si besoin). */
+.dsl{background:#000;border-radius:20px;overflow:hidden}
+.dsl-v{position:relative;aspect-ratio:16/8.6;background:#1C1C1E}
+.dsl-s{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;pointer-events:none;display:block;color:inherit;text-decoration:none}
+.dsl-s.on{opacity:1;pointer-events:auto}
+.dsl-s img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dsl-s::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.6) 60%,rgba(0,0,0,.92))}
+.dsl-t{position:absolute;left:28px;right:28px;bottom:22px;z-index:1;display:flex;flex-direction:column;gap:6px;text-shadow:0 1px 12px rgba(0,0,0,.6)}
+.dsl-t .dm{font-size:13px}.dsl-t h2{margin:0;font:700 50px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.dsl-t p{margin:2px 0 0;color:#E5E5EA;font-size:17px;font-weight:500;line-height:1.45;max-width:72ch;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.dsl-s:hover h2{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.dsl-nx{position:absolute;top:50%;z-index:2;width:44px;height:44px;margin-top:-22px;border:0;border-radius:22px;background:rgba(0,0,0,.6);color:#fff;display:grid;place-items:center;cursor:pointer}
+.dsl-nx svg{width:20px;height:20px}.dsl-nx.p{left:16px}.dsl-nx.n{right:16px}.dsl-nx.p svg{transform:rotate(180deg)}
+.dsl-th{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:10px}
+.dsl-th button{position:relative;display:flex;flex-direction:column;gap:6px;padding:8px;border:0;border-radius:14px;background:#111;color:#F5F5F7;text-align:left;cursor:pointer;min-width:0}
+.dsl-th button:hover{background:#18181A}.dsl-th button.on{background:#1C1C1E}
+.dsl-th button i{position:absolute;left:8px;right:8px;top:0;height:3px;border-radius:2px;background:#3A3A3D;overflow:hidden;opacity:0}
+.dsl-th button.on i{opacity:1}.dsl-th button i::after{content:"";position:absolute;inset:0;background:#E5483A;transform-origin:left;transform:scaleX(0)}
+.dsl-th button.on i::after{animation:dslP var(--dsl,6s) linear forwards}
+@keyframes dslP{to{transform:scaleX(1)}}
+.dsl-th img,.dsl-th .ph0{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:9px;background:#2C2C2E;display:block}
+.dsl-th small{display:flex;gap:5px;font:700 10.5px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;min-width:0}
+.dsl-th small .k{overflow:hidden;text-overflow:ellipsis;min-width:0}.dsl-th small .d{flex:none;color:#8E8E93;font-weight:600;text-transform:none;letter-spacing:0}
+.dsl-th b{font:700 17px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (prefers-reduced-motion:reduce){.dsl-s{transition:none}.dsl-th button.on i::after{animation:none;transform:none}}
 /* Liste */
 .dr{background:#000;border-radius:20px;padding:14px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:stretch}
 .dr-i{display:block;line-height:0}
@@ -847,10 +873,10 @@ DT.TL = Object.fromEntries(DT.types.map(t => [t[0], t])); DT.TL.annonce = DT.TL.
 try { const c = JSON.parse(localStorage.getItem("fg-news") || "null"); if (c && c.length) DT.news = c; } catch (e) {}
 const escN = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const slugN = t => String(t || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
-const MCN = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const MCS = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 // Dates naturelles sur ordinateur : aujourd'hui, hier, avant-hier, puis la date (Will, 05/10/2026).
 const relN = d => { if (!d) return ""; const t = new Date(new Date().toLocaleDateString("sv") + "T12:00:00"), x = new Date(d + "T12:00:00"), k = Math.round((t - x) / 864e5); return k === 0 ? "Aujourd'hui" : k === 1 ? "Hier" : k === 2 ? "Avant-hier" : ddN(d); };
-const ddN = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return x.getDate() + " " + MCN[x.getMonth()]; };
+const ddN = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return x.getDate() + " " + MCS[x.getMonth()]; };
 const nfN = n => n >= 1000 ? (n / 1000).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " k" : String(n || 0);
 const couvN = (u, w) => u ? (/^https?:/.test(u) ? "/api/couv?u=" + encodeURIComponent(u) + "&w=" + w : u) : "";
 const getN = u => fetch(u, { credentials: "same-origin" }).then(r => r.ok ? r.json() : null).catch(() => null);
@@ -922,6 +948,31 @@ function phN(x, w = 120){
   const ph = `<span class="ph" lang="ja" title="Couverture à venir">${escN(String(x.jp || x.series || "").replace(/\s+/g, "").slice(0, 5))}</span>`;
   return x.cover ? `<img src="${escN(couvN(x.cover, w))}" alt="" loading="lazy" data-ph="${escN(ph)}" onerror="this.outerHTML=this.dataset.ph">` : ph;
 }
+// Bannière défilante (accueil ordinateur) : 4 news, la première affichée, changement toutes les 6 s.
+const DSL_MOIS = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const dslDate = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return x.getDate() + " " + DSL_MOIS[x.getMonth()]; };
+const dslCat = it => { const c = catsN(it); return c.find(t => t[0] !== "news" && t[0] !== "annonce") || c[0]; };
+const DSL_FL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+function sliderN(l) {
+  const sl = l.map((it, i) => { const t = it.fr || it.titre, img = couvN(it.cover, 1400), pos = it.pos == null ? 20 : it.pos;
+    return `<a class="dsl-s${i ? "" : " on"}" href="${escN(linkN(it))}" data-i="${i}">${img ? `<img src="${escN(img)}" alt="Image de la news : ${escN(t)}" style="object-position:center ${pos}%"${i ? ' loading="lazy"' : ""}>` : ""}` +
+      `<span class="dsl-t"><div class="dm">${catsN(it).map(c => `<span style="color:${c[2]}">${escN(c[1])}</span>`).join("<span>·</span>")}<span>·</span><span>${escN(dslDate(it.date))}</span></div><h2>${escN(t)}</h2><p>${escN(it.accroche || SENT(it.texte)[0] || "")}</p></span></a>`; }).join("");
+  const th = l.map((it, i) => { const c = dslCat(it), img = couvN(it.cover, 480), pos = it.pos == null ? 20 : it.pos;
+    return `<button type="button" class="${i ? "" : "on"}" data-sl="${i}" aria-label="${escN(it.fr || it.titre)}"><i></i>${img ? `<img src="${escN(img)}" alt="" loading="lazy" style="object-position:center ${pos}%">` : '<span class="ph0"></span>'}` +
+      `<small><span class="k" style="color:${c[2]}">${escN(c[1])}</span><span class="d">· ${escN(dslDate(it.date))}</span></small><b>${escN(it.fr || it.titre)}</b></button>`; }).join("");
+  return `<section class="dsl" id="dsl" aria-roledescription="carrousel" aria-label="À la une"><div class="dsl-v">${sl}<button type="button" class="dsl-nx p" data-sln="-1" aria-label="Précédente">${DSL_FL}</button><button type="button" class="dsl-nx n" data-sln="1" aria-label="Suivante">${DSL_FL}</button></div><div class="dsl-th">${th}</div></section>`;
+}
+const DSL = { i: 0, t: 0, ms: 6000 };
+function slGo(i) {
+  const r = document.getElementById("dsl"); if (!r) return; const n = r.querySelectorAll(".dsl-s").length; if (!n) return;
+  DSL.i = (i + n) % n;
+  r.querySelectorAll(".dsl-s").forEach((e, k) => e.classList.toggle("on", k === DSL.i));
+  r.querySelectorAll("[data-sl]").forEach((e, k) => { e.classList.remove("on"); if (k === DSL.i) { void e.offsetWidth; e.classList.add("on"); } });
+  clearTimeout(DSL.t); DSL.t = setTimeout(() => slGo(DSL.i + 1), DSL.ms);
+}
+document.addEventListener("click", e => { const t = e.target.closest("[data-sl]"); if (t) { slGo(+t.dataset.sl); return; } const n = e.target.closest("[data-sln]"); if (n) { e.preventDefault(); slGo(DSL.i + +n.dataset.sln); } });
+document.addEventListener("mouseover", e => { if (e.target.closest("#dsl .dsl-v")) clearTimeout(DSL.t); });
+document.addEventListener("mouseout", e => { const v = e.target.closest("#dsl .dsl-v"); if (v && !v.contains(e.relatedTarget)) { clearTimeout(DSL.t); DSL.t = setTimeout(() => slGo(DSL.i + 1), DSL.ms); } });
 function rowN(it) {
   const t = it.fr || it.titre, img = couvN(it.cover, 360);
   return `<article class="dr" data-img data-id="${escN(it.id)}"><a class="dr-i" href="${escN(linkN(it))}" tabindex="-1">${img ? `<img src="${escN(img)}" alt="" loading="lazy" onload="${wideN}">` : "<span></span>"}</a>` +
@@ -991,8 +1042,9 @@ function renderN() {
   else if (DT.signets == null) html = note("Chargement de tes signets…");
   else list = news.filter(it => DT.signets.includes(it.id));
   if (list) {
-    const max = DT.all || DT.cat || DT.tab !== "toutes" ? list.length : 5;
-    html = list.length ? list.slice(0, max).map((it, i) => i === 0 ? heroN(it) : rowN(it)).join("") : note(DT.tab === "signets" && !DT.cat ? "Aucun signet pour l'instant : clique sur l'icône signet d'une news pour la garder ici." : "Aucune actualité dans cette catégorie pour l'instant.");
+    const home = !(DT.all || DT.cat || DT.tab !== "toutes"), nSl = home ? Math.min(4, list.length) : 0;
+    const max = home ? nSl + 4 : list.length;
+    html = list.length ? (home && nSl > 1 ? sliderN(list.slice(0, nSl)) + list.slice(nSl, max).map(rowN).join("") : list.slice(0, max).map((it, i) => i === 0 ? heroN(it) : rowN(it)).join("")) : note(DT.tab === "signets" && !DT.cat ? "Aucun signet pour l'instant : clique sur l'icône signet d'une news pour la garder ici." : "Aucune actualité dans cette catégorie pour l'instant.");
     // « Voir toutes les actualités » toujours présent sous les 5 news de l'accueil (Will, 05/10/2026).
     if (list.length > max) html += `<button type="button" class="box dmore" data-all>Voir toutes les actualités<small>${list.length - max} de plus</small></button>`;
     else if (!DT.all && !DT.cat && DT.tab === "toutes" && list.length) html += `<a class="box dmore" href="/?vue=actus">Voir toutes les actualités</a>`;
@@ -1003,6 +1055,7 @@ function renderN() {
   feed.innerHTML = html;
   fitN(feed);
   viewsN();
+  if (document.getElementById("dsl")) slGo(0); else clearTimeout(DSL.t);
 }
 function loadStatsN(list) {
   const ids = list.map(it => it.id).filter(id => !(id in DT.stats)); if (!ids.length) return;

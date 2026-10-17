@@ -31,6 +31,8 @@ const AJOUTS = [
   { id: "c181011", t: "Premium : fenêtre « dernière semaine de novembre » dans Ma collection (du 24 au 30/11) : rappel de la fin de l'offre + s'abonner + faire un don", cat: "Premium" },
   { id: "c181012", t: "Premium : choisir la fenêtre (10 variantes) et l'encart Ma collection, puis coder", cat: "Premium" },
   { id: "c181013", t: "Accueil ordinateur : bannière défilante version B (vignettes sans stats), à coder", cat: "Site" },
+  { id: "c181020", t: "Lancement : créer un lien PayPal et le relier à FuryoGang (dons + bouton Faire un don)", cat: "Site" },
+  { id: "c181021", t: "Premium : toute personne qui s'abonne entre le 15 et le 30 novembre a 2 mois offerts", cat: "Premium", remplace: "Premium : surprise à annoncer — abonnement à l'année pris avant le 1er décembre = 2 mois offerts" },
   { id: "c181014", t: "Devenir membre : choisir le bandeau accueil (ordi + téléphone) et le widget colonne, à la place du bandeau don", cat: "Site" },
   { id: "c171003", t: "Premium : offert à tous les membres jusqu'au 30 novembre 2026, payant à partir du 1er décembre", cat: "Premium", remplace: "Premium : 30 jours offerts à l'ouverture, données gardées, paiement vers le 15 novembre" },
   { id: "c171004", t: "Premium : surprise à annoncer — abonnement à l'année pris avant le 1er décembre = 2 mois offerts", cat: "Premium" },
