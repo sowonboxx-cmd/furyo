@@ -31,6 +31,7 @@ const AJOUTS = [
   { id: "c171004", t: "Premium : surprise à annoncer — abonnement à l'année pris avant le 1er décembre = 2 mois offerts", cat: "Premium" },
   { id: "c171005", t: "Premium : après le 1er décembre, 2 € par mois", cat: "Premium" },
   { id: "c171006", t: "Stripe : créer le compte et les liens d'abonnement (mensuel 2 €, annuel avec les 2 mois offerts jusqu'au 30/11)", cat: "Premium" },
+  { id: "c171009", t: "Premium : tirage au sort chaque mois, un membre Premium gagne un tome (sortie française ou exclu japonaise) — ajouté à la page /premium/, organiser le premier tirage", cat: "Premium" },
   { id: "c171007", t: "Promo : vidéo Crows × Worst (univers, carte dynamique, fiche Crows), 20-25 s, son de la BO de Crows Zero à envoyer (vérifier les droits)", cat: "Réseaux" },
   { id: "c171008", t: "Promo : enchaîner les vidéos par page (accueil, calendrier, collection…) pour le lancement", cat: "Réseaux" },
 ];
