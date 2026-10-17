@@ -250,7 +250,7 @@ a{color:inherit}
 <body>
 <script src="/site/header.js?v=53"></script>
 <script>window.FG_GANG_PREMIUM = true;</script>
-<script src="/site/gang.js?v=3"></script>
+<script src="/site/gang.js?v=4"></script>
 <script src="/site/statut.js?v=3"></script>
 <div class="page"><div id="app"></div></div>
 <script>document.getElementById("app").innerHTML = window.FG_SK ? (/^\/ma-collection\/[^/]+/.test(location.pathname) ? FG_SK.fiche() : FG_SK.grid(12)) : "";</script>
@@ -417,7 +417,7 @@ function drawHome(){
   const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Possédés</small></div><div><b>${n.r}</b><small>Lus</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Envie</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
-  const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}${rangBox()}
+  const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}${!GUEST && window.FG_GANG && FG_GANG.encart ? FG_GANG.encart() : ""}${rangBox()}
     <div><h4>Ma bibliothèque</h4><div class="lk">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : `<em>${k === "c" ? n.tomes : n[k]}</em>`}</button>`).join("")}</div></div>
     ${TAB === "c" ? `<div><h4>Statut</h4><div class="fk">${[["complete", "Complètes"], ["manque", "Tome manquant"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
     <div><h4>Pays</h4><div class="fk">${["France", "Japon"].map(v => `<button data-f="pays" data-v="${v}" aria-pressed="${F.pays.has(v)}"><i></i>${v}</button>`).join("")}</div></div>

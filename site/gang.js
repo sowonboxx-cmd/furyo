@@ -99,6 +99,21 @@
     o.addEventListener("click", function (e) { if (e.target === o || e.target.closest(".x,[data-fgp-x]")) close(); });
   };
 
+  /* Encart Ma collection (colonne de gauche, ordinateur), version 2 validée le 18/10/2026 : un clic ouvre la fenêtre Premium. */
+  var ARR = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  var c2 = document.createElement("style");
+  c2.textContent = ".fge{position:relative;display:block;width:100%;box-sizing:border-box;min-height:164px;padding:14px;border:0;border-radius:14px;background:#BC002D;color:#fff;text-align:left;cursor:pointer;overflow:hidden;font-family:Inter,sans-serif}" +
+    ".fge:hover{filter:brightness(1.06)}.fge .bu{position:absolute;right:10px;top:10px;background:#000;color:#F2B33D;font:400 12px/1 Bangers,cursive;letter-spacing:.04em;padding:5px 8px;border-radius:10px;transform:rotate(-3deg);white-space:nowrap}" +
+    ".fge img{position:absolute;right:10px;bottom:10px;height:112px;width:auto;pointer-events:none}" +
+    ".fge b{display:block;position:relative;width:60%;padding-top:22px;font:700 20px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase}" +
+    ".fge .cta{position:absolute;left:14px;bottom:12px;display:inline-flex;align-items:center;gap:6px;background:#F2B33D;color:#000;padding:5px 10px;border-radius:999px;font:700 11.5px Inter,sans-serif}";
+  document.head.appendChild(c2);
+  window.FG_GANG.encart = function () {
+    if (!OFFERT) return "";
+    return '<button type="button" class="fge no-sk" data-fgp-open aria-label="Premium offert jusqu’au 30 novembre : ce que ça change"><span class="bu">On t’attend le 1er déc.</span><img src="/img/don/duo.webp" alt=""><b>Jusqu’au 30 novembre, c’est open bar</b><span class="cta">Ce que ça change ' + ARR + "</span></button>";
+  };
+  document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-fgp-open]")) window.FG_GANG.premium(true); });
+
   /* Membre ou pas ? On retire les blocs « Rejoindre » pour les membres. */
   var clean = function () { if (MEMBRE) document.querySelectorAll("[data-fgm]").forEach(function (e) { e.remove(); }); };
   if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
