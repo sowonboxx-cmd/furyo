@@ -194,7 +194,7 @@
     var m = D.mbr; if (!m) return "";
     // Les têtes des derniers inscrits visibles par tous (Will, 17/10/2026) : sans connexion, l'API donne « recents » (pseudo et photo seulement).
     var list = (m.items || m.recents || []).slice().sort(function (a, b) { return new Date(b.inscrit) - new Date(a.inscrit); }).slice(0, 5);
-    var body = list.length ? '<div class="mh-mbr">' + list.map(function (x) { return (m.items ? '<a href="' + (x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/") + '">' : '<span class="mh-mbm">') + (x.photo ? '<img src="' + esc(x.photo) + '" alt="" referrerpolicy="no-referrer" loading="lazy">' : "<i>" + esc((x.pseudo || x.nom || "?").charAt(0).toUpperCase()) + "</i>") + "<span>" + esc(x.pseudo || x.nom || "Membre") + "</span>" + (m.items ? "</a>" : "</span>"); }).join("") + "</div>" + (m.total ? '<p class="mh-note mh-mbn">' + m.total + " membre" + (m.total > 1 ? "s" : "") + " dans le gang</p>" : "")
+    var body = list.length ? '<div class="mh-mbr">' + list.map(function (x) { return (m.items ? '<a href="' + (x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/") + '">' : '<span class="mh-mbm">') + (x.photo ? '<img src="' + esc(x.photo) + '" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="var i=document.createElement(\'i\');i.textContent=' + esc(JSON.stringify((x.pseudo || "?").charAt(0).toUpperCase())) + ';this.replaceWith(i)">' : "<i>" + esc((x.pseudo || x.nom || "?").charAt(0).toUpperCase()) + "</i>") + "<span>" + esc(x.pseudo || x.nom || "Membre") + "</span>" + (m.items ? "</a>" : "</span>"); }).join("") + "</div>" + (m.total ? '<p class="mh-note mh-mbn">' + m.total + " membre" + (m.total > 1 ? "s" : "") + " dans le gang</p>" : "")
       : '<p class="mh-note">' + (m.total || 0) + " membre" + ((m.total || 0) > 1 ? "s" : "") + " dans le gang. Connecte-toi pour voir qui en fait partie.</p>";
     return '<section class="mh-sec mh-mbs" aria-label="Derniers membres">' + head2("Ils ont rejoint le gang", "Derniers membres", "/communaute/", "Communauté") + body +
       (D.me && D.me.user ? "" : '<button type="button" class="mh-join" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button>') + "</section>";
@@ -270,7 +270,16 @@
   }
   // Ruban façon scène de crime (Will, 17/10/2026) : « FURYO GANG » et 不良ギャング en boucle sur une bande rouge inclinée.
   // Il défile de gauche à droite en continu, sous les sorties en France (Will, 17/10/2026, 14 h 40).
-  function bande() { var x = ""; for (var i = 0; i < 6; i++) x += '<span>FURYOGANG</span><span class="j" lang="ja">不良ギャング</span>'; return '<div class="mh-band" aria-hidden="true"><div><p>' + x + x + "</p></div></div>"; }
+  // Deux rubans croisés (Will, 17/10/2026, 15 h 06) : FURYOGANG rouge qui défile vers la droite, ruban police noir
+  // (POLICE · 立入禁止 · NE PAS FRANCHIR · 警視庁) qui défile vers la gauche, juste au-dessus des dernières fiches.
+  function bande() {
+    var a = "", b = "", i;
+    for (i = 0; i < 6; i++) a += '<span>FURYOGANG</span><span class="j" lang="ja">不良ギャング</span>';
+    for (i = 0; i < 4; i++) b += '<span>POLICE</span><span class="j" lang="ja">立入禁止</span><span>NE PAS FRANCHIR</span><span class="j" lang="ja">警視庁</span>';
+    return '<div class="mh-mx" aria-hidden="true"><div class="tp b"><p>' + b + b + '</p></div><div class="tp a"><p>' + a + a + "</p></div></div>";
+  }
+  // Séparateur « La famille » avant la carte Crows × Worst, la base et les membres (Will, 17/10/2026).
+  function famille() { return '<div class="mh-jp" role="presentation"><span class="wm" lang="ja" aria-hidden="true">一家</span><i></i><b>La famille</b><small>Le gang · Les membres · L\u2019univers</small></div>'; }
   // Séparateur « Japon » : on entre dans la partie consacrée au Japon (sorties et prépublications).
   function japon() { return '<div class="mh-jp" role="presentation"><span class="wm" lang="ja" aria-hidden="true">日本</span><i></i><b>En direct du Japon</b><small>Sorties · Prépublications</small></div>'; }
   // Dernières fiches mises en ligne, avec leur numéro.
@@ -341,7 +350,7 @@
       // Dernières fiches juste sous les news ; puis la France, le ruban, et un bloc « Japon » (sorties + prépublications) annoncé par un séparateur (Will, 17/10/2026).
       // Sorties en France, ruban, puis Dernières fiches ; le bloc Mangakas est retiré de l'accueil (Will, 17/10/2026, 14 h 56).
       root.innerHTML = slider(news.slice(0, SL_N)) + cetteSemaine(news) + grille(news.slice(SL_N, SL_N + 4)) +
-        sortiesFR() + bande() + railFiches() + japon() + railJP() + direct() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + crows() + avance() + membres();
+        sortiesFR() + bande() + railFiches() + japon() + railJP() + direct() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + famille() + crows() + avance() + membres();
       slStart();
     } else root.innerHTML = '<div class="mh-feed">' + feed + "</div>" + sortiesFR() + railJP() + railFiches() + direct() + crows() + avance() + membres() + mangakas();
     fitM();
