@@ -123,7 +123,25 @@
     /* Téléphone : un trait gris très léger sépare la ligne du logo (avatar, logo, recherche) du menu (Will, 05/10/2026). */
     "@media (max-width:719px){.sh-top{border-bottom:1px solid rgba(255,255,255,.07)}}" +
     /* Ordinateur : logo, menu, recherche et avatar un peu en retrait des bords du contenu (Will, 05/10/2026). */
-    "@media (min-width:980px){.sh-in{padding:0 48px!important}}";
+    "@media (min-width:980px){.sh-in{padding:0 48px!important}}" +
+    /* Téléphone, maquette validée le 17/10/2026 : une seule ligne. Logo rond à gauche, rubriques et ☰ (à la hauteur des majuscules)
+       au milieu, avatar à droite. Plus de loupe ni de compteur : la recherche passe dans le menu de l'avatar. */
+    ".sh-logo .sh-lr{display:none}" +
+    "@media (max-width:719px){.sh-in{display:flex;flex-wrap:wrap;align-items:center;min-height:50px;padding:0 12px 0 14px;gap:0 10px}" +
+    ".sh-top{display:contents!important}.sh-logo{position:static!important;transform:none!important;order:0;flex:none;line-height:0}" +
+    ".sh-logo img{display:none!important}.sh-logo img.sh-lr{display:block!important;width:30px!important;height:30px!important}" +
+    ".sh-search,.sh-adm{display:none!important}.sh-me{order:2;position:static!important;transform:none!important;flex:none;width:34px;height:34px}" +
+    ".sh-nav{order:1;flex:1 1 0;min-width:0;overflow:hidden;margin:0!important;padding:0!important;border:0!important;display:flex!important;align-items:center;justify-content:center!important;gap:clamp(6px,2.2vw,11px)!important}" +
+    ".sh-nav a{flex:none!important;height:50px!important;padding:0!important;font:500 clamp(11px,3.05vw,13.5px)/1 Antonio,'Arial Narrow',sans-serif!important;letter-spacing:.03em!important;text-transform:uppercase;color:#D9D6CF!important;white-space:nowrap}" +
+    ".sh-nav a[aria-current=page]{color:#fff!important}.sh-nav a[aria-current=page]::after{left:0!important;right:0!important;bottom:0!important;height:2px!important;border-radius:0!important}" +
+    ".sh-ma{display:none}" +
+    ".sh-plus{flex:none!important;width:clamp(12px,3.2vw,14px)!important;height:50px;margin:0!important;padding:0;align-self:center;color:#D9D6CF}" +
+    ".sh-plus svg.b{display:none!important}.sh-plus .bm{display:flex;flex-direction:column;justify-content:space-between;width:100%;height:clamp(9px,2.4vw,10.5px)}.sh-plus .bm i{display:block;height:1.7px;border-radius:1px;background:currentColor}" +
+    ".sh-plus[aria-expanded=true] .bm{display:none}.sh-plus .x{width:15px;height:15px}" +
+    ".sh-more{order:3;flex:0 0 100%;margin:0 -2px 10px!important}}" +
+    "@media (min-width:720px){.sh-plus .bm{display:none}}" +
+    ".adm-b.srch{background:#2A2A2D;border:0;width:100%;font:inherit;color:#F5F5F7;text-align:left;cursor:pointer}.adm-b.srch svg{width:20px;height:20px}" +
+    ".me-srch{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;margin:0 0 14px;border:0;border-radius:22px;background:#2C2C2F;color:#F5F5F7;font:600 14.5px Inter,system-ui,sans-serif;cursor:pointer}.me-srch svg{width:18px;height:18px}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   // Squelettes de chargement (Will, 06/10/2026) : des blocs gris qui pulsent à la place du contenu, puis la page finale.
   // .sk = bloc gris animé ; les images pas encore chargées pulsent aussi, puis apparaissent en fondu.
@@ -163,13 +181,13 @@
   var ICON_S = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
   var html = '<header class="sh" id="sh"><div class="sh-in">' +
     '<div class="sh-top"><button class="sh-btn sh-me" id="sh-me" aria-label="Mon compte"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.3 4.2-7 8.5-7s7.7 2.7 8.5 7z"/></svg></span></button>' +
-    '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"></a>' +
+    '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"><img class="sh-lr" src="/img/logo-rond.png" alt="" width="276" height="276"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
     '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("ecran", "/films/", "À l'écran", 0, 0, "sh-m0") + a("cal", "/calendrier/", "Calendrier") +
     // « Au Japon » (Will, 12/10/2026) : ordinateur seulement, juste avant Ma collection qui reste à droite, ouvre le Direct du Japon (magazines et séries en ligne).
     a("jp", "/japon/", "Au Japon", 0, 0, "sh-m0") +
-a("col", "/ma-collection/", "Ma collection", 1) +
-    '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><svg class="b" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+a("col", "/ma-collection/", '<span class="sh-ma">Ma </span>collection', 1) +
+    '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><span class="bm" aria-hidden="true"><i></i><i></i><i></i></span><svg class="b" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
     "</nav>" +
     '<div class="sh-more" id="sh-more" hidden>' + a("ecran", "/films/", "À l'écran") + a("mk", "/auteurs/", "Mangakas") + a("cm", "/communaute/", "Communauté") + a("cxw", "/crows-x-worst/", "Crows × Worst") + "</div>" +
     "</div></header>";
@@ -295,7 +313,7 @@ a("col", "/ma-collection/", "Ma collection", 1) +
     '<div class="fs-in">' + ICON_S + '<input id="fs-q" type="search" placeholder="Série, mangaka, sortie, actu…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Rechercher"><button class="fs-x" id="fs-x">Fermer</button></div>' +
     '<div class="fs-res" id="fs-res" role="listbox"></div>' +
     '<div class="fs-h"><span><kbd>↑</kbd> <kbd>↓</kbd> naviguer</span><span><kbd>Entrée</kbd> ouvrir</span><span><kbd>Échap</kbd> fermer</span></div></div></div>' +
-    '<div class="me" id="me" hidden role="dialog" aria-modal="true" aria-label="Compte"><div class="me-box"><h3>Ton compte FuryoGang</h3>' +
+    '<div class="me" id="me" hidden role="dialog" aria-modal="true" aria-label="Compte"><div class="me-box"><button type="button" class="me-srch" data-srch>' + ICON_S + 'Rechercher sur le site</button><h3>Ton compte FuryoGang</h3>' +
     "<p>Connecte-toi en un clic avec Google. Ton compte gratuit te permettra bientôt de :</p>" +
     "<ul><li><i style=\"background:#E5483926;color:#E54839\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 21s-8.5-5.2-8.5-11.6C3.5 6.3 5.8 4 8.6 4c1.5 0 2.7.7 3.4 1.8C12.7 4.7 13.9 4 15.4 4c2.8 0 5.1 2.3 5.1 5.4C20.5 15.8 12 21 12 21z\"/></svg></i>Liker les actus et les séries</li><li><i style=\"background:#F2B33D26;color:#F2B33D\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z\"/></svg></i>Garder tes séries préférées en favoris</li><li><i style=\"background:#4C9BFF26;color:#4C9BFF\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M12 3l8 9h-5v9H9v-9H4z\"/></svg></i>Voter pour les séries populaires</li><li><i style=\"background:#7BC67E26;color:#7BC67E\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"8\" r=\"4\"/><path d=\"M2 20c0-3.9 3.1-7 7-7s7 3.1 7 7z\"/><circle cx=\"17\" cy=\"7\" r=\"3\"/><path d=\"M17.5 12c2.8.3 4.5 2.6 4.5 5.5V19h-4.2c-.3-2.6-1.5-4.9-3.3-6.4.9-.4 1.9-.6 3-.6z\"/></svg></i>Voir la famille FuryoGang (réservé aux membres)</li></ul>" +
     '<div id="me-g" class="me-g"></div><p class="me-err" id="me-err"></p><a class="me-mb" href="/communaute/">Voir la communauté</a><button class="no" id="me-x">Fermer</button></div></div>');
@@ -329,7 +347,7 @@ a("col", "/ma-collection/", "Ma collection", 1) +
   /* ---------- Compte : connexion « Continuer avec Google » ---------- */
   var GCID = "923817714860-h88lmvr2bnvninn41ioa19iv2lrd2ed5.apps.googleusercontent.com", ME = null;
   var meInner = meBox.querySelector(".me-box"), meDefault = meInner.innerHTML;
-  function bindClose() { var x = document.getElementById("me-x"); if (x) x.onclick = function () { meBox.hidden = true; }; }
+  function bindClose() { var x = document.getElementById("me-x"); if (x) x.onclick = function () { meBox.hidden = true; }; var sr = meBox.querySelector("[data-srch]"); if (sr) sr.onclick = function () { meBox.hidden = true; open(); }; }
   function drawAvatar() {
     var btn = document.getElementById("sh-me");
     if (ME && ME.user && ME.user.picture) btn.innerHTML = '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">';
@@ -380,6 +398,8 @@ a("col", "/ma-collection/", "Ma collection", 1) +
     var n = (document.querySelector(".sh-val") || { getAttribute: function () { return "0"; } }).getAttribute("data-n") || "0";
     pop.innerHTML = '<div class="adm-box" role="dialog" aria-label="Mon compte">' +
       '<a class="adm-u" href="/profil/">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "<i></i>") + '<span><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + ' · Voir mon profil</small></span></a>' +
+      // Recherche (Will, 17/10/2026) : sur téléphone, la loupe n'est plus dans l'en-tête, elle passe ici.
+      '<button type="button" class="adm-b srch" data-srch><span><strong>Rechercher</strong><small>Séries, mangakas, sorties, news</small></span>' + ICON_S + '</button>' +
       (ME.admin ? '<a class="adm-b v" href="/admin/#validation"><span><strong>Validation</strong><small>À relire avant publication</small></span><em>' + esc(n) + '</em></a>' +
       // Sorties du jour et Couvertures manquantes toujours visibles, juste sous Validation (Will, 08/10/2026) : un clic au lieu de deux.
       '<a class="adm-b j" href="/admin/#sorties"><span><strong>Sorties du jour</strong><small>' + (SJ.n ? [SJ.fr ? SJ.fr + " France" : "", SJ.jp ? SJ.jp + " Japon" : ""].filter(Boolean).join(" · ") + " à poster" : "Rien à poster pour l'instant") + '</small></span>' + (SJ.n ? '<em>' + SJ.n + '</em>' : '<span aria-hidden="true">→</span>') + '</a>' +
@@ -392,6 +412,7 @@ a("col", "/ma-collection/", "Ma collection", 1) +
       // Communauté (Will, 07/10/2026) : réseaux, classement des collections, membres.
       '<a class="adm-b fgcm" href="/communaute/"><span><strong>Communauté</strong><small>Tous les membres du gang</small></span><span aria-hidden="true">→</span></a>' +
       '<button class="adm-out" type="button">Se déconnecter</button></div>';
+    pop.querySelector("[data-srch]").onclick = function () { pop.hidden = true; open(); };
     pop.querySelector(".adm-out").onclick = function () { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); };
     // Ordinateur : même fenêtre que sur téléphone, ouverte sous l'avatar, sans assombrir la page (Will, 04/10/2026).
     var box = pop.querySelector(".adm-box"), av = document.getElementById("sh-me");

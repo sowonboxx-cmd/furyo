@@ -57,10 +57,17 @@
     return '<article class="mh-o"><a class="mh-hit" href="' + esc(link(it)) + '"><div class="mh-ot">' + meta(it) + '<h3>' + esc(it.fr || it.titre) + '</h3>' + pf(it.texte, it.accroche) + "</div>" +
       (it.cover ? '<img src="' + esc(couv(it.cover, 240)) + '" alt="" loading="lazy">' : "") + "</a>" + acts(it) + "</article>";
   }
-  // Carte de liste (toutes les actus / catégorie) : image à gauche, même détail
+  // Catégorie affichée : une seule, « News » seulement s'il n'y a rien d'autre (Will, 17/10/2026).
+  function prim(it) {
+    var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
+    return cs.filter(function (t) { return t[0] !== "news" && t[0] !== "annonce"; })[0] || cs[0] || TL.news;
+  }
+  // Carte de liste (toutes les actus / catégorie), maquette 3a·1 validée le 17/10/2026 : carte noire séparée, image 5:4 à gauche,
+  // catégorie en texte et date écrite en haut à droite, titre sur une ligne, accroche sur deux lignes, actions en bas.
   function cardR(it) {
-    return '<article class="mh-r"><a class="mh-hit" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 240)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') +
-      '<div class="mh-rt">' + meta(it) + "<h3>" + esc(it.fr || it.titre) + "</h3>" + pf(it.texte, it.accroche) + "</div></a>" + acts(it) + "</article>";
+    var t = prim(it);
+    return '<article class="mh-r"><a class="mh-hit" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 280)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') +
+      '<div class="mh-rt"><div class="mh-ctl"><span style="color:' + t[2] + '">' + esc(t[1]) + '</span><em>' + esc(dd(it.date)) + "</em></div><h3>" + esc(it.fr || it.titre) + "</h3>" + pf(it.texte, it.accroche) + "</div></a>" + acts(it) + "</article>";
   }
   // La plus récente en grand
   function hero(it) {
@@ -196,6 +203,84 @@
     }).join("") + "</div></section>";
   }
 
+  // ---------- Accueil téléphone (maquette « mix » validée le 17/10/2026) ----------
+  // Bandeau : les dernières news qui défilent toutes seules (16:9), une catégorie, date en pastille sur l'image, titre sur une ligne.
+  var SL_N = 4;
+  function slider(list) {
+    if (!list.length) return "";
+    return '<section class="mh-sl" aria-label="À la une"><div class="mh-slt">' + list.map(function (it, i) {
+      var t = prim(it);
+      return '<a class="mh-sli" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 900)) + '" alt=""' + (i ? ' loading="lazy"' : ' fetchpriority="high"') + (it.pos == null ? "" : ' style="object-position:center ' + it.pos + '%"') + ">" : "") +
+        '<span class="dt">' + esc(dd(it.date)) + '</span><span class="tx"><span class="pl" style="background:' + t[2] + '">' + esc(t[1]) + "</span><b>" + esc(it.fr || it.titre) + "</b></span></a>";
+    }).join("") + "</div>" + (list.length > 1 ? '<button type="button" class="mh-sla l" aria-label="Précédente">' + I.back + '</button><button type="button" class="mh-sla r" aria-label="Suivante">' + I.back + '</button><div class="mh-sld">' + list.map(function (_, i) { return "<i" + (i ? "" : ' class="on"') + "></i>"; }).join("") + "</div>" : "") + "</section>";
+  }
+  var slTimer = null, SL_I = 0;
+  function slStart() {
+    var sl = root.querySelector(".mh-sl"); if (!sl) return;
+    var tr = sl.querySelector(".mh-slt"), dots = [].slice.call(sl.querySelectorAll(".mh-sld i")), n = dots.length;
+    if (!n) return;
+    tr.scrollLeft = (SL_I % n) * tr.clientWidth;
+    var cur = function () { return Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth)); };
+    var to = function (i) { tr.scrollTo({ left: ((i + n) % n) * tr.clientWidth, behavior: "smooth" }); };
+    tr.addEventListener("scroll", function () { var k = cur(); SL_I = k; dots.forEach(function (d, i) { d.classList.toggle("on", i === k); }); }, { passive: true });
+    sl.querySelector(".mh-sla.l").onclick = function () { to(cur() - 1); arm(); };
+    sl.querySelector(".mh-sla.r").onclick = function () { to(cur() + 1); arm(); };
+    tr.addEventListener("touchstart", function () { clearInterval(slTimer); }, { passive: true });
+    tr.addEventListener("touchend", arm, { passive: true });
+    function arm() { clearInterval(slTimer); if (matchMedia("(prefers-reduced-motion:reduce)").matches) return; slTimer = setInterval(function () { if (!document.hidden && document.body.contains(tr)) to(cur() + 1); else if (!document.body.contains(tr)) clearInterval(slTimer); }, 5500); }
+    arm();
+  }
+  // « Cette semaine » : pastilles qui défilent au doigt, avec le nombre de la semaine (lundi → dimanche) ou des 7 derniers jours pour les news.
+  function cetteSemaine(news) {
+    var w = semaine(), d7 = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
+    var has = function (it, re) { return re.test(it.cat || "") || (it.cats || []).some(function (c) { return re.test(c.k); }); };
+    var rec = news.filter(function (it) { return (it.date || "") >= d7; });
+    var P = [
+      ["Sorties", (D.cal || []).filter(function (x) { return x.date >= w[0] && x.date <= w[1]; }).length, "/calendrier/"],
+      ["Couvertures", rec.filter(function (it) { return has(it, /^couv/); }).length, "/?cat=couv-fr"],
+      ["Prépubs", (D.prepub || []).filter(function (x) { return x.date >= w[0] && x.date <= w[1]; }).length, "/?vue=magazines"],
+      ["Fiches", (D.av && D.av.semaine) || 0, "/avancement/"],
+      ["Fins de série", rec.filter(function (it) { return has(it, /^fin$/); }).length, "/?cat=fin"],
+      ["News", rec.length, "/?vue=actus"]
+    ].filter(function (p) { return p[1] > 0; });
+    if (!P.length) return "";
+    return '<nav class="mh-wk" aria-label="Cette semaine"><span class="k">Cette semaine</span>' + P.map(function (p) { return '<a href="' + p[2] + '">' + esc(p[0]) + "<b>" + p[1] + "</b></a>"; }).join("") + "</nav>";
+  }
+  // Dernières news en carrés sur deux colonnes : catégorie sur l'image, date en pastille en haut à droite.
+  function grille(list) {
+    if (!list.length) return "";
+    return '<section class="mh-sec mh-g4s" aria-label="Dernières news">' + head2("Dernières news", "", "/?vue=actus", "Tout voir →") + '<div class="mh-g4">' + list.map(function (it) {
+      var t = prim(it);
+      return '<a class="mh-gc" href="' + esc(link(it)) + '"><span class="im">' + (it.cover ? '<img src="' + esc(couv(it.cover, 400)) + '" alt="" loading="lazy"' + (it.pos == null ? "" : ' style="object-position:center ' + it.pos + '%"') + ">" : "") +
+        '<i class="tg" style="background:' + t[2] + '">' + esc(t[1]) + '</i><i class="dt">' + esc(dd(it.date)) + "</i></span><b>" + esc(it.fr || it.titre) + "</b><small>" + esc(it.accroche || it.texte || "") + "</small></a>";
+    }).join("") + "</div></section>";
+  }
+  // Prochaines sorties au Japon en couvertures (les sorties françaises ont déjà leur bloc juste au-dessus).
+  function railJP() {
+    var t = new Date().toISOString().slice(0, 10), it = (D.cal || []).filter(function (x) { return x.pays === "Japon" && x.date >= t; }).slice(0, 12);
+    if (!it.length) return "";
+    var span = dd(it[0].date) + (it[it.length - 1].date !== it[0].date ? " – " + dd(it[it.length - 1].date) : "");
+    return '<section class="mh-sec" aria-label="Prochaines sorties au Japon">' + head2("Prochaines sorties", I.jp + "Japon · " + esc(span), "/calendrier/#japon", "Calendrier →") + '<div class="mh-car mh-rail">' + it.map(function (x) {
+      return '<a class="mh-rc" data-tome="' + esc(x.id) + '" href="' + (x.fiche ? "/series/" + slug(x.fr || x.series) : "/calendrier/#japon") + '"><span>' + (x.cover ? '<img src="' + esc(couv(x.cover, 220)) + '" alt="" loading="lazy">' : '<i class="mh-noimg"></i>') + "<em>JP</em></span><b>" + esc(x.series) + (x.n != null ? " T." + esc(x.n) : "") + "</b><small>" + esc(dd(x.date)) + (x.pub ? " · " + esc(String(x.pub).replace(/ Shoten| Bungeisha|\s*\(.*$/g, "")) : "") + "</small></a>";
+    }).join("") + "</div></section>";
+  }
+  // Dernières fiches mises en ligne, avec leur numéro.
+  function railFiches() {
+    var a = D.av, rec = (a && a.recentes) || []; if (!rec.length) return "";
+    var cov = {}; (D.ser || []).forEach(function (x) { cov[x.slug] = x.cover; });
+    return '<section class="mh-sec" aria-label="Dernières fiches">' + head2("Dernières fiches", a.semaine ? a.semaine + " cette semaine" : "", "/series/", "Toutes les séries →") + '<div class="mh-car mh-rail">' + rec.slice(0, 10).map(function (x) {
+      return '<a class="mh-rf" href="/series/' + esc(x.slug) + '"><span>' + (cov[x.slug] ? '<img src="' + esc(couv(cov[x.slug], 240)) + '" alt="" loading="lazy">' : '<i class="mh-noimg"></i>') + (x.rang ? "<em>N°" + esc(x.rang) + "</em>" : "") + "</span><b>" + esc(x.fr || x.t) + "</b><small>" + esc(x.type || "") + "</small></a>";
+    }).join("") + "</div></section>";
+  }
+  // « À lire aussi » : la suite du fil en lignes compactes.
+  function lireAussi(list) {
+    if (!list.length) return "";
+    return '<section class="mh-sec" aria-label="À lire aussi">' + head2("À lire aussi", "", "", "") + '<div class="mh-la">' + list.map(function (it) {
+      var t = prim(it);
+      return '<a href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 200)) + '" alt="" loading="lazy">' : '<i class="mh-noimg"></i>') + '<span><small><i style="color:' + t[2] + '">' + esc(t[1]) + "</i> · " + esc(dd(it.date)) + "</small><b>" + esc(it.fr || it.titre) + "</b><em>" + esc(it.accroche || it.texte || "") + "</em></span></a>";
+    }).join("") + '</div><a class="mh-all" href="/?vue=actus">Voir toutes les actualités</a></section>';
+  }
+
   // ---------- Vues ----------
   function q() { var p = new URLSearchParams(location.search), t = p.get("tab") || ""; return { vue: p.get("vue") || "", cat: p.get("cat") || "", tab: t === "feed" || t === "signets" ? t : "toutes" }; }
   // Page « Toutes les actualités » : le titre devient les onglets Toutes / Mon feed / Signets / Catégories, dans la police des titres (Will, 05/10/2026).
@@ -241,10 +326,13 @@
     else if (TAB === "feed") { var fl = D.follow; var mine = fl ? news.filter(function (it) { return fl.indexOf(slug(it.fr || it.titre)) >= 0 || fl.indexOf(slug(it.titre)) >= 0; }) : [];
       feed = fl == null ? '<p class="mh-note">Chargement…</p>' : mine.length ? mine.map(cardO).join("") : '<p class="mh-note">' + (fl.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton + en haut de leur fiche : leurs news apparaîtront ici.") + "</p>"; }
     else { var ids = D.signets || []; var sig = news.filter(function (it) { return ids.indexOf(newsId(it)) >= 0; }); feed = D.signets == null ? '<p class="mh-note">Chargement…</p>' : sig.length ? sig.map(cardO).join("") : '<p class="mh-note">Aucun signet pour l\'instant : touche l\'icône signet d\'une news pour la garder ici.</p>'; }
-    // « Voir toutes les actualités » dans le bloc noir des news, pour qu'on voie qu'il en fait partie (Will, 04/10/2026).
-    root.innerHTML = '<div class="mh-feed">' + feed +
-      (TAB === "toutes" && news.length ? '<a class="mh-all" href="/?vue=actus">Voir toutes les actualités</a>' : "") + "</div>" +
-      sortiesFR() + sortiesJP() + direct() + crows() + avance() + membres() + mangakas();
+    // Accueil (maquette validée le 17/10/2026) : bandeau qui défile, Cette semaine, Dernières news en carrés,
+    // sorties en France (inchangées), sorties au Japon en couvertures, dernières fiches, À lire aussi, puis le reste.
+    if (TAB === "toutes" && news.length) {
+      root.innerHTML = slider(news.slice(0, SL_N)) + cetteSemaine(news) + grille(news.slice(SL_N, SL_N + 4)) +
+        sortiesFR() + railJP() + railFiches() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + direct() + crows() + avance() + membres() + mangakas();
+      slStart();
+    } else root.innerHTML = '<div class="mh-feed">' + feed + "</div>" + sortiesFR() + railJP() + railFiches() + direct() + crows() + avance() + membres() + mangakas();
     fitM();
   }
   // Bloc don en bas du fil (maquette 4 « Bangers », validée par Will le 06/10/2026). Lien PayPal à venir.
@@ -359,6 +447,7 @@
     get("/api/avancement").then(function (j) { D.av = j; refresh("av"); });
     get("/api/membres").then(function (j) { D.mbr = j; refresh("mbr"); });
     get("/api/auteurs").then(function (j) { D.aut = (j && j.authors) || []; refresh("aut"); });
+    get("/api/series").then(function (j) { D.ser = (j && j.items) || []; refresh("ser"); });
   }
   var started = false;
   function check() { if (MQ.matches && !started) { started = true; start(); } }
