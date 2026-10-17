@@ -61,9 +61,9 @@
     // Les personnages restent entiers, au-dessus des pastilles.
     mobile: function () {
       var V = [
-        { ch: "haru", h: 184, tag: "Message du gang", l1: "Toi.", l2: "Rejoins le gang.", sub: "Gratuit." + (OFFERT ? " Premium offert jusqu’au 30 novembre." : ""), g: 1 },
-        { ch: "murota", h: 168, tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit, et t’es des nôtres." },
-        { ch: "murota", h: 168, tag: "Toi, là", l1: "Viens manger", l2: "avec le gang.", sub: "Gratuit." + (OFFERT ? " Premium offert jusqu’au 30 novembre." : ""), bul: "Slurp. Assieds-toi." }
+        { ch: "haru", h: 184, tag: "Message du gang", l1: "Toi.", l2: "Rejoins le gang.", sub: "Fais pas genre t’as rien vu.<br>Inscris-toi, c’est gratuit.", g: 1 },
+        { ch: "murota", h: 168, tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit,<br>et t’es des nôtres." },
+        { ch: "murota", h: 168, tag: "Toi, là", l1: "Viens manger", l2: "avec le gang.", sub: "C’est gratuit et y a du rab.<br>C’est moi qui régale.", bul: "Slurp. Assieds-toi." }
       ];
       var f = /[?&]v=(\d)/.exec(location.search);
       if (MO == null) MO = f ? +f[1] % V.length : Math.floor(Math.random() * V.length);
@@ -75,9 +75,9 @@
     // Trois versions Murota tirées au hasard à chaque chargement (Will, 18/10/2026).
     widget: function () {
       var V = [
-        { tag: "Message pour toi", l1: "Y a encore", l2: "une place à table.", sub: "Gratuit." + (OFFERT ? " Premium offert jusqu’au 30 novembre." : "") },
-        { tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit, et t’es des nôtres." },
-        { tag: "Toi, là", l1: "Viens manger", l2: "avec le gang.", sub: "Gratuit." + (OFFERT ? " Premium offert jusqu’au 30/11." : ""), bul: "Slurp. Assieds-toi." }
+        { tag: "Message pour toi", l1: "Y a encore", l2: "une place à table.", sub: "C’est gratuit.<br>Installe-toi." },
+        { tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit,<br>et t’es des nôtres." },
+        { tag: "Toi, là", l1: "Viens manger", l2: "avec le gang.", sub: "C’est gratuit et y a du rab.<br>C’est moi qui régale.", bul: "Slurp. Assieds-toi." }
       ];
       if (WD == null) WD = Math.floor(Math.random() * V.length);
       var v = V[WD];
