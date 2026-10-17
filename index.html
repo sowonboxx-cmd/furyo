@@ -723,6 +723,12 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
   .mh-rc>span.nc .vj{display:flex}
   .mh-magl b .nw{white-space:nowrap}
   span.mh-mbm{cursor:default}
+  /* Séparateur « En direct du Japon » (proposition 1, filigrane 日本, validée le 17/10/2026). */
+  .mh-jp{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;margin:34px 0 6px;padding:44px 16px}
+  .mh-jp .wm{position:absolute;inset:0;display:grid;place-items:center;font:900 132px/1 "Noto Sans JP",sans-serif;color:rgba(255,255,255,.045);pointer-events:none}
+  .mh-jp i{display:block;width:34px;height:3px;border-radius:2px;background:#BC002D;margin-bottom:12px}
+  .mh-jp b{position:relative;font:700 28px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.06em;color:#F5F5F7}
+  .mh-jp small{position:relative;margin-top:9px;font:600 11px Inter,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#8E8E93}
   /* Gris des cartes (maquette v6 b validée le 17/10/2026) : sortie France en vedette, bloc don, mangakas. */
   .mh .mh-ff,.mh .fgd,.mh .mh-mk a{background:#1C1C1E}
   /* Ruban « scène de crime » entre les sorties au Japon et les dernières fiches (v9 C, japonais en Zen Antique). */
@@ -747,7 +753,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <div class="mh" id="mh" aria-label="Accueil"></div>
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
-<script src="/site/home-m.js?v=51" defer></script>
+<script src="/site/home-m.js?v=52" defer></script>
 <div class="page">
 
 

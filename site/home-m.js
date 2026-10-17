@@ -270,7 +270,9 @@
   }
   // Ruban façon scène de crime (Will, 17/10/2026) : « FURYO GANG » et 不良ギャング en boucle sur une bande rouge inclinée.
   // Il défile de gauche à droite en continu, sous les sorties en France (Will, 17/10/2026, 14 h 40).
-  function bande() { var x = ""; for (var i = 0; i < 6; i++) x += '<span>FURYO GANG</span><span class="j" lang="ja">不良ギャング</span>'; return '<div class="mh-band" aria-hidden="true"><div><p>' + x + x + "</p></div></div>"; }
+  function bande() { var x = ""; for (var i = 0; i < 6; i++) x += '<span>FURYOGANG</span><span class="j" lang="ja">不良ギャング</span>'; return '<div class="mh-band" aria-hidden="true"><div><p>' + x + x + "</p></div></div>"; }
+  // Séparateur « Japon » : on entre dans la partie consacrée au Japon (sorties et prépublications).
+  function japon() { return '<div class="mh-jp" role="presentation"><span class="wm" lang="ja" aria-hidden="true">日本</span><i></i><b>En direct du Japon</b><small>Sorties · Prépublications</small></div>'; }
   // Dernières fiches mises en ligne, avec leur numéro.
   function railFiches() {
     var a = D.av, rec = (a && a.recentes) || []; if (!rec.length) return "";
@@ -336,8 +338,10 @@
     // Accueil (maquette validée le 17/10/2026) : bandeau qui défile, Cette semaine, Dernières news en carrés,
     // sorties en France (inchangées), sorties au Japon en couvertures, dernières fiches, À lire aussi, puis le reste.
     if (TAB === "toutes" && news.length) {
+      // Dernières fiches juste sous les news ; puis la France, le ruban, et un bloc « Japon » (sorties + prépublications) annoncé par un séparateur (Will, 17/10/2026).
+      // Sorties en France, ruban, puis Dernières fiches ; le bloc Mangakas est retiré de l'accueil (Will, 17/10/2026, 14 h 56).
       root.innerHTML = slider(news.slice(0, SL_N)) + cetteSemaine(news) + grille(news.slice(SL_N, SL_N + 4)) +
-        sortiesFR() + bande() + railJP() + railFiches() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + direct() + crows() + avance() + membres() + mangakas();
+        sortiesFR() + bande() + railFiches() + japon() + railJP() + direct() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + crows() + avance() + membres();
       slStart();
     } else root.innerHTML = '<div class="mh-feed">' + feed + "</div>" + sortiesFR() + railJP() + railFiches() + direct() + crows() + avance() + membres() + mangakas();
     fitM();
