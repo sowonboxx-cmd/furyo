@@ -47,7 +47,7 @@
   document.head.appendChild(css);
   if (!document.querySelector('link[href*="family=Bangers"]')) { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=Bangers&display=swap"; document.head.appendChild(l); }
 
-  var MEMBRE = null; // null = on ne sait pas encore
+  var MEMBRE = null, WD = null; // null = on ne sait pas encore
   var img = function (k, st) { return '<img class="ch no-sk" src="/img/don/' + k + '.webp" alt="" loading="lazy" style="' + st + '">'; };
   var bouton = function (lab, google, cls) { return '<button type="button" class="go' + (cls ? " " + cls : "") + '" onclick="window.FG_LOGIN && FG_LOGIN()">' + (google ? G : "") + lab + "</button>"; };
   var pr = function () { return OFFERT ? '<span class="pr">' + ic("p") + "Premium offert jusqu’au 30 novembre</span>" : ""; };
@@ -61,9 +61,17 @@
       return '<div class="fgm mo">' + img("haru", "right:16px;top:16px;height:190px") + '<div class="tx"><span class="tag">Message du gang</span><p class="msg">Toi.<br><em>Rejoins le gang.</em></p><p class="sub">Gratuit.' + (OFFERT ? " Premium offert jusqu’au 30 novembre." : "") + "</p></div>" +
         '<div class="grid" style="position:relative;z-index:2">' + chips() + "</div>" + bouton("Rejoindre le gang", true, "w") + "</div>";
     },
+    // Trois versions Murota tirées au hasard à chaque chargement (Will, 18/10/2026).
     widget: function () {
-      return '<div class="fgm wd"><div class="hd"><span class="bul">Slurp. Assieds-toi.</span>' + img("murota", "right:-4px;bottom:0;height:220px") +
-        '<div class="tx"><span class="tag">Toi, là</span><p class="msg">Viens manger<br><em>avec le gang.</em></p><p class="sub">Gratuit.' + (OFFERT ? " Premium offert jusqu’au 30/11." : "") + "</p></div></div>" +
+      var V = [
+        { tag: "Message pour toi", l1: "Y a encore", l2: "une place à table.", sub: "Gratuit." + (OFFERT ? " Premium offert jusqu’au 30 novembre." : "") },
+        { tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit, et t’es des nôtres." },
+        { tag: "Toi, là", l1: "Viens manger", l2: "avec le gang.", sub: "Gratuit." + (OFFERT ? " Premium offert jusqu’au 30/11." : ""), bul: "Slurp. Assieds-toi." }
+      ];
+      if (WD == null) WD = Math.floor(Math.random() * V.length);
+      var v = V[WD];
+      return '<div class="fgm wd"><div class="hd">' + (v.bul ? '<span class="bul">' + v.bul + "</span>" : "") + img("murota", "right:-4px;bottom:0;height:220px") +
+        '<div class="tx"' + (v.bul ? "" : ' style="padding-top:0"') + '><span class="tag">' + v.tag + '</span><p class="msg">' + v.l1 + "<br><em>" + v.l2 + '</em></p><p class="sub">' + v.sub + "</p></div></div>" +
         '<div class="grid">' + chips(1) + "</div>" + bouton("Rejoindre", false, "w") + "</div>";
     }
   };
