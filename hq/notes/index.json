@@ -1,80 +1,80 @@
 {
- "maj": "2026-10-18",
- "docs": [
-  {
-   "f": "fonctionnement-premium.md",
-   "titre": "Fonctionnement du Premium",
-   "desc": "Brouillon : périodes, dons PayPal, Stripe, ce qui est fait, à faire, avec le planning."
-  },
-  {
-   "f": "planning-de-sortie.md",
-   "titre": "Planning de sortie (19/10)",
-   "desc": "La checklist du lancement : vérification des pages, qui voit quoi, dimanche, jour J, la semaine."
-  },
-  {
-   "f": "a-faire.md",
-   "titre": "À faire : où ça vit",
-   "desc": "La to-do est ici, dans le QG. Ce que ça remplace."
-  },
-  {
-   "f": "lancement.md",
-   "titre": "Lancement du site",
-   "desc": "Message, semaine de teasing, concours, inscriptions."
-  },
-  {
-   "f": "regles-premium.md",
-   "titre": "Règles Premium et membres",
-   "desc": "Les trois niveaux, le calendrier jusqu'au 1er décembre, dons, badges."
-  },
-  {
-   "f": "a-venir.md",
-   "titre": "À venir",
-   "desc": "Articles Premium, Lexique Furyō (ex-Furyo Voc), tarifs, droits."
-  },
-  {
-   "f": "faire-vivre-le-site.md",
-   "titre": "Faire vivre le site",
-   "desc": "Les rendez-vous réseaux récurrents."
-  },
-  {
-   "f": "calendrier-editorial.md",
-   "titre": "Calendrier éditorial",
-   "desc": "Le socle, le rythme des fiches, le vote de la semaine."
-  },
-  {
-   "f": "reseaux-sociaux.md",
-   "titre": "Réseaux sociaux",
-   "desc": "Formats des posts X, Instagram, TikTok et visuels."
-  },
-  {
-   "f": "badges.md",
-   "titre": "Badges, points et classement",
-   "desc": "Les badges des membres et leurs règles."
-  },
-  {
-   "f": "ressources.md",
-   "titre": "Ressources",
-   "desc": "BUBKA, murs d'affiches, chronologies, VHS."
-  },
-  {
-   "f": "couvertures-officielles.md",
-   "titre": "Couvertures officielles",
-   "desc": "Où prendre chaque couverture, éditeur par éditeur."
-  },
-  {
-   "f": "cahier-sources.md",
-   "titre": "Cahier de sources",
-   "desc": "Les sources de la veille, les rituels Alert Bell et Manga News."
-  },
-  {
-   "f": "pages-series-japon.md",
-   "titre": "Pages séries Japon",
-   "desc": "La page officielle de chaque série japonaise suivie."
-  },
-  {
-   "f": "ancien-a-faire.md",
-   "titre": "À faire (ancien doc)",
-   "desc": "Archive du 03/10 au 10/10, avec les listes Bibliothèque (couvertures, blocs 2 à 11)."
-  }
- ]
+"maj": "2026-10-18",
+"docs": [
+{
+"f": "fonctionnement-premium.md",
+"titre": "Fonctionnement du Premium",
+"desc": "Brouillon : périodes, dons PayPal, Stripe, ce qui est fait, à faire, avec le planning."
+},
+{
+"f": "planning-de-sortie.md",
+"titre": "Planning de sortie (19/10)",
+"desc": "La checklist du lancement : vérification des pages, qui voit quoi, dimanche, jour J, la semaine."
+},
+{
+"f": "a-faire.md",
+"titre": "À faire : où ça vit",
+"desc": "La to-do est ici, dans le QG. Ce que ça remplace."
+},
+{
+"f": "lancement.md",
+"titre": "Lancement du site",
+"desc": "Message, semaine de teasing, concours, inscriptions."
+},
+{
+"f": "regles-premium.md",
+"titre": "Règles Premium et membres",
+"desc": "Les trois niveaux, le calendrier jusqu'au 1er décembre, dons, badges."
+},
+{
+"f": "a-venir.md",
+"titre": "À venir",
+"desc": "Articles Premium, Lexique Furyō (ex-Furyo Voc), tarifs, droits."
+},
+{
+"f": "faire-vivre-le-site.md",
+"titre": "Faire vivre le site",
+"desc": "Les rendez-vous réseaux récurrents."
+},
+{
+"f": "calendrier-editorial.md",
+"titre": "Calendrier éditorial",
+"desc": "Le socle, le rythme des fiches, le vote de la semaine."
+},
+{
+"f": "reseaux-sociaux.md",
+"titre": "Réseaux sociaux",
+"desc": "Formats des posts X, Instagram, TikTok et visuels."
+},
+{
+"f": "badges.md",
+"titre": "Badges, points et classement",
+"desc": "Les badges des membres et leurs règles."
+},
+{
+"f": "ressources.md",
+"titre": "Ressources",
+"desc": "BUBKA, murs d'affiches, chronologies, VHS."
+},
+{
+"f": "couvertures-officielles.md",
+"titre": "Couvertures officielles",
+"desc": "Où prendre chaque couverture, éditeur par éditeur."
+},
+{
+"f": "cahier-sources.md",
+"titre": "Cahier de sources",
+"desc": "Les sources de la veille, les rituels Alert Bell et Manga News."
+},
+{
+"f": "pages-series-japon.md",
+"titre": "Pages séries Japon",
+"desc": "La page officielle de chaque série japonaise suivie."
+},
+{
+"f": "ancien-a-faire.md",
+"titre": "À faire (ancien doc)",
+"desc": "Archive du 03/10 au 10/10, avec les listes Bibliothèque (couvertures, blocs 2 à 11)."
+}
+]
 }
