@@ -151,10 +151,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .dn .cd{font:700 20px "FGAntonio";color:var(--cr);letter-spacing:.04em}.dn .mt{font:700 22px "FGAntonio";color:#F2B33D;white-space:nowrap}
 @media (max-width:600px){.dn{grid-template-columns:auto 1fr auto}.dn .cd{grid-column:2}}
 /* ===== QG dashboard : fond gris, cartes noires, pas de bordure (Will, 19/10) ===== */
-.tile,.gantt,.nl a,.md,.rc,.td,.camp,.snd,.card,.bg,.bgf,.dn,.caltog,.add input,.add select{box-shadow:0 14px 34px rgba(0,0,0,.42)}
-.tile{transition:transform .15s,box-shadow .15s,filter .15s}
-.tile:hover{border-color:transparent!important;transform:translateY(-3px);box-shadow:0 20px 44px rgba(0,0,0,.55);filter:brightness(1.06)}
-.nl a:hover,.nl a[aria-current=true]{border-color:transparent!important;box-shadow:0 0 0 2px var(--blue)}
+.wrap *{box-shadow:none!important}
+.tile{transition:none}
+.tile:hover{border-color:transparent!important;transform:none;filter:none}
+.nl a:hover,.nl a[aria-current=true]{border-color:transparent!important;background:var(--s2)}
 .filt button[aria-pressed=true]{background:var(--blue)!important;color:#fff!important;border-color:transparent!important}
 .btn.r{background:var(--blue)}
 /* ===== Calendrier éditorial : vue liste maître / détail ===== */
@@ -173,12 +173,12 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .calbar2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 22px 4px}
 .calbar2 .seg{margin:0}
 .addbtn{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:0 16px;height:38px;font:700 13.5px "FGInter";cursor:pointer;white-space:nowrap}
-.addbtn:hover{filter:brightness(1.08)}
+.addbtn:hover{filter:none}
 .list{padding:8px 16px 18px;overflow:auto}
 .day{font:700 13px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);padding:16px 8px 8px}
 .day.to{color:var(--cr)}
 .it{display:flex;align-items:center;gap:12px;background:var(--s2);border-radius:15px;padding:14px 15px;margin-bottom:9px;cursor:pointer;transition:background .12s,transform .12s}
-.it:hover{transform:translateX(2px);filter:brightness(1.12)}
+.it:hover{background:#1d1d22}
 .it.sel{background:rgba(47,128,237,.18);box-shadow:inset 0 0 0 1.5px var(--blue)}
 .it.done{opacity:.5}.it.done .t{text-decoration:line-through}
 .it .mid{flex:1;min-width:0}
@@ -187,7 +187,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .it .m i{width:9px;height:9px;border-radius:50%;background:var(--c,#888);flex:none}
 .it .imp{flex:none;font:700 10.5px "FGInter";letter-spacing:.04em;text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:5px 9px;border-radius:8px}
 .it .chev{color:var(--mut);font-size:18px;flex:none}
-.it.todo{background:transparent;box-shadow:inset 0 0 0 1.5px #2a2a30}
+.it.todo{background:#121216}
 .empty{color:var(--mut);font-size:14px;padding:10px 8px}
 .calright{padding:30px 32px;min-height:320px}
 .chips{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
@@ -197,8 +197,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .rnote{font:400 16px/1.5 "FGInter";color:#c7c7cc;max-width:760px;white-space:pre-wrap}
 .slab{font:700 13px "FGAntonio";letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin:28px 0 12px}
 .grid{display:flex;gap:12px;flex-wrap:wrap}
-.gtile{flex:1;min-width:120px;background:var(--s2);border-radius:16px;padding:15px 18px;transition:transform .12s,box-shadow .12s}
-.gtile:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.4)}
+.gtile{flex:1;min-width:120px;background:var(--s2);border-radius:16px;padding:15px 18px}
 .gtile .gl{font:700 11.5px "FGAntonio";letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
 .gtile .gv{font:600 16px "FGInter";margin-top:7px}
 .vis{display:flex;gap:12px;flex-wrap:wrap}
