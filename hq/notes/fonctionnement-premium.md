@@ -11,7 +11,7 @@ Le site ouvre le 19 octobre, tout le monde est Premium gratuitement jusqu'au 30 
 | Période | Ce qui se passe | Paiement possible |
 |---|---|---|
 | 19 oct → 14 nov | Lancement. Tous les membres sont Premium gratuitement. | Dons PayPal uniquement (« Premium avant Premium ») |
-| 15 nov → 30 nov | Premium toujours offert à tous. Les abonnements ouvrent. Ceux qui s'abonnent ont des mois offerts. | Stripe (abonnement) + dons PayPal |
+| 15 nov → 30 nov | Premium toujours offert à tous. Les abonnements ouvrent. Ceux qui s'abonnent ont 2 mois offerts. | Stripe (abonnement) + dons PayPal |
 | 24 nov → 30 nov | Fenêtre « dernière semaine » dans Ma collection : fin de l'offre, s'abonner, faire un don. | idem |
 | À partir du 1er déc | Premium payant, 2 € par mois. Les non-abonnés repassent membres gratuits (leurs listes sont gardées). Blocs « Devenir Premium » en ligne. | Stripe + dons PayPal |
 
@@ -35,8 +35,7 @@ Avant Stripe, la seule façon de soutenir, c'est un don PayPal, avec l'e-mail du
 
 - Stripe ouvert le 15 novembre seulement, une fois la société créée.
 - 2 € par mois. Abonnement à l'année : prix **à fixer**.
-- Offre de lancement : ceux qui s'abonnent entre le 15 et le 30 novembre ont des mois offerts.
-  - **À trancher** : 1 mois ou 2 mois ? Le 18/10 au matin, tu avais validé **2 mois**. Ce soir tu as dit 1 mois.
+- Offre de lancement : ceux qui s'abonnent entre le 15 et le 30 novembre ont **2 mois offerts** (confirmé par Will le 18/10 à 17 h 51).
 
 ## Ce qui est déjà en place sur le site
 
@@ -52,7 +51,7 @@ Avant Stripe, la seule façon de soutenir, c'est un don PayPal, avec l'e-mail du
 | 19 oct | Will | Créer le lien PayPal, Claude le branche sur les boutons de don |
 | Avant le 15 nov | Claude | Date de fin de Premium par membre (pour les dons : 1, 2 ou 4 ans), réglable depuis le back-office |
 | Avant le 15 nov | Will | Créer la société, puis le compte Stripe |
-| Avant le 15 nov | Claude | Brancher Stripe : abonnement 2 €/mois (et annuel), mois offerts du 15 au 30/11, Premium activé tout seul après paiement |
+| Avant le 15 nov | Claude | Brancher Stripe : abonnement 2 €/mois (et annuel), 2 mois offerts du 15 au 30/11, Premium activé tout seul après paiement |
 | Avant le 15 nov | Will | Valider la nouvelle page Premium (brouillon) |
 | 15 nov | Will + Claude | Ouvrir les abonnements, post réseaux |
 | 23 nov | Claude | Rappel : revoir les blocs « Devenir Premium » |
