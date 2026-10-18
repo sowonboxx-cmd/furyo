@@ -32,6 +32,16 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .tile p{margin:0;color:var(--mut);font-size:14px;line-height:1.45}
 .tile .n{margin-top:auto;font:700 13px "FGInter";letter-spacing:.1em;text-transform:uppercase;color:var(--cr)}
 .sec{display:none}.sec.on{display:block}
+.nl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.nl a{display:block;text-decoration:none;color:var(--cr);background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.nl a:hover,.nl a[aria-current=true]{border-color:var(--red)}.nl b{display:block;font-size:15px}.nl small{display:block;margin-top:4px;color:var(--mut);font-size:13px;line-height:1.4}
+.md{margin-top:22px;background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:24px 28px;line-height:1.6;font-size:15px;overflow-wrap:anywhere}
+.md h1{font:700 34px/1.05 "FGAntonio";text-transform:uppercase;margin:0 0 14px}.md h2{font:700 24px/1.1 "FGAntonio";text-transform:uppercase;margin:26px 0 8px;color:var(--cr)}.md h3{font-size:16px;margin:18px 0 6px}
+.md p{margin:8px 0}.md ul,.md ol{margin:6px 0;padding-left:22px}.md li{margin:3px 0}.md li.ck{list-style:none;margin-left:-20px}.md li.ck.x{color:var(--mut);text-decoration:line-through}
+.md code{background:var(--s2);border-radius:6px;padding:1px 5px;font-size:13px}.md pre{background:var(--s2);border-radius:10px;padding:12px;overflow:auto;font-size:13px}
+.md table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13.5px;display:block;overflow:auto}.md th,.md td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}.md th{background:var(--s2)}
+.md a{color:#8ab4ff}.md hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+
 .lbl{font:700 12px "FGInter";letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin:30px 0 12px}
 /* Ressources */
 .res{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
@@ -119,6 +129,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       <a class="tile" href="#ressources"><span class="k">資料</span><h2>Ressources</h2><p>Scans de magazines, murs d'affiches, chronologies : là où on puise le contenu du site.</p><span class="n" id="n-res">…</span></a>
       <a class="tile" href="#todo"><span class="k">課題</span><h2>To-do</h2><p>Tout ce qu'il reste à faire, à cocher. Ajoute, modifie, supprime.</p><span class="n" id="n-todo">…</span></a>
       <a class="tile" href="#vivre"><span class="k">活気</span><h2>Faire vivre le site</h2><p>Tous les contenus récurrents à poster sur les réseaux, presque tout seuls : ce qui est en place, ce qui reste à faire, les idées.</p><span class="n">Rendez-vous réseaux</span></a>
+      <a class="tile" href="#notes"><span class="k">記録</span><h2>Notes du projet</h2><p>Toutes les notes de travail avec Claude : règles, lancement, Premium, réseaux, sources. Synchronisées avec le projet.</p><span class="n" id="n-notes">…</span></a>
       <a class="tile" href="#magazine"><span class="k">雑誌</span><h2>FuryoGang Magazine</h2><p>Le magazine du mois pour les Premium : idée, format, inspiration ATOM, étapes.</p><span class="n">Projet en cours</span></a>
     </div>
     <div class="lbl">Raccourcis</div>
@@ -154,6 +165,13 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <form class="add" id="addf"><input id="addt" placeholder="Nouvelle tâche…" autocomplete="off"><select id="addc"></select><button class="btn r" type="submit">Ajouter</button></form>
     <div class="filt" id="filt"></div>
     <div id="tdl"></div><p id="tdmsg"></p>
+  </section>
+
+  <section class="sec" id="notes">
+    <h1>Notes du projet</h1>
+    <p class="lead">Les docs de travail du projet Claude, en lecture. Claude les met à jour ici et dans le projet en même temps. Pour changer quelque chose, demande-le à Claude.</p>
+    <div class="nl" id="nl"></div>
+    <article class="md" id="nmd" hidden></article>
   </section>
 
   <section class="sec" id="vivre">
@@ -257,7 +275,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
-  var CATS = ["Magazine", "Premium", "Base", "Site", "Réseaux", "Ressources", "Divers"];
+  var CATS = ["Aujourd'hui", "Lancement", "Premium", "Site", "Base", "Réseaux", "Magazine", "Ressources", "À venir", "Plus tard", "Divers"];
   function route() {
     var h = (location.hash || "#home").slice(1); if (!document.getElementById(h)) h = "home";
     document.querySelectorAll(".sec").forEach(function (s) { s.classList.toggle("on", s.id === h); });
@@ -266,6 +284,48 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   window.addEventListener("hashchange", route); route();
 
   // Ressources
+
+  // Notes du projet : /hq/notes/index.json + les .md, rendus ici (Will, 18/10/2026 : tout ce qui est en .md doit être dans le QG).
+  function inl(t) {
+    return esc(t).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<i>$2</i>")
+      .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  }
+  function md(src) {
+    var L = src.replace(/\r/g, "").split("\n"), o = [], i = 0, stack = [];
+    var closeLists = function (lvl) { while (stack.length > lvl) o.push("</" + stack.pop() + ">"); };
+    while (i < L.length) {
+      var l = L[i];
+      if (/^```/.test(l)) { closeLists(0); var c = []; i++; while (i < L.length && !/^```/.test(L[i])) c.push(L[i++]); i++; o.push("<pre>" + esc(c.join("\n")) + "</pre>"); continue; }
+      var h = /^(#{1,4})\s+(.*)/.exec(l); if (h) { closeLists(0); var n = Math.min(3, h[1].length); o.push("<h" + n + ">" + inl(h[2]) + "</h" + n + ">"); i++; continue; }
+      if (/^---+\s*$/.test(l)) { closeLists(0); o.push("<hr>"); i++; continue; }
+      if (/^\|/.test(l)) { closeLists(0); var rows = []; while (i < L.length && /^\|/.test(L[i])) rows.push(L[i++]);
+        var cells = function (r) { return r.replace(/^\||\|\s*$/g, "").split("|").map(function (x) { return x.trim(); }); };
+        var hd = cells(rows[0]), body = rows.slice(/^\|[\s:-]+\|/.test(rows[1] || "") ? 2 : 1);
+        o.push("<table><tr>" + hd.map(function (x) { return "<th>" + inl(x) + "</th>"; }).join("") + "</tr>" + body.map(function (r) { return "<tr>" + cells(r).map(function (x) { return "<td>" + inl(x) + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>"); continue; }
+      var li = /^(\s*)([-*]|\d+\.)\s+(.*)/.exec(l);
+      if (li) { var lvl = Math.floor(li[1].length / 2) + 1, tag = /\d/.test(li[2]) ? "ol" : "ul";
+        if (stack.length < lvl) { while (stack.length < lvl) { o.push("<" + tag + ">"); stack.push(tag); } } else closeLists(lvl);
+        var t = li[3], ck = /^\[( |x)\]\s*/.exec(t);
+        o.push(ck ? '<li class="ck' + (ck[1] === "x" ? " x" : "") + '">' + (ck[1] === "x" ? "☑ " : "☐ ") + inl(t.slice(ck[0].length)) + "</li>" : "<li>" + inl(t) + "</li>"); i++; continue; }
+      if (!l.trim()) { closeLists(0); i++; continue; }
+      closeLists(0); var p = [l]; i++; while (i < L.length && L[i].trim() && !/^(#|\||```|\s*([-*]|\d+\.)\s)/.test(L[i])) p.push(L[i++]);
+      o.push("<p>" + p.map(inl).join("<br>") + "</p>");
+    }
+    closeLists(0); return o.join("");
+  }
+  var NOTES = [];
+  function ouvreNote(f) {
+    var d = NOTES.find(function (x) { return x.f === f; }); if (!d) return;
+    document.querySelectorAll("#nl a").forEach(function (a) { a.setAttribute("aria-current", a.dataset.f === f); });
+    var box = $("#nmd"); box.hidden = false; box.innerHTML = "<p>Chargement…</p>";
+    fetch("/hq/notes/" + f, { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.text(); }).then(function (t) { box.innerHTML = md(t); box.scrollIntoView({ behavior: "smooth", block: "start" }); }).catch(function () { box.innerHTML = "<p>Indisponible.</p>"; });
+  }
+  fetch("/hq/notes/index.json", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+    NOTES = d.docs || []; $("#n-notes").textContent = NOTES.length + " notes · maj " + (d.maj || "").split("-").reverse().join("/");
+    $("#nl").innerHTML = NOTES.map(function (x) { return '<a href="#notes" data-f="' + esc(x.f) + '"><b>' + esc(x.titre) + "</b><small>" + esc(x.desc) + "</small></a>"; }).join("");
+  }).catch(function () { $("#n-notes").textContent = "Indisponible"; });
+  $("#nl").addEventListener("click", function (e) { var a = e.target.closest("a[data-f]"); if (!a) return; e.preventDefault(); ouvreNote(a.dataset.f); });
   fetch("/ressources/index.json", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
     var l = d.items || []; $("#n-res").textContent = l.length + " ressource" + (l.length > 1 ? "s" : "");
     $("#res").innerHTML = l.map(function (x) {
@@ -319,10 +379,13 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   function dessiner() {
     var reste = items.filter(function (x) { return !x.done; }).length;
     $("#n-todo").textContent = reste + " à faire";
-    var cats = ["Tout"].concat(CATS.filter(function (c) { return items.some(function (x) { return x.cat === c; }); })).concat(["Fait"]);
+    var autres = items.map(function (x) { return x.cat; }).filter(function (c, i, a) { return c && CATS.indexOf(c) < 0 && a.indexOf(c) === i; });
+    var cats = ["Tout"].concat(CATS.filter(function (c) { return items.some(function (x) { return x.cat === c && !x.done; }); })).concat(autres).concat(["Fait"]);
     $("#filt").innerHTML = cats.map(function (c) { return '<button type="button" aria-pressed="' + (c === filtre) + '">' + c + "</button>"; }).join("");
     var vis = items.filter(function (x) { return filtre === "Fait" ? x.done : (filtre === "Tout" ? true : x.cat === filtre); });
-    if (filtre !== "Fait") vis = vis.filter(function (x) { return !x.done; }).concat(filtre === "Tout" ? items.filter(function (x) { return x.done; }) : []);
+    // « Tout » : rangé par catégorie dans l'ordre de CATS (Aujourd'hui, Lancement, Premium…), les tâches faites à la fin.
+    var rang = function (x) { var k = CATS.indexOf(x.cat); return k < 0 ? CATS.length : k; };
+    if (filtre !== "Fait") vis = vis.filter(function (x) { return !x.done; }).map(function (x, i) { return [x, i]; }).sort(function (a, b) { return rang(a[0]) - rang(b[0]) || a[1] - b[1]; }).map(function (a) { return a[0]; }).concat(filtre === "Tout" ? items.filter(function (x) { return x.done; }) : []);
     $("#tdl").innerHTML = vis.map(function (x) {
       return '<div class="td' + (x.done ? " done" : "") + '" data-id="' + esc(x.id) + '"><input type="checkbox"' + (x.done ? " checked" : "") + ' aria-label="Fait"><div class="t" contenteditable="plaintext-only">' + esc(x.t) + '</div><span class="c">' + esc(x.cat) + '</span><button class="x" title="Supprimer" aria-label="Supprimer">×</button></div>';
     }).join("") || '<p class="lead">Rien ici.</p>';
