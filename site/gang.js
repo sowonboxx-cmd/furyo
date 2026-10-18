@@ -127,8 +127,17 @@
     ".fge b{display:block;position:relative;width:60%;padding-top:22px;font:700 20px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase}" +
     ".fge .cta{position:absolute;left:14px;bottom:12px;display:inline-flex;align-items:center;gap:6px;background:#F2B33D;color:#000;padding:5px 10px;border-radius:999px;font:700 11.5px Inter,sans-serif}";
   document.head.appendChild(c2);
-  window.FG_GANG.encart = function () {
-    if (!OFFERT) return "";
+  // À partir du 1er décembre (plus d'open bar) : Murota « Passe à table Premium » pour les membres non Premium (Will, 18/10/2026).
+  var LU = '<path d="M5 12l4 4 10-10"/>', EN = '<path d="M12 21s-8-5-8-11a5 5 0 0 1 8-3 5 5 0 0 1 8 3c0 6-8 11-8 11z"/>', PA = '<path d="M4 7h16l-2 12H6zM9 7V5h6v2"/>', ST = '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>';
+  var icP = function (d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="#F2B33D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + "</svg>"; };
+  window.FG_GANG.encart = function (vip) {
+    if (!OFFERT) {
+      if (vip) return "";
+      return '<div class="fgm fgm-c"><div class="top"><span class="bul">2 €, le prix d’un bol.</span>' + img("murota", "position:relative;display:block;margin:0 auto;height:150px") + "</div>" +
+        '<span class="tag" style="position:static;margin:0">Réservé Premium</span><p class="msg">Passe à table<br><em>Premium.</em></p>' +
+        '<div class="grid">' + [[LU, "Lu"], [EN, "Envie"], [PA, "Panier"], [ST, "Stats"]].map(function (b) { return "<span>" + icP(b[0]) + b[1] + "</span>"; }).join("") + "</div>" +
+        '<a class="go w" href="/premium/" style="background:#F2B33D;color:#000;text-decoration:none">Devenir Premium</a></div>';
+    }
     return '<button type="button" class="fge no-sk" data-fgp-open aria-label="Premium offert jusqu’au 30 novembre : ce que ça change"><span class="bu">On t’attend le 1er déc.</span><img src="/img/don/duo.webp" alt=""><b>Jusqu’au 30 novembre, c’est open bar</b><span class="cta">Ce que ça change ' + ARR + "</span></button>";
   };
   document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-fgp-open]")) window.FG_GANG.premium(true); });
