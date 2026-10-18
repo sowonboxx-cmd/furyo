@@ -170,7 +170,7 @@
     ".fgpap-st{position:sticky;z-index:30;margin:0 -16px;padding:0}.fgpap-st .fgs{border-radius:0;border-width:0 0 1px}@media (min-width:980px){.fgpap-st{display:none}}" +
     ".fge.d2 b{width:58%;padding-top:24px}.fge.d2 b span{color:#F2B33D}.fge.d2 p{position:relative;width:58%;margin:8px 0 0;font:600 12px/1.35 Inter,sans-serif;color:#fff}.fge.d2 img{height:120px}.fge.d2{min-height:190px}" +
     /* Fenêtre d'explications */
-    ".fgx,.fgx *{text-align:left;text-transform:none;letter-spacing:normal;box-sizing:border-box}.fgx h2,.fgx small{text-transform:uppercase}.fgx small,.fgx h3{letter-spacing:.12em}.fgx h3{text-transform:uppercase}" +
+    ".fgx,.fgx *{text-align:left;text-transform:none;letter-spacing:normal;box-sizing:border-box}.fgx h2,.fgx h2 *,.fgx small{text-transform:uppercase}.fgx small,.fgx h3{letter-spacing:.12em}.fgx h3{text-transform:uppercase}" +
     ".fgx-o{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px;animation:fgpIn .25s ease}" +
     ".fgx{position:relative;width:min(600px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#0B0B0C;border:1px solid #2A2A2D;border-radius:24px;color:#F5F5F7;font-family:Inter,sans-serif;text-align:left}" +
     ".fgx .fx-t{position:relative;background:#BC002D;padding:20px 28px 18px;min-height:150px;box-sizing:border-box;overflow:hidden}" +
