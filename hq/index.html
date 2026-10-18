@@ -140,6 +140,11 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .bgf .acts{grid-column:1/-1;display:flex;gap:8px;align-items:center}.bgf #bgmsg{color:var(--mut);font-size:13px}
 .bgprev{grid-column:1/-1}
 @media (max-width:600px){.bg{grid-template-columns:44px 1fr}.bg .ic{width:44px;height:44px}.bg .rt{grid-column:1/-1;text-align:left;display:flex;align-items:center;gap:12px}.bg .rt .btn{margin:0}}
+.dn{display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:8px}
+.dn.ok{opacity:.55}.dn input{width:22px;height:22px;accent-color:var(--ok);cursor:pointer}
+.dn b{font-size:15px}.dn b a{color:var(--cr)}.dn small{display:block;color:var(--mut);font-size:13px;margin-top:2px}
+.dn .cd{font:700 20px "FGAntonio";color:var(--cr);letter-spacing:.04em}.dn .mt{font:700 22px "FGAntonio";color:#F2B33D;white-space:nowrap}
+@media (max-width:600px){.dn{grid-template-columns:auto 1fr auto}.dn .cd{grid-column:2}}
 </style>
 </head>
 <body>
@@ -156,6 +161,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       <a class="tile" href="#todo"><span class="k">課題</span><h2>To-do</h2><p>Tout ce qu'il reste à faire, à cocher. Ajoute, modifie, supprime.</p><span class="n" id="n-todo">…</span></a>
       <a class="tile" href="#vivre"><span class="k">活気</span><h2>Faire vivre le site</h2><p>Tous les contenus récurrents à poster sur les réseaux, presque tout seuls : ce qui est en place, ce qui reste à faire, les idées.</p><span class="n">Rendez-vous réseaux</span></a>
       <a class="tile" href="#premium"><span class="k">会員</span><h2>Fonctionnement du Premium</h2><p>Les dates, les dons PayPal, l'abonnement Stripe, ce qui est fait et ce qu'il reste à faire, avec le planning.</p><span class="n">Règles validées</span></a>
+      <a class="tile" href="#dons"><span class="k">寄付</span><h2>Dons PayPal</h2><p>Les membres qui ont cliqué « Je soutiens » avant d'aller sur PayPal : pseudo, e-mail, montant, code à retrouver dans la note PayPal.</p><span class="n" id="n-dons">…</span></a>
       <a class="tile" href="#badges"><span class="k">紋章</span><h2>Badges</h2><p>Tous les badges du site : icône, ce qu'ils font, combien de membres les ont. Ajoute et modifie ici, attribue sur la fiche du membre.</p><span class="n" id="n-badges">…</span></a>
       <a class="tile" href="#notes"><span class="k">記録</span><h2>Notes du projet</h2><p>Toutes les notes de travail avec Claude : règles, lancement, Premium, réseaux, sources. Synchronisées avec le projet.</p><span class="n" id="n-notes">…</span></a>
       <a class="tile" href="#magazine"><span class="k">雑誌</span><h2>FuryoGang Magazine</h2><p>Le magazine du mois pour les Premium : idée, format, inspiration ATOM, étapes.</p><span class="n">Projet en cours</span></a>
@@ -200,6 +206,13 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <p class="lead">Règles validées le 18/10/2026. Les dates et tout ce qu'il faut faire, étape par étape. <a class="btn r" href="/hq/premium-brouillon/" style="margin-left:8px">Voir le brouillon de la page Premium</a></p>
     <div class="gantt" id="gantt"></div>
     <article class="md" id="pmd"><p>Chargement…</p></article>
+  </section>
+
+  <section class="sec" id="dons">
+    <h1>Dons PayPal</h1>
+    <p class="lead">Chaque fois qu'un membre clique « Je soutiens » sur la page Premium, il apparaît ici avant d'aller sur PayPal. Quand un paiement arrive, retrouve-le avec le code en note (FG-numéro), l'heure et le montant. Pose ensuite son badge sur sa fiche (Kobun, Bancho, Shogun, Oyabun) et coche « Traité ». Le Premium des donateurs démarre le 1er décembre.</p>
+    <div class="filt" id="dnf"><button type="button" data-dn="todo" aria-pressed="true">À traiter</button><button type="button" data-dn="fait" aria-pressed="false">Traités</button><button type="button" data-dn="tout" aria-pressed="false">Tout</button></div>
+    <div id="dnl"><p>Chargement…</p></div>
   </section>
 
   <section class="sec" id="badges">
@@ -536,6 +549,28 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       .catch(function (er) { $("#bgmsg").textContent = "Erreur : " + (er.message || "réessaie"); });
   });
   bgLoad();
+
+  // Dons PayPal (Will, 18/10/2026) : clics « Je soutiens » de la page Premium, à rapprocher des paiements PayPal.
+  var DN = [], DNF = "todo";
+  var dnDate = function (t) { var d = new Date(t); return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }) + " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }); };
+  function dnList() {
+    var l = DN.filter(function (d) { return DNF === "tout" || (DNF === "fait" ? d.fait : !d.fait); });
+    $("#dnl").innerHTML = l.map(function (d) {
+      return '<div class="dn' + (d.fait ? " ok" : "") + '"><input type="checkbox" data-dn-id="' + esc(d.id) + '"' + (d.fait ? " checked" : "") + ' title="Traité"><div><b>' + (d.s ? '<a href="/membres/' + esc(d.s) + '/" target="_blank">' + esc(d.n || d.s) + "</a>" : esc(d.n || "Membre")) + "</b><small>" + esc(d.e) + " · " + dnDate(d.t) + '</small></div><span class="cd">' + esc(d.code) + '</span><span class="mt">' + (d.montant === "libre" ? "Libre" : d.montant + " €") + "</span></div>";
+    }).join("") || "<p>Rien ici pour l'instant.</p>";
+  }
+  function dnLoad() {
+    fetch("/api/admin/dons", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d.ok) throw 0; DN = d.dons; var n = DN.filter(function (x) { return !x.fait; }).length;
+      $("#n-dons").textContent = n ? n + " à traiter" : "Rien à traiter"; dnList();
+    }).catch(function () { $("#dnl").innerHTML = "<p>Indisponible.</p>"; $("#n-dons").textContent = "Indisponible"; });
+  }
+  $("#dnf").addEventListener("click", function (e) { var b = e.target.closest("[data-dn]"); if (!b) return; DNF = b.dataset.dn; $("#dnf").querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); dnList(); });
+  $("#dnl").addEventListener("change", function (e) {
+    var c = e.target.closest("[data-dn-id]"); if (!c) return;
+    fetch("/api/admin/dons", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: c.dataset.dnId, fait: c.checked }) }).then(function () { dnLoad(); });
+  });
+  dnLoad();
 })();
 </script>
 </body>
