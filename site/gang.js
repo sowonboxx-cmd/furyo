@@ -61,13 +61,12 @@
         '<span class="tag">Message du gang</span><p class="msg">Tes potes sont déjà dedans.<br><em>Et toi, tu fais quoi ?</em></p><div class="chips">' + chips() + "</div>" +
         '<div style="display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap">' + bouton("Rejoindre le gang", true) + pr() + "</div></div>";
     },
-    // Accueil téléphone : Haruyama, Murota « Psst » ou Murota « Toi, là » tirés au hasard (Will, 18/10/2026).
+    // Accueil téléphone : Haruyama ou Murota « Psst » tirés au hasard (« Toi, là » retiré sur téléphone, Will 18/10/2026) (Will, 18/10/2026).
     // Les personnages restent entiers, au-dessus des pastilles.
     mobile: function () {
       var V = [
         { ch: "haru", h: 184, tag: "Message du gang", l1: "Toi.", l2: "Rejoins le gang.", sub: "Fais pas genre t’as rien vu.<br>Inscris-toi, c’est gratuit.", g: 1 },
-        { ch: "murota", h: 168, tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit,<br>et t’es des nôtres." },
-        { ch: "murota", h: 168, tag: "Toi, là", l1: "Viens manger", l2: "avec le gang.", sub: "C’est gratuit et y a du rab.<br>C’est moi qui régale.", bul: "Slurp. Assieds-toi." }
+        { ch: "murota", h: 168, tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit,<br>et t’es des nôtres." }
       ];
       var f = /[?&]v=(\d)/.exec(location.search);
       if (MO == null) MO = f ? +f[1] % V.length : Math.floor(Math.random() * V.length);
