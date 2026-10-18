@@ -28,6 +28,8 @@
     ".fgm .bul,.fgp .bul{position:absolute;z-index:2;background:#F2B33D;color:#000;font:400 17px/1.05 Bangers,cursive;letter-spacing:.04em;padding:8px 12px;border-radius:16px;transform:rotate(-3deg);white-space:nowrap}" +
     ".fgm.bn{margin:70px 0 0;min-height:210px;padding:26px 26px 26px 250px}" +
     ".fgm.mo{padding:20px}.fgm.mo .mh{position:relative}.fgm.mo .tx{position:relative;z-index:2;width:62%}.fgm.mo .msg{font-size:30px}" +
+    ".fgm-c{padding:14px;border:1px solid #2C2C2E;border-radius:14px}.fgm-c .top{position:relative;padding-top:30px;margin-bottom:6px}.fgm-c .bul{left:50%;top:0;transform:translateX(-50%) rotate(-3deg);font-size:14px}" +
+    ".fgm-c .msg{font-size:24px;margin-top:10px}.fgm-c .sub{font-size:12.5px}.fgm-c .grid{gap:6px}.fgm-c .grid span{padding:9px 8px;font-size:12px;gap:6px}.fgm-c .grid svg{width:15px;height:15px}.fgm-c .go{height:40px;font-size:14px}" +
     ".fgm.wd{padding:18px}.fgm.wd .hd{position:relative;min-height:220px}.fgm.wd .tx{position:relative;z-index:2;width:58%;padding-top:38px}.fgm.wd .msg{font-size:27px}.fgm.wd .sub{font-size:13px}.fgm.wd .bul{right:110px;top:0;font-size:15px}" +
     /* Fenêtre Premium */
     ".fgp-o{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px;animation:fgpIn .25s ease}" +
@@ -73,16 +75,22 @@
         '<div class="grid">' + chips() + "</div>" + bouton(v.g ? "Rejoindre le gang" : "Rejoindre", !!v.g, "w") + "</div>";
     },
     // Trois versions Murota tirées au hasard à chaque chargement (Will, 18/10/2026).
-    widget: function () {
+    widget: function (force) {
       var V = [
         { tag: "Message pour toi", l1: "Y a encore", l2: "une place à table.", sub: "C’est gratuit.<br>Installe-toi." },
         { tag: "Psst", l1: "J’ai gardé", l2: "des nouilles pour toi.", sub: "Un compte gratuit,<br>et t’es des nôtres." },
         { tag: "Toi, là", l1: "Viens manger", l2: "avec le gang.", sub: "C’est gratuit et y a du rab.<br>C’est moi qui régale.", bul: "Slurp. Assieds-toi." }
       ];
       if (WD == null) WD = Math.floor(Math.random() * V.length);
-      var v = V[WD];
+      var v = V[force != null ? force : WD];
       return '<div class="fgm wd"><div class="hd">' + (v.bul ? '<span class="bul">' + v.bul + "</span>" : "") + img("murota", "right:-4px;bottom:0;height:220px") +
         '<div class="tx"' + (v.bul ? "" : ' style="padding-top:0"') + '><span class="tag">' + v.tag + '</span><p class="msg">' + v.l1 + "<br><em>" + v.l2 + '</em></p><p class="sub">' + v.sub + "</p></div></div>" +
+        '<div class="grid">' + chips(1) + "</div>" + bouton("Rejoindre", false, "w") + "</div>";
+    },
+    // Ma collection, visiteur non connecté : Murota « Toi, là » dans la colonne de gauche (Will, 18/10/2026).
+    collection: function () {
+      return '<div class="fgm fgm-c"><div class="top"><span class="bul">Slurp. Assieds-toi.</span>' + img("murota", "position:relative;display:block;margin:0 auto;height:150px") + "</div>" +
+        '<span class="tag" style="position:static;margin:0">Toi, là</span><p class="msg">Viens manger<br><em>avec le gang.</em></p><p class="sub">C’est gratuit et y a du rab.<br>C’est moi qui régale.</p>' +
         '<div class="grid">' + chips(1) + "</div>" + bouton("Rejoindre", false, "w") + "</div>";
     }
   };
