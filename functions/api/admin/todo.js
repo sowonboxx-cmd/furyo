@@ -48,6 +48,8 @@ const AJOUTS = [
   { id: "c181043", t: "IMPORTANT · Furyo Voc 2.0 (nom à choisir : vocabulaire, lexique, argot) : l'argot, les expressions et les insultes japonaises. Aperçu sur les réseaux, détail complet sur le site réservé Premium", cat: "À venir" },
   { id: "c181044", t: "Furyo Voc : livrets PDF à vendre (tous les 50 mots, vers 5 €), mise en page pro et illustrations ; dont un livret « apprendre à insulter comme il faut »", cat: "À venir" },
   { id: "c181045", t: "Furyo Voc : reprendre le résumé déjà envoyé sur les expressions et insultes japonaises pour créer la section", cat: "À venir" },
+  { id: "c181046", t: "Furyo Voc : relancer le compte X @FuryoVoc (arrêté en 2023) avec #FuryoVoc ; format mot japonais + lecture + traduction + image. Remplacer les images sous licence (images libres ou créées)", cat: "À venir" },
+  { id: "c181047", t: "Furyo Voc : base de données du lexique sur le site (mot, lecture, traduction, explications), réservée Premium ; récupérer les anciens posts du compte comme base", cat: "À venir" },
   { id: "c181014", t: "Devenir membre : choisir le bandeau accueil (ordi + téléphone) et le widget colonne, à la place du bandeau don", cat: "Site" },
   { id: "c171003", t: "Premium : offert à tous les membres jusqu'au 30 novembre 2026, payant à partir du 1er décembre", cat: "Premium", remplace: "Premium : 30 jours offerts à l'ouverture, données gardées, paiement vers le 15 novembre" },
   { id: "c171004", t: "Premium : surprise à annoncer — abonnement à l'année pris avant le 1er décembre = 2 mois offerts", cat: "Premium" },
