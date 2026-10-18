@@ -189,13 +189,13 @@ main{max-width:1240px;padding-left:20px;padding-right:20px}
 </head>
 <body>
 <script src="/site/header.js?v=54"></script>
-<script src="/site/badges.js?v=1"></script>
+<script src="/site/badges.js?v=2"></script>
 <main id="app"><p class="empty">Chargement…</p></main>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dl = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 // Profil public : seulement les badges obtenus, et les réseaux si le membre les a rendus publics.
-// Un admin voit en plus « Gérer les badges » : il coche / décoche les badges du membre et ajuste ses points.
+// Un admin voit en plus « Gérer les badges » : il coche / décoche les badges du membre (points retirés de l'écran, Will 18/10/2026).
 // Il faut être membre pour voir les membres.
 const LOCK_ICO = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg>`;
 const verrou = (total) => `<div class="lock"><i>${LOCK_ICO}</i><h2>Réservé aux membres</h2><p>Pour voir les membres, il faut être membre.${total ? ` Déjà <b class="n">${total}</b> inscrit${total > 1 ? "s" : ""} dans la famille FuryoGang.` : ""}<br>Connecte-toi en un clic avec Google, c'est gratuit.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Se connecter / s'inscrire</button></div>`;
@@ -277,7 +277,7 @@ function draw() {
         <p>Touche un badge pour l'ajouter ou le retirer, puis enregistre. Les badges grisés sont automatiques. Donner « Administrateur » ouvre l'accès au back-office.</p>
         <div class="tg">${CAT.map(b => { const on = ont.has(b.id), auto = b.r === "cent" || fixes.has(b.id);
           return `<button type="button" data-b="${b.id}" aria-pressed="${on}" ${auto ? "disabled" : ""} style="${on ? `background:${b.c}` : ""}" title="${esc(b.d)}">${FG_BADGES.icone(b)}${esc(b.n)}${auto ? " · auto" : ""}</button>`; }).join("")}</div>
-        <label>Points <input type="number" name="points" min="0" step="1" value="${m.points}"></label>
+        
         <button class="save">Enregistrer</button><div class="msg" id="amsg"></div>
       </form></section>` : ""}
       <div class="acts"><a href="/communaute/" class="sec">Voir toute la communauté</a></div>
@@ -294,7 +294,7 @@ function draw() {
   f.onsubmit = async e => { e.preventDefault(); const msg = document.getElementById("amsg"); msg.className = "msg"; msg.textContent = "Enregistrement…";
     // On n'envoie que les badges attribués à la main (les automatiques restent).
     const badges = [...f.querySelectorAll("[data-b]:not(:disabled)")].filter(x => x.getAttribute("aria-pressed") === "true").map(x => x.dataset.b);
-    const x = await fetch("/api/admin/membre", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: M.id, badges, points: f.points.value }) }).catch(() => null);
+    const x = await fetch("/api/admin/membre", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: M.id, badges }) }).catch(() => null);
     const k = x ? await x.json().catch(() => ({})) : {};
     if (!x || !x.ok) { msg.className = "msg err"; msg.textContent = k.error || "Erreur, réessaie."; return; }
     if (k.membre) M = { ...k.membre, reseaux: M.reseaux };

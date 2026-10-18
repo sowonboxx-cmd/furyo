@@ -124,6 +124,22 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .cover .mt small{display:block;font-size:20px;letter-spacing:.2em;color:var(--mut);margin-bottom:6px}
 .cover .bt{position:relative;font:700 16px "FGInter";color:var(--mut);letter-spacing:.08em;text-transform:uppercase}
 .cover .bt b{color:var(--cr)}
+.bgtop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;color:var(--mut);font-size:14px}
+.bgl{display:grid;gap:8px}
+.bg{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.bg.off{opacity:.5}
+.bg .ic{width:52px;height:52px;border-radius:14px;display:grid;place-items:center}.bg .ic svg{width:26px;height:26px}
+.bg h3{margin:0;font:700 22px/1.05 "FGAntonio";text-transform:uppercase}.bg p{margin:4px 0 0;color:var(--mut);font-size:13.5px;line-height:1.45}
+.bg .fx{margin-top:6px;font-size:13px;color:var(--cr)}.bg .fx b{color:var(--cr)}
+.bg .rt{text-align:right}.bg .nb{font:700 30px/1 "FGAntonio"}.bg .nb small{display:block;font:600 11px "FGInter";color:var(--mut);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.bg .rt .btn{margin-top:8px;padding:7px 11px;font-size:12px}
+.bgf{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;background:var(--s1);border:1px solid var(--red);border-radius:16px;padding:16px;margin-bottom:16px}
+.bgf label{display:flex;flex-direction:column;gap:5px;font:700 12px "FGInter";color:var(--mut);letter-spacing:.04em}
+.bgf input,.bgf select{font:inherit;font-size:15px;font-weight:500;height:42px;border:1px solid var(--line);border-radius:10px;background:var(--s2);color:var(--cr);padding:0 10px;letter-spacing:0}
+.bgf label.ck{flex-direction:row;align-items:center;gap:8px;grid-column:1/-1}.bgf label.ck input{width:20px;height:20px}
+.bgf .acts{grid-column:1/-1;display:flex;gap:8px;align-items:center}.bgf #bgmsg{color:var(--mut);font-size:13px}
+.bgprev{grid-column:1/-1}
+@media (max-width:600px){.bg{grid-template-columns:44px 1fr}.bg .ic{width:44px;height:44px}.bg .rt{grid-column:1/-1;text-align:left;display:flex;align-items:center;gap:12px}.bg .rt .btn{margin:0}}
 </style>
 </head>
 <body>
@@ -140,6 +156,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       <a class="tile" href="#todo"><span class="k">課題</span><h2>To-do</h2><p>Tout ce qu'il reste à faire, à cocher. Ajoute, modifie, supprime.</p><span class="n" id="n-todo">…</span></a>
       <a class="tile" href="#vivre"><span class="k">活気</span><h2>Faire vivre le site</h2><p>Tous les contenus récurrents à poster sur les réseaux, presque tout seuls : ce qui est en place, ce qui reste à faire, les idées.</p><span class="n">Rendez-vous réseaux</span></a>
       <a class="tile" href="#premium"><span class="k">会員</span><h2>Fonctionnement du Premium</h2><p>Les dates, les dons PayPal, l'abonnement Stripe, ce qui est fait et ce qu'il reste à faire, avec le planning.</p><span class="n">Règles validées</span></a>
+      <a class="tile" href="#badges"><span class="k">紋章</span><h2>Badges</h2><p>Tous les badges du site : icône, ce qu'ils font, combien de membres les ont. Ajoute et modifie ici, attribue sur la fiche du membre.</p><span class="n" id="n-badges">…</span></a>
       <a class="tile" href="#notes"><span class="k">記録</span><h2>Notes du projet</h2><p>Toutes les notes de travail avec Claude : règles, lancement, Premium, réseaux, sources. Synchronisées avec le projet.</p><span class="n" id="n-notes">…</span></a>
       <a class="tile" href="#magazine"><span class="k">雑誌</span><h2>FuryoGang Magazine</h2><p>Le magazine du mois pour les Premium : idée, format, inspiration ATOM, étapes.</p><span class="n">Projet en cours</span></a>
     </div>
@@ -183,6 +200,24 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <p class="lead">Règles validées le 18/10/2026. Les dates et tout ce qu'il faut faire, étape par étape. <a class="btn r" href="/hq/premium-brouillon/" style="margin-left:8px">Voir le brouillon de la page Premium</a></p>
     <div class="gantt" id="gantt"></div>
     <article class="md" id="pmd"><p>Chargement…</p></article>
+  </section>
+
+  <section class="sec" id="badges">
+    <h1>Badges</h1>
+    <p class="lead">La liste complète des badges, dans l'ordre d'affichage. Pour donner un badge à quelqu'un : ouvre sa fiche membre, « Gérer les badges · admin ». Ici, tu crées et tu modifies les badges eux-mêmes.</p>
+    <div class="bgtop"><span id="bgsum"></span><button class="btn r" type="button" id="bgnew">+ Nouveau badge</button></div>
+    <form class="bgf" id="bgf" hidden>
+      <div class="bgprev" id="bgprev"></div>
+      <label>Nom<input name="n" maxlength="80" required></label>
+      <label>Description<input name="d" maxlength="300" placeholder="Courte phrase affichée sous le badge"></label>
+      <label>Icône<select name="icone"></select></label>
+      <label>Couleur<select name="couleur"></select></label>
+      <label>Ce qu'il fait<select name="regle"></select></label>
+      <label>Ordre<input name="o" type="number" step="1"></label>
+      <label class="ck"><input type="checkbox" name="masque"> Masqué (retiré du site sans le supprimer)</label>
+      <div class="acts"><button class="btn r" type="submit">Enregistrer</button><button class="btn" type="button" id="bgx">Annuler</button><span id="bgmsg"></span></div>
+    </form>
+    <div class="bgl" id="bgl"><p>Chargement…</p></div>
   </section>
 
   <section class="sec" id="notes">
@@ -289,6 +324,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     </div>
   </section>
 </div>
+<script src="/site/badges.js?v=2"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -454,6 +490,52 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   $("#tdl").addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.classList.contains("t")) { e.preventDefault(); e.target.blur(); } });
   $("#addf").addEventListener("submit", function (e) { e.preventDefault(); var t = $("#addt").value.trim(); if (!t) return; $("#addt").value = ""; api({ add: { t: t, cat: $("#addc").value } }); });
   api();
+
+  // Badges (Will, 18/10/2026) : liste complète + création / modification. Données : /api/admin/badges (base Notion « Badges »).
+  var FX = { "Manuel": "Attribué à la main sur la fiche du membre. Badge d'honneur, ne débloque rien.", "Administrateurs": "Attribué à la main. Donne l'accès au back-office et au QG.", "Accès complet": "Attribué à la main. Premium sans abonnement : tout le site débloqué.", "100 premiers inscrits": "Automatique : les membres n° 1 à 100." };
+  var BG = [], BGD = null, BGE = null;
+  var bgIc = function (b) { return window.FG_BADGES ? FG_BADGES.icone(b) : ""; };
+  function bgList() {
+    $("#bgsum").textContent = BG.length + " badges · " + (BGD.membres || 0) + " membres";
+    $("#bgl").innerHTML = BG.map(function (b) {
+      return '<div class="bg' + (b.masque ? " off" : "") + '"><span class="ic" style="background:' + b.c + '22;color:' + b.c + '">' + bgIc(b) + "</span><div><h3>" + esc(b.n) + (b.masque ? ' <span class="pill">Masqué</span>' : "") + "</h3>" +
+        (b.d ? "<p>" + esc(b.d) + "</p>" : "") + '<div class="fx"><b>' + esc(b.regle) + "</b> · " + esc(FX[b.regle] || "") + '</div></div><div class="rt"><div class="nb">' + b.nb + "<small>membre" + (b.nb > 1 ? "s" : "") + '</small></div><button class="btn" type="button" data-bge="' + b.id + '">Modifier</button></div></div>';
+    }).join("") || "<p>Aucun badge.</p>";
+  }
+  function bgPrev() {
+    var f = $("#bgf"), b = { n: f.n.value || "Nom du badge", c: BGD.couleurs[f.couleur.value] || "#98989D", i: ({ "Bouclier": "bouclier", "Étoile": "etoile", "Cœur": "coeur", "Crayon": "crayon", "Livre": "livre", "Couronne": "couronne", "Flamme": "flamme", "Épées": "epees" })[f.icone.value] || "etoile" };
+    $("#bgprev").innerHTML = '<div class="bg" style="border-color:transparent;background:var(--s2)"><span class="ic" style="background:' + b.c + '22;color:' + b.c + '">' + bgIc(b) + "</span><div><h3>" + esc(b.n) + "</h3><p>" + esc(f.d.value) + '</p><div class="fx">' + esc(FX[f.regle.value] || "") + "</div></div></div>";
+  }
+  function bgOpen(b) {
+    BGE = b || null; var f = $("#bgf"); f.hidden = false;
+    f.n.value = b ? b.n : ""; f.d.value = b ? b.d : ""; f.icone.value = b ? b.icone : "Étoile"; f.couleur.value = b ? b.couleur : "Gris"; f.regle.value = b ? b.regle : "Manuel";
+    f.o.value = b ? b.o : (BG.length ? Math.max.apply(null, BG.map(function (x) { return x.o; }).filter(function (x) { return x < 99; }).concat([0])) + 1 : 1); f.masque.checked = !!(b && b.masque);
+    $("#bgmsg").textContent = ""; bgPrev(); f.scrollIntoView({ behavior: "smooth", block: "start" }); f.n.focus();
+  }
+  function bgLoad() {
+    fetch("/api/admin/badges", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d.ok) throw 0; BGD = d; BG = d.badges;
+      $("#n-badges").textContent = BG.filter(function (b) { return !b.masque; }).length + " badges";
+      var f = $("#bgf");
+      if (!f.icone.options.length) {
+        f.icone.innerHTML = d.icones.map(function (x) { return "<option>" + esc(x) + "</option>"; }).join("");
+        f.couleur.innerHTML = Object.keys(d.couleurs).map(function (x) { return "<option>" + esc(x) + "</option>"; }).join("");
+        f.regle.innerHTML = d.regles.map(function (x) { return "<option>" + esc(x) + "</option>"; }).join("");
+      }
+      bgList();
+    }).catch(function () { $("#bgl").innerHTML = "<p>Indisponible.</p>"; $("#n-badges").textContent = "Indisponible"; });
+  }
+  $("#bgnew").addEventListener("click", function () { bgOpen(null); });
+  $("#bgx").addEventListener("click", function () { $("#bgf").hidden = true; });
+  $("#bgf").addEventListener("input", bgPrev);
+  $("#bgl").addEventListener("click", function (e) { var t = e.target.closest("[data-bge]"); if (t) bgOpen(BG.filter(function (b) { return b.id === t.dataset.bge; })[0]); });
+  $("#bgf").addEventListener("submit", function (e) {
+    e.preventDefault(); var f = e.target; $("#bgmsg").textContent = "Enregistrement…";
+    fetch("/api/admin/badges", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: BGE ? BGE.id : "", n: f.n.value, d: f.d.value, icone: f.icone.value, couleur: f.couleur.value, regle: f.regle.value, o: f.o.value, masque: f.masque.checked }) })
+      .then(function (r) { return r.json(); }).then(function (d) { if (!d.ok) throw new Error(d.error || ""); f.hidden = true; bgLoad(); })
+      .catch(function (er) { $("#bgmsg").textContent = "Erreur : " + (er.message || "réessaie"); });
+  });
+  bgLoad();
 })();
 </script>
 </body>

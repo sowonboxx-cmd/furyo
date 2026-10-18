@@ -9,10 +9,12 @@
     crayon: '<svg ' + A + '><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>',
     livre: '<svg ' + A + '><path d="M4 5h6a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h6z"/></svg>',
     couronne: '<svg ' + A + '><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>',
+    epees: '<svg ' + A + '><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M14.5 6.5L18 3h3v3l-3.5 3.5M5 14l4 4M7 17l-3 3M3 19l2 2"/></svg>',
     flamme: '<svg ' + A + '><path d="M12 21c-3.9 0-7-2.8-7-6.6 0-3.1 2.2-5.3 3.6-7.2.4 1.6 1.4 2.8 2.6 3.3C11 7 12.5 4.6 15 3c-.3 2.6.8 4.4 2.2 6 1.1 1.3 1.8 2.9 1.8 4.6C19 18 15.9 21 12 21z"/></svg>'
   };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   window.FG_BADGES = {
+    icones: I,
     icone: function (b) { return I[b.i] || I.etoile; },
     // Carte (profil) ; on = obtenu.
     carte: function (b, on) {
