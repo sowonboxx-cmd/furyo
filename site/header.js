@@ -447,7 +447,13 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     bindClose(); meBox.hidden = false;
   }
   document.getElementById("sh-me").addEventListener("click", openMe);
-  window.FG_LOGIN = openMe;
+  // « Rejoindre » (Will, 18/10/2026) : un clic et on part directement sur l'écran Google de choix du compte,
+  // puis retour sur la même page, connecté. Déjà connecté : la fenêtre du compte s'ouvre comme avant.
+  window.FG_LOGIN = function () {
+    if (ME && ME.user) return openMe();
+    location.href = "/api/auth/google?r=" + encodeURIComponent(location.pathname + location.search + location.hash);
+  };
+  if (/[?&]connexion=echec/.test(location.search)) { setTimeout(function () { openMe(); }, 400); history.replaceState(null, "", location.pathname + location.search.replace(/[?&]connexion=echec/, "").replace(/^&/, "?") + location.hash); }
   if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j) { ME = j; drawAvatar(); } }).catch(function () {});
   bindClose();
   meBox.addEventListener("click", function (e) { if (e.target === meBox) meBox.hidden = true; });

@@ -248,9 +248,9 @@ a{color:inherit}
 </style>
 </head>
 <body>
-<script src="/site/header.js?v=53"></script>
+<script src="/site/header.js?v=54"></script>
 <script>window.FG_GANG_PREMIUM = true;</script>
-<script src="/site/gang.js?v=11"></script>
+<script src="/site/gang.js?v=12"></script>
 <script src="/site/statut.js?v=3"></script>
 <div class="page"><div id="app"></div></div>
 <script>document.getElementById("app").innerHTML = window.FG_SK ? (/^\/ma-collection\/[^/]+/.test(location.pathname) ? FG_SK.fiche() : FG_SK.grid(12)) : "";</script>
@@ -582,7 +582,7 @@ function gate(){
   const p = document.createElement("div"); p.className = "pay gp";
   p.innerHTML = `<div class="gate"><button class="gx" aria-label="Fermer">×</button><div class="stack">${pile.map(s => `<span><img src="${esc(couv(s.cover, 200))}" alt=""></span>`).join("")}</div><b>Range ta collection</b><p>Note tes tomes et ce qu'il te manque. Gratuit et illimité pour les membres ; lu, envie de lire et panier avec Premium.</p><button class="btn" id="join">Devenir membre</button><button class="btn g" id="join2">J'ai déjà un compte</button></div>`;
   document.body.appendChild(p);
-  const go = () => { p.remove(); const b = document.getElementById("sh-me"); if (b) b.click(); };
+  const go = () => { p.remove(); if (window.FG_LOGIN) FG_LOGIN(); else { const b = document.getElementById("sh-me"); if (b) b.click(); } };
   p.querySelector("#join").onclick = go; p.querySelector("#join2").onclick = go;
   p.onclick = e => { if (e.target === p || e.target.closest(".gx")) p.remove(); };
 }

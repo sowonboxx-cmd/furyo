@@ -74,7 +74,7 @@
       var v = V[MO];
       return '<div class="fgm mo"><div class="mh" style="min-height:' + (v.h + (v.bul ? 30 : 0)) + 'px">' + (v.bul ? '<span class="bul" style="right:96px;top:0;font-size:15px">' + v.bul + "</span>" : "") +
         img(v.ch, "right:0;bottom:0;height:" + v.h + "px") + '<div class="tx"' + (v.bul ? ' style="padding-top:40px"' : "") + '><span class="tag">' + v.tag + '</span><p class="msg">' + v.l1 + "<br><em>" + v.l2 + '</em></p><p class="sub">' + v.sub + "</p></div></div>" +
-        '<div class="grid">' + chips() + "</div>" + bouton(v.g ? "Rejoindre le gang" : "Rejoindre", !!v.g, "w") + "</div>";
+        '<div class="grid">' + chips() + "</div>" + bouton(v.g ? "Rejoindre le gang" : "Rejoindre", true, "w") + "</div>";
     },
     // Trois versions Murota tirées au hasard à chaque chargement (Will, 18/10/2026).
     widget: function (force) {
@@ -87,7 +87,7 @@
       var v = V[force != null ? force : WD];
       return '<div class="fgm wd"><div class="hd">' + (v.bul ? '<span class="bul">' + v.bul + "</span>" : "") + img("murota", "right:-4px;bottom:0;height:220px") +
         '<div class="tx"' + (v.bul ? "" : ' style="padding-top:0"') + '><span class="tag">' + v.tag + '</span><p class="msg">' + v.l1 + "<br><em>" + v.l2 + '</em></p><p class="sub">' + v.sub + "</p></div></div>" +
-        '<div class="grid">' + chips(1) + "</div>" + bouton("Rejoindre", false, "w") + "</div>";
+        '<div class="grid">' + chips(1) + "</div>" + bouton("Rejoindre", true, "w") + "</div>";
     },
     // Ma collection, visiteur non connecté : Murota « Toi, là » dans la colonne de gauche (Will, 18/10/2026).
     // Ma collection, visiteur non connecté : Busō dans le rond jaune, version 1 validée le 18/10/2026 (remplace Murota).
@@ -96,7 +96,7 @@
       return '<div class="fgm fgm-c fgm-b"><div class="ci"><img src="/img/don/buso.webp" alt="" class="no-sk"></div>' +
         '<span class="tag">Rejoins le gang</span><p class="msg">Ta collection,<br><em>c’est gratuit.</em></p><p class="sub">Range tes tomes, coche ce que t’as lu, note ce qui te manque.</p>' +
         '<div class="grid">' + P.map(function (b) { return '<span><svg viewBox="0 0 24 24" fill="none" stroke="#F2B33D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + b[0] + "</svg>" + b[1] + "</span>"; }).join("") + "</div>" +
-        bouton("Rejoindre", false, "w y") + "</div>";
+        bouton("Rejoindre", true, "w y") + "</div>";
     }
   };
   window.FG_GANG = function (k) { if (MEMBRE || !B[k]) return ""; return '<div class="fgm-w" data-fgm>' + B[k]() + "</div>"; };
