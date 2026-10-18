@@ -1,6 +1,6 @@
 // Dons PayPal « Premium avant Premium » (Will, 18/10/2026) : avant d'ouvrir PayPal, le site note qui clique,
 // pour que Will retrouve le donateur (QG > Dons). Membres connectés seulement.
-//   POST /api/don { montant: "libre" | 25 | 50 | 100 } → { ok, code: "FG-123" }
+//   POST /api/don { montant: "libre" | 25 | 50 | 100 } → { ok, code: "FG-123", pseudo }
 import { membre } from "../../lib/auth.js";
 const CLE = "dons:clics", MAX = 1000;
 const json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -17,5 +17,5 @@ export async function onRequestPost({ request, env }) {
   if (prev) prev.t = now;
   else l.unshift({ id: now.toString(36) + Math.random().toString(36).slice(2, 5), t: now, m: id, n: u.n || "", s: u.s || "", e: u.e || "", k: u.k || null, code, montant, fait: false });
   await env.STATS.put(CLE, JSON.stringify(l.slice(0, MAX)));
-  return json({ ok: true, code });
+  return json({ ok: true, code, pseudo: u.n || "" });
 }

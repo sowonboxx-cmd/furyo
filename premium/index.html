@@ -193,7 +193,7 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
       <div class="ti"><b>50 €</b><span>Premium 2 ans</span><p>Premium à partir du 1er décembre</p><em class="bdg" style="color:#B38CFF;background:#B38CFF26"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>Badge Shogun</em><button type="button" class="btn b3" data-don="50">Je soutiens</button></div>
       <div class="ti top"><b>100 €</b><span>Premium 4 ans</span><p>Premium à partir du 1er décembre</p><em class="bdg" style="color:#E54839;background:#E5483926"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 21c-3.9 0-7-2.8-7-6.6 0-3.1 2.2-5.3 3.6-7.2.4 1.6 1.4 2.8 2.6 3.3C11 7 12.5 4.6 15 3c-.3 2.6.8 4.4 2.2 6 1.1 1.3 1.8 2.9 1.8 4.6C19 18 15.9 21 12 21z"/></svg>Badge Oyabun</em><button type="button" class="btn b3" data-don="100">Je soutiens</button></div>
     </div>
-    <p class="note">Connecte-toi d'abord : le bouton enregistre ton don à ton nom, puis ouvre PayPal (carte bancaire, Apple Pay ou compte PayPal), où tu tapes le montant de ton choix. On active ton Premium (à partir du 1er décembre) et ton badge à la main.</p>
+    <p class="note">Connecte-toi d'abord : le bouton enregistre ton don à ton nom, puis ouvre PayPal (carte bancaire, Apple Pay ou compte PayPal), où tu tapes le montant de ton choix et ton pseudo. On active ton Premium (à partir du 1er décembre) et ton badge à la main.</p>
   </section>
 
   <section class="faq"><h2>Questions</h2>
@@ -205,8 +205,8 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
   </section>
 </main>
 <div class="dm-o" id="dm" hidden><div class="dm" role="dialog" aria-modal="true" aria-label="Ton don"><button type="button" class="dm-x" aria-label="Fermer">×</button>
-<small>Premium avant Premium</small><h3>C'est noté</h3><p class="dm-c" id="dmc">FG-</p>
-<p>On a enregistré ton don à ton nom. Sur PayPal, tape <b id="dmm">le montant de ton choix</b> et paie <b>maintenant</b> : on te retrouve grâce à l'heure et au montant, puis on pose ton badge et ton Premium.</p>
+<small>Premium avant Premium</small><h3>C'est noté, ton pseudo</h3><p class="dm-c" id="dmc">FG-</p>
+<p>On a enregistré ton don à ton nom. Sur PayPal, tape <b id="dmm">le montant de ton choix</b> et <b>écris ton pseudo ci-dessus dans le champ « Ton pseudo FuryoGang »</b> : c'est comme ça qu'on te retrouve pour poser ton badge et ton Premium.</p>
 <a class="btn b3 dm-go" id="dmgo" href="https://www.paypal.com/ncp/payment/JBESY5XU4BXME" target="_blank" rel="noopener">Ouvrir PayPal</a><p class="dm-n">Carte bancaire, Apple Pay ou compte PayPal.</p></div></div>
 <style>.dm-o{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px}.dm-o[hidden]{display:none}
 .dm{position:relative;width:min(420px,100%);background:#111;color:#F5F5F7;border-radius:22px;padding:24px;text-align:left;font-family:Inter,sans-serif}
@@ -226,7 +226,7 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
       .then(function (r) { if (r.status === 401) throw "login"; return r.json(); })
       .then(function (j) {
         if (!j.ok) throw 0;
-        document.getElementById("dmc").textContent = j.code;
+        document.getElementById("dmc").textContent = j.pseudo || j.code;
         document.getElementById("dmm").textContent = m === "libre" ? "le montant de ton choix" : m + " €";
         dm.hidden = false;
       })

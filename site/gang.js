@@ -225,7 +225,7 @@
       "<h3>C’est quoi ?</h3><p>FuryoGang, c’est un passionné, pas une boîte. Pour lancer le site, <b>tout le monde est Premium gratuitement jusqu’au 30 novembre</b>. Après, ce sera 2 € par mois. Si tu veux nous aider dès maintenant, tu peux faire un don : en échange, <b>on te garde le Premium</b>.</p>" +
       "<h3>Comment ça marche</h3>" +
       '<div class="fx-s"><i>1</i><p><b>Tu fais un don sur PayPal</b> (carte bancaire, Apple Pay ou compte PayPal), du montant que tu veux. Un seul paiement, pas d’abonnement, rien ne sera prélevé ensuite.</p></div>' +
-      '<div class="fx-s"><i>2</i><p><b>Tu cliques sur « Je soutiens » en étant connecté</b> : le site note ton don à ton nom, c’est comme ça qu’on te retrouve.</p></div>' +
+      '<div class="fx-s"><i>2</i><p><b>Tu écris ton pseudo FuryoGang sur PayPal</b> (un champ est prévu), pour qu’on te retrouve.</p></div>' +
       '<div class="fx-s"><i>3</i><p><b>Ton Premium démarre le 1er décembre</b>, à la fin de la période offerte. Tu ne perds pas un jour. Ton badge apparaît sur ton profil.</p></div>' +
       '<h3>Ce que ton don te donne</h3><div class="fx-tb">' + tr("Moins de 25 €", "Un grand merci + badge Donateur") + tr("25 €", "<em>1 an</em> de Premium") + tr("50 €", "<em>2 ans</em> de Premium") + tr("100 €", "<em>4 ans</em> de Premium") + "</div>" +
       '<p class="fx-nt">Et 1 an de plus par tranche de 25 € au-dessus.</p><h3>Ce que tu débloques</h3>' + CH2 +
