@@ -45,6 +45,7 @@ Avant Stripe, la seule façon de soutenir, c'est un don PayPal, avec l'e-mail du
 - **Jusqu'au 14 novembre** : il dit « Premium avant Premium » et mène au don PayPal (Premium à partir du 1er décembre).
 - **À partir du 15 novembre** : il dit « Devenir Premium » (abonnement Stripe), avec à côté « Faire un don ».
 - Le changement se fait tout seul à la date.
+- Parcours du don (18/10) : tous les boutons « Faire un don avec PayPal » du site mènent d'abord au bloc dons de la page /premium/ (paliers expliqués). Seul le bouton de cette page ouvre PayPal, où le montant est libre. Le donateur utilise l'e-mail de son compte FuryoGang ou met son pseudo en note.
 
 ## Abonnement (Stripe, à partir du 15 novembre)
 
