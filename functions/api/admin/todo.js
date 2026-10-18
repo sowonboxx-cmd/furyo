@@ -32,6 +32,7 @@ const ANCIENS_TXT = ["1er décembre, Devenir Premium (membres non Premium) : ban
 // Tâches ajoutées par Claude après la refonte (id fixe) : glissées une seule fois en tête de liste.
 // « remplace » met à jour le texte d'une tâche existante devenue fausse. Une tâche supprimée par Will ne revient pas.
 const AJOUTS = [
+  { id: "c181060", t: "Au Japon : ajouter les prépublications en ligne (Champion Cross, Comic Zenon, Yanmaga Web…) dans la page L'actualité manga au Japon, avec la liste de ce qui sort (ex. WORST Gaiden Saburoku Santa)", cat: "Site" },
 ];
 async function lire(env) {
   let l = null; try { l = JSON.parse((await env.STATS.get(CLE)) || "null"); } catch (e) {}
