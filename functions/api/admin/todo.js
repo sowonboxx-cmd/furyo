@@ -102,13 +102,15 @@ export async function onRequestPost({ request, env }) {
     let b = {}; try { b = await request.json(); } catch (e) {}
     const l = await lire(env), now = new Date().toISOString().slice(0, 10);
     const txt = s => String(s || "").trim().slice(0, 500);
-    if (b.add && txt(b.add.t)) l.unshift({ id: uid(), t: txt(b.add.t), cat: txt(b.add.cat).slice(0, 40) || "Divers", prio: "moyen", done: false, d: now });
+    const okDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "";
+    if (b.add && txt(b.add.t)) l.unshift({ id: uid(), t: txt(b.add.t), cat: txt(b.add.cat).slice(0, 40) || "Divers", prio: "moyen", dt: okDate(b.add.dt), done: false, d: now });
     else {
       const i = l.findIndex(x => x.id === b.id); if (i < 0) return json({ error: "tâche introuvable" }, 404);
       if (b.del) l.splice(i, 1);
       else {
         if (typeof b.done === "boolean") { l[i].done = b.done; l[i].fait = b.done ? now : ""; }
         if (b.prio) l[i].prio = ["haut","moyen","bas"].includes(b.prio) ? b.prio : l[i].prio;
+        if (typeof b.dt === "string") l[i].dt = okDate(b.dt);
         if (typeof b.t === "string" && txt(b.t)) l[i].t = txt(b.t);
         if (typeof b.cat === "string") l[i].cat = txt(b.cat).slice(0, 40) || "Divers";
       }
