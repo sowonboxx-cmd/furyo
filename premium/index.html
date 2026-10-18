@@ -206,7 +206,7 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
 </main>
 <div class="dm-o" id="dm" hidden><div class="dm" role="dialog" aria-modal="true" aria-label="Ton don"><button type="button" class="dm-x" aria-label="Fermer">×</button>
 <small>Premium avant Premium</small><h3>C'est noté, ton pseudo</h3><p class="dm-c" id="dmc">FG-</p>
-<p>On a enregistré ton don à ton nom. Sur PayPal, tape <b id="dmm">le montant de ton choix</b> et <b>écris ton pseudo ci-dessus dans le champ « Ton pseudo FuryoGang »</b> : c'est comme ça qu'on te retrouve pour poser ton badge et ton Premium.</p>
+<p>On a enregistré ton don à ton nom. Sur PayPal, tape <b id="dmm">le montant de ton choix</b> si on te le demande, et <b>écris ton pseudo ci-dessus dans le champ « Ton pseudo FuryoGang »</b> : c'est comme ça qu'on te retrouve pour poser ton badge et ton Premium.</p>
 <a class="btn b3 dm-go" id="dmgo" href="https://www.paypal.com/ncp/payment/JBESY5XU4BXME" target="_blank" rel="noopener">Ouvrir PayPal</a><p class="dm-n">Carte bancaire, Apple Pay ou compte PayPal.</p></div></div>
 <style>.dm-o{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px}.dm-o[hidden]{display:none}
 .dm{position:relative;width:min(420px,100%);background:#111;color:#F5F5F7;border-radius:22px;padding:24px;text-align:left;font-family:Inter,sans-serif}
@@ -217,6 +217,8 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
 <script>
 // « Je soutiens » (Will, 18/10/2026) : le site note qui clique (QG > Dons), donne le code membre à mettre en note, puis ouvre PayPal.
 (function () {
+  // Liens de paiement PayPal par montant (Will, 18/10/2026) ; sans lien dédié, on garde le lien libre.
+  var PP = { libre: "https://www.paypal.com/ncp/payment/JBESY5XU4BXME", 25: "https://www.paypal.com/ncp/payment/Y375X2UCLPP4E" };
   var dm = document.getElementById("dm");
   document.addEventListener("click", function (e) {
     if (e.target.closest(".dm-x") || e.target === dm) { dm.hidden = true; return; }
@@ -228,6 +230,7 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
         if (!j.ok) throw 0;
         document.getElementById("dmc").textContent = j.pseudo || j.code;
         document.getElementById("dmm").textContent = m === "libre" ? "le montant de ton choix" : m + " €";
+        document.getElementById("dmgo").href = PP[m] || PP.libre;
         dm.hidden = false;
       })
       .catch(function (er) { if (er === "login") { if (window.FG_LOGIN) FG_LOGIN(); else location.href = "/api/auth/google?r=/premium/%23dons"; } else alert("Petit souci, réessaie dans un instant."); })
