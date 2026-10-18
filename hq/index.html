@@ -170,7 +170,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .wknav{display:flex;align-items:center;gap:8px;color:var(--mut);font:600 13px "FGInter"}
 .wknav button{width:34px;height:34px;border:0;background:var(--s2);border-radius:11px;color:var(--cr);cursor:pointer;font-size:16px}
 .wknav span{min-width:92px;text-align:center}
-.calleft .seg{margin:0 22px 4px}
+.calbar2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 22px 4px}
+.calbar2 .seg{margin:0}
+.addbtn{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:0 16px;height:38px;font:700 13.5px "FGInter";cursor:pointer;white-space:nowrap}
+.addbtn:hover{filter:brightness(1.08)}
 .list{padding:8px 16px 18px;overflow:auto}
 .day{font:700 13px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);padding:16px 8px 8px}
 .day.to{color:var(--cr)}
@@ -289,7 +292,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
           <h2 id="caltitre">Cette semaine</h2>
           <div class="wknav"><button id="calprev" aria-label="Précédent">‹</button><span id="calrange">…</span><button id="calnext" aria-label="Suivant">›</button></div>
         </div>
-        <div class="caltog seg"><button data-v="semaine" aria-pressed="true">Semaine</button><button data-v="mois" aria-pressed="false">Mois</button></div>
+        <div class="calbar2">
+          <div class="caltog seg"><button data-v="semaine" aria-pressed="true">Semaine</button><button data-v="mois" aria-pressed="false">Mois</button></div>
+          <button class="addbtn" id="caladd" title="Ajouter un rendez-vous">+ Ajouter</button>
+        </div>
         <div class="list" id="callist"><p class="empty">Chargement…</p></div>
       </div>
       <div class="calcol calright" id="caldetail"><p class="empty">Choisis un élément à gauche pour voir le détail.</p></div>
@@ -672,7 +678,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 
   // Calendrier éditorial (Will, 19/10/2026) : vue liste maître/détail, style dashboard.
   // Données : /api/admin/calendrier (KV) + /api/admin/todo (tâches datées remontées ici).
-  var CAL = { types: [], events: [] }, TODO = [], calView = "semaine", calCur = new Date(), selKind = null, selId = null, editing = false;
+  var CAL = { types: [], events: [] }, TODO = [], calView = "semaine", calCur = new Date(), selKind = null, selId = null, editing = false, creating = false;
   var JJ = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"], JJL = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   var MA = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
@@ -783,6 +789,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   }
   function dessinerDetail() {
     var box = $("#caldetail");
+    if (creating) { box.innerHTML = '<div class="chips"><span class="chip">Nouveau rendez-vous</span></div><h2 class="rtitle">Ajouter</h2>' + formEv(null); return; }
     if (selKind === "todo") { var t = TODO.find(function (x) { return x.id === selId; }); box.innerHTML = t ? detailTodo(t) : '<p class="empty">Tâche introuvable.</p>'; return; }
     if (selKind === "ev") {
       var e = CAL.events.find(function (x) { return x.id === selId; });
@@ -810,7 +817,12 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   // Liste : sélection
   $("#callist").addEventListener("click", function (ev) {
     var it = ev.target.closest(".it"); if (!it) return;
-    selKind = it.dataset.kind; selId = it.dataset.id; editing = false; rafraichir();
+    selKind = it.dataset.kind; selId = it.dataset.id; editing = false; creating = false; rafraichir();
+    if (window.matchMedia("(max-width:860px)").matches) $("#caldetail").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  // Bouton « + Ajouter » : formulaire de création dans le panneau détail
+  $("#caladd").addEventListener("click", function () {
+    creating = true; editing = false; selKind = null; selId = null; dessinerDetail();
     if (window.matchMedia("(max-width:860px)").matches) $("#caldetail").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   // Détail : copier, actions, édition
@@ -824,7 +836,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     var a = ev.target.closest("[data-act]"); if (!a) return;
     var act = a.dataset.act, e = CAL.events.find(function (x) { return x.id === selId; });
     if (act === "edit") { editing = true; dessinerDetail(); }
-    else if (act === "cancel") { editing = false; dessinerDetail(); }
+    else if (act === "cancel") { editing = false; creating = false; selKind = null; selId = null; dessinerDetail(); }
     else if (act === "fait" && e) calPost({ id: e.id, fait: !e.fait });
     else if (act === "del" && e) { if (confirm("Supprimer « " + e.titre + " » ?")) calPost({ id: e.id, del: true }, function () { selKind = null; selId = null; }); }
     else if (act === "tdone") {
@@ -835,7 +847,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     if (ev.target.id !== "cedit") return;
     ev.preventDefault(); var f = ev.target, m = $("#calmsg"); if (m) m.textContent = "Enregistrement…";
     var vis = f.visuels.value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
-    calPost({ ev: { id: selId, titre: f.titre.value, type: f.type.value, date: f.date.value, repeat: f.date.value ? "" : f.repeat.value, note: f.note.value, imp: f.imp.checked, tirage: f.tirage.value, visuels: vis, textes: { ig: f.ig.value, tw: f.tw.value, tiktok: f.tiktok.value } } }, function () { editing = false; });
+    calPost({ ev: { id: creating ? "" : selId, titre: f.titre.value, type: f.type.value, date: f.date.value, repeat: f.date.value ? "" : f.repeat.value, note: f.note.value, imp: f.imp.checked, tirage: f.tirage.value, visuels: vis, textes: { ig: f.ig.value, tw: f.tw.value, tiktok: f.tiktok.value } } }, function () { editing = false; creating = false; });
   });
   // Barre : semaine/mois + navigation
   document.querySelectorAll(".caltog button").forEach(function (b) { b.addEventListener("click", function () { calView = b.dataset.v; document.querySelectorAll(".caltog button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); dessinerListe(); }); });
