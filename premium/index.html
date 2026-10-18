@@ -218,7 +218,7 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
 // « Je soutiens » (Will, 18/10/2026) : le site note qui clique (QG > Dons), donne le code membre à mettre en note, puis ouvre PayPal.
 (function () {
   // Liens de paiement PayPal par montant (Will, 18/10/2026) ; sans lien dédié, on garde le lien libre.
-  var PP = { libre: "https://www.paypal.com/ncp/payment/JBESY5XU4BXME", 25: "https://www.paypal.com/ncp/payment/Y375X2UCLPP4E" };
+  var PP = { libre: "https://www.paypal.com/ncp/payment/JBESY5XU4BXME", 25: "https://www.paypal.com/ncp/payment/Y375X2UCLPP4E", 50: "https://www.paypal.com/ncp/payment/U643V3QBB46L8", 100: "https://www.paypal.com/ncp/payment/J6VL4UKWYHG7U" };
   var dm = document.getElementById("dm");
   document.addEventListener("click", function (e) {
     if (e.target.closest(".dm-x") || e.target === dm) { dm.hidden = true; return; }
