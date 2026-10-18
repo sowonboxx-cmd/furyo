@@ -38,6 +38,8 @@ const AJOUTS = [
   { id: "c181080", t: "Sécurité : double authentification (2FA) sur Google, Cloudflare, GitHub, Notion et PayPal", cat: "Lancement" },
   { id: "c181081", t: "Sécurité : mot de passe admin du back-office long (16 caractères ou plus), à changer dans Cloudflare (variable ADMIN_PASSWORD)", cat: "Lancement" },
   { id: "c181082", t: "Sécurité (facultatif) : règle Cloudflare de limitation sur /api/admin/login (5 essais par minute)", cat: "Lancement" },
+  { id: "c181090", t: "Vidéo Crows×Worst : la finir et la publier (format téléphone 25-30 s)", cat: "Réseaux", prio: "haut" },
+  { id: "c181091", t: "Concours figurine : publier le visuel mardi ou mercredi (fiche prête)", cat: "Réseaux", prio: "haut" },
   { id: "c181060", t: "Au Japon : ajouter les prépublications en ligne (Champion Cross, Comic Zenon, Yanmaga Web…) dans la page L'actualité manga au Japon, avec la liste de ce qui sort (ex. WORST Gaiden Saburoku Santa)", cat: "Site" },
 ];
 // Corrections ponctuelles appliquées une seule fois (Will, 18/10/2026) : del = supprimer, done = cocher, t = nouveau texte.
@@ -68,7 +70,7 @@ async function lire(env) {
     const d = new Date().toISOString().slice(0, 10);
     for (const a of neufs.slice().reverse()) {
       const old = a.remplace ? l.find(x => x.t === a.remplace) : null;
-      if (old) { old.t = a.t; old.cat = a.cat; } else if (!l.some(x => x.id === a.id)) l.unshift({ id: a.id, t: a.t, cat: a.cat, done: false, d });
+      if (old) { old.t = a.t; old.cat = a.cat; } else if (!l.some(x => x.id === a.id)) l.unshift({ id: a.id, t: a.t, cat: a.cat, prio: a.prio || "moyen", done: false, d });
     }
     await env.STATS.put(CLE, JSON.stringify(l));
     await env.STATS.put(CLE + ":ajouts", JSON.stringify(vus.concat(neufs.map(a => a.id))));
@@ -100,12 +102,13 @@ export async function onRequestPost({ request, env }) {
     let b = {}; try { b = await request.json(); } catch (e) {}
     const l = await lire(env), now = new Date().toISOString().slice(0, 10);
     const txt = s => String(s || "").trim().slice(0, 500);
-    if (b.add && txt(b.add.t)) l.unshift({ id: uid(), t: txt(b.add.t), cat: txt(b.add.cat).slice(0, 40) || "Divers", done: false, d: now });
+    if (b.add && txt(b.add.t)) l.unshift({ id: uid(), t: txt(b.add.t), cat: txt(b.add.cat).slice(0, 40) || "Divers", prio: "moyen", done: false, d: now });
     else {
       const i = l.findIndex(x => x.id === b.id); if (i < 0) return json({ error: "tâche introuvable" }, 404);
       if (b.del) l.splice(i, 1);
       else {
         if (typeof b.done === "boolean") { l[i].done = b.done; l[i].fait = b.done ? now : ""; }
+        if (b.prio) l[i].prio = ["haut","moyen","bas"].includes(b.prio) ? b.prio : l[i].prio;
         if (typeof b.t === "string" && txt(b.t)) l[i].t = txt(b.t);
         if (typeof b.cat === "string") l[i].cat = txt(b.cat).slice(0, 40) || "Divers";
       }
