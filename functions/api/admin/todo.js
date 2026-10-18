@@ -35,7 +35,19 @@ const AJOUTS = [
   { id: "c181070", t: "Premium : écran « Premium » dans le back-office (liste, temps restant, filtres, totaux) + date de fin par membre + saisie d'un don PayPal (e-mail + montant, 25 € = 1 an, départ au 1er décembre) + badge « Premium avant Premium »", cat: "Premium" },
   { id: "c181071", t: "Premium : bouton toujours visible « Premium avant Premium » (don PayPal) jusqu'au 14/11, puis « Devenir Premium » + « Faire un don » dès le 15/11, bascule automatique : maquettes puis code", cat: "Premium" },
   { id: "c181072", t: "15 novembre : Stripe pour tout (abonnements + dons), activation et prolongation automatiques ; les donateurs PayPal gardent leur date de fin", cat: "Premium" },
+  { id: "c181080", t: "Sécurité : double authentification (2FA) sur Google, Cloudflare, GitHub, Notion et PayPal", cat: "Lancement" },
+  { id: "c181081", t: "Sécurité : mot de passe admin du back-office long (16 caractères ou plus), à changer dans Cloudflare (variable ADMIN_PASSWORD)", cat: "Lancement" },
+  { id: "c181082", t: "Sécurité (facultatif) : règle Cloudflare de limitation sur /api/admin/login (5 essais par minute)", cat: "Lancement" },
   { id: "c181060", t: "Au Japon : ajouter les prépublications en ligne (Champion Cross, Comic Zenon, Yanmaga Web…) dans la page L'actualité manga au Japon, avec la liste de ce qui sort (ex. WORST Gaiden Saburoku Santa)", cat: "Site" },
+];
+// Corrections ponctuelles appliquées une seule fois (Will, 18/10/2026) : del = supprimer, done = cocher, t = nouveau texte.
+const CORRECTIONS = [
+  { id: "k181001", cible: "r009", del: true },
+  { id: "k181002", cible: "c181020", done: true, t: "PayPal : liens de paiement créés (libre, 25, 50, 100 €) et branchés sur la page Premium" },
+  { id: "k181003", cible: "c181071", done: true },
+  { id: "k181004", cible: "c181026", done: true, t: "Badges donateurs : Kobun, Bancho, Shogun, Oyabun + Légende du Gang (QG > Badges)" },
+  { id: "k181005", cible: "r026", del: true },
+  { id: "k181006", cible: "r016", t: "Search Console : sitemap fait (764 pages, 0 erreur). Reste Bing Webmaster Tools : importer depuis Search Console" },
 ];
 async function lire(env) {
   let l = null; try { l = JSON.parse((await env.STATS.get(CLE)) || "null"); } catch (e) {}
@@ -60,6 +72,19 @@ async function lire(env) {
     }
     await env.STATS.put(CLE, JSON.stringify(l));
     await env.STATS.put(CLE + ":ajouts", JSON.stringify(vus.concat(neufs.map(a => a.id))));
+  }
+  const corr = CORRECTIONS.filter(c => !vus.includes(c.id));
+  if (corr.length) {
+    const d = new Date().toISOString().slice(0, 10);
+    for (const c of corr) {
+      if (c.del) { l = l.filter(x => x.id !== c.cible); continue; }
+      const x = l.find(y => y.id === c.cible); if (!x) continue;
+      if (c.t) x.t = c.t;
+      if (c.done) { x.done = true; x.fait = x.fait || d; }
+    }
+    vus = vus.concat(neufs.map(a => a.id));
+    await env.STATS.put(CLE, JSON.stringify(l));
+    await env.STATS.put(CLE + ":ajouts", JSON.stringify(vus.concat(corr.map(c => c.id))));
   }
   return l;
 }
