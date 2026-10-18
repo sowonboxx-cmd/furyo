@@ -45,6 +45,8 @@ Avant Stripe, la seule façon de soutenir, c'est un don PayPal, avec l'e-mail du
 - **Jusqu'au 14 novembre** : il dit « Premium avant Premium » et mène au don PayPal (Premium à partir du 1er décembre).
 - **À partir du 15 novembre** : il dit « Devenir Premium » (abonnement Stripe), avec à côté « Faire un don ».
 - Le changement se fait tout seul à la date.
+- Lien PayPal (18/10) : lien de paiement à montant libre (carte, Apple Pay, PayPal), branché sur les 4 boutons de la page Premium.
+- Retrouver les donateurs (18/10) : « Je soutiens » est réservé aux membres connectés. Le site note le clic (pseudo, e-mail, montant, heure) dans QG > Dons PayPal et donne au membre son code (FG-numéro) à mettre en note sur PayPal. Will rapproche le paiement, pose le badge (Kobun < 25 €, Bancho 25 €, Shogun 50 €, Oyabun 100 €) et coche « Traité ».
 - Parcours du don (18/10) : tous les boutons « Faire un don avec PayPal » du site mènent d'abord au bloc dons de la page /premium/ (paliers expliqués). Seul le bouton de cette page ouvre PayPal, où le montant est libre. Le donateur utilise l'e-mail de son compte FuryoGang ou met son pseudo en note.
 
 ## Abonnement (Stripe, à partir du 15 novembre)
