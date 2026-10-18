@@ -9,7 +9,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 2; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 3; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -23,8 +23,8 @@ const CONCOURS_TEXTES = {
 const DEPART = {
   sv: SEED_V,
   types: [
-    { id: "qn-sem", nom: "Quoi de neuf (semaine)", couleur: "#4C9BFF" },
-    { id: "qn-mois", nom: "Quoi de neuf (mois)", couleur: "#B38CFF" },
+    { id: "qn-sem", nom: "News Hebdo", couleur: "#4C9BFF" },
+    { id: "qn-mois", nom: "Sorties du mois", couleur: "#B38CFF" },
     { id: "couv", nom: "Couvertures", couleur: "#BC002D" },
     { id: "fiche", nom: "Fiches du mois", couleur: "#F2B33D" },
     { id: "maj", nom: "Fiches mises à jour", couleur: "#7BC67E" },
@@ -35,8 +35,8 @@ const DEPART = {
     { id: "autre", nom: "Autre", couleur: "#98989D" },
   ],
   events: [
-    { id: "ev-qn-sem", titre: "Quoi de neuf dans le gang — la semaine", type: "qn-sem", repeat: "lun", note: "Carrousel réseaux : tout ce qui s'est passé la semaine d'avant." },
-    { id: "ev-qn-mois", titre: "Quoi de neuf — le mois", type: "qn-mois", repeat: "mois", note: "Résumé du mois, carrousel studio." },
+    { id: "ev-qn-sem", titre: "Quoi de neuf dans le gang", type: "qn-sem", repeat: "lun", note: "News Hebdo — carrousel réseaux : tout ce qui s'est passé la semaine d'avant. Généré dans La Fabrique." },
+    { id: "ev-qn-mois", titre: "Sorties du mois", type: "qn-mois", repeat: "mois", note: "Récap des sorties du mois d'avant (vers le 15). Visuel noir ou crème, généré dans La Fabrique." },
     { id: "ev-maj", titre: "Fiches mises à jour — récap", type: "maj", repeat: "jeu", note: "Les séries à aller compléter sur le site." },
     { id: "ev-cxw", titre: "Vidéo Crows×Worst", type: "video", date: "2026-10-20", imp: true, note: "Finir la version 25-30 s (téléphone, bordures) et la publier." },
     {
@@ -80,9 +80,9 @@ function migrer(d) {
     const fait = ex.fait;
     Object.assign(ex, JSON.parse(JSON.stringify(seed)), { fait });
   }
-  // s'assure que les types de départ existent
-  const typeIds = new Set(d.types.map(t => t.id));
-  for (const t of DEPART.types) if (!typeIds.has(t.id)) d.types.push(t);
+  // s'assure que les types de départ existent et met à jour leur nom (alignement vocabulaire)
+  const typById = new Map(d.types.map(t => [t.id, t]));
+  for (const t of DEPART.types) { const ex = typById.get(t.id); if (ex) ex.nom = t.nom; else d.types.push(JSON.parse(JSON.stringify(t))); }
   d.sv = SEED_V;
   return d;
 }
