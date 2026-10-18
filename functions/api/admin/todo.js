@@ -41,6 +41,7 @@ const AJOUTS = [
   { id: "c181027", t: "À partir du 1er décembre : membres non Premium = bandeau et widget « Devenir Premium » affichés automatiquement partout (maquettes à faire et valider)", cat: "Premium" },
   { id: "c181028", t: "Encart Premium dans Ma collection : choisir entre A (duo rouge), B (compte à rebours noir) et C (discret)", cat: "Premium" },
   { id: "c181029", t: "1er décembre, Devenir Premium (membres non Premium) : bandeau accueil ordinateur Busō C2 noir (un seul, en bas de l'accueil), bloc téléphone Jinnai dans le fil de l'accueil, widget colonne Murota « 2 €, le prix d'un bol » (accueil : au-dessus des Derniers commentaires). Rappel le 23/11", cat: "Premium", remplace: "À partir du 1er décembre : membres non Premium = bandeau et widget « Devenir Premium » affichés automatiquement partout (maquettes à faire et valider)" },
+  { id: "c181030", t: "Vidéo Crows × Worst : refaire une version de 25-30 s (garder le téléphone avec bordures, Will choisit ce qu'on coupe)", cat: "Réseaux" },
   { id: "c181014", t: "Devenir membre : choisir le bandeau accueil (ordi + téléphone) et le widget colonne, à la place du bandeau don", cat: "Site" },
   { id: "c171003", t: "Premium : offert à tous les membres jusqu'au 30 novembre 2026, payant à partir du 1er décembre", cat: "Premium", remplace: "Premium : 30 jours offerts à l'ouverture, données gardées, paiement vers le 15 novembre" },
   { id: "c171004", t: "Premium : surprise à annoncer — abonnement à l'année pris avant le 1er décembre = 2 mois offerts", cat: "Premium" },
