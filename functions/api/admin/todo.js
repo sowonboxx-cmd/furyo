@@ -32,6 +32,9 @@ const ANCIENS_TXT = ["1er décembre, Devenir Premium (membres non Premium) : ban
 // Tâches ajoutées par Claude après la refonte (id fixe) : glissées une seule fois en tête de liste.
 // « remplace » met à jour le texte d'une tâche existante devenue fausse. Une tâche supprimée par Will ne revient pas.
 const AJOUTS = [
+  { id: "c181070", t: "Premium : écran « Premium » dans le back-office (liste, temps restant, filtres, totaux) + date de fin par membre + saisie d'un don PayPal (e-mail + montant, 25 € = 1 an, départ au 1er décembre) + badge « Premium avant Premium »", cat: "Premium" },
+  { id: "c181071", t: "Premium : pastille « Premium avant Premium » (encart Ma collection, fenêtre Premium, page Premium) : maquettes puis code", cat: "Premium" },
+  { id: "c181072", t: "15 novembre : Stripe pour tout (abonnements + dons), activation et prolongation automatiques ; les donateurs PayPal gardent leur date de fin", cat: "Premium" },
   { id: "c181060", t: "Au Japon : ajouter les prépublications en ligne (Champion Cross, Comic Zenon, Yanmaga Web…) dans la page L'actualité manga au Japon, avec la liste de ce qui sort (ex. WORST Gaiden Saburoku Santa)", cat: "Site" },
 ];
 async function lire(env) {

@@ -32,6 +32,13 @@ Avant Stripe, la seule façon de soutenir, c'est un don PayPal, avec l'e-mail du
 - Badges donateurs (noms à valider) : Pilier / niveau intermédiaire / Parrain, puis un badge « all time » pour les gros dons.
 - Vérification à la main : Will voit le don dans PayPal, retrouve le membre par son e-mail, pose le badge et la date de fin de Premium.
 
+## Paiements : PayPal puis Stripe (décidé le 18/10)
+
+- **Jusqu'au 14 novembre : PayPal**, pour les dons seulement. Will saisit chaque don dans le back-office (e-mail + montant), le site calcule la durée et la date de fin.
+- **À partir du 15 novembre : Stripe pour tout** (abonnements et dons). Activation et prolongation automatiques après paiement.
+- Les donateurs PayPal ne sont pas transférés vers Stripe : leur date de fin de Premium est gardée sur le site, ils restent tranquilles jusqu'à cette date. Will fournit la liste si besoin de vérifier.
+- Back-office, écran « Premium » : liste des Premium (type, montant, début, fin, temps restant), filtres (fin dans moins de 30 jours, donateurs, abonnés, expirés), totaux.
+
 ## Abonnement (Stripe, à partir du 15 novembre)
 
 - Stripe ouvert le 15 novembre seulement, une fois la société créée.
