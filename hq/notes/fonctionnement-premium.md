@@ -1,6 +1,6 @@
-# Fonctionnement du Premium — brouillon à valider
+# Fonctionnement du Premium
 
-Fait le 18/10/2026 d'après Will. Les points **à trancher** sont marqués. Le planning (Gantt) est juste au-dessus dans le QG.
+Fait le 18/10/2026 d'après Will. Toutes les règles sont validées par Will (18/10/2026). Le planning (Gantt) est juste au-dessus dans le QG.
 
 ## En une phrase
 
@@ -26,8 +26,9 @@ Avant Stripe, la seule façon de soutenir, c'est un don PayPal, avec l'e-mail du
 | 50 € à 99 € | 2 ans de Premium + badge |
 | 100 € et plus | 4 ans de Premium + badge |
 
-- **À trancher** : au-delà de 100 €, « c'est plus ». Proposition : 1 an de plus par tranche de 25 € (125 € = 5 ans, 150 € = 6 ans), ce qui garde le même prix partout.
-- **À trancher** : le Premium offert par un don démarre le 1er décembre (pour ne rien perdre pendant la période gratuite), ou le jour du don ? Proposition : le 1er décembre, ou le jour du don s'il est fait après.
+- Au-delà de 100 € : 1 an de plus par tranche de 25 € (125 € = 5 ans, 150 € = 6 ans). Même prix partout. Validé par Will le 18/10.
+- Le Premium offert par un don démarre le **1er décembre** (rien n'est perdu pendant la période gratuite). Pour un don fait après le 1er décembre, il démarre le jour du don. Validé le 18/10.
+- Après le 1er décembre, les dons continuent avec les mêmes règles. Si le donateur est déjà abonné, le don est un soutien en plus (pas de Premium supplémentaire). Sinon, mêmes paliers. Validé le 18/10.
 - Badges donateurs (noms à valider) : Pilier / niveau intermédiaire / Parrain, puis un badge « all time » pour les gros dons.
 - Vérification à la main : Will voit le don dans PayPal, retrouve le membre par son e-mail, pose le badge et la date de fin de Premium.
 
