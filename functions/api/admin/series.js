@@ -15,7 +15,7 @@ const nid = id => id.replace(/-/g, "");
 
 // Vitesse (Will, 07/10/2026) : la liste est gardée prête (cache Cloudflare, lu seulement après la vérification admin),
 // servie tout de suite et reconstruite en arrière-plan si elle a plus de 30 s. Une modification de fiche vide ce cache.
-export const CLE_ADMIN_SERIES = "/__cache/admin-series-v1";
+export const CLE_ADMIN_SERIES = "/__cache/admin-series-v2";
 export async function onRequestGet({ request, env, waitUntil }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   const r = await cached(request, waitUntil, CLE_ADMIN_SERIES, 30, () => construire(env, waitUntil));
@@ -43,6 +43,13 @@ async function construire(env, waitUntil) {
     const sc = (num(q["N°"]) ?? 999) * 2 + (ed.pays === "France" ? 0 : 1);
     if (!best[ed.serie] || sc < best[ed.serie].sc) best[ed.serie] = { sc, c };
   }
+  // Prochaine sortie de chaque série (France ou Japon), pour ranger « À publier » dans l'ordre (Will, 18/10/2026) :
+  // une fiche dont un tome sort bientôt passe en premier, elle arrive au moment où on en parle.
+  const auj = new Date().toISOString().slice(0, 10), proch = {};
+  for (const t of tRows) {
+    const q = t.properties, ed = eds[rel(q["Édition"])[0]], d = date(q["Date de sortie"]); if (!ed || !ed.serie || !d || d < auj) continue;
+    if (!proch[ed.serie] || d < proch[ed.serie].d) proch[ed.serie] = { d, pays: ed.pays === "France" ? "FR" : "JP", n: num(q["N°"]) };
+  }
   const items = rows.map(r => {
     const p = r.properties || {}, t = text(p["SERIES"]), id = nid(r.id);
     const stFR = text(p["Statut France"]);
@@ -67,6 +74,7 @@ async function construire(env, waitUntil) {
       // Pour générer l'image « Nouvelle fiche » depuis le back-office.
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), num: num(p["N° fiche"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), genres: list(p["Genre"]), pubFR: list(p["Éditeur Français"]).join(", "),
       sns: reseaux(p, ctx), exFR: extraitFR(p), oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),
+      next: proch[id] || null,
       cover: best[id]?.c || text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), stJP: text(p["Statut Japon"]), stFR,
     };
   }).filter(s => s.t).sort((a, b) => a.t.localeCompare(b.t, "fr"));

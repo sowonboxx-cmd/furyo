@@ -318,6 +318,9 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .stb th{text-align:right;color:var(--paper-3);font-weight:600;font-size:12px;padding:0 0 6px 10px}.stb th:first-child{text-align:left;padding-left:0}
 .stb td{padding:7px 0 7px 10px;border-top:1px solid #1C1C1E;text-align:right;white-space:nowrap}.stb td:first-child{text-align:left;padding-left:0;white-space:normal;overflow-wrap:anywhere}
 @media (max-width:700px){.stk{grid-template-columns:1fr 1fr}.stg{grid-template-columns:1fr}}
+.nm .rk{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-right:8px;padding:0 5px;border-radius:11px;background:var(--ink-3);font-size:12px;vertical-align:1px}
+.nm .pq{display:inline-block;margin:4px 0 2px;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;background:var(--ink-3);color:var(--paper-3)}
+.nm .pq.p0{background:#BC002D;color:#fff}.nm .pq.p1{background:#5a1f3a;color:#ffd6e6}.nm .pq.p2{background:#1f4a3a;color:#c8f5df}
 </style>
 </head>
 <body>
@@ -345,7 +348,14 @@ const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5S3 1
 const pret = s => !s.publier && s.oblig.length > 0 && s.manque.length === 0;
 // Statut de la série (colonne « Statut » dans Notion, Will 06/10/2026) : À valider / Validé · admins / En ligne · public.
 const ST = [["À valider", "À valider"], ["Validé · admins", "Admins"], ["En ligne · public", "En ligne"]];
+// « À publier » (Will, 18/10/2026) : toutes les fiches pas encore en ligne, dans l'ordre où les publier :
+// 1) un tome sort dans les 45 jours (la plus proche d'abord), 2) coups de cœur, 3) prêtes, 4) le reste (le moins à faire d'abord).
+const J45 = new Date(Date.now() + 45 * 864e5).toISOString().slice(0, 10);
+const prio = s => s.next && s.next.d <= J45 ? 0 : s.coeur ? 1 : pret(s) ? 2 : 3;
+const ordrePub = (a, b) => prio(a) - prio(b) || (prio(a) === 0 ? a.next.d.localeCompare(b.next.d) : 0) || a.manque.length - b.manque.length || a.t.localeCompare(b.t, "fr");
+const PRIO_L = ["Sortie bientôt", "Coup de cœur", "Prête", "À compléter"];
 const FILTRES = [
+  ["publier", "À publier", s => !s.publier],
   ["valider", "À valider", s => s.statut === "À valider" && !pret(s)],
   ["pretes", "Prêtes à publier", pret],
   ["admins", "Admins", s => s.statut === "Validé · admins"],
@@ -354,8 +364,8 @@ const FILTRES = [
   ["tout", "Tout", () => true],
 ];
 // Tri : A→Z, presque finies d'abord (le moins à faire), ou à travailler d'abord (le plus à faire).
-const TRIS = [["az", "A → Z"], ["peu", "Presque finies"], ["beaucoup", "À travailler"]];
-let ITEMS = [], F = "valider", Q = "", T = "az";
+const TRIS = [["ordre", "Ordre de publication"], ["az", "A → Z"], ["peu", "Presque finies"], ["beaucoup", "À travailler"]];
+let ITEMS = [], F = "publier", Q = "", T = "ordre";
 const slugify = s => String(s || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1800); }
 
@@ -385,7 +395,7 @@ async function load(){
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { root.innerHTML = `<p class="empty">${esc(j.error || "Impossible de charger.")}</p>`; return; }
   ITEMS = j.items || [];
-  F = ITEMS.some(s => s.statut === "Validé · admins") ? "admins" : ITEMS.some(pret) ? "pretes" : "valider";
+  F = "publier"; T = "ordre"; // Toujours « À publier » dans l'ordre de publication en arrivant (Will, 18/10/2026).
   shell(); draw();
   // Liste servie depuis le cache : si elle a plus d'une minute, on la relit tout de suite dans Notion et on la remplace
   // (une série ajoutée directement dans Notion apparaît donc dès l'ouverture, Will 08/10/2026).
@@ -412,6 +422,7 @@ function draw(){
   const n = slugify(Q), keep = FILTRES.find(x => x[0] === F)[2];
   const list = ITEMS.filter(s => (n ? slugify([s.t, s.fr, s.jp].join(" ")).includes(n) || (s.jp || "").includes(Q) : keep(s)));
   const reste = s => s.manque.length;
+  if (T === "ordre") list.sort(ordrePub);
   if (T === "peu") list.sort((a, b) => reste(a) - reste(b) || a.t.localeCompare(b.t, "fr"));
   if (T === "beaucoup") list.sort((a, b) => reste(b) - reste(a) || a.t.localeCompare(b.t, "fr"));
   document.getElementById("tris").innerHTML = `<span>Trier</span>` + TRIS.map(([k, l]) => `<button data-t="${k}" aria-pressed="${T === k}">${l}</button>`).join("");
@@ -434,7 +445,7 @@ function plusM(){
 function row(s){
   return `<li class="it" data-id="${s.id}">
     <span class="th">${s.cover ? `<img src="/api/couv?w=160&u=${encodeURIComponent(s.cover)}" alt="" loading="lazy" decoding="async">` : esc((s.jp || "").slice(0, 2))}</span>
-    <span class="nm"><b>${esc(s.fr && s.fr !== s.t ? s.fr : s.t)}</b><small>${esc([s.fr && s.fr !== s.t ? s.t : "", s.jp].filter(Boolean).join(" · "))}</small></span>
+    <span class="nm"><b>${T === "ordre" && !s.publier ? `<span class="rk">${LISTE_M.indexOf(s) + 1}</span>` : ""}${esc(s.fr && s.fr !== s.t ? s.fr : s.t)}</b>${!s.publier ? `<span class="pq p${prio(s)}">${PRIO_L[prio(s)]}${s.next ? ` · ${s.next.pays} ${s.next.d.slice(8, 10)}/${s.next.d.slice(5, 7)}${s.next.n != null ? " · T." + String(s.next.n).padStart(2, "0") : ""}` : ""}</span>` : ""}<small>${esc([s.fr && s.fr !== s.t ? s.t : "", s.jp].filter(Boolean).join(" · "))}</small></span>
     <label class="stw"><select class="st" data-st data-v="${esc(s.statut)}" aria-label="Statut sur le site">${ST.map(([v, l]) => `<option value="${v}"${s.statut === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
     <div class="meta">
       <button class="heart" data-coeur aria-pressed="${s.coeur}" aria-label="Coup de cœur : à traiter en premier">${HEART}</button>
