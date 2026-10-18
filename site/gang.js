@@ -28,7 +28,7 @@
     ".fgm .bul,.fgp .bul{position:absolute;z-index:2;background:#F2B33D;color:#000;font:400 17px/1.05 Bangers,cursive;letter-spacing:.04em;padding:8px 12px;border-radius:16px;transform:rotate(-3deg);white-space:nowrap}" +
     ".fgm.bn{margin:70px 0 0;min-height:210px;padding:26px 26px 26px 250px}" +
     ".fgm.mo{padding:20px}.fgm.mo .mh{position:relative}.fgm.mo .tx{position:relative;z-index:2;width:62%}.fgm.mo .msg{font-size:30px}" +
-    ".fgm-b{text-align:center;padding:16px 14px}.fgm-b .ci{width:170px;height:170px;margin:0 auto;border-radius:50%;background:#F2B33D;position:relative;overflow:hidden}.fgm-b .ci img{position:absolute;left:50%;bottom:6px;height:162px;width:auto;transform:translateX(-50%)}" +
+    ".fgm .go.y{background:#F2B33D;color:#000}.fgm-b{text-align:center;padding:16px 14px}.fgm-b .ci{width:170px;height:170px;margin:0 auto;border-radius:50%;background:#F2B33D;position:relative;overflow:hidden}.fgm-b .ci img{position:absolute;left:50%;bottom:6px;height:162px;width:auto;transform:translateX(-50%)}" +
     ".fgm-b .tag{position:relative;margin-top:-10px}.fgm-b .msg{font-size:25px;line-height:1.02;margin-top:10px}.fgm-b .sub{font-size:12.5px;margin-top:8px}.fgm-b .grid{text-align:left}" +
     ".fgm-c{padding:14px;border:1px solid #2C2C2E;border-radius:14px}.fgm-c .top{position:relative;padding-top:30px;margin-bottom:6px}.fgm-c .bul{left:50%;top:0;transform:translateX(-50%) rotate(-3deg);font-size:14px}" +
     ".fgm-c .msg{font-size:24px;margin-top:10px}.fgm-c .sub{font-size:12.5px}.fgm-c .grid{gap:6px}.fgm-c .grid span{padding:9px 8px;font-size:12px;gap:6px}.fgm-c .grid svg{width:15px;height:15px}.fgm-c .go{height:40px;font-size:14px}" +
@@ -96,7 +96,7 @@
       return '<div class="fgm fgm-c fgm-b"><div class="ci"><img src="/img/don/buso.webp" alt="" class="no-sk"></div>' +
         '<span class="tag">Rejoins le gang</span><p class="msg">Ta collection,<br><em>c’est gratuit.</em></p><p class="sub">Range tes tomes, coche ce que t’as lu, note ce qui te manque.</p>' +
         '<div class="grid">' + P.map(function (b) { return '<span><svg viewBox="0 0 24 24" fill="none" stroke="#F2B33D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + b[0] + "</svg>" + b[1] + "</span>"; }).join("") + "</div>" +
-        bouton("Rejoindre", false, "w") + "</div>";
+        bouton("Rejoindre", false, "w y") + "</div>";
     }
   };
   window.FG_GANG = function (k) { if (MEMBRE || !B[k]) return ""; return '<div class="fgm-w" data-fgm>' + B[k]() + "</div>"; };
