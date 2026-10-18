@@ -39,6 +39,13 @@ Avant Stripe, la seule façon de soutenir, c'est un don PayPal, avec l'e-mail du
 - Les donateurs PayPal ne sont pas transférés vers Stripe : leur date de fin de Premium est gardée sur le site, ils restent tranquilles jusqu'à cette date. Will fournit la liste si besoin de vérifier.
 - Back-office, écran « Premium » : liste des Premium (type, montant, début, fin, temps restant), filtres (fin dans moins de 30 jours, donateurs, abonnés, expirés), totaux.
 
+## Le bouton Premium sur le site (décidé le 18/10)
+
+- Un bouton Premium est toujours visible quelque part sur le site.
+- **Jusqu'au 14 novembre** : il dit « Premium avant Premium » et mène au don PayPal (Premium à partir du 1er décembre).
+- **À partir du 15 novembre** : il dit « Devenir Premium » (abonnement Stripe), avec à côté « Faire un don ».
+- Le changement se fait tout seul à la date.
+
 ## Abonnement (Stripe, à partir du 15 novembre)
 
 - Stripe ouvert le 15 novembre seulement, une fois la société créée.
