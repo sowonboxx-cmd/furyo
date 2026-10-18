@@ -9,3 +9,5 @@
 /mangakas/ /auteurs/ 301
 /videos /?vue=actus 301
 /videos/ /?vue=actus 301
+/magazines /?vue=magazines 301
+/magazines/ /?vue=magazines 301

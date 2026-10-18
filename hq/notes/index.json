@@ -2,6 +2,11 @@
  "maj": "2026-10-18",
  "docs": [
   {
+   "f": "planning-de-sortie.md",
+   "titre": "Planning de sortie (19/10)",
+   "desc": "La checklist du lancement : vérification des pages, qui voit quoi, dimanche, jour J, la semaine."
+  },
+  {
    "f": "a-faire.md",
    "titre": "À faire : où ça vit",
    "desc": "La to-do est ici, dans le QG. Ce que ça remplace."
