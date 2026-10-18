@@ -32,6 +32,16 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .tile p{margin:0;color:var(--mut);font-size:14px;line-height:1.45}
 .tile .n{margin-top:auto;font:700 13px "FGInter";letter-spacing:.1em;text-transform:uppercase;color:var(--cr)}
 .sec{display:none}.sec.on{display:block}
+.gantt{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:18px;overflow-x:auto;margin-bottom:22px}
+.gt{min-width:860px;display:grid;grid-template-columns:230px 1fr;row-gap:6px;font-size:13px}
+.gt .lb{padding:6px 10px 6px 0;color:var(--cr);font-weight:600;line-height:1.3}.gt .lb small{display:block;color:var(--mut);font-weight:500}
+.gt .tr{position:relative;height:30px;border-radius:8px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(100%/10.5 - 1px),var(--line) calc(100%/10.5 - 1px),var(--line) calc(100%/10.5))}
+.gt .br{position:absolute;top:4px;bottom:4px;border-radius:6px;display:flex;align-items:center;padding:0 8px;font:700 11.5px "FGInter";color:#fff;white-space:nowrap;overflow:hidden}
+.gt .ms{position:absolute;top:2px;width:26px;height:26px;margin-left:-13px;transform:rotate(45deg);border-radius:4px}
+.gt .hd{position:relative;height:22px;color:var(--mut);font-size:11.5px}.gt .hd span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.gt .today{position:absolute;top:0;bottom:0;width:2px;background:#fff;opacity:.6}
+.gt .grp{grid-column:1/3;margin-top:10px;font:700 11px "FGInter";letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+
 .nl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .nl a{display:block;text-decoration:none;color:var(--cr);background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .nl a:hover,.nl a[aria-current=true]{border-color:var(--red)}.nl b{display:block;font-size:15px}.nl small{display:block;margin-top:4px;color:var(--mut);font-size:13px;line-height:1.4}
@@ -129,6 +139,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       <a class="tile" href="#ressources"><span class="k">資料</span><h2>Ressources</h2><p>Scans de magazines, murs d'affiches, chronologies : là où on puise le contenu du site.</p><span class="n" id="n-res">…</span></a>
       <a class="tile" href="#todo"><span class="k">課題</span><h2>To-do</h2><p>Tout ce qu'il reste à faire, à cocher. Ajoute, modifie, supprime.</p><span class="n" id="n-todo">…</span></a>
       <a class="tile" href="#vivre"><span class="k">活気</span><h2>Faire vivre le site</h2><p>Tous les contenus récurrents à poster sur les réseaux, presque tout seuls : ce qui est en place, ce qui reste à faire, les idées.</p><span class="n">Rendez-vous réseaux</span></a>
+      <a class="tile" href="#premium"><span class="k">会員</span><h2>Fonctionnement du Premium</h2><p>Les dates, les dons PayPal, l'abonnement Stripe, ce qui est fait et ce qu'il reste à faire, avec le planning.</p><span class="n">Brouillon à valider</span></a>
       <a class="tile" href="#notes"><span class="k">記録</span><h2>Notes du projet</h2><p>Toutes les notes de travail avec Claude : règles, lancement, Premium, réseaux, sources. Synchronisées avec le projet.</p><span class="n" id="n-notes">…</span></a>
       <a class="tile" href="#magazine"><span class="k">雑誌</span><h2>FuryoGang Magazine</h2><p>Le magazine du mois pour les Premium : idée, format, inspiration ATOM, étapes.</p><span class="n">Projet en cours</span></a>
     </div>
@@ -165,6 +176,13 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <form class="add" id="addf"><input id="addt" placeholder="Nouvelle tâche…" autocomplete="off"><select id="addc"></select><button class="btn r" type="submit">Ajouter</button></form>
     <div class="filt" id="filt"></div>
     <div id="tdl"></div><p id="tdmsg"></p>
+  </section>
+
+  <section class="sec" id="premium">
+    <h1>Fonctionnement du Premium</h1>
+    <p class="lead">Brouillon à valider. Les dates et tout ce qu'il faut faire, étape par étape. <a class="btn r" href="/hq/premium-brouillon/" style="margin-left:8px">Voir le brouillon de la page Premium</a></p>
+    <div class="gantt" id="gantt"></div>
+    <article class="md" id="pmd"><p>Chargement…</p></article>
   </section>
 
   <section class="sec" id="notes">
@@ -326,6 +344,44 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     $("#nl").innerHTML = NOTES.map(function (x) { return '<a href="#notes" data-f="' + esc(x.f) + '"><b>' + esc(x.titre) + "</b><small>" + esc(x.desc) + "</small></a>"; }).join("");
   }).catch(function () { $("#n-notes").textContent = "Indisponible"; });
   $("#nl").addEventListener("click", function (e) { var a = e.target.closest("a[data-f]"); if (!a) return; e.preventDefault(); ouvreNote(a.dataset.f); });
+
+  // Planning Premium (Gantt), du 19 octobre au 31 décembre 2026 (Will, 18/10/2026).
+  (function () {
+    var D0 = Date.parse("2026-10-19"), D1 = Date.parse("2027-01-01"), span = D1 - D0;
+    var pos = function (d) { return Math.max(0, Math.min(100, (Date.parse(d) - D0) / span * 100)); };
+    var C = { will: "#BC002D", claude: "#305887", site: "#4DAB9A", offre: "#B8862B" };
+    var R = [
+      ["Le site", null],
+      ["Premium offert à tous", "", [["2026-10-19", "2026-12-01", "offre", "Tous les membres Premium gratuitement"]]],
+      ["Premium payant (2 €/mois)", "", [["2026-12-01", "2027-01-01", "site", "Abonnés seulement"]]],
+      ["Paiements", null],
+      ["Dons PayPal « Premium avant Premium »", "Will", [["2026-10-19", "2027-01-01", "will", "<25 € : don · 25-49 : 1 an · 50-99 : 2 ans · 100+ : 4 ans"]]],
+      ["Abonnements Stripe", "Will + Claude", [["2026-11-15", "2027-01-01", "claude", "Ouverts le 15/11"]]],
+      ["Offre de lancement", "mois offerts", [["2026-11-15", "2026-12-01", "offre", "1 ou 2 mois offerts (à trancher)"]]],
+      ["À faire", null],
+      ["Lien PayPal sur le site", "Will puis Claude", [["2026-10-19", "2026-10-26", "will", "PayPal"]]],
+      ["Date de fin de Premium par membre", "Claude", [["2026-10-26", "2026-11-08", "claude", "Pour les dons (1, 2, 4 ans)"]]],
+      ["Société + compte Stripe", "Will", [["2026-10-19", "2026-11-14", "will", "Avant le 15/11"]]],
+      ["Brancher Stripe", "Claude", [["2026-11-02", "2026-11-14", "claude", "Abonnement, mois offerts, activation auto"]]],
+      ["Valider la page Premium", "Will", [["2026-10-19", "2026-11-14", "will", "Brouillon prêt"]]],
+      ["Revoir les blocs Devenir Premium", "rappel le 23/11", [["2026-11-23", null, "claude", ""]]],
+      ["Fenêtre « dernière semaine »", "Ma collection", [["2026-11-24", "2026-12-01", "claude", "24 → 30/11"]]],
+      ["Blocs Devenir Premium en ligne", "1er décembre", [["2026-12-01", null, "site", ""]]]
+    ];
+    var ticks = ["2026-10-19", "2026-11-01", "2026-11-15", "2026-12-01", "2026-12-15"], lab = function (d) { var x = new Date(d); return x.getDate() + " " + ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."][x.getMonth()]; };
+    var today = new Date().toISOString().slice(0, 10), td = today >= "2026-10-19" && today < "2027-01-01" ? '<i class="today" style="left:' + pos(today) + '%"></i>' : "";
+    var h = '<div class="gt"><div></div><div class="hd">' + ticks.map(function (t) { return '<span style="left:' + pos(t) + '%">' + lab(t) + "</span>"; }).join("") + "</div>";
+    R.forEach(function (r) {
+      if (r[1] === null) { h += '<div class="grp">' + esc(r[0]) + "</div>"; return; }
+      h += '<div class="lb">' + esc(r[0]) + (r[1] ? "<small>" + esc(r[1]) + "</small>" : "") + '</div><div class="tr">' + td + r[2].map(function (b) {
+        return b[1] ? '<span class="br" style="left:' + pos(b[0]) + "%;width:" + (pos(b[1]) - pos(b[0])) + "%;background:" + C[b[2]] + '" title="' + esc(b[3]) + '">' + esc(b[3]) + "</span>"
+          : '<span class="ms" style="left:' + pos(b[0]) + "%;background:" + C[b[2]] + '" title="' + esc(lab(b[0])) + '"></span>';
+      }).join("") + "</div>";
+    });
+    h += '</div><p style="margin:12px 0 0;font-size:12.5px;color:var(--mut)"><b style="color:#BC002D">■</b> Will · <b style="color:#305887">■</b> Claude · <b style="color:#4DAB9A">■</b> site · <b style="color:#B8862B">■</b> offre · trait blanc : aujourd\'hui</p>';
+    $("#gantt").innerHTML = h;
+    fetch("/hq/notes/fonctionnement-premium.md", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.text(); }).then(function (t) { $("#pmd").innerHTML = md(t); }).catch(function () { $("#pmd").innerHTML = "<p>Indisponible.</p>"; });
+  })();
   fetch("/ressources/index.json", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
     var l = d.items || []; $("#n-res").textContent = l.length + " ressource" + (l.length > 1 ? "s" : "");
     $("#res").innerHTML = l.map(function (x) {

@@ -2,6 +2,11 @@
  "maj": "2026-10-18",
  "docs": [
   {
+   "f": "fonctionnement-premium.md",
+   "titre": "Fonctionnement du Premium",
+   "desc": "Brouillon : périodes, dons PayPal, Stripe, ce qui est fait, à faire, avec le planning."
+  },
+  {
    "f": "planning-de-sortie.md",
    "titre": "Planning de sortie (19/10)",
    "desc": "La checklist du lancement : vérification des pages, qui voit quoi, dimanche, jour J, la semaine."

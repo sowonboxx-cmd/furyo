@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Premium : l'expérience communautaire complète · FuryoGang</title>
+<meta name="description" content="Le site FuryoGang reste gratuit. Premium à 2 € par mois débloque l'expérience communautaire complète : statistiques de lecture, classements, listes, collections des membres, newsletters.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Bangers&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Page Premium (Will, 13/10/2026) : pourquoi Premium, ce qui est inclus, offre des 100 premiers donateurs. */
+:root{--ink:#232326;--card:#000;--c2:#141416;--cream:#F2EFE9;--red:#BC002D;--gold:#F2B33D;--mut:rgba(255,255,255,.6);--line:rgba(255,255,255,.1)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ink);color:#fff;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 80px}
+.hero{background:var(--card);border-radius:26px;padding:56px 56px 52px;position:relative;overflow:hidden}
+.hero .kj{position:absolute;right:-20px;top:-60px;font:900 330px/1 "Noto Sans JP",sans-serif;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.07);pointer-events:none}
+.kick{display:inline-flex;align-items:center;gap:8px;background:rgba(188,0,45,.18);color:#ff5a7a;font:800 12.5px Inter;letter-spacing:.14em;text-transform:uppercase;border-radius:30px;padding:8px 15px}
+.hero h1{position:relative;z-index:2;font:700 92px/.92 Antonio,sans-serif;text-transform:uppercase;margin:22px 0 18px;max-width:760px}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero p{position:relative;font-size:18px;line-height:1.55;color:rgba(255,255,255,.8);margin:0;max-width:600px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.box{background:var(--card);border-radius:22px;padding:30px 30px 26px}
+.box h2{font:700 30px/1 Antonio,sans-serif;text-transform:uppercase;margin:0 0 6px}
+.box .st{font-size:14px;color:var(--mut);margin:0 0 18px}
+.box ul{list-style:none;margin:0;padding:0}
+.box li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);font-size:15.5px;line-height:1.45}
+.box li b{display:block;font-weight:700}.box li span{color:var(--mut);font-size:13.5px}
+.ic{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;margin-top:1px}
+.ic svg{width:13px;height:13px;stroke:#000;fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.free .ic{background:#3A3A3E}.free .ic svg{stroke:#fff}
+.prem{background:linear-gradient(180deg,#1b0a10 0,#000 60%);box-shadow:inset 0 0 0 1.5px rgba(188,0,45,.55)}
+.prem .ic{background:var(--red)}.prem .ic svg{stroke:#fff}
+.tagp{display:inline-block;background:var(--red);color:#fff;font:800 11px Inter;letter-spacing:.1em;text-transform:uppercase;border-radius:6px;padding:4px 8px;margin-left:8px;vertical-align:5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 24px;border-radius:26px;border:0;font:800 15px Inter;cursor:pointer;text-decoration:none}
+.b1{background:#fff;color:#000}.b2{background:var(--gold);color:#000}
+.prem .btn{margin-top:20px;width:100%}
+.why{background:var(--card);border-radius:22px;padding:34px 40px;margin-top:16px;display:grid;grid-template-columns:300px 1fr;gap:10px 48px;align-items:start}
+.why h2{font:700 34px/1 Antonio,sans-serif;text-transform:uppercase;margin:0}
+.why p{margin:0 0 12px;font-size:16px;line-height:1.65;color:rgba(255,255,255,.8)}
+.don{margin-top:16px;border-radius:26px;background:var(--gold);color:#000;padding:40px 44px;display:grid;grid-template-columns:1fr 280px;gap:30px;align-items:center;position:relative;overflow:hidden}
+.don .kj{position:absolute;right:250px;bottom:-70px;font:900 220px/1 "Noto Sans JP",sans-serif;color:transparent;-webkit-text-stroke:2px rgba(0,0,0,.08);pointer-events:none}
+.don small{font:800 12.5px Inter;letter-spacing:.14em;text-transform:uppercase}
+.don h2{font:700 60px/.95 Antonio,sans-serif;text-transform:uppercase;margin:12px 0 14px}
+.don p{font-size:16.5px;line-height:1.55;margin:0 0 10px;max-width:560px}
+.don .note{font-size:13px;opacity:.7}
+.badge{background:#000;color:#fff;border-radius:20px;padding:24px;text-align:center;position:relative}
+.badge .bg{display:inline-flex;align-items:center;gap:7px;background:rgba(242,179,61,.16);color:var(--gold);font:800 13px Inter;border-radius:20px;padding:7px 13px}
+.badge .bg svg{width:15px;height:15px;fill:var(--gold)}
+.badge b{display:block;font:700 64px/1 Antonio,sans-serif;margin:16px 0 2px;color:var(--gold)}
+.badge span{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);font-weight:700}
+.badge .btn{width:100%;margin-top:18px}
+.faq{background:var(--card);border-radius:22px;padding:30px 40px;margin-top:16px}
+.faq h2{font:700 30px/1 Antonio,sans-serif;text-transform:uppercase;margin:0 0 8px}
+.faq details{border-top:1px solid var(--line);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:700;font-size:15.5px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::after{content:"+";color:var(--mut);font-weight:500}.faq details[open] summary::after{content:"–"}
+.faq p{margin:10px 0 0;color:rgba(255,255,255,.75);line-height:1.6;font-size:15px}
+.tab{background:var(--card);border-radius:22px;padding:30px 34px;margin-top:16px}
+.tab .th{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:10px}
+.tab h2{font:700 34px/1 Antonio,sans-serif;text-transform:uppercase;margin:0}
+.pr{margin:0;text-align:right}.pr b{display:block;font:700 44px/1 Antonio,sans-serif;color:#fff}.pr span{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th{font:700 12.5px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);text-align:center;padding:10px 8px;width:120px}th:first-child{width:auto}
+th.p{color:#ff5a7a}
+td{border-top:1px solid var(--line);padding:14px 8px;text-align:center}td:first-child{text-align:left;padding-left:0;font-weight:600}
+td.p{background:rgba(188,0,45,.12)}
+td i{font-style:normal;font-weight:800;font-size:16px}.y{color:#fff}td.p .y{color:#ff5a7a}.n{color:#55555A}
+td small{color:var(--mut);font-size:12.5px;font-weight:600}
+.tab .btn{margin-top:22px}
+.don{display:block}
+.don .in{max-width:640px}
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 14px}
+.ti{background:#000;color:#fff;border-radius:18px;padding:20px 18px 18px;display:flex;flex-direction:column}
+.ti b{font:700 40px/1 Antonio,sans-serif;color:var(--gold)}
+.ti span{font-weight:700;font-size:15px;margin-top:6px}
+.ti p{margin:6px 0 16px;font-size:13px;color:var(--mut);flex:1}
+.ti.top{box-shadow:inset 0 0 0 2px #fff}
+.b3{background:var(--gold);color:#000;height:42px;width:100%}
+.ng{display:block;border-radius:16px;object-fit:cover}
+.hero{display:block}.hero .hj{position:absolute;right:56px;top:50%;transform:translateY(-50%) rotate(3deg);width:250px;box-shadow:0 18px 40px rgba(0,0,0,.6);z-index:1}
+.wh .ng{width:170px;margin-top:20px;transform:rotate(-3deg)}
+.soon{background:var(--card);border-radius:22px;padding:30px 34px;margin-top:16px}
+.soon h2{font:700 30px/1 Antonio,sans-serif;text-transform:uppercase;margin:0 0 18px}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sg article{background:var(--c2);border-radius:18px;padding:14px;display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center}
+.sg .ng{width:96px;height:130px;border-radius:12px}
+.sg b{font-size:16px}.sg p{margin:6px 0 0;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.72)}
+.av{display:inline-block;margin-left:8px;background:rgba(242,179,61,.16);color:var(--gold)!important;border-radius:6px;padding:2px 7px;font-size:11px!important;font-weight:800!important;vertical-align:1px}
+.don{position:relative}.don .dd{position:absolute;right:40px;top:26px;width:150px;transform:rotate(3deg)}
+.don h2,.don .in{max-width:calc(100% - 200px)}
+@media (max-width:760px){.sg{grid-template-columns:1fr}.hero .hj{position:relative;right:auto;top:auto;transform:rotate(3deg);width:150px;margin:0 0 18px auto}.wh .ng{display:none}.soon{padding:24px 18px}.don .dd{width:96px;right:18px;top:18px}.don h2,.don .in{max-width:none}.don h2{padding-right:100px}.tab{padding:24px 18px}.tab h2{font-size:26px}.pr b{font-size:34px}th{width:74px;font-size:11px}td{font-size:14px;padding:12px 4px}.tiers{grid-template-columns:1fr 1fr}.ti b{font-size:32px}}
+@media (max-width:760px){
+  main{padding:14px 12px 60px}
+  .hero{padding:34px 22px 30px}.hero .kj{font-size:200px;top:-30px}
+  .hero h1{font-size:54px}.hero p{font-size:15.5px}
+  .grid{grid-template-columns:1fr}.box{padding:24px 20px 20px}.box h2{font-size:26px}
+  .why{grid-template-columns:1fr;padding:26px 22px}.why h2{font-size:28px}
+  .don{grid-template-columns:1fr;padding:28px 22px}.don h2{font-size:42px}.don .kj{display:none}
+  .faq{padding:24px 22px}
+}
+
+/* Persos Nice Guy détourés, façon blocs « Message du gang » (Will, 13/10/2026) */
+.ch{position:absolute;bottom:0;z-index:2;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55));pointer-events:none}
+.bul{position:absolute;z-index:3;background:var(--gold);color:#000;font:400 18px/1.05 Bangers,cursive;letter-spacing:.04em;padding:9px 13px;border-radius:16px;transform:rotate(-3deg);white-space:nowrap}
+.tagg{display:inline-block;transform:rotate(-4deg);background:var(--red);color:#fff;font:800 11px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:4px}
+.why{display:block;position:relative;margin-top:70px;padding:34px 40px;min-height:300px}
+.why .ch{right:40px;height:330px}
+.why .wt{max-width:620px}.why h2{font:700 46px/1 Antonio,sans-serif;text-transform:uppercase;margin:14px 0 16px}.why h2 em{font-style:normal;color:var(--gold)}
+.soon{margin-top:16px}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;row-gap:84px;margin-top:70px}
+.sg article{position:relative;background:var(--c2);border-radius:18px;padding:20px;min-height:220px;display:block}
+.sg article .ch{right:8px;height:210px}
+.sg article .bul{top:-34px;right:14px;font-size:15px}
+.sg article div{position:relative;z-index:3;width:56%}
+.sg b{font-size:17px;display:block}.sg p{margin:8px 0 0;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.75)}
+.don{margin-top:80px;position:relative}
+.don .dj{right:40px;height:380px;bottom:auto;top:-80px}
+.don .dk{right:250px;top:-40px}
+.don h2,.don .in{max-width:calc(100% - 300px)}
+@media (max-width:760px){
+ .why{margin-top:60px;padding:24px 20px 26px}.why .ch{height:190px;right:6px;top:-60px;bottom:auto}.why .bul{right:120px!important;top:-44px!important;font-size:14px}.why h2{font-size:34px;padding-right:110px}
+ .sg{grid-template-columns:1fr;gap:56px}.sg article .ch{height:180px}
+ .don{margin-top:70px}.don .dj{height:200px;top:-60px;right:10px}.don .dk{right:120px;top:-46px;font-size:14px}.don h2,.don .in{max-width:none}.don h2{padding-right:110px}
+}
+.don{overflow:visible}.don .dt{min-height:215px}
+.don .dj{right:50px;height:310px;top:-100px}
+.don .dk{right:260px;top:-34px}
+.sg article:nth-child(2) .ch{height:175px;right:4px}
+.sg article div{width:52%}
+@media (max-width:760px){.don .dt{min-height:0}.don .dj{height:190px;top:-70px}.don .dk{right:96px;top:-50px;font-size:13px}}
+/* En-tête : les persos de QP en noir et blanc, ordinateur seulement (Will, 13/10/2026, version C3-a) */
+.hero .qp{position:absolute;top:16px;right:-40px;height:130%;opacity:.6;filter:grayscale(1) contrast(1.1);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 30%);mask-image:linear-gradient(90deg,transparent 0,#000 30%);pointer-events:none}
+.hero h1 em{color:#ff2a55}.hero .kick,.hero h1,.hero p{position:relative;z-index:2}
+@media (max-width:760px){.hero .qp{display:none}}
+</style>
+</head>
+<body>
+<script src="/site/header.js?v=54"></script>
+<div style="position:sticky;top:0;z-index:50;background:#BC002D;color:#fff;text-align:center;font:700 14px Inter,sans-serif;padding:8px">Brouillon · visible seulement par les admins · <a href="/hq/#premium" style="color:#fff">retour au QG</a></div>
+<main>
+  <section class="hero"><img class="qp" src="/img/qp/qp.webp" alt="" aria-hidden="true">
+    <span class="kick">FuryoGang Premium</span>
+    <h1>L'expérience <em>communautaire</em> complète</h1>
+    <p>Le site reste gratuit pour tout le monde : actus, fiches, calendrier, et tes tomes possédés sans limite. Premium débloque tout ce qui donne envie de participer.</p>
+    <p style="margin-top:14px;display:inline-block;background:#F2B33D;color:#000;font-weight:700;padding:10px 16px;border-radius:12px">Jusqu'au 30 novembre, Premium est offert à tous les membres. Abonnements à partir du 15 novembre.</p>
+  </section>
+
+  <section class="tab"><div class="th"><h2>Gratuit ou Premium</h2><p class="pr"><b>2 €</b><span>par mois</span></p></div>
+    <table>
+      <thead><tr><th></th><th>Gratuit</th><th class="p">Premium</th></tr></thead>
+      <tbody>
+        <tr><td>Actus, fiches séries, calendrier, Au Japon</td><td><i class="y">✓</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Bibliothèque des mangas possédés</td><td><i class="y">✓</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Mangas lus et statistiques de lecture</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Classements communautaires</td><td><small>Limité</small></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Liste des mangas à lire</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Panier : mangas à acheter plus tard</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Collections détaillées des autres membres</td><td><small>Limité</small></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Tirage au sort pour gagner un tome<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Tirage au sort pour gagner une figurine<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>FuryoGang Magazine : le magazine du mois<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Concours<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Bibliothèque de ressources du gang<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Lexique Furyō Plus : l’argot japonais en détail<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn b1" onclick="this.textContent='Ouverture le 15 novembre'">Abonnements dès le 15 novembre · 2 € par mois</button>
+  </section>
+
+  <section class="why"><img class="ch" src="/img/don/haru.webp" alt=""><span class="bul" style="right:150px;top:-30px">Toi. Oui, toi.<br>Tu lis tout gratos ?</span>
+    <div class="wt"><span class="tagg">Message du gang</span><h2>Pourquoi <em>Premium</em> ?</h2>
+    <p>FuryoGang est un média indépendant, tenu par des passionnés. L'info reste gratuite pour tout le monde : c'est notre façon de faire connaître le manga furyō.</p>
+    <p>Ce qu'on fait payer, c'est l'expérience communautaire complète : suivre ce que tu lis, te mesurer au reste du gang, construire tes listes. C'est ce qui finance le site, les serveurs et les heures passées à tenir la base à jour.</p></div>
+  </section>
+
+  <section class="soon"><h2>Bientôt pour les Premium</h2>
+    <div class="sg">
+      <article><span class="bul">Tout ce que la France a raté.</span><img class="ch" src="/img/don/buso.webp" alt=""><div><b>La bibliothèque du gang</b><p>Une base de ressources sur tout ce qui n'est pas sorti en France : mangas, dramas, films, avec les infos et les liens pour les trouver.</p></div></article>
+      <article><span class="bul">On t'attend au tirage.</span><img class="ch" src="/img/don/duo.webp" alt=""><div><b>Les concours</b><p>Réservés aux Premium : des lots à gagner, et des concours avec des mangakas japonais.</p></div></article>
+      <article><span class="bul">Slurp. Le mag arrive.</span><img class="ch" src="/img/don/murota.webp" alt=""><div><b>FuryoGang Magazine</b><p>Chaque mois, le magazine du gang : tout ce qui s'est passé, en version magazine à lire en ligne. Un aperçu arrive par e-mail.</p></div></article>
+      <article><span class="bul">Fais pas genre t'as compris.</span><img class="ch" src="/img/don/haru.webp" alt=""><div><b>Lexique Furyō Plus</b><p>L'argot japonais des voyous, des yakuzas et de la rue. Le lexique reste ouvert à tous ; avec Premium, chaque mot a ses explications, ses exemples et ses illustrations, comme dans un vrai livre.</p></div></article>
+    </div>
+  </section>
+
+  <section class="don"><img class="ch dj" src="/img/don/jinnai.webp" alt=""><span class="bul dk">T'as lu, t'as aimé ?<br>Alors aboule.</span><div class="dt"><small>Premium avant Premium</small>
+    <h2>Soutiens le gang avant tout le monde</h2>
+    <p class="in">Les abonnements ouvrent le 15 novembre. En attendant, tu peux déjà soutenir le site par un don PayPal : à partir de 25 €, tu as des années de Premium d'avance et le badge de soutien sur ton profil. Ton Premium démarre le 1er décembre : tu ne perds rien pendant la période offerte.</p></div>
+    <div class="tiers">
+      <div class="ti"><b>Libre</b><span>Moins de 25 €</span><p>Un coup de main. Badge Donateur, sans Premium.</p><button type="button" class="btn b3" onclick="this.textContent='Bientôt disponible'">Donner</button></div>
+      <div class="ti"><b>25 €</b><span>Premium 1 an</span><p>De 25 à 49 €. + badge de soutien</p><button type="button" class="btn b3" onclick="this.textContent='Bientôt disponible'">Soutenir</button></div>
+      <div class="ti"><b>50 €</b><span>Premium 2 ans</span><p>De 50 à 99 €. + badge de soutien</p><button type="button" class="btn b3" onclick="this.textContent='Bientôt disponible'">Soutenir</button></div>
+      <div class="ti top"><b>100 €</b><span>Premium 4 ans</span><p>100 € et plus. Au-delà, encore plus de Premium.</p><button type="button" class="btn b3" onclick="this.textContent='Bientôt disponible'">Soutenir</button></div>
+    </div>
+    <p class="note">Fais ton don PayPal avec l'adresse e-mail de ton compte FuryoGang : on active ton Premium et ton badge à la main.</p>
+  </section>
+
+  <section class="faq"><h2>Questions</h2>
+    <details><summary>Le site va-t-il devenir payant ?</summary><p>Non. Les actualités, les fiches, le calendrier et ta collection de tomes possédés restent gratuits. Premium ajoute l'expérience communautaire.</p></details>
+    <details><summary>Combien coûte Premium ?</summary><p>2 € par mois, à partir du 1er décembre. Jusqu'au 30 novembre, Premium est offert à tous les membres.</p></details>
+    <details><summary>Quand peut-on s'abonner ?</summary><p>À partir du 15 novembre. Si tu t'abonnes entre le 15 et le 30 novembre, tu as [1 / 2] mois offert(s) en plus.</p></details>
+    <details><summary>C'est quoi « Premium avant Premium » ?</summary><p>Avant l'ouverture des abonnements, tu peux soutenir le site par un don PayPal. De 25 à 49 € : 1 an de Premium. De 50 à 99 € : 2 ans. 100 € et plus : 4 ans. Ton Premium démarre le 1er décembre.</p></details>
+    <details><summary>Comment marche le tirage au sort ?</summary><p>Bientôt, des tirages au sort réservés aux membres Premium pour gagner un tome ou une figurine. Tous les membres Premium participent, sans rien faire de plus, et sans rien payer en plus : c'est compris dans les 2 € par mois.</p></details>
+    <details><summary>Que se passe-t-il à la fin de ma période Premium ?</summary><p>Tu repasses en gratuit : tes tomes possédés restent, et tes listes Premium sont gardées jusqu'à ton retour.</p></details>
+    <details><summary>Je n'ai pas encore de compte</summary><p>Crée ton compte gratuitement avec Google depuis l'icône en haut à droite, puis fais ton soutien avec la même adresse e-mail.</p></details>
+  </section>
+</main>
+</body>
+</html>
