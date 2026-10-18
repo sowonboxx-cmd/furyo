@@ -142,12 +142,103 @@
         '<div class="grid">' + [[LU, "Lu"], [EN, "Envie"], [PA, "Panier"], [ST, "Stats"]].map(function (b) { return "<span>" + icP(b[0]) + b[1] + "</span>"; }).join("") + "</div>" +
         '<a class="go w" href="/premium/" style="background:#F2B33D;color:#000;text-decoration:none">Devenir Premium</a></div>';
     }
+    if (Date.now() < Date.parse("2026-11-15T00:00:00+01:00") || /[?&]apercu=pap/.test(location.search))
+      return '<button type="button" class="fge d2 no-sk" data-fgx-open aria-label="Premium avant tout le monde : soutiens le gang"><span class="bu">On t’attend le 1er déc.</span><img src="/img/don/duo.webp" alt=""><b>Premium avant <span>tout le monde</span></b><p>Un don, et t’es Premium dès le 1er décembre.</p><span class="cta">Je soutiens le gang ' + ARR + "</span></button>";
     return '<button type="button" class="fge no-sk" data-fgp-open aria-label="Premium offert jusqu’au 30 novembre : ce que ça change"><span class="bu">On t’attend le 1er déc.</span><img src="/img/don/duo.webp" alt=""><b>Jusqu’au 30 novembre, c’est open bar</b><span class="cta">Ce que ça change ' + ARR + "</span></button>";
   };
   document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-fgp-open]")) window.FG_GANG.premium(true); });
 
+  /* « Premium avant Premium » (maquettes v2-v4 validées par Will le 18/10/2026), jusqu'au 14 novembre inclus.
+     Membres connectés seulement. Accueil ordinateur : widget Jinnai (→ page Premium). Accueil téléphone : Busō en grand
+     la première fois (→ page Premium), puis la petite barre B (→ fenêtre d'explications). Ma collection : D2 sur ordinateur,
+     barre collante T3 sur téléphone (→ fenêtre d'explications). La fenêtre mène à la page Premium, bloc dons. */
+  var PAP = Date.now() < Date.parse("2026-11-15T00:00:00+01:00") || /[?&]apercu=pap/.test(location.search), PAPVU = false, DONS = "/premium/#dons";
+  try { PAPVU = !!localStorage.getItem("fg_pap_vu") && !/[?&]apercu=pap1/.test(location.search); } catch (e) {}
+  var c3 = document.createElement("style");
+  c3.textContent =
+    ".fci{display:inline-block;flex:none;border-radius:50%;background:#F2B33D;position:relative;overflow:hidden}.fci img{position:absolute;left:50%;top:50%;height:84%;width:auto;transform:translate(-50%,-50%);pointer-events:none}" +
+    ".fgm .tag.y,.fgx .tag.y{background:#F2B33D;color:#000}" +
+    ".fgm .ti3,.fgx .ti3{display:flex;gap:6px;margin-top:12px}.fgm .ti3 span{flex:1;text-align:center;background:#1C1C1E;border-radius:10px;padding:8px 4px;font:600 11px Inter,sans-serif;color:#BDBDC2}.fgm .ti3 b{display:block;font:700 20px/1.1 Antonio,sans-serif;color:#fff}" +
+    ".fgm .cy,.fgx .cy{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border-radius:23px;background:#F2B33D;color:#000;font:800 15px Inter,sans-serif;text-decoration:none;margin-top:12px;border:0;width:100%;cursor:pointer}.fgm .cy:hover,.fgx .cy:hover{filter:brightness(1.06)}" +
+    ".fgm .ppl,.fgx .bd>p.ppl{margin:8px 0 0;text-align:center;font:600 11.5px Inter,sans-serif;color:#9A9AA0}.ppw{font-style:italic;font-weight:900;color:#fff}.ppw span{color:#009CDE}" +
+    ".fgm .ch2,.fgx .ch2{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.fgm .ch2 span,.fgx .ch2 span{display:inline-flex;align-items:center;gap:5px;background:#1C1C1E;border-radius:999px;padding:6px 10px;font:600 12px Inter,sans-serif;color:#E4E4E8}.fgm .ch2 svg,.fgx .ch2 svg{width:14px;height:14px}.fgm .ch2 .pl,.fgx .ch2 .pl{background:rgba(188,0,45,.22);color:#fff}" +
+    ".fgm.pw .hd{min-height:210px}.fgm.pw .tx{padding-top:96px}.fgm.pw .bul{background:#BC002D;color:#fff}" +
+    ".fgm.pb{padding:20px}.fgm.pb .rw{display:flex;gap:10px;align-items:flex-end}.fgm.pb .msg{font-size:28px}" +
+    ".fgs{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;padding:10px 12px;border-radius:16px;background:linear-gradient(90deg,#2a1c05,#000 75%);border:1px solid #3a2a0a;color:#F5F5F7;text-align:left;cursor:pointer;font-family:Inter,sans-serif}" +
+    ".fgs b{flex:1;font:700 16px/1.05 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase}.fgs b em{font-style:normal;color:#F2B33D}" +
+    ".fgs .cta{flex:none;background:#F2B33D;color:#000;padding:8px 12px;border-radius:999px;font:700 12.5px Inter,sans-serif;white-space:nowrap}" +
+    ".fgpap-st{position:sticky;z-index:30;margin:0 -16px;padding:0}.fgpap-st .fgs{border-radius:0;border-width:0 0 1px}@media (min-width:980px){.fgpap-st{display:none}}" +
+    ".fge.d2 b{width:58%;padding-top:24px}.fge.d2 b span{color:#F2B33D}.fge.d2 p{position:relative;width:58%;margin:8px 0 0;font:600 12px/1.35 Inter,sans-serif;color:#fff}.fge.d2 img{height:120px}.fge.d2{min-height:190px}" +
+    /* Fenêtre d'explications */
+    ".fgx-o{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px;animation:fgpIn .25s ease}" +
+    ".fgx{position:relative;width:min(600px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#0B0B0C;border:1px solid #2A2A2D;border-radius:24px;color:#F5F5F7;font-family:Inter,sans-serif;text-align:left}" +
+    ".fgx .top{position:relative;background:#BC002D;padding:20px 28px 18px;min-height:150px;box-sizing:border-box;overflow:hidden}" +
+    ".fgx .top .fci{position:absolute;right:34px;bottom:14px;width:140px;height:140px}" +
+    ".fgx .top .bul{position:absolute;z-index:2;right:150px;top:16px;background:#000;color:#F2B33D;font:400 16px/1.05 Bangers,cursive;letter-spacing:.04em;padding:7px 11px;border-radius:14px;transform:rotate(-3deg);white-space:nowrap}" +
+    ".fgx small{font:700 11px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;opacity:.85}" +
+    ".fgx h2{position:relative;margin:30px 0 0;font:700 32px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;max-width:62%;color:#fff}.fgx h2 span{color:#F2B33D}" +
+    ".fgx .x{position:absolute;right:14px;top:12px;z-index:3;width:32px;height:32px;border:0;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;font:400 20px Inter;cursor:pointer}" +
+    ".fgx .bd{padding:0 28px 20px}.fgx h3{margin:22px 0 6px;font:700 12px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8E8E93}" +
+    ".fgx .bd>p{margin:0;font:500 14px/1.5 Inter,sans-serif;color:#D8D8DC}.fgx b{color:#fff}" +
+    ".fgx .st{display:flex;gap:12px;margin-top:12px}.fgx .st i{flex:none;width:26px;height:26px;border-radius:50%;background:#BC002D;color:#fff;font:700 15px Antonio,sans-serif;font-style:normal;display:flex;align-items:center;justify-content:center}.fgx .st p{margin:0;font:500 13.5px/1.45 Inter,sans-serif;color:#D8D8DC}" +
+    ".fgx .tb{background:#141416;border-radius:14px;margin-top:8px;overflow:hidden}.fgx .tr{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid #222;font:500 13.5px Inter,sans-serif;color:#D8D8DC}.fgx .tr:last-child{border:0}.fgx .tr b{font:700 19px Antonio,sans-serif;white-space:nowrap}.fgx .tr em{font-style:normal;font-weight:700;color:#F2B33D}" +
+    ".fgx .bd>p.nt{margin:8px 0 0;font:500 12.5px Inter,sans-serif;color:#9A9AA0}.fgx .ltr{display:block;margin:10px auto 0;background:none;border:0;font:600 13px Inter,sans-serif;color:#8E8E93;cursor:pointer}" +
+    "@media (max-width:600px){.fgx-o{place-items:end center;padding:0}.fgx{width:100%;max-height:92vh;border-radius:24px 24px 0 0;border-width:1px 0 0}.fgx .top{padding:18px 18px 16px;min-height:128px}.fgx .top .fci{right:22px;width:110px;height:110px}.fgx .top .bul{right:60px;top:14px;font-size:15px}.fgx small{visibility:hidden}.fgx h2{font-size:28px;margin-top:22px}.fgx .bd{padding:0 18px 22px}}";
+  document.head.appendChild(c3);
+  var busoRond = function (d) { return '<span class="fci" style="width:' + d + "px;height:" + d + 'px"><img src="/img/don/buso.webp" alt="" class="no-sk"></span>'; };
+  var PPW = '<i class="ppw">Pay<span>Pal</span></i>';
+  var TI3 = '<div class="ti3"><span><b>25 €</b>1 an</span><span><b>50 €</b>2 ans</span><span><b>100 €</b>4 ans</span></div>';
+  // 11 avantages réservés au Premium sur la page /premium/ : Lu et Panier sont montrés, il en reste 9.
+  var CH2 = '<div class="ch2"><span>' + icP(LU) + "Lu</span><span>" + icP(PA) + 'Panier</span><span class="pl">+ 9 autres avantages Premium</span></div>';
+  var CYA = function (lab) { return '<a class="cy" href="' + DONS + '">' + lab + " " + ARR + "</a>"; };
+  var PB = {
+    widget: function () {
+      return '<div class="fgm wd pw"><div class="hd"><span class="bul">On rackette pas. On propose.</span>' + img("jinnai", "right:-6px;bottom:0;height:210px") +
+        '<div class="tx"><span class="tag y">Premium avant Premium</span><p class="msg">Un don,<br><em>et t’es Premium.</em></p></div></div>' +
+        '<p class="sub">Un seul don PayPal, sans abonnement. Ton Premium démarre le 1er décembre : d’ici là, c’est offert à tout le monde.</p>' + CH2 + TI3 + CYA("Je soutiens le gang") +
+        '<p class="ppl">Don via ' + PPW + " · montant libre</p></div>";
+    },
+    mobile: function () {
+      if (PAPVU) return '<div style="padding:0 16px;margin:24px 0">' + petite() + "</div>";
+      try { localStorage.setItem("fg_pap_vu", String(Date.now())); } catch (e) {}
+      return '<div style="padding:0 16px;margin:24px 0"><div class="fgm pb"><div class="rw"><div style="flex:1"><span class="tag y">Premium avant Premium</span><p class="msg">Soutiens le gang.<br><em>Sois Premium avant tout le monde.</em></p></div>' + busoRond(116) + "</div>" +
+        '<p class="sub">Un don, et ton Premium démarre le 1er décembre. Pas d’abonnement, pas de surprise.</p>' + TI3 + CYA("Je soutiens le gang") +
+        '<p class="ppl">Don via ' + PPW + " · Premium dès le 1er décembre</p></div></div>";
+    }
+  };
+  var petite = function () { return '<button type="button" class="fgs no-sk" data-fgx-open>' + busoRond(42) + "<b>Premium<br><em>avant tout le monde</em></b><span class=\"cta\">Devenir Premium</span></button>"; };
+  var remplir = function () {
+    if (!MEMBRE || !PAP) return;
+    document.querySelectorAll("[data-fgpap]").forEach(function (e) { if (!e.firstChild && PB[e.dataset.fgpap]) e.innerHTML = PB[e.dataset.fgpap](); });
+    if (window.FG_GANG_PREMIUM && !document.querySelector(".fgpap-st")) {
+      var pg = document.querySelector(".page"), sh = document.querySelector(".sh");
+      if (pg) { var d = document.createElement("div"); d.className = "fgpap-st"; d.style.top = (sh ? sh.offsetHeight : 0) + "px"; d.innerHTML = petite(); pg.insertBefore(d, pg.firstChild); }
+    }
+  };
+  window.FG_GANG.pap = function () {
+    if (document.querySelector(".fgx-o")) return;
+    var o = document.createElement("div"); o.className = "fgx-o"; o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "Premium avant Premium");
+    var tr = function (a, b) { return '<div class="tr"><b>' + a + "</b><span>" + b + "</span></div>"; };
+    o.innerHTML = '<div class="fgx"><div class="top"><button type="button" class="x" aria-label="Fermer">×</button>' + busoRond(140) + '<span class="bul">On vole personne, promis.</span>' +
+      "<small>Premium avant Premium</small><h2>Soutiens le gang,<br><span>sois Premium avant tout le monde.</span></h2></div><div class=\"bd\">" +
+      "<h3>C’est quoi ?</h3><p>FuryoGang, c’est un passionné, pas une boîte. Pour lancer le site, <b>tout le monde est Premium gratuitement jusqu’au 30 novembre</b>. Après, ce sera 2 € par mois. Si tu veux nous aider dès maintenant, tu peux faire un don : en échange, <b>on te garde le Premium</b>.</p>" +
+      "<h3>Comment ça marche</h3>" +
+      '<div class="st"><i>1</i><p><b>Tu fais un don sur PayPal</b>, du montant que tu veux. Un seul paiement, pas d’abonnement, rien ne sera prélevé ensuite.</p></div>' +
+      '<div class="st"><i>2</i><p><b>Tu mets l’e-mail de ton compte FuryoGang</b> (ou ton pseudo en note), pour qu’on te retrouve.</p></div>' +
+      '<div class="st"><i>3</i><p><b>Ton Premium démarre le 1er décembre</b>, à la fin de la période offerte. Tu ne perds pas un jour. Ton badge apparaît sur ton profil.</p></div>' +
+      '<h3>Ce que ton don te donne</h3><div class="tb">' + tr("Moins de 25 €", "Un grand merci + badge Donateur") + tr("25 €", "<em>1 an</em> de Premium") + tr("50 €", "<em>2 ans</em> de Premium") + tr("100 €", "<em>4 ans</em> de Premium") + "</div>" +
+      '<p class="nt">Et 1 an de plus par tranche de 25 € au-dessus.</p><h3>Ce que tu débloques</h3>' + CH2 +
+      '<a class="cy" style="margin-top:18px" href="' + DONS + '">Je soutiens le gang ' + ARR + '</a><p class="ppl">Tu arrives sur la page Premium, puis le don se fait sur ' + PPW + '.</p><button type="button" class="ltr" data-fgx-x>Plus tard</button></div></div>';
+    document.body.appendChild(o);
+    var close = function () { o.remove(); document.removeEventListener("keydown", esc); };
+    var esc = function (e) { if (e.key === "Escape") close(); };
+    document.addEventListener("keydown", esc);
+    o.addEventListener("click", function (e) { if (e.target === o || e.target.closest(".x,[data-fgx-x]")) close(); });
+  };
+  document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-fgx-open]")) window.FG_GANG.pap(); });
+
   /* Membre ou pas ? On retire les blocs « Rejoindre » pour les membres. */
-  var clean = function () { if (MEMBRE) document.querySelectorAll("[data-fgm]").forEach(function (e) { e.remove(); }); };
+  var clean = function () { if (MEMBRE) { document.querySelectorAll("[data-fgm]").forEach(function (e) { e.remove(); }); remplir(); } };
   if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
     MEMBRE = !!(j && j.user) && !/[?&]apercu=gang/.test(location.search); clean();
     if (MEMBRE) new MutationObserver(clean).observe(document.body, { childList: true, subtree: true });
