@@ -209,19 +209,27 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .wcol .wh{font:700 13px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
 .wcol .wh b{font-size:19px;color:var(--cr)}
 .wcol.to .wh b{color:var(--blue)}
-.wcard{background:#1f1f25;border-radius:11px;padding:10px 11px;cursor:pointer;border:0;text-align:left;width:100%;display:block}
+.wcard{position:relative;background:#1f1f25;border-radius:11px;padding:10px 32px 10px 11px;cursor:pointer;border:0;text-align:left;width:100%;display:block}
 .wcard .bar{display:block;height:4px;width:34px;border-radius:3px;margin-bottom:8px}
 .wcard .t,.wcard .m,.rcard .ri .t,.rcard .ri .m{display:block}
 .wcard .t{font:600 13px "FGInter";line-height:1.25;color:var(--cr)}
 .wcard .m{font:700 10.5px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);margin-top:7px}
 .wcard .im{display:inline-block;margin-top:7px;font:700 9.5px "FGInter";text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:4px 7px;border-radius:7px}
-.rcard{background:#1f1f25;border-radius:11px;padding:9px;display:flex;gap:10px;align-items:center;cursor:pointer;border:0;text-align:left;width:100%}
+.rcard{position:relative;background:#1f1f25;border-radius:11px;padding:9px 30px 9px 9px;display:flex;gap:10px;align-items:center;cursor:pointer;border:0;text-align:left;width:100%}
 .rcard .cov{width:40px;height:56px;border-radius:5px;flex:none;background:#262630 center/cover no-repeat;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
 .rcard .cov b{font:800 15px "FGAntonio";color:#fff;opacity:.85;padding-bottom:3px}
-.rcard .cov .fl{position:absolute;top:3px;left:3px;font-size:9px}
 .rcard .ri{min-width:0}
 .rcard .ri .t{font:600 12.5px "FGInter";line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--cr)}
 .rcard .ri .m{font:700 10px "FGAntonio";letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin-top:5px}
+/* Drapeau éditeur (flat, rectangulaire, calé sur la hauteur des lettres) + pastille publié/pas-publié (Will, 19/10/2026) */
+.fl{display:inline-block;overflow:hidden;border-radius:1px;line-height:0;vertical-align:-0.13em;width:13px;height:9px}
+.fl svg{display:block;width:100%;height:100%}
+.chk{position:absolute;right:8px;bottom:8px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;cursor:pointer;flex:none;z-index:2}
+.wcard .chk{top:50%;bottom:auto;transform:translateY(-50%)}
+.chk svg{width:12px;height:12px;display:block}
+.chk.off{background:#34343b;color:#747480}
+.chk.on{background:var(--ok);color:#1b1b1f}
+.chk.busy{opacity:.5;pointer-events:none}
 .wempty{color:var(--mut);font:500 12.5px "FGInter";padding:4px}
 .kb{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .kcol{background:var(--s2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:280px}
@@ -737,7 +745,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 
   // Calendrier éditorial — dashboard (Will, 19/10/2026) : Mois / Semaine / Kanban / Gantt,
   // projets colorés, vraies sorties de la base (/api/calendrier), pop-up compact à onglets.
-  var CAL = { types: [], events: [] }, TODO = [], SORT = [], SORTX = {}, calView = "mois", calCur = new Date();
+  var CAL = { types: [], events: [] }, TODO = [], SORT = [], SORTX = {}, calView = "semaine", calCur = new Date();
   var PSORTIE = { id: "sortie", nom: "Sortie de tome", couleur: "#7B8CEB" };
   var JJ = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
@@ -754,7 +762,15 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   function projets() { return CAL.types.concat([PSORTIE]); }
   function proj(id) { return projets().find(function (t) { return t.id === id; }) || { nom: "Autre", couleur: "#888" }; }
   function lisible(hex) { try { var h = hex.replace("#", ""); var r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16); return (r * 299 + g * 587 + b * 114) / 1000 > 150; } catch (e) { return false; } }
-  function flag(pays) { return pays === "France" ? "🇫🇷" : "🇯🇵"; }
+  // Drapeaux flat (rectangulaires) dessinés en SVG, à côté de l'éditeur. Will 19/10/2026.
+  var FLAG_FR = '<svg viewBox="0 0 30 20" preserveAspectRatio="none"><rect width="10" height="20" fill="#41479B"/><rect x="10" width="10" height="20" fill="#F5F5F5"/><rect x="20" width="10" height="20" fill="#FF4B55"/></svg>';
+  var FLAG_JP = '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#F5F5F5"/><circle cx="15" cy="10" r="5.4" fill="#FF4B55"/></svg>';
+  function flag(pays) { return '<span class="fl">' + (pays === "France" ? FLAG_FR : FLAG_JP) + '</span>'; }
+  // Pastille « publié » (vert) / « pas publié » (gris), cochable en direct, synchronisée avec la Validation.
+  var CHK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+  function chkBadge(kind, id, on) { return '<span class="chk ' + (on ? "on" : "off") + '" data-chk="' + kind + '" data-chkid="' + esc(id) + '" role="button" aria-label="' + (on ? "Publié" : "Pas encore publié") + '" title="' + (on ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span>'; }
+  // Une sortie est « postée » si la base Tomes (via /api/admin/sorties → « Sortie postée ») le dit. Même champ que la Validation.
+  function postedSortie(id) { var x = SORTX[id]; return !!(x && x.poste); }
   // Normalise une sortie de la base en item calendrier.
   function sortieLabel(s) { return (s.series || s.fr || s.jp || "Tome") + (s.n != null && s.n !== "" ? " T." + s.n : ""); }
   function captionSortie(s) {
@@ -811,9 +827,9 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       var d = new Date(l); d.setDate(l.getDate() + i); var is = iso(d), its = itemsJour(d);
       h += '<div class="wcol' + (is === today ? " to" : "") + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
       h += its.length ? its.map(function (it) {
-        if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '<span class="fl">' + flag(s.pays) + '</span></span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">Sortie · ' + esc(s.pub || "") + "</span></span></button>"; }
+        if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + " " + flag(s.pays) + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
         var c = itemColor(it);
-        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</button>";
+        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }).join("") : '<div class="wempty">—</div>';
       h += "</div>";
     }
@@ -875,18 +891,18 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   }
   // ---- Modal ----
   var host = document.createElement("div"); host.id = "calmodalhost"; document.body.appendChild(host);
-  var modalCap = null, modalTab = "ig";
+  var modalCap = null, modalTab = "tw";
   var IC_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
   var IC_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
   function closeModal() { host.innerHTML = ""; modalCap = null; }
   function tabsHTML(cap) {
     var n = { ig: "Instagram", tw: "Twitter / X", tk: "TikTok" };
-    var h = '<div class="ctabs" id="ctabs">' + ["ig", "tw", "tk"].map(function (k) { return '<button data-tab="' + k + '" aria-pressed="' + (k === modalTab) + '">' + LOGO[k] + n[k] + "</button>"; }).join("") + "</div>";
+    var h = '<div class="ctabs" id="ctabs">' + ["tw", "ig", "tk"].map(function (k) { return '<button data-tab="' + k + '" aria-pressed="' + (k === modalTab) + '">' + LOGO[k] + n[k] + "</button>"; }).join("") + "</div>";
     h += '<div class="cbox"><button class="cp" id="cpbtn" aria-label="Copier" title="Copier">' + IC_COPY + '</button><p id="captxt">' + esc(cap[modalTab] || "") + "</p></div>";
     return h;
   }
   function openItem(kind, id) {
-    modalTab = "ig";
+    modalTab = "tw";
     if (kind === "sortie") return openSortie(SORT.find(function (s) { return s.id === id; }));
     if (kind === "todo") return openTodo(TODO.find(function (t) { return t.id === id; }));
     openEv(CAL.events.find(function (e) { return e.id === id; }));
@@ -927,7 +943,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
        + '<button class="dlb" data-tome="post" data-theme="creme">Post 3:4 · Crème</button>'
        + '<button class="dlb" data-tome="story" data-theme="sombre">Story · Noir</button>'
        + '<button class="dlb" data-tome="story" data-theme="creme">Story · Crème</button></div>';
-    h += '<div class="macts">' + (s.fiche && s.seriesId ? '<a class="btn2" href="/series/' + esc(s.seriesId) + '" target="_blank" rel="noopener">Voir la fiche</a>' : "") + '<button class="btn2 p" data-act="poste">Marquer posté</button><span id="calmsg"></span></div>';
+    h += '<div class="macts">' + (s.fiche && s.seriesId ? '<a class="btn2" href="/series/' + esc(s.seriesId) + '" target="_blank" rel="noopener">Voir la fiche</a>' : "") + '<button class="btn2 p" data-act="poste">' + (postedSortie(s.id) ? "Marquer à publier" : "Marquer posté") + '</button><span id="calmsg"></span></div>';
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "sortie"; host.dataset.id = s.id;
   }
   function openTodo(t) {
@@ -990,9 +1006,23 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   $("#caltoday").addEventListener("click", function () { calCur = new Date(); renderView(); });
   $("#caladd").addEventListener("click", function () { formEv(null); });
   $("#calview").addEventListener("click", function (ev) {
+    // Pastille « publié » : on coche en direct sans ouvrir la carte. Synchronisé avec la Validation (même champ Notion).
+    var ck = ev.target.closest("[data-chk]"); if (ck) { ev.preventDefault(); ev.stopPropagation(); togglePublie(ck); return; }
     var it = ev.target.closest("[data-k]"); if (it) { openItem(it.dataset.k, it.dataset.id); return; }
     var ad = ev.target.closest("[data-add]"); if (ad) { if (calView !== "semaine") { calCur = parseIso(ad.dataset.add); } formEvDate(ad.dataset.add); }
   });
+  // Coche / décoche « publié » depuis la pastille. Sortie → base Tomes (Sortie postée) ; événement → Publié du calendrier.
+  function togglePublie(ck) {
+    var kind = ck.dataset.chk, id = ck.dataset.chkid, on = ck.classList.contains("on");
+    ck.classList.add("busy");
+    if (kind === "sortie") {
+      fetch("/api/admin/sorties", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, poste: !on }) })
+        .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw 0; if (SORTX[id]) SORTX[id].poste = !on ? 1 : 0; else SORTX[id] = { id: id, poste: !on ? 1 : 0 }; renderView(); })
+        .catch(function () { ck.classList.remove("busy"); });
+    } else {
+      calPost({ id: id, fait: !on });
+    }
+  }
   function formEvDate(d) { formEv(null); var f = $("#cedit"); if (f) f.date.value = d; }
   $("#projrow").addEventListener("click", function (ev) {
     if (!ev.target.closest("#projadd")) return;
@@ -1022,8 +1052,9 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   // « Marquer posté » : coche « Sortie postée » dans la base Tomes → la sortie disparaît de l'écran « Sorties du jour » du QG.
   function posterSortie(btn) {
     var s = host._sortie; if (!s) return; var m = $("#calmsg"); if (m) m.textContent = "Enregistrement…";
-    fetch("/api/admin/sorties", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: s.id, poste: true }) })
-      .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); btn.textContent = "Posté ✓"; btn.disabled = true; if (m) m.textContent = "Retiré des sorties à publier."; setTimeout(closeModal, 900); })
+    var next = !postedSortie(s.id); // bascule selon l'état réel (synchro Validation), au lieu de toujours « posté »
+    fetch("/api/admin/sorties", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: s.id, poste: next }) })
+      .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); if (SORTX[s.id]) SORTX[s.id].poste = next ? 1 : 0; else SORTX[s.id] = { id: s.id, poste: next ? 1 : 0 }; btn.textContent = next ? "Marquer à publier" : "Marquer posté"; if (m) m.textContent = next ? "Marqué posté ✓" : "Remis à publier."; renderView(); })
       .catch(function (e) { if (m) m.textContent = "Erreur : " + (e.message || "réessaie"); });
   }
   // délégation modal
