@@ -158,13 +158,20 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .filt button[aria-pressed=true]{background:var(--blue)!important;color:#fff!important;border-color:transparent!important}
 .btn.r{background:var(--blue)}
 /* ===== Calendrier éditorial : dashboard (Will, 19/10/2026) ===== */
-.calbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
-.calbar h2{font:700 24px "FGAntonio";text-transform:uppercase;margin:0}
+/* calendrier en plein écran, exceptionnel au QG */
+.sec#calendrier{width:100vw;max-width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;padding:0 clamp(16px,3vw,40px)}
+.calhdr{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.calhdr h1{margin:0}
+.calhdr .btn{font:700 12.5px "FGInter"}
+.calbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.calbar h2{font:700 24px "FGAntonio";text-transform:uppercase;margin:0;white-space:nowrap}
+.calbar-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.calbar .today{border:0;background:var(--s2);color:var(--cr);border-radius:11px;padding:0 15px;height:40px;font:700 13px "FGInter";cursor:pointer}
 .calbar .nav{display:flex;align-items:center;gap:8px;color:var(--mut);font:600 13px "FGInter"}
 .calbar .nav button{width:34px;height:34px;border:0;background:var(--s2);border-radius:11px;color:var(--cr);cursor:pointer;font-size:16px}
 .calbar .nav .today{width:auto;padding:0 14px;font:700 12px "FGInter"}
 .calbar .addb{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:11px 18px;font:700 14px "FGInter";cursor:pointer}
-.dtabs{display:flex;gap:4px;background:var(--s1);border-radius:16px;padding:6px;width:max-content;margin-bottom:14px}
+.dtabs{display:flex;gap:4px;background:var(--s1);border-radius:13px;padding:5px;width:max-content}
 .dtabs button{border:0;background:none;color:var(--mut);font:700 14px "FGInter";padding:11px 22px;border-radius:11px;cursor:pointer}
 .dtabs button[aria-pressed=true]{background:var(--blue);color:#fff}
 .projrow{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -174,7 +181,9 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .calpan{background:var(--s1);border-radius:22px;padding:18px}
 .mhead{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:8px}
 .mhead div{font:700 13px "FGAntonio";letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:0 4px}
-.mgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(104px,auto);gap:10px}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:150px;gap:10px}
+.cell .chip-ev,.cell .milestone{font-size:12.5px}
+.cell .chip-ev{padding:7px 10px}
 .cell{background:var(--s2);border-radius:14px;padding:9px 9px 6px;display:flex;flex-direction:column;gap:5px;overflow:hidden;min-width:0}
 .cell.off{opacity:.4}
 .cell .dn{font:700 13px "FGAntonio";color:var(--mut)}
@@ -320,17 +329,17 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   </section>
 
   <section class="sec" id="calendrier">
-    <h1>Calendrier éditorial</h1>
-    <p class="lead">Tout ce qu'il y a à publier, site et réseaux. Les sorties de tomes datées remontent toutes seules depuis la base (📖). Clique un élément pour voir le détail et copier les textes. <a class="btn" href="#vivre" style="margin-left:6px">Idées de rendez-vous</a></p>
+    <div class="calhdr"><h1>Calendrier éditorial</h1><a class="btn" href="#vivre">Idées de rendez-vous</a></div>
+    <div class="projrow" id="projrow"></div>
     <div class="calbar">
       <h2 id="caltitre">…</h2>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <div class="nav"><button id="calprev" aria-label="Précédent">‹</button><span id="calrange"></span><button id="calnext" aria-label="Suivant">›</button><button class="today" id="caltoday">Aujourd'hui</button></div>
+      <div class="calbar-r">
+        <div class="dtabs" id="dtabs"></div>
+        <div class="nav"><button id="calprev" aria-label="Précédent">‹</button><span id="calrange"></span><button id="calnext" aria-label="Suivant">›</button></div>
+        <button class="today" id="caltoday">Aujourd'hui</button>
         <button class="addb" id="caladd">+ Ajouter</button>
       </div>
     </div>
-    <div class="dtabs" id="dtabs"></div>
-    <div class="projrow" id="projrow"></div>
     <div id="calview"><p class="lead">Chargement…</p></div>
   </section>
 
@@ -749,7 +758,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     return out;
   }
   function itemColor(it) { return it.kind === "sortie" ? PSORTIE.couleur : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
-  function itemTitle(it) { return it.kind === "sortie" ? ("📖 " + sortieLabel(it.s)) : (it.kind === "todo" ? it.t.t : it.e.titre); }
+  function itemTitle(it) { return it.kind === "sortie" ? sortieLabel(it.s) : (it.kind === "todo" ? it.t.t : it.e.titre); }
   function itemImp(it) { return it.kind === "ev" ? it.e.imp : (it.kind === "todo" ? it.t.prio === "haut" : false); }
   function itemDone(it) { return it.kind === "ev" ? it.e.fait : false; }
 
