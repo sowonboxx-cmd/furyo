@@ -1073,8 +1073,23 @@ function captions(i, rs){
   };
 }
 // Régénère les légendes ; celles que Will a retouchées à la main restent telles quelles (sauf « force »).
+// Comptes magazine ajoutés d'office sur la ligne X de certaines séries (Will, 19/10/2026).
+// The Fable : les deux comptes Young Magazine (en ligne + papier). Will en retire à la main s'il y en a trop.
+const MAG_X = [{ test: s => /fable/i.test(((s && s.slug) || "") + " " + ((s && s.t) || "")), hs: ["magazine_young", "yanmagaweb"] }];
+function magHandlesX(serie){ for (const r of MAG_X) if (r.test(serie)) return r.hs; return []; }
+function ajouteMagX(xText, i){
+  const extra = magHandlesX(i.serie); if (!extra.length || !xText) return xText;
+  const lines = xText.split("\n");
+  let li = -1; for (let k = lines.length - 1; k >= 0; k--) if (/^@\S/.test(lines[k])) { li = k; break; }
+  const present = new Set((li >= 0 ? lines[li] : "").split("·").map(x => x.trim().replace(/^@/, "").toLowerCase()).filter(Boolean));
+  const add = extra.filter(h => !present.has(h.toLowerCase()));
+  if (!add.length) return xText;
+  if (li >= 0) { lines[li] += " · " + add.map(h => "@" + h).join(" · "); return lines.join("\n"); }
+  return xText + "\n" + add.map(h => "@" + h).join(" · ");
+}
 function vcaps(m, i, force){
   const rsEl = m.querySelector("#vrs"), cap = captions(i, rsEl ? rsEl.value.trim() : "");
+  cap.x = ajouteMagX(cap.x, i);
   for (const k of ["x", "ig", "tt"]) { const ta = m.querySelector(`[data-cap="${k}"]`); if (force || !ta.dataset.edit) ta.value = cap[k]; }
 }
 // Compteur X : un lien compte pour 23 caractères.
@@ -1088,10 +1103,16 @@ function vcount(m){
 async function vsend(btn, statut){
   const m = btn.closest(".vm"), id = m.dataset.vid, i = VITEMS.find(x => x.id === id);
   const vtx = m.querySelector("#vtx"), texte = vtx ? vtx.value : i.texte, vc = m.querySelector("#vcat"), vv = m.querySelector("#vvid");
-  const video = vv ? vv.value.trim() : "", vu = m.querySelector("#vimgu"), image = vu ? vu.value.trim() : null;
+  const video = vv ? vv.value.trim() : "", vu = m.querySelector("#vimgu");
+  let image = vu ? vu.value.trim() : null;
   const vcr = m.querySelector("#vcrop"), cadrage = vcr && Number(vcr.value) !== (i.cadrage ?? 0) ? Number(vcr.value) : undefined;
-  if (image && !/^https:\/\//.test(image)) { toast("L'image doit être une adresse https://"); return; }
   btn.classList.add("busy");
+  // Tomes en circulation : le visuel généré devient l'image de l'article (le même qu'on poste sur les réseaux).
+  if (m._circ && m._circ.url && !image) {
+    try { const blob = await (await fetch(m._circ.url)).blob(); image = await envoyerImage(new File([blob], "tomes-en-circulation.png", { type: "image/png" })); }
+    catch (e) { btn.classList.remove("busy"); toast("Visuel non envoyé, réessaie"); return; }
+  }
+  if (image && !/^https:\/\//.test(image)) { btn.classList.remove("busy"); toast("L'image doit être une adresse https://"); return; }
   // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
   const vc2 = m.querySelector("#vcat2"), c2 = vc2 && vc2.value !== (vc && vc.value) ? vc2.value : "";
   const categorie = vc && (statut === "Publié sur le site" || (!statut && (vc.value !== i.cat || c2 !== (i.cat2 || "")))) ? [VCATS[vc.value], ...(c2 ? [VCATS[c2]] : [])] : "";
