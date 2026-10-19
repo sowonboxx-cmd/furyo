@@ -352,6 +352,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 <div class="toast" id="toast"></div>
 <script src="/site/fiche-card.js?v=4"></script>
 <script src="/site/tome-card.js?v=4"></script>
+<script src="/site/sortie-post.js?v=1"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const root = document.getElementById("root");
@@ -1261,6 +1262,13 @@ document.addEventListener("click", e => {
   e.preventDefault(); if (t) t.blur(); edOuvrir(li, k);
 });
 addEventListener("keydown", e => { if (e.key === "Escape") { const ed = document.querySelector(".ed"); if (ed) ed.querySelector(".ok").click(); } });
+// Source unique des légendes (Will, 19/10/2026) : le back-office délègue au moteur partagé /site/sortie-post.js,
+// pour que la Validation et le calendrier éditorial écrivent exactement les mêmes textes X / Instagram / TikTok.
+// Ces déclarations remplacent les versions inline plus haut (la dernière déclaration d'une fonction fait foi).
+// Elles ajoutent aussi la règle « couverture japonaise = pas d'Instagram ni TikTok ».
+function captions(i, rs){ FGPost.setCats(VCATS, NEWS_CATS); return FGPost.captions(i, rs); }
+function resumeAuto(i){ FGPost.setCats(VCATS, NEWS_CATS); return FGPost.resumeAuto(i); }
+function ajouteMagX(x, i){ return FGPost.ajouteMagX(x, i); }
 </script>
 </body>
 </html>

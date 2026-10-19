@@ -63,7 +63,10 @@ async function construire(env, waitUntil) {
     // X : une ligne, auteurs, magazine puis éditeur français (jamais l'éditeur japonais ; magazine ajouté par Will le 16/10/2026).
     const autC = aut.map(k => comptes[k]).filter(Boolean), frC = rel(p["Éditeurs (fiches)"]).map(k => comptes[k]).filter(c => c && c.fr);
     const magC = rel(p["Éditeurs (fiches)"]).map(k => comptes[k]).filter(c => c && c.mag && c.x);
-    const mX = { aut: autC.map(c => c.x), fr: frC.map(c => c.x), mag: magC.slice(0, 1).map(c => c.x) };
+    // Compte officiel de la série (Twitter Serie / Author / Artist, Will 19/10/2026) : cité comme un auteur, à la suite,
+    // pour les séries sans compte perso d'auteur (ex. Dustland → @cxwxd_official). Vaut aussi pour les news, pas que les sorties.
+    const twSerie = [text(p["Twitter Author"]), text(p["Twitter Artist"]), text(p["Twitter Serie"])].map(handle).filter(Boolean);
+    const mX = { aut: [...autC.map(c => c.x), ...twSerie], fr: frC.map(c => c.x), mag: magC.slice(0, 1).map(c => c.x) };
     for (const k of ["ig", "tt", "x"]) { const n = syncMentions(leg[k], k, k === "x" ? mX : mentionList(cs, k)); if (n !== leg[k]) { leg[k] = n; maj[NOMS[k]] = rt(n); } }
     if (Object.keys(maj).length) aMettreAJour.push([r.id, maj]);
     return {

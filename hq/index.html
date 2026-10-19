@@ -498,6 +498,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   </section>
 </div>
 <script src="/site/badges.js?v=2"></script>
+<script src="/site/sortie-post.js?v=1"></script>
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -736,7 +737,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 
   // Calendrier éditorial — dashboard (Will, 19/10/2026) : Mois / Semaine / Kanban / Gantt,
   // projets colorés, vraies sorties de la base (/api/calendrier), pop-up compact à onglets.
-  var CAL = { types: [], events: [] }, TODO = [], SORT = [], calView = "mois", calCur = new Date();
+  var CAL = { types: [], events: [] }, TODO = [], SORT = [], SORTX = {}, calView = "mois", calCur = new Date();
   var PSORTIE = { id: "sortie", nom: "Sortie de tome", couleur: "#7B8CEB" };
   var JJ = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
@@ -905,7 +906,16 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "ev"; host.dataset.id = e.id;
   }
   function openSortie(s) {
-    if (!s) return; modalCap = captionSortie(s); host._sortie = s;
+    if (!s) return;
+    // Légendes identiques à la Validation : on utilise le moteur partagé (FGPost) sur la sortie enrichie.
+    // Si la sortie n'est pas dans la fenêtre des 30 jours de /api/admin/sorties, repli sur le texte simple.
+    var rich = SORTX[s.id];
+    if (rich && window.FGPost) {
+      var rs = (rich.serie && rich.serie.resumeSortie) || FGPost.resumeAuto(rich);
+      var cap = FGPost.captions(rich, rs); cap.x = FGPost.ajouteMagX(cap.x, rich);
+      modalCap = { ig: cap.ig, tw: cap.x, tk: cap.tt };
+    } else { modalCap = captionSortie(s); }
+    host._sortie = s;
     var cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : '';
     var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
     h += '<div class="chips"><span class="chip"><i style="background:' + PSORTIE.couleur + '"></i>Sortie de tome</span><span class="chip">' + flag(s.pays) + " " + esc(s.pays || "") + "</span></div>";
@@ -954,13 +964,17 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     Promise.all([
       fetch("/api/admin/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }),
       fetch("/api/admin/todo", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
-      fetch("/api/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
+      fetch("/api/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
+      // Sorties enrichies (série, comptes, résumé sortie) : les mêmes données que la Validation,
+      // pour que les légendes du calendrier soient IDENTIQUES à celles du back-office (Will, 19/10/2026).
+      fetch("/api/admin/sorties", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
     ]).then(function (res) {
       var d = res[0]; if (!d.ok) throw 0;
       CAL = { types: d.types, events: d.events };
       TODO = (res[1] && res[1].items || []).filter(function (t) { return t.dt; });
       var raw = (res[2] && (res[2].items || res[2].sorties || res[2].tomes)) || [];
       SORT = raw.filter(function (s) { return s.date; });
+      SORTX = {}; ((res[3] && res[3].items) || []).forEach(function (x) { if (x && x.id) SORTX[x.id] = x; });
       renderView();
     }).catch(function () { $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
   }
