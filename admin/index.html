@@ -53,6 +53,10 @@ a{color:inherit}
 .vselw::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;border-radius:12px 0 0 12px;background:var(--g,transparent);pointer-events:none;z-index:1}
 .vselw::after{content:"";position:absolute;right:16px;top:50%;width:8px;height:8px;border-right:2px solid var(--paper-2);border-bottom:2px solid var(--paper-2);transform:translateY(-70%) rotate(45deg);pointer-events:none}
 .vsel{width:100%;height:44px;border:0;outline:none;border-radius:12px;background:var(--ink-2,#1C1C1E);color:var(--paper);font:600 16px Inter,sans-serif;padding:0 40px 0 20px;-webkit-appearance:none;appearance:none;cursor:pointer}
+.majbar{display:flex;align-items:center;gap:12px;margin-top:10px}
+.majall{height:44px;padding:0 18px;border:0;border-radius:12px;background:#305887;color:#fff;font:700 15px Inter,sans-serif;cursor:pointer}
+.majall:disabled{opacity:.45;cursor:default}
+.majmsg{font-size:13px;color:var(--ok)}
 @media (max-width:700px){html,body{overflow-x:hidden}}
 @media (min-width:701px){.chips{margin:10px 0 0;padding:0}}
 .chip{flex:none;height:32px;padding:0 12px;border:1px solid var(--line);border-radius:16px;background:transparent;color:var(--paper-2);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -585,6 +589,7 @@ function route(){
   document.querySelectorAll(".vm").forEach(m => m.remove());
   if (h === "mangas") return ITEMS.length ? (shell(), draw()) : load();
   if (h === "validation") return veille();
+  if (h === "maj") return veille(false, true);
   if (h === "sorties") return sorties();
   if (h === "couvertures") return couvertures();
   if (h === "stats") return stats();
@@ -594,6 +599,7 @@ addEventListener("hashchange", route);
 const ICO_BASE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H9v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M9 4h4.5A1.5 1.5 0 0 1 15 5.5V20H9z"/><path d="M15.5 6.2l3-.8a1.5 1.5 0 0 1 1.8 1l3 11.2"/></svg>`;
 // Icône « Mangas Database » — design flat « étagère de tomes » avec un tome rouge (option C, Will 19/10/2026).
 const ICO_DB = `<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#fff"><rect x="3.3" y="6" width="3.1" height="13" rx="0.7"/><rect x="7.1" y="4.3" width="3.1" height="14.7" rx="0.7"/><rect x="14.9" y="7" width="3.1" height="12" rx="0.7"/><rect x="2" y="19" width="20" height="2.5" rx="1.25"/></g><rect x="10.9" y="5.2" width="3.3" height="13.8" rx="0.7" fill="#E54839"/></svg>`;
+const ICO_MAJ = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14 4.5L20 16"/><path d="M20 20v-4h-4"/></svg>`;
 const ICO_CAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>`;
 const ICO_VAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11.5l2.2 2.2L16 9"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>`;
 async function hub(){
@@ -606,6 +612,7 @@ async function hub(){
       <a class="tile" href="/studio/semaine/"><span class="ic">${ICO_CAL}</span><div><h2>Quoi de neuf dans le gang</h2><p>Le carrousel Instagram de fin de semaine, rempli tout seul : sorties, prépub, actus, à l'écran, fiches, membres.</p></div></a>
       <a class="tile st" href="#stats"><span class="ic">${ICO_ST}</span><div><h2>Statistiques</h2><p>Google : clics, apparitions dans les recherches, requêtes et pages qui ramènent du monde.</p></div></a>
       <a class="tile" href="#mangas"><span class="ic">${ICO_DB}</span><div><h2>Mangas Database</h2></div></a>
+      <a class="tile" href="#maj"><span class="ic">${ICO_MAJ}</span><div><h2>Mises à jour de fiche</h2><p>Les corrections de fiches repérées par la veille (statut, tomes, magazine…). À appliquer en bloc, quand tu veux.</p></div></a>
     </div>`;
   document.getElementById("out").onclick = async () => { await fetch("/api/admin/login", { method: "DELETE" }); login(); };
   const r = await fetch("/api/admin/veille?count=1").catch(() => null);
@@ -761,12 +768,18 @@ document.addEventListener("click", async e => {
 // Catégories et couleurs : celles de Notion, envoyées par /api/admin/veille (lib/categories.js).
 let VCOL = {};
 const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "news"];
-let VITEMS = [], VCATS = {}, VF = "tout";
+let VITEMS = [], VCATS = {}, VF = "tout", MAJ_MODE = false;
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
-async function veille(garder){
-  if (!garder) VF = "tout"; // En arrivant sur Validation : toujours « Tout » (Will, 06/10/2026).
-  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Actualité et veille</b></div>
-    <div class="chips" id="vchips"></div><label class="vselw"><select class="vsel" id="vsel" aria-label="Filtrer les propositions"></select></label></div></header><main><p class="vhint" id="vhint">Chargement…</p><ul class="vl" id="vl"></ul></main>`;
+async function veille(garder, maj){
+  MAJ_MODE = !!maj;
+  if (!garder) VF = "tout"; // En arrivant sur Actualité et veille : toujours « Tout » (Will, 06/10/2026).
+  const titre = MAJ_MODE ? "Mises à jour de fiche" : "Actualité et veille";
+  const ctrl = MAJ_MODE
+    ? `<div class="majbar"><button class="majall" id="majall" type="button">Tout appliquer</button><span class="majmsg" id="majmsg"></span></div>`
+    : `<div class="chips" id="vchips"></div><label class="vselw"><select class="vsel" id="vsel" aria-label="Filtrer les propositions"></select></label>`;
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">${titre}</b></div>
+    ${ctrl}</div></header><main><p class="vhint" id="vhint">Chargement…</p><ul class="vl" id="vl"></ul></main>`;
+  const mb = document.getElementById("majall"); if (mb) mb.onclick = vMajTout;
   const r = await fetch("/api/admin/veille");
   if (r.status === 401) return login("Session expirée, reconnecte-toi.");
   const j = await r.json().catch(() => ({}));
@@ -774,12 +787,34 @@ async function veille(garder){
   VITEMS = j.items || []; VCATS = j.cats || {}; VCOL = j.cols || {};
   vdraw();
 }
+// Applique en bloc toutes les mises à jour de fiche en attente (Will, 19/10/2026).
+async function vMajTout(){
+  const majs = VITEMS.filter(i => !i.vu && !i.enLigne && i.cat === "fiche");
+  const btn = document.getElementById("majall"), msg = document.getElementById("majmsg");
+  if (!majs.length) return;
+  btn.disabled = true; btn.textContent = "Application…"; if (msg) msg.textContent = "";
+  let ok = 0;
+  for (const i of majs) {
+    try { const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: i.id, statut: "À appliquer à la fiche" }) }); if (r.ok) ok++; } catch (e) {}
+  }
+  if (msg) msg.textContent = ok + " appliquée" + (ok > 1 ? "s" : "") + " ✓";
+  btn.disabled = false; btn.textContent = "Tout appliquer";
+  veille(true, true);
+}
 function vdraw(){
   // « Vu, pas sur le site » : news gardées de côté, à part, qu'on peut encore publier plus tard.
   // « Publiées » : news déjà en ligne, encore modifiables (texte, image, vidéo, catégorie).
-  // Les couvertures seules (couv-fr / couv-jp) ne sont plus à relire ici : elles se gèrent dans « Sorties du jour » (Will, 19/10/2026).
+  // Écran séparé « Mises à jour de fiche » (Will, 19/10/2026) : uniquement les corrections de fiche, avec « Tout appliquer ».
+  if (MAJ_MODE) {
+    const majs = VITEMS.filter(i => !i.vu && !i.enLigne && i.cat === "fiche");
+    const mb = document.getElementById("majall"); if (mb) mb.disabled = !majs.length;
+    document.getElementById("vhint").textContent = majs.length ? `${majs.length} mise${majs.length > 1 ? "s" : ""} à jour · « Tout appliquer », ou touche une ligne pour voir le détail` : "Aucune mise à jour de fiche en attente 👌";
+    document.getElementById("vl").innerHTML = majs.map(i => `<li class="vi" data-vid="${i.id}"><time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
+    return;
+  }
+  // Les couvertures seules (couv-fr / couv-jp) et les mises à jour de fiche ne sont plus à relire ici : couvertures → « Prochaine sortie », fiches → écran dédié « Mises à jour de fiche » (Will, 19/10/2026).
   const estCouv = i => /^couv/.test(i.cat || "");
-  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne && !estCouv(i)), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
+  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne && !estCouv(i) && i.cat !== "fiche"), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
   const counts = {}; actifs.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
   if (!["tout", "vu", "pub"].includes(VF) && !counts[VF]) VF = "tout";
   if (VF === "vu" && !gardes.length) VF = "tout";
@@ -1186,7 +1221,7 @@ async function vsend(btn, statut){
   if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(true); return; }
   if (statut === "Vu" && i.base !== "prepub") { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
   m.remove(); vdraw();
-  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Noté : à appliquer à la fiche ✓" : statut === "Vu" ? "Rangée dans « Vu, pas sur le site »" : i.base === "prepub" ? "Écartée" : "Rejeté");
+  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Fiche mise à jour ✓" + ficheMsg : statut === "Vu" ? "Rangée dans « Vu, pas sur le site »" : i.base === "prepub" ? "Écartée" : "Rejeté");
 }
 // Catégorie changée dans la fiche : couleur, puis légendes régénérées avec le nouveau nom.
 document.addEventListener("change", e => {

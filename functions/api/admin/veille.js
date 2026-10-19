@@ -275,8 +275,9 @@ async function traiter(request, env) {
   });
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // News publiée = fiche à jour en même temps (Will, 06/10/2026) : les « Mise à jour fiche » en attente pour la même série sont appliquées.
+  // « À appliquer à la fiche » (écran Mises à jour de fiche) applique aussi tout de suite, sans attendre une news (Will, 19/10/2026).
   let fiche = [];
-  if (b.statut === "Publié sur le site") fiche = await appliquerFiche(env, b.id).catch(() => []);
+  if (b.statut === "Publié sur le site" || b.statut === "À appliquer à la fiche") fiche = await appliquerFiche(env, b.id).catch(() => []);
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
   await Promise.all(["/api/news?v=8", "/api/crows", "/api/series?v=5", "/api/series?v=5&admin=1", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
@@ -336,7 +337,8 @@ async function appliquerFiche(env, newsId) {
 const CLE = "https://furyogang.com/__cache/admin-veille-v1";
 async function reconstruire(request, env) {
   const data = await construire(request, env);
-  const n = (data.items || []).filter(i => !i.vu && !i.enLigne).length;
+  // Badge « Actualité et veille » : on ne compte plus les couvertures ni les mises à jour de fiche (écrans à part, Will 19/10/2026).
+  const n = (data.items || []).filter(i => !i.vu && !i.enLigne && i.cat !== "fiche" && !/^couv/.test(i.cat || "")).length;
   const body = JSON.stringify({ ...data, n, construit: Date.now() });
   await caches.default.put(new Request(CLE), new Response(body, { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=86400" } }));
   return JSON.parse(body);
