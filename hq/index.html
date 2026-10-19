@@ -230,6 +230,9 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .chk.off{background:#34343b;color:#747480}
 .chk.on{background:var(--ok);color:#1b1b1f}
 .chk.busy{opacity:.5;pointer-events:none}
+[data-drag]{cursor:grab}
+.dragging{opacity:.4}
+.wcol.drop-ok,.cell.drop-ok{outline:2px dashed var(--blue);outline-offset:-3px;background:rgba(42,111,208,.14)}
 .wempty{color:var(--mut);font:500 12.5px "FGInter";padding:4px}
 .kb{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .kcol{background:var(--s2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:280px}
@@ -771,6 +774,22 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   function chkBadge(kind, id, on) { return '<span class="chk ' + (on ? "on" : "off") + '" data-chk="' + kind + '" data-chkid="' + esc(id) + '" role="button" aria-label="' + (on ? "Publié" : "Pas encore publié") + '" title="' + (on ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span>'; }
   // Une sortie est « postée » si la base Tomes (via /api/admin/sorties → « Sortie postée ») le dit. Même champ que la Validation.
   function postedSortie(id) { var x = SORTX[id]; return !!(x && x.poste); }
+  // Glisser-déposer (Will, 19/10/2026) : on peut faire glisser un événement d'un jour à l'autre.
+  // Daté → nouvelle date. Récurrent hebdo → change le jour de répétition. Mensuel et sorties : pas déplaçables.
+  function dragAttr(it) {
+    if (it.kind !== "ev") return ""; var e = it.e || {};
+    var can = !!e.date || (e.repeat && e.repeat !== "mois");
+    return can ? ' draggable="true" data-drag="' + esc(it.id) + '"' : "";
+  }
+  function moveEvent(id, date) {
+    var e = CAL.events.find(function (x) { return x.id === id; }); if (!e || !date) return;
+    if (e.date) { if (e.date === date) return; calPost({ ev: { id: id, titre: e.titre, date: date } }); return; }
+    if (e.repeat && e.repeat !== "mois") {
+      var rep = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"][parseIso(date).getDay()];
+      if (rep === e.repeat) return;
+      calPost({ ev: { id: id, titre: e.titre, date: "", repeat: rep } });
+    }
+  }
   // Normalise une sortie de la base en item calendrier.
   function sortieLabel(s) { return (s.series || s.fr || s.jp || "Tome") + (s.n != null && s.n !== "" ? " T." + s.n : ""); }
   function captionSortie(s) {
@@ -799,7 +818,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 
   function chipEv(it) {
     var c = itemColor(it), dark = it.kind !== "sortie" && lisible(c);
-    return '<button class="chip-ev' + (dark ? " dark" : "") + (itemDone(it) ? " done" : "") + '" style="background:' + c + '" data-k="' + it.kind + '" data-id="' + esc(it.id) + '">' + (itemImp(it) ? '<span class="im">● </span>' : "") + esc(itemTitle(it)) + "</button>";
+    return '<button class="chip-ev' + (dark ? " dark" : "") + (itemDone(it) ? " done" : "") + '" style="background:' + c + '" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + ">" + (itemImp(it) ? '<span class="im">● </span>' : "") + esc(itemTitle(it)) + "</button>";
   }
   function titreVue() {
     if (calView === "semaine") {
@@ -817,7 +836,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       var d = new Date(start); d.setDate(start.getDate() + i);
       var off = d.getMonth() !== calCur.getMonth(), is = iso(d), its = off ? [] : itemsJour(d);
       var ces = its.map(chipEv).join(""), more = its.length > 3 ? '<span class="more">+' + (its.length - 3) + ' de plus</span>' : "";
-      h += '<div class="cell' + (off ? " off" : "") + (is === today ? " to" : "") + '"><span class="dnum">' + d.getDate() + '</span><div class="ces">' + ces + '</div>' + more + '<button class="add" data-add="' + is + '">+</button></div>';
+      h += '<div class="cell' + (off ? " off" : "") + (is === today ? " to" : "") + '"' + (off ? "" : ' data-date="' + is + '"') + '><span class="dnum">' + d.getDate() + '</span><div class="ces">' + ces + '</div>' + more + '<button class="add" data-add="' + is + '">+</button></div>';
     }
     return h + "</div></div>";
   }
@@ -825,11 +844,11 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     var l = lundi(calCur), today = iso(new Date()), h = '<div class="calpan"><div class="wk">';
     for (var i = 0; i < 7; i++) {
       var d = new Date(l); d.setDate(l.getDate() + i); var is = iso(d), its = itemsJour(d);
-      h += '<div class="wcol' + (is === today ? " to" : "") + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
+      h += '<div class="wcol' + (is === today ? " to" : "") + '" data-date="' + is + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
       h += its.length ? its.map(function (it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + " " + flag(s.pays) + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
         var c = itemColor(it);
-        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
+        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }).join("") : '<div class="wempty">—</div>';
       h += "</div>";
     }
@@ -1024,6 +1043,27 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     }
   }
   function formEvDate(d) { formEv(null); var f = $("#cedit"); if (f) f.date.value = d; }
+  // --- Glisser-déposer un événement vers un autre jour (vue Mois et Semaine) ---
+  var dragId = null;
+  function clearDrop() { document.querySelectorAll(".drop-ok").forEach(function (z) { z.classList.remove("drop-ok"); }); }
+  $("#calview").addEventListener("dragstart", function (ev) {
+    var d = ev.target.closest("[data-drag]"); if (!d) { ev.preventDefault(); return; }
+    dragId = d.dataset.drag; try { ev.dataTransfer.setData("text/plain", dragId); ev.dataTransfer.effectAllowed = "move"; } catch (e) {}
+    d.classList.add("dragging");
+  });
+  $("#calview").addEventListener("dragend", function (ev) {
+    var d = ev.target.closest("[data-drag]"); if (d) d.classList.remove("dragging"); dragId = null; clearDrop();
+  });
+  $("#calview").addEventListener("dragover", function (ev) {
+    if (!dragId) return; var z = ev.target.closest("[data-date]"); if (!z) return;
+    ev.preventDefault(); try { ev.dataTransfer.dropEffect = "move"; } catch (e) {}
+    if (!z.classList.contains("drop-ok")) { clearDrop(); z.classList.add("drop-ok"); }
+  });
+  $("#calview").addEventListener("drop", function (ev) {
+    var z = ev.target.closest("[data-date]"); if (!z) return; ev.preventDefault();
+    var id = dragId || (ev.dataTransfer && ev.dataTransfer.getData("text/plain"));
+    clearDrop(); dragId = null; if (id) moveEvent(id, z.dataset.date);
+  });
   $("#projrow").addEventListener("click", function (ev) {
     if (!ev.target.closest("#projadd")) return;
     var nom = prompt("Nom du nouveau projet :"); if (!nom) return;
