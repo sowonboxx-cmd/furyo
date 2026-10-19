@@ -42,6 +42,18 @@
     ".adm-b.c{background:#1F2A38;color:#fff}.adm-b.c small{color:#C9D6E6!important}" +
     ".adm-b.fgcm{background:#3A2A08;color:#fff}.adm-b.fgcm small{color:#E9D3A0!important}" +
     ".adm-b.j{background:#F2B33D;color:#000}.adm-b.j small{color:rgba(0,0,0,.66)!important}.adm-b.j em{background:#000;color:#F2B33D}" +
+    /* Accès rapide admin (Will, 19/10/2026) : pop-up centré, grille 2 par 2. */
+    ".adm-pop.center{background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}" +
+    ".adm-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(460px,calc(100% - 24px));box-sizing:border-box;padding:18px;background:#151517;border:1px solid #2C2C2F;border-radius:22px;box-shadow:0 40px 100px rgba(0,0,0,.6);color:#F5F5F7}" +
+    ".adm-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.adm-h .t{font:700 13px Antonio,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#98989D}.adm-h .t b{color:#BC002D}" +
+    ".adm-h .x{width:30px;height:30px;border-radius:50%;background:#2a2a2e;color:#98989D;display:grid;place-items:center;font-size:18px;border:0;cursor:pointer;line-height:1}" +
+    ".adm-s{display:flex;align-items:center;gap:10px;height:46px;background:#1f1f22;border-radius:14px;padding:0 14px;margin-bottom:14px;cursor:text;width:100%;border:0;color:inherit;text-align:left}.adm-s svg{width:18px;height:18px;color:#98989D;flex:none}.adm-s span{color:#98989D;font-size:15px}" +
+    ".adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}" +
+    ".adm-qt{position:relative;display:flex;align-items:center;gap:12px;background:#1b1b1e;border:1px solid #2C2C2F;border-radius:14px;padding:13px 14px;text-decoration:none;color:inherit}.adm-qt.wide{grid-column:1/3}" +
+    ".adm-qt .ic{width:38px;height:38px;border-radius:11px;background:#305887;display:grid;place-items:center;flex:none}.adm-qt .ic svg{width:20px;height:20px;color:#fff}" +
+    ".adm-qt h3{margin:0;font:700 15px/1 Antonio,sans-serif;text-transform:uppercase;letter-spacing:.01em}.adm-qt small{display:block;color:#98989D;font-size:11.5px;margin-top:3px}" +
+    ".adm-qt .bdg{margin-left:auto;min-width:22px;height:22px;padding:0 7px;box-sizing:border-box;border-radius:11px;background:#BC002D;color:#fff;font:700 12px Antonio,sans-serif;display:grid;place-items:center}" +
+    ".adm-out2{margin-top:12px;width:100%;height:42px;border:0;border-radius:12px;background:#2a2a2e;color:#98989D;font:600 13px Inter,sans-serif;cursor:pointer}" +
     ".sh-sj{display:inline-flex;align-items:center;gap:4px;color:#F2B33D;text-decoration:none;font:600 13px Inter,system-ui,sans-serif}.sh-sj svg{width:15px;height:15px}.sh-sj b{font-weight:700}.sh-sj[data-n='0']{display:none!important}" +
     ".sh-adm{display:flex;align-items:center;gap:10px}" +
     ".adm-out{height:44px;border:0;border-radius:12px;background:transparent;color:#98989D;font:600 14px Inter,system-ui,sans-serif;cursor:pointer}" +
@@ -395,6 +407,8 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       document.body.appendChild(pop);
       pop.addEventListener("click", function (e) { if (e.target === pop) pop.hidden = true; });
     }
+    if (ME.admin) { admGrid(pop); return; }
+    pop.classList.remove("center");
     var n = (document.querySelector(".sh-val") || { getAttribute: function () { return "0"; } }).getAttribute("data-n") || "0";
     pop.innerHTML = '<div class="adm-box" role="dialog" aria-label="Mon compte">' +
       '<a class="adm-u" href="/profil/">' + (ME.user.picture ? '<img src="' + esc(ME.user.picture) + '" alt="" referrerpolicy="no-referrer">' : "<i></i>") + '<span><b>' + esc(ME.user.name || "Membre") + '</b><small>' + (ME.admin ? "Administrateur" : "Membre FuryoGang") + ' · Voir mon profil</small></span></a>' +
@@ -422,6 +436,41 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       box.style.top = Math.round(r.bottom + 10) + "px"; if (r.left < innerWidth / 2) box.style.left = Math.max(12, Math.round(r.left)) + "px"; else { box.style.left = "auto"; box.style.right = Math.max(12, Math.round(innerWidth - r.right)) + "px"; }
       box.style.boxShadow = "0 20px 50px rgba(0,0,0,.5)"; box.style.border = "1px solid #38383B";
     } else { pop.style.background = ""; box.style.cssText = ""; }
+    pop.hidden = false;
+  }
+  // Accès rapide admin : pop-up centré, grille 2 par 2 (Will, 19/10/2026, maquette validée).
+  function admGrid(pop) {
+    pop.classList.add("center"); pop.style.background = "";
+    var n = (document.querySelector(".sh-val") || { getAttribute: function () { return "0"; } }).getAttribute("data-n") || "0";
+    var I = {
+      news: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.5l2.2 2.2L16 9"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>',
+      sort: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
+      cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 13h4M7 17h7"/></svg>',
+      db: '<svg viewBox="0 0 24 24"><g fill="#fff"><rect x="3.3" y="6" width="3.1" height="13" rx="0.7"/><rect x="7.1" y="4.3" width="3.1" height="14.7" rx="0.7"/><rect x="14.9" y="7" width="3.1" height="12" rx="0.7"/><rect x="2" y="19" width="20" height="2.5" rx="1.25"/></g><rect x="10.9" y="5.2" width="3.3" height="13.8" rx="0.7" fill="#E54839"/></svg>',
+      stats: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+      comm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/><circle cx="18" cy="7" r="3"/><path d="M18 13c2.6.2 4 2.3 4 4.8"/></svg>',
+      user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>'
+    };
+    function qt(ic, title, sub, href, badge, wide) {
+      return '<a class="adm-qt' + (wide ? " wide" : "") + '" href="' + href + '"><span class="ic">' + I[ic] + '</span><div><h3>' + title + '</h3><small>' + sub + '</small></div>' + (badge ? '<span class="bdg">' + esc(String(badge)) + '</span>' : '') + '</a>';
+    }
+    var sjSub = SJ && SJ.n ? (SJ.n + " à poster") : "France + Japon";
+    pop.innerHTML = '<div class="adm-card" role="dialog" aria-label="Accès rapide admin">' +
+      '<div class="adm-h"><span class="t">Accès rapide · <b>Admin</b></span><button class="x" type="button" aria-label="Fermer">×</button></div>' +
+      '<button type="button" class="adm-s" data-srch>' + ICON_S + '<span>Chercher une série, un mangaka, une sortie…</span></button>' +
+      '<div class="adm-grid">' +
+        qt("news", "Actualités et veille", "à relire", "/admin/#validation", n !== "0" ? n : "") +
+        qt("sort", "Prochaines sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
+        qt("cal", "Calendrier éditorial", "la semaine", "/hq/#calendrier", "") +
+        qt("db", "Mangas Database", "toutes les séries", "/admin/#mangas", "") +
+        qt("stats", "Statistiques", "clics Google", "/admin/#stats", "") +
+        qt("comm", "Communauté", "les membres", "/communaute/", "") +
+        qt("user", "Mon compte", "profil, préférences", "/profil/", "", true) +
+      '</div>' +
+      '<button class="adm-out2" type="button">Se déconnecter</button></div>';
+    pop.querySelector(".x").onclick = function () { pop.hidden = true; };
+    pop.querySelector("[data-srch]").onclick = function () { pop.hidden = true; open(); };
+    pop.querySelector(".adm-out2").onclick = function () { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); };
     pop.hidden = false;
   }
   function openMe() {
