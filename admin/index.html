@@ -364,7 +364,8 @@ const FILTRES = [
   ["tout", "Tout", () => true],
 ];
 // Tri : A→Z, presque finies d'abord (le moins à faire), ou à travailler d'abord (le plus à faire).
-const TRIS = [["ordre", "Ordre de publication"], ["az", "A → Z"], ["peu", "Presque finies"], ["beaucoup", "À travailler"]];
+// « Récemment ajoutées » (Will, 19/10/2026) : les dernières fiches créées dans Notion en premier, pour voir celles à valider.
+const TRIS = [["ordre", "Ordre de publication"], ["recent", "Récemment ajoutées"], ["az", "A → Z"], ["peu", "Presque finies"], ["beaucoup", "À travailler"]];
 let ITEMS = [], F = "publier", Q = "", T = "ordre";
 const slugify = s => String(s || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1800); }
@@ -423,6 +424,7 @@ function draw(){
   const list = ITEMS.filter(s => (n ? slugify([s.t, s.fr, s.jp].join(" ")).includes(n) || (s.jp || "").includes(Q) : keep(s)));
   const reste = s => s.manque.length;
   if (T === "ordre") list.sort(ordrePub);
+  if (T === "recent") list.sort((a, b) => (b.cree || "").localeCompare(a.cree || "") || a.t.localeCompare(b.t, "fr"));
   if (T === "peu") list.sort((a, b) => reste(a) - reste(b) || a.t.localeCompare(b.t, "fr"));
   if (T === "beaucoup") list.sort((a, b) => reste(b) - reste(a) || a.t.localeCompare(b.t, "fr"));
   document.getElementById("tris").innerHTML = `<span>Trier</span>` + TRIS.map(([k, l]) => `<button data-t="${k}" aria-pressed="${T === k}">${l}</button>`).join("");
@@ -445,7 +447,7 @@ function plusM(){
 function row(s){
   return `<li class="it" data-id="${s.id}">
     <span class="th">${s.cover ? `<img src="/api/couv?w=160&u=${encodeURIComponent(s.cover)}" alt="" loading="lazy" decoding="async">` : esc((s.jp || "").slice(0, 2))}</span>
-    <span class="nm"><b>${T === "ordre" && !s.publier ? `<span class="rk">${LISTE_M.indexOf(s) + 1}</span>` : ""}${esc(s.fr && s.fr !== s.t ? s.fr : s.t)}</b>${!s.publier ? `<span class="pq p${prio(s)}">${PRIO_L[prio(s)]}${s.next ? ` · ${s.next.pays} ${s.next.d.slice(8, 10)}/${s.next.d.slice(5, 7)}${s.next.n != null ? " · T." + String(s.next.n).padStart(2, "0") : ""}` : ""}</span>` : ""}<small>${esc([s.fr && s.fr !== s.t ? s.t : "", s.jp].filter(Boolean).join(" · "))}</small></span>
+    <span class="nm"><b>${T === "ordre" && !s.publier ? `<span class="rk">${LISTE_M.indexOf(s) + 1}</span>` : ""}${esc(s.fr && s.fr !== s.t ? s.fr : s.t)}</b>${!s.publier ? `<span class="pq p${prio(s)}">${PRIO_L[prio(s)]}${s.next ? ` · ${s.next.pays} ${s.next.d.slice(8, 10)}/${s.next.d.slice(5, 7)}${s.next.n != null ? " · T." + String(s.next.n).padStart(2, "0") : ""}` : ""}</span>` : ""}${T === "recent" && s.cree ? `<span class="pq">Ajoutée le ${s.cree.slice(8, 10)}/${s.cree.slice(5, 7)}/${s.cree.slice(0, 4)}</span>` : ""}<small>${esc([s.fr && s.fr !== s.t ? s.t : "", s.jp].filter(Boolean).join(" · "))}</small></span>
     <label class="stw"><select class="st" data-st data-v="${esc(s.statut)}" aria-label="Statut sur le site">${ST.map(([v, l]) => `<option value="${v}"${s.statut === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
     <div class="meta">
       <button class="heart" data-coeur aria-pressed="${s.coeur}" aria-label="Coup de cœur : à traiter en premier">${HEART}</button>

@@ -67,6 +67,8 @@ async function construire(env, waitUntil) {
     for (const k of ["ig", "tt", "x"]) { const n = syncMentions(leg[k], k, k === "x" ? mX : mentionList(cs, k)); if (n !== leg[k]) { leg[k] = n; maj[NOMS[k]] = rt(n); } }
     if (Object.keys(maj).length) aMettreAJour.push([r.id, maj]);
     return {
+      // Date de création de la fiche dans Notion, pour le tri « Récemment ajoutées » (Will, 19/10/2026).
+      cree: r.created_time || null,
       id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p),
       statut: statut(p), publier: statut(p) === PUBLIC, visible: estVisible(p), date: date(p["Date de publication"]),
       leg,
