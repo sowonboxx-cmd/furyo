@@ -1060,6 +1060,9 @@ async function vCircInit(m, i){
     } catch(e){}
   }
   if (!toms.length){ prev.innerHTML = "<span>Aucune couverture trouvée pour cette série.</span>"; return; }
+  // L'éventail ne montre qu'une poignée des DERNIERS tomes : au-delà, ils débordent et cachent le chiffre (Will, 19/10/2026, ex. Out +8,5 M). Comme Fable.
+  const MAX_FAN = 5;
+  if (toms.length > MAX_FAN) toms = toms.slice(-MAX_FAN);
   m._circ = { serie: i.serie.t, covers: toms.map(t => t.cover), hero: toms.length - 1 };
   m.querySelector("#vcirch").innerHTML = toms.map((t, k) => `<option value="${k}"${k === toms.length - 1 ? " selected" : ""}>Tome ${t.n || (k + 1)}</option>`).join("");
   vCircRender(m);
