@@ -605,7 +605,7 @@ const ICO_VAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 async function hub(){
   root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="home" href="/" title="Retour au site"><b>FuryoGang<span>Back-office</span></b></a><button class="out" id="out">Déconnexion</button></div></div></header>
     <div class="hub">
-      <a class="tile val" href="#validation"><span class="n" id="hub-n">…</span><span class="ic">${ICO_VAL}</span><div><h2>Actualité et veille</h2><p>Toutes les actus et ce que la veille a trouvé, en attente de ton avis.</p></div></a>
+      <a class="tile val" href="#validation"><span class="n" id="hub-n">…</span><span class="ic">${ICO_VAL}</span><div><h2>Actualités et veille</h2><p>Toutes les actus et ce que la veille a trouvé, en attente de ton avis.</p></div></a>
       <a class="tile sj" href="#sorties"><span class="n" id="hub-sj">…</span><span class="ic">${ICO_CAL}</span><div><h2>Prochaine sortie</h2><p>Les prochains tomes France et Japon à poster sur les réseaux.</p></div></a>
       <a class="tile cv" href="#couvertures"><span class="n" id="hub-cv">…</span><span class="ic">${ICO_CV}</span><div><h2>Couvertures manquantes</h2><p>Tous les tomes sans couverture, par série et par édition, France et Japon. Envoie-moi les liens ou les images.</p></div></a>
       <a class="tile" href="/hq/"><span class="ic">${ICO_BASE}</span><div><h2>HQ</h2><p>Ton QG : ressources, to-do, projets en cours (FuryoGang Magazine).</p></div></a>
@@ -772,8 +772,8 @@ let VITEMS = [], VCATS = {}, VF = "tout", MAJ_MODE = false;
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
 async function veille(garder, maj){
   MAJ_MODE = !!maj;
-  if (!garder) VF = "tout"; // En arrivant sur Actualité et veille : toujours « Tout » (Will, 06/10/2026).
-  const titre = MAJ_MODE ? "Mises à jour de fiche" : "Actualité et veille";
+  if (!garder) VF = "tout"; // En arrivant sur Actualités et veille : toujours « Tout » (Will, 06/10/2026).
+  const titre = MAJ_MODE ? "Mises à jour de fiche" : "Actualités et veille";
   const ctrl = MAJ_MODE
     ? `<div class="majbar"><button class="majall" id="majall" type="button">Tout appliquer</button><span class="majmsg" id="majmsg"></span></div>`
     : `<div class="chips" id="vchips"></div><label class="vselw"><select class="vsel" id="vsel" aria-label="Filtrer les propositions"></select></label>`;
@@ -812,9 +812,10 @@ function vdraw(){
     document.getElementById("vl").innerHTML = majs.map(i => `<li class="vi" data-vid="${i.id}"><time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
     return;
   }
-  // Les couvertures seules (couv-fr / couv-jp) et les mises à jour de fiche ne sont plus à relire ici : couvertures → « Prochaine sortie », fiches → écran dédié « Mises à jour de fiche » (Will, 19/10/2026).
-  const estCouv = i => /^couv/.test(i.cat || "");
-  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne && !estCouv(i) && i.cat !== "fiche"), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
+  // Actualités et veille = uniquement les vraies actus. On retire les couvertures ET les sorties (déjà dans « Prochaine sortie »
+  // + le calendrier) ainsi que les mises à jour de fiche (écran dédié). Will, 19/10/2026.
+  const masque = i => /^(couv|sortie)/.test(i.cat || "") || i.cat === "fiche";
+  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne && !masque(i)), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
   const counts = {}; actifs.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
   if (!["tout", "vu", "pub"].includes(VF) && !counts[VF]) VF = "tout";
   if (VF === "vu" && !gardes.length) VF = "tout";

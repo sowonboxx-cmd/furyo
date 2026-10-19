@@ -337,8 +337,8 @@ async function appliquerFiche(env, newsId) {
 const CLE = "https://furyogang.com/__cache/admin-veille-v1";
 async function reconstruire(request, env) {
   const data = await construire(request, env);
-  // Badge « Actualité et veille » : on ne compte plus les couvertures ni les mises à jour de fiche (écrans à part, Will 19/10/2026).
-  const n = (data.items || []).filter(i => !i.vu && !i.enLigne && i.cat !== "fiche" && !/^couv/.test(i.cat || "")).length;
+  // Badge « Actualités et veille » : on ne compte que les vraies actus (pas couvertures, pas sorties, pas mises à jour de fiche — écrans à part, Will 19/10/2026).
+  const n = (data.items || []).filter(i => !i.vu && !i.enLigne && i.cat !== "fiche" && !/^(couv|sortie)/.test(i.cat || "")).length;
   const body = JSON.stringify({ ...data, n, construit: Date.now() });
   await caches.default.put(new Request(CLE), new Response(body, { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=86400" } }));
   return JSON.parse(body);
