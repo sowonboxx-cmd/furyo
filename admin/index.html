@@ -417,7 +417,7 @@ async function load(){
 }
 function shell(){
   root.innerHTML = `<header class="top"><div class="top-in">
-      <div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Base de données manga</b><a href="/hq/" title="HQ : ressources, to-do, promo, kit officiel" style="margin-left:12px;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:10px;background:#BC002D;color:#fff;font:700 13px var(--f-body,Inter),sans-serif;text-decoration:none;letter-spacing:.04em">HQ</a></div>
+      <div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Mangas Database</b><a href="/hq/" title="HQ : ressources, to-do, promo, kit officiel" style="margin-left:12px;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:10px;background:#BC002D;color:#fff;font:700 13px var(--f-body,Inter),sans-serif;text-decoration:none;letter-spacing:.04em">HQ</a></div>
       <div class="prog" id="prog"></div>
       <input class="q" id="q" type="search" placeholder="Chercher une série" autocomplete="off">
       <div class="chips" id="chips"></div>
@@ -578,8 +578,8 @@ function route(){
 }
 addEventListener("hashchange", route);
 const ICO_BASE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H9v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M9 4h4.5A1.5 1.5 0 0 1 15 5.5V20H9z"/><path d="M15.5 6.2l3-.8a1.5 1.5 0 0 1 1.8 1l3 11.2"/></svg>`;
-// Icône « Base de données manga » — à remplacer par le design flat choisi par Will (19/10/2026). Provisoire = ICO_BASE.
-const ICO_DB = ICO_BASE;
+// Icône « Mangas Database » — design flat « étagère de tomes » avec un tome rouge (option C, Will 19/10/2026).
+const ICO_DB = `<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#fff"><rect x="3.3" y="6" width="3.1" height="13" rx="0.7"/><rect x="7.1" y="4.3" width="3.1" height="14.7" rx="0.7"/><rect x="14.9" y="7" width="3.1" height="12" rx="0.7"/><rect x="2" y="19" width="20" height="2.5" rx="1.25"/></g><rect x="10.9" y="5.2" width="3.3" height="13.8" rx="0.7" fill="#E54839"/></svg>`;
 const ICO_CAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>`;
 const ICO_VAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11.5l2.2 2.2L16 9"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>`;
 async function hub(){
@@ -591,7 +591,7 @@ async function hub(){
       <a class="tile" href="/hq/"><span class="ic">${ICO_BASE}</span><div><h2>HQ</h2><p>Ton QG : ressources, to-do, projets en cours (FuryoGang Magazine).</p></div></a>
       <a class="tile" href="/studio/semaine/"><span class="ic">${ICO_CAL}</span><div><h2>Quoi de neuf dans le gang</h2><p>Le carrousel Instagram de fin de semaine, rempli tout seul : sorties, prépub, actus, à l'écran, fiches, membres.</p></div></a>
       <a class="tile st" href="#stats"><span class="ic">${ICO_ST}</span><div><h2>Statistiques</h2><p>Google : clics, apparitions dans les recherches, requêtes et pages qui ramènent du monde.</p></div></a>
-      <a class="tile" href="#mangas"><span class="ic">${ICO_DB}</span><div><h2>Base de données manga</h2></div></a>
+      <a class="tile" href="#mangas"><span class="ic">${ICO_DB}</span><div><h2>Mangas Database</h2></div></a>
     </div>`;
   document.getElementById("out").onclick = async () => { await fetch("/api/admin/login", { method: "DELETE" }); login(); };
   const r = await fetch("/api/admin/veille?count=1").catch(() => null);
