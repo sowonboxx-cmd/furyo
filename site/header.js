@@ -45,7 +45,8 @@
     /* Accès rapide admin (Will, 19/10/2026) : pop-up centré, grille 2 par 2. */
     ".adm-pop.center{background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}" +
     ".adm-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100% - 28px));box-sizing:border-box;padding:26px;background:#151517;border:1px solid #2C2C2F;border-radius:28px;box-shadow:0 40px 100px rgba(0,0,0,.6);color:#F5F5F7}" +
-    ".adm-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.adm-h .t{font:700 17px Antonio,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#98989D}.adm-h .t b{color:#BC002D}" +
+    ".adm-h{position:relative;display:flex;align-items:center;justify-content:flex-end;min-height:42px;margin-bottom:20px}.adm-h .t{font:700 17px Antonio,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#98989D}.adm-h .t b{color:#BC002D}" +
+    ".adm-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;line-height:0}.adm-logo img{height:30px;width:auto;display:block}" +
     ".adm-h .x{width:42px;height:42px;border-radius:50%;background:#2a2a2e;color:#98989D;display:grid;place-items:center;font-size:26px;border:0;cursor:pointer;line-height:1}" +
     ".adm-s{display:flex;align-items:center;gap:13px;height:64px;background:#1f1f22;border-radius:18px;padding:0 20px;margin-bottom:20px;cursor:text;width:100%;border:0;color:inherit;text-align:left}.adm-s svg{width:26px;height:26px;color:#98989D;flex:none}.adm-s span{color:#98989D;font-size:20px}" +
     ".adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}" +
@@ -456,8 +457,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     }
     var sjSub = SJ && SJ.n ? (SJ.n + " à poster") : "France + Japon";
     pop.innerHTML = '<div class="adm-card" role="dialog" aria-label="Accès rapide admin">' +
-      '<div class="adm-h"><span class="t">Accès rapide · <b>Admin</b></span><button class="x" type="button" aria-label="Fermer">×</button></div>' +
-      '<button type="button" class="adm-s" data-srch>' + ICON_S + '<span>Chercher une série, un mangaka, une sortie…</span></button>' +
+      '<div class="adm-h"><a class="adm-logo" href="/" aria-label="Retour au site"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a><button class="x" type="button" aria-label="Fermer">×</button></div>' +
       '<div class="adm-grid">' +
         qt("news", "Actualités", "à relire", "/admin/#validation", n !== "0" ? n : "") +
         qt("sort", "Prochaines sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
@@ -469,7 +469,6 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       '</div>' +
       '<button class="adm-out2" type="button">Se déconnecter</button></div>';
     pop.querySelector(".x").onclick = function () { pop.hidden = true; };
-    pop.querySelector("[data-srch]").onclick = function () { pop.hidden = true; open(); };
     pop.querySelector(".adm-out2").onclick = function () { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); };
     pop.hidden = false;
   }
