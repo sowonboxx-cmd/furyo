@@ -36,6 +36,13 @@ a{color:inherit}
 .prog .bar{flex:1;height:8px;border-radius:4px;background:var(--ink-3);overflow:hidden}
 .prog .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-2));min-width:4px}
 .prog b{color:var(--paper)}
+/* Deux barres empilées dans la base mangas : En ligne (vert) + Promo (bleu), même gabarit (Will, 19/10/2026). */
+#prog{flex-direction:column;align-items:stretch;gap:6px}
+.pline{display:flex;align-items:center;gap:9px}
+.pline .tag{width:64px;flex:none;font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.03em}
+.pline .tag.tg{color:var(--ok)}.pline .tag.tb{color:var(--blue-2)}
+.pline.onl .bar i{background:linear-gradient(90deg,#4CA266,var(--ok))}
+.pline.prm .bar i{background:linear-gradient(90deg,var(--blue),var(--blue-2))}
 .q{width:100%;height:44px;margin-top:10px;border:0;border-radius:12px;background:var(--ink-3);padding:0 14px;outline:none}
 .q::placeholder{color:var(--paper-3)}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:10px -16px 0;padding:0 16px}
@@ -104,13 +111,16 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .chip .hi{width:13px;height:13px;fill:var(--red);vertical-align:-2px;margin-right:4px}
 .next{height:26px;border:1px dashed var(--line);border-radius:7px;background:transparent;color:var(--paper-3);font-size:12px;font-weight:700;padding:0 8px;cursor:pointer}
 .next[aria-pressed=true]{border:0;background:color-mix(in srgb,var(--blue) 26%,var(--ink-3));color:var(--blue-2)}
-/* Statut sur le site : À valider / Admins / En ligne */
-.stw{display:flex;align-items:center}.stw.busy{opacity:.5;pointer-events:none}
-.st{height:30px;border:0;border-radius:15px;padding:0 12px;font:700 12px Inter,sans-serif;cursor:pointer;-webkit-appearance:none;appearance:none;text-align:center;background:var(--ink-3);color:var(--paper-2)}
-.st[data-v="À valider"]{background:color-mix(in srgb,var(--amber) 20%,var(--ink-3));color:var(--amber)}
-.st[data-v="Validé · admins"]{background:#6A4BC4;color:#fff}
-.st[data-v="En ligne · public"]{background:color-mix(in srgb,var(--ok) 22%,var(--ink-3));color:var(--ok)}
-.st option{background:#1C1C1E;color:#fff}
+/* En ligne (vert) + Promo (bleu) : deux pastilles « swatch carré », empilées à droite (Will, 19/10/2026, Style 6).
+   En ligne = la fiche est publique sur le site · Promo = le post-fiche réseaux est fait (back-office seulement). */
+.ctl{display:flex;flex-direction:column;gap:6px;align-self:start}
+.b{min-width:108px;height:28px;border:0;border-radius:8px;display:inline-flex;align-items:center;gap:7px;padding:0 11px;font:700 12px Inter,sans-serif;letter-spacing:.02em;background:var(--ink-3);color:var(--paper-3);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.b .sw{width:14px;height:14px;border-radius:4px;flex:none;background:#4a4a4e;transition:background .15s}
+.b.on{color:var(--paper)}
+.b.en.on .sw{background:var(--ok)}
+.b.pr.on .sw{background:var(--blue-2)}
+.b:active{transform:scale(.95)}
+.b.busy{opacity:.5;pointer-events:none}
 /* Interrupteur (autres écrans) */
 .sw{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--paper-3);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .sw input{position:absolute;opacity:0;pointer-events:none}
@@ -361,8 +371,7 @@ const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5S3 1
 // Prête = tous les éléments ★ obligatoires sont faits, pas encore publiée : c'est là qu'on pioche chaque semaine.
 const pret = s => !s.publier && s.oblig.length > 0 && s.manque.length === 0;
 // Statut de la série sur le site (Will, 19/10/2026) : deux états seulement — Hors ligne (pas public) / En ligne (public).
-// « Hors ligne » est stocké « À valider » dans Notion. L'ancien « Validé · admins » n'est plus proposé (plus personne ne l'utilise).
-const ST = [["À valider", "Hors ligne"], ["En ligne · public", "En ligne"]];
+// « Hors ligne » est stocké « À valider » dans Notion, « En ligne » = « En ligne · public ». Bascule par la pastille verte.
 // Ordre de travail : 1) un tome sort dans les 45 jours (la plus proche d'abord), 2) coups de cœur, 3) prêtes, 4) le reste.
 const J45 = new Date(Date.now() + 45 * 864e5).toISOString().slice(0, 10);
 const prio = s => s.next && s.next.d <= J45 ? 0 : s.coeur ? 1 : pret(s) ? 2 : 3;
@@ -372,6 +381,7 @@ const PRIO_L = ["Sortie bientôt", "Coup de cœur", "Prête", "À compléter"];
 const FILTRES = [
   ["horsligne", "Hors ligne", s => !s.publier],
   ["ligne", "En ligne", s => s.publier],
+  ["promo", "À promouvoir", s => s.publier && !s.promo],
   ["coeur", HEART.replace("<svg ", '<svg class="hi" ') + "Coup de cœur", s => s.coeur],
   ["tout", "Tout", () => true],
 ];
@@ -428,8 +438,9 @@ function shell(){
   document.getElementById("q").oninput = e => { Q = e.target.value.trim(); LIM_M = 40; draw(); };
 }
 function draw(){
-  const on = ITEMS.filter(s => s.publier).length, tot = ITEMS.length;
-  document.getElementById("prog").innerHTML = `<span><b>${on}</b> en ligne / ${tot}</span><span class="bar"><i style="width:${tot ? on / tot * 100 : 0}%"></i></span><span>${tot ? (on / tot * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) : 0} %</span>`;
+  const on = ITEMS.filter(s => s.publier).length, pro = ITEMS.filter(s => s.promo).length, tot = ITEMS.length;
+  const bar = (cls, tag, lab, n) => { const p = tot ? n / tot * 100 : 0; return `<div class="pline ${cls}"><span class="tag ${tag}">${lab}</span><b>${n}</b> / ${tot}<span class="bar"><i style="width:${p}%"></i></span><span>${tot ? p.toLocaleString("fr-FR", { maximumFractionDigits: 1 }) : 0} %</span></div>`; };
+  document.getElementById("prog").innerHTML = bar("onl", "tg", "En ligne", on) + bar("prm", "tb", "Promo", pro);
   document.getElementById("chips").innerHTML = FILTRES.map(([k, l, f]) => `<button class="chip" data-f="${k}" aria-pressed="${F === k}">${l} <small>${ITEMS.filter(f).length}</small></button>`).join("");
   const n = slugify(Q), keep = FILTRES.find(x => x[0] === F)[2];
   const list = ITEMS.filter(s => (n ? slugify([s.t, s.fr, s.jp].join(" ")).includes(n) || (s.jp || "").includes(Q) : keep(s)));
@@ -459,7 +470,10 @@ function row(s){
   return `<li class="it" data-id="${s.id}">
     <span class="th">${s.cover ? `<img src="/api/couv?w=160&u=${encodeURIComponent(s.cover)}" alt="" loading="lazy" decoding="async">` : esc((s.jp || "").slice(0, 2))}</span>
     <span class="nm"><b>${T === "ordre" && !s.publier ? `<span class="rk">${LISTE_M.indexOf(s) + 1}</span>` : ""}${esc(s.fr && s.fr !== s.t ? s.fr : s.t)}</b>${!s.publier ? `<span class="pq p${prio(s)}">${PRIO_L[prio(s)]}${s.next ? ` · ${s.next.pays} ${s.next.d.slice(8, 10)}/${s.next.d.slice(5, 7)}${s.next.n != null ? " · T." + String(s.next.n).padStart(2, "0") : ""}` : ""}</span>` : ""}${T === "recent" && s.cree ? `<span class="pq">Ajoutée le ${s.cree.slice(8, 10)}/${s.cree.slice(5, 7)}/${s.cree.slice(0, 4)}</span>` : ""}<small>${esc([s.fr && s.fr !== s.t ? s.t : "", s.jp].filter(Boolean).join(" · "))}</small></span>
-    <label class="stw"><select class="st" data-st data-v="${esc(s.statut)}" aria-label="Statut sur le site">${ST.map(([v, l]) => `<option value="${v}"${s.statut === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
+    <div class="ctl">
+      <button class="b en${s.publier ? " on" : ""}" data-en aria-pressed="${s.publier}" aria-label="En ligne sur le site"><span class="sw"></span>En ligne</button>
+      <button class="b pr${s.promo ? " on" : ""}" data-promo aria-pressed="${s.promo}" aria-label="Promo réseaux faite"><span class="sw"></span>Promo</button>
+    </div>
     <div class="meta">
       <button class="heart" data-coeur aria-pressed="${s.coeur}" aria-label="Coup de cœur : à traiter en premier">${HEART}</button>
       ${(() => { const ok = s.oblig.length - s.manque.length, r = s.oblig.length ? ok / s.oblig.length : 0;
@@ -493,9 +507,9 @@ async function send(s, patch, el){
     const j = await r.json().catch(() => ({}));
     if (r.status === 401) return login("Session expirée, reconnecte-toi.");
     if (!r.ok) throw new Error(j.error || "Erreur");
-    Object.assign(s, patch, { statut: j.statut, publier: j.publier, date: j.date || s.date });
+    Object.assign(s, patch, { statut: j.statut, publier: j.publier, promo: typeof j.promo === "boolean" ? j.promo : s.promo, date: j.date || s.date });
     if (textes) { toast("Enregistré ✓"); return; }
-    toast(patch.statut === "En ligne · public" ? "En ligne pour tout le monde ✓" : patch.statut ? "Hors ligne : retirée du site" : "Enregistré ✓");
+    toast(patch.statut === "En ligne · public" ? "En ligne pour tout le monde ✓" : patch.statut ? "Hors ligne : retirée du site" : "promo" in patch ? (patch.promo ? "Promo faite ✓" : "Promo annulée") : "Enregistré ✓");
   } catch (e) { toast(e.message.slice(0, 80)); }
   finally { if (!textes) draw(); else el && el.classList.remove("busy"); }
 }
@@ -513,6 +527,8 @@ document.addEventListener("click", e => {
       cp.innerHTML = ICO_OK; cp.classList.add("done"); toast(`Légende ${nom} copiée ✓`);
       setTimeout(() => { cp.innerHTML = ICO_COPY; cp.classList.remove("done"); }, 1800);
     }); return; }
+  if (e.target.closest("[data-en]")) { send(s, { statut: s.publier ? "À valider" : "En ligne · public" }, li.querySelector(".ctl")); return; }
+  if (e.target.closest("[data-promo]")) { send(s, { promo: !s.promo }, li.querySelector(".ctl")); return; }
   if (e.target.closest("[data-coeur]")) { send(s, { coeur: !s.coeur }); return; }
   if (e.target.closest("[data-save]")) { const v = k => li.querySelector(`[data-f="${k}"]`).value;
     send(s, { num: v("num"), resume: v("resume").trim(), resumeImg: v("resumeImg").trim(), legIG: v("ig"), legTT: v("tt"), legX: v("x") }).then(() => { s.num = +v("num") || null; AV = null; s.resume = v("resume").trim(); s.resumeImg = v("resumeImg").trim(); s.leg = { ig: v("ig"), tt: v("tt"), x: v("x") }; }); return; }
@@ -561,11 +577,6 @@ async function imageFiche(s, fmt, li, btn){
   } catch (err) { toast("Impossible de générer l'image"); console.error(err); }
   finally { btn.classList.remove("busy"); btn.innerHTML = lbl; }
 }
-document.addEventListener("change", e => {
-  const li = e.target.closest(".it"); if (!li) return;
-  const s = ITEMS.find(x => x.id === li.dataset.id);
-  if (e.target.matches("[data-st]")) send(s, { statut: e.target.value }, e.target.closest(".stw"));
-});
 
 /* ---------- Navigation : accueil (#), base mangas (#mangas), validation (#validation) ---------- */
 function route(){

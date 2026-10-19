@@ -72,7 +72,7 @@ async function construire(env, waitUntil) {
       id, notion: r.url, t, fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p),
       statut: statut(p), publier: statut(p) === PUBLIC, visible: estVisible(p), date: date(p["Date de publication"]),
       leg,
-      coeur: check(p["Prochaine à traiter"]), editions: rel(p["Éditions"]).length,
+      coeur: check(p["Prochaine à traiter"]), promo: check(p["Promo"]), editions: rel(p["Éditions"]).length,
       // Pour générer l'image « Nouvelle fiche » depuis le back-office.
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), num: num(p["N° fiche"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), genres: list(p["Genre"]), pubFR: list(p["Éditeur Français"]).join(", "),
       sns: reseaux(p, ctx), exFR: extraitFR(p), oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),

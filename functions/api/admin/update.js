@@ -36,6 +36,8 @@ async function maj({ request, env }) {
   // Résumé court commun à tous les posts de sortie de tome de la série (écran Validation).
   if (typeof b.resumeSortie === "string") props["Résumé sortie"] = rt(b.resumeSortie.trim());
   if (typeof b.coeur === "boolean") props["Prochaine à traiter"] = { checkbox: b.coeur };
+  // Promo réseaux faite (post-fiche publié) — back-office uniquement, n'affecte pas le site (Will, 19/10/2026).
+  if (typeof b.promo === "boolean") props["Promo"] = { checkbox: b.promo };
   // Légendes des réseaux (depuis le Studio « Nouvelle fiche »).
   if (typeof b.legIG === "string") props["Légende Instagram"] = rt(b.legIG);
   if (typeof b.legTT === "string") props["Légende TikTok"] = rt(b.legTT);
@@ -52,5 +54,5 @@ async function maj({ request, env }) {
   await Promise.all(["/api/series?v=5", "/api/series?v=5&admin=1", "/__cache/admin-series-v2", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", "/api/biblio?v=3", "/api/biblio?v=3&id=" + b.id, ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString())))).catch(() => {});
   const p = ((await r.json().catch(() => ({}))).properties) || {};
   const st = ((p["Statut"] || {}).select || {}).name || A_VALIDER;
-  return json({ ok: true, statut: st, publier: st === PUBLIC, date: ((p["Date de publication"] || {}).date || {}).start || "" });
+  return json({ ok: true, statut: st, publier: st === PUBLIC, promo: !!((p["Promo"] || {}).checkbox), date: ((p["Date de publication"] || {}).date || {}).start || "" });
 }
