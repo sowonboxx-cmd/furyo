@@ -221,10 +221,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .rcard .ri{min-width:0}
 .rcard .ri .t{font:600 12.5px "FGInter";line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--cr)}
 .rcard .ri .m{font:700 10px "FGAntonio";letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin-top:5px}
-/* Drapeau flat rectangulaire : sur la couverture du manga (Will 19/10/2026) + pastille publié/pas-publié */
-.fl{display:inline-block;overflow:hidden;border-radius:1px;line-height:0;vertical-align:-0.13em;width:13px;height:9px}
-.fl svg{display:block;width:100%;height:100%}
-.rcard .cov .fl{position:absolute;top:3px;left:3px;width:15px;height:10px;z-index:1;box-shadow:0 1px 2px rgba(0,0,0,.45)}
+/* Pastille publié / pas-publié (Will, 19/10/2026) */
 .chk{position:absolute;right:8px;bottom:8px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;cursor:pointer;flex:none;z-index:2}
 .wcard .chk{top:50%;bottom:auto;transform:translateY(-50%)}
 .chk svg{width:12px;height:12px;display:block}
@@ -766,10 +763,8 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   function projets() { return CAL.types.concat([PSORTIE]); }
   function proj(id) { return projets().find(function (t) { return t.id === id; }) || { nom: "Autre", couleur: "#888" }; }
   function lisible(hex) { try { var h = hex.replace("#", ""); var r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16); return (r * 299 + g * 587 + b * 114) / 1000 > 150; } catch (e) { return false; } }
-  // Drapeaux flat (rectangulaires) dessinés en SVG, à côté de l'éditeur. Will 19/10/2026.
-  var FLAG_FR = '<svg viewBox="0 0 30 20" preserveAspectRatio="none"><rect width="10" height="20" fill="#41479B"/><rect x="10" width="10" height="20" fill="#F5F5F5"/><rect x="20" width="10" height="20" fill="#FF4B55"/></svg>';
-  var FLAG_JP = '<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#F5F5F5"/><circle cx="15" cy="10" r="5.4" fill="#FF4B55"/></svg>';
-  function flag(pays) { return '<span class="fl">' + (pays === "France" ? FLAG_FR : FLAG_JP) + '</span>'; }
+  // Drapeaux retirés des cartes du calendrier (Will, 19/10/2026 — « à refaire plus tard »). flag() reste pour les pastilles de la fenêtre détail.
+  function flag(pays) { return pays === "France" ? "🇫🇷" : "🇯🇵"; }
   // Pastille « publié » (vert) / « pas publié » (gris), cochable en direct, synchronisée avec la Validation.
   var CHK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
   function chkBadge(kind, id, on) { return '<span class="chk ' + (on ? "on" : "off") + '" data-chk="' + kind + '" data-chkid="' + esc(id) + '" role="button" aria-label="' + (on ? "Publié" : "Pas encore publié") + '" title="' + (on ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span>'; }
@@ -847,7 +842,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       var d = new Date(l); d.setDate(l.getDate() + i); var is = iso(d), its = itemsJour(d);
       h += '<div class="wcol' + (is === today ? " to" : "") + '" data-date="' + is + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
       h += its.length ? its.map(function (it) {
-        if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + flag(s.pays) + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
+        if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
         var c = itemColor(it);
         return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }).join("") : '<div class="wempty">—</div>';
