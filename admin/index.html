@@ -964,15 +964,18 @@ let CIRC_LIB, VCIRCT;
 function circLib(){ if (window.FG_CIRC) return Promise.resolve(); if (!CIRC_LIB) CIRC_LIB = new Promise((ok, ko) => { const s = document.createElement("script"); s.src = "/site/circ-card.js?v=1"; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); return CIRC_LIB; }
 async function vCircInit(m, i){
   const prev = m.querySelector("#vcircprev");
-  if (!i.serie || !i.serie.slug){ prev.innerHTML = "<span>Pas de série reliée : visuel indisponible.</span>"; return; }
+  if (!i.serie){ prev.innerHTML = "<span>Pas de série reliée : visuel indisponible.</span>"; return; }
   const nin = m.querySelector("#vcircn"); if (!nin.value) nin.value = chiffreCirc(i);
-  let toms = [];
-  try {
-    const d = await fetch("/api/serie?s=" + encodeURIComponent(i.serie.slug)).then(r => r.json());
-    let best = [];
-    for (const e of (d.editions || [])){ const ts = (e.tomes || []).filter(t => t.cover).sort((a, b) => (a.n || 0) - (b.n || 0)); if (ts.length > best.length) best = ts; }
-    toms = best;
-  } catch(e){}
+  // Couvertures : d'abord celles envoyées par la veille (marche même pour une fiche non publique), sinon l'API publique.
+  let toms = (i.tomes || []).filter(t => t.cover);
+  if (!toms.length && i.serie.slug){
+    try {
+      const d = await fetch("/api/serie?s=" + encodeURIComponent(i.serie.slug)).then(r => r.json());
+      let best = [];
+      for (const e of (d.editions || [])){ const ts = (e.tomes || []).filter(t => t.cover).sort((a, b) => (a.n || 0) - (b.n || 0)); if (ts.length > best.length) best = ts; }
+      toms = best;
+    } catch(e){}
+  }
   if (!toms.length){ prev.innerHTML = "<span>Aucune couverture trouvée pour cette série.</span>"; return; }
   m._circ = { serie: i.serie.t, covers: toms.map(t => t.cover), hero: toms.length - 1 };
   m.querySelector("#vcirch").innerHTML = toms.map((t, k) => `<option value="${k}"${k === toms.length - 1 ? " selected" : ""}>Tome ${t.n || (k + 1)}</option>`).join("");

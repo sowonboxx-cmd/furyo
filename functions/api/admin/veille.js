@@ -110,6 +110,22 @@ async function construire(request, env) {
   for (const i of tomeItems) if (i._n != null) for (const e of eds) if (e.serie === i.serie.id) besoins.push({ e: e.id, n: i._n });
   const tRows = besoins.length ? await queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { or: besoins.slice(0, 100).map(b => ({ and: [{ property: "Édition", relation: { contains: b.e } }, { property: "N°", number: b.n === 1 ? { less_than_or_equal_to: 1 } : { equals: b.n } }] })) } } }).catch(() => []) : [];
   for (const t of tRows) { const q = t.properties || {}, e = edById[rel(q["Édition"])[0]]; if (e) e.tomes.push({ n: num(q["N°"]) || 1, date: date(q["Date de sortie"]), prec: text(q["Précision date"]) || "Jour", cover: text(q["Couverture"]) }); }
+  // « Tomes en circulation » (1re ou 2e catégorie) : on attache TOUTES les couvertures des tomes de la série,
+  // pour générer le visuel dans la fenêtre Validation (le dernier tome en avant). Marche même pour une fiche non publique.
+  const circItems = items.filter(i => i.serie && (i.cat === "tirage" || i.cat2 === "tirage"));
+  if (circItems.length) {
+    const cIds = [...new Set(circItems.map(i => i.serie.id))];
+    const cEr = await queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { or: cIds.slice(0, 100).map(id => ({ property: "Série", relation: { contains: id } })) } } }).catch(() => []);
+    const cEd = cEr.map(e => ({ id: nid(e.id), serie: rel(e.properties["Série"])[0], tomes: [] }));
+    const cEdById = Object.fromEntries(cEd.map(e => [e.id, e]));
+    const cTr = cEd.length ? await queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { or: cEd.slice(0, 50).map(e => ({ property: "Édition", relation: { contains: e.id } })) } } }).catch(() => []) : [];
+    for (const t of cTr) { const q = t.properties || {}, e = cEdById[rel(q["Édition"])[0]]; const c = text(q["Couverture"]); if (e && c) e.tomes.push({ n: num(q["N°"]) || 1, cover: c }); }
+    for (const i of circItems) {
+      let best = [];
+      for (const e of cEd.filter(e => e.serie === i.serie.id)) { const ts = e.tomes.slice().sort((a, b) => a.n - b.n); if (ts.length > best.length) best = ts; }
+      i.tomes = best;
+    }
+  }
   // Comptes des éditeurs (pour la ligne « X @… » et le 📣 d'Instagram / TikTok).
   // Comptes chargés dès qu'une ligne est reliée à une série : toutes les news (et prépublications) citent auteurs et éditeur (Will, 05/10/2026).
   const avecSerie = items.some(i => i.serie) || pRows.some(r => rel(r.properties["Série"]).length);
