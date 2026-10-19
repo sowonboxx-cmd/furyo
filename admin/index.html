@@ -27,8 +27,11 @@ input,select,textarea{font-size:16px!important}
 a{color:inherit}
 .top{position:sticky;top:0;z-index:10;background:#141416;border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px}
 .top-in{max-width:868px;margin:0 auto}
-.brand{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px}
 .brand .home{color:inherit;text-decoration:none}
+/* Logo FuryoGang centré dans l'en-tête, toujours un lien vers le site (Will, 19/10/2026) */
+.site-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;z-index:1}
+.site-logo img{height:30px;display:block}
 .brand b{font-family:var(--f-display);font-size:22px;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap}
 .brand b span{color:var(--paper-3);font-size:16px;margin-left:6px}
 .out{border:0;background:transparent;color:var(--paper-3);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
@@ -434,7 +437,7 @@ async function load(){
 }
 function shell(){
   root.innerHTML = `<header class="top"><div class="top-in">
-      <div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Mangas Database</b><a href="/hq/" title="HQ : ressources, to-do, promo, kit officiel" style="margin-left:12px;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:10px;background:#BC002D;color:#fff;font:700 13px var(--f-body,Inter),sans-serif;text-decoration:none;letter-spacing:.04em">HQ</a></div>
+      <div class="brand"><a class="back" href="#">‹ Back-office</a>${SITELOGO}<b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Mangas Database</b><a href="/hq/" title="HQ : ressources, to-do, promo, kit officiel" style="margin-left:12px;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:10px;background:#BC002D;color:#fff;font:700 13px var(--f-body,Inter),sans-serif;text-decoration:none;letter-spacing:.04em">HQ</a></div>
       <div class="prog" id="prog"></div>
       <input class="q" id="q" type="search" placeholder="Chercher une série" autocomplete="off">
       <div class="chips" id="chips"></div>
@@ -596,6 +599,8 @@ function route(){
   hub();
 }
 addEventListener("hashchange", route);
+// Logo FuryoGang au centre de l'en-tête : toujours un lien direct vers le site (Will, 19/10/2026).
+const SITELOGO = `<a class="site-logo" href="/" title="Aller sur le site" aria-label="FuryoGang — aller sur le site"><img src="/img/logo-furyogang.png" alt=""></a>`;
 const ICO_BASE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H9v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M9 4h4.5A1.5 1.5 0 0 1 15 5.5V20H9z"/><path d="M15.5 6.2l3-.8a1.5 1.5 0 0 1 1.8 1l3 11.2"/></svg>`;
 // Icône « Mangas Database » — design flat « étagère de tomes » avec un tome rouge (option C, Will 19/10/2026).
 const ICO_DB = `<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#fff"><rect x="3.3" y="6" width="3.1" height="13" rx="0.7"/><rect x="7.1" y="4.3" width="3.1" height="14.7" rx="0.7"/><rect x="14.9" y="7" width="3.1" height="12" rx="0.7"/><rect x="2" y="19" width="20" height="2.5" rx="1.25"/></g><rect x="10.9" y="5.2" width="3.3" height="13.8" rx="0.7" fill="#E54839"/></svg>`;
@@ -603,10 +608,10 @@ const ICO_MAJ = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const ICO_CAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>`;
 const ICO_VAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11.5l2.2 2.2L16 9"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>`;
 async function hub(){
-  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="home" href="/" title="Retour au site"><b>FuryoGang<span>Back-office</span></b></a><button class="out" id="out">Déconnexion</button></div></div></header>
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><span class="back" aria-hidden="true" style="visibility:hidden">‹</span>${SITELOGO}<button class="out" id="out">Déconnexion</button></div></div></header>
     <div class="hub">
       <a class="tile val" href="#validation"><span class="n" id="hub-n">…</span><span class="ic">${ICO_VAL}</span><div><h2>Actualités et veille</h2><p>Toutes les actus et ce que la veille a trouvé, en attente de ton avis.</p></div></a>
-      <a class="tile sj" href="#sorties"><span class="n" id="hub-sj">…</span><span class="ic">${ICO_CAL}</span><div><h2>Prochaine sortie</h2><p>Les prochains tomes France et Japon à poster sur les réseaux.</p></div></a>
+      <a class="tile sj" href="#sorties"><span class="n" id="hub-sj">…</span><span class="ic">${ICO_CAL}</span><div><h2>Prochaines sorties</h2><p>Les prochains tomes France et Japon à poster sur les réseaux.</p></div></a>
       <a class="tile cv" href="#couvertures"><span class="n" id="hub-cv">…</span><span class="ic">${ICO_CV}</span><div><h2>Couvertures manquantes</h2><p>Tous les tomes sans couverture, par série et par édition, France et Japon. Envoie-moi les liens ou les images.</p></div></a>
       <a class="tile" href="/hq/"><span class="ic">${ICO_BASE}</span><div><h2>HQ</h2><p>Ton QG : ressources, to-do, projets en cours (FuryoGang Magazine).</p></div></a>
       <a class="tile" href="/studio/semaine/"><span class="ic">${ICO_CAL}</span><div><h2>Quoi de neuf dans le gang</h2><p>Le carrousel Instagram de fin de semaine, rempli tout seul : sorties, prépub, actus, à l'écran, fiches, membres.</p></div></a>
@@ -634,7 +639,7 @@ const PAYS = { fra: "France", bel: "Belgique", che: "Suisse", can: "Canada", jpn
 const APP = { DESKTOP: "Ordinateur", MOBILE: "Téléphone", TABLET: "Tablette" };
 const nf = n => Math.round(n).toLocaleString("fr-FR"), pct = n => (n * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " %";
 async function stats(){
-  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Statistiques</b></div></div></header><main><p class="vhint" id="sthint">Chargement des chiffres Google…</p><div id="st"></div></main>`;
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a>${SITELOGO}<b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Statistiques</b></div></div></header><main><p class="vhint" id="sthint">Chargement des chiffres Google…</p><div id="st"></div></main>`;
   const r = await fetch("/api/admin/stats");
   if (r.status === 401) return login("Session expirée, reconnecte-toi.");
   const d = await r.json().catch(() => ({}));
@@ -670,7 +675,7 @@ const plages = l => { const n = l.map(x => x.n).filter(x => x != null).sort((a, 
   for (const x of n) { if (a === null) { a = b = x; } else if (x === b + 1) b = x; else { out.push(a === b ? "T." + a : `T.${a}-${b}`); a = b = x; } }
   if (a !== null) out.push(a === b ? "T." + a : `T.${a}-${b}`); return out.join(", "); };
 async function couvertures(){
-  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Couvertures</b></div>
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a>${SITELOGO}<b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Couvertures</b></div>
     <label class="vselw"><select class="vsel" id="cvsel" aria-label="Filtrer"></select></label><input class="q" id="cvq" type="search" placeholder="Chercher une série" value="${esc(CVQ)}"></div></header>
     <main><div id="cvhead"></div><p class="vhint" id="cvhint">Chargement…</p><div id="cvl" class="cvl"></div></main>`;
   if (!CV) { const r = await fetch("/api/admin/couvertures");
@@ -703,7 +708,7 @@ function cvdraw(){
         <a class="cvn" href="https://www.notion.so/${e.id}" target="_blank" rel="noopener" title="Ouvrir l'édition dans Notion">Notion ↗</a></div>`; }).join("")}</section>`).join("") || `<p class="vhint">Rien ici.</p>`;
 }
 async function sorties(){
-  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Prochaine sortie</b></div></div></header><main id="sjm"><p class="vhint">Chargement…</p></main>`;
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a>${SITELOGO}<b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Prochaines sorties</b></div></div></header><main id="sjm"><p class="vhint">Chargement…</p></main>`;
   const r = await fetch("/api/admin/sorties");
   if (r.status === 401) return login("Session expirée, reconnecte-toi.");
   const j = await r.json().catch(() => ({}));
@@ -777,7 +782,7 @@ async function veille(garder, maj){
   const ctrl = MAJ_MODE
     ? `<div class="majbar"><button class="majall" id="majall" type="button">Tout appliquer</button><span class="majmsg" id="majmsg"></span></div>`
     : `<div class="chips" id="vchips"></div><label class="vselw"><select class="vsel" id="vsel" aria-label="Filtrer les propositions"></select></label>`;
-  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">${titre}</b></div>
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a>${SITELOGO}<b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">${titre}</b></div>
     ${ctrl}</div></header><main><p class="vhint" id="vhint">Chargement…</p><ul class="vl" id="vl"></ul></main>`;
   const mb = document.getElementById("majall"); if (mb) mb.onclick = vMajTout;
   const r = await fetch("/api/admin/veille");
@@ -812,7 +817,7 @@ function vdraw(){
     document.getElementById("vl").innerHTML = majs.map(i => `<li class="vi" data-vid="${i.id}"><time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
     return;
   }
-  // Actualités et veille = uniquement les vraies actus. On retire les couvertures ET les sorties (déjà dans « Prochaine sortie »
+  // Actualités et veille = uniquement les vraies actus. On retire les couvertures ET les sorties (déjà dans « Prochaines sorties »
   // + le calendrier) ainsi que les mises à jour de fiche (écran dédié). Will, 19/10/2026.
   const masque = i => /^(couv|sortie)/.test(i.cat || "") || i.cat === "fiche";
   const actifs = VITEMS.filter(i => !i.vu && !i.enLigne && !masque(i)), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
