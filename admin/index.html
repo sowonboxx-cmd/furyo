@@ -789,7 +789,7 @@ function vopen(id){
   const news = i.news, pp = i.cat === "prepub";
   const site = news || pp; // onglet « Site » : texte de la news, ou annonce du magazine pour une prépublication
   const couv = /^couv/.test(i.cat);
-  const circ = i.cat === "tirage"; // « Tomes en circulation » : visuel généré automatiquement (template F3)
+  const circ = i.cat === "tirage" || i.cat2 === "tirage"; // « Tomes en circulation » (1re ou 2e catégorie) : visuel généré automatiquement (template F3)
   const img = news ? "" : i.image ? `<img class="cv${/^(couv|sortie|prepub)/.test(i.cat) ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
   const dt = (k, v) => v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : "";
   const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
