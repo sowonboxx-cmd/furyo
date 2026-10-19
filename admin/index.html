@@ -275,6 +275,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm .vcirc-f input,.vm .vcirc-f select{height:40px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);font:600 14px Inter,sans-serif;padding:0 11px}
 .vm .vcirc-dl{height:40px;padding:0 16px;border:0;border-radius:20px;background:#2E7D4F;color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;flex:none}
 .vm .vcirc-dl svg{width:16px;height:16px}
+.vm .vcirc-note{flex:1;font:600 12.5px Inter,sans-serif;color:var(--paper-3)}
 .vm .act{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .vm .act button{height:48px;border:0;border-radius:24px;font-weight:700;font-size:14.5px;cursor:pointer;background:var(--ink-3);color:var(--paper)}
 .vm .act .go{grid-column:1/3;background:#2E7D4F;color:#fff}
@@ -942,7 +943,15 @@ function postX(i, rs){
 // avec tous les comptes ; sinon avec moins de comptes ; sinon la phrase la plus courte (Will retouche).
 // ---- Visuel « Tomes en circulation » (catégorie tirage) : généré automatiquement dans la fenêtre Validation ----
 // Le bloc s'affiche direct (preview), avec le chiffre (trouvé dans la news), le choix du tome mis en avant, et le téléchargement.
+// Image fixe par série (exception) : pour une saga à plusieurs saisons, le visuel auto n'est pas idéal,
+// on force l'image validée. The Fable (Will, 19/10/2026) → /img/circ/the-fable.jpg.
+const CIRC_FIXE = [{ test: s => /fable/i.test(((s && s.slug) || "") + " " + ((s && s.t) || "")), url: "/img/circ/the-fable.jpg" }];
+function circFixe(serie){ for (const r of CIRC_FIXE) if (r.test(serie)) return r.url; return ""; }
 function vCircBloc(i){
+  if (circFixe(i.serie)) return `<div class="vcirc" id="vcirc">
+    <div class="vcirc-prev" id="vcircprev"><span>Chargement du visuel…</span></div>
+    <div class="vcirc-ctl"><span class="vcirc-note">Image fixe (${esc(i.serie && i.serie.t || "")})</span><button class="vcirc-dl" data-vcircdl type="button">${ICO_DL}Post</button></div>
+  </div>`;
   return `<div class="vcirc" id="vcirc">
     <div class="vcirc-prev" id="vcircprev"><span>Génération du visuel…</span></div>
     <div class="vcirc-ctl">
@@ -964,6 +973,8 @@ let CIRC_LIB, VCIRCT;
 function circLib(){ if (window.FG_CIRC) return Promise.resolve(); if (!CIRC_LIB) CIRC_LIB = new Promise((ok, ko) => { const s = document.createElement("script"); s.src = "/site/circ-card.js?v=1"; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); return CIRC_LIB; }
 async function vCircInit(m, i){
   const prev = m.querySelector("#vcircprev");
+  const fixe = circFixe(i.serie);
+  if (fixe){ const url = new URL(fixe, location.origin).href; m._circ = { serie: (i.serie && i.serie.t) || "the-fable", url, fixe: true }; prev.innerHTML = `<img src="${url}" alt="" onerror="this.parentNode.innerHTML='&lt;span&gt;Image fixe introuvable&lt;/span&gt;'">`; return; }
   if (!i.serie){ prev.innerHTML = "<span>Pas de série reliée : visuel indisponible.</span>"; return; }
   const nin = m.querySelector("#vcircn"); if (!nin.value) nin.value = chiffreCirc(i);
   // Couvertures : d'abord celles envoyées par la veille (marche même pour une fiche non publique), sinon l'API publique.
@@ -1110,10 +1121,11 @@ async function vsend(btn, statut){
   let image = vu ? vu.value.trim() : null;
   const vcr = m.querySelector("#vcrop"), cadrage = vcr && Number(vcr.value) !== (i.cadrage ?? 0) ? Number(vcr.value) : undefined;
   btn.classList.add("busy");
-  // Tomes en circulation : le visuel généré devient l'image de l'article (le même qu'on poste sur les réseaux).
+  // Tomes en circulation : le visuel devient l'image de l'article (le même qu'on poste sur les réseaux).
   if (m._circ && m._circ.url && !image) {
-    try { const blob = await (await fetch(m._circ.url)).blob(); image = await envoyerImage(new File([blob], "tomes-en-circulation.png", { type: "image/png" })); }
-    catch (e) { btn.classList.remove("busy"); toast("Visuel non envoyé, réessaie"); return; }
+    if (m._circ.fixe) { image = m._circ.url; } // image fixe (ex. The Fable) : déjà une adresse du site
+    else { try { const blob = await (await fetch(m._circ.url)).blob(); image = await envoyerImage(new File([blob], "tomes-en-circulation.png", { type: "image/png" })); }
+      catch (e) { btn.classList.remove("busy"); toast("Visuel non envoyé, réessaie"); return; } }
   }
   if (image && !/^https:\/\//.test(image)) { btn.classList.remove("busy"); toast("L'image doit être une adresse https://"); return; }
   // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
