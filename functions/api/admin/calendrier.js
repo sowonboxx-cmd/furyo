@@ -9,7 +9,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 3; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 4; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -28,6 +28,7 @@ const DEPART = {
     { id: "couv", nom: "Couvertures", couleur: "#BC002D" },
     { id: "fiche", nom: "Fiches du mois", couleur: "#F2B33D" },
     { id: "maj", nom: "Fiches mises à jour", couleur: "#7BC67E" },
+    { id: "mangaka", nom: "Fiche mangaka", couleur: "#C77DD6" },
     { id: "membre", nom: "Membre à l'honneur", couleur: "#F08AC0" },
     { id: "article", nom: "Article", couleur: "#E0955F" },
     { id: "concours", nom: "Concours", couleur: "#E54839" },
