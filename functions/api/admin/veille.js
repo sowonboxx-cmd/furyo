@@ -51,9 +51,12 @@ async function listerPrepub(env) {
 
 async function construire(request, env) {
   const [all, pRows] = await Promise.all([lister(env), listerPrepub(env)]);
-  // Couvertures à paraître sans proposition : on les ajoute (au plus toutes les 5 minutes), voir lib/couvprops.js.
+  // Propositions « Couverture dévoilée » désactivées (Will, 19/10/2026) : on ne met plus les couvertures seules dans
+  // « News et veille ». Les couvertures sont gérées le jour de la sortie, via « Sorties du jour » (visuel + infos).
+  // (Mettre COUV_PROPOSALS à true pour réactiver.)
+  const COUV_PROPOSALS = false;
   const MARQ = new Request("https://furyogang.com/__cache/couvprops-v1");
-  if (!(await caches.default.match(MARQ))) {
+  if (COUV_PROPOSALS && !(await caches.default.match(MARQ))) {
     await caches.default.put(MARQ, new Response("1", { headers: { "Cache-Control": "max-age=300" } }));
     try { all.push(...(await proposerCouvertures(env, all))); } catch (e) {}
   }

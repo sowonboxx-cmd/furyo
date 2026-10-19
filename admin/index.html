@@ -599,7 +599,7 @@ const ICO_VAL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 async function hub(){
   root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="home" href="/" title="Retour au site"><b>FuryoGang<span>Back-office</span></b></a><button class="out" id="out">Déconnexion</button></div></div></header>
     <div class="hub">
-      <a class="tile val" href="#validation"><span class="n" id="hub-n">…</span><span class="ic">${ICO_VAL}</span><div><h2>Validation</h2><p>News, couvertures, sorties, fins de série : tout ce que la veille a trouvé et qui attend ton avis.</p></div></a>
+      <a class="tile val" href="#validation"><span class="n" id="hub-n">…</span><span class="ic">${ICO_VAL}</span><div><h2>News et veille</h2><p>Toutes les news et ce que la veille a trouvé, en attente de ton avis.</p></div></a>
       <a class="tile sj" href="#sorties"><span class="n" id="hub-sj">…</span><span class="ic">${ICO_CAL}</span><div><h2>Sorties du jour</h2><p>Les tomes France et Japon qui sortent aujourd'hui, à poster sur les réseaux.</p></div></a>
       <a class="tile cv" href="#couvertures"><span class="n" id="hub-cv">…</span><span class="ic">${ICO_CV}</span><div><h2>Couvertures manquantes</h2><p>Tous les tomes sans couverture, par série et par édition, France et Japon. Envoie-moi les liens ou les images.</p></div></a>
       <a class="tile" href="/hq/"><span class="ic">${ICO_BASE}</span><div><h2>HQ</h2><p>Ton QG : ressources, to-do, projets en cours (FuryoGang Magazine).</p></div></a>
@@ -765,7 +765,7 @@ let VITEMS = [], VCATS = {}, VF = "tout";
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
 async function veille(garder){
   if (!garder) VF = "tout"; // En arrivant sur Validation : toujours « Tout » (Will, 06/10/2026).
-  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">Validation</b></div>
+  root.innerHTML = `<header class="top"><div class="top-in"><div class="brand"><a class="back" href="#">‹ Back-office</a><b style="font-family:var(--f-display);font-size:22px;text-transform:uppercase">News et veille</b></div>
     <div class="chips" id="vchips"></div><label class="vselw"><select class="vsel" id="vsel" aria-label="Filtrer les propositions"></select></label></div></header><main><p class="vhint" id="vhint">Chargement…</p><ul class="vl" id="vl"></ul></main>`;
   const r = await fetch("/api/admin/veille");
   if (r.status === 401) return login("Session expirée, reconnecte-toi.");
@@ -777,7 +777,9 @@ async function veille(garder){
 function vdraw(){
   // « Vu, pas sur le site » : news gardées de côté, à part, qu'on peut encore publier plus tard.
   // « Publiées » : news déjà en ligne, encore modifiables (texte, image, vidéo, catégorie).
-  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
+  // Les couvertures seules (couv-fr / couv-jp) ne sont plus à relire ici : elles se gèrent dans « Sorties du jour » (Will, 19/10/2026).
+  const estCouv = i => /^couv/.test(i.cat || "");
+  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne && !estCouv(i)), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
   const counts = {}; actifs.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
   if (!["tout", "vu", "pub"].includes(VF) && !counts[VF]) VF = "tout";
   if (VF === "vu" && !gardes.length) VF = "tout";
