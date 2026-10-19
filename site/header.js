@@ -459,9 +459,9 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       '<div class="adm-h"><span class="t">Accès rapide · <b>Admin</b></span><button class="x" type="button" aria-label="Fermer">×</button></div>' +
       '<button type="button" class="adm-s" data-srch>' + ICON_S + '<span>Chercher une série, un mangaka, une sortie…</span></button>' +
       '<div class="adm-grid">' +
-        qt("news", "Actualités et veille", "à relire", "/admin/#validation", n !== "0" ? n : "") +
+        qt("news", "Actualités", "à relire", "/admin/#validation", n !== "0" ? n : "") +
         qt("sort", "Prochaines sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
-        qt("cal", "Calendrier éditorial", "la semaine", "/hq/#calendrier", "") +
+        qt("cal", "Calendrier", "la semaine", "/hq/#calendrier", "") +
         qt("db", "Mangas Database", "toutes les séries", "/admin/#mangas", "") +
         qt("stats", "Statistiques", "clics Google", "/admin/#stats", "") +
         qt("comm", "Communauté", "les membres", "/communaute/", "") +
