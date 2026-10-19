@@ -747,7 +747,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 
   // Calendrier éditorial — dashboard (Will, 19/10/2026) : Mois / Semaine / Kanban / Gantt,
   // projets colorés, vraies sorties de la base (/api/calendrier), pop-up compact à onglets.
-  var CAL = { types: [], events: [] }, TODO = [], SORT = [], SORTX = {}, calView = "semaine", calCur = new Date();
+  var CAL = { types: [], events: [] }, TODO = [], SORT = [], SORTX = {}, NEWS = [], NEWSCOL = {}, calView = "semaine", calCur = new Date();
   var PSORTIE = { id: "sortie", nom: "Sortie de tome", couleur: "#7B8CEB" };
   var JJ = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
@@ -806,10 +806,11 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     });
     TODO.forEach(function (t) { if (t.dt === is && !t.done) out.push({ kind: "todo", id: t.id, date: is, t: t }); });
     SORT.forEach(function (s) { if (s.date === is) out.push({ kind: "sortie", id: s.id, date: is, s: s }); });
+    NEWS.forEach(function (n) { if (n.date === is) out.push({ kind: "news", id: n.id, date: is, n: n }); });
     return out;
   }
-  function itemColor(it) { return it.kind === "sortie" ? PSORTIE.couleur : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
-  function itemTitle(it) { return it.kind === "sortie" ? sortieLabel(it.s) : (it.kind === "todo" ? it.t.t : it.e.titre); }
+  function itemColor(it) { return it.kind === "sortie" ? PSORTIE.couleur : it.kind === "news" ? (NEWSCOL[it.n.cat] || "#4C9BFF") : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
+  function itemTitle(it) { return it.kind === "sortie" ? sortieLabel(it.s) : it.kind === "news" ? it.n.titre : (it.kind === "todo" ? it.t.t : it.e.titre); }
   function itemImp(it) { return it.kind === "ev" ? it.e.imp : (it.kind === "todo" ? it.t.prio === "haut" : false); }
   function itemDone(it) { return it.kind === "ev" ? it.e.fait : false; }
 
@@ -845,7 +846,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       h += its.length ? its.map(function (it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
         var c = itemColor(it);
-        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
+        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? "Publiée · " + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }).join("") : '<div class="wempty">—</div>';
       h += "</div>";
     }
@@ -920,8 +921,23 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   function openItem(kind, id) {
     modalTab = "tw";
     if (kind === "sortie") return openSortie(SORT.find(function (s) { return s.id === id; }));
+    if (kind === "news") return openNews(NEWS.find(function (n) { return n.id === id; }));
     if (kind === "todo") return openTodo(TODO.find(function (t) { return t.id === id; }));
     openEv(CAL.events.find(function (e) { return e.id === id; }));
+  }
+  // News publiée ouverte depuis le calendrier : mêmes légendes qu'Actualités et veille (moteur FGPost), à copier / reprendre.
+  function openNews(n) {
+    if (!n) return; var item = n.i;
+    var cap = { x: "", ig: "", tt: "" };
+    if (window.FGPost) { try { cap = FGPost.captions(item, (item.serie && item.serie.resumeSortie) || ""); cap.x = FGPost.ajouteMagX(cap.x, item); } catch (e) {} }
+    modalCap = { ig: cap.ig, tw: cap.x, tk: cap.tt };
+    var img = item.imageChoisie || item.image || "";
+    var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
+    h += '<div class="chips"><span class="chip"><i style="background:' + (NEWSCOL[n.cat] || "#4C9BFF") + '"></i>' + esc(n.label || "News") + '</span><span class="chip">' + esc(quand({ date: n.date })) + '</span><span class="chip">✓ Publiée</span></div>';
+    h += '<div class="mh">' + (img ? '<button class="cov has" data-lightbox="' + esc(img) + '" style="background-image:url(' + esc(img) + ')"></button>' : '') + '<div><h2>' + esc(n.titre) + '</h2>' + (item.serie ? '<div class="sub">' + esc(item.serie.t || "") + '</div>' : '') + '</div></div>';
+    h += '<div class="mslab">Légendes à publier</div>' + tabsHTML(modalCap);
+    h += '<div class="macts"><a class="btn2 p" href="/admin/#validation" target="_blank" rel="noopener">Modifier dans Actualités et veille</a>' + (item.serie && item.serie.slug ? '<a class="btn2" href="/series/' + esc(item.serie.slug) + '" target="_blank" rel="noopener">Voir la fiche</a>' : '') + '</div>';
+    h += "</div></div>"; host.innerHTML = h; host.dataset.k = "news"; host.dataset.id = n.id;
   }
   function quand(e) { return e.date ? (function () { var d = parseIso(e.date); return JJ[(d.getDay() + 6) % 7] + ". " + d.getDate() + " " + MA[d.getMonth()]; })() : ("Chaque " + ({ lun: "lundi", mar: "mardi", mer: "mercredi", jeu: "jeudi", ven: "vendredi", sam: "samedi", dim: "dimanche", mois: "1er du mois" }[e.repeat] || "—")); }
   function openEv(e) {
@@ -999,7 +1015,9 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       fetch("/api/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
       // Sorties enrichies (série, comptes, résumé sortie) : les mêmes données que la Validation,
       // pour que les légendes du calendrier soient IDENTIQUES à celles du back-office (Will, 19/10/2026).
-      fetch("/api/admin/sorties", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
+      fetch("/api/admin/sorties", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
+      // News déjà publiées : elles apparaissent aussi dans le calendrier, cliquables (légende X/IG/TikTok à copier) — Will, 19/10/2026.
+      fetch("/api/admin/veille", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
     ]).then(function (res) {
       var d = res[0]; if (!d.ok) throw 0;
       CAL = { types: d.types, events: d.events };
@@ -1007,6 +1025,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       var raw = (res[2] && (res[2].items || res[2].sorties || res[2].tomes)) || [];
       SORT = raw.filter(function (s) { return s.date; });
       SORTX = {}; ((res[3] && res[3].items) || []).forEach(function (x) { if (x && x.id) SORTX[x.id] = x; });
+      var vn = (res[4] && res[4].items) || [];
+      NEWS = vn.filter(function (x) { return x && x.enLigne && (x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.date || x.cree, titre: x.titre, cat: x.cat, label: x.label, i: x }; });
+      NEWSCOL = (res[4] && res[4].cols) || {};
+      if (window.FGPost && res[4] && res[4].cats) FGPost.setCats(res[4].cats);
       renderView();
     }).catch(function () { $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
   }
