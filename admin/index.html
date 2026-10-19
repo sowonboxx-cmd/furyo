@@ -358,27 +358,25 @@ const NOMS = { ig: "Instagram", tt: "TikTok", x: "X" };
 const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5S3 15 3 8.8C3 6 5.1 4 7.7 4c1.8 0 3.3 1 4.3 2.4C13 5 14.5 4 16.3 4 18.9 4 21 6 21 8.8 21 15 12 20.5 12 20.5z"/></svg>`;
 // Prête = tous les éléments ★ obligatoires sont faits, pas encore publiée : c'est là qu'on pioche chaque semaine.
 const pret = s => !s.publier && s.oblig.length > 0 && s.manque.length === 0;
-// Statut de la série (colonne « Statut » dans Notion, Will 06/10/2026) : À valider / Validé · admins / En ligne · public.
-const ST = [["À valider", "À valider"], ["Validé · admins", "Admins"], ["En ligne · public", "En ligne"]];
-// « À publier » (Will, 18/10/2026) : toutes les fiches pas encore en ligne, dans l'ordre où les publier :
-// 1) un tome sort dans les 45 jours (la plus proche d'abord), 2) coups de cœur, 3) prêtes, 4) le reste (le moins à faire d'abord).
+// Statut de la série sur le site (Will, 19/10/2026) : deux états seulement — Hors ligne (pas public) / En ligne (public).
+// « Hors ligne » est stocké « À valider » dans Notion. L'ancien « Validé · admins » n'est plus proposé (plus personne ne l'utilise).
+const ST = [["À valider", "Hors ligne"], ["En ligne · public", "En ligne"]];
+// Ordre de travail : 1) un tome sort dans les 45 jours (la plus proche d'abord), 2) coups de cœur, 3) prêtes, 4) le reste.
 const J45 = new Date(Date.now() + 45 * 864e5).toISOString().slice(0, 10);
 const prio = s => s.next && s.next.d <= J45 ? 0 : s.coeur ? 1 : pret(s) ? 2 : 3;
 const ordrePub = (a, b) => prio(a) - prio(b) || (prio(a) === 0 ? a.next.d.localeCompare(b.next.d) : 0) || a.manque.length - b.manque.length || a.t.localeCompare(b.t, "fr");
 const PRIO_L = ["Sortie bientôt", "Coup de cœur", "Prête", "À compléter"];
+// Filtres de la base manga (Will, 19/10/2026) : Hors ligne (ce qu'il reste à faire) · En ligne · Coup de cœur · Tout (toute la base).
 const FILTRES = [
-  ["publier", "À publier", s => !s.publier],
-  ["valider", "À valider", s => s.statut === "À valider" && !pret(s)],
-  ["pretes", "Prêtes à publier", pret],
-  ["admins", "Admins", s => s.statut === "Validé · admins"],
-  ["coeur", HEART.replace("<svg ", '<svg class="hi" ') + "Coups de cœur", s => s.coeur && !s.publier],
+  ["horsligne", "Hors ligne", s => !s.publier],
   ["ligne", "En ligne", s => s.publier],
+  ["coeur", HEART.replace("<svg ", '<svg class="hi" ') + "Coup de cœur", s => s.coeur],
   ["tout", "Tout", () => true],
 ];
 // Tri : A→Z, presque finies d'abord (le moins à faire), ou à travailler d'abord (le plus à faire).
 // « Récemment ajoutées » (Will, 19/10/2026) : les dernières fiches créées dans Notion en premier, pour voir celles à valider.
 const TRIS = [["ordre", "Ordre de publication"], ["recent", "Récemment ajoutées"], ["az", "A → Z"], ["peu", "Presque finies"], ["beaucoup", "À travailler"]];
-let ITEMS = [], F = "publier", Q = "", T = "ordre";
+let ITEMS = [], F = "horsligne", Q = "", T = "ordre";
 const slugify = s => String(s || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 function toast(t){ const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1800); }
 
@@ -408,7 +406,7 @@ async function load(){
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { root.innerHTML = `<p class="empty">${esc(j.error || "Impossible de charger.")}</p>`; return; }
   ITEMS = j.items || [];
-  F = "publier"; T = "ordre"; // Toujours « À publier » dans l'ordre de publication en arrivant (Will, 18/10/2026).
+  F = "horsligne"; T = "ordre"; // Toujours « Hors ligne » dans l'ordre de travail en arrivant (Will, 19/10/2026).
   shell(); draw();
   // Liste servie depuis le cache : si elle a plus d'une minute, on la relit tout de suite dans Notion et on la remplace
   // (une série ajoutée directement dans Notion apparaît donc dès l'ouverture, Will 08/10/2026).
@@ -429,8 +427,7 @@ function shell(){
 }
 function draw(){
   const on = ITEMS.filter(s => s.publier).length, tot = ITEMS.length;
-  const pr = ITEMS.filter(pret).length;
-  document.getElementById("prog").innerHTML = `<span><b>${on}</b> en ligne / ${tot}</span><span class="pr"><b>${pr}</b> prête${pr > 1 ? "s" : ""}</span><span class="bar"><i style="width:${tot ? on / tot * 100 : 0}%"></i></span><span>${tot ? (on / tot * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) : 0} %</span>`;
+  document.getElementById("prog").innerHTML = `<span><b>${on}</b> en ligne / ${tot}</span><span class="bar"><i style="width:${tot ? on / tot * 100 : 0}%"></i></span><span>${tot ? (on / tot * 100).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) : 0} %</span>`;
   document.getElementById("chips").innerHTML = FILTRES.map(([k, l, f]) => `<button class="chip" data-f="${k}" aria-pressed="${F === k}">${l} <small>${ITEMS.filter(f).length}</small></button>`).join("");
   const n = slugify(Q), keep = FILTRES.find(x => x[0] === F)[2];
   const list = ITEMS.filter(s => (n ? slugify([s.t, s.fr, s.jp].join(" ")).includes(n) || (s.jp || "").includes(Q) : keep(s)));
@@ -496,7 +493,7 @@ async function send(s, patch, el){
     if (!r.ok) throw new Error(j.error || "Erreur");
     Object.assign(s, patch, { statut: j.statut, publier: j.publier, date: j.date || s.date });
     if (textes) { toast("Enregistré ✓"); return; }
-    toast(patch.statut === "En ligne · public" ? "En ligne pour tout le monde ✓" : patch.statut === "Validé · admins" ? "Visible seulement par les admins ✓" : patch.statut ? "À valider : retirée du site" : "Enregistré ✓");
+    toast(patch.statut === "En ligne · public" ? "En ligne pour tout le monde ✓" : patch.statut ? "Hors ligne : retirée du site" : "Enregistré ✓");
   } catch (e) { toast(e.message.slice(0, 80)); }
   finally { if (!textes) draw(); else el && el.classList.remove("busy"); }
 }
