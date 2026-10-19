@@ -51,7 +51,7 @@
       '<div class="fgq-h"><a class="fgq-logo" href="/" aria-label="Retour au site"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a><button class="x" type="button" aria-label="Fermer">×</button></div>' +
       '<div class="fgq-grid">' +
         qt("news", "Actualités", "à relire", "/admin/#validation", n) +
-        qt("sort", "Prochaines sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
+        qt("sort", "Sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
         qt("cal", "Calendrier", "la semaine", "/hq/#calendrier", "") +
         qt("db", "Mangas Database", "toutes les séries", "/admin/#mangas", "") +
         qt("stats", "Statistiques", "clics Google", "/admin/#stats", "") +

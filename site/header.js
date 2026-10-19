@@ -460,7 +460,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       '<div class="adm-h"><a class="adm-logo" href="/" aria-label="Retour au site"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a><button class="x" type="button" aria-label="Fermer">×</button></div>' +
       '<div class="adm-grid">' +
         qt("news", "Actualités", "à relire", "/admin/#validation", n !== "0" ? n : "") +
-        qt("sort", "Prochaines sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
+        qt("sort", "Sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
         qt("cal", "Calendrier", "la semaine", "/hq/#calendrier", "") +
         qt("db", "Mangas Database", "toutes les séries", "/admin/#mangas", "") +
         qt("stats", "Statistiques", "clics Google", "/admin/#stats", "") +
