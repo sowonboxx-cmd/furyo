@@ -163,9 +163,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .calhdr{display:flex;align-items:center;gap:14px;margin-bottom:14px}
 .calhdr h1{margin:0}
 .calhdr .btn{font:700 12.5px "FGInter"}
-.calbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.calbar{display:flex;align-items:center;justify-content:flex-start;gap:18px;margin-bottom:12px;flex-wrap:wrap}
 .calbar h2{font:700 24px "FGAntonio";text-transform:uppercase;margin:0;white-space:nowrap}
-.calbar-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.calbar-r{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.calbar-r .nav{margin-left:8px}
 .calbar .today{border:0;background:var(--s2);color:var(--cr);border-radius:11px;padding:0 15px;height:40px;font:700 13px "FGInter";cursor:pointer}
 .calbar .nav{display:flex;align-items:center;gap:8px;color:var(--mut);font:600 13px "FGInter"}
 .calbar .nav button{width:34px;height:34px;border:0;background:var(--s2);border-radius:11px;color:var(--cr);cursor:pointer;font-size:16px}
@@ -182,12 +183,19 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .mhead{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:8px}
 .mhead div{font:700 13px "FGAntonio";letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:0 4px}
 .mgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:150px;gap:10px}
-.cell .chip-ev,.cell .milestone{font-size:12.5px}
-.cell .chip-ev{padding:7px 10px}
-.cell{background:var(--s2);border-radius:14px;padding:9px 9px 6px;display:flex;flex-direction:column;gap:5px;overflow:hidden;min-width:0}
-.cell.off{opacity:.4}
-.cell .dn{font:700 13px "FGAntonio";color:var(--mut)}
-.cell.to .dn{color:#fff;background:var(--blue);width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:12px}
+.cell{background:#2b2b31;border-radius:14px;padding:9px 9px 6px;display:flex;flex-direction:column;gap:5px;overflow:hidden;min-width:0;position:relative}
+.cell.off{opacity:.4;background:#242429}
+.cell .dnum{font:700 14px "FGAntonio";color:var(--mut);padding:1px 2px}
+.cell.to .dnum{color:var(--blue)}
+.cell.to{box-shadow:inset 0 0 0 2px var(--blue);animation:todayflash 2.4s ease-in-out infinite}
+@keyframes todayflash{0%,100%{box-shadow:inset 0 0 0 2px var(--blue)}50%{box-shadow:inset 0 0 0 2px var(--blue),0 0 0 4px rgba(42,111,208,.26)}}
+.cell .ces{display:flex;flex-direction:column;gap:5px;overflow:hidden;min-height:0}
+.cell .ces .chip-ev:nth-child(n+4){display:none}
+.cell .more{font:700 11px "FGInter";color:#aeaeb4;padding:1px 3px;cursor:default}
+.cell:hover{overflow:visible;z-index:7}
+.cell:hover .more{display:none}
+.cell:hover .ces{position:absolute;left:0;right:0;top:27px;background:#34343e;border-radius:0 0 14px 14px;padding:4px 9px 9px;box-shadow:0 18px 38px rgba(0,0,0,.62);z-index:7}
+.cell:hover .ces .chip-ev:nth-child(n+4){display:block}
 .cell .add{margin-top:auto;border:0;background:transparent;color:transparent;cursor:pointer;height:6px;padding:0}
 .cell:hover .add{color:var(--mut);height:auto;padding:3px;font:700 14px "FGInter"}
 .chip-ev{font:600 11.5px/1.2 "FGInter";padding:6px 8px;border-radius:8px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;text-align:left;border:0;width:100%;display:block}
@@ -228,7 +236,16 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .gt2 .bar.dark{color:#141414}
 .gt2 .dia{position:absolute;top:6px;width:20px;height:20px;transform:rotate(45deg);border-radius:3px}
 .modal-ov{position:fixed;inset:0;background:rgba(10,10,12,.66);display:grid;place-items:center;z-index:50;padding:20px}
-.modal{width:min(620px,96vw);max-height:88vh;background:var(--s1);border-radius:22px;padding:24px 26px;overflow:auto;position:relative}
+.modal{width:min(620px,96vw);max-height:88vh;background:#1e1e24;border-radius:22px;padding:24px 26px;overflow:auto;position:relative}
+.modal .sdate{font:700 23px "FGAntonio";text-transform:uppercase;letter-spacing:.03em;color:var(--blue);margin:2px 0 14px}
+.modal .mh .cov.has{cursor:zoom-in;border:0;padding:0}
+.dlgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.dlb{border:0;border-radius:12px;padding:12px 14px;font:600 13.5px "FGInter";cursor:pointer;background:var(--s2);color:var(--cr);text-align:left}
+.dlb:hover{background:#26262c}
+.dlb.busy{opacity:.6;pointer-events:none}
+.macts .btn2{text-decoration:none}
+.lightbox{position:fixed;inset:0;background:rgba(6,6,8,.9);display:grid;place-items:center;z-index:60;padding:28px;cursor:zoom-out}
+.lightbox img{max-width:min(520px,92vw);max-height:92vh;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 .modal .chips{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
 .modal .chip{display:inline-flex;align-items:center;gap:6px;background:var(--s2);border-radius:999px;padding:6px 12px;font:600 12px "FGInter";color:#dcdce0}
 .modal .chip.imp{color:var(--imp)}
@@ -252,8 +269,9 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .ctabs button[aria-pressed=true]{background:var(--blue);color:#fff}
 .ctabs svg{display:block}
 .cbox{background:var(--s2);border-radius:14px;padding:14px 15px;position:relative}
-.cbox p{font:400 13.5px/1.5 "FGInter";color:var(--cr);white-space:pre-wrap;margin:0;padding-right:78px}
-.cbox .cp{position:absolute;top:12px;right:12px;background:var(--blue);color:#fff;border:0;border-radius:9px;padding:7px 14px;font:600 12px "FGInter";cursor:pointer}
+.cbox p{font:400 13.5px/1.5 "FGInter";color:var(--cr);white-space:pre-wrap;margin:0;padding-right:52px}
+.cbox .cp{position:absolute;top:10px;right:10px;background:var(--blue);color:#fff;border:0;border-radius:9px;width:36px;height:32px;display:grid;place-items:center;padding:0;cursor:pointer}
+.cbox .cp svg{width:17px;height:17px;display:block}
 .cbox .cp.ok{background:var(--ok);color:#000}
 .macts{display:flex;gap:9px;margin-top:20px;align-items:center;flex-wrap:wrap}
 .macts .btn2{border:0;border-radius:12px;padding:12px 20px;font:600 14px "FGInter";cursor:pointer;background:var(--s2);color:var(--cr)}
@@ -737,7 +755,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   function lisible(hex) { try { var h = hex.replace("#", ""); var r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16); return (r * 299 + g * 587 + b * 114) / 1000 > 150; } catch (e) { return false; } }
   function flag(pays) { return pays === "France" ? "🇫🇷" : "🇯🇵"; }
   // Normalise une sortie de la base en item calendrier.
-  function sortieLabel(s) { return (s.series || s.fr || s.jp || "Tome") + " " + (s.tome || ("T." + (s.n || ""))); }
+  function sortieLabel(s) { return (s.series || s.fr || s.jp || "Tome") + (s.n != null && s.n !== "" ? " T." + s.n : ""); }
   function captionSortie(s) {
     var t = sortieLabel(s), f = flag(s.pays), pub = s.pub || "";
     return {
@@ -781,7 +799,8 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     for (var i = 0; i < 42; i++) {
       var d = new Date(start); d.setDate(start.getDate() + i);
       var off = d.getMonth() !== calCur.getMonth(), is = iso(d), its = off ? [] : itemsJour(d);
-      h += '<div class="cell' + (off ? " off" : "") + (is === today ? " to" : "") + '"><span class="dn">' + d.getDate() + "</span>" + its.map(chipEv).join("") + '<button class="add" data-add="' + is + '">+</button></div>';
+      var ces = its.map(chipEv).join(""), more = its.length > 3 ? '<span class="more">+' + (its.length - 3) + ' de plus</span>' : "";
+      h += '<div class="cell' + (off ? " off" : "") + (is === today ? " to" : "") + '"><span class="dnum">' + d.getDate() + '</span><div class="ces">' + ces + '</div>' + more + '<button class="add" data-add="' + is + '">+</button></div>';
     }
     return h + "</div></div>";
   }
@@ -856,11 +875,13 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   // ---- Modal ----
   var host = document.createElement("div"); host.id = "calmodalhost"; document.body.appendChild(host);
   var modalCap = null, modalTab = "ig";
+  var IC_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+  var IC_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
   function closeModal() { host.innerHTML = ""; modalCap = null; }
   function tabsHTML(cap) {
     var n = { ig: "Instagram", tw: "Twitter / X", tk: "TikTok" };
     var h = '<div class="ctabs" id="ctabs">' + ["ig", "tw", "tk"].map(function (k) { return '<button data-tab="' + k + '" aria-pressed="' + (k === modalTab) + '">' + LOGO[k] + n[k] + "</button>"; }).join("") + "</div>";
-    h += '<div class="cbox"><button class="cp" id="cpbtn">Copier</button><p id="captxt">' + esc(cap[modalTab] || "") + "</p></div>";
+    h += '<div class="cbox"><button class="cp" id="cpbtn" aria-label="Copier" title="Copier">' + IC_COPY + '</button><p id="captxt">' + esc(cap[modalTab] || "") + "</p></div>";
     return h;
   }
   function openItem(kind, id) {
@@ -884,16 +905,20 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "ev"; host.dataset.id = e.id;
   }
   function openSortie(s) {
-    if (!s) return; modalCap = captionSortie(s);
+    if (!s) return; modalCap = captionSortie(s); host._sortie = s;
     var cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : '';
     var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
-    h += '<div class="chips"><span class="chip">' + esc(quand({ date: s.date })) + '</span><span class="chip"><i style="background:' + PSORTIE.couleur + '"></i>Sortie de tome</span><span class="chip">' + flag(s.pays) + " " + esc(s.pays || "") + "</span></div>";
-    h += '<div class="mh"><div class="cov" style="' + cov + '">' + (s.cover ? "" : "<b>" + esc(String(s.n || "")) + "</b>") + '</div><div><h2>' + esc(sortieLabel(s)) + '</h2><div class="sub">' + esc([s.series, s.pub, s.auteurs].filter(Boolean).join(" · ")) + "</div></div></div>";
-    h += '<div class="mslab">Infos</div><div class="mgrid2"><div class="gi"><div class="gl">Série</div><div class="gv">' + esc(s.series || "") + '</div></div><div class="gi"><div class="gl">Tome</div><div class="gv">' + esc(s.tome || ("T." + (s.n || ""))) + '</div></div><div class="gi"><div class="gl">Éditeur</div><div class="gv">' + esc(s.pub || "—") + '</div></div><div class="gi"><div class="gl">Sortie</div><div class="gv">' + esc(quand({ date: s.date })) + "</div></div></div>";
-    if (s.cover) h += '<div class="mslab">Couverture <a class="dl" href="' + esc(s.cover) + '" target="_blank" rel="noopener" download>Télécharger</a></div><div class="mvis"><a href="' + esc(s.cover) + '" target="_blank" rel="noopener" style="background-image:url(' + esc(s.cover) + ')"></a></div>';
+    h += '<div class="chips"><span class="chip"><i style="background:' + PSORTIE.couleur + '"></i>Sortie de tome</span><span class="chip">' + flag(s.pays) + " " + esc(s.pays || "") + "</span></div>";
+    h += '<div class="sdate">' + esc(quand({ date: s.date })) + '</div>';
+    h += '<div class="mh"><button class="cov' + (s.cover ? " has" : "") + '"' + (s.cover ? ' data-lightbox="' + esc(s.cover) + '"' : "") + ' style="' + cov + '">' + (s.cover ? "" : "<b>" + esc(String(s.n || "")) + "</b>") + '</button><div><h2>' + esc(sortieLabel(s)) + '</h2><div class="sub">' + esc([s.series, s.pub, s.auteurs].filter(Boolean).join(" · ")) + "</div></div></div>";
     h += '<div class="mslab">Légendes à publier</div>' + tabsHTML(modalCap);
-    h += '<div class="macts">' + (s.fiche && s.seriesId ? '<a class="btn2 p" href="/series/' + esc(s.seriesId) + '" target="_blank" rel="noopener">Voir la fiche</a>' : "") + '<span class="hint">Copie la légende, récupère la couverture, et publie quand tu veux.</span></div>';
-    h += "</div></div>"; host.innerHTML = h;
+    h += '<div class="mslab">Visuel de sortie</div><div class="dlgrid">'
+       + '<button class="dlb" data-tome="post" data-theme="sombre">Post 3:4 · Noir</button>'
+       + '<button class="dlb" data-tome="post" data-theme="creme">Post 3:4 · Crème</button>'
+       + '<button class="dlb" data-tome="story" data-theme="sombre">Story · Noir</button>'
+       + '<button class="dlb" data-tome="story" data-theme="creme">Story · Crème</button></div>';
+    h += '<div class="macts">' + (s.fiche && s.seriesId ? '<a class="btn2" href="/series/' + esc(s.seriesId) + '" target="_blank" rel="noopener">Voir la fiche</a>' : "") + '<button class="btn2 p" data-act="poste">Marquer posté</button><span id="calmsg"></span></div>';
+    h += "</div></div>"; host.innerHTML = h; host.dataset.k = "sortie"; host.dataset.id = s.id;
   }
   function openTodo(t) {
     if (!t) return; modalCap = null;
@@ -961,17 +986,46 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     var coul = prompt("Couleur (hex, ex. #E0955F) :", "#98989D") || "#98989D";
     calPost({ addType: { nom: nom, couleur: coul } });
   });
+  // Lightbox couverture.
+  function openLightbox(u) { var o = document.createElement("div"); o.className = "lightbox"; o.innerHTML = '<img src="' + esc(u) + '" alt="">'; o.addEventListener("click", function () { o.remove(); }); document.body.appendChild(o); }
+  // Génération du visuel « Sortie d'un tome » (design Soleil) via tome-card.js, chargé à la demande.
+  function ensureTomeLib() { return window.FG_TOME ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/tome-card.js?v=4"; sc.onload = ok; sc.onerror = ko; document.head.appendChild(sc); }); }
+  function sortieToTomeData(s) {
+    var clean = function (v) { return String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*|\s+&\s+|\s+et\s+/).map(function (x) { return x.trim(); }).filter(Boolean); };
+    return { titre: s.series || s.fr, n: s.n, jp: s.jp, date: s.date, prec: s.prec || "Jour", cover: s.cover, auteurs: Array.from(new Set(clean(s.scen).concat(clean(s.dess)))), pays: s.pays };
+  }
+  function dlTome(btn) {
+    var s = host._sortie; if (!s) return;
+    var fmt = btn.dataset.tome, theme = btn.dataset.theme, lbl = btn.innerHTML;
+    btn.classList.add("busy"); btn.textContent = "Génération…";
+    ensureTomeLib().then(function () { return FG_TOME.png(sortieToTomeData(s), { theme: theme, fmt: fmt }); }).then(function (url) {
+      return fetch(url).then(function (r) { return r.blob(); }).then(function (blob) {
+        var nom = ((s.series || "tome").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")) + "-t" + String(s.n == null ? "" : s.n).padStart(2, "0") + "-" + (fmt === "story" ? "story-9x16" : "post-3x4") + "-" + theme + ".png";
+        var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+      });
+    }).catch(function (e) { var m = $("#calmsg"); if (m) m.textContent = "Impossible de générer l'image"; console.error(e); }).finally(function () { btn.classList.remove("busy"); btn.innerHTML = lbl; });
+  }
+  // « Marquer posté » : coche « Sortie postée » dans la base Tomes → la sortie disparaît de l'écran « Sorties du jour » du QG.
+  function posterSortie(btn) {
+    var s = host._sortie; if (!s) return; var m = $("#calmsg"); if (m) m.textContent = "Enregistrement…";
+    fetch("/api/admin/sorties", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: s.id, poste: true }) })
+      .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); btn.textContent = "Posté ✓"; btn.disabled = true; if (m) m.textContent = "Retiré des sorties à publier."; setTimeout(closeModal, 900); })
+      .catch(function (e) { if (m) m.textContent = "Erreur : " + (e.message || "réessaie"); });
+  }
   // délégation modal
   host.addEventListener("click", function (ev) {
     if (ev.target.id === "mx" || ev.target.id === "mx2" || ev.target.id === "mx3" || ev.target.classList.contains("modal-ov")) { closeModal(); return; }
+    var lb = ev.target.closest("[data-lightbox]"); if (lb) { openLightbox(lb.dataset.lightbox); return; }
+    var dt = ev.target.closest("[data-tome]"); if (dt) { dlTome(dt); return; }
     var tb = ev.target.closest("[data-tab]"); if (tb) { modalTab = tb.dataset.tab; $("#captxt").textContent = (modalCap && modalCap[modalTab]) || ""; document.querySelectorAll("#ctabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === tb); }); return; }
-    if (ev.target.id === "cpbtn") { var txt = (modalCap && modalCap[modalTab]) || ""; navigator.clipboard.writeText(txt).then(function () { var b = ev.target; b.classList.add("ok"); var o = b.textContent; b.textContent = "Copié ✓"; setTimeout(function () { b.classList.remove("ok"); b.textContent = o; }, 1400); }); return; }
+    if (ev.target.closest("#cpbtn")) { var b = ev.target.closest("#cpbtn"); var txt = (modalCap && modalCap[modalTab]) || ""; navigator.clipboard.writeText(txt).then(function () { b.classList.add("ok"); b.innerHTML = IC_CHECK; setTimeout(function () { b.classList.remove("ok"); b.innerHTML = IC_COPY; }, 1400); }); return; }
     var a = ev.target.closest("[data-act]"); if (a) {
       var act = a.dataset.act, k = host.dataset.k, id = host.dataset.id;
       if (act === "edit") { formEv(CAL.events.find(function (e) { return e.id === id; })); }
       else if (act === "fait") { var e = CAL.events.find(function (x) { return x.id === id; }); calPost({ id: id, fait: !(e && e.fait) }, closeModal); }
       else if (act === "del") { var e2 = CAL.events.find(function (x) { return x.id === id; }); if (confirm("Supprimer « " + (e2 ? e2.titre : "") + " » ?")) calPost({ id: id, del: true }, closeModal); }
       else if (act === "tdone") { fetch("/api/admin/todo", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, done: true }) }).then(function (r) { return r.json(); }).then(function () { closeModal(); calLoad(); }); }
+      else if (act === "poste") { posterSortie(a); }
     }
   });
   host.addEventListener("submit", function (ev) {
