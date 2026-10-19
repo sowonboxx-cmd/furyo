@@ -270,6 +270,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm .vcirc-prev img{display:block;width:100%;height:auto}
 .vm .vcirc-prev span{color:var(--paper-2);font-size:13px;padding:16px;text-align:center}
 .vm .vcirc-prev.busy{opacity:.55}
+.vm .vcirc-prev-b{margin-top:8px}
 .vm .vcirc-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-top:8px}
 .vm .vcirc-f{display:flex;flex-direction:column;gap:4px;margin:0;font-size:11px;color:var(--paper-3);text-transform:uppercase;letter-spacing:.04em;flex:1;min-width:120px}
 .vm .vcirc-f input,.vm .vcirc-f select{height:40px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);font:600 14px Inter,sans-serif;padding:0 11px}
@@ -945,19 +946,24 @@ function postX(i, rs){
 // Le bloc s'affiche direct (preview), avec le chiffre (trouvé dans la news), le choix du tome mis en avant, et le téléchargement.
 // Image fixe par série (exception) : pour une saga à plusieurs saisons, le visuel auto n'est pas idéal,
 // on force l'image validée. The Fable (Will, 19/10/2026) → /img/circ/the-fable.jpg.
-const CIRC_FIXE = [{ test: s => /fable/i.test(((s && s.slug) || "") + " " + ((s && s.t) || "")), url: "/img/circ/the-fable.jpg" }];
-function circFixe(serie){ for (const r of CIRC_FIXE) if (r.test(serie)) return r.url; return ""; }
+const CIRC_FIXE = [{ test: s => /fable/i.test(((s && s.slug) || "") + " " + ((s && s.t) || "")), url: "/img/circ/the-fable.jpg", banner: "/img/circ/the-fable-banner.jpg" }];
+function circFixeRule(serie){ for (const r of CIRC_FIXE) if (r.test(serie)) return r; return null; }
+function circFixe(serie){ const r = circFixeRule(serie); return r ? r.url : ""; }
+function circFixeBanner(serie){ const r = circFixeRule(serie); return r ? (r.banner || "") : ""; }
 function vCircBloc(i){
   if (circFixe(i.serie)) return `<div class="vcirc" id="vcirc">
-    <div class="vcirc-prev" id="vcircprev"><span>Chargement du visuel…</span></div>
-    <div class="vcirc-ctl"><span class="vcirc-note">Image fixe (${esc(i.serie && i.serie.t || "")})</span><button class="vcirc-dl" data-vcircdl type="button">${ICO_DL}Post</button></div>
+    <div class="vcirc-prev" id="vcircprev"><span>Chargement de l'affiche…</span></div>
+    <div class="vcirc-prev vcirc-prev-b" id="vcircbprev"><span>Chargement de la bannière…</span></div>
+    <div class="vcirc-ctl"><span class="vcirc-note">Images fixes (${esc(i.serie && i.serie.t || "")})</span><button class="vcirc-dl" data-vcircdl="post" type="button">${ICO_DL}Post 4:5</button><button class="vcirc-dl" data-vcircdl="banner" type="button">${ICO_DL}Bannière</button></div>
   </div>`;
   return `<div class="vcirc" id="vcirc">
-    <div class="vcirc-prev" id="vcircprev"><span>Génération du visuel…</span></div>
+    <div class="vcirc-prev" id="vcircprev"><span>Génération de l'affiche…</span></div>
+    <div class="vcirc-prev vcirc-prev-b" id="vcircbprev"><span>Génération de la bannière…</span></div>
     <div class="vcirc-ctl">
       <label class="vcirc-f">Chiffre<input id="vcircn" type="text" placeholder="ex. 100 000 ou 30 millions"></label>
       <label class="vcirc-f">Tome en avant<select id="vcirch"></select></label>
-      <button class="vcirc-dl" data-vcircdl type="button">${ICO_DL}Post</button>
+      <button class="vcirc-dl" data-vcircdl="post" type="button">${ICO_DL}Post 4:5</button>
+      <button class="vcirc-dl" data-vcircdl="banner" type="button">${ICO_DL}Bannière</button>
     </div></div>`;
 }
 // Le chiffre : on le trouve dans le texte de la news (celui que la veille a repéré). Will peut le corriger.
@@ -970,11 +976,21 @@ function chiffreCirc(i){
   return "";
 }
 let CIRC_LIB, VCIRCT;
-function circLib(){ if (window.FG_CIRC) return Promise.resolve(); if (!CIRC_LIB) CIRC_LIB = new Promise((ok, ko) => { const s = document.createElement("script"); s.src = "/site/circ-card.js?v=1"; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); return CIRC_LIB; }
+function unScript(src){ return new Promise((ok, ko) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
+function circLib(){ if (window.FG_CIRC && window.FG_CIRC_BANNER) return Promise.resolve(); if (!CIRC_LIB) CIRC_LIB = Promise.all([
+  window.FG_CIRC ? Promise.resolve() : unScript("/site/circ-card.js?v=1"),
+  window.FG_CIRC_BANNER ? Promise.resolve() : unScript("/site/circ-banner.js?v=1"),
+]); return CIRC_LIB; }
 async function vCircInit(m, i){
-  const prev = m.querySelector("#vcircprev");
+  const prev = m.querySelector("#vcircprev"), bprev = m.querySelector("#vcircbprev");
   const fixe = circFixe(i.serie);
-  if (fixe){ const url = new URL(fixe, location.origin).href; m._circ = { serie: (i.serie && i.serie.t) || "the-fable", url, fixe: true }; prev.innerHTML = `<img src="${url}" alt="" onerror="this.parentNode.innerHTML='&lt;span&gt;Image fixe introuvable&lt;/span&gt;'">`; return; }
+  if (fixe){
+    const url = new URL(fixe, location.origin).href, burl = new URL(circFixeBanner(i.serie) || fixe, location.origin).href;
+    m._circ = { serie: (i.serie && i.serie.t) || "the-fable", url, banner: burl, fixe: true };
+    prev.innerHTML = `<img src="${url}" alt="" onerror="this.parentNode.innerHTML='&lt;span&gt;Affiche introuvable&lt;/span&gt;'">`;
+    if (bprev) bprev.innerHTML = `<img src="${burl}" alt="" onerror="this.parentNode.innerHTML='&lt;span&gt;Bannière introuvable&lt;/span&gt;'">`;
+    return;
+  }
   if (!i.serie){ prev.innerHTML = "<span>Pas de série reliée : visuel indisponible.</span>"; return; }
   const nin = m.querySelector("#vcircn"); if (!nin.value) nin.value = chiffreCirc(i);
   // Couvertures : d'abord celles envoyées par la veille (marche même pour une fiche non publique), sinon l'API publique.
@@ -993,25 +1009,31 @@ async function vCircInit(m, i){
   vCircRender(m);
 }
 async function vCircRender(m){
-  const c = m._circ; if (!c) return;
-  const prev = m.querySelector("#vcircprev");
+  const c = m._circ; if (!c || c.fixe) return;
+  const prev = m.querySelector("#vcircprev"), bprev = m.querySelector("#vcircbprev");
   const nombre = (m.querySelector("#vcircn").value || "").trim().toUpperCase();
-  prev.classList.add("busy");
+  prev.classList.add("busy"); if (bprev) bprev.classList.add("busy");
   try {
     await circLib();
-    const url = await FG_CIRC.png({ serie: c.serie, nombre: nombre, covers: c.covers, hero: c.hero });
+    const d = { serie: c.serie, nombre: nombre, covers: c.covers, hero: c.hero };
+    const url = await FG_CIRC.png(d);
     c.url = url; prev.innerHTML = `<img src="${url}" alt="">`;
+    try { const burl = await FG_CIRC_BANNER.png(d); c.banner = burl; if (bprev) bprev.innerHTML = `<img src="${burl}" alt="">`; }
+    catch(e){ if (bprev) bprev.innerHTML = "<span>Bannière non générée.</span>"; }
   } catch(e){ prev.innerHTML = "<span>Impossible de générer le visuel.</span>"; }
-  prev.classList.remove("busy");
+  prev.classList.remove("busy"); if (bprev) bprev.classList.remove("busy");
 }
-async function vCircDL(m){
-  const c = m._circ; if (!c || !c.url) return;
-  const nom = (c.serie || "serie").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-tomes-en-circulation.png";
+async function vCircDL(m, which){
+  const c = m._circ; if (!c) return;
+  const banner = which === "banner";
+  const src = banner ? c.banner : c.url; if (!src) return;
+  const base = (c.serie || "serie").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const nom = base + (banner ? "-tomes-en-circulation-banniere" : "-tomes-en-circulation") + (/\.jpg(\?|$)/i.test(src) ? ".jpg" : ".png");
   try {
-    const blob = await (await fetch(c.url)).blob(), file = new File([blob], nom, { type: "image/png" });
+    const blob = await (await fetch(src)).blob(), file = new File([blob], nom, { type: blob.type || "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [file] }) && matchMedia("(pointer:coarse)").matches){
       const sh = document.createElement("div"); sh.className = "sheet";
-      sh.innerHTML = `<img src="${c.url}" alt=""><p>Touche « Enregistrer » puis « Enregistrer l'image », ou appuie longuement sur l'image.</p><div class="row"><button class="go">Enregistrer</button><button class="no">Fermer</button></div>`;
+      sh.innerHTML = `<img src="${src}" alt=""><p>Touche « Enregistrer » puis « Enregistrer l'image », ou appuie longuement sur l'image.</p><div class="row"><button class="go">Enregistrer</button><button class="no">Fermer</button></div>`;
       document.body.appendChild(sh); sh.querySelector(".no").onclick = () => sh.remove();
       sh.querySelector(".go").onclick = () => navigator.share({ files: [file] }).then(() => sh.remove()).catch(() => {});
     } else { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Image téléchargée ✓"); }
@@ -1019,7 +1041,7 @@ async function vCircDL(m){
 }
 document.addEventListener("input", e => { if (e.target.id === "vcircn"){ clearTimeout(VCIRCT); VCIRCT = setTimeout(() => { const m = e.target.closest(".vm"); if (m) vCircRender(m); }, 450); } });
 document.addEventListener("change", e => { if (e.target.id === "vcirch"){ const m = e.target.closest(".vm"); if (m && m._circ){ m._circ.hero = +e.target.value; vCircRender(m); } } });
-document.addEventListener("click", e => { const b = e.target.closest("[data-vcircdl]"); if (b){ const m = b.closest(".vm"); if (m) vCircDL(m); } });
+document.addEventListener("click", e => { const b = e.target.closest("[data-vcircdl]"); if (b){ const m = b.closest(".vm"); if (m) vCircDL(m, b.dataset.vcircdl); } });
 function resumeAuto(i){
   const s = i.serie || {}, cands = [];
   for (const t of [s.resumeImg, s.resume]) { const ph = phrases(t); ph.forEach((_, n) => cands.push(ph.slice(0, n + 1).join(" "))); } // toujours depuis la 1re phrase
@@ -1121,11 +1143,12 @@ async function vsend(btn, statut){
   let image = vu ? vu.value.trim() : null;
   const vcr = m.querySelector("#vcrop"), cadrage = vcr && Number(vcr.value) !== (i.cadrage ?? 0) ? Number(vcr.value) : undefined;
   btn.classList.add("busy");
-  // Tomes en circulation : le visuel devient l'image de l'article (le même qu'on poste sur les réseaux).
-  if (m._circ && m._circ.url && !image) {
-    if (m._circ.fixe) { image = m._circ.url; } // image fixe (ex. The Fable) : déjà une adresse du site
-    else { try { const blob = await (await fetch(m._circ.url)).blob(); image = await envoyerImage(new File([blob], "tomes-en-circulation.png", { type: "image/png" })); }
-      catch (e) { btn.classList.remove("busy"); toast("Visuel non envoyé, réessaie"); return; } }
+  // Tomes en circulation : c'est la BANNIÈRE (16/8.6) qui devient l'image de la news sur le site (l'affiche 4:5 reste pour les réseaux).
+  if (m._circ && (m._circ.banner || m._circ.url) && !image) {
+    const src = m._circ.banner || m._circ.url;
+    if (m._circ.fixe) { image = src; } // image fixe (ex. The Fable) : déjà une adresse du site
+    else { try { const blob = await (await fetch(src)).blob(); image = await envoyerImage(new File([blob], "tomes-en-circulation-banniere.png", { type: blob.type || "image/png" })); }
+      catch (e) { btn.classList.remove("busy"); toast("Bannière non envoyée, réessaie"); return; } }
   }
   if (image && !/^https:\/\//.test(image)) { btn.classList.remove("busy"); toast("L'image doit être une adresse https://"); return; }
   // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
