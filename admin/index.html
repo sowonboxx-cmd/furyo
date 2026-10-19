@@ -265,6 +265,16 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 .vm .tools button{height:38px;padding:0 14px;border:0;border-radius:19px;background:var(--ink-3);color:var(--paper);font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 .vm .tools button svg{width:16px;height:16px}
 .vm .tools button:disabled{opacity:.45;cursor:default}
+.vm .vcirc{margin:6px 0 12px}
+.vm .vcirc-prev{border:1px solid #48484C;border-radius:14px;overflow:hidden;background:var(--ink-3);min-height:140px;display:flex;align-items:center;justify-content:center}
+.vm .vcirc-prev img{display:block;width:100%;height:auto}
+.vm .vcirc-prev span{color:var(--paper-2);font-size:13px;padding:16px;text-align:center}
+.vm .vcirc-prev.busy{opacity:.55}
+.vm .vcirc-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-top:8px}
+.vm .vcirc-f{display:flex;flex-direction:column;gap:4px;margin:0;font-size:11px;color:var(--paper-3);text-transform:uppercase;letter-spacing:.04em;flex:1;min-width:120px}
+.vm .vcirc-f input,.vm .vcirc-f select{height:40px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);font:600 14px Inter,sans-serif;padding:0 11px}
+.vm .vcirc-dl{height:40px;padding:0 16px;border:0;border-radius:20px;background:#2E7D4F;color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;flex:none}
+.vm .vcirc-dl svg{width:16px;height:16px}
 .vm .act{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .vm .act button{height:48px;border:0;border-radius:24px;font-weight:700;font-size:14.5px;cursor:pointer;background:var(--ink-3);color:var(--paper)}
 .vm .act .go{grid-column:1/3;background:#2E7D4F;color:#fff}
@@ -779,6 +789,7 @@ function vopen(id){
   const news = i.news, pp = i.cat === "prepub";
   const site = news || pp; // onglet « Site » : texte de la news, ou annonce du magazine pour une prépublication
   const couv = /^couv/.test(i.cat);
+  const circ = i.cat === "tirage"; // « Tomes en circulation » : visuel généré automatiquement (template F3)
   const img = news ? "" : i.image ? `<img class="cv${/^(couv|sortie|prepub)/.test(i.cat) ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
   const dt = (k, v) => v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : "";
   const dLong = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "";
@@ -800,7 +811,7 @@ function vopen(id){
     <h2>${esc(i.titre)}</h2>
     ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
     ${img}
-    ${news ? vimgBloc(i) : ""}
+    ${circ ? vCircBloc(i) : news ? vimgBloc(i) : ""}
     ${champs ? `<dl>${champs}</dl>` : ""}
     ${tomeIt ? `<label for="vrs">Résumé sortie (commun à tous les tomes de la série)</label>
     <div class="rs"><textarea id="vrs" maxlength="300">${esc(rs)}</textarea><button data-vrs>Enregistrer</button></div>` : ""}
@@ -808,7 +819,7 @@ function vopen(id){
     ${site ? `<textarea id="vtx" class="cap" data-cap="site"${act !== "site" ? " hidden" : ""}>${esc(i.texte)}</textarea>` : ""}
     ${news ? `<label for="vvid">Vidéo YouTube (jouée dans la page de la news, facultatif)</label><input id="vvid" class="vvid" type="url" placeholder="https://www.youtube.com/watch?v=…" value="${esc(i.video || "")}">` : ""}
     ${["x", "ig", "tt"].map(k => `<textarea class="cap" data-cap="${k}"${k !== act ? " hidden" : ""}></textarea>`).join("")}
-    <div class="tools"><button data-vcp>${ICO_COPY}Copier</button>${!tomeIt && news ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}<span class="cnt" id="vcnt"></span></div>
+    <div class="tools"><button data-vcp>${ICO_COPY}Copier</button>${!tomeIt && news && !circ ? `<button disabled title="Le modèle d'image des news arrive bientôt">${ICO_DL}Image (bientôt)</button>` : ""}<span class="cnt" id="vcnt"></span></div>
     ${tomeIt && i.image ? `<div class="vimg"><div class="seg" role="group" aria-label="Thème"><button data-vth="creme" aria-pressed="true">Crème</button><button data-vth="sombre" aria-pressed="false">Sombre</button></div>
       <button data-vimg="post">${ICO_DL}Post 3:4</button><button data-vimg="story">${ICO_DL}Story 9:16</button></div>` : ""}
     <div class="srcs">${i.src ? `<a href="${esc(i.src)}" target="_blank" rel="noopener">${pp ? "Numéro du magazine" : "Source officielle"} ↗</a>` : ""}${i.relais ? `<a href="${esc(i.relais)}" target="_blank" rel="noopener">${pp ? "Page de la série" : "Source relais"} ↗</a>` : ""}${(i.liens || []).map(l => `<a href="${esc(l.u)}" target="_blank" rel="noopener">${esc(l.n)} ↗</a>`).join("")}<a href="${esc(i.notion)}" target="_blank" rel="noopener">Notion ↗</a></div>
@@ -822,6 +833,7 @@ function vopen(id){
   document.body.appendChild(m);
   vcaps(m, i, true);
   vcount(m);
+  if (circ) vCircInit(m, i);
 }
 // Image d'une news : celle choisie par Will (propriété « Image »), sinon celle trouvée automatiquement.
 // On peut en envoyer une (fichier ou copier-coller), coller une adresse, ou la retirer.
@@ -928,6 +940,72 @@ function postX(i, rs){
 }
 // Résumé sortie proposé quand le champ est vide : la plus longue suite de phrases entières qui tient dans le post X
 // avec tous les comptes ; sinon avec moins de comptes ; sinon la phrase la plus courte (Will retouche).
+// ---- Visuel « Tomes en circulation » (catégorie tirage) : généré automatiquement dans la fenêtre Validation ----
+// Le bloc s'affiche direct (preview), avec le chiffre (trouvé dans la news), le choix du tome mis en avant, et le téléchargement.
+function vCircBloc(i){
+  return `<div class="vcirc" id="vcirc">
+    <div class="vcirc-prev" id="vcircprev"><span>Génération du visuel…</span></div>
+    <div class="vcirc-ctl">
+      <label class="vcirc-f">Chiffre<input id="vcircn" type="text" placeholder="ex. 100 000 ou 30 millions"></label>
+      <label class="vcirc-f">Tome en avant<select id="vcirch"></select></label>
+      <button class="vcirc-dl" data-vcircdl type="button">${ICO_DL}Post</button>
+    </div></div>`;
+}
+// Le chiffre : on le trouve dans le texte de la news (celui que la veille a repéré). Will peut le corriger.
+function chiffreCirc(i){
+  const t = [i.titre, i.texte, i.propose, i.actuel, i.prop].filter(Boolean).join("  ");
+  let m = t.match(/(\d+(?:[.,]\d+)?)\s*millions?/i);
+  if (m) return m[1].replace(".", ",") + " millions";
+  m = t.match(/(\d[\d  .  ]{3,}\d)/);
+  if (m){ const n = m[1].replace(/[  .  ]/g, ""); if (/^\d{5,}$/.test(n)) return Number(n).toLocaleString("fr-FR").replace(/[  ]/g, " "); }
+  return "";
+}
+let CIRC_LIB, VCIRCT;
+function circLib(){ if (window.FG_CIRC) return Promise.resolve(); if (!CIRC_LIB) CIRC_LIB = new Promise((ok, ko) => { const s = document.createElement("script"); s.src = "/site/circ-card.js?v=1"; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); return CIRC_LIB; }
+async function vCircInit(m, i){
+  const prev = m.querySelector("#vcircprev");
+  if (!i.serie || !i.serie.slug){ prev.innerHTML = "<span>Pas de série reliée : visuel indisponible.</span>"; return; }
+  const nin = m.querySelector("#vcircn"); if (!nin.value) nin.value = chiffreCirc(i);
+  let toms = [];
+  try {
+    const d = await fetch("/api/serie?s=" + encodeURIComponent(i.serie.slug)).then(r => r.json());
+    let best = [];
+    for (const e of (d.editions || [])){ const ts = (e.tomes || []).filter(t => t.cover).sort((a, b) => (a.n || 0) - (b.n || 0)); if (ts.length > best.length) best = ts; }
+    toms = best;
+  } catch(e){}
+  if (!toms.length){ prev.innerHTML = "<span>Aucune couverture trouvée pour cette série.</span>"; return; }
+  m._circ = { serie: i.serie.t, covers: toms.map(t => t.cover), hero: toms.length - 1 };
+  m.querySelector("#vcirch").innerHTML = toms.map((t, k) => `<option value="${k}"${k === toms.length - 1 ? " selected" : ""}>Tome ${t.n || (k + 1)}</option>`).join("");
+  vCircRender(m);
+}
+async function vCircRender(m){
+  const c = m._circ; if (!c) return;
+  const prev = m.querySelector("#vcircprev");
+  const nombre = (m.querySelector("#vcircn").value || "").trim().toUpperCase();
+  prev.classList.add("busy");
+  try {
+    await circLib();
+    const url = await FG_CIRC.png({ serie: c.serie, nombre: nombre, covers: c.covers, hero: c.hero });
+    c.url = url; prev.innerHTML = `<img src="${url}" alt="">`;
+  } catch(e){ prev.innerHTML = "<span>Impossible de générer le visuel.</span>"; }
+  prev.classList.remove("busy");
+}
+async function vCircDL(m){
+  const c = m._circ; if (!c || !c.url) return;
+  const nom = (c.serie || "serie").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-tomes-en-circulation.png";
+  try {
+    const blob = await (await fetch(c.url)).blob(), file = new File([blob], nom, { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] }) && matchMedia("(pointer:coarse)").matches){
+      const sh = document.createElement("div"); sh.className = "sheet";
+      sh.innerHTML = `<img src="${c.url}" alt=""><p>Touche « Enregistrer » puis « Enregistrer l'image », ou appuie longuement sur l'image.</p><div class="row"><button class="go">Enregistrer</button><button class="no">Fermer</button></div>`;
+      document.body.appendChild(sh); sh.querySelector(".no").onclick = () => sh.remove();
+      sh.querySelector(".go").onclick = () => navigator.share({ files: [file] }).then(() => sh.remove()).catch(() => {});
+    } else { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Image téléchargée ✓"); }
+  } catch(e){ toast("Téléchargement impossible"); }
+}
+document.addEventListener("input", e => { if (e.target.id === "vcircn"){ clearTimeout(VCIRCT); VCIRCT = setTimeout(() => { const m = e.target.closest(".vm"); if (m) vCircRender(m); }, 450); } });
+document.addEventListener("change", e => { if (e.target.id === "vcirch"){ const m = e.target.closest(".vm"); if (m && m._circ){ m._circ.hero = +e.target.value; vCircRender(m); } } });
+document.addEventListener("click", e => { const b = e.target.closest("[data-vcircdl]"); if (b){ const m = b.closest(".vm"); if (m) vCircDL(m); } });
 function resumeAuto(i){
   const s = i.serie || {}, cands = [];
   for (const t of [s.resumeImg, s.resume]) { const ph = phrases(t); ph.forEach((_, n) => cands.push(ph.slice(0, n + 1).join(" "))); } // toujours depuis la 1re phrase
