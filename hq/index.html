@@ -10,7 +10,7 @@
    Ressources (scans, murs d'affiches), to-do, projets en cours (FuryoGang Magazine), raccourcis. */
 @font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
 @font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
-:root{--bg:#202024;--s1:#0c0c0e;--s2:#17171b;--line:transparent;--cr:#f3f3f5;--mut:#8c8c93;--red:#BC002D;--ok:#4DAB9A;--blue:#2f80ed;--imp:#ff6b5e;color-scheme:dark}
+:root{--bg:#202024;--s1:#0c0c0e;--s2:#17171b;--line:transparent;--cr:#f3f3f5;--mut:#8c8c93;--red:#BC002D;--ok:#4DAB9A;--blue:#2A6FD0;--imp:#ff6b5e;--ind:#7B8CEB;color-scheme:dark}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--cr);font-family:"FGInter",system-ui,sans-serif;font-weight:500;-webkit-font-smoothing:antialiased}
 a{color:inherit}
@@ -157,73 +157,110 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .nl a:hover,.nl a[aria-current=true]{border-color:transparent!important;background:var(--s2)}
 .filt button[aria-pressed=true]{background:var(--blue)!important;color:#fff!important;border-color:transparent!important}
 .btn.r{background:var(--blue)}
-/* ===== Calendrier éditorial : vue liste maître / détail ===== */
-.calbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.caltog{display:inline-flex;background:var(--s2);border-radius:13px;padding:4px}
-.caltog button{border:0;background:transparent;color:var(--mut);font:700 13.5px "FGInter";padding:9px 22px;border-radius:10px;cursor:pointer}
-.caltog button[aria-pressed=true]{background:var(--blue);color:#fff}
-.calwrap{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:20px;align-items:start}
-.calcol{background:var(--s1);border-radius:24px;box-shadow:0 18px 40px rgba(0,0,0,.45);overflow:hidden}
-.calleft{display:flex;flex-direction:column;max-height:76vh}
-.calleft .lhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:22px 22px 8px}
-.calleft .lhead h2{font:700 26px "FGAntonio";text-transform:uppercase;letter-spacing:.02em;margin:0}
-.wknav{display:flex;align-items:center;gap:8px;color:var(--mut);font:600 13px "FGInter"}
-.wknav button{width:34px;height:34px;border:0;background:var(--s2);border-radius:11px;color:var(--cr);cursor:pointer;font-size:16px}
-.wknav span{min-width:92px;text-align:center}
-.calbar2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 22px 4px}
-.calbar2 .seg{margin:0}
-.addbtn{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:0 16px;height:38px;font:700 13.5px "FGInter";cursor:pointer;white-space:nowrap}
-.addbtn:hover{filter:none}
-.list{padding:8px 16px 18px;overflow:auto}
-.day{font:700 13px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);padding:16px 8px 8px}
-.day.to{color:var(--cr)}
-.it{display:flex;align-items:center;gap:12px;background:var(--s2);border-radius:15px;padding:14px 15px;margin-bottom:9px;cursor:pointer;transition:background .12s,transform .12s}
-.it:hover{background:#1d1d22}
-.it.sel{background:rgba(47,128,237,.18);box-shadow:inset 0 0 0 1.5px var(--blue)}
-.it.done{opacity:.5}.it.done .t{text-decoration:line-through}
-.it .mid{flex:1;min-width:0}
-.it .t{font:600 15.5px "FGInter";letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.it .m{font:700 11.5px "FGAntonio";letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-top:6px;display:flex;align-items:center;gap:7px}
-.it .m i{width:9px;height:9px;border-radius:50%;background:var(--c,#888);flex:none}
-.it .imp{flex:none;font:700 10.5px "FGInter";letter-spacing:.04em;text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:5px 9px;border-radius:8px}
-.it .chev{color:var(--mut);font-size:18px;flex:none}
-.it.todo{background:#121216}
-.empty{color:var(--mut);font-size:14px;padding:10px 8px}
-.calright{padding:30px 32px;min-height:320px}
-.chips{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.chip{display:inline-flex;align-items:center;gap:7px;background:var(--s2);border-radius:999px;padding:8px 15px;font:600 13px "FGInter";color:var(--cr)}
-.chip.imp{color:var(--imp)}
-.rtitle{font:700 42px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.01em;margin:0 0 12px}
-.rnote{font:400 16px/1.5 "FGInter";color:#c7c7cc;max-width:760px;white-space:pre-wrap}
-.slab{font:700 13px "FGAntonio";letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin:28px 0 12px}
-.grid{display:flex;gap:12px;flex-wrap:wrap}
-.gtile{flex:1;min-width:120px;background:var(--s2);border-radius:16px;padding:15px 18px}
-.gtile .gl{font:700 11.5px "FGAntonio";letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
-.gtile .gv{font:600 16px "FGInter";margin-top:7px}
-.vis{display:flex;gap:12px;flex-wrap:wrap}
-.vis a{display:block;width:118px;height:150px;border-radius:16px;background:#000 center/cover no-repeat}
-.copy{background:var(--s2);border-radius:18px;padding:16px 18px;margin-bottom:14px;max-width:820px}
-.copy .ch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
-.copy .ch b{font:700 15px "FGInter"}
-.cp{display:inline-flex;align-items:center;gap:7px;background:var(--blue);color:#fff;border:0;border-radius:11px;padding:9px 16px;font:600 13.5px "FGInter";cursor:pointer}
-.cp.ok{background:var(--ok);color:#000}
-.copy p{font:400 14.5px/1.55 "FGInter";color:var(--cr);white-space:pre-wrap;margin:0}
-.racts{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
-.racts .btn{padding:12px 22px;font-size:15px}
-.racts .btn.p{background:var(--blue);color:#fff}.racts .btn.d{background:transparent;color:var(--imp)}
-/* Édition dans le détail */
-.cedit{display:grid;gap:12px;max-width:820px}
+/* ===== Calendrier éditorial : dashboard (Will, 19/10/2026) ===== */
+.calbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.calbar h2{font:700 24px "FGAntonio";text-transform:uppercase;margin:0}
+.calbar .nav{display:flex;align-items:center;gap:8px;color:var(--mut);font:600 13px "FGInter"}
+.calbar .nav button{width:34px;height:34px;border:0;background:var(--s2);border-radius:11px;color:var(--cr);cursor:pointer;font-size:16px}
+.calbar .nav .today{width:auto;padding:0 14px;font:700 12px "FGInter"}
+.calbar .addb{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:11px 18px;font:700 14px "FGInter";cursor:pointer}
+.dtabs{display:flex;gap:4px;background:var(--s1);border-radius:16px;padding:6px;width:max-content;margin-bottom:14px}
+.dtabs button{border:0;background:none;color:var(--mut);font:700 14px "FGInter";padding:11px 22px;border-radius:11px;cursor:pointer}
+.dtabs button[aria-pressed=true]{background:var(--blue);color:#fff}
+.projrow{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.projrow .pj{display:inline-flex;align-items:center;gap:8px;font:600 12.5px "FGInter";color:#cdcdd3}
+.projrow .pj i{width:11px;height:11px;border-radius:50%}
+.projadd{font:700 12px "FGInter";color:var(--mut);background:var(--s2);border:0;border-radius:999px;padding:8px 14px;cursor:pointer}
+.calpan{background:var(--s1);border-radius:22px;padding:18px}
+.mhead{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:8px}
+.mhead div{font:700 13px "FGAntonio";letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:0 4px}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:minmax(104px,auto);gap:10px}
+.cell{background:var(--s2);border-radius:14px;padding:9px 9px 6px;display:flex;flex-direction:column;gap:5px;overflow:hidden;min-width:0}
+.cell.off{opacity:.4}
+.cell .dn{font:700 13px "FGAntonio";color:var(--mut)}
+.cell.to .dn{color:#fff;background:var(--blue);width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:12px}
+.cell .add{margin-top:auto;border:0;background:transparent;color:transparent;cursor:pointer;height:6px;padding:0}
+.cell:hover .add{color:var(--mut);height:auto;padding:3px;font:700 14px "FGInter"}
+.chip-ev{font:600 11.5px/1.2 "FGInter";padding:6px 8px;border-radius:8px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;text-align:left;border:0;width:100%;display:block}
+.chip-ev.dark{color:#141414}
+.chip-ev.done{opacity:.5;text-decoration:line-through}
+.chip-ev .im{font-size:9px}
+.milestone{display:flex;align-items:center;gap:6px;font:700 11px "FGInter";color:#cfcfd4;cursor:pointer;background:none;border:0;padding:2px;width:100%;text-align:left}
+.milestone .d{width:11px;height:11px;border:2px solid var(--blue);transform:rotate(45deg);border-radius:2px;flex:none}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.wcol{background:var(--s2);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:9px;min-height:360px}
+.wcol .wh{font:700 13px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+.wcol .wh b{font-size:19px;color:var(--cr)}
+.wcol.to .wh b{color:var(--blue)}
+.wcard{background:#1f1f25;border-radius:11px;padding:10px 11px;cursor:pointer;border:0;text-align:left;width:100%;display:block}
+.wcard .bar{display:block;height:4px;width:34px;border-radius:3px;margin-bottom:8px}
+.wcard .t,.wcard .m,.rcard .ri .t,.rcard .ri .m{display:block}
+.wcard .t{font:600 13px "FGInter";line-height:1.25;color:var(--cr)}
+.wcard .m{font:700 10.5px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);margin-top:7px}
+.wcard .im{display:inline-block;margin-top:7px;font:700 9.5px "FGInter";text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:4px 7px;border-radius:7px}
+.rcard{background:#1f1f25;border-radius:11px;padding:9px;display:flex;gap:10px;align-items:center;cursor:pointer;border:0;text-align:left;width:100%}
+.rcard .cov{width:40px;height:56px;border-radius:5px;flex:none;background:#262630 center/cover no-repeat;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+.rcard .cov b{font:800 15px "FGAntonio";color:#fff;opacity:.85;padding-bottom:3px}
+.rcard .cov .fl{position:absolute;top:3px;left:3px;font-size:9px}
+.rcard .ri{min-width:0}
+.rcard .ri .t{font:600 12.5px "FGInter";line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--cr)}
+.rcard .ri .m{font:700 10px "FGAntonio";letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin-top:5px}
+.wempty{color:var(--mut);font:500 12.5px "FGInter";padding:4px}
+.kb{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kcol{background:var(--s2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:280px}
+.kcol .kh{font:700 15px "FGAntonio";text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:9px;color:var(--cr)}
+.kcol .kh span{font:700 11px "FGInter";color:var(--mut);background:#26262c;border-radius:999px;padding:3px 9px}
+.gtw{overflow-x:auto}
+.gt2{min-width:760px;display:grid;grid-template-columns:190px 1fr;gap:12px;align-items:center}
+.gt2 .axis{display:flex;justify-content:space-between;font:700 11px "FGAntonio";letter-spacing:.04em;text-transform:uppercase;color:var(--mut);padding:0 2px 8px}
+.gt2 .lab{font:600 13.5px "FGInter";color:#dcdce0}
+.gt2 .track{position:relative;height:32px;background:var(--s2);border-radius:9px}
+.gt2 .bar{position:absolute;top:5px;bottom:5px;border-radius:7px;display:flex;align-items:center;padding:0 10px;font:700 11px "FGInter";color:#fff;white-space:nowrap;overflow:hidden}
+.gt2 .bar.dark{color:#141414}
+.gt2 .dia{position:absolute;top:6px;width:20px;height:20px;transform:rotate(45deg);border-radius:3px}
+.modal-ov{position:fixed;inset:0;background:rgba(10,10,12,.66);display:grid;place-items:center;z-index:50;padding:20px}
+.modal{width:min(620px,96vw);max-height:88vh;background:var(--s1);border-radius:22px;padding:24px 26px;overflow:auto;position:relative}
+.modal .chips{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.modal .chip{display:inline-flex;align-items:center;gap:6px;background:var(--s2);border-radius:999px;padding:6px 12px;font:600 12px "FGInter";color:#dcdce0}
+.modal .chip.imp{color:var(--imp)}
+.modal .chip i{width:9px;height:9px;border-radius:50%}
+.modal .mh{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.modal .mh .cov{width:56px;height:78px;border-radius:8px;flex:none;background:#262630 center/cover no-repeat;display:flex;align-items:flex-end;justify-content:center}
+.modal .mh .cov b{font:800 18px "FGAntonio";color:#fff;opacity:.9;padding-bottom:5px}
+.modal h2{font:700 28px "FGAntonio";text-transform:uppercase;line-height:.98;margin:0}
+.modal .sub{font:600 12.5px "FGInter";color:var(--mut);margin-top:6px}
+.modal .note{font:400 14.5px/1.5 "FGInter";color:#c7c7cc;margin:6px 0 2px}
+.mslab{font:700 11.5px "FGAntonio";letter-spacing:.07em;text-transform:uppercase;color:var(--mut);margin:16px 0 9px;display:flex;justify-content:space-between;align-items:center}
+.mslab .dl{font:600 11.5px "FGInter";color:var(--blue);background:rgba(42,111,208,.16);border:0;border-radius:8px;padding:7px 12px;cursor:pointer;text-transform:none;letter-spacing:0;text-decoration:none}
+.mgrid2{display:flex;gap:11px;flex-wrap:wrap}
+.mgrid2 .gi{flex:1;min-width:120px;background:var(--s2);border-radius:14px;padding:13px 15px}
+.mgrid2 .gl{font:700 11px "FGAntonio";letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+.mgrid2 .gv{font:600 15px "FGInter";margin-top:6px}
+.mvis{display:flex;gap:9px;flex-wrap:wrap}
+.mvis a{display:block;width:92px;height:118px;border-radius:9px;background:#000 center/cover no-repeat}
+.ctabs{display:flex;gap:4px;background:var(--s2);border-radius:12px;padding:4px;width:max-content;margin-bottom:10px}
+.ctabs button{border:0;background:none;color:var(--mut);font:700 12.5px "FGInter";padding:9px 15px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.ctabs button[aria-pressed=true]{background:var(--blue);color:#fff}
+.ctabs svg{display:block}
+.cbox{background:var(--s2);border-radius:14px;padding:14px 15px;position:relative}
+.cbox p{font:400 13.5px/1.5 "FGInter";color:var(--cr);white-space:pre-wrap;margin:0;padding-right:78px}
+.cbox .cp{position:absolute;top:12px;right:12px;background:var(--blue);color:#fff;border:0;border-radius:9px;padding:7px 14px;font:600 12px "FGInter";cursor:pointer}
+.cbox .cp.ok{background:var(--ok);color:#000}
+.macts{display:flex;gap:9px;margin-top:20px;align-items:center;flex-wrap:wrap}
+.macts .btn2{border:0;border-radius:12px;padding:12px 20px;font:600 14px "FGInter";cursor:pointer;background:var(--s2);color:var(--cr)}
+.macts .btn2.p{background:var(--blue);color:#fff}
+.macts .btn2.d{background:transparent;color:var(--imp)}
+.macts .hint{font:500 12px "FGInter";color:var(--mut)}
+.modal .x{position:absolute;top:14px;right:16px;background:none;border:0;color:var(--mut);font-size:24px;cursor:pointer;line-height:1}
+.cedit{display:grid;gap:12px}
 .cedit label{display:flex;flex-direction:column;gap:6px;font:700 12px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut)}
-.cedit .rowf{display:flex;gap:12px;flex-wrap:wrap}.cedit .rowf label{flex:1;min-width:150px}
+.cedit .rowf{display:flex;gap:12px;flex-wrap:wrap}.cedit .rowf label{flex:1;min-width:140px}
 .cedit input,.cedit select,.cedit textarea{font:inherit;font-size:15px;font-weight:500;border:0;border-radius:12px;background:var(--s2);color:var(--cr);padding:12px 13px}
-.cedit textarea{min-height:92px;resize:vertical;line-height:1.5}
+.cedit textarea{min-height:80px;resize:vertical;line-height:1.5}
 .cedit label.ck{flex-direction:row;align-items:center;gap:9px;text-transform:none;letter-spacing:0;font-size:14px;color:var(--cr)}
 .cedit label.ck input{width:20px;height:20px}
-.callg{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
-.callg span{display:inline-flex;align-items:center;gap:7px;font:600 12.5px "FGInter";color:var(--mut)}
-.callg i{width:12px;height:12px;border-radius:4px}
-#calmsg{color:var(--mut);font-size:13px;align-self:center}
-@media (max-width:860px){.calwrap{grid-template-columns:1fr}.calleft{max-height:none}.rtitle{font-size:34px}h1{font-size:48px}}
+.callg{display:none}
+@media (max-width:860px){.mgrid,.mhead,.wk{grid-template-columns:repeat(2,1fr)}.kb{grid-template-columns:1fr}h1{font-size:48px}.cell .add{color:var(--mut);height:auto}}
 </style>
 </head>
 <body>
@@ -284,22 +321,17 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 
   <section class="sec" id="calendrier">
     <h1>Calendrier éditorial</h1>
-    <p class="lead">Tout ce qu'il y a à publier, site et réseaux. À gauche la semaine, à droite le détail : tu peux tout éditer, et copier les textes réseaux d'un clic. Les tâches datées de la to-do remontent ici. <a class="btn" href="#vivre" style="margin-left:6px">Idées de rendez-vous</a></p>
-    <div class="calwrap">
-      <div class="calcol calleft">
-        <div class="lhead">
-          <h2 id="caltitre">Cette semaine</h2>
-          <div class="wknav"><button id="calprev" aria-label="Précédent">‹</button><span id="calrange">…</span><button id="calnext" aria-label="Suivant">›</button></div>
-        </div>
-        <div class="calbar2">
-          <div class="caltog seg"><button data-v="semaine" aria-pressed="true">Semaine</button><button data-v="mois" aria-pressed="false">Mois</button></div>
-          <button class="addbtn" id="caladd" title="Ajouter un rendez-vous">+ Ajouter</button>
-        </div>
-        <div class="list" id="callist"><p class="empty">Chargement…</p></div>
+    <p class="lead">Tout ce qu'il y a à publier, site et réseaux. Les sorties de tomes datées remontent toutes seules depuis la base (📖). Clique un élément pour voir le détail et copier les textes. <a class="btn" href="#vivre" style="margin-left:6px">Idées de rendez-vous</a></p>
+    <div class="calbar">
+      <h2 id="caltitre">…</h2>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="nav"><button id="calprev" aria-label="Précédent">‹</button><span id="calrange"></span><button id="calnext" aria-label="Suivant">›</button><button class="today" id="caltoday">Aujourd'hui</button></div>
+        <button class="addb" id="caladd">+ Ajouter</button>
       </div>
-      <div class="calcol calright" id="caldetail"><p class="empty">Choisis un élément à gauche pour voir le détail.</p></div>
     </div>
-    <div class="callg" id="callg"></div>
+    <div class="dtabs" id="dtabs"></div>
+    <div class="projrow" id="projrow"></div>
+    <div id="calview"><p class="lead">Chargement…</p></div>
   </section>
 
   <section class="sec" id="premium">
@@ -675,183 +707,271 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   });
   dnLoad();
 
-  // Calendrier éditorial (Will, 19/10/2026) : vue liste maître/détail, style dashboard.
-  // Données : /api/admin/calendrier (KV) + /api/admin/todo (tâches datées remontées ici).
-  var CAL = { types: [], events: [] }, TODO = [], calView = "semaine", calCur = new Date(), selKind = null, selId = null, editing = false, creating = false;
-  var JJ = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"], JJL = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+  // Calendrier éditorial — dashboard (Will, 19/10/2026) : Mois / Semaine / Kanban / Gantt,
+  // projets colorés, vraies sorties de la base (/api/calendrier), pop-up compact à onglets.
+  var CAL = { types: [], events: [] }, TODO = [], SORT = [], calView = "mois", calCur = new Date();
+  var PSORTIE = { id: "sortie", nom: "Sortie de tome", couleur: "#7B8CEB" };
+  var JJ = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   var MA = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   var REPJ = { lun: 1, mar: 2, mer: 3, jeu: 4, ven: 5, sam: 6, dim: 0 };
+  var LOGO = {
+    ig: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor" stroke="none"/></svg>',
+    tw: '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M17.5 3h3l-7.1 8.1L22 21h-6.3l-4.9-6.4L5.1 21H2l7.6-8.7L2 3h6.4l4.5 5.9L17.5 3zm-1.1 16h1.7L7.7 4.8H5.9L16.4 19z"/></svg>',
+    tk: '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M16.6 3c.3 2 1.5 3.6 3.4 3.9v2.6c-1.3 0-2.5-.4-3.5-1.1v5.7c0 3.1-2.5 5.6-5.6 5.6S5.3 17.2 5.3 14.1s2.7-5.7 6.1-5.5v2.7c-.3-.1-.6-.1-.9-.1-1.6 0-2.9 1.3-2.9 2.9s1.3 2.9 2.9 2.9 2.9-1.3 2.9-2.9V3h3.2z"/></svg>'
+  };
   function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
   function lundi(d) { var x = new Date(d); var j = (x.getDay() + 6) % 7; x.setDate(x.getDate() - j); x.setHours(0, 0, 0, 0); return x; }
-  function parseIso(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
-  function typ(id) { return CAL.types.find(function (t) { return t.id === id; }) || { nom: "Autre", couleur: "#888" }; }
-  function frLong(d) { return JJL[(d.getDay() + 6) % 7] + " " + d.getDate() + " " + MOIS[d.getMonth()]; }
-  function frShort(d) { return JJ[(d.getDay() + 6) % 7] + ". " + d.getDate(); }
-  // Éléments d'un jour : événements du calendrier + tâches datées de la to-do.
+  function parseIso(s) { var p = String(s).split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function projets() { return CAL.types.concat([PSORTIE]); }
+  function proj(id) { return projets().find(function (t) { return t.id === id; }) || { nom: "Autre", couleur: "#888" }; }
+  function lisible(hex) { try { var h = hex.replace("#", ""); var r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16); return (r * 299 + g * 587 + b * 114) / 1000 > 150; } catch (e) { return false; } }
+  function flag(pays) { return pays === "France" ? "🇫🇷" : "🇯🇵"; }
+  // Normalise une sortie de la base en item calendrier.
+  function sortieLabel(s) { return (s.series || s.fr || s.jp || "Tome") + " " + (s.tome || ("T." + (s.n || ""))); }
+  function captionSortie(s) {
+    var t = sortieLabel(s), f = flag(s.pays), pub = s.pub || "";
+    return {
+      ig: "📕 SORTIE DU JOUR — " + t + " " + f + "\n\n" + (pub ? pub + ". " : "") + "Dispo aujourd'hui.\n👉 Fiche complète sur furyogang.com · 🔖 Ajoute-le à ta collection",
+      tw: "📕 Sortie du jour : " + t + (pub ? " (" + pub + ")" : "") + " " + f + " — dispo aujourd'hui. Fiche + collection sur furyogang.com",
+      tk: "📕 Sortie du jour : " + t + " " + f + " ! Dispo aujourd'hui" + (pub ? " chez " + pub : "") + ". Fiche complète sur furyogang.com #furyo #manga #sortie"
+    };
+  }
+  // Tous les items d'un jour : événements éditoriaux + tâches datées + sorties de tomes.
   function itemsJour(d) {
     var is = iso(d), dow = d.getDay(), dom = d.getDate(), out = [];
     CAL.events.forEach(function (e) {
       var ok = e.date ? e.date === is : (e.repeat === "mois" ? dom === 1 : (e.repeat in REPJ && REPJ[e.repeat] === dow));
-      if (ok) out.push({ kind: "ev", id: e.id, e: e });
+      if (ok) out.push({ kind: "ev", id: e.id, date: is, e: e });
     });
-    TODO.forEach(function (t) { if (t.dt === is && !t.done) out.push({ kind: "todo", id: t.id, t: t }); });
+    TODO.forEach(function (t) { if (t.dt === is && !t.done) out.push({ kind: "todo", id: t.id, date: is, t: t }); });
+    SORT.forEach(function (s) { if (s.date === is) out.push({ kind: "sortie", id: s.id, date: is, s: s }); });
     return out;
   }
-  function itemHTML(it) {
-    if (it.kind === "todo") {
-      var sel = selKind === "todo" && selId === it.id;
-      return '<div class="it todo' + (sel ? " sel" : "") + '" data-kind="todo" data-id="' + esc(it.id) + '"><div class="mid"><div class="t">' + esc(it.t.t) + '</div><div class="m">To-do · ' + esc(it.t.cat || "") + '</div></div>' + (it.t.prio === "haut" ? '<span class="imp">Priorité</span>' : "") + '<span class="chev">›</span></div>';
-    }
-    var e = it.e, t = typ(e.type), sel2 = selKind === "ev" && selId === e.id;
-    return '<div class="it' + (sel2 ? " sel" : "") + (e.fait ? " done" : "") + '" data-kind="ev" data-id="' + esc(e.id) + '"><div class="mid"><div class="t">' + esc(e.titre) + '</div><div class="m"><i style="--c:' + t.couleur + '"></i>' + esc(t.nom) + (e.fait ? " · publié" : "") + '</div></div>' + (e.imp ? '<span class="imp">Important</span>' : "") + '<span class="chev">›</span></div>';
+  function itemColor(it) { return it.kind === "sortie" ? PSORTIE.couleur : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
+  function itemTitle(it) { return it.kind === "sortie" ? ("📖 " + sortieLabel(it.s)) : (it.kind === "todo" ? it.t.t : it.e.titre); }
+  function itemImp(it) { return it.kind === "ev" ? it.e.imp : (it.kind === "todo" ? it.t.prio === "haut" : false); }
+  function itemDone(it) { return it.kind === "ev" ? it.e.fait : false; }
+
+  function chipEv(it) {
+    var c = itemColor(it), dark = it.kind !== "sortie" && lisible(c);
+    return '<button class="chip-ev' + (dark ? " dark" : "") + (itemDone(it) ? " done" : "") + '" style="background:' + c + '" data-k="' + it.kind + '" data-id="' + esc(it.id) + '">' + (itemImp(it) ? '<span class="im">● </span>' : "") + esc(itemTitle(it)) + "</button>";
   }
   function titreVue() {
     if (calView === "semaine") {
       var l = lundi(calCur), f = new Date(l); f.setDate(f.getDate() + 6);
       $("#calrange").textContent = l.getDate() + "–" + f.getDate() + " " + MA[f.getMonth()];
-      var now = new Date(); return (iso(lundi(now)) === iso(l)) ? "Cette semaine" : "Semaine";
+      return (iso(lundi(new Date())) === iso(l)) ? "Cette semaine" : "Semaine";
     }
     $("#calrange").textContent = calCur.getFullYear();
     return MOIS[calCur.getMonth()];
   }
-  function dessinerListe() {
-    $("#caltitre").textContent = titreVue();
-    var today = iso(new Date()), h = "", total = 0;
-    var jours = [];
-    if (calView === "semaine") {
-      var l = lundi(calCur);
-      for (var i = 0; i < 7; i++) { var d = new Date(l); d.setDate(l.getDate() + i); jours.push(d); }
-      jours.forEach(function (d) {
-        var its = itemsJour(d), is = iso(d); total += its.length;
-        h += '<div class="day' + (is === today ? " to" : "") + '">' + frShort(d) + (is === today ? " · aujourd’hui" : "") + "</div>";
-        h += its.length ? its.map(itemHTML).join("") : '<div class="empty">Rien de prévu.</div>';
-      });
-    } else {
-      var y = calCur.getFullYear(), m = calCur.getMonth(), nb = new Date(y, m + 1, 0).getDate();
-      for (var k = 1; k <= nb; k++) {
-        var dd = new Date(y, m, k), its2 = itemsJour(dd);
-        if (!its2.length) continue; total += its2.length;
-        h += '<div class="day' + (iso(dd) === today ? " to" : "") + '">' + frShort(dd) + "</div>" + its2.map(itemHTML).join("");
-      }
-      if (!total) h = '<div class="empty">Rien ce mois-ci. Dis à Claude ce que tu veux programmer.</div>';
+  function renderMois() {
+    var first = new Date(calCur.getFullYear(), calCur.getMonth(), 1), start = lundi(first), today = iso(new Date());
+    var h = '<div class="calpan"><div class="mhead">' + JJ.map(function (j) { return "<div>" + j + "</div>"; }).join("") + '</div><div class="mgrid">';
+    for (var i = 0; i < 42; i++) {
+      var d = new Date(start); d.setDate(start.getDate() + i);
+      var off = d.getMonth() !== calCur.getMonth(), is = iso(d), its = off ? [] : itemsJour(d);
+      h += '<div class="cell' + (off ? " off" : "") + (is === today ? " to" : "") + '"><span class="dn">' + d.getDate() + "</span>" + its.map(chipEv).join("") + '<button class="add" data-add="' + is + '">+</button></div>';
     }
-    $("#callist").innerHTML = h;
-    $("#callg").innerHTML = CAL.types.map(function (t) { return '<span><i style="background:' + t.couleur + '"></i>' + esc(t.nom) + "</span>"; }).join("");
+    return h + "</div></div>";
+  }
+  function renderSemaine() {
+    var l = lundi(calCur), today = iso(new Date()), h = '<div class="calpan"><div class="wk">';
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(l); d.setDate(l.getDate() + i); var is = iso(d), its = itemsJour(d);
+      h += '<div class="wcol' + (is === today ? " to" : "") + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
+      h += its.length ? its.map(function (it) {
+        if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '<span class="fl">' + flag(s.pays) + '</span></span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">Sortie · ' + esc(s.pub || "") + "</span></span></button>"; }
+        var c = itemColor(it);
+        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</button>";
+      }).join("") : '<div class="wempty">—</div>';
+      h += "</div>";
+    }
+    return h + "</div></div>";
+  }
+  function renderKanban() {
+    var l = lundi(new Date()), f = new Date(l); f.setDate(f.getDate() + 7);
+    var lo = iso(l), hi = iso(f), cols = { rec: [], sem: [], ven: [], pub: [] };
+    CAL.events.forEach(function (e) {
+      if (e.fait) return cols.pub.push({ kind: "ev", id: e.id, e: e, m: "Publié" });
+      if (e.repeat) return cols.rec.push({ kind: "ev", id: e.id, e: e, m: "Chaque " + (e.repeat === "mois" ? "mois" : e.repeat) });
+      if (e.date) { var c = (e.date >= lo && e.date < hi) ? "sem" : (e.date >= hi ? "ven" : "pub"); cols[c].push({ kind: "ev", id: e.id, e: e, m: moisJour(e.date) }); }
+    });
+    SORT.forEach(function (s) { if (!s.date) return; var c = (s.date >= lo && s.date < hi) ? "sem" : (s.date >= hi ? "ven" : null); if (c) cols[c].push({ kind: "sortie", id: s.id, s: s, m: moisJour(s.date) }); });
+    TODO.forEach(function (t) { if (!t.dt) return; if (t.done) return cols.pub.push({ kind: "todo", id: t.id, t: t, m: "Fait" }); var c = (t.dt >= lo && t.dt < hi) ? "sem" : (t.dt >= hi ? "ven" : "sem"); cols[c].push({ kind: "todo", id: t.id, t: t, m: moisJour(t.dt) }); });
+    var defs = [["rec", "Récurrents"], ["sem", "Cette semaine"], ["ven", "À venir"], ["pub", "Publié / fait"]];
+    var h = '<div class="kb">';
+    defs.forEach(function (d) {
+      var arr = cols[d[0]];
+      h += '<div class="kcol"><div class="kh">' + d[1] + ' <span>' + arr.length + "</span></div>" + arr.map(function (it) {
+        var c = itemColor(it);
+        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(it.m) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</button>";
+      }).join("") + "</div>";
+    });
+    return h + "</div>";
+  }
+  function moisJour(is) { var d = parseIso(is); return JJ[(d.getDay() + 6) % 7] + " " + d.getDate(); }
+  function renderGantt() {
+    var y = calCur.getFullYear(), m = calCur.getMonth(), nb = new Date(y, m + 1, 0).getDate();
+    var pos = function (is) { var d = parseIso(is); if (d.getMonth() !== m || d.getFullYear() !== y) { if (d < new Date(y, m, 1)) return 0; return 100; } return (d.getDate() - 1) / (nb - 1) * 100; };
+    var ticks = [1, 8, 15, 22, nb].map(function (n) { return n + " " + MA[m]; });
+    var h = '<div class="calpan gtw"><div class="gt2"><div></div><div class="axis">' + ticks.map(function (t) { return "<span>" + t + "</span>"; }).join("") + "</div>";
+    var rows = [];
+    CAL.types.forEach(function (tp) {
+      var evs = CAL.events.filter(function (e) { return e.type === tp.id; });
+      if (!evs.length) return;
+      var rep = evs.find(function (e) { return e.repeat; });
+      var dates = evs.filter(function (e) { return e.date && parseIso(e.date).getMonth() === m && parseIso(e.date).getFullYear() === y; }).map(function (e) { return e.date; }).sort();
+      rows.push({ nom: tp.nom, c: tp.couleur, rep: rep ? ("chaque " + (rep.repeat === "mois" ? "mois" : rep.repeat)) : "", dates: dates });
+    });
+    var sd = SORT.filter(function (s) { return s.date && parseIso(s.date).getMonth() === m && parseIso(s.date).getFullYear() === y; }).map(function (s) { return s.date; }).sort();
+    if (sd.length) rows.push({ nom: PSORTIE.nom, c: PSORTIE.couleur, rep: "", dates: sd });
+    if (!rows.length) return '<div class="calpan"><p class="wempty">Rien ce mois-ci.</p></div>';
+    rows.forEach(function (r) {
+      var bar;
+      if (r.rep) bar = '<div class="bar' + (lisible(r.c) ? " dark" : "") + '" style="left:0;right:0;background:' + r.c + '">' + esc(r.nom) + "</div>";
+      else if (r.dates.length === 1) bar = '<span class="dia" style="left:calc(' + pos(r.dates[0]) + '% - 10px);background:' + r.c + '"></span>';
+      else { var a = pos(r.dates[0]), b = pos(r.dates[r.dates.length - 1]); bar = '<div class="bar' + (lisible(r.c) ? " dark" : "") + '" style="left:' + a + '%;width:' + Math.max(6, b - a) + '%;background:' + r.c + '">' + esc(r.nom) + "</div>"; }
+      h += '<div class="lab">' + esc(r.nom) + (r.rep ? '<small style="display:block;color:var(--mut);font:700 10.5px \'FGAntonio\';text-transform:uppercase;margin-top:3px">' + esc(r.rep) + "</small>" : "") + '</div><div class="track">' + bar + "</div>";
+    });
+    return h + "</div></div>";
+  }
+  function renderView() {
+    $("#caltitre").textContent = titreVue();
+    var R = { mois: renderMois, semaine: renderSemaine, kanban: renderKanban, gantt: renderGantt };
+    $("#calview").innerHTML = (R[calView] || renderMois)();
+    $("#projrow").innerHTML = projets().map(function (p) { return '<span class="pj"><i style="background:' + p.couleur + '"></i>' + esc(p.nom) + "</span>"; }).join("") + '<button class="projadd" id="projadd">+ Projet</button>';
     var nc = $("#n-cal"); if (nc) nc.textContent = CAL.events.filter(function (e) { return !e.fait; }).length + " à publier";
   }
-  function copyBtn(label) { return '<button class="cp" data-copy="' + label + '">⧉ Copier</button>'; }
-  function detailEv(e) {
-    var t = typ(e.type), quand = e.date ? (function () { var d = parseIso(e.date); return JJ[(d.getDay() + 6) % 7] + ". " + d.getDate() + " " + MA[d.getMonth()]; })() : ("Chaque " + ({ lun: "lundi", mar: "mardi", mer: "mercredi", jeu: "jeudi", ven: "vendredi", sam: "samedi", dim: "dimanche", mois: "1er du mois", sem: "semaine" }[e.repeat] || "—"));
-    var h = '<div class="chips"><span class="chip">' + esc(e.date ? frLong(parseIso(e.date)) : ("Chaque " + (e.repeat || ""))) + '</span><span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:' + t.couleur + ';display:inline-block"></i>' + esc(t.nom) + '</span>' + (e.imp ? '<span class="chip imp">● Important</span>' : "") + (e.fait ? '<span class="chip">✓ Publié</span>' : "") + '</div>';
-    h += '<h2 class="rtitle">' + esc(e.titre) + "</h2>";
-    if (e.note) h += '<div class="rnote">' + esc(e.note) + "</div>";
-    h += '<div class="slab">Infos</div><div class="grid">' +
-      '<div class="gtile"><div class="gl">Quand</div><div class="gv">' + esc(quand) + '</div></div>' +
-      '<div class="gtile"><div class="gl">Type</div><div class="gv">' + esc(t.nom) + '</div></div>' +
-      (e.tirage ? '<div class="gtile"><div class="gl">Tirage</div><div class="gv">' + esc(e.tirage) + '</div></div>' : "") +
-      '<div class="gtile"><div class="gl">État</div><div class="gv">' + (e.fait ? "Publié" : "À publier") + '</div></div></div>';
-    if (e.visuels && e.visuels.length) h += '<div class="slab">Visuels</div><div class="vis">' + e.visuels.map(function (u) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener" style="background-image:url(' + esc(u) + ')"></a>'; }).join("") + "</div>";
-    var tx = e.textes || {};
-    if (tx.ig || tx.tw || tx.tiktok) {
-      h += '<div class="slab">Textes à publier</div>';
-      if (tx.ig) h += '<div class="copy"><div class="ch"><b>📸 Instagram</b>' + copyBtn("ig") + '</div><p>' + esc(tx.ig) + "</p></div>";
-      if (tx.tw) h += '<div class="copy"><div class="ch"><b>𝕏 Twitter / X</b>' + copyBtn("tw") + '</div><p>' + esc(tx.tw) + "</p></div>";
-      if (tx.tiktok) h += '<div class="copy"><div class="ch"><b>♪ TikTok</b>' + copyBtn("tiktok") + '</div><p>' + esc(tx.tiktok) + "</p></div>";
-    }
-    h += '<div class="racts"><button class="btn p" data-act="fait">' + (e.fait ? "Marquer à publier" : "Marquer publié") + '</button><button class="btn" data-act="edit">Éditer</button><button class="btn d" data-act="del">Supprimer</button><span id="calmsg"></span></div>';
+  // ---- Modal ----
+  var host = document.createElement("div"); host.id = "calmodalhost"; document.body.appendChild(host);
+  var modalCap = null, modalTab = "ig";
+  function closeModal() { host.innerHTML = ""; modalCap = null; }
+  function tabsHTML(cap) {
+    var n = { ig: "Instagram", tw: "Twitter / X", tk: "TikTok" };
+    var h = '<div class="ctabs" id="ctabs">' + ["ig", "tw", "tk"].map(function (k) { return '<button data-tab="' + k + '" aria-pressed="' + (k === modalTab) + '">' + LOGO[k] + n[k] + "</button>"; }).join("") + "</div>";
+    h += '<div class="cbox"><button class="cp" id="cpbtn">Copier</button><p id="captxt">' + esc(cap[modalTab] || "") + "</p></div>";
     return h;
   }
+  function openItem(kind, id) {
+    modalTab = "ig";
+    if (kind === "sortie") return openSortie(SORT.find(function (s) { return s.id === id; }));
+    if (kind === "todo") return openTodo(TODO.find(function (t) { return t.id === id; }));
+    openEv(CAL.events.find(function (e) { return e.id === id; }));
+  }
+  function quand(e) { return e.date ? (function () { var d = parseIso(e.date); return JJ[(d.getDay() + 6) % 7] + ". " + d.getDate() + " " + MA[d.getMonth()]; })() : ("Chaque " + ({ lun: "lundi", mar: "mardi", mer: "mercredi", jeu: "jeudi", ven: "vendredi", sam: "samedi", dim: "dimanche", mois: "1er du mois" }[e.repeat] || "—")); }
+  function openEv(e) {
+    if (!e) return; var t = proj(e.type);
+    modalCap = e.textes || null;
+    var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
+    h += '<div class="chips"><span class="chip">' + esc(quand(e)) + '</span><span class="chip"><i style="background:' + t.couleur + '"></i>' + esc(t.nom) + "</span>" + (e.imp ? '<span class="chip imp">● Important</span>' : "") + (e.fait ? '<span class="chip">✓ Publié</span>' : "") + "</div>";
+    h += '<div class="mh"><div><h2>' + esc(e.titre) + "</h2></div></div>";
+    if (e.note) h += '<div class="note">' + esc(e.note) + "</div>";
+    h += '<div class="mslab">Infos</div><div class="mgrid2"><div class="gi"><div class="gl">Quand</div><div class="gv">' + esc(quand(e)) + '</div></div><div class="gi"><div class="gl">Projet</div><div class="gv">' + esc(t.nom) + "</div></div>" + (e.tirage ? '<div class="gi"><div class="gl">Tirage</div><div class="gv">' + esc(e.tirage) + "</div></div>" : "") + '<div class="gi"><div class="gl">État</div><div class="gv">' + (e.fait ? "Publié" : "À publier") + "</div></div></div>";
+    if (e.visuels && e.visuels.length) h += '<div class="mslab">Visuels <a class="dl" href="' + esc(e.visuels[0]) + '" download>Télécharger</a></div><div class="mvis">' + e.visuels.map(function (u) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener" style="background-image:url(' + esc(u) + ')"></a>'; }).join("") + "</div>";
+    if (modalCap && (modalCap.ig || modalCap.tw || modalCap.tiktok)) { modalCap = { ig: modalCap.ig, tw: modalCap.tw, tk: modalCap.tiktok }; h += '<div class="mslab">Légendes à publier</div>' + tabsHTML(modalCap); }
+    h += '<div class="macts"><button class="btn2 p" data-act="fait">' + (e.fait ? "Marquer à publier" : "Marquer publié") + '</button><button class="btn2" data-act="edit">Éditer</button><button class="btn2 d" data-act="del">Supprimer</button><span id="calmsg"></span></div>';
+    h += "</div></div>"; host.innerHTML = h; host.dataset.k = "ev"; host.dataset.id = e.id;
+  }
+  function openSortie(s) {
+    if (!s) return; modalCap = captionSortie(s);
+    var cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : '';
+    var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
+    h += '<div class="chips"><span class="chip">' + esc(quand({ date: s.date })) + '</span><span class="chip"><i style="background:' + PSORTIE.couleur + '"></i>Sortie de tome</span><span class="chip">' + flag(s.pays) + " " + esc(s.pays || "") + "</span></div>";
+    h += '<div class="mh"><div class="cov" style="' + cov + '">' + (s.cover ? "" : "<b>" + esc(String(s.n || "")) + "</b>") + '</div><div><h2>' + esc(sortieLabel(s)) + '</h2><div class="sub">' + esc([s.series, s.pub, s.auteurs].filter(Boolean).join(" · ")) + "</div></div></div>";
+    h += '<div class="mslab">Infos</div><div class="mgrid2"><div class="gi"><div class="gl">Série</div><div class="gv">' + esc(s.series || "") + '</div></div><div class="gi"><div class="gl">Tome</div><div class="gv">' + esc(s.tome || ("T." + (s.n || ""))) + '</div></div><div class="gi"><div class="gl">Éditeur</div><div class="gv">' + esc(s.pub || "—") + '</div></div><div class="gi"><div class="gl">Sortie</div><div class="gv">' + esc(quand({ date: s.date })) + "</div></div></div>";
+    if (s.cover) h += '<div class="mslab">Couverture <a class="dl" href="' + esc(s.cover) + '" target="_blank" rel="noopener" download>Télécharger</a></div><div class="mvis"><a href="' + esc(s.cover) + '" target="_blank" rel="noopener" style="background-image:url(' + esc(s.cover) + ')"></a></div>';
+    h += '<div class="mslab">Légendes à publier</div>' + tabsHTML(modalCap);
+    h += '<div class="macts">' + (s.fiche && s.seriesId ? '<a class="btn2 p" href="/series/' + esc(s.seriesId) + '" target="_blank" rel="noopener">Voir la fiche</a>' : "") + '<span class="hint">Copie la légende, récupère la couverture, et publie quand tu veux.</span></div>';
+    h += "</div></div>"; host.innerHTML = h;
+  }
+  function openTodo(t) {
+    if (!t) return; modalCap = null;
+    var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
+    h += '<div class="chips"><span class="chip">' + esc(quand({ date: t.dt })) + '</span><span class="chip">To-do</span>' + (t.cat ? '<span class="chip">' + esc(t.cat) + "</span>" : "") + (t.prio === "haut" ? '<span class="chip imp">● Priorité</span>' : "") + "</div>";
+    h += '<div class="mh"><div><h2>Tâche à faire</h2></div></div><div class="note">' + esc(t.t) + "</div>";
+    h += '<div class="macts"><button class="btn2 p" data-act="tdone">Marquer faite</button><a class="btn2" href="#todo" id="mx2">Ouvrir la to-do</a></div>';
+    h += "</div></div>"; host.innerHTML = h; host.dataset.k = "todo"; host.dataset.id = t.id;
+  }
   function formEv(e) {
-    e = e || { titre: "", type: CAL.types[0] && CAL.types[0].id, note: "", textes: {}, visuels: [] };
+    var creating = !e; e = e || { titre: "", type: (CAL.types[0] || {}).id, note: "", textes: {}, visuels: [] };
     var tx = e.textes || {};
     var opts = CAL.types.map(function (t) { return '<option value="' + t.id + '"' + (t.id === e.type ? " selected" : "") + ">" + esc(t.nom) + "</option>"; }).join("");
     var reps = [["", "— ponctuel —"], ["lun", "lundi"], ["mar", "mardi"], ["mer", "mercredi"], ["jeu", "jeudi"], ["ven", "vendredi"], ["sam", "samedi"], ["dim", "dimanche"], ["mois", "1er du mois"]].map(function (r) { return '<option value="' + r[0] + '"' + (r[0] === (e.repeat || "") ? " selected" : "") + ">" + r[1] + "</option>"; }).join("");
-    return '<form class="cedit" id="cedit">' +
+    var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button><h2 style="margin-bottom:16px">' + (creating ? "Ajouter" : "Éditer") + "</h2>";
+    h += '<form class="cedit" id="cedit" data-id="' + (creating ? "" : esc(e.id)) + '">' +
       '<label>Titre<input name="titre" maxlength="160" value="' + esc(e.titre) + '" required></label>' +
-      '<div class="rowf"><label>Type<select name="type">' + opts + '</select></label>' +
+      '<div class="rowf"><label>Projet<select name="type">' + opts + '</select></label>' +
       '<label>Date<input name="date" type="date" value="' + esc(e.date || "") + '"></label>' +
-      '<label>Ou chaque<select name="repeat">' + reps + '</select></label></div>' +
+      '<label>Ou chaque<select name="repeat">' + reps + "</select></label></div>" +
       '<label class="ck"><input type="checkbox" name="imp"' + (e.imp ? " checked" : "") + "> Marquer comme important</label>" +
       '<label>Note<textarea name="note" maxlength="600">' + esc(e.note || "") + "</textarea></label>" +
-      '<label>Tirage / échéance <span style="font-weight:400;text-transform:none">(facultatif)</span><input name="tirage" maxlength="80" value="' + esc(e.tirage || "") + '"></label>' +
+      '<label>Tirage / échéance<input name="tirage" maxlength="80" value="' + esc(e.tirage || "") + '"></label>' +
       '<label>Visuels — une URL par ligne<textarea name="visuels">' + esc((e.visuels || []).join("\n")) + "</textarea></label>" +
       '<label>Texte Instagram<textarea name="ig">' + esc(tx.ig || "") + "</textarea></label>" +
       '<label>Texte Twitter / X<textarea name="tw">' + esc(tx.tw || "") + "</textarea></label>" +
       '<label>Texte TikTok<textarea name="tiktok">' + esc(tx.tiktok || "") + "</textarea></label>" +
-      '<div class="racts"><button class="btn p" type="submit">Enregistrer</button><button class="btn" type="button" data-act="cancel">Annuler</button><span id="calmsg"></span></div></form>';
+      '<div class="macts"><button class="btn2 p" type="submit">Enregistrer</button><button class="btn2" type="button" id="mx3">Annuler</button><span id="calmsg"></span></div></form>';
+    h += "</div></div>"; host.innerHTML = h;
   }
-  function detailTodo(t) {
-    return '<div class="chips"><span class="chip">' + esc(t.dt ? frLong(parseIso(t.dt)) : "") + '</span><span class="chip">To-do</span>' + (t.cat ? '<span class="chip">' + esc(t.cat) + "</span>" : "") + (t.prio === "haut" ? '<span class="chip imp">● Priorité</span>' : "") + "</div>" +
-      '<h2 class="rtitle">Tâche à faire</h2><div class="rnote">' + esc(t.t) + "</div>" +
-      '<div class="racts"><button class="btn p" data-act="tdone">Marquer faite</button><a class="btn" href="#todo">Ouvrir la to-do</a></div>';
-  }
-  function dessinerDetail() {
-    var box = $("#caldetail");
-    if (creating) { box.innerHTML = '<div class="chips"><span class="chip">Nouveau rendez-vous</span></div><h2 class="rtitle">Ajouter</h2>' + formEv(null); return; }
-    if (selKind === "todo") { var t = TODO.find(function (x) { return x.id === selId; }); box.innerHTML = t ? detailTodo(t) : '<p class="empty">Tâche introuvable.</p>'; return; }
-    if (selKind === "ev") {
-      var e = CAL.events.find(function (x) { return x.id === selId; });
-      if (!e) { box.innerHTML = '<p class="empty">Choisis un élément à gauche.</p>'; return; }
-      box.innerHTML = editing ? formEv(e) : detailEv(e);
-      return;
-    }
-    box.innerHTML = '<p class="empty">Choisis un élément à gauche pour voir le détail, l’éditer et copier les textes réseaux.</p>';
-  }
-  function rafraichir() { dessinerListe(); dessinerDetail(); }
+  // ---- Data ----
   function calLoad() {
     Promise.all([
       fetch("/api/admin/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }),
-      fetch("/api/admin/todo", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
+      fetch("/api/admin/todo", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
+      fetch("/api/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
     ]).then(function (res) {
       var d = res[0]; if (!d.ok) throw 0;
       CAL = { types: d.types, events: d.events };
       TODO = (res[1] && res[1].items || []).filter(function (t) { return t.dt; });
-      rafraichir();
-    }).catch(function () { $("#callist").innerHTML = "<p class='empty'>Indisponible.</p>"; });
+      var raw = (res[2] && (res[2].items || res[2].sorties || res[2].tomes)) || [];
+      SORT = raw.filter(function (s) { return s.date; });
+      renderView();
+    }).catch(function () { $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
   }
   function calPost(body, cb) {
     fetch("/api/admin/calendrier", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); calLoad(); if (cb) cb(); }).catch(function (e) { var m = $("#calmsg"); if (m) m.textContent = "Erreur : " + (e.message || "réessaie"); });
   }
-  // Liste : sélection
-  $("#callist").addEventListener("click", function (ev) {
-    var it = ev.target.closest(".it"); if (!it) return;
-    selKind = it.dataset.kind; selId = it.dataset.id; editing = false; creating = false; rafraichir();
-    if (window.matchMedia("(max-width:860px)").matches) $("#caldetail").scrollIntoView({ behavior: "smooth", block: "start" });
+  // ---- Events ----
+  document.querySelectorAll(".dtabs button").forEach && null;
+  $("#dtabs").innerHTML = [["mois", "Mois"], ["semaine", "Semaine"], ["kanban", "Kanban"], ["gantt", "Gantt"]].map(function (t) { return '<button data-v="' + t[0] + '" aria-pressed="' + (t[0] === calView) + '">' + t[1] + "</button>"; }).join("");
+  $("#dtabs").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; calView = b.dataset.v; document.querySelectorAll("#dtabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); renderView(); });
+  $("#calprev").addEventListener("click", function () { if (calView === "semaine") calCur.setDate(calCur.getDate() - 7); else calCur.setMonth(calCur.getMonth() - 1); calCur = new Date(calCur); renderView(); });
+  $("#calnext").addEventListener("click", function () { if (calView === "semaine") calCur.setDate(calCur.getDate() + 7); else calCur.setMonth(calCur.getMonth() + 1); calCur = new Date(calCur); renderView(); });
+  $("#caltoday").addEventListener("click", function () { calCur = new Date(); renderView(); });
+  $("#caladd").addEventListener("click", function () { formEv(null); });
+  $("#calview").addEventListener("click", function (ev) {
+    var it = ev.target.closest("[data-k]"); if (it) { openItem(it.dataset.k, it.dataset.id); return; }
+    var ad = ev.target.closest("[data-add]"); if (ad) { if (calView !== "semaine") { calCur = parseIso(ad.dataset.add); } formEvDate(ad.dataset.add); }
   });
-  // Bouton « + Ajouter » : formulaire de création dans le panneau détail
-  $("#caladd").addEventListener("click", function () {
-    creating = true; editing = false; selKind = null; selId = null; dessinerDetail();
-    if (window.matchMedia("(max-width:860px)").matches) $("#caldetail").scrollIntoView({ behavior: "smooth", block: "start" });
+  function formEvDate(d) { formEv(null); var f = $("#cedit"); if (f) f.date.value = d; }
+  $("#projrow").addEventListener("click", function (ev) {
+    if (!ev.target.closest("#projadd")) return;
+    var nom = prompt("Nom du nouveau projet :"); if (!nom) return;
+    var coul = prompt("Couleur (hex, ex. #E0955F) :", "#98989D") || "#98989D";
+    calPost({ addType: { nom: nom, couleur: coul } });
   });
-  // Détail : copier, actions, édition
-  $("#caldetail").addEventListener("click", function (ev) {
-    var cp = ev.target.closest("[data-copy]");
-    if (cp) {
-      var e0 = CAL.events.find(function (x) { return x.id === selId; }); var txt = (e0 && e0.textes && e0.textes[cp.dataset.copy]) || "";
-      navigator.clipboard.writeText(txt).then(function () { cp.classList.add("ok"); var old = cp.innerHTML; cp.innerHTML = "✓ Copié"; setTimeout(function () { cp.classList.remove("ok"); cp.innerHTML = old; }, 1500); });
-      return;
+  // délégation modal
+  host.addEventListener("click", function (ev) {
+    if (ev.target.id === "mx" || ev.target.id === "mx2" || ev.target.id === "mx3" || ev.target.classList.contains("modal-ov")) { closeModal(); return; }
+    var tb = ev.target.closest("[data-tab]"); if (tb) { modalTab = tb.dataset.tab; $("#captxt").textContent = (modalCap && modalCap[modalTab]) || ""; document.querySelectorAll("#ctabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === tb); }); return; }
+    if (ev.target.id === "cpbtn") { var txt = (modalCap && modalCap[modalTab]) || ""; navigator.clipboard.writeText(txt).then(function () { var b = ev.target; b.classList.add("ok"); var o = b.textContent; b.textContent = "Copié ✓"; setTimeout(function () { b.classList.remove("ok"); b.textContent = o; }, 1400); }); return; }
+    var a = ev.target.closest("[data-act]"); if (a) {
+      var act = a.dataset.act, k = host.dataset.k, id = host.dataset.id;
+      if (act === "edit") { formEv(CAL.events.find(function (e) { return e.id === id; })); }
+      else if (act === "fait") { var e = CAL.events.find(function (x) { return x.id === id; }); calPost({ id: id, fait: !(e && e.fait) }, closeModal); }
+      else if (act === "del") { var e2 = CAL.events.find(function (x) { return x.id === id; }); if (confirm("Supprimer « " + (e2 ? e2.titre : "") + " » ?")) calPost({ id: id, del: true }, closeModal); }
+      else if (act === "tdone") { fetch("/api/admin/todo", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, done: true }) }).then(function (r) { return r.json(); }).then(function () { closeModal(); calLoad(); }); }
     }
-    var a = ev.target.closest("[data-act]"); if (!a) return;
-    var act = a.dataset.act, e = CAL.events.find(function (x) { return x.id === selId; });
-    if (act === "edit") { editing = true; dessinerDetail(); }
-    else if (act === "cancel") { editing = false; creating = false; selKind = null; selId = null; dessinerDetail(); }
-    else if (act === "fait" && e) calPost({ id: e.id, fait: !e.fait });
-    else if (act === "del" && e) { if (confirm("Supprimer « " + e.titre + " » ?")) calPost({ id: e.id, del: true }, function () { selKind = null; selId = null; }); }
-    else if (act === "tdone") {
-      fetch("/api/admin/todo", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: selId, done: true }) }).then(function (r) { return r.json(); }).then(function () { selKind = null; selId = null; calLoad(); });
-    }
   });
-  $("#caldetail").addEventListener("submit", function (ev) {
-    if (ev.target.id !== "cedit") return;
-    ev.preventDefault(); var f = ev.target, m = $("#calmsg"); if (m) m.textContent = "Enregistrement…";
+  host.addEventListener("submit", function (ev) {
+    if (ev.target.id !== "cedit") return; ev.preventDefault();
+    var f = ev.target, m = $("#calmsg"); if (m) m.textContent = "Enregistrement…";
     var vis = f.visuels.value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
-    calPost({ ev: { id: creating ? "" : selId, titre: f.titre.value, type: f.type.value, date: f.date.value, repeat: f.date.value ? "" : f.repeat.value, note: f.note.value, imp: f.imp.checked, tirage: f.tirage.value, visuels: vis, textes: { ig: f.ig.value, tw: f.tw.value, tiktok: f.tiktok.value } } }, function () { editing = false; creating = false; });
+    calPost({ ev: { id: f.dataset.id || "", titre: f.titre.value, type: f.type.value, date: f.date.value, repeat: f.date.value ? "" : f.repeat.value, note: f.note.value, imp: f.imp.checked, tirage: f.tirage.value, visuels: vis, textes: { ig: f.ig.value, tw: f.tw.value, tiktok: f.tiktok.value } } }, closeModal);
   });
-  // Barre : semaine/mois + navigation
-  document.querySelectorAll(".caltog button").forEach(function (b) { b.addEventListener("click", function () { calView = b.dataset.v; document.querySelectorAll(".caltog button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); dessinerListe(); }); });
-  $("#calprev").addEventListener("click", function () { if (calView === "semaine") calCur.setDate(calCur.getDate() - 7); else calCur.setMonth(calCur.getMonth() - 1); calCur = new Date(calCur); dessinerListe(); });
-  $("#calnext").addEventListener("click", function () { if (calView === "semaine") calCur.setDate(calCur.getDate() + 7); else calCur.setMonth(calCur.getMonth() + 1); calCur = new Date(calCur); dessinerListe(); });
+  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") closeModal(); });
   calLoad();
 })();
 </script>
