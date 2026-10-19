@@ -848,6 +848,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       h += '<div class="wcol' + (is === today ? " to" : "") + '" data-date="' + is + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
       h += its.length ? its.map(function (it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
+        if (it.kind === "news") { var ni = it.n, ncol = itemColor(it), nbg = ni.image ? 'background-image:url(/api/couv?w=120&u=' + encodeURIComponent(ni.image) + ')' : 'background:' + ncol; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov" style="' + nbg + '">' + (ni.image ? '' : '<b>N</b>') + '</span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + "</span></span></button>"; }
         var c = itemColor(it);
         return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? "Publiée · " + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }).join("") : '<div class="wempty">—</div>';
@@ -1029,7 +1030,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       SORT = raw.filter(function (s) { return s.date; });
       SORTX = {}; ((res[3] && res[3].items) || []).forEach(function (x) { if (x && x.id) SORTX[x.id] = x; });
       var vn = (res[4] && res[4].items) || [];
-      NEWS = vn.filter(function (x) { return x && x.enLigne && (x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.date || x.cree, titre: x.titre, cat: x.cat, label: x.label, i: x }; });
+      NEWS = vn.filter(function (x) { return x && x.enLigne && (x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.date || x.cree, titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || "", i: x }; });
       NEWSCOL = (res[4] && res[4].cols) || {};
       if (window.FGPost && res[4] && res[4].cats) FGPost.setCats(res[4].cats);
       renderView();
