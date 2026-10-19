@@ -10,8 +10,8 @@
     '.fgb{width:1600px;height:860px;position:relative;overflow:hidden;background:#0c0c0e;color:#F2EFE9;font-family:"FGInter",sans-serif;line-height:normal;letter-spacing:normal;text-align:left}',
     '.fgb .fan{position:absolute;left:0;top:0;width:100%;height:100%}',
     '.fgb .fan img{position:absolute;border:4px solid #fff;border-radius:9px;object-fit:cover;box-shadow:0 26px 54px rgba(0,0,0,.72);background:#222;transform-origin:50% 92%}',
-    '.fgb .div{position:absolute;left:52%;top:112px;bottom:112px;width:3px;background:#BC002D;z-index:2;border-radius:2px}',
-    '.fgb .block{position:absolute;right:60px;top:50%;transform:translateY(-50%);z-index:3;text-align:right}',
+    '.fgb .div{position:absolute;left:52%;top:26px;bottom:300px;width:3px;background:#BC002D;z-index:2;border-radius:2px}',
+    '.fgb .block{position:absolute;right:60px;top:76px;z-index:3;text-align:right}',
     '.fgb .eyebrow{font:800 30px "FGAntonio",sans-serif;letter-spacing:.11em;text-transform:uppercase;color:#FF2E43}',
     '.fgb .big{font-family:"FGAntonio",sans-serif;font-weight:700;letter-spacing:.01em;color:#F2B33D;line-height:.82;white-space:nowrap}',
     '.fgb .big .u{color:#BC002D;vertical-align:top}',
@@ -42,7 +42,7 @@
   // Éventail à gauche : le hero au centre (devant, plus grand), les autres tomes répartis symétriquement
   // autour (slots entiers ±1, ±2… jamais 0, pour qu'aucun ne soit caché), puis remis dans l'ordre des tomes.
   function fanHTML(imgs, heroIdx) {
-    var cx = 440, cy = 440, heroW = 348, otherW = 260, HH = Math.round(heroW * 1.5), OH = Math.round(otherW * 1.5), step = 132;
+    var cx = 440, cy = 312, heroW = 348, otherW = 260, HH = Math.round(heroW * 1.5), OH = Math.round(otherW * 1.5), step = 132;
     var others = [], hero = null;
     imgs.forEach(function (src, i) { if (i === heroIdx) hero = src; else others.push(src); });
     var slots = []; for (var i = 1; slots.length < others.length; i++) { slots.push(-i); if (slots.length < others.length) slots.push(i); }
