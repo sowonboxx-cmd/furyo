@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Studio · Récap du mois · FuryoGang</title>
+<style>
+/* Studio « Récap du mois » (Will, 20/10/2026) : le carrousel Instagram des sorties du mois (France + Japon),
+   rempli tout seul avec le calendrier. Même mécanique que « Quoi de neuf » : cartes 1080×1440, thème Noir/Crème,
+   chaque image décochable, textes modifiables, puis téléchargement de toutes les images d'un coup. */
+@font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+:root{--ink:#232325;--ink-2:#000;--ink-3:#38383B;--paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;--red:#BC002D;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ink);color:var(--paper);font-family:"FGInter",system-ui,sans-serif;font-weight:500}
+.page{max-width:1240px;margin:0 auto;padding:20px 16px 60px}
+h1{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:44px;text-transform:uppercase;margin:0 0 4px}
+.sub{margin:0 0 16px;color:var(--paper-2);line-height:1.45}
+.pick{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+select,button,input{font:inherit;height:42px;border:0;border-radius:12px;background:var(--ink-3);color:var(--paper);padding:0 14px}
+label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--paper-2)}
+button{font-weight:700;cursor:pointer}
+button.main{background:var(--red)}
+button:disabled{opacity:.5;cursor:default}
+.seg{display:inline-flex;background:var(--ink-3);border-radius:12px;padding:4px;height:42px}
+.seg button{height:34px;border-radius:9px;background:none;padding:0 16px;font-size:13px}
+.seg button[aria-pressed=true]{background:var(--red)}
+#msg{font-size:13px;color:var(--paper-3)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px;align-items:start}
+.slot>h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.slot>h2 label{text-transform:none;letter-spacing:0}
+.slot.off .frame{opacity:.25}
+.frame{width:100%;aspect-ratio:3/4;position:relative;overflow:hidden;border-radius:10px;background:#000}
+.frame>.sc{position:absolute;left:0;top:0;transform-origin:0 0}
+[contenteditable]:hover{outline:3px dashed rgba(255,255,255,.35);outline-offset:4px}
+[contenteditable]:focus{outline:3px solid #fff;outline-offset:4px}
+
+/* ——— Les images (1080 × 1440) ——— */
+.qn{width:1080px;height:1440px;position:relative;overflow:hidden;background:var(--bg);color:var(--cr);font-family:"FGInter",sans-serif;line-height:normal;text-align:left}
+.qn[data-th="noir"]{--bg:#0c0c0e;--bg2:#17171a;--line:#2a2a2e;--cr:#F2EFE9;--mut:#9a968f;--red:#BC002D;--frame:#fff}
+.qn[data-th="creme"]{--bg:#F3EDE1;--bg2:#E9E1D2;--line:#d9cfbb;--cr:#1b1915;--mut:#857c6b;--red:#BC002D;--frame:#fff}
+.qn *{box-sizing:border-box;margin:0;padding:0}
+.qn .top{position:absolute;left:64px;right:64px;top:52px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+.qn .top img{height:52px}
+.qn .top.c{justify-content:center}
+.qn[data-th="creme"] .top img{filter:brightness(0)}
+.qn .top .r{font:600 26px/1 "FGAntonio";letter-spacing:.1em;color:var(--mut);text-transform:uppercase}
+.qn .top .r b{color:var(--cr);font-weight:700}
+.qn .bot{position:absolute;left:64px;right:64px;bottom:50px;display:flex;align-items:center;justify-content:space-between;font:600 24px "FGInter";color:var(--mut);z-index:5}
+.qn .bot .nav{min-width:200px}.qn .bot .nav.nx{text-align:right}
+.qn .bot .nav b{color:var(--cr);font-weight:700}
+.qn .dots{display:flex;gap:11px}
+.qn .dots i{width:14px;height:14px;border-radius:50%;background:var(--line);display:block}
+.qn .dots i.on{background:var(--red)}
+/* drapeaux dessinés (les emojis ne s'exportent pas en image) */
+.qn .flag{display:inline-flex;align-items:center;justify-content:center;width:56px;height:38px;border-radius:5px;overflow:hidden;flex:none;border:1px solid var(--line)}
+.qn .flag.jp{background:#fff}
+.qn .flag.jp i{width:19px;height:19px;border-radius:50%;background:#BC002D;display:block}
+.qn .flag.fr i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#0055A4 0 33.34%,#fff 33.34% 66.67%,#EF4135 66.67% 100%)}
+/* page pays */
+.qn .phead{position:absolute;left:64px;top:148px;right:64px;z-index:3;display:flex;align-items:center;justify-content:space-between}
+.qn .phead .chip{font:700 62px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.02em;display:inline-flex;align-items:center;gap:22px}
+.qn .phead .pg{font:600 27px "FGAntonio";letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.qn .gridc{position:absolute;left:64px;right:64px;top:280px;bottom:140px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:34px 30px}
+.qn .cell{min-width:0;display:flex;flex-direction:column}
+.qn .cell .covw{position:relative;flex:none}
+.qn .cov{width:100%;height:330px;object-fit:cover;border:5px solid var(--frame);border-radius:4px;box-shadow:0 14px 30px rgba(0,0,0,.45);background:#222;display:block}
+.qn .cell .nb{position:absolute;right:-7px;top:-7px;background:var(--red);color:#fff;font:700 29px/1 "FGAntonio";padding:8px 11px;border-radius:6px;letter-spacing:.02em}
+.qn .cell .t{font:700 32px/1.08 "FGAntonio";text-transform:uppercase;margin-top:15px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.qn .cell .s{font:500 21px "FGInter";color:var(--mut);margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* couverture */
+.qn .sun{position:absolute;left:50%;top:560px;width:760px;height:760px;margin-left:-380px;border-radius:50%;background:var(--red)}
+.qn .rhead{position:absolute;left:64px;right:64px;top:150px;text-align:center;z-index:4}
+.qn .rhead .k{font:700 27px "FGInter";letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
+.qn .rhead h2{font:700 150px/.92 "FGAntonio";text-transform:uppercase;letter-spacing:.005em;margin-top:14px}
+.qn .rhead h2 em{font-style:normal;color:var(--red)}
+.qn .fan{position:absolute;left:0;right:0;top:600px;height:560px;z-index:3}
+.qn .fan img{position:absolute;left:50%;top:40px;width:256px;height:384px;object-fit:cover;border:6px solid var(--frame);border-radius:4px;box-shadow:0 22px 50px rgba(0,0,0,.6);transform-origin:bottom center}
+.qn .tiles{position:absolute;left:64px;right:64px;bottom:150px;display:grid;grid-template-columns:1fr 1fr;gap:24px;z-index:4}
+.qn .tiles>div{background:var(--bg2);border:2px solid var(--line);border-radius:22px;padding:30px 34px}
+.qn .tiles .fl{display:flex;align-items:center;gap:18px}
+.qn .tiles b{font:700 92px/1 "FGAntonio"}
+.qn .tiles .cap{font:600 26px/1.25 "FGInter";color:var(--mut);margin-top:10px}
+/* final CTA */
+.qn .wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:10px;opacity:.22;filter:saturate(.9)}
+.qn .wall img{width:100%;height:100%;object-fit:cover}
+.qn[data-th="creme"] .wall{opacity:.3}
+.qn .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 55%,transparent),var(--bg) 70%)}
+.qn .panel{position:absolute;left:64px;right:64px;top:150px;bottom:140px;z-index:4;display:flex;flex-direction:column}
+.qn .panel h2{font:700 96px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.005em}
+.qn .steps{margin-top:46px;display:flex;flex-direction:column;gap:30px}
+.qn .steps .st{display:flex;gap:26px;align-items:flex-start}
+.qn .steps .n{width:60px;height:60px;border-radius:50%;background:var(--cr);color:var(--bg);font:700 34px/60px "FGAntonio";text-align:center;flex:none}
+.qn .steps p{font:500 34px/1.4 "FGInter";color:var(--cr)}
+.qn .steps p b{font-weight:700}
+.qn .prem{margin-top:auto;background:#BC002D;color:#fff;border-radius:22px;padding:34px 38px}
+.qn .prem b{font:700 36px "FGAntonio";letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:12px}
+.qn .prem p{font:500 30px/1.4 "FGInter"}
+.qn .cta{margin-top:30px;align-self:flex-start;background:var(--cr);color:var(--bg);font:700 38px "FGAntonio";letter-spacing:.04em;padding:20px 34px;border-radius:999px}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Récap du mois</h1>
+  <p class="sub">Le carrousel Instagram des sorties du mois (France + Japon), rempli tout seul avec le calendrier.
+    Choisis le mois et le thème, clique un texte pour le modifier, décoche une image pour la retirer, puis télécharge tout d'un coup.</p>
+  <div class="pick">
+    <button id="prev" aria-label="Mois précédent">←</button>
+    <input id="mois" type="month" aria-label="Mois">
+    <button id="next" aria-label="Mois suivant">→</button>
+    <span class="seg" role="group" aria-label="Thème"><button data-th="noir" aria-pressed="true">Noir</button><button data-th="creme" aria-pressed="false">Crème</button></span>
+    <button class="main" id="dl" disabled>Télécharger les images</button>
+    <span id="msg">Chargement…</span>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+(function () {
+  var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  var LOGO = "/img/logo-furyogang.png";
+  var PAR_PAGE = 6;
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var couv = function (u) { if (!u) return ""; if (/^\//.test(u)) return u; return "/api/couv?u=" + encodeURIComponent(u); };
+  var nn = function (n) { return n == null ? "" : "T." + String(n).padStart(2, "0"); };
+  var jm = function (j) { return j.slice(8, 10) + "/" + j.slice(5, 7); };
+  var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
+  var chunk = function (a, n) { var o = []; for (var i = 0; i < a.length; i += n) o.push(a.slice(i, i + n)); return o; };
+  var VIDE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+  var theme = "noir", D = null, slides = [], tour = 0;
+
+  // Mois par défaut : le mois précédent (le récap se poste au début du mois suivant).
+  var now = new Date();
+  var defM = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
+  $("#mois").value = defM.toISOString().slice(0, 7);
+
+  function charger() {
+    var m = $("#mois").value || defM.toISOString().slice(0, 7);
+    var moi = ++tour; $("#msg").textContent = "Chargement…"; $("#dl").disabled = true;
+    return get("/api/calendrier").then(function (p) {
+      if (moi !== tour) return;
+      var items = (p.items || []).filter(function (x) { return x.date && x.date.slice(0, 7) === m && x.cover; });
+      items.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+      D = { m: m, jp: items.filter(function (x) { return x.pays === "Japon"; }), fr: items.filter(function (x) { return x.pays === "France"; }) };
+      construire();
+    });
+  }
+
+  function nomMois(m) { return MOIS[Number(m.slice(5, 7)) - 1]; }
+  function moisAn(m) { return nomMois(m).charAt(0).toUpperCase() + nomMois(m).slice(1) + " " + m.slice(0, 4); }
+
+  // ——— Gabarits ———
+  function cellule(x, fr) {
+    var titre = fr ? (x.fr || x.series) : x.series;
+    return '<div class="cell" data-cell><div class="covw"><img class="cov" src="' + couv(x.cover) + '">' + (x.n != null ? '<div class="nb">' + nn(x.n) + "</div>" : "") + "</div>" +
+      '<div class="t" contenteditable>' + esc(titre) + '</div><div class="s" contenteditable>' + esc([jm(x.date), x.pub].filter(Boolean).join(" · ")) + "</div></div>";
+  }
+  function pagePays(list, fr, nomPays, cls, pageIdx, nbPages) {
+    var cells = list.map(function (x) { return cellule(x, fr); }).join("");
+    return '<div class="qn" data-th="' + theme + '">' +
+      '<div class="top"><img src="' + LOGO + '" alt=""><div class="r"><b>' + esc(moisAn(D.m)) + "</b></div></div>" +
+      '<div class="phead"><div class="chip"><span class="flag ' + cls + '"><i></i></span><span contenteditable>' + nomPays + '</span></div><div class="pg">' + (pageIdx + 1) + "/" + nbPages + "</div></div>" +
+      '<div class="gridc">' + cells + "</div>" +
+      '<div class="bot"><span class="nav" data-prev></span><span class="dots" data-dots></span><span class="nav nx" data-next></span></div></div>';
+  }
+
+  function construire() {
+    var out = [];
+    var jp = D.jp, fr = D.fr, tout = jp.concat(fr);
+
+    // 1 · Couverture
+    var fan = tout.slice(0, 7), nf = fan.length;
+    var fanHtml = fan.map(function (x, i) { var k = i - (nf - 1) / 2; return '<img src="' + couv(x.cover) + '" style="margin-left:-128px;transform:translateX(' + (k * 118) + 'px) rotate(' + (k * 7) + 'deg);z-index:' + (20 - Math.abs(Math.round(k))) + '">'; }).join("");
+    var cover = '<div class="qn" data-th="' + theme + '">' +
+      '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
+      '<div class="rhead"><div class="k" contenteditable>Le récap du mois</div><h2 contenteditable>Sorties de<br><em>' + esc(nomMois(D.m)) + '</em></h2></div>' +
+      '<div class="fan">' + fanHtml + "</div>" +
+      '<div class="tiles"><div><div class="fl"><span class="flag jp"><i></i></span><b>' + jp.length + '</b></div><div class="cap" contenteditable>sortie' + (jp.length > 1 ? "s" : "") + ' au Japon</div></div>' +
+      '<div><div class="fl"><span class="flag fr"><i></i></span><b>' + fr.length + '</b></div><div class="cap" contenteditable>en France, à ne pas rater</div></div></div>' +
+      '<div class="bot"><span class="nav">furyogang.com</span><span class="dots" data-dots></span><span class="nav nx" data-next></span></div></div>';
+    out.push({ k: "couv", nom: "Couverture", html: cover });
+
+    // 2 · Japon (pages de 6)
+    var jpP = chunk(jp, PAR_PAGE);
+    jpP.forEach(function (page, i) { out.push({ k: "jp" + i, nom: "Japon " + (i + 1) + "/" + jpP.length, html: pagePays(page, false, "Japon", "jp", i, jpP.length) }); });
+    // 3 · France (pages de 6)
+    var frP = chunk(fr, PAR_PAGE);
+    frP.forEach(function (page, i) { out.push({ k: "fr" + i, nom: "France " + (i + 1) + "/" + frP.length, html: pagePays(page, true, "France", "fr", i, frP.length) }); });
+
+    // 4 · Fin — Ajoutez-les à votre collection
+    var wall = tout.concat(tout).slice(0, 20).map(function (x) { return '<img src="' + couv(x.cover) + '">'; }).join("");
+    var fin = '<div class="qn" data-th="' + theme + '">' +
+      '<div class="wall">' + wall + '</div><div class="shade"></div>' +
+      '<div class="top"><img src="' + LOGO + '" alt=""><div class="r">' + esc(moisAn(D.m)) + "</div></div>" +
+      '<div class="panel"><h2 contenteditable>Ajoutez-les à<br>votre collection</h2>' +
+      '<div class="steps"><div class="st"><div class="n">1</div><p contenteditable>Coche tes tomes sur <b>furyogang.com/ma-collection</b></p></div>' +
+      '<div class="st"><div class="n">2</div><p contenteditable>Chaque tome ajouté te rapporte des <b>points</b> et te fait monter au classement du gang</p></div></div>' +
+      '<div class="prem"><b>Tirage Premium</b><p contenteditable>Chaque mois, un membre Premium est tiré au sort et gagne un tome sorti en France.</p></div>' +
+      '<div class="cta">furyogang.com/ma-collection</div></div>' +
+      '<div class="bot"><span class="nav" data-prev></span><span class="dots" data-dots></span><span class="nav nx">@FuryoGang</span></div></div>';
+    out.push({ k: "fin", nom: "Fin · Collection", html: fin });
+
+    slides = out; afficher();
+  }
+
+  function afficher() {
+    var g = $("#grid"); g.innerHTML = "";
+    if (!slides.length) { $("#msg").textContent = "Aucune sortie avec couverture pour " + moisAn(D.m) + "."; $("#dl").disabled = true; return; }
+    slides.forEach(function (s) {
+      var el = document.createElement("div"); el.className = "slot";
+      el.innerHTML = '<h2><span>' + esc(s.nom) + '</span><label><input type="checkbox" checked style="width:auto;height:auto"> Garder</label></h2><div class="frame"><div class="sc">' + s.html + "</div></div>";
+      el.querySelector("input").onchange = function (e) { s.off = !e.target.checked; el.classList.toggle("off", s.off); numeroter(); };
+      g.appendChild(el); s.el = el;
+    });
+    var echelle = function () { slides.forEach(function (s) { var f = s.el.querySelector(".frame"); s.el.querySelector(".sc").style.transform = "scale(" + f.clientWidth / 1080 + ")"; }); };
+    g.querySelectorAll(".qn img").forEach(function (im) { im.addEventListener("error", function () { var c = im.closest("[data-cell]"); if (c) c.remove(); else { im.src = VIDE; im.style.visibility = "hidden"; } }); });
+    echelle(); window.onresize = echelle; numeroter();
+    $("#msg").textContent = slides.length + " images · " + moisAn(D.m) + " (" + D.jp.length + " au Japon, " + D.fr.length + " en France)";
+    $("#dl").disabled = false;
+  }
+  function numeroter() {
+    var on = slides.filter(function (s) { return !s.off; }), n = on.length;
+    var dots = function () { var h = ""; for (var i = 0; i < n; i++) h += '<i class="' + "" + '"></i>'; return h; };
+    on.forEach(function (s, i) {
+      var d = s.el.querySelector("[data-dots]"); if (d) { d.innerHTML = Array.from({ length: n }, function (_, j) { return '<i' + (j === i ? ' class="on"' : "") + "></i>"; }).join(""); }
+      var p = s.el.querySelector("[data-prev]"); if (p) p.innerHTML = i > 0 ? "‹ Précédent" : "";
+      var nx = s.el.querySelector("[data-next]"); if (nx && !nx.textContent.trim()) nx.innerHTML = i < n - 1 ? "Suivant ›" : "";
+    });
+  }
+
+  // ——— Export (identique au studio hebdo) ———
+  var cache = {};
+  function dataUrl(url) {
+    if (!cache[url]) cache[url] = fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(function (b) {
+      return new Promise(function (ok) { var f = new FileReader(); f.onload = function () { ok(f.result); }; f.readAsDataURL(b); }); });
+    return cache[url];
+  }
+  var polices = null;
+  function fontCSS() {
+    if (polices) return polices;
+    polices = Promise.all([dataUrl("/fonts/Antonio.ttf"), dataUrl("/fonts/Inter.ttf")]).then(function (u) {
+      var css = '@font-face{font-family:"FGAntonio";src:url(' + u[0] + ') format("truetype");font-weight:100 700}\n@font-face{font-family:"FGInter";src:url(' + u[1] + ') format("truetype");font-weight:100 900}\n';
+      var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st); return css; });
+    return polices;
+  }
+  fontCSS();
+  function jpeg(node, fcss, bg) {
+    return Promise.all([].map.call(node.querySelectorAll("img"), function (im) {
+      if (/^data:/.test(im.src)) return null;
+      return dataUrl(im.getAttribute("src")).then(function (u) { im.src = u; return new Promise(function (ok) { if (im.complete) ok(); else im.onload = im.onerror = ok; }); }).catch(function () { im.src = VIDE; im.style.visibility = "hidden"; });
+    })).then(function () {
+      var opts = { width: 1080, height: 1440, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, backgroundColor: bg, imagePlaceholder: VIDE, filter: function () { return true; } };
+      var essai = function (k, prev) { return htmlToImage.toJpeg(node, opts).then(function (u) {
+        if (k >= 4 || (prev && Math.abs(u.length - prev.length) < 300 && k >= 2)) return u;
+        return new Promise(function (ok) { setTimeout(ok, 150); }).then(function () { return essai(k + 1, u); }); }); };
+      return essai(1, null);
+    });
+  }
+  $("#dl").onclick = function () {
+    var on = slides.filter(function (s) { return !s.off; }); if (!on.length) return;
+    var b = $("#dl"); b.disabled = true; $("#msg").textContent = "Préparation des images…";
+    document.activeElement && document.activeElement.blur && document.activeElement.blur();
+    var bg = theme === "creme" ? "#F3EDE1" : "#0c0c0e";
+    var files = [], nom = "sorties-" + D.m + "-" + theme + "-";
+    fontCSS().then(function (fcss) {
+      return on.reduce(function (p, s, i) { return p.then(function () {
+        $("#msg").textContent = "Image " + (i + 1) + " / " + on.length + "…";
+        return jpeg(s.el.querySelector(".qn"), fcss, bg).then(function (u) { return fetch(u).then(function (r) { return r.blob(); }); })
+          .then(function (bl) { files.push(new File([bl], nom + String(i + 1).padStart(2, "0") + ".jpg", { type: "image/jpeg" })); });
+      }); }, Promise.resolve());
+    }).then(function () {
+      if (navigator.canShare && navigator.canShare({ files: files }) && /iPhone|iPad|Android/i.test(navigator.userAgent)) {
+        $("#msg").innerHTML = ""; var go = document.createElement("button"); go.className = "main"; go.textContent = "Enregistrer les " + files.length + " images";
+        go.onclick = function () { navigator.share({ files: files }).catch(function () {}); }; $("#msg").appendChild(go); return;
+      }
+      files.forEach(function (f, i) { setTimeout(function () { var a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); }, i * 400); });
+      $("#msg").textContent = files.length + " images téléchargées.";
+    }).catch(function (e) { $("#msg").textContent = "Échec : " + (e && e.message || "une image n'a pas pu être chargée"); }).finally(function () { b.disabled = false; });
+  };
+  document.querySelectorAll(".seg button").forEach(function (bt) { bt.onclick = function () {
+    theme = bt.dataset.th; document.querySelectorAll(".seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === bt); });
+    if (D) construire();
+  }; });
+  $("#mois").onchange = charger;
+  $("#prev").onclick = function () { var d = new Date($("#mois").value + "-01T12:00:00Z"); d.setUTCMonth(d.getUTCMonth() - 1); $("#mois").value = d.toISOString().slice(0, 7); charger(); };
+  $("#next").onclick = function () { var d = new Date($("#mois").value + "-01T12:00:00Z"); d.setUTCMonth(d.getUTCMonth() + 1); $("#mois").value = d.toISOString().slice(0, 7); charger(); };
+  charger();
+})();
+</script>
+</body>
+</html>

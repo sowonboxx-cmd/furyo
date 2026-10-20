@@ -395,6 +395,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <div class="tiles">
       <a class="tile" href="/admin/"><h2>Back-office</h2><p>Actualités et veille, prochaines sorties, couvertures, base mangas, statistiques.</p></a>
       <a class="tile" href="/studio/semaine/"><h2>Quoi de neuf dans le gang</h2><p>Le carrousel Instagram de fin de semaine, rempli tout seul.</p></a>
+      <a class="tile" href="/studio/mois/"><h2>Récap du mois · Sorties</h2><p>Le carrousel des sorties du mois (France + Japon), noir ou crème, rempli tout seul.</p></a>
       <a class="tile" href="/premium/"><h2>Page Premium</h2><p>Non référencée, accessible par lien seulement.</p></a>
     </div>
   </section>
@@ -1283,7 +1284,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     { nm: "Membre le plus actif — commentaires", ds: "Celui qui a le plus commenté cette semaine.", freq: "Hebdo", cat: "Membres" },
     { nm: "Le plus de badges — semaine", ds: "Le membre qui a gagné le plus de badges cette semaine.", freq: "Hebdo", cat: "Membres" },
     { nm: "Nouveaux membres", ds: "Bienvenue aux nouveaux arrivés dans le gang.", freq: "Au fil de l'eau", cat: "Membres" },
-    { nm: "Membres qui ont donné", ds: "Remercier ceux qui ont soutenu / donné.", freq: "Au fil de l'eau", cat: "Membres" }
+    { nm: "Membres qui ont donné", ds: "Remercier ceux qui ont soutenu / donné.", freq: "Au fil de l'eau", cat: "Membres" },
+    { nm: "Rejoins le gang — avantages", ds: "Chaque mois, inciter à s'inscrire en montrant les avantages : au début, gagner un tome ; plus tard, les membres Premium gagnent des figurines.", freq: "Mensuel", cat: "Communauté" }
   ];
   function uid() { return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   function load() { try { var v = JSON.parse(localStorage.getItem(K)); if (Array.isArray(v) && v.length) return v; } catch (e) {} return DEF.map(function (d) { return { id: uid(), nm: d.nm, ds: d.ds, freq: d.freq, cat: d.cat }; }); }
