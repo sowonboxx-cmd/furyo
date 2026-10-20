@@ -218,6 +218,8 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
   /* ---------- Recherche instantanée ---------- */
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var norm = function (s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9぀-ヿ㐀-鿿]+/g, " ").trim(); };
+  // Voyelles longues : « ou / oo / ō / ô » et toute voyelle doublée ≡ une seule voyelle, pour que « tou », « too », « tōsenbō » et « tosenbo » tombent sur la même fiche (Will, 20/10/2026).
+  var lv = function (s) { return String(s || "").replace(/ou/g, "o").replace(/([aeiou])\1+/g, "$1"); };
   var tn = function (n) { return (Number.isInteger(n) && n >= 0 && n < 10) ? "0" + n : String(n); };
   var MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
   var dc = function (s) { if (!s) return ""; var d = new Date(s + "T12:00:00"); return d.getDate() + " " + MC[d.getMonth()] + " " + d.getFullYear(); };
@@ -262,12 +264,12 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
   }
   // Score : début du titre > début d'un mot du titre > dans le titre > autres champs (japonais, éditeur…).
   function score(item, q) {
-    var t = norm(item.t), o = norm(item.alt);
-    if (t.indexOf(q) === 0) return 100 - t.length / 100;
-    if ((" " + t).indexOf(" " + q) >= 0) return 80 - t.length / 100;
-    if (t.indexOf(q) >= 0) return 60;
-    if ((" " + o).indexOf(" " + q) >= 0) return 40;
-    if (o.indexOf(q) >= 0) return 20;
+    var t = lv(norm(item.t)), o = lv(norm(item.alt)), Q = lv(q);
+    if (t.indexOf(Q) === 0) return 100 - t.length / 100;
+    if ((" " + t).indexOf(" " + Q) >= 0) return 80 - t.length / 100;
+    if (t.indexOf(Q) >= 0) return 60;
+    if ((" " + o).indexOf(" " + Q) >= 0) return 40;
+    if (o.indexOf(Q) >= 0) return 20;
     return 0;
   }
   function find(list, q, max) {
