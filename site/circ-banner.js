@@ -7,7 +7,7 @@
 (function () {
   var SIZE = [1600, 860];
   var CSS = [
-    '.fgb{width:1600px;height:860px;position:relative;overflow:hidden;background:#0c0c0e;color:#F2EFE9;font-family:"FGInter",sans-serif;line-height:normal;letter-spacing:normal;text-align:left}',
+    '.fgb{width:1600px;height:860px;position:relative;overflow:hidden;background:#000;color:#F2EFE9;font-family:"FGInter",sans-serif;line-height:normal;letter-spacing:normal;text-align:left}',
     '.fgb .fan{position:absolute;left:0;top:0;width:100%;height:100%}',
     '.fgb .fan img{position:absolute;border:4px solid #fff;border-radius:9px;object-fit:cover;box-shadow:0 26px 54px rgba(0,0,0,.72);background:#222;transform-origin:50% 92%}',
     '.fgb .div{position:absolute;left:52%;top:26px;bottom:300px;width:3px;background:#BC002D;z-index:2;border-radius:2px}',

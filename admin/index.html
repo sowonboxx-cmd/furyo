@@ -1044,8 +1044,8 @@ function chiffreCirc(i){
 let CIRC_LIB, VCIRCT;
 function unScript(src){ return new Promise((ok, ko) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
 function circLib(){ if (window.FG_CIRC && window.FG_CIRC_BANNER) return Promise.resolve(); if (!CIRC_LIB) CIRC_LIB = Promise.all([
-  window.FG_CIRC ? Promise.resolve() : unScript("/site/circ-card.js?v=1"),
-  window.FG_CIRC_BANNER ? Promise.resolve() : unScript("/site/circ-banner.js?v=1"),
+  window.FG_CIRC ? Promise.resolve() : unScript("/site/circ-card.js?v=2"),
+  window.FG_CIRC_BANNER ? Promise.resolve() : unScript("/site/circ-banner.js?v=2"),
 ]); return CIRC_LIB; }
 async function vCircInit(m, i){
   const prev = m.querySelector("#vcircprev"), bprev = m.querySelector("#vcircbprev");

@@ -13,7 +13,7 @@
 (function () {
   var SIZE = [1080, 1350];
   var CSS = [
-    '.fgc{width:1080px;height:1350px;position:relative;overflow:hidden;background:#0c0c0e;color:#F2EFE9;font-family:"FGInter",sans-serif;line-height:normal;letter-spacing:normal;text-align:left}',
+    '.fgc{width:1080px;height:1350px;position:relative;overflow:hidden;background:#000;color:#F2EFE9;font-family:"FGInter",sans-serif;line-height:normal;letter-spacing:normal;text-align:left}',
     '.fgc .logo{position:absolute;left:50%;top:82px;transform:translateX(-50%);height:88px}',
     '.fgc .fan{position:absolute;left:0;right:0;top:238px;height:470px}',
     '.fgc .fan img{position:absolute;left:50%;bottom:0;border:4px solid #fff;border-radius:7px;object-fit:cover;box-shadow:0 20px 46px rgba(0,0,0,.66);background:#222;transform-origin:50% 95%}',
@@ -21,7 +21,7 @@
     '.fgc .eyebrow{font:800 36px "FGAntonio",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#FF2E43}',
     '.fgc .big{font:700 196px/.82 "FGAntonio",sans-serif;letter-spacing:.01em;color:#F2B33D;margin-top:14px;white-space:nowrap}',
     '.fgc .big .u{font-size:88px;color:#BC002D;vertical-align:top}',
-    '.fgc .lab{font:700 64px/1 "FGAntonio",sans-serif;text-transform:uppercase;letter-spacing:.015em;color:#F2EFE9;margin-top:4px;position:relative;z-index:3;text-shadow:0 2px 10px #0c0c0e,0 0 22px #0c0c0e,0 0 22px #0c0c0e}',
+    '.fgc .lab{font:700 64px/1 "FGAntonio",sans-serif;text-transform:uppercase;letter-spacing:.015em;color:#F2EFE9;margin-top:4px;position:relative;z-index:3;text-shadow:0 2px 10px #000,0 0 22px #000,0 0 22px #000}',
     '.fgc .jp{font:700 46px "FGAntonio",sans-serif;text-transform:uppercase;letter-spacing:.04em;color:#F2EFE9;margin-top:16px}'
   ].join("\n");
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
