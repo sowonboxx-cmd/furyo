@@ -62,7 +62,8 @@ button:disabled{opacity:.5;cursor:default}
 .qn .phead{position:absolute;left:64px;top:150px;right:64px;z-index:3;display:flex;align-items:center;justify-content:space-between}
 .qn .phead .chip{font:700 62px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.02em;display:inline-flex;align-items:center;gap:22px}
 .qn .phead .pg{font:600 27px "FGAntonio";letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
-.qn .sep{position:absolute;left:64px;right:64px;top:238px;height:2px;background:var(--line);z-index:3}
+.qn .sep{position:absolute;left:64px;right:64px;top:238px;height:4px;background:#54545e;border-radius:2px;z-index:3}
+.qn[data-th="creme"] .sep{background:#c3b8a2}
 .qn .gridc{position:absolute;left:64px;right:64px;top:266px;bottom:118px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px 30px;align-content:start}
 .qn .cell{min-width:0;display:flex;flex-direction:column}
 .qn .cell .covw{position:relative;flex:none}
@@ -77,12 +78,12 @@ button:disabled{opacity:.5;cursor:default}
 .qn .rhead .k{font:700 27px "FGInter";letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
 .qn .rhead h2{font:700 110px/.92 "FGAntonio";text-transform:uppercase;letter-spacing:.005em;margin-top:14px}
 .qn .rhead h2 em{font-style:normal;color:var(--red);font-size:168px;display:inline-block;line-height:.88;margin-top:4px}
-.qn .fan{position:absolute;left:0;right:0;top:480px;height:470px;z-index:3}
-.qn .fan img{position:absolute;left:50%;top:40px;width:256px;height:384px;object-fit:cover;border:6px solid var(--frame);border-radius:4px;box-shadow:0 22px 50px rgba(0,0,0,.6);transform-origin:bottom center}
-.qn .tiles{position:absolute;left:64px;right:64px;bottom:118px;display:grid;grid-template-columns:1fr 1fr;gap:26px;z-index:4}
-.qn .tiles>div{background:var(--bg2);border:2px solid var(--line);border-radius:24px;padding:26px 32px}
+.qn .fan{position:absolute;left:0;right:0;top:470px;height:480px;z-index:3}
+.qn .fan img{position:absolute;left:50%;top:40px;width:296px;height:444px;object-fit:cover;border:6px solid var(--frame);border-radius:4px;box-shadow:0 22px 50px rgba(0,0,0,.6);transform-origin:bottom center}
+.qn .tiles{position:absolute;left:64px;right:64px;bottom:110px;display:grid;grid-template-columns:1fr 1fr;gap:26px;z-index:4}
+.qn .tiles>div{background:var(--bg2);border:2px solid var(--line);border-radius:24px;padding:24px 32px}
 .qn .tiles .flag{width:58px;height:40px}
-.qn .tiles b{display:block;font:700 158px/.84 "FGAntonio";margin:16px 0 4px}
+.qn .tiles b{display:block;font:700 150px/1 "FGAntonio";margin:12px 0 6px}
 .qn .tiles .cap{font:600 27px/1.2 "FGInter";color:var(--mut)}
 /* final CTA */
 /* Fond mur de couvertures bien visible + carte sombre arrondie par-dessus (version d'origine préférée par Will, 20/10/2026). */
@@ -101,7 +102,8 @@ button:disabled{opacity:.5;cursor:default}
 .qn .prem{margin-top:auto;background:#BC002D;color:#fff;border-radius:22px;padding:34px 38px}
 .qn .prem b{font:700 36px "FGAntonio";letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:12px}
 .qn .prem p{font:500 30px/1.4 "FGInter"}
-.qn .cta{margin-top:30px;align-self:flex-start;background:var(--cr);color:var(--bg);font:700 38px "FGAntonio";letter-spacing:.04em;padding:20px 34px;border-radius:999px}
+/* Bouton ma-collection : pleine largeur, centré, police texte FGInter (comme le screenshot de Will, 20/10/2026). */
+.qn .cta{margin-top:32px;width:100%;text-align:center;background:var(--cr);color:var(--bg);font:800 37px "FGInter",system-ui,sans-serif;letter-spacing:.005em;padding:24px 20px;border-radius:999px}
 </style>
 </head>
 <body>
@@ -189,7 +191,7 @@ button:disabled{opacity:.5;cursor:default}
     var others = tout.filter(function (x) { return x !== featured; }).slice(0, 8);
     var arr = others.slice(); if (featured) arr.splice(Math.floor(arr.length / 2), 0, featured);
     var nf = arr.length;
-    var fanHtml = arr.map(function (x, i) { var k = i - (nf - 1) / 2; var z = (x === featured) ? 99 : 20 - Math.abs(Math.round(k)); return '<img src="' + couv(x.cover) + '" style="margin-left:-128px;transform:translateX(' + (k * 118) + 'px) rotate(' + (k * 7) + 'deg);z-index:' + z + '">'; }).join("");
+    var fanHtml = arr.map(function (x, i) { var k = i - (nf - 1) / 2; var z = (x === featured) ? 99 : 20 - Math.abs(Math.round(k)); return '<img src="' + couv(x.cover) + '" style="margin-left:-148px;transform:translateX(' + (k * 132) + 'px) rotate(' + (k * 7) + 'deg);z-index:' + z + '">'; }).join("");
     var cover = '<div class="qn" data-th="' + theme + '">' +
       '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
       '<div class="rhead"><div class="k" contenteditable>Le récap du mois</div><h2 contenteditable>Sorties de<br><em>' + esc(nomMois(D.m)) + '</em></h2></div>' +
