@@ -5,17 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sorties de septembre 2026 — Le récap du mois · FuryoGang</title>
 <meta name="description" content="Toutes les sorties manga de septembre 2026, France et Japon : furyō, yakuza, combat, crime… Coche-les dans ta collection FuryoGang.">
-<!-- Méta de partage (draft) : à générer dynamiquement (image 16:9) côté serveur ensuite. -->
+<!-- Méta de partage : visuel du studio récap (3:4, vraies sorties du mois). -->
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="FuryoGang">
 <meta property="og:title" content="Sorties de septembre 2026 — Le récap du mois">
 <meta property="og:description" content="19 sorties au Japon, 9 en France. Tout le récap du mois + ta collection sur FuryoGang.">
 <meta property="og:url" content="https://furyogang.com/recap/2026-09/">
-<meta property="og:image" content="https://furyogang.com/img/og/recap-2026-09.jpg">
+<meta property="og:image" content="https://furyogang.com/img/og/recap-2026-09.jpg?v=2">
+<meta property="og:image:width" content="1080">
+<meta property="og:image:height" content="1440">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sorties de septembre 2026 — FuryoGang">
 <meta name="twitter:description" content="19 au Japon, 9 en France. Le récap complet + ta collection sur furyogang.com.">
-<meta name="twitter:image" content="https://furyogang.com/img/og/recap-2026-09.jpg">
+<meta name="twitter:image" content="https://furyogang.com/img/og/recap-2026-09.jpg?v=2">
 <style>
 @font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
 @font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
@@ -146,9 +148,10 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px}
   var m = (location.pathname.match(/(\d{4})-(\d{2})/) || [,"2026","09"]).slice(1).join("-");
   document.title = "Sorties de " + MOIS[+m.slice(5, 7) - 1] + " " + m.slice(0, 4) + " — Le récap du mois · FuryoGang";
 
-  // ⬇️ Couverture à mettre EN AVANT dans le hero : mets l'ISBN (ou l'id) du tome.
-  //    Laisse vide → première sortie France du mois par défaut.
-  var FEATURED = "";
+  // ⬇️ Couverture EN AVANT dans le hero. Priorité : ?feat=<ISBN> dans l'URL
+  //    (réglable depuis le champ « Lien » du back-office), sinon la valeur ci-dessous,
+  //    sinon la première sortie France du mois.
+  var FEATURED = (new URLSearchParams(location.search).get("feat") || "9782505144342").trim();
 
   var ALL = [];           // ordre d'affichage : France puis Japon (sert au lightbox)
   function pays(x) { return x.pays === "France" ? "fr" : "jp"; }
