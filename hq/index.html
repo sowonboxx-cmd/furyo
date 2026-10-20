@@ -170,17 +170,20 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .calhdr{display:flex;align-items:center;gap:14px;margin-bottom:14px}
 .calhdr h1{margin:0}
 .calhdr .btn{font:700 12.5px "FGInter"}
-.calbar{display:flex;align-items:center;justify-content:flex-start;gap:18px;margin-bottom:12px;flex-wrap:wrap}
-.calbar h2{font:700 24px "FGAntonio";text-transform:uppercase;margin:0;white-space:nowrap}
+.calbar{--calh:54px;display:flex;align-items:center;justify-content:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap}
 .calbar-r{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.calbar-r .nav{margin-left:8px}
-.calbar .today{border:0;background:var(--s2);color:var(--cr);border-radius:11px;padding:0 15px;height:40px;font:700 13px "FGInter";cursor:pointer}
-.calbar .nav{display:flex;align-items:center;gap:8px;color:var(--mut);font:600 13px "FGInter"}
-.calbar .nav button{width:34px;height:34px;border:0;background:var(--s2);border-radius:11px;color:var(--cr);cursor:pointer;font-size:16px}
-.calbar .nav .today{width:auto;padding:0 14px;font:700 12px "FGInter"}
-.calbar .addb{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:11px 18px;font:700 14px "FGInter";cursor:pointer}
-.dtabs{display:flex;gap:4px;background:var(--s1);border-radius:13px;padding:5px;width:max-content}
-.dtabs button{border:0;background:none;color:var(--mut);font:700 14px "FGInter";padding:11px 22px;border-radius:11px;cursor:pointer}
+/* Carte date : « Cette semaine » + la plage + les flèches réunis dans un même bloc, tout à la même hauteur que les contrôles (Will, 20/10/2026). */
+.datecard{height:var(--calh);display:inline-flex;align-items:center;gap:14px;background:var(--s1);border-radius:14px;padding:0 8px 0 18px}
+.datecard .txt{display:flex;flex-direction:column;line-height:1;min-width:0}
+.datecard .k{font:700 11px "FGInter";letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:5px;white-space:nowrap}
+.datecard .v{font:700 19px "FGAntonio";text-transform:uppercase;color:var(--cr);white-space:nowrap}
+.datecard .ars{display:flex;gap:4px;flex:none}
+.datecard .ar{width:38px;height:38px;border:0;background:var(--s2);color:var(--cr);border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center}
+.datecard .ar:hover{background:#26262c}
+.calbar .today{height:var(--calh);border:0;background:var(--s2);color:var(--cr);border-radius:14px;padding:0 20px;font:700 14px "FGInter";cursor:pointer}
+.calbar .addb{height:var(--calh);border:0;background:var(--blue);color:#fff;border-radius:14px;padding:0 22px;font:700 14px "FGInter";cursor:pointer}
+.dtabs{height:var(--calh);display:inline-flex;align-items:center;gap:4px;background:var(--s1);border-radius:14px;padding:0 5px;width:max-content}
+.dtabs button{height:calc(var(--calh) - 10px);border:0;background:none;color:var(--mut);font:700 14px "FGInter";padding:0 22px;border-radius:10px;cursor:pointer}
 .dtabs button[aria-pressed=true]{background:var(--blue);color:#fff}
 .projrow{display:none}
 .projrow .pj{display:inline-flex;align-items:center;gap:8px;font:600 12.5px "FGInter";color:#cdcdd3}
@@ -380,10 +383,12 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <div class="calhdr"><h1>Calendrier éditorial</h1><a class="btn" href="#vivre">Contenu</a></div>
     <div class="projrow" id="projrow"></div>
     <div class="calbar">
-      <h2 id="caltitre">…</h2>
+      <div class="datecard">
+        <div class="txt"><span class="k" id="caltitre">…</span><span class="v" id="calrange"></span></div>
+        <div class="ars"><button class="ar" id="calprev" aria-label="Précédent">‹</button><button class="ar" id="calnext" aria-label="Suivant">›</button></div>
+      </div>
       <div class="calbar-r">
         <div class="dtabs" id="dtabs"></div>
-        <div class="nav"><button id="calprev" aria-label="Précédent">‹</button><span id="calrange"></span><button id="calnext" aria-label="Suivant">›</button></div>
         <button class="today" id="caltoday">Aujourd'hui</button>
         <button class="addb" id="caladd">+ Ajouter</button>
       </div>
