@@ -182,14 +182,14 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .dtabs{display:flex;gap:4px;background:var(--s1);border-radius:13px;padding:5px;width:max-content}
 .dtabs button{border:0;background:none;color:var(--mut);font:700 14px "FGInter";padding:11px 22px;border-radius:11px;cursor:pointer}
 .dtabs button[aria-pressed=true]{background:var(--blue);color:#fff}
-.projrow{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.projrow{display:none}
 .projrow .pj{display:inline-flex;align-items:center;gap:8px;font:600 12.5px "FGInter";color:#cdcdd3}
 .projrow .pj i{width:11px;height:11px;border-radius:50%}
 .projadd{font:700 12px "FGInter";color:var(--mut);background:var(--s2);border:0;border-radius:999px;padding:8px 14px;cursor:pointer}
 .calpan{background:var(--s1);border-radius:22px;padding:18px}
-.mhead{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:8px}
+.mhead{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-bottom:8px}
 .mhead div{font:700 13px "FGAntonio";letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:0 4px}
-.mgrid{display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:150px;gap:10px}
+.mgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:150px;gap:10px}
 .cell{background:#2b2b31;border-radius:14px;padding:9px 9px 6px;display:flex;flex-direction:column;gap:5px;overflow:hidden;min-width:0;position:relative}
 .cell.off{opacity:.4;background:#242429}
 .cell .dnum{font:700 14px "FGAntonio";color:var(--mut);padding:1px 2px}
@@ -211,7 +211,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .chip-ev .im{font-size:9px}
 .milestone{display:flex;align-items:center;gap:6px;font:700 11px "FGInter";color:#cfcfd4;cursor:pointer;background:none;border:0;padding:2px;width:100%;text-align:left}
 .milestone .d{width:11px;height:11px;border:2px solid var(--blue);transform:rotate(45deg);border-radius:2px;flex:none}
-.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
 .wcol{background:var(--s2);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:9px;min-height:360px}
 .wcol .wh{font:700 13px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
 .wcol .wh b{font-size:19px;color:var(--cr)}
@@ -219,7 +219,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .wcard{position:relative;background:#1f1f25;border-radius:11px;padding:10px 32px 10px 11px;cursor:pointer;border:0;text-align:left;width:100%;display:block}
 .wcard .bar{display:block;height:4px;width:34px;border-radius:3px;margin-bottom:8px}
 .wcard .t,.wcard .m,.rcard .ri .t,.rcard .ri .m{display:block}
-.wcard .t{font:600 13px "FGInter";line-height:1.25;color:var(--cr)}
+.wcard .t{font:600 13px "FGInter";line-height:1.25;color:var(--cr);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wcard .m{font:700 10.5px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);margin-top:7px}
 .wcard .im{display:inline-block;margin-top:7px;font:700 9.5px "FGInter";text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:4px 7px;border-radius:7px}
 .rcard{position:relative;background:#1f1f25;border-radius:11px;padding:9px 30px 9px 9px;display:flex;gap:10px;align-items:center;cursor:pointer;border:0;text-align:left;width:100%}
@@ -1066,7 +1066,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   }
   // ---- Events ----
   document.querySelectorAll(".dtabs button").forEach && null;
-  $("#dtabs").innerHTML = [["mois", "Mois"], ["semaine", "Semaine"], ["kanban", "Kanban"], ["gantt", "Gantt"]].map(function (t) { return '<button data-v="' + t[0] + '" aria-pressed="' + (t[0] === calView) + '">' + t[1] + "</button>"; }).join("");
+  $("#dtabs").innerHTML = [["mois", "Mois"], ["semaine", "Semaine"]].map(function (t) { return '<button data-v="' + t[0] + '" aria-pressed="' + (t[0] === calView) + '">' + t[1] + "</button>"; }).join("");
   $("#dtabs").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; calView = b.dataset.v; document.querySelectorAll("#dtabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); renderView(); });
   $("#calprev").addEventListener("click", function () { if (calView === "semaine") calCur.setDate(calCur.getDate() - 7); else calCur.setMonth(calCur.getMonth() - 1); calCur = new Date(calCur); renderView(); });
   $("#calnext").addEventListener("click", function () { if (calView === "semaine") calCur.setDate(calCur.getDate() + 7); else calCur.setMonth(calCur.getMonth() + 1); calCur = new Date(calCur); renderView(); });
