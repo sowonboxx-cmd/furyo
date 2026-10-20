@@ -133,7 +133,7 @@ button:disabled{opacity:.5;cursor:default}
         (p[4].items || []).forEach(function (s) { D.series[s.slug] = s; });
         construire();
       });
-    });
+    }).catch(function (e) { if (moi === tour) { $("#dl").disabled = true; $("#msg").textContent = "Souci de chargement — recharge la page (et connecte-toi au back-office)."; console.error(e); } });
   }
 
   // ——— Gabarits ———
