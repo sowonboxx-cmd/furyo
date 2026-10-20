@@ -5,8 +5,8 @@ import { ogFiche, seoNews, SITE } from "../../lib/seo.js";
 async function carte(env, request, path) {
   // Carte livrée avec le site (fichier statique).
   try { const r = await env.ASSETS.fetch(new Request(new URL(path, request.url).toString(), { method: "HEAD" })); if (r.ok && (r.headers.get("content-type") || "").includes("image")) return SITE + path; } catch (e) {}
-  // Carte générée par le back-office et stockée dans R2 (clé = chemin sans « /img/ »).
-  try { if (env.COUV) { const o = await env.COUV.head(path.replace(/^\/img\//, "")); if (o) return SITE + path; } } catch (e) {}
+  // Carte générée par le back-office et stockée dans R2 : servie via /api/ogcard/ (chemin toujours routé vers une fonction).
+  try { if (env.COUV) { const name = path.split("/").pop(); const o = await env.COUV.head("og/f/" + name); if (o) return SITE + "/api/ogcard/" + name; } } catch (e) {}
   return "";
 }
 
