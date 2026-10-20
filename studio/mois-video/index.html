@@ -6,9 +6,9 @@
 <meta name="robots" content="noindex">
 <title>Studio · Récap du mois — Vidéo · FuryoGang</title>
 <style>
-/* Draft vidéo « Récap du mois » (Will, 20/10/2026) : logo en fade (façon Netflix) → Sorties du mois → Japon → France
-   → Ajoutez-les à votre collection → logo. Format 1080×1440. Effets sobres (fondus + léger scale), rapide mais on voit les covers.
-   Pour l'instant c'est une animation à regarder / screen-record ; l'export fichier (webm/mp4) viendra ensuite. */
+/* Draft vidéo « Récap du mois » (Will, 20/10/2026) : démarre sur « Sorties de <mois> » (design existant),
+   puis Japon et France où les couvertures apparaissent (effet) et défilent en slidant pour qu'on les voie toutes,
+   puis « Ajoutez-les à votre collection », puis le logo de fin. Effets sobres (fondus + apparition en cascade). */
 @font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
 @font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
 :root{--ink:#000;--paper:#F5F5F7;--paper-3:#98989D;--red:#BC002D;color-scheme:dark}
@@ -23,64 +23,73 @@ button,input{font:inherit;height:40px;border:0;border-radius:11px;background:#2a
 button{font-weight:700;cursor:pointer}
 button.main{background:var(--red)}
 button:disabled{opacity:.5;cursor:default}
+label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--paper-3)}
 #msg{font-size:12px;color:var(--paper-3)}
-/* Cadre vidéo */
 .viewport{position:relative;width:min(405px,86vw);aspect-ratio:3/4;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 30px 70px rgba(0,0,0,.5)}
-.stage{position:absolute;left:0;top:0;width:1080px;height:1440px;transform-origin:0 0;background:#0c0c0e;overflow:hidden;font-family:"FGInter",sans-serif;color:#F2EFE9}
+.stage{position:absolute;left:0;top:0;width:1080px;height:1440px;transform-origin:0 0;background:#0c0c0e;overflow:hidden;font-family:"FGInter",sans-serif;color:#F2EFE9;--bg2:#17171a;--line:#2a2a2e;--mut:#9a968f;--cr:#F2EFE9}
 .stage *{box-sizing:border-box;margin:0;padding:0}
 .scene{position:absolute;inset:0;opacity:0}
-.logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:620px}
-.wrapc{position:absolute;left:64px;right:64px;top:50%;transform:translateY(-50%);text-align:center}
-.k{font:700 28px "FGInter";letter-spacing:.22em;text-transform:uppercase;color:#9a968f;opacity:0}
-.big{font:700 128px/.92 "FGAntonio";text-transform:uppercase;letter-spacing:.005em;margin-top:14px}
-.big em{font-style:normal;color:var(--red);display:block;font-size:176px}
-.tiles{display:flex;gap:26px;justify-content:center;margin-top:50px}
-.tiles>div{opacity:0;background:#17171a;border:2px solid #2a2a2e;border-radius:22px;padding:22px 36px;min-width:230px}
-.tiles .flag{display:inline-flex;align-items:center;justify-content:center;width:52px;height:36px;border-radius:5px;overflow:hidden;border:1px solid #2a2a2e}
-.tiles .flag.jp{background:#fff}.tiles .flag.jp i{width:17px;height:17px;border-radius:50%;background:#BC002D;display:block}
+/* Logo (fin) */
+.logoEl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:620px}
+/* Scène « Sorties de <mois> » (design existant) */
+.top{position:absolute;left:64px;right:64px;top:52px;display:flex;justify-content:center}
+.top img{height:52px}
+.rhead{position:absolute;left:64px;right:64px;top:140px;text-align:center}
+.rhead .k{font:700 27px "FGInter";letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
+.rhead .big{font:700 110px/.92 "FGAntonio";text-transform:uppercase;letter-spacing:.005em;margin-top:14px}
+.rhead .big em{font-style:normal;color:var(--red);display:block;font-size:168px;line-height:.88;margin-top:4px}
+.fan{position:absolute;left:0;right:0;top:500px;height:470px}
+.fan img{position:absolute;left:50%;top:40px;width:296px;height:444px;object-fit:cover;border:6px solid #fff;border-radius:4px;box-shadow:0 22px 50px rgba(0,0,0,.6);transform-origin:bottom center}
+.tiles{position:absolute;left:64px;right:64px;bottom:110px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.tiles>div{background:var(--bg2);border:2px solid var(--line);border-radius:24px;padding:24px 32px}
+.tiles .flag{display:inline-flex;align-items:center;justify-content:center;width:58px;height:40px;border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.tiles .flag.jp{background:#fff}.tiles .flag.jp i{width:19px;height:19px;border-radius:50%;background:var(--red);display:block}
 .tiles .flag.fr i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#0055A4 0 33.34%,#fff 33.34% 66.67%,#EF4135 66.67% 100%)}
-.tiles b{display:block;font:700 120px/1 "FGAntonio";margin-top:8px}
-.tiles .cap{font:600 24px "FGInter";color:#9a968f;margin-top:4px}
-/* Scène pays */
-.phead{position:absolute;left:64px;top:120px;right:64px;display:flex;align-items:center;gap:22px;opacity:0}
-.phead .flag{display:inline-flex;align-items:center;justify-content:center;width:64px;height:44px;border-radius:6px;overflow:hidden;border:1px solid #2a2a2e}
-.phead .flag.jp{background:#fff}.phead .flag.jp i{width:22px;height:22px;border-radius:50%;background:#BC002D;display:block}
+.tiles b{display:block;font:700 150px/1 "FGAntonio";margin:12px 0 6px}
+.tiles .cap{font:600 27px/1.2 "FGInter";color:var(--mut)}
+/* Scènes pays (défilement) */
+.phead{position:absolute;left:64px;top:110px;right:64px;display:flex;align-items:center;gap:22px}
+.phead .flag{display:inline-flex;align-items:center;justify-content:center;width:64px;height:44px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.phead .flag.jp{background:#fff}.phead .flag.jp i{width:22px;height:22px;border-radius:50%;background:var(--red);display:block}
 .phead .flag.fr i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#0055A4 0 33.34%,#fff 33.34% 66.67%,#EF4135 66.67% 100%)}
-.phead b{font:700 72px/1 "FGAntonio";text-transform:uppercase}
-.cgrid{position:absolute;left:64px;right:64px;top:260px;bottom:120px;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:min-content;gap:28px 28px;align-content:start}
-.cgrid img{width:100%;aspect-ratio:300/430;object-fit:cover;border:5px solid #fff;border-radius:4px;box-shadow:0 14px 30px rgba(0,0,0,.5);background:#222;opacity:0;display:block}
+.phead b{font:700 76px/1 "FGAntonio";text-transform:uppercase}
+.cviewport{position:absolute;left:64px;right:64px;top:250px;bottom:110px;overflow:hidden}
+.cscroll{display:grid;grid-template-columns:repeat(3,1fr);gap:26px 26px}
+.cscroll img{width:100%;aspect-ratio:300/430;object-fit:cover;border:5px solid #fff;border-radius:4px;box-shadow:0 14px 30px rgba(0,0,0,.5);background:#222;display:block}
 /* Scène CTA */
 .cta-wrap{position:absolute;left:72px;right:72px;top:50%;transform:translateY(-50%);text-align:center}
 .cta-wrap h2{font:700 104px/1 "FGAntonio";text-transform:uppercase}
-.cta-wrap .pill{display:inline-block;margin-top:46px;background:#F2EFE9;color:#0c0c0e;font:800 40px "FGInter";padding:26px 48px;border-radius:999px;opacity:0}
-.cta-wrap .note{font:600 30px "FGInter";color:#9a968f;margin-top:30px}
+.cta-wrap .pill{display:inline-block;margin-top:46px;background:#F2EFE9;color:#0c0c0e;font:800 40px "FGInter";padding:26px 48px;border-radius:999px}
+.cta-wrap .note{font:600 30px "FGInter";color:var(--mut);margin-top:30px}
 </style>
 </head>
 <body>
 <div class="page">
   <h1>Récap du mois — Vidéo (draft)</h1>
-  <p class="sub">Logo en fondu → Sorties du mois → Japon → France → Ajoutez-les à votre collection → logo. Clique sur Lire. Pour l'instant, regarde / enregistre l'écran ; l'export fichier viendra après.</p>
+  <p class="sub">Sorties du mois → Japon (les covers défilent) → France → Ajoutez-les à votre collection → logo. Clique sur Lire (le son démarre avec).</p>
   <div class="pick">
     <button id="prev" aria-label="Mois précédent">←</button>
     <input id="mois" type="month" aria-label="Mois">
     <button id="next" aria-label="Mois suivant">→</button>
+    <label><input id="mute" type="checkbox" style="width:auto;height:auto"> Muet</label>
     <button class="main" id="play" disabled>▶ Lire</button>
     <span id="msg">Chargement…</span>
   </div>
   <div class="viewport">
     <div class="stage" id="stage">
-      <div class="scene" id="sLogo"><img class="logo" src="/img/logo-furyogang.png" alt=""></div>
-      <div class="scene" id="sTitle">
-        <div class="wrapc" style="top:170px;transform:none"><div class="k" id="kTitle">Le récap du mois</div><div class="big">Sorties de<em id="moisTitre">—</em></div></div>
-        <div class="cgrid" id="titleFan" style="top:700px;bottom:auto;height:440px;grid-template-columns:repeat(5,1fr);gap:0 18px;opacity:1"></div>
+      <div class="scene" id="sCover">
+        <div class="top"><img class="logoEl" src="/img/logo-furyogang.png" alt="" style="position:static;transform:none;width:auto"></div>
+        <div class="rhead"><div class="k">Le récap du mois</div><div class="big">Sorties de<em id="moisTitre">—</em></div></div>
+        <div class="fan" id="coverFan"></div>
+        <div class="tiles" id="coverTiles"></div>
       </div>
-      <div class="scene" id="sJP"><div class="phead"><span class="flag jp"><i></i></span><b>Japon</b></div><div class="cgrid" id="gridJP"></div></div>
-      <div class="scene" id="sFR"><div class="phead"><span class="flag fr"><i></i></span><b>France</b></div><div class="cgrid" id="gridFR"></div></div>
+      <div class="scene" id="sJP"><div class="phead"><span class="flag jp"><i></i></span><b>Japon</b></div><div class="cviewport"><div class="cscroll" id="scrollJP"></div></div></div>
+      <div class="scene" id="sFR"><div class="phead"><span class="flag fr"><i></i></span><b>France</b></div><div class="cviewport"><div class="cscroll" id="scrollFR"></div></div></div>
       <div class="scene" id="sCTA"><div class="cta-wrap"><h2>Ajoutez-les à<br>votre collection</h2><div class="pill">furyogang.com/ma-collection</div><div class="note">Un tome offert chaque mois aux membres du gang</div></div></div>
-      <div class="scene" id="sEnd"><img class="logo" src="/img/logo-furyogang.png" alt=""></div>
+      <div class="scene" id="sEnd"><img class="logoEl" src="/img/logo-furyogang.png" alt=""></div>
     </div>
   </div>
-  <audio id="snd" src="/hq/audio/newworld.mp3" preload="auto" loop></audio>
+  <audio id="snd" src="/audio/recap-mix.mp3" preload="auto"></audio>
 </div>
 <script>
 (function () {
@@ -93,7 +102,6 @@ button:disabled{opacity:.5;cursor:default}
 
   var now = new Date(), defM = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
   $("#mois").value = defM.toISOString().slice(0, 7);
-
   function echelle() { var vp = $(".viewport"); $("#stage").style.transform = "scale(" + vp.clientWidth / 1080 + ")"; }
   window.addEventListener("resize", echelle); echelle();
 
@@ -103,73 +111,89 @@ button:disabled{opacity:.5;cursor:default}
       var items = (p.items || []).filter(function (x) { return x.date && x.date.slice(0, 7) === m && x.cover; });
       items.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
       D = { m: m, jp: items.filter(function (x) { return x.pays === "Japon"; }), fr: items.filter(function (x) { return x.pays === "France"; }) };
+      var jp = D.jp, fr = D.fr, tout = jp.concat(fr);
       $("#moisTitre").textContent = MOIS[Number(m.slice(5, 7)) - 1];
-      // fan de la scène titre (5 covers) + grilles pays (9 max)
-      var tout = D.jp.concat(D.fr);
-      $("#titleFan").innerHTML = tout.slice(0, 5).map(function (x, i) { var k = i - 2; return '<img src="' + couv(x.cover) + '" style="transform:rotate(' + (k * 7) + 'deg) translateY(' + Math.abs(k) * 22 + 'px)">'; }).join("");
-      $("#gridJP").innerHTML = D.jp.slice(0, 6).map(function (x) { return '<img src="' + couv(x.cover) + '">'; }).join("");
-      $("#gridFR").innerHTML = D.fr.slice(0, 6).map(function (x) { return '<img src="' + couv(x.cover) + '">'; }).join("");
-      // compteurs (réutilisés dans la scène titre, en bas)
-      $("#msg").textContent = D.jp.length + " au Japon · " + D.fr.length + " en France — prêt";
-      $("#play").disabled = false;
+      $("#coverFan").innerHTML = tout.slice(0, 7).map(function (x, i) { var k = i - 3; return '<img style="margin-left:-148px;transform:translateX(' + (k * 132) + 'px) rotate(' + (k * 7) + 'deg)" src="' + couv(x.cover) + '">'; }).join("");
+      $("#coverTiles").innerHTML = '<div><span class="flag jp"><i></i></span><b>' + jp.length + '</b><div class="cap">sortie' + (jp.length > 1 ? "s" : "") + ' au Japon</div></div>' +
+        '<div><span class="flag fr"><i></i></span><b style="color:var(--red)">' + fr.length + '</b><div class="cap">en France, à ne pas rater</div></div>';
+      $("#scrollJP").innerHTML = jp.map(function (x) { return '<img src="' + couv(x.cover) + '">'; }).join("");
+      $("#scrollFR").innerHTML = fr.map(function (x) { return '<img src="' + couv(x.cover) + '">'; }).join("");
+      resetAll();
+      $("#msg").textContent = jp.length + " au Japon · " + fr.length + " en France — prêt";
+      $("#play").disabled = false; $("#play").textContent = "▶ Lire";
     }).catch(function (e) { $("#msg").textContent = "Souci de chargement — recharge la page."; console.error(e); });
   }
 
-  // ——— Helpers d'animation (Web Animations API) ———
+  // ——— Animation ———
   function A(el, kf, dur, opt) { return el.animate(kf, Object.assign({ duration: dur, fill: "forwards", easing: "ease" }, opt || {})).finished; }
-  function fadeIn(el, dur) { return A(el, [{ opacity: 0 }, { opacity: 1 }], dur, { easing: "ease-out" }); }
-  function fadeOut(el, dur) { return A(el, [{ opacity: 1 }, { opacity: 0 }], dur, { easing: "ease-in" }); }
-  function reset() { ["sLogo","sTitle","sJP","sFR","sCTA","sEnd"].forEach(function (id) { $("#" + id).style.opacity = 0; }); }
-
-  async function stagger(sel, dur, step) {
+  function fadeIn(el, dur) { el.style.opacity = 0; return A(el, [{ opacity: 0 }, { opacity: 1 }], dur, { easing: "ease-out" }); }
+  function fadeOut(el, dur) { return A(el, [{ opacity: 1 }, { opacity: 0 }], dur, { easing: "ease-in" }).then(function () { el.style.opacity = 0; }); }
+  function resetAll() {
+    $("#stage").querySelectorAll("*").forEach(function (el) { el.getAnimations().forEach(function (a) { a.cancel(); }); });
+    ["sCover","sJP","sFR","sCTA","sEnd"].forEach(function (id) { $("#" + id).style.opacity = 0; });
+    $("#stage").querySelectorAll(".rhead .k,.rhead .big,.fan img,.tiles>div,.phead,.cscroll img,.cta-wrap h2,.cta-wrap .pill,.cta-wrap .note,.logoEl").forEach(function (el) { el.style.opacity = 0; });
+    $("#scrollJP").style.transform = "translateY(0)"; $("#scrollFR").style.transform = "translateY(0)";
+  }
+  // Apparition en cascade (opacité + léger translate/scale).
+  function pop(list, step, dur) {
+    var els = (typeof list === "string") ? document.querySelectorAll(list) : list;
+    els.forEach(function (el) { el.getAnimations().forEach(function (a) { a.cancel(); }); el.style.opacity = 0; });
+    els.forEach(function (el, i) { A(el, [{ opacity: 0, transform: "translateY(24px) scale(.96)" }, { opacity: 1, transform: "none" }], dur || 520, { delay: i * step, easing: "cubic-bezier(.2,.7,.3,1)" }); });
+    return (els.length - 1) * step + (dur || 520);
+  }
+  // Pour l'éventail : on ne touche pas au transform (il porte la rotation), on fond juste l'opacité.
+  function popFade(sel, step) {
     var els = document.querySelectorAll(sel);
     els.forEach(function (el) { el.getAnimations().forEach(function (a) { a.cancel(); }); el.style.opacity = 0; });
-    els.forEach(function (el, i) { A(el, [{ opacity: 0, transform: "translateY(26px) scale(.95)" }, { opacity: 1, transform: "none" }], dur, { delay: i * step, easing: "cubic-bezier(.2,.7,.3,1)" }); });
-    await wait((els.length - 1) * step + dur);
+    els.forEach(function (el, i) { A(el, [{ opacity: 0 }, { opacity: 1 }], 480, { delay: i * step, easing: "ease-out" }); });
+    return (els.length - 1) * step + 480;
+  }
+
+  async function scenePays(scene, scroll) {
+    var vp = scene.querySelector(".cviewport");
+    await fadeIn(scene, 420);
+    A(scene.querySelector(".phead"), [{ opacity: 0, transform: "translateX(-20px)" }, { opacity: 1, transform: "none" }], 500, { easing: "ease-out" });
+    pop(scroll.querySelectorAll("img"), 60, 520);
+    await wait(1150);
+    var over = scroll.scrollHeight - vp.clientHeight;
+    if (over > 8) await A(scroll, [{ transform: "translateY(0)" }, { transform: "translateY(-" + over + "px)" }], Math.min(4600, 1200 + over * 2), { easing: "ease-in-out" });
+    await wait(450);
+    await fadeOut(scene, 450);
   }
 
   async function play() {
     if (!D) return; var tok = ++running; $("#play").disabled = true;
-    try { var s = $("#snd"); s.currentTime = 0; s.play().catch(function () {}); } catch (e) {}
-    reset();
-    // 1 · Logo façon Netflix : fade + léger scale, il vient puis repart.
-    var logo = $("#sLogo"); A(logo.querySelector(".logo"), [{ transform: "translate(-50%,-50%) scale(.86)" }, { transform: "translate(-50%,-50%) scale(1)" }], 1600, { easing: "ease-out" });
-    await fadeIn(logo, 650); if (tok !== running) return;
-    await wait(950); await fadeOut(logo, 520); if (tok !== running) return;
-    // 2 · Titre « Sorties de <mois> » + éventail qui apparaît
-    var t = $("#sTitle"); t.style.opacity = 1;
-    A($("#kTitle"), [{ opacity: 0, transform: "translateY(14px)" }, { opacity: 1, transform: "none" }], 500, { delay: 120, easing: "ease-out" });
-    A(t.querySelector(".big"), [{ opacity: 0, transform: "translateY(26px)" }, { opacity: 1, transform: "none" }], 650, { delay: 220, easing: "cubic-bezier(.2,.7,.3,1)" });
-    stagger("#titleFan img", 520, 90); if (tok !== running) return;
-    await wait(1700); await fadeOut(t, 450); t.style.opacity = 0; if (tok !== running) return;
-    // 3 · Japon
-    await scenePays($("#sJP"), "#gridJP"); if (tok !== running) return;
-    // 4 · France
-    await scenePays($("#sFR"), "#gridFR"); if (tok !== running) return;
-    // 5 · CTA
-    var c = $("#sCTA"); await fadeIn(c, 450);
-    A(c.querySelector("h2"), [{ opacity: 0, transform: "translateY(22px)" }, { opacity: 1, transform: "none" }], 600, { easing: "cubic-bezier(.2,.7,.3,1)" });
-    A(c.querySelector(".pill"), [{ opacity: 0, transform: "scale(.9)" }, { opacity: 1, transform: "none" }], 500, { delay: 500, easing: "ease-out" });
-    await wait(1900); await fadeOut(c, 450); if (tok !== running) return;
-    // 6 · Logo de fin
-    var e = $("#sEnd"); A(e.querySelector(".logo"), [{ transform: "translate(-50%,-50%) scale(.92)" }, { transform: "translate(-50%,-50%) scale(1)" }], 1400, { easing: "ease-out" });
-    await fadeIn(e, 600); await wait(1400); await fadeOut(e, 600);
+    resetAll();
+    if (!$("#mute").checked) { try { var s = $("#snd"); s.currentTime = 0; s.volume = 1; s.play().catch(function () {}); } catch (e) {} }
+    // 1 · Sorties du mois
+    var c = $("#sCover"); await fadeIn(c, 450); if (tok !== running) return;
+    A(c.querySelector(".top .logoEl"), [{ opacity: 0 }, { opacity: 1 }], 500, { easing: "ease-out" });
+    A($(".rhead .k"), [{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }], 500, { delay: 120, easing: "ease-out" });
+    A($(".rhead .big"), [{ opacity: 0, transform: "translateY(24px)" }, { opacity: 1, transform: "none" }], 650, { delay: 220, easing: "cubic-bezier(.2,.7,.3,1)" });
+    popFade(".fan img", 85);
+    pop($("#coverTiles").querySelectorAll("div"), 160, 560);
+    await wait(2700); if (tok !== running) return;
+    await fadeOut(c, 450); if (tok !== running) return;
+    // 2 · Japon
+    await scenePays($("#sJP"), $("#scrollJP")); if (tok !== running) return;
+    // 3 · France
+    await scenePays($("#sFR"), $("#scrollFR")); if (tok !== running) return;
+    // 4 · CTA
+    var t = $("#sCTA"); await fadeIn(t, 430); if (tok !== running) return;
+    A(t.querySelector("h2"), [{ opacity: 0, transform: "translateY(22px)" }, { opacity: 1, transform: "none" }], 600, { easing: "cubic-bezier(.2,.7,.3,1)" });
+    A(t.querySelector(".pill"), [{ opacity: 0, transform: "scale(.9)" }, { opacity: 1, transform: "none" }], 500, { delay: 480, easing: "ease-out" });
+    A(t.querySelector(".note"), [{ opacity: 0 }, { opacity: 1 }], 500, { delay: 800, easing: "ease-out" });
+    await wait(2100); if (tok !== running) return;
+    await fadeOut(t, 450); if (tok !== running) return;
+    // 5 · Logo de fin
+    var e = $("#sEnd"); A(e.querySelector(".logoEl"), [{ transform: "translate(-50%,-50%) scale(.92)" }, { transform: "translate(-50%,-50%) scale(1)" }], 1400, { easing: "ease-out" });
+    await fadeIn(e, 550); await wait(1400); await fadeOut(e, 600);
     try { $("#snd").pause(); } catch (e2) {}
-    if (tok === running) $("#play").disabled = false;
-    $("#play").textContent = "↺ Rejouer";
-  }
-
-  async function scenePays(scene, gridSel) {
-    var head = scene.querySelector(".phead");
-    head.getAnimations().forEach(function (a) { a.cancel(); }); head.style.opacity = 0;
-    scene.style.opacity = 1;
-    A(head, [{ opacity: 0, transform: "translateX(-20px)" }, { opacity: 1, transform: "none" }], 500, { easing: "ease-out" });
-    await stagger(gridSel + " img", 520, 85);
-    await wait(900);
-    await fadeOut(scene, 450); scene.style.opacity = 0; head.style.opacity = 0;
+    if (tok === running) { $("#play").disabled = false; $("#play").textContent = "↺ Rejouer"; }
   }
 
   $("#play").onclick = play;
+  $("#mute").onchange = function () { if ($("#mute").checked) { try { $("#snd").pause(); } catch (e) {} } };
   $("#mois").onchange = charger;
   $("#prev").onclick = function () { var d = new Date($("#mois").value + "-01T12:00:00Z"); d.setUTCMonth(d.getUTCMonth() - 1); $("#mois").value = d.toISOString().slice(0, 7); charger(); };
   $("#next").onclick = function () { var d = new Date($("#mois").value + "-01T12:00:00Z"); d.setUTCMonth(d.getUTCMonth() + 1); $("#mois").value = d.toISOString().slice(0, 7); charger(); };
