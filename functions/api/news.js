@@ -21,7 +21,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
   // Pas de reconstruction forcée pour Will (elle rendait les pages news lentes) : le back-office vide le cache à chaque changement.
-  return cached(request, waitUntil, "/api/news?v=8", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=9", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -57,6 +57,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         // la date de sortie d'un tome reste dans le texte de la news.
         id: r.id.replace(/-/g, ""), cat: cat.k, catNom: cat.nom, catC: cat.c, cats: [{ k: cat.k, nom: cat.nom, c: cat.c }, ...autres], date: (r.created_time || "").slice(0, 10) || date(p["Date de la news"]), _t: r.created_time || "",
         titre: s.t || prop, fr: s.fr, jp: s.jp, pub, label, t1, cover, pos: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null, texte: text(p["Résumé site"]), accroche: text(p["Accroche"]),
+        // Lien externe facultatif (Will, 20/10/2026) : si rempli, la carte ouvre cette page (ex. /recap/2026-09/) au lieu de /actus/<slug>.
+        lien: text(p["Lien"]) || "",
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),
         // Plusieurs sources possibles dans « Source officielle » (liens séparés par un espace ou un retour à la ligne).
