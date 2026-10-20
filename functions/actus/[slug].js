@@ -3,7 +3,11 @@
 import { ogFiche, seoNews, SITE } from "../../lib/seo.js";
 // Carte de partage de la fiche si elle existe (Will, 17/10/2026), sinon l'image d'origine.
 async function carte(env, request, path) {
-  try { const r = await env.ASSETS.fetch(new Request(new URL(path, request.url).toString(), { method: "HEAD" })); return r.ok && (r.headers.get("content-type") || "").includes("image") ? SITE + path : ""; } catch (e) { return ""; }
+  // Carte livrée avec le site (fichier statique).
+  try { const r = await env.ASSETS.fetch(new Request(new URL(path, request.url).toString(), { method: "HEAD" })); if (r.ok && (r.headers.get("content-type") || "").includes("image")) return SITE + path; } catch (e) {}
+  // Carte générée par le back-office et stockée dans R2 (clé = chemin sans « /img/ »).
+  try { if (env.COUV) { const o = await env.COUV.head(path.replace(/^\/img\//, "")); if (o) return SITE + path; } } catch (e) {}
+  return "";
 }
 
 export async function onRequestGet({ request, env, params }) {

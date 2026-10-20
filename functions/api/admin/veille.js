@@ -97,7 +97,7 @@ async function construire(request, env) {
       actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]), video: text(p["Vidéo"]),
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",
-      serie: s, news, vu: vu(r), enLigne: pub(r), imageChoisie: text(p["Image"]), cadrage: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null,
+      serie: s, news, vu: vu(r), enLigne: pub(r), imageChoisie: text(p["Image"]), accroche: text(p["Accroche"]), cadrage: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null,
       cat2: (categoriesDe(catN)[1] || {}).k || "", // 2e catégorie (Notion en accepte plusieurs ; le back-office en gère deux)
     };
   });

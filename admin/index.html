@@ -361,6 +361,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 <script src="/site/tome-card.js?v=4"></script>
 <script src="/site/sortie-post.js?v=1"></script>
 <script src="/site/quickaccess.js?v=2"></script>
+<script src="/site/og-actu.js?v=1"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const root = document.getElementById("root");
@@ -1205,6 +1206,32 @@ function vcount(m){
   if (ta.dataset.cap === "x") { el.textContent = `${n} / 280`; el.classList.toggle("ko", n > 280); }
   else { el.textContent = `${n} car.`; el.classList.remove("ko"); }
 }
+// Carte de partage (og:image) générée automatiquement à la publication d'une news (Will, 20/10/2026).
+// Même template que Hell Dogs / Bumpoor (/site/og-actu.js) : couverture originale à droite, badge + titre + accroche à gauche.
+async function ogCover(i){
+  let toms = (i.tomes || []).filter(t => t.cover);
+  if (!toms.length && i.serie && i.serie.slug){
+    try { const d = await fetch("/api/serie?s=" + encodeURIComponent(i.serie.slug)).then(r => r.json());
+      let best = []; for (const e of (d.editions || [])){ const ts = (e.tomes || []).filter(t => t.cover).sort((a, b) => (a.n || 0) - (b.n || 0)); if (ts.length > best.length) best = ts; } toms = best;
+    } catch(e){}
+  }
+  toms.sort((a, b) => (a.n || 0) - (b.n || 0));
+  return toms.length ? toms[0].cover : (i.imageChoisie || "");
+}
+function ogPhrase(txt){ const s = String(txt || "").replace(/\s+/g, " ").trim(); const m = s.split(/(?<=[.!?])\s/)[0]; return (m || s).slice(0, 150); }
+function pngToJpeg(dataUrl, q){ return new Promise(ok => { const img = new Image(); img.onload = function(){ const c = document.createElement("canvas"); c.width = 1200; c.height = 630; const x = c.getContext("2d"); x.fillStyle = "#000"; x.fillRect(0, 0, 1200, 630); x.drawImage(img, 0, 0, 1200, 630); try { ok(c.toDataURL("image/jpeg", q || 0.9)); } catch(e){ ok(dataUrl); } }; img.onerror = function(){ ok(dataUrl); }; img.src = dataUrl; }); }
+async function genOgCard(i){
+  try {
+    if ([i.cat, i.cat2].includes("tirage")) return; // « Tomes en circulation » : garde son visuel dédié
+    if (!window.FG_OGACTU) return;
+    const labels = [VCATS[i.cat], VCATS[i.cat2]].filter(Boolean);
+    const badge = labels.find(l => l.toLowerCase() !== "news") || labels[0] || "News";
+    const cover = await ogCover(i);
+    const png = await FG_OGACTU.png({ titre: (i.serie && i.serie.t) || i.titre, cat: badge, date: i.date || i.cree, desc: i.accroche || ogPhrase(i.texte), cover });
+    const jpg = await pngToJpeg(png, 0.9);
+    await fetch("/api/admin/ogcard", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: i.id, data: jpg }) });
+  } catch(e){}
+}
 async function vsend(btn, statut){
   const m = btn.closest(".vm"), id = m.dataset.vid, i = VITEMS.find(x => x.id === id);
   const vtx = m.querySelector("#vtx"), texte = vtx ? vtx.value : i.texte, vc = m.querySelector("#vcat"), vv = m.querySelector("#vvid");
@@ -1231,10 +1258,10 @@ async function vsend(btn, statut){
   if (!statut) { // news en ligne modifiée : elle reste dans « Publiées »
     if (vtx) i.texte = vtx.value; if (vv) i.video = video; if (image !== null) i.imageChoisie = image; if (cadrage !== undefined) i.cadrage = cadrage;
     if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; i.cat2 = c2; }
-    m.remove(); vdraw(); toast("Changements en ligne ✓"); return;
+    if (i.enLigne) genOgCard(i); m.remove(); vdraw(); toast("Changements en ligne ✓"); return;
   }
   if (statut === "Vu" && i.enLigne) { i.enLigne = false; i.vu = true; m.remove(); vdraw(); toast("Retirée du site · rangée dans « Vu, pas sur le site »"); return; }
-  if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } m.remove(); vdraw(); toast("Publié sur le site ✓" + ficheMsg); if (ficheMsg) { toast.t && clearTimeout(toast.t); toast.t = setTimeout(() => document.getElementById("toast").classList.remove("on"), 5000); } return; }
+  if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } genOgCard(i); m.remove(); vdraw(); toast("Publié sur le site ✓" + ficheMsg); if (ficheMsg) { toast.t && clearTimeout(toast.t); toast.t = setTimeout(() => document.getElementById("toast").classList.remove("on"), 5000); } return; }
   // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
   // Prépublication publiée aussi en news : la news créée arrive dans la liste, à relire et publier comme les autres.
   if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(true); return; }
