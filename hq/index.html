@@ -891,7 +891,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function itemsJour(d) {
     var is = iso(d), dow = d.getDay(), dom = d.getDate(), out = [];
     CAL.events.forEach(function (e) {
-      var ok = e.date ? e.date === is : (e.repeat === "mois" ? dom === 1 : (e.repeat in REPJ && REPJ[e.repeat] === dow));
+      var ok = e.date ? e.date === is : (e.repeat === "mois" ? dom === (e.jour || 1) : (e.repeat in REPJ && REPJ[e.repeat] === dow));
       if (ok) out.push({ kind: "ev", id: e.id, date: is, e: e });
     });
     TODO.forEach(function (t) { if (t.dt === is && !t.done) out.push({ kind: "todo", id: t.id, date: is, t: t }); });
@@ -1060,7 +1060,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     h += '<div class="macts"><a class="btn2 p" href="/admin/#validation" target="_blank" rel="noopener">Modifier dans Actualités et veille</a>' + (item.serie && item.serie.slug ? '<a class="btn2" href="/series/' + esc(item.serie.slug) + '" target="_blank" rel="noopener">Voir la fiche</a>' : '') + '</div>';
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "news"; host.dataset.id = n.id;
   }
-  function quand(e) { return e.date ? (function () { var d = parseIso(e.date); return JJ[(d.getDay() + 6) % 7] + ". " + d.getDate() + " " + MA[d.getMonth()]; })() : ("Chaque " + ({ lun: "lundi", mar: "mardi", mer: "mercredi", jeu: "jeudi", ven: "vendredi", sam: "samedi", dim: "dimanche", mois: "1er du mois" }[e.repeat] || "—")); }
+  function quand(e) { return e.date ? (function () { var d = parseIso(e.date); return JJ[(d.getDay() + 6) % 7] + ". " + d.getDate() + " " + MA[d.getMonth()]; })() : ("Chaque " + (e.repeat === "mois" ? (((e.jour || 1) === 1 ? "1er" : (e.jour || 1)) + " du mois") : ({ lun: "lundi", mar: "mardi", mer: "mercredi", jeu: "jeudi", ven: "vendredi", sam: "samedi", dim: "dimanche" }[e.repeat] || "—"))); }
   function openEv(e) {
     if (!e) return; var t = proj(e.type);
     modalCap = e.textes || null;
@@ -1068,6 +1068,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     h += '<div class="chips"><span class="chip">' + esc(quand(e)) + '</span><span class="chip"><i style="background:' + t.couleur + '"></i>' + esc(t.nom) + "</span>" + (e.imp ? '<span class="chip imp">● Important</span>' : "") + (e.fait ? '<span class="chip">✓ Publié</span>' : "") + "</div>";
     h += '<div class="mh"><div><h2>' + esc(e.titre) + "</h2></div></div>";
     if (e.note) h += '<div class="note">' + esc(e.note) + "</div>";
+    if (e.lien) { var lstud = /\/studio\//.test(e.lien), lext = /^https?:/.test(e.lien); h += '<div class="mslab">Raccourci</div><a class="btn2 p" href="' + esc(e.lien) + '"' + (lext ? ' target="_blank" rel="noopener"' : "") + '>' + (lstud ? "Ouvrir le studio" : "Ouvrir le lien") + ' →</a>'; }
     h += '<div class="mslab">Infos</div><div class="mgrid2"><div class="gi"><div class="gl">Quand</div><div class="gv">' + esc(quand(e)) + '</div></div><div class="gi"><div class="gl">Projet</div><div class="gv">' + esc(t.nom) + "</div></div>" + (e.tirage ? '<div class="gi"><div class="gl">Tirage</div><div class="gv">' + esc(e.tirage) + "</div></div>" : "") + '<div class="gi"><div class="gl">État</div><div class="gv">' + (e.fait ? "Publié" : "À publier") + "</div></div></div>";
     if (e.visuels && e.visuels.length) h += '<div class="mslab">Visuels <a class="dl" href="' + esc(e.visuels[0]) + '" download>Télécharger</a></div><div class="mvis">' + e.visuels.map(function (u) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener" style="background-image:url(' + esc(u) + ')"></a>'; }).join("") + "</div>";
     if (modalCap && (modalCap.ig || modalCap.tw || modalCap.tiktok)) { modalCap = { ig: modalCap.ig, tw: modalCap.tw, tk: modalCap.tiktok }; h += '<div class="mslab">Légendes à publier</div>' + tabsHTML(modalCap); }
@@ -1288,7 +1289,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Liste de départ dictée par Will (20/10/2026).
   var DEF = [
     { nm: "Résumé hebdo", ds: "Ce qui s'est passé dans le gang cette semaine (= « Quoi de neuf », qui génère les images). Plutôt le dimanche.", freq: "Hebdo", cat: "Récap" },
-    { nm: "Sortie mensuelle — Globale", ds: "Le récap de toutes les sorties du mois. À générer en noir ou crème.", freq: "Mensuel", cat: "Sorties" },
+    { nm: "Sortie mensuelle — Globale (récap du mois)", ds: "Le récap de toutes les sorties du mois, le 10 de chaque mois. Carrousel à générer dans le studio (Récap du mois), en noir ou crème.", freq: "Mensuel", cat: "Sorties" },
     { nm: "Sortie mensuelle — Japon", ds: "Les sorties du mois au Japon.", freq: "Mensuel", cat: "Sorties" },
     { nm: "Sortie mensuelle — France", ds: "Les sorties du mois en France.", freq: "Mensuel", cat: "Sorties" },
     { nm: "Fiche mangaka", ds: "Portrait d'un mangaka (séries, infos), posté dès qu'une fiche auteur est créée ou mise à jour.", freq: "Au fil de l'eau", cat: "Fiches" },

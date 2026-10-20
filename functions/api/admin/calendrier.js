@@ -3,13 +3,14 @@
 // Stocké dans le KV STATS, clé hq:calendrier : { sv, types:[{id,nom,couleur}], events:[...] }.
 //   GET  /api/admin/calendrier                         → { ok, types, events }
 //   POST { addType:{nom,couleur} }                     → crée une pastille
-//   POST { ev:{id?,titre,type,date?,repeat?,note?,imp?,tirage?,visuels?,textes?} } → crée / modifie
+//   POST { ev:{id?,titre,type,date?,repeat?,jour?,lien?,note?,imp?,tirage?,visuels?,textes?} } → crée / modifie
+//     jour : jour du mois (1-28) pour repeat "mois" ; lien : raccourci ouvert depuis l'événement (ex. /studio/mois/)
 //   POST { id, fait }                                  → coche publié
 //   POST { id, del:true }                              → supprime
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 4; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 5; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -37,7 +38,7 @@ const DEPART = {
   ],
   events: [
     { id: "ev-qn-sem", titre: "Quoi de neuf dans le gang", type: "qn-sem", repeat: "lun", note: "News Hebdo — carrousel réseaux : tout ce qui s'est passé la semaine d'avant. Généré dans La Fabrique." },
-    { id: "ev-qn-mois", titre: "Sorties du mois", type: "qn-mois", repeat: "mois", note: "Récap des sorties du mois d'avant (vers le 15). Visuel noir ou crème, généré dans La Fabrique." },
+    { id: "ev-qn-mois", titre: "Récap du mois", type: "qn-mois", repeat: "mois", jour: 10, lien: "/studio/mois/", note: "Le 10 de chaque mois : récap des sorties du mois précédent (France + Japon). Choisis la cover en avant et exporte le carrousel directement dans le studio (lien ci-dessous). Visuel noir ou crème." },
     { id: "ev-maj", titre: "Fiches mises à jour — récap", type: "maj", repeat: "jeu", note: "Les séries à aller compléter sur le site." },
     { id: "ev-cxw", titre: "Vidéo Crows×Worst", type: "video", date: "2026-10-20", imp: true, note: "Finir la version 25-30 s (téléphone, bordures) et la publier." },
     {
@@ -58,11 +59,17 @@ function nettEv(e, old) {
     ? { ig: String(e.textes.ig || "").slice(0, 2000), tw: String(e.textes.tw || "").slice(0, 2000), tiktok: String(e.textes.tiktok || "").slice(0, 2000) }
     : (old.textes || null);
   const visuels = Array.isArray(e.visuels) ? e.visuels.map(u => String(u || "").slice(0, 300)).filter(Boolean).slice(0, 8) : (old.visuels || null);
+  // Jour du mois pour une récurrence mensuelle (1 à 28, défaut 1). Lien direct (studio, page…) ouvert depuis l'événement.
+  const jourIn = Number.isInteger(e.jour) && e.jour >= 1 && e.jour <= 28 ? e.jour : null;
+  const jour = jourIn != null ? jourIn : (old.jour || null);
+  const lien = typeof e.lien === "string" ? (/^(\/|https?:\/\/)/.test(e.lien) ? e.lien.slice(0, 300) : (e.lien === "" ? null : (old.lien || null))) : (old.lien || null);
   return {
     id: old.id || uid(),
     titre: String(e.titre).slice(0, 160),
     type: e.type || old.type || "autre",
     date, repeat: date ? null : rep,
+    jour: (!date && rep === "mois") ? jour : null,
+    lien,
     note: String(e.note != null ? e.note : (old.note || "")).slice(0, 600),
     imp: "imp" in e ? !!e.imp : !!old.imp,
     tirage: String(e.tirage != null ? e.tirage : (old.tirage || "")).slice(0, 80),
