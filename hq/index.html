@@ -17,7 +17,8 @@ a{color:inherit}
 .wrap{max-width:1100px;margin:0 auto;padding:22px 16px 80px}
 header{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:26px}
 header .fgq-av{position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:40px}
-header a.home{display:flex;align-items:center;gap:12px;text-decoration:none}
+header .home{display:flex;align-items:center;gap:12px}
+header .home a{display:flex;align-items:center;text-decoration:none;color:inherit}
 header img{height:38px}
 header b{font:700 30px/1 "FGAntonio";letter-spacing:.06em;text-transform:uppercase;transform:translateY(-3px)}
 header b em{font-style:normal;color:var(--red)}
@@ -206,7 +207,8 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .datecard .ar{width:38px;height:38px;border:0;background:var(--s2);color:var(--cr);border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center}
 .datecard .ar:hover{background:#26262c}
 .calbar .today{height:var(--calh);border:0;background:var(--s2);color:var(--cr);border-radius:14px;padding:0 20px;font:700 14px "FGInter";cursor:pointer}
-.calbar .addb{height:var(--calh);border:0;background:var(--blue);color:#fff;border-radius:14px;padding:0 22px;font:700 14px "FGInter";cursor:pointer}
+/* « Ajouter » : même style sombre que Mois/Semaine, assemblé et compact (Will, 20/10/2026). */
+.calbar .addb{height:var(--calh);border:0;background:var(--s1);color:var(--cr);border-radius:14px;padding:0 18px;font:700 14px "FGInter";cursor:pointer}
 .dtabs{height:var(--calh);display:inline-flex;align-items:center;gap:4px;background:var(--s1);border-radius:14px;padding:0 5px;width:max-content}
 .dtabs button{height:calc(var(--calh) - 10px);border:0;background:none;color:var(--mut);font:700 14px "FGInter";padding:0 22px;border-radius:10px;cursor:pointer}
 .dtabs button[aria-pressed=true]{background:var(--blue);color:#fff}
@@ -350,6 +352,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 @media (max-width:860px){.mgrid,.mhead,.wk{grid-template-columns:repeat(2,1fr)}.kb{grid-template-columns:1fr}h1{font-size:48px}.cell .add{color:var(--mut);height:auto}}
 /* Mobile : calendrier éditorial simplifié — uniquement la vue semaine, un jour à la fois, qu'on fait défiler à l'horizontale (Will, 20/10/2026). */
 @media (max-width:719px){
+  #calendrier .calhdr{justify-content:center}
   #calendrier .calhdr h1{font-size:26px;white-space:nowrap}
   #calendrier .dtabs{display:none!important}
   #calendrier .calpan{padding:12px}
@@ -366,7 +369,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 </head>
 <body>
 <div class="wrap">
-  <header><a class="home" href="#"><img src="/img/logo-furyogang.png" alt=""><b><em>HQ</em></b></a><button id="hq-av" type="button"></button></header>
+  <header><span class="home"><a href="/" aria-label="Aller sur le site FuryoGang"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a><a href="#home" aria-label="Accueil du QG"><b><em>HQ</em></b></a></span><button id="hq-av" type="button"></button></header>
 
   <section class="sec on" id="home">
     <h1>Le QG</h1>
@@ -377,7 +380,6 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
       <a class="tile" href="#ressources"><span class="k">資料</span><h2>Ressources</h2><p>Scans de magazines, murs d'affiches, chronologies : là où on puise le contenu du site.</p><span class="n" id="n-res">…</span></a>
       <a class="tile" href="#todo"><span class="k">課題</span><h2>To-do</h2><p>Tout ce qu'il reste à faire, à cocher. Ajoute, modifie, supprime.</p><span class="n" id="n-todo">…</span></a>
       <a class="tile" href="#calendrier"><span class="k">暦</span><h2>Calendrier éditorial</h2><p>Tout ce que tu dois publier, semaine par semaine et par mois : site et réseaux, avec une pastille par type de contenu.</p><span class="n" id="n-cal">…</span></a>
-      <a class="tile" href="#vivre"><span class="k">活気</span><h2>Contenu</h2><p>Les contenus récurrents en détail : ce qui est en place, à faire, les idées. La réserve où piocher pour le calendrier.</p><span class="n">Réseaux</span></a>
       <a class="tile" href="#premium"><span class="k">会員</span><h2>Fonctionnement du Premium</h2><p>Les dates, les dons PayPal, l'abonnement Stripe, ce qui est fait et ce qu'il reste à faire, avec le planning.</p><span class="n">Règles validées</span></a>
       <a class="tile" href="#dons"><span class="k">寄付</span><h2>Dons PayPal</h2><p>Les membres qui ont cliqué « Je soutiens » avant d'aller sur PayPal : pseudo, e-mail, montant, code à retrouver dans la note PayPal.</p><span class="n" id="n-dons">…</span></a>
       <a class="tile" href="#badges"><span class="k">紋章</span><h2>Badges</h2><p>Tous les badges du site : icône, ce qu'ils font, combien de membres les ont. Ajoute et modifie ici, attribue sur la fiche du membre.</p><span class="n" id="n-badges">…</span></a>
@@ -421,7 +423,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   </section>
 
   <section class="sec" id="calendrier">
-    <div class="calhdr"><h1>Calendrier éditorial</h1><a class="btn" href="#vivre">Contenu</a></div>
+    <div class="calhdr"><h1>Calendrier éditorial</h1></div>
     <div class="projrow" id="projrow"></div>
     <div class="calbar">
       <div class="datecard">
