@@ -1285,7 +1285,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     { nm: "Le plus de badges — semaine", ds: "Le membre qui a gagné le plus de badges cette semaine.", freq: "Hebdo", cat: "Membres" },
     { nm: "Nouveaux membres", ds: "Bienvenue aux nouveaux arrivés dans le gang.", freq: "Au fil de l'eau", cat: "Membres" },
     { nm: "Membres qui ont donné", ds: "Remercier ceux qui ont soutenu / donné.", freq: "Au fil de l'eau", cat: "Membres" },
-    { nm: "Rejoins le gang — avantages", ds: "Chaque mois, inciter à s'inscrire en montrant les avantages : au début, gagner un tome ; plus tard, les membres Premium gagnent des figurines.", freq: "Mensuel", cat: "Communauté" }
+    { nm: "Rejoins le gang — avantages", ds: "Chaque mois : un tome offert aux membres inscrits, une figurine aux membres Premium. Post d'incitation à s'inscrire en montrant ces avantages.", freq: "Mensuel", cat: "Communauté" }
   ];
   function uid() { return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   function load() { try { var v = JSON.parse(localStorage.getItem(K)); if (Array.isArray(v) && v.length) return v; } catch (e) {} return DEF.map(function (d) { return { id: uid(), nm: d.nm, ds: d.ds, freq: d.freq, cat: d.cat }; }); }

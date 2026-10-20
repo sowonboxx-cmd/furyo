@@ -48,9 +48,8 @@ button:disabled{opacity:.5;cursor:default}
 .qn[data-th="creme"] .top img{filter:brightness(0)}
 .qn .top .r{font:600 26px/1 "FGAntonio";letter-spacing:.1em;color:var(--mut);text-transform:uppercase}
 .qn .top .r b{color:var(--cr);font-weight:700}
-.qn .bot{position:absolute;left:64px;right:64px;bottom:50px;display:flex;align-items:center;justify-content:space-between;font:600 24px "FGInter";color:var(--mut);z-index:5}
-.qn .bot .nav{min-width:200px}.qn .bot .nav.nx{text-align:right}
-.qn .bot .nav b{color:var(--cr);font-weight:700}
+.qn .bot{position:absolute;left:64px;right:64px;bottom:50px;display:flex;align-items:center;justify-content:space-between;font:700 25px "FGInter";z-index:5}
+.qn .bot .nav{min-width:200px;color:var(--red);font-weight:700}.qn .bot .nav.nx{text-align:right}
 .qn .dots{display:flex;gap:11px}
 .qn .dots i{width:14px;height:14px;border-radius:50%;background:var(--line);display:block}
 .qn .dots i.on{background:var(--red)}
@@ -60,10 +59,11 @@ button:disabled{opacity:.5;cursor:default}
 .qn .flag.jp i{width:19px;height:19px;border-radius:50%;background:#BC002D;display:block}
 .qn .flag.fr i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#0055A4 0 33.34%,#fff 33.34% 66.67%,#EF4135 66.67% 100%)}
 /* page pays */
-.qn .phead{position:absolute;left:64px;top:148px;right:64px;z-index:3;display:flex;align-items:center;justify-content:space-between}
+.qn .phead{position:absolute;left:64px;top:150px;right:64px;z-index:3;display:flex;align-items:center;justify-content:space-between}
 .qn .phead .chip{font:700 62px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.02em;display:inline-flex;align-items:center;gap:22px}
-.qn .phead .pg{font:600 27px "FGAntonio";letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
-.qn .gridc{position:absolute;left:64px;right:64px;top:248px;bottom:118px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px 30px;align-content:start}
+.qn .phead .pg{font:600 27px "FGAntonio";letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.qn .sep{position:absolute;left:64px;right:64px;top:238px;height:2px;background:var(--line);z-index:3}
+.qn .gridc{position:absolute;left:64px;right:64px;top:266px;bottom:118px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px 30px;align-content:start}
 .qn .cell{min-width:0;display:flex;flex-direction:column}
 .qn .cell .covw{position:relative;flex:none}
 /* Couvertures au format manga naturel (≈ standard tankōbon), toutes identiques — pas de carré (Will, 20/10/2026). */
@@ -72,24 +72,26 @@ button:disabled{opacity:.5;cursor:default}
 .qn .cell .t{font:700 30px/1.1 "FGAntonio";text-transform:uppercase;margin-top:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qn .cell .s{font:500 21px "FGInter";color:var(--mut);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* couverture */
-.qn .sun{position:absolute;left:50%;top:560px;width:760px;height:760px;margin-left:-380px;border-radius:50%;background:var(--red)}
-.qn .rhead{position:absolute;left:64px;right:64px;top:150px;text-align:center;z-index:4}
+.qn .sun{position:absolute;left:50%;top:470px;width:660px;height:660px;margin-left:-330px;border-radius:50%;background:var(--red)}
+.qn .rhead{position:absolute;left:64px;right:64px;top:140px;text-align:center;z-index:4}
 .qn .rhead .k{font:700 27px "FGInter";letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
-.qn .rhead h2{font:700 150px/.92 "FGAntonio";text-transform:uppercase;letter-spacing:.005em;margin-top:14px}
-.qn .rhead h2 em{font-style:normal;color:var(--red)}
-.qn .fan{position:absolute;left:0;right:0;top:600px;height:560px;z-index:3}
+.qn .rhead h2{font:700 110px/.92 "FGAntonio";text-transform:uppercase;letter-spacing:.005em;margin-top:14px}
+.qn .rhead h2 em{font-style:normal;color:var(--red);font-size:168px;display:inline-block;line-height:.88;margin-top:4px}
+.qn .fan{position:absolute;left:0;right:0;top:480px;height:470px;z-index:3}
 .qn .fan img{position:absolute;left:50%;top:40px;width:256px;height:384px;object-fit:cover;border:6px solid var(--frame);border-radius:4px;box-shadow:0 22px 50px rgba(0,0,0,.6);transform-origin:bottom center}
-.qn .tiles{position:absolute;left:64px;right:64px;bottom:150px;display:grid;grid-template-columns:1fr 1fr;gap:24px;z-index:4}
-.qn .tiles>div{background:var(--bg2);border:2px solid var(--line);border-radius:22px;padding:30px 34px}
-.qn .tiles .fl{display:flex;align-items:center;gap:18px}
-.qn .tiles b{font:700 92px/1 "FGAntonio"}
-.qn .tiles .cap{font:600 26px/1.25 "FGInter";color:var(--mut);margin-top:10px}
+.qn .tiles{position:absolute;left:64px;right:64px;bottom:118px;display:grid;grid-template-columns:1fr 1fr;gap:26px;z-index:4}
+.qn .tiles>div{background:var(--bg2);border:2px solid var(--line);border-radius:24px;padding:26px 32px}
+.qn .tiles .flag{width:58px;height:40px}
+.qn .tiles b{display:block;font:700 158px/.84 "FGAntonio";margin:16px 0 4px}
+.qn .tiles .cap{font:600 27px/1.2 "FGInter";color:var(--mut)}
 /* final CTA */
-.qn .wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:10px;opacity:.22;filter:saturate(.9)}
+/* Fond mur de couvertures bien visible + carte sombre arrondie par-dessus (version d'origine préférée par Will, 20/10/2026). */
+.qn .wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:8px;opacity:.62}
 .qn .wall img{width:100%;height:100%;object-fit:cover}
-.qn[data-th="creme"] .wall{opacity:.3}
-.qn .shade{position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 55%,transparent),var(--bg) 70%)}
-.qn .panel{position:absolute;left:64px;right:64px;top:150px;bottom:140px;z-index:4;display:flex;flex-direction:column}
+.qn[data-th="creme"] .wall{opacity:.52}
+.qn .shade{position:absolute;inset:0;background:rgba(0,0,0,.28)}
+.qn[data-th="creme"] .shade{background:rgba(243,237,225,.22)}
+.qn .panel{position:absolute;left:42px;right:42px;top:150px;bottom:116px;z-index:4;background:var(--bg);border-radius:40px;padding:58px 54px;display:flex;flex-direction:column}
 .qn .panel h2{font:700 96px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.005em}
 .qn .steps{margin-top:46px;display:flex;flex-direction:column;gap:30px}
 .qn .steps .st{display:flex;gap:26px;align-items:flex-start}
@@ -112,6 +114,7 @@ button:disabled{opacity:.5;cursor:default}
     <input id="mois" type="month" aria-label="Mois">
     <button id="next" aria-label="Mois suivant">→</button>
     <span class="seg" role="group" aria-label="Thème"><button data-th="noir" aria-pressed="true">Noir</button><button data-th="creme" aria-pressed="false">Crème</button></span>
+    <label>Couverture en avant <select id="feat"></select></label>
     <button class="main" id="dl" disabled>Télécharger les images</button>
     <span id="msg">Chargement…</span>
   </div>
@@ -131,7 +134,7 @@ button:disabled{opacity:.5;cursor:default}
   var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
   var chunk = function (a, n) { var o = []; for (var i = 0; i < a.length; i += n) o.push(a.slice(i, i + n)); return o; };
   var VIDE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-  var theme = "noir", D = null, slides = [], tour = 0;
+  var theme = "noir", D = null, slides = [], tour = 0, featIdx = 0;
 
   // Mois par défaut : le mois précédent (le récap se poste au début du mois suivant).
   var now = new Date();
@@ -146,12 +149,19 @@ button:disabled{opacity:.5;cursor:default}
       var items = (p.items || []).filter(function (x) { return x.date && x.date.slice(0, 7) === m && x.cover; });
       items.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
       D = { m: m, jp: items.filter(function (x) { return x.pays === "Japon"; }), fr: items.filter(function (x) { return x.pays === "France"; }) };
+      featIdx = 0; peupleFeat();
       construire();
     }).catch(function (e) { if (moi === tour) { $("#dl").disabled = true; $("#msg").textContent = "Souci de chargement — recharge la page."; console.error(e); } });
   }
 
   function nomMois(m) { return MOIS[Number(m.slice(5, 7)) - 1]; }
   function moisAn(m) { return nomMois(m).charAt(0).toUpperCase() + nomMois(m).slice(1) + " " + m.slice(0, 4); }
+  // Liste déroulante « couverture en avant » : toutes les sorties du mois (Japon puis France), au choix de Will.
+  function peupleFeat() {
+    var tout = D.jp.concat(D.fr);
+    $("#feat").innerHTML = tout.map(function (x, i) { return '<option value="' + i + '">' + esc((x.fr || x.series) + (x.n != null ? " " + nn(x.n) : "")) + "</option>"; }).join("");
+    $("#feat").value = String(Math.min(featIdx, Math.max(0, tout.length - 1)));
+  }
 
   // ——— Gabarits ———
   function cellule(x, fr) {
@@ -162,8 +172,9 @@ button:disabled{opacity:.5;cursor:default}
   function pagePays(list, fr, nomPays, cls, pageIdx, nbPages) {
     var cells = list.map(function (x) { return cellule(x, fr); }).join("");
     return '<div class="qn" data-th="' + theme + '">' +
-      '<div class="top"><img src="' + LOGO + '" alt=""><div class="r"><b>' + esc(moisAn(D.m)) + "</b></div></div>" +
-      '<div class="phead"><div class="chip"><span class="flag ' + cls + '"><i></i></span><span contenteditable>' + nomPays + '</span></div><div class="pg">' + (pageIdx + 1) + "/" + nbPages + "</div></div>" +
+      '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
+      '<div class="phead"><div class="chip"><span class="flag ' + cls + '"><i></i></span><span contenteditable>' + nomPays + '</span></div><div class="pg">' + esc(moisAn(D.m)) + " · " + (pageIdx + 1) + "/" + nbPages + "</div></div>" +
+      '<div class="sep"></div>' +
       '<div class="gridc">' + cells + "</div>" +
       '<div class="bot"><span class="nav" data-prev></span><span class="dots" data-dots></span><span class="nav nx" data-next></span></div></div>';
   }
@@ -172,16 +183,20 @@ button:disabled{opacity:.5;cursor:default}
     var out = [];
     var jp = D.jp, fr = D.fr, tout = jp.concat(fr);
 
-    // 1 · Couverture
-    var fan = tout.slice(0, 7), nf = fan.length;
-    var fanHtml = fan.map(function (x, i) { var k = i - (nf - 1) / 2; return '<img src="' + couv(x.cover) + '" style="margin-left:-128px;transform:translateX(' + (k * 118) + 'px) rotate(' + (k * 7) + 'deg);z-index:' + (20 - Math.abs(Math.round(k))) + '">'; }).join("");
+    // 1 · Couverture — éventail avec la couverture choisie au centre, devant
+    var fi = Math.min(featIdx, tout.length - 1);
+    var featured = tout[fi] || tout[0];
+    var others = tout.filter(function (x) { return x !== featured; }).slice(0, 8);
+    var arr = others.slice(); if (featured) arr.splice(Math.floor(arr.length / 2), 0, featured);
+    var nf = arr.length;
+    var fanHtml = arr.map(function (x, i) { var k = i - (nf - 1) / 2; var z = (x === featured) ? 99 : 20 - Math.abs(Math.round(k)); return '<img src="' + couv(x.cover) + '" style="margin-left:-128px;transform:translateX(' + (k * 118) + 'px) rotate(' + (k * 7) + 'deg);z-index:' + z + '">'; }).join("");
     var cover = '<div class="qn" data-th="' + theme + '">' +
       '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
       '<div class="rhead"><div class="k" contenteditable>Le récap du mois</div><h2 contenteditable>Sorties de<br><em>' + esc(nomMois(D.m)) + '</em></h2></div>' +
       '<div class="fan">' + fanHtml + "</div>" +
-      '<div class="tiles"><div><div class="fl"><span class="flag jp"><i></i></span><b>' + jp.length + '</b></div><div class="cap" contenteditable>sortie' + (jp.length > 1 ? "s" : "") + ' au Japon</div></div>' +
-      '<div><div class="fl"><span class="flag fr"><i></i></span><b>' + fr.length + '</b></div><div class="cap" contenteditable>en France, à ne pas rater</div></div></div>' +
-      '<div class="bot"><span class="nav">furyogang.com</span><span class="dots" data-dots></span><span class="nav nx" data-next></span></div></div>';
+      '<div class="tiles"><div><span class="flag jp"><i></i></span><b>' + jp.length + '</b><div class="cap" contenteditable>sortie' + (jp.length > 1 ? "s" : "") + ' au Japon</div></div>' +
+      '<div><span class="flag fr"><i></i></span><b style="color:var(--red)">' + fr.length + '</b><div class="cap" contenteditable>en France, à ne pas rater</div></div></div>' +
+      '<div class="bot"><span class="dots" data-dots></span><span class="nav nx" data-next></span></div></div>';
     out.push({ k: "couv", nom: "Couverture", html: cover });
 
     // 2 · Japon (pages de 6)
@@ -195,13 +210,13 @@ button:disabled{opacity:.5;cursor:default}
     var wall = tout.concat(tout).slice(0, 20).map(function (x) { return '<img src="' + couv(x.cover) + '">'; }).join("");
     var fin = '<div class="qn" data-th="' + theme + '">' +
       '<div class="wall">' + wall + '</div><div class="shade"></div>' +
-      '<div class="top"><img src="' + LOGO + '" alt=""><div class="r">' + esc(moisAn(D.m)) + "</div></div>" +
+      '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
       '<div class="panel"><h2 contenteditable>Ajoutez-les à<br>votre collection</h2>' +
       '<div class="steps"><div class="st"><div class="n">1</div><p contenteditable>Coche tes tomes sur <b>furyogang.com/ma-collection</b></p></div>' +
       '<div class="st"><div class="n">2</div><p contenteditable>Chaque tome ajouté te rapporte des <b>points</b> et te fait monter au classement du gang</p></div></div>' +
       '<div class="prem"><b>Tirage Premium</b><p contenteditable>Chaque mois, un membre Premium est tiré au sort et gagne un tome sorti en France.</p></div>' +
       '<div class="cta">furyogang.com/ma-collection</div></div>' +
-      '<div class="bot"><span class="nav" data-prev></span><span class="dots" data-dots></span><span class="nav nx">@FuryoGang</span></div></div>';
+      '<div class="bot"><span class="nav" data-prev></span><span class="dots" data-dots></span><span class="nav nx">furyogang.com</span></div></div>';
     out.push({ k: "fin", nom: "Fin · Collection", html: fin });
 
     slides = out; afficher();
@@ -285,6 +300,7 @@ button:disabled{opacity:.5;cursor:default}
     theme = bt.dataset.th; document.querySelectorAll(".seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === bt); });
     if (D) construire();
   }; });
+  $("#feat").onchange = function () { featIdx = Number($("#feat").value) || 0; if (D) construire(); };
   $("#mois").onchange = charger;
   $("#prev").onclick = function () { var d = new Date($("#mois").value + "-01T12:00:00Z"); d.setUTCMonth(d.getUTCMonth() - 1); $("#mois").value = d.toISOString().slice(0, 7); charger(); };
   $("#next").onclick = function () { var d = new Date($("#mois").value + "-01T12:00:00Z"); d.setUTCMonth(d.getUTCMonth() + 1); $("#mois").value = d.toISOString().slice(0, 7); charger(); };
