@@ -352,11 +352,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 @media (max-width:860px){.mgrid,.mhead,.wk{grid-template-columns:repeat(2,1fr)}.kb{grid-template-columns:1fr}h1{font-size:48px}.cell .add{color:var(--mut);height:auto}}
 /* Mobile : calendrier éditorial simplifié — uniquement la vue semaine, un jour à la fois, qu'on fait défiler à l'horizontale (Will, 20/10/2026). */
 @media (max-width:719px){
-  #calendrier .calhdr{justify-content:center}
-  #calendrier .calhdr h1{font-size:14px;white-space:nowrap}
-  /* « Ajouter » sur la même ligne que la carte date, même hauteur ; « Aujourd'hui » retiré (Will, 20/10/2026). */
-  #calendrier .calbar{flex-wrap:nowrap;gap:10px}
-  #calendrier .datecard{flex:1 1 auto;min-width:0}
+  /* Titre « Calendrier éditorial » masqué sur mobile — inutile, prend de la place (Will, 20/10/2026). */
+  #calendrier .calhdr{display:none}
+  /* Carte date en largeur naturelle (pas étirée) + « Ajouter » collé à sa droite, l'espace restant reste vide ; « Aujourd'hui » retiré. */
+  #calendrier .calbar{flex-wrap:nowrap;gap:10px;justify-content:flex-start}
   #calendrier .datecard .ar{width:34px;height:34px}
   #calendrier .calbar-r{flex:none}
   #calendrier .calbar .addb{padding:0 14px}
