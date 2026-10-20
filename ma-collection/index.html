@@ -250,7 +250,7 @@ a{color:inherit}
 <body>
 <script src="/site/header.js?v=63"></script>
 <script>window.FG_GANG_PREMIUM = true;</script>
-<script src="/site/gang.js?v=20"></script>
+<script src="/site/gang.js?v=21"></script>
 <script src="/site/statut.js?v=3"></script>
 <div class="page"><div id="app"></div></div>
 <script>document.getElementById("app").innerHTML = window.FG_SK ? (/^\/ma-collection\/[^/]+/.test(location.pathname) ? FG_SK.fiche() : FG_SK.grid(12)) : "";</script>
@@ -533,9 +533,8 @@ async function envoyer(l, on, tomes, el){
   finally { el && el.classList.remove("busy"); }
 }
 function premium(){
-  const p = document.createElement("div"); p.className = "pay";
-  p.innerHTML = `<div><b>Premium</b><p>« Lu », « Envie de lire » et le Panier sont réservés aux membres Premium. Tes tomes possédés, eux, sont illimités.</p><button class="btn">OK</button></div>`;
-  document.body.appendChild(p); p.onclick = e => { if (e.target === p || e.target.closest(".btn")) p.remove(); };
+  // Direct vers la page Premium (haut de page) pour voir les avantages, sans pop-up (Will, 20/10/2026).
+  location.href = "/premium/";
 }
 document.addEventListener("click", async e => {
   if (e.target.closest("[data-fsh]")) { feuille(); return; }

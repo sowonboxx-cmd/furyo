@@ -152,7 +152,7 @@
      Membres connectés seulement. Accueil ordinateur : widget Jinnai (→ page Premium). Accueil téléphone : Busō en grand
      la première fois (→ page Premium), puis la petite barre B (→ fenêtre d'explications). Ma collection : D2 sur ordinateur,
      barre collante T3 sur téléphone (→ fenêtre d'explications). La fenêtre mène à la page Premium, bloc dons. */
-  var PAP = Date.now() < Date.parse("2026-11-15T00:00:00+01:00") || /[?&]apercu=pap/.test(location.search), PAPVU = false, DONS = "/premium/#dons";
+  var PAP = Date.now() < Date.parse("2026-11-15T00:00:00+01:00") || /[?&]apercu=pap/.test(location.search), PAPVU = false, DONS = "/premium/";
   try { PAPVU = !!localStorage.getItem("fg_pap_vu") && !/[?&]apercu=pap1/.test(location.search); } catch (e) {}
   var c3 = document.createElement("style");
   c3.textContent =
