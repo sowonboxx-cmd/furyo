@@ -234,7 +234,8 @@ function hold(fn){
   fn();
   requestAnimationFrame(() => requestAnimationFrame(() => { app.style.minHeight = ""; }));
 }
-function applyPays(){
+// Filtre les sorties selon le pays choisi et replace le repère « Aujourd'hui ». Ne touche pas au défilement.
+function filterPays(){
   document.querySelectorAll("[data-pays]").forEach(b => b.setAttribute("aria-pressed", b.dataset.pays === state.pays));
   const old = document.getElementById("now"); if (old) old.remove();
   SHOWN = []; let firstNext = null;
@@ -252,7 +253,22 @@ function applyPays(){
   const none = document.getElementById("none");
   if (none) { none.hidden = !!firstNext; none.textContent = !SHOWN.length ? `Aucune sortie pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.` : `Aucune sortie annoncée pour l'instant${state.pays !== "all" ? " de ce côté" : ""}.`; }
   fitAll();
-  goToday(); settle();
+}
+// Chargement / changement de vue : on filtre puis on se cale sur « Aujourd'hui ».
+function applyPays(){ filterPays(); goToday(); settle(); }
+// Changement de pays (Tout / Japon / France) : on garde la vue STABLE au lieu de resauter sur Aujourd'hui (Will, 20/10/2026).
+// On repère l'élément visible le plus haut (sa date + sa hauteur à l'écran), on filtre, puis on remet à la même hauteur
+// l'élément dont la date est la plus proche — le regard ne bouge quasiment pas.
+function switchPays(){
+  const sel = `[data-v="${state.view}"] li[data-p]:not([hidden]), #now`;
+  let aDate = null, aOff = 0;
+  for (const li of document.querySelectorAll(sel)) { const r = li.getBoundingClientRect(); if (r.bottom > 100) { aDate = li.dataset.d || today; aOff = r.top; break; } }
+  filterPays();
+  if (aDate != null) {
+    const cands = [...document.querySelectorAll(sel)];
+    let target = cands.find(li => (li.dataset.d || today) >= aDate) || cands[cands.length - 1];
+    if (target) scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + scrollY - aOff), behavior: "instant" });
+  }
 }
 // Les images et polices du dessus finissent de charger après le premier placement : on se recale sur le mois en cours
 // tant que le visiteur n'a pas fait défiler lui-même (bug iPad : on voyait la fin de septembre, Will 05/10/2026).
@@ -285,7 +301,7 @@ function goToday(){
   scrollTo({ top: Math.max(0, y), behavior: "instant" });
 }
 document.addEventListener("click", e => {
-  const p = e.target.closest("[data-pays]"); if (p) { if (p.dataset.pays === state.pays) return; state.pays = p.dataset.pays; history.replaceState(null, "", state.pays === "all" ? location.pathname : "#" + state.pays.toLowerCase()); hold(applyPays); return; }
+  const p = e.target.closest("[data-pays]"); if (p) { if (p.dataset.pays === state.pays) return; state.pays = p.dataset.pays; history.replaceState(null, "", state.pays === "all" ? location.pathname : "#" + state.pays.toLowerCase()); hold(switchPays); return; }
   const v = e.target.closest("[data-view]"); if (v) { if (v.dataset.view === state.view) return; state.view = v.dataset.view; store.set("cal-view", state.view); hold(() => render(false)); }
 });
 // Fenêtre d'une sortie : un clic sur un tome montre la couverture en grand ; flèches (ou glisser) pour la sortie d'avant / d'après.
