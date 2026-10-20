@@ -304,6 +304,16 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .cedit label.ck input{width:20px;height:20px}
 .callg{display:none}
 @media (max-width:860px){.mgrid,.mhead,.wk{grid-template-columns:repeat(2,1fr)}.kb{grid-template-columns:1fr}h1{font-size:48px}.cell .add{color:var(--mut);height:auto}}
+/* Mobile : calendrier éditorial simplifié — uniquement la vue semaine, un jour à la fois, qu'on fait défiler à l'horizontale (Will, 20/10/2026). */
+@media (max-width:719px){
+  #calendrier .calhdr h1{font-size:26px;white-space:nowrap}
+  #calendrier .dtabs{display:none!important}
+  #calendrier .calpan{padding:12px}
+  #calendrier .wk{display:flex!important;grid-template-columns:none!important;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;align-items:flex-start;scroll-padding-left:4px;scrollbar-width:none}
+  #calendrier .wk::-webkit-scrollbar{display:none}
+  #calendrier .wk .wcol{flex:0 0 90%;scroll-snap-align:start;min-height:52vh}
+  #calendrier .wcol .wh b{font-size:22px}
+}
 </style>
 </head>
 <body>
@@ -910,9 +920,14 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     return h + "</div></div>";
   }
   function renderView() {
+    // Mobile : uniquement la vue semaine (un jour à la fois, défilement horizontal).
+    var mob = matchMedia("(max-width:719px)").matches;
+    if (mob && calView !== "semaine") calView = "semaine";
     $("#caltitre").textContent = titreVue();
     var R = { mois: renderMois, semaine: renderSemaine, kanban: renderKanban, gantt: renderGantt };
     $("#calview").innerHTML = (R[calView] || renderMois)();
+    // Mobile : on centre le défilement sur le jour d'aujourd'hui.
+    if (mob && calView === "semaine") { var wk = $("#calview .wk"), to = wk && wk.querySelector(".wcol.to"); if (wk && to) wk.scrollLeft = Math.max(0, to.offsetLeft - wk.offsetLeft - 4); }
     $("#projrow").innerHTML = projets().map(function (p) { return '<span class="pj"><i style="background:' + p.couleur + '"></i>' + esc(p.nom) + "</span>"; }).join("") + '<button class="projadd" id="projadd">+ Projet</button>';
     var nc = $("#n-cal"); if (nc) nc.textContent = CAL.events.filter(function (e) { return !e.fait; }).length + " à publier";
   }
