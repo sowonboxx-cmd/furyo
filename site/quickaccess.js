@@ -23,7 +23,9 @@
       ".fgq-qt .bdg{position:absolute;top:20px;right:18px;min-width:28px;height:28px;padding:0 8px;box-sizing:border-box;border-radius:7px;background:#BC002D;color:#fff;font:700 15px FGAntonio,sans-serif;display:flex;align-items:center;justify-content:center;line-height:1}.fgq-qt .bdg span{display:block;transform:translateY(-1px)}" +
       ".fgq-out{margin-top:16px;width:100%;height:58px;border:0;border-radius:16px;background:#2a2a2e;color:#98989D;font:600 16px Inter,sans-serif;cursor:pointer}" +
       ".fgq-av{width:34px;height:34px;border-radius:50%;background:#38383B;border:0;padding:0;cursor:pointer;overflow:hidden;display:grid;place-items:center;color:#CFCFD4;flex:none}.fgq-av img{width:100%;height:100%;object-fit:cover;display:block}" +
-      ".fgq-av svg{width:20px;height:20px}";
+      ".fgq-av svg{width:20px;height:20px}" +
+      // Mobile : liste dense (une entrée par ligne, petite icône, sans sous-titre) — le pop-up « bureau » ne tient pas sur téléphone (Will, 20/10/2026).
+      "@media (max-width:600px){.fgq-card{padding:16px;border-radius:22px;max-height:calc(100vh - 24px);overflow-y:auto}.fgq-grid{grid-template-columns:1fr;gap:9px}.fgq-qt{padding:10px 13px;gap:11px;border-radius:13px}.fgq-qt.wide{grid-column:auto}.fgq-qt .ic{width:32px;height:32px;border-radius:9px}.fgq-qt .ic svg{width:18px;height:18px}.fgq-qt h3{font-size:19px}.fgq-qt small{display:none}.fgq-qt .bdg{position:static;margin-left:auto;top:auto;right:auto}.fgq-out{height:50px;font-size:15px}}";
     document.head.appendChild(s);
   }
 
