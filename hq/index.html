@@ -311,8 +311,12 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   #calendrier .calpan{padding:12px}
   #calendrier .wk{display:flex!important;grid-template-columns:none!important;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;align-items:flex-start;scroll-padding-left:4px;scrollbar-width:none}
   #calendrier .wk::-webkit-scrollbar{display:none}
-  #calendrier .wk .wcol{flex:0 0 90%;scroll-snap-align:start;min-height:52vh}
+  #calendrier .wk .wcol{flex:0 0 90%;min-width:0;scroll-snap-align:start;min-height:52vh}
   #calendrier .wcol .wh b{font-size:22px}
+  /* Titres sur une ligne, coupés avec « … » pour qu'ils tiennent dans le cadre, comme les sorties (Will, 20/10/2026). */
+  #calendrier .wcard .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* Légende des pastilles (types) retirée sur mobile : on les retrouve dans le projet. */
+  #calendrier .projrow{display:none}
 }
 </style>
 </head>
@@ -864,7 +868,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       h += '<div class="wcol' + (is === today ? " to" : "") + '" data-date="' + is + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
       h += its.length ? its.map(function (it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
-        if (it.kind === "news") { var ni = it.n, ncol = itemColor(it), nbg = ni.image ? "background-image:url('" + esc(ni.image) + "')" : 'background:' + ncol; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov" style="' + nbg + '">' + (ni.image ? '' : '<b>N</b>') + '</span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + "</span></span></button>"; }
+        if (it.kind === "news") { var ni = it.n, ncol = itemColor(it), nbg = ni.image ? "background-image:url('" + esc(ni.image) + "')" : 'background:' + ncol; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov" style="' + nbg + '">' + (ni.image ? '' : '<b>N</b>') + '</span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
         var c = itemColor(it);
         return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? "Publiée · " + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }).join("") : '<div class="wempty">—</div>';
