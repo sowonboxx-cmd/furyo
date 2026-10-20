@@ -1006,6 +1006,21 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   var modalCap = null, modalTab = "tw";
   var IC_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
   var IC_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  // Copie robuste (mobile compris) : clipboard API avec repli execCommand si elle échoue ou n'existe pas, puis coche verte (Will, 20/10/2026).
+  function copyTexte(txt, btn) {
+    txt = String(txt || "");
+    var ok = function () { if (!btn) return; btn.classList.add("ok"); btn.innerHTML = IC_CHECK; setTimeout(function () { btn.classList.remove("ok"); btn.innerHTML = IC_COPY; }, 1400); };
+    var repli = function () {
+      try {
+        var ta = document.createElement("textarea"); ta.value = txt; ta.setAttribute("readonly", "");
+        ta.style.position = "fixed"; ta.style.top = "0"; ta.style.left = "0"; ta.style.opacity = "0"; ta.style.fontSize = "16px";
+        document.body.appendChild(ta); ta.focus(); ta.select(); try { ta.setSelectionRange(0, txt.length); } catch (e) {}
+        var done = document.execCommand("copy"); ta.remove(); if (done) ok();
+      } catch (e) {}
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(ok).catch(repli); }
+    else repli();
+  }
   var IC_BOOK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v13"/><path d="M4 5h5a3 3 0 0 1 3 3 3 3 0 0 1 3-3h5v13h-5a3 3 0 0 0-3 3 3 3 0 0 0-3-3H4z"/></svg>';
   // Slug public de la fiche (même logique que lib/notion.js) : Titre FR sinon le titre SERIES.
   function ficheSlug(s) { return String(s.fr || s.series || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
@@ -1239,8 +1254,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var lb = ev.target.closest("[data-lightbox]"); if (lb) { openLightbox(lb.dataset.lightbox); return; }
     var dt = ev.target.closest("[data-tome]"); if (dt) { dlTome(dt); return; }
     var tb = ev.target.closest("[data-tab]"); if (tb) { modalTab = tb.dataset.tab; $("#captxt").textContent = (modalCap && modalCap[modalTab]) || ""; document.querySelectorAll("#ctabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === tb); }); return; }
-    if (ev.target.closest("#cpbtn")) { var b = ev.target.closest("#cpbtn"); var txt = (modalCap && modalCap[modalTab]) || ""; navigator.clipboard.writeText(txt).then(function () { b.classList.add("ok"); b.innerHTML = IC_CHECK; setTimeout(function () { b.classList.remove("ok"); b.innerHTML = IC_COPY; }, 1400); }); return; }
-    if (ev.target.closest("#fichecp")) { var fb = ev.target.closest("#fichecp"); var u = fb.dataset.url || ""; navigator.clipboard.writeText(u).then(function () { fb.classList.add("ok"); fb.innerHTML = IC_CHECK; setTimeout(function () { fb.classList.remove("ok"); fb.innerHTML = IC_COPY; }, 1400); }); return; }
+    if (ev.target.closest("#cpbtn")) { copyTexte((modalCap && modalCap[modalTab]) || "", ev.target.closest("#cpbtn")); return; }
+    if (ev.target.closest("#fichecp")) { var fb = ev.target.closest("#fichecp"); copyTexte(fb.dataset.url || "", fb); return; }
     var a = ev.target.closest("[data-act]"); if (a) {
       var act = a.dataset.act, k = host.dataset.k, id = host.dataset.id;
       if (act === "edit") { formEv(CAL.events.find(function (e) { return e.id === id; })); }
