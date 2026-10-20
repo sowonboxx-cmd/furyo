@@ -53,7 +53,7 @@
     ".adm-qt{position:relative;display:flex;align-items:center;gap:16px;background:#1b1b1e;border:1px solid #2C2C2F;border-radius:18px;padding:18px 20px;text-decoration:none;color:inherit}.adm-qt.wide{grid-column:1/3}" +
     ".adm-qt .ic{width:54px;height:54px;border-radius:16px;background:#305887;display:grid;place-items:center;flex:none}.adm-qt .ic svg{width:28px;height:28px;color:#fff}" +
     ".adm-qt h3{margin:0;font:700 22px/1 Antonio,sans-serif;text-transform:uppercase;letter-spacing:.01em}.adm-qt small{display:block;color:#98989D;font-size:15px;margin-top:4px}" +
-    ".adm-qt .bdg{margin-left:auto;min-width:30px;height:30px;padding:0 10px;box-sizing:border-box;border-radius:15px;background:#BC002D;color:#fff;font:700 16px Antonio,sans-serif;display:grid;place-items:center}" +
+    ".adm-qt .bdg{position:absolute;top:20px;right:18px;min-width:28px;height:28px;padding:0 8px;box-sizing:border-box;border-radius:7px;background:#BC002D;color:#fff;font:700 15px Antonio,sans-serif;display:flex;align-items:center;justify-content:center;line-height:1}.adm-qt .bdg span{display:block;transform:translateY(-1px)}" +
     ".adm-out2{margin-top:16px;width:100%;height:58px;border:0;border-radius:16px;background:#2a2a2e;color:#98989D;font:600 16px Inter,sans-serif;cursor:pointer}" +
     ".sh-sj{display:inline-flex;align-items:center;gap:4px;color:#F2B33D;text-decoration:none;font:600 13px Inter,system-ui,sans-serif}.sh-sj svg{width:15px;height:15px}.sh-sj b{font-weight:700}.sh-sj[data-n='0']{display:none!important}" +
     ".sh-adm{display:flex;align-items:center;gap:10px}" +
@@ -444,7 +444,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     pop.classList.add("center"); pop.style.background = "";
     var n = (document.querySelector(".sh-val") || { getAttribute: function () { return "0"; } }).getAttribute("data-n") || "0";
     var I = {
-      news: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.5l2.2 2.2L16 9"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>',
+      news: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h11v15H5a1 1 0 0 1-1-1z"/><path d="M15 8h3a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2"/><path d="M7 8.5h5M7 11.5h5M7 14.5h3"/></svg>',
       sort: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
       cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 13h4M7 17h7"/></svg>',
       db: '<svg viewBox="0 0 24 24"><g fill="#fff"><rect x="3.3" y="6" width="3.1" height="13" rx="0.7"/><rect x="7.1" y="4.3" width="3.1" height="14.7" rx="0.7"/><rect x="14.9" y="7" width="3.1" height="12" rx="0.7"/><rect x="2" y="19" width="20" height="2.5" rx="1.25"/></g><rect x="10.9" y="5.2" width="3.3" height="13.8" rx="0.7" fill="#E54839"/></svg>',
@@ -453,7 +453,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>'
     };
     function qt(ic, title, sub, href, badge, wide) {
-      return '<a class="adm-qt' + (wide ? " wide" : "") + '" href="' + href + '"><span class="ic">' + I[ic] + '</span><div><h3>' + title + '</h3><small>' + sub + '</small></div>' + (badge ? '<span class="bdg">' + esc(String(badge)) + '</span>' : '') + '</a>';
+      return '<a class="adm-qt' + (wide ? " wide" : "") + '" href="' + href + '"><span class="ic">' + I[ic] + '</span><div><h3>' + title + '</h3><small>' + sub + '</small></div>' + (badge ? '<span class="bdg"><span>' + esc(String(badge)) + '</span></span>' : '') + '</a>';
     }
     var sjSub = SJ && SJ.n ? (SJ.n + " à poster") : "France + Japon";
     pop.innerHTML = '<div class="adm-card" role="dialog" aria-label="Accès rapide admin">' +

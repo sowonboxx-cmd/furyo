@@ -23,6 +23,12 @@ header b{font:700 30px/1 "FGAntonio";letter-spacing:.06em;text-transform:upperca
 header b em{font-style:normal;color:var(--red)}
 .back{display:none;font:600 14px "FGInter";color:var(--mut);text-decoration:none}
 body.sub .back{display:inline}
+.dlsheet{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+.dlsheet img{max-width:100%;max-height:70vh;border-radius:10px;-webkit-touch-callout:default}
+.dlsheet p{margin:0;color:var(--mut);font-size:13px;text-align:center}
+.dlsheet .row{display:flex;gap:10px}
+.dlsheet button{height:46px;padding:0 22px;border:0;border-radius:23px;font:700 14px "FGInter";cursor:pointer}
+.dlsheet .go{background:#305887;color:#fff}.dlsheet .no{background:#2a2a2e;color:#F5F5F7}
 h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .lead{color:var(--mut);margin:0 0 26px;line-height:1.5}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
@@ -510,7 +516,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 </div>
 <script src="/site/badges.js?v=2"></script>
 <script src="/site/sortie-post.js?v=1"></script>
-<script src="/site/quickaccess.js?v=2"></script>
+<script src="/site/quickaccess.js?v=3"></script>
 <script>
 if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
 (function () {
@@ -1108,7 +1114,17 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     ensureTomeLib().then(function () { return FG_TOME.png(sortieToTomeData(s), { theme: theme, fmt: fmt }); }).then(function (url) {
       return fetch(url).then(function (r) { return r.blob(); }).then(function (blob) {
         var nom = ((s.series || "tome").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")) + "-t" + String(s.n == null ? "" : s.n).padStart(2, "0") + "-" + (fmt === "story" ? "story-9x16" : "post-3x4") + "-" + theme + ".png";
-        var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        var file = new File([blob], nom, { type: "image/png" });
+        // Sur téléphone : feuille de partage iOS pour enregistrer dans Photos (comme « Actualités et veille »). Sur ordinateur : téléchargement direct.
+        if (navigator.canShare && navigator.canShare({ files: [file] }) && matchMedia("(pointer:coarse)").matches) {
+          var sh = document.createElement("div"); sh.className = "dlsheet";
+          sh.innerHTML = '<img src="' + url + '" alt=""><p>Touche « Enregistrer » puis « Enregistrer l\'image », ou appuie longuement sur l\'image.</p><div class="row"><button class="go">Enregistrer</button><button class="no">Fermer</button></div>';
+          document.body.appendChild(sh);
+          sh.querySelector(".no").onclick = function () { sh.remove(); };
+          sh.querySelector(".go").onclick = function () { navigator.share({ files: [file] }).then(function () { sh.remove(); }).catch(function () {}); };
+        } else {
+          var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nom; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        }
       });
     }).catch(function (e) { var m = $("#calmsg"); if (m) m.textContent = "Impossible de générer l'image"; console.error(e); }).finally(function () { btn.classList.remove("busy"); btn.innerHTML = lbl; });
   }
