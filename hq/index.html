@@ -1179,8 +1179,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     ck.classList.add("busy");
     if (kind === "sortie") {
       fetch("/api/admin/sorties", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, poste: !on }) })
-        .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw 0; if (SORTX[id]) SORTX[id].poste = !on ? 1 : 0; else SORTX[id] = { id: id, poste: !on ? 1 : 0 }; renderView(); })
-        .catch(function () { ck.classList.remove("busy"); });
+        .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); if (SORTX[id]) SORTX[id].poste = !on ? 1 : 0; else SORTX[id] = { id: id, poste: !on ? 1 : 0 }; renderView(); })
+        .catch(function (e) { ck.classList.remove("busy"); var m = $("#calmsg"); if (m) m.textContent = "Erreur d'enregistrement : " + (e.message || "réessaie"); });
     } else {
       calPost({ id: id, fait: !on });
     }

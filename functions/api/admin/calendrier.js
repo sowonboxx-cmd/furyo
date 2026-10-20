@@ -10,7 +10,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 5; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 6; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -78,17 +78,22 @@ function nettEv(e, old) {
   };
 }
 
-// Migration : met à jour les rendez-vous de départ (dates, textes) sans toucher aux ajouts de Will.
+// Migration NON DESTRUCTIVE (Will, 20/10/2026) : on garde TOUT ce que Will a réglé sur un rendez-vous
+// existant (date, jour de répétition, jour du mois, « publié », notes…). On ajoute seulement les nouveaux
+// rendez-vous manquants et les NOUVEAUX champs (lien, jour) encore absents. Un bump de SEED_V ne doit plus
+// jamais remettre ses déplacements en place.
 function migrer(d) {
   const parId = new Map(d.events.map(e => [e.id, e]));
   for (const seed of DEPART.events) {
     const ex = parId.get(seed.id);
     if (!ex) { d.events.push(JSON.parse(JSON.stringify(seed))); continue; }
-    // garde l'état « fait » de Will, remplace le reste par le seed à jour
-    const fait = ex.fait;
-    Object.assign(ex, JSON.parse(JSON.stringify(seed)), { fait });
+    if (ex.lien == null && seed.lien != null) ex.lien = seed.lien;
+    if (ex.jour == null && seed.jour != null && ex.repeat === "mois") ex.jour = seed.jour;
   }
-  // s'assure que les types de départ existent et met à jour leur nom (alignement vocabulaire)
+  // « Récap du mois » : titre et note alignés tant que Will ne les a pas personnalisés (ancienne note « vers le 15 »).
+  const rm = parId.get("ev-qn-mois"), seedRm = DEPART.events.find(e => e.id === "ev-qn-mois");
+  if (rm && seedRm && /vers le 15/.test(rm.note || "")) { rm.titre = seedRm.titre; rm.note = seedRm.note; }
+  // Types : ajoute les manquants + met à jour les noms (cosmétique, aucune donnée de Will).
   const typById = new Map(d.types.map(t => [t.id, t]));
   for (const t of DEPART.types) { const ex = typById.get(t.id); if (ex) ex.nom = t.nom; else d.types.push(JSON.parse(JSON.stringify(t))); }
   d.sv = SEED_V;
