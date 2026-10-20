@@ -275,11 +275,9 @@ let fitT; addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeo
 if (document.fonts) document.fonts.ready.then(fitAll);
 function goToday(){
   const now = document.getElementById("now"); if (!now) return;
-  const sec = now.closest("section"), mo = sec && sec.querySelector(".month");
-  // Ordinateur : on démarre TOUJOURS pile sur « Aujourd'hui » (Will, 19/10/2026), quel que soit le lien d'arrivée
-  // (le reste du mois déjà passé reste au-dessus, accessible en remontant).
-  // Téléphone : on reste calé sur le titre du mois en cours (mois + nombre de sorties + « Aujourd'hui » visibles d'un coup).
-  const el = (innerWidth >= 980) ? now : (mo || now);
+  // Ordinateur et téléphone : on démarre TOUJOURS pile sur « Aujourd'hui » (Will, 20/10/2026),
+  // quel que soit le lien d'arrivée (le mois déjà passé reste au-dessus, accessible en remontant).
+  const el = now;
   const bar = document.querySelector(".bar");
   // Sous l'en-tête du site et la barre Tout / Japon / France (toutes deux collées en haut), avec un peu d'air.
   const sh = document.getElementById("sh");
