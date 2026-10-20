@@ -20,6 +20,9 @@ export async function onRequestGet({ request, env, params }) {
     if (!r.ok) return page;
     const n = ((await r.json()).items || []).find(x => String(x.id).endsWith(bout));
     if (!n) return page;
+    // News avec un lien externe (ex. récap du mois) : la page /actus/ redirige vers ce lien,
+    // qui porte le vrai contenu. Évite une page news vide (pas de série reliée). (Will, 20/10/2026)
+    if (n.lien) return Response.redirect(n.lien, 302);
     const seo = seoNews(n, `${SITE}/actus/${slug}`);
     const og = await carte(env, request, ogFiche("actu", String(n.id).slice(-8)));
     if (og) { seo.image = og; seo.carte = "summary_large_image"; }
