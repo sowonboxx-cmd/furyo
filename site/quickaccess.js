@@ -10,17 +10,17 @@
   function css() {
     if (cssDone) return; cssDone = true;
     var s = document.createElement("style");
-    s.textContent = "" +
-      ".fgq-pop{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);font-family:Inter,system-ui,sans-serif}.fgq-pop[hidden]{display:none}" +
-      ".fgq-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100% - 28px));box-sizing:border-box;padding:26px;background:#151517;border:1px solid #2C2C2F;border-radius:28px;box-shadow:0 40px 100px rgba(0,0,0,.6);color:#F5F5F7}" +
+    s.textContent = '@font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}@font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}' +
+      ".fgq-pop{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);font-family:FGInter,Inter,system-ui,sans-serif}.fgq-pop[hidden]{display:none}" +
+      ".fgq-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100% - 28px));box-sizing:border-box;padding:26px;background:#0c0c0e;border:1px solid #242428;border-radius:28px;box-shadow:0 40px 100px rgba(0,0,0,.6);color:#F5F5F7}" +
       ".fgq-h{position:relative;display:flex;align-items:center;justify-content:flex-end;min-height:42px;margin-bottom:20px}" +
       ".fgq-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;line-height:0}.fgq-logo img{height:30px;width:auto;display:block}" +
       ".fgq-h .x{width:42px;height:42px;border-radius:50%;background:#2a2a2e;color:#98989D;display:grid;place-items:center;font-size:26px;border:0;cursor:pointer;line-height:1}" +
       ".fgq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}" +
-      ".fgq-qt{position:relative;display:flex;align-items:center;gap:16px;background:#1b1b1e;border:1px solid #2C2C2F;border-radius:18px;padding:18px 20px;text-decoration:none;color:inherit}.fgq-qt.wide{grid-column:1/3}" +
+      ".fgq-qt{position:relative;display:flex;align-items:center;gap:16px;background:#1e1e22;border:0;border-radius:18px;padding:18px 20px;text-decoration:none;color:inherit}.fgq-qt.wide{grid-column:1/3}" +
       ".fgq-qt .ic{width:54px;height:54px;border-radius:16px;background:#305887;display:grid;place-items:center;flex:none}.fgq-qt .ic svg{width:28px;height:28px;color:#fff}" +
-      ".fgq-qt h3{margin:0;font:700 22px/1 Antonio,sans-serif;text-transform:uppercase;letter-spacing:.01em}.fgq-qt small{display:block;color:#98989D;font-size:15px;margin-top:4px}" +
-      ".fgq-qt .bdg{position:absolute;top:20px;right:18px;min-width:28px;height:28px;padding:0 8px;box-sizing:border-box;border-radius:7px;background:#BC002D;color:#fff;font:700 15px Antonio,sans-serif;display:flex;align-items:center;justify-content:center;line-height:1}.fgq-qt .bdg span{display:block;transform:translateY(-1px)}" +
+      ".fgq-qt h3{margin:0;font:700 24px/1 FGAntonio,sans-serif;text-transform:uppercase;letter-spacing:.01em;color:#fff}.fgq-qt small{display:block;color:#9a9aa0;font-size:15px;margin-top:4px}" +
+      ".fgq-qt .bdg{position:absolute;top:20px;right:18px;min-width:28px;height:28px;padding:0 8px;box-sizing:border-box;border-radius:7px;background:#BC002D;color:#fff;font:700 15px FGAntonio,sans-serif;display:flex;align-items:center;justify-content:center;line-height:1}.fgq-qt .bdg span{display:block;transform:translateY(-1px)}" +
       ".fgq-out{margin-top:16px;width:100%;height:58px;border:0;border-radius:16px;background:#2a2a2e;color:#98989D;font:600 16px Inter,sans-serif;cursor:pointer}" +
       ".fgq-av{width:34px;height:34px;border-radius:50%;background:#38383B;border:0;padding:0;cursor:pointer;overflow:hidden;display:grid;place-items:center;color:#CFCFD4;flex:none}.fgq-av img{width:100%;height:100%;object-fit:cover;display:block}" +
       ".fgq-av svg{width:20px;height:20px}";
@@ -34,7 +34,8 @@
     db: '<svg viewBox="0 0 24 24"><g fill="#fff"><rect x="3.3" y="6" width="3.1" height="13" rx="0.7"/><rect x="7.1" y="4.3" width="3.1" height="14.7" rx="0.7"/><rect x="14.9" y="7" width="3.1" height="12" rx="0.7"/><rect x="2" y="19" width="20" height="2.5" rx="1.25"/></g><rect x="10.9" y="5.2" width="3.3" height="13.8" rx="0.7" fill="#E54839"/></svg>',
     stats: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
     comm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/><circle cx="18" cy="7" r="3"/><path d="M18 13c2.6.2 4 2.3 4 4.8"/></svg>',
-    user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>'
+    user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>',
+    hq: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V8l8-4 8 4v12"/><path d="M3 20h18M9.5 20v-4h5v4M8.5 11h2M13.5 11h2"/></svg>'
   };
 
   function qt(ic, title, sub, href, badge, wide) {
@@ -56,7 +57,8 @@
         qt("db", "Mangas Database", "toutes les séries", "/admin/#mangas", "") +
         qt("stats", "Statistiques", "clics Google", "/admin/#stats", "") +
         qt("comm", "Communauté", "les membres", "/communaute/", "") +
-        qt("user", "Mon compte", "profil, préférences", "/profil/", "", true) +
+        qt("user", "Mon compte", "profil, préférences", "/profil/", "") +
+        qt("hq", "HQ", "ressources, promo", "/hq/", "") +
       '</div>' +
       '<button class="fgq-out" type="button">Se déconnecter</button></div>';
     pop.querySelector(".x").onclick = function () { pop.hidden = true; };
