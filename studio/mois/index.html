@@ -87,9 +87,9 @@ button:disabled{opacity:.5;cursor:default}
 .qn .tiles .cap{font:600 27px/1.2 "FGInter";color:var(--mut)}
 /* final CTA */
 /* Fond mur de couvertures bien visible + carte sombre arrondie par-dessus (version d'origine préférée par Will, 20/10/2026). */
-.qn .wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:8px;opacity:.62}
+.qn .wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:8px;opacity:var(--wo,.4)}
 .qn .wall img{width:100%;height:100%;object-fit:cover}
-.qn[data-th="creme"] .wall{opacity:.52}
+.qn[data-th="creme"] .wall{opacity:calc(var(--wo,.4) - .1)}
 .qn .shade{position:absolute;inset:0;background:rgba(0,0,0,.28)}
 .qn[data-th="creme"] .shade{background:rgba(243,237,225,.22)}
 .qn .panel{position:absolute;left:42px;right:42px;top:150px;bottom:116px;z-index:4;background:var(--bg);border-radius:40px;padding:58px 54px;display:flex;flex-direction:column}
@@ -117,6 +117,9 @@ button:disabled{opacity:.5;cursor:default}
     <button id="next" aria-label="Mois suivant">→</button>
     <span class="seg" role="group" aria-label="Thème"><button data-th="noir" aria-pressed="true">Noir</button><button data-th="creme" aria-pressed="false">Crème</button></span>
     <label>Couverture en avant <select id="feat"></select></label>
+    <span class="seg" id="fmt" role="group" aria-label="Format"><button data-fmt="ig" aria-pressed="true">Instagram</button><button data-fmt="x" aria-pressed="false">X (4 images)</button></span>
+    <label>Fond de la fin <select id="wo"><option value=".25">Très sombre</option><option value=".32">Sombre</option><option value=".4" selected>Moyen</option><option value=".48">Clair</option><option value=".62">Très clair (avant)</option></select></label>
+    <label id="accw" hidden>Accroche X <select id="acc"></select></label>
     <button class="main" id="dl" disabled>Télécharger les images</button>
     <span id="msg">Chargement…</span>
   </div>
@@ -136,7 +139,17 @@ button:disabled{opacity:.5;cursor:default}
   var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
   var chunk = function (a, n) { var o = []; for (var i = 0; i < a.length; i += n) o.push(a.slice(i, i + n)); return o; };
   var VIDE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-  var theme = "noir", D = null, slides = [], tour = 0, featIdx = 0;
+  var theme = "noir", D = null, slides = [], tour = 0, featIdx = 0, fmt = "ig", wo = ".4", accI = 0;
+  // Version X (Twitter, 4 images max) : couverture, 1re page Japon, 1re page France, puis une fin qui pousse au clic vers le récap (Will, 21/10/2026).
+  var ACC = [
+    function (m) { return "Tout le récap<br>du mois en un clic"; },
+    function (m) { return "Toutes les sorties<br>de " + esc(nomMois(m)) + " ici"; },
+    function (m) { return "Les sorties du mois,<br>c'est par ici"; },
+    function (m) { return "Voir tout<br>le récap de " + esc(nomMois(m)); },
+    function (m) { return "Toutes les sorties<br>FuryoGang du mois"; },
+    function (m) { return "Clique, coche,<br>collectionne"; }
+  ];
+  var CONCOURS = '<div class="prem"><b>Concours</b><p contenteditable>Chaque mois, un membre de FuryoGang est tiré au sort et gagne un tome sorti en France.</p></div>';
 
   // Mois par défaut : le mois précédent (le récap se poste au début du mois suivant).
   var now = new Date();
@@ -210,16 +223,30 @@ button:disabled{opacity:.5;cursor:default}
 
     // 4 · Fin — Ajoutez-les à votre collection
     var wall = tout.concat(tout).slice(0, 20).map(function (x) { return '<img src="' + couv(x.cover) + '">'; }).join("");
-    var fin = '<div class="qn" data-th="' + theme + '">' +
+    var fin = '<div class="qn" data-th="' + theme + '" style="--wo:' + wo + '">' +
       '<div class="wall">' + wall + '</div><div class="shade"></div>' +
       '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
       '<div class="panel"><h2 contenteditable>Ajoutez-les à<br>votre collection</h2>' +
       '<div class="steps"><div class="st"><div class="n">1</div><p contenteditable>Coche tes tomes sur <b>furyogang.com/ma-collection</b></p></div>' +
       '<div class="st"><div class="n">2</div><p contenteditable>Chaque tome ajouté te rapporte des <b>points</b> et te fait monter au classement du gang</p></div></div>' +
-      '<div class="prem"><b>Tirage Premium</b><p contenteditable>Chaque mois, un membre Premium est tiré au sort et gagne un tome sorti en France.</p></div>' +
+      CONCOURS +
       '<div class="cta">furyogang.com/ma-collection</div></div>' +
       '<div class="bot"><span class="nav" data-prev></span><span class="dots" data-dots></span><span class="nav nx">furyogang.com</span></div></div>';
     out.push({ k: "fin", nom: "Fin · Collection", html: fin });
+
+    if (fmt === "x") {
+      var url = "furyogang.com/recap/" + D.m;
+      var finX = '<div class="qn" data-th="' + theme + '" style="--wo:' + wo + '">' +
+        '<div class="wall">' + wall + '</div><div class="shade"></div>' +
+        '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
+        '<div class="panel"><h2 contenteditable>' + ACC[accI](D.m) + '</h2>' +
+        '<div class="steps"><div class="st"><div class="n">1</div><p contenteditable>Vois tout ce qui est sorti <b>au Japon et en France</b> ce mois-ci</p></div>' +
+        '<div class="st"><div class="n">2</div><p contenteditable>Coche tes tomes et ajoute-les à <b>ta collection</b> en un clic</p></div></div>' +
+        CONCOURS +
+        '<div class="cta">' + url + '</div></div>' +
+        '<div class="bot"><span class="nav" data-prev></span><span class="dots" data-dots></span><span class="nav nx">furyogang.com</span></div></div>';
+      out = [out[0], out.filter(function (o) { return o.k === "jp0"; })[0], out.filter(function (o) { return o.k === "fr0"; })[0], { k: "finx", nom: "Fin · X", html: finX }].filter(Boolean);
+    }
 
     slides = out; afficher();
   }
@@ -282,7 +309,7 @@ button:disabled{opacity:.5;cursor:default}
     var b = $("#dl"); b.disabled = true; $("#msg").textContent = "Préparation des images…";
     document.activeElement && document.activeElement.blur && document.activeElement.blur();
     var bg = theme === "creme" ? "#F3EDE1" : "#0c0c0e";
-    var files = [], nom = "sorties-" + D.m + "-" + theme + "-";
+    var files = [], nom = "sorties-" + D.m + "-" + (fmt === "x" ? "x-" : "") + theme + "-";
     fontCSS().then(function (fcss) {
       return on.reduce(function (p, s, i) { return p.then(function () {
         $("#msg").textContent = "Image " + (i + 1) + " / " + on.length + "…";
@@ -298,8 +325,15 @@ button:disabled{opacity:.5;cursor:default}
       $("#msg").textContent = files.length + " images téléchargées.";
     }).catch(function (e) { $("#msg").textContent = "Échec : " + (e && e.message || "une image n'a pas pu être chargée"); }).finally(function () { b.disabled = false; });
   };
-  document.querySelectorAll(".seg button").forEach(function (bt) { bt.onclick = function () {
-    theme = bt.dataset.th; document.querySelectorAll(".seg button").forEach(function (x) { x.setAttribute("aria-pressed", x === bt); });
+  $("#acc").innerHTML = ACC.map(function (f, i) { return '<option value="' + i + '">' + f("2026-09").replace(/<br>/g, " ").replace(/septembre/, "…") + "</option>"; }).join("");
+  $("#acc").onchange = function () { accI = Number($("#acc").value) || 0; if (D) construire(); };
+  $("#wo").onchange = function () { wo = $("#wo").value; if (D) construire(); };
+  document.querySelectorAll("#fmt button").forEach(function (bt) { bt.onclick = function () {
+    fmt = bt.dataset.fmt; document.querySelectorAll("#fmt button").forEach(function (x) { x.setAttribute("aria-pressed", x === bt); });
+    $("#accw").hidden = fmt !== "x"; if (D) construire();
+  }; });
+  document.querySelectorAll(".seg button[data-th]").forEach(function (bt) { bt.onclick = function () {
+    theme = bt.dataset.th; document.querySelectorAll(".seg button[data-th]").forEach(function (x) { x.setAttribute("aria-pressed", x === bt); });
     if (D) construire();
   }; });
   $("#feat").onchange = function () { featIdx = Number($("#feat").value) || 0; if (D) construire(); };
