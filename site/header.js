@@ -462,6 +462,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       comm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/><circle cx="18" cy="7" r="3"/><path d="M18 13c2.6.2 4 2.3 4 4.8"/></svg>',
       user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>',
       couv: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/></svg>',
+      admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
       hq: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V8l8-4 8 4v12"/><path d="M3 20h18M9.5 20v-4h5v4M8.5 11h2M13.5 11h2"/></svg>'
     };
     function qt(ic, title, sub, href, badge, wide) {
@@ -479,6 +480,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
         qt("db", "Mangas Database", "toutes les séries", "/admin/#mangas", "") +
         // Couvertures manquantes, nombre en direct, juste sous Mangas Database (Will, 21/10/2026).
         qt("couv", "Couvertures manquantes", COUV == null ? "tomes parus sans couverture" : (COUV ? COUV + " à remplir" : "tout est rempli"), "/admin/#couvertures", COUV || "", true).replace('class="adm-qt', 'data-couv class="adm-qt') +
+        qt("admin", "Admin", "le back-office", "/admin/", "") +
         qt("stats", "Statistiques", "clics Google", "/admin/#stats", "") +
         qt("comm", "Communauté", "les membres", "/communaute/", "") +
         qt("user", "Mon compte", "profil, préférences", "/profil/", "") +
