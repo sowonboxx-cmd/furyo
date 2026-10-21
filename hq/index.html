@@ -1155,29 +1155,41 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     h += "</div></div>"; host.innerHTML = h;
   }
   // ---- Data ----
-  function calLoad() {
-    Promise.all([
-      fetch("/api/admin/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }),
-      fetch("/api/admin/todo", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
-      fetch("/api/calendrier?tout=1", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
-      // Sorties enrichies (série, comptes, résumé sortie) : les mêmes données que la Validation,
-      // pour que les légendes du calendrier soient IDENTIQUES à celles du back-office (Will, 19/10/2026).
-      fetch("/api/admin/sorties?passe=1", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
-      // News déjà publiées : elles apparaissent aussi dans le calendrier, cliquables (légende X/IG/TikTok à copier) — Will, 19/10/2026.
-      fetch("/api/admin/veille", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
-    ]).then(function (res) {
-      var d = res[0]; if (!d.ok) throw 0;
-      CAL = { types: d.types, events: d.events };
-      TODO = (res[1] && res[1].items || []).filter(function (t) { return t.dt; });
-      var raw = (res[2] && (res[2].items || res[2].sorties || res[2].tomes)) || [];
-      SORT = raw.filter(function (s) { return s.date; });
-      SORTX = {}; ((res[3] && res[3].items) || []).forEach(function (x) { if (x && x.id) SORTX[x.id] = x; });
-      var vn = (res[4] && res[4].items) || [];
+  // Chargement en deux temps (Will, 21/10/2026 : « plus de 10 s ») :
+  // 1) la dernière version gardée sur l'appareil s'affiche tout de suite ;
+  // 2) l'essentiel (rendez-vous, to-do, sorties) redessine dès qu'il arrive ; légendes enrichies et news suivent sans bloquer.
+  var CALK = "hq-cal-v1";
+  function calAppliquer(part) {
+    if (part.d) CAL = { types: part.d.types, events: part.d.events };
+    if (part.todo) TODO = (part.todo.items || []).filter(function (t) { return t.dt; });
+    if (part.cal) SORT = ((part.cal.items || part.cal.sorties || part.cal.tomes) || []).filter(function (s) { return s.date; });
+    if (part.sx) { SORTX = {}; (part.sx.items || []).forEach(function (x) { if (x && x.id) SORTX[x.id] = x; }); }
+    if (part.ve) {
+      var vn = part.ve.items || [];
       NEWS = vn.filter(function (x) { return x && x.enLigne && (x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.date || x.cree, titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || "", i: x }; });
-      NEWSCOL = (res[4] && res[4].cols) || {};
-      if (window.FGPost && res[4] && res[4].cats) FGPost.setCats(res[4].cats);
-      renderView();
-    }).catch(function () { $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
+      NEWSCOL = part.ve.cols || {};
+      if (window.FGPost && part.ve.cats) FGPost.setCats(part.ve.cats);
+    }
+  }
+  function calRedessiner() { var wk = $("#calview .wk"), sl = wk ? wk.scrollLeft : null, y = scrollY; renderView(); if (sl != null) { var w2 = $("#calview .wk"); if (w2) w2.scrollLeft = sl; } scrollTo(0, y); }
+  function calLoad() {
+    var j = function (u) { return fetch(u, { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }); };
+    var store = {}; try { store = JSON.parse(localStorage.getItem(CALK) || "{}") || {}; } catch (e) { store = {}; }
+    var vu = false;
+    if (store.d && store.d.ok) { calAppliquer(store); renderView(); vu = true; }
+    var garder = function (k, v) { store[k] = v; try { localStorage.setItem(CALK, JSON.stringify(store)); } catch (e) { try { delete store.ve; localStorage.setItem(CALK, JSON.stringify(store)); } catch (e2) {} } };
+    Promise.all([
+      j("/api/admin/calendrier"),
+      j("/api/admin/todo").catch(function () { return { items: [] }; }),
+      j("/api/calendrier?tout=1").catch(function () { return { items: [] }; })
+    ]).then(function (res) {
+      if (!res[0].ok) throw 0;
+      calAppliquer({ d: res[0], todo: res[1], cal: res[2] }); garder("d", res[0]); garder("todo", res[1]); garder("cal", res[2]);
+      vu ? calRedessiner() : renderView(); vu = true;
+    }).catch(function () { if (!vu) $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
+    // Sorties enrichies (légendes identiques à la Validation, coches « postée ») et news publiées : en arrière-plan.
+    j("/api/admin/sorties?passe=1").then(function (sx) { calAppliquer({ sx: sx }); garder("sx", sx); if (vu) calRedessiner(); }).catch(function () {});
+    j("/api/admin/veille").then(function (ve) { calAppliquer({ ve: ve }); garder("ve", { items: (ve.items || []).filter(function (x) { return x && x.enLigne; }), cols: ve.cols, cats: ve.cats }); if (vu) calRedessiner(); }).catch(function () {});
   }
   function calPost(body, cb) {
     fetch("/api/admin/calendrier", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); calLoad(); if (cb) cb(); }).catch(function (e) { var m = $("#calmsg"); if (m) m.textContent = "Erreur : " + (e.message || "réessaie"); });

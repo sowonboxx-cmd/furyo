@@ -72,8 +72,24 @@ async function ajouterComptes(env, items) {
   }
 }
 
-export async function onRequestGet({ request, env }) {
+// Cache du calendrier éditorial (?passe=1) : servi tout de suite, reconstruit en arrière-plan s'il a plus de 30 s
+// (avant, chaque ouverture du calendrier attendait Notion plus de 10 s — Will, 21/10/2026).
+const CLE_PASSE = "https://furyogang.com/__cache/admin-sorties-passe-v1";
+async function construirePasse(env, request) {
+  const d = await charger(env, request);
+  await ajouterComptes(env, d.items).catch(() => {});
+  d.construit = Date.now();
+  await caches.default.put(new Request(CLE_PASSE), new Response(JSON.stringify(d), { headers: { "content-type": "application/json", "cache-control": "max-age=86400" } }));
+  return d;
+}
+export async function onRequestGet({ request, env, waitUntil }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
+  if (new URL(request.url).searchParams.has("passe")) {
+    const hit = await caches.default.match(new Request(CLE_PASSE));
+    const d = hit ? await hit.json().catch(() => null) : null;
+    if (d) { if (Date.now() - (d.construit || 0) > 30e3) waitUntil(construirePasse(env, request).catch(() => {})); return json(d); }
+    return json(await construirePasse(env, request));
+  }
   const d = await charger(env, request);
   if (new URL(request.url).searchParams.has("count")) {
     const t = d.items.filter(x => x.date === d.today && !x.poste);
@@ -93,5 +109,8 @@ export async function onRequestPost({ request, env }) {
     body: JSON.stringify({ properties: { "Sortie postée": { checkbox: !!b.poste } } }),
   });
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
+  // La coche est reportée tout de suite dans la copie en cache du calendrier.
+  try { const hit = await caches.default.match(new Request(CLE_PASSE)); const d = hit ? await hit.json() : null;
+    if (d && d.items) { d.items.forEach(x => { if (x.id === b.id) x.poste = b.poste ? 1 : 0; }); await caches.default.put(new Request(CLE_PASSE), new Response(JSON.stringify(d), { headers: { "content-type": "application/json", "cache-control": "max-age=86400" } })); } } catch (e) {}
   return json({ ok: true, poste: !!b.poste });
 }
