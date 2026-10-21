@@ -68,13 +68,14 @@ async function ajouterComptes(env, items) {
     x.sortie = x.date;
     x.tome = { n: x.n, pays, pub, flag: x.n === 1 ? "premier" : (/termin/i.test(statut || "") && x.n && total && x.n === total) ? "dernier" : "" };
     const mag = s.editeurs.map(k => editeurs[k]).find(e => e && /Magazine|Plateforme/.test(e.type) && e.x);
-    x.comptes = { x: uniq([...aut.map(c => c.x), ...(s.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]) };
+    // xEd : compte X de l'éditeur de CE tome (FR ou JP), cité dans « Sortie aujourd'hui chez @… » (Will, 21/10/2026).
+    x.comptes = { xEd: ed && ed.x ? [ed.x] : [], x: uniq([...aut.map(c => c.x), ...(s.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]) };
   }
 }
 
 // Cache du calendrier éditorial (?passe=1) : servi tout de suite, reconstruit en arrière-plan s'il a plus de 30 s
 // (avant, chaque ouverture du calendrier attendait Notion plus de 10 s — Will, 21/10/2026).
-const CLE_PASSE = "https://furyogang.com/__cache/admin-sorties-passe-v1";
+const CLE_PASSE = "https://furyogang.com/__cache/admin-sorties-passe-v2";
 async function construirePasse(env, request) {
   const d = await charger(env, request);
   await ajouterComptes(env, d.items).catch(() => {});

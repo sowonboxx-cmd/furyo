@@ -31,11 +31,13 @@
   }
   function postX(i, rs) {
     var s = i.serie || {}, c = i.comptes || {}, t = i.tome || {};
-    var edAt = t.pays === "France" && t.pub && (c.xFR || [])[0] ? "@" + c.xFR[0] : "";
+    // « chez @éditeur » : le compte de l'éditeur du tome (FR ou JP), sinon l'éditeur FR de la série pour un tome français.
+    var edH = (c.xEd || [])[0] || (t.pays === "France" ? (c.xFR || [])[0] : "");
+    var edAt = t.pub && edH ? "@" + edH : "";
     var base = (/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)) + i.titre + "\n" + ligneSortie(i, edAt) + (rs ? "\n\n" + rs : "") + "\n\n↗ furyogang.com/series/" + s.slug;
     // Pas de double mention : un compte déjà cité dans « chez @Éditeur » ne revient pas dans la liste (Will, 21/10/2026).
     var sansEd = function (l) { return (l || []).filter(function (h) { return !edAt || h.toLowerCase() !== edAt.slice(1).toLowerCase(); }); };
-    var hs = choixX(sansEd(c.x), edAt ? [] : c.xFR, function (h) { return poidsX(base + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag);
+    var hs = choixX(sansEd(c.x), sansEd(t.pays === "France" && edAt ? [] : c.xFR), function (h) { return poidsX(base + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag);
     return base + (hs.length ? "\n" + hs.map(function (h) { return "@" + h; }).join(" · ") : "");
   }
   function resumeAuto(i) {
@@ -43,7 +45,7 @@
     for (var t of [s.resumeImg, s.resume]) { var ph = phrases(t); ph.forEach(function (_, n) { cands.push(ph.slice(0, n + 1).join(" ")); }); }
     var u = [...new Set(cands)].sort(function (a, b) { return b.length - a.length; });
     if (!u.length) return "";
-    var c = i.comptes || {}, t2 = i.tome || {}, edA = t2.pays === "France" && t2.pub && (c.xFR || [])[0] ? c.xFR[0].toLowerCase() : "", plein = choixX((c.x || []).filter(function (h) { return h.toLowerCase() !== edA; }), t2.pays === "France" && t2.pub ? [] : c.xFR, function () { return true; }, c.xMag);
+    var c = i.comptes || {}, t2 = i.tome || {}, edA = t2.pub ? ((c.xEd || [])[0] || (t2.pays === "France" ? (c.xFR || [])[0] : "") || "").toLowerCase() : "", plein = choixX((c.x || []).filter(function (h) { return h.toLowerCase() !== edA; }), t2.pays === "France" && t2.pub ? [] : c.xFR, function () { return true; }, c.xMag);
     for (var k = plein.length; k >= 0; k--) {
       var ok = u.find(function (r) { var p = postX(i, r); return poidsX(p) <= 280 && (p.match(/\n(@\S.*)$/) || ["", ""])[1].split(" · ").filter(Boolean).length >= k; });
       if (ok) return ok;
