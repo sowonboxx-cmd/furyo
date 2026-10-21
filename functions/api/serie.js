@@ -101,6 +101,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       id: nid(id), slug: slugSerie(p), t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]),
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
+      univers: text(p["Univers"]),
       pubJP: list(p["Éditeur Japonais"]).join(", "), pubFR: list(p["Éditeur Français"]).join(", "),
       mag: text(p["Magazine"]), genres: list(p["Genre"]), type: text(p["Type"]), y1: num(p["Année Début"]), y2: num(p["Année Fin"]),
       prepub: date(p["Date début prépub JP"]), prepubFin: date(p["Date fin prépub JP"]), t1JP: date(p["Date tome 1 JP"]), t1FR: date(p["Date tome 1 FR"]),
