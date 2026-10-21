@@ -154,7 +154,7 @@
     ".sh-plus svg.b{display:none!important}.sh-plus .bm{display:flex;flex-direction:column;justify-content:space-between;width:100%;height:clamp(10px,2.8vw,12px);transform:translateY(.7px)}.sh-plus .bm i{display:block;height:1.7px;border-radius:1px;background:currentColor}" +
     ".sh-plus[aria-expanded=true] .bm{display:none}.sh-plus .x{width:15px;height:15px}" +
     ".sh-more{order:3;flex:0 0 100%;margin:0 -2px 10px!important}}" +
-    "@media (min-width:720px){.sh-plus .bm{display:none}}" +
+    "@media (min-width:720px){.sh-plus .bm,.sh-plus .pl{display:none}}" +
     ".adm-b.srch{background:#2A2A2D;border:0;width:100%;font:inherit;color:#F5F5F7;text-align:left;cursor:pointer}.adm-b.srch svg{width:20px;height:20px}" +
     // Téléphone (Will, 21/10/2026) : rubriques Actualités · Calendrier · Collection ; loupe à gauche de l'avatar pour tous ;
     // pour l'admin, le nombre de news à valider juste avant la loupe.
@@ -163,6 +163,8 @@
     ".sh-adm .sh-val{pointer-events:auto!important;font-size:0!important;width:auto!important;height:auto!important;padding:0!important;background:transparent!important}" +
     ".sh-adm .sh-val b{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;min-width:21px!important;height:21px!important;padding:1px 6px 0!important;border-radius:11px!important;background:#BC002D!important;color:#fff!important;font:700 12px/21px Inter,system-ui,sans-serif!important;font-variant-numeric:tabular-nums;text-align:center}.sh-adm .sh-val[data-n='0']{display:none!important}" +
     ".sh-me{order:4!important}.sh-more{order:9!important}" +
+    // ☰ remplacé par un « + » épais (Will, 21/10/2026) ; « × » quand le menu est ouvert.
+    ".sh-plus{width:18px!important;display:grid!important;place-items:center}.sh-plus .pl{display:block;width:17px;height:17px}.sh-plus[aria-expanded=true] .pl{display:none}" +
     ".sh-nav{justify-content:center!important;padding-left:0!important;gap:clamp(6px,2.1vw,12px)!important}#sh .sh-nav a[aria-current=page]::after{content:''!important;display:block!important;position:absolute!important;left:0!important;right:0!important;bottom:0!important;height:2px!important;border-radius:0!important;background:#BC002D!important}.sh-nav a{font-size:clamp(12.5px,3.45vw,15.5px)!important}" +
     ".sh-in{gap:0 clamp(5px,1.6vw,9px)!important;padding:0 10px 0 12px!important}.sh-search{width:26px!important}.sh-me{width:32px!important;height:32px!important}}" +
     ".me-srch{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;margin:0 0 14px;border:0;border-radius:22px;background:#2C2C2F;color:#F5F5F7;font:600 14.5px Inter,system-ui,sans-serif;cursor:pointer}.me-srch svg{width:18px;height:18px}";
@@ -211,7 +213,7 @@
     // « Au Japon » (Will, 12/10/2026) : ordinateur seulement, juste avant Ma collection qui reste à droite, ouvre le Direct du Japon (magazines et séries en ligne).
     a("jp", "/japon/", "Au Japon", 0, 0, "sh-m0") +
 a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) +
-    '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><span class="bm" aria-hidden="true"><i></i><i></i><i></i></span><svg class="b" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+    '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><svg class="pl" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg><svg class="b" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
     "</nav>" +
     // Menu ☰ du téléphone (Will, 21/10/2026) : Séries en haut à gauche, Crows × Worst en haut à droite, puis le reste.
     '<div class="sh-more" id="sh-more" hidden>' + a("series", "/series/", "Séries") + a("cxw", "/crows-x-worst/", "Crows × Worst") + a("ecran", "/films/", "À l'écran") + a("mk", "/auteurs/", "Mangakas") + a("cm", "/communaute/", "Communauté") + a("jp", "/japon/", "Au Japon") + "</div>" +
