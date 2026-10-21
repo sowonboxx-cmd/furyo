@@ -11,7 +11,7 @@ import { uid, jourParis, debutSemaine, debutMois, decaler } from "../../lib/comm
 const ID = /^[0-9a-f]{32}$/;
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 const lireJ = async (env, k, def) => { try { return JSON.parse((await env.STATS.get(k)) || "null") ?? def; } catch (e) { return def; } };
-const CLE = "https://furyogang.com/__cache/communaute-v1";
+const CLE = "https://furyogang.com/__cache/communaute-v2";
 
 async function construire(env) {
   const j = jourParis(), lun = debutSemaine(j), m1 = debutMois(j);
@@ -27,7 +27,11 @@ async function construire(env) {
     const b = await lireJ(env, k, {});
     const h = b.h || {}; let sem = 0, mois = 0;
     for (const [d, n] of Object.entries(h)) { if (d >= lun) sem += n; if (d >= m1) mois += n; }
-    return { id, g: Object.keys(b.c || {}).length, m: Math.max(0, mois), s: Math.max(0, sem) };
+    // Séries de ce membre : possédées (au moins un tome dans la Collection, par pays via cp) et lues (Lu).
+    const pos = {}, lu = {};
+    for (const [t, sid] of Object.entries(b.c || {})) { const o = pos[sid] = pos[sid] || { n: 0, F: 0, J: 0 }; o.n++; const py = (b.cp || {})[t]; if (py) o[py]++; }
+    for (const sid of Object.values(b.r || {})) lu[sid] = (lu[sid] || 0) + 1;
+    return { id, g: Object.keys(b.c || {}).length, m: Math.max(0, mois), s: Math.max(0, sem), pos, lu };
   }));
   const ok = data.filter(Boolean);
   const tri = k => ok.filter(x => x[k] > 0).sort((a, b) => b[k] - a[k]).slice(0, 100).map((x, i) => ({ id: x.id, n: x[k], r: i + 1 }));
@@ -47,7 +51,17 @@ async function construire(env) {
     const ref = avant(k);
     classements[k] = l.map(x => ({ id: x.id, n: x.n, mv: !ref ? 0 : ref[x.id] ? ref[x.id] - x.r : null }));
   }
-  return { classements, construit: Date.now() };
+  // Classements de séries (Will, 21/10/2026) : les plus possédées (nombre de membres qui en ont au moins un tome,
+  // puis nombre de tomes), et les plus lues (membres qui en ont lu au moins un tome). FR / JP d'après le pays des tomes.
+  const S = {};
+  const sx = sid => S[sid] = S[sid] || { s: sid, m: 0, t: 0, mF: 0, mJ: 0, l: 0, tl: 0 };
+  for (const x of ok) {
+    for (const [sid, o] of Object.entries(x.pos)) { const a = sx(sid); a.m++; a.t += o.n; if (o.F) a.mF++; if (o.J) a.mJ++; }
+    for (const [sid, n] of Object.entries(x.lu)) { const a = sx(sid); a.l++; a.tl += n; }
+  }
+  const top = (k, k2) => Object.values(S).filter(a => a[k] > 0).sort((a, b) => b[k] - a[k] || b[k2] - a[k2]).slice(0, 20).map(a => ({ s: a.s, n: a[k], t: a[k2] }));
+  const series = { pos: top("m", "t"), lu: top("l", "tl"), posF: top("mF", "t"), posJ: top("mJ", "t") };
+  return { classements, series, construit: Date.now() };
 }
 
 async function classements(env, waitUntil) {
@@ -144,7 +158,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (id && new URL(request.url).searchParams.get("col")) return ID.test(id) ? json(await collectionComplete(env, id)) : json({ ok: false, error: "membre inconnu" }, 400);
   if (id) return ID.test(id) ? json(await profil(env, request, me, id, waitUntil)) : json({ ok: false, error: "membre inconnu" }, 400);
   const [cl, suivis] = await Promise.all([classements(env, waitUntil), lireJ(env, "um:" + uid(me), [])]);
-  return json({ ok: true, classements: cl.classements, suivis, moi: uid(me) });
+  return json({ ok: true, classements: cl.classements, series: cl.series || null, suivis, moi: uid(me) });
 }
 
 export async function onRequestPost({ env, request }) {

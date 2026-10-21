@@ -64,6 +64,10 @@ a{color:inherit}
 .side .rkb .r1 .n,.side .rkb .r1 .t{color:#F2B33D}.side .rkb .r1 .av{box-shadow:0 0 0 2px #F2B33D}
 .side .rkb .r2 .av{box-shadow:0 0 0 2px #C9CED6}.side .rkb .r3 .av{box-shadow:0 0 0 2px #C98A55}
 .side .rkb .r1 .ps{font-weight:700}
+/* Séries les plus possédées / les plus lues par la communauté, sous le classement (Will, 21/10/2026) */
+.side .rkb.ts .cv{width:22px;height:32px;border-radius:3px;flex:none;overflow:hidden;background:var(--s2,#2a2a2e)}
+.side .rkb.ts .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.side .rkb.ts .t small{font:600 10.5px var(--fb);color:var(--mut);margin-left:3px}
 .side .rkb .crn{width:12px;height:10px;color:#F2B33D;flex:none;margin-left:-3px}
 .side .rkb .vp{margin-top:2px;height:32px;border-radius:16px;background:var(--s2);color:var(--fg);font:600 13px var(--fb);display:grid;place-items:center;text-decoration:none}
 .fbtn{flex:none;height:42px;border-radius:10px;border:0;background:var(--s1);color:var(--fg);font:600 13.5px var(--fb);padding:0 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
@@ -388,14 +392,29 @@ function rangBox(){
   const av = m => m.photo ? `<span class="av"><img src="${esc(m.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>` : `<span class="av" style="background:${RCOUL[(m.num || 0) % RCOUL.length]}">${esc((m.pseudo || "?")[0].toUpperCase())}</span>`;
   return `<div class="rkb"><div class="ch"><span>Classement</span><span>Tomes</span></div>${RANG.map((x, i) => `<a class="r r${i + 1}" href="${x.m.slug ? "/membres/" + encodeURIComponent(x.m.slug) : "/communaute/"}"><span class="n">${i + 1}</span>${av(x.m)}<span class="ps">${esc(x.m.pseudo || "Membre")}</span>${i === 0 ? '<svg class="crn" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M2 5l5 4 5-7 5 7 5-4-2 11H4z"/></svg>' : ""}<span class="t">${x.n.toLocaleString("fr-FR")}</span></a>`).join("")}<a class="vp" href="/communaute/">Voir plus</a></div>`;
 }
+// Les séries les plus possédées et les plus lues par tous les membres (aperçu, Will, 21/10/2026).
+let SERIES_TOP = null;
+function topSeriesBox(){
+  if (!SERIES_TOP) return "";
+  const bloc = (titre, col, l, unite) => {
+    const rows = (l || []).filter(x => BYID[x.s]).slice(0, 3);
+    if (!rows.length) return "";
+    return `<div class="rkb ts"><div class="ch"><span>${titre}</span><span>${col}</span></div>${rows.map((x, i) => { const se = BYID[x.s];
+      return `<a class="r r${i + 1}" href="/series/${esc(se.slug)}"><span class="n">${i + 1}</span><span class="cv">${se.cover ? `<img src="${esc(couv(se.cover, 100))}" alt="" loading="lazy">` : ""}</span><span class="ps">${esc(se.t)}</span><span class="t" title="${x.n} ${unite}${x.n > 1 ? "s" : ""}">${x.n.toLocaleString("fr-FR")}</span></a>`; }).join("")}</div>`;
+  };
+  return bloc("Les plus possédés", "Membres", SERIES_TOP.pos, "membre") + bloc("Les plus lus", "Lecteurs", SERIES_TOP.lu, "lecteur");
+}
 async function chargerRang(){
   try {
     const [c, m] = await Promise.all([fetch("/api/communaute", { credentials: "same-origin" }).then(r => r.ok ? r.json() : null), fetch("/api/membres").then(r => r.ok ? r.json() : null)]);
     if (!c || !c.ok || !m) return;
     const MB = Object.fromEntries((m.items || []).filter(x => x.id).map(x => [x.id, x]));
     RANG = ((c.classements || {}).g || []).filter(x => MB[x.id] && x.n > 0).slice(0, 3).map(x => ({ n: x.n, m: MB[x.id] }));
+    SERIES_TOP = c.series || null;
     const sd = document.querySelector(".side"), w = sd && sd.querySelector(".cmp, .sbox");
     if (RANG.length && w && !sd.querySelector(".rkb")) w.insertAdjacentHTML("afterend", rangBox());
+    const apres = sd && (sd.querySelector(".rkb") || w);
+    if (apres && !sd.querySelector(".rkb.ts")) apres.insertAdjacentHTML("afterend", topSeriesBox());
   } catch (e) {}
 }
 function drawHome(){
@@ -411,7 +430,7 @@ function drawHome(){
   const stats = `<div class="stats mob"><div><b>${n.tomes}</b><small>Possédés</small></div><div><b>${n.r}</b><small>Lus</small></div><div><b>${n.series}</b><small>Séries</small></div><div><b>${n.k}</b><small>Panier</small></div><div><b>${n.w}</b><small>Envie</small></div></div>`;
   const chip = (g, v, l) => `<button data-f="${g}" data-v="${esc(v)}" aria-pressed="${F[g].has(v)}">${esc(l)}</button>`;
   const chips = `<div class="chips mob">${TAB === "c" ? chip("statut", "complete", "Complètes") + chip("statut", "manque", "Tome manquant") : ""}${chip("pays", "France", "France")}${chip("pays", "Japon", "Japon")}${genres.slice(0, 8).map(g => chip("genre", g, g)).join("")}</div>`;
-  const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}${!GUEST && window.FG_GANG && FG_GANG.encart ? FG_GANG.encart(VIP) : ""}${GUEST && window.FG_GANG ? FG_GANG("collection") : ""}${rangBox()}
+  const side = `<aside class="side"><h1 class="h1">Ma collection</h1>${MAX ? `<div class="sbox"><b>${n.tomes}/${MAX}</b><small>tomes gratuits</small><div class="bar"><i style="width:${Math.min(100, n.tomes / MAX * 100)}%"></i></div>${STATS.tomes ? `<small class="base">Dans la base : ${STATS.tomes.toLocaleString("fr-FR")} tomes · ${STATS.series} séries</small>` : ""}</div>` : STATS.tomes ? cmpBox(n) : `<div class="sbox"><b>${n.tomes}</b><small>tomes · ${n.series} séries</small></div>`}${!GUEST && window.FG_GANG && FG_GANG.encart ? FG_GANG.encart(VIP) : ""}${GUEST && window.FG_GANG ? FG_GANG("collection") : ""}${rangBox()}${topSeriesBox()}
     <div><h4>Ma bibliothèque</h4><div class="lk">${LISTS.map(([k, l]) => `<button data-tab="${k}" aria-pressed="${TAB === k}"${ferme(k) ? ' data-lock="1"' : ""}>${l}${ferme(k) ? VERROU : `<em>${k === "c" ? n.tomes : n[k]}</em>`}</button>`).join("")}</div></div>
     ${TAB === "c" ? `<div><h4>Statut</h4><div class="fk">${[["complete", "Complètes"], ["manque", "Tome manquant"]].map(([v, l]) => `<button data-f="statut" data-v="${v}" aria-pressed="${F.statut.has(v)}"><i></i>${l}</button>`).join("")}</div></div>` : ""}
     <div><h4>Pays</h4><div class="fk">${["France", "Japon"].map(v => `<button data-f="pays" data-v="${v}" aria-pressed="${F.pays.has(v)}"><i></i>${v}</button>`).join("")}</div></div>
