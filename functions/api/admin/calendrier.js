@@ -10,7 +10,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 6; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 7; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -37,7 +37,7 @@ const DEPART = {
     { id: "autre", nom: "Autre", couleur: "#98989D" },
   ],
   events: [
-    { id: "ev-qn-sem", titre: "Quoi de neuf dans le gang", type: "qn-sem", repeat: "lun", note: "News Hebdo — carrousel réseaux : tout ce qui s'est passé la semaine d'avant. Généré dans La Fabrique." },
+    { id: "ev-qn-sem", titre: "Récap hebdo", type: "qn-sem", repeat: "lun", lien: "/studio/semaine/", note: "Carrousel réseaux : tout ce qui s'est passé dans le gang la semaine d'avant. Images générées dans le studio « Quoi de neuf dans le gang »." },
     { id: "ev-qn-mois", titre: "Récap du mois", type: "qn-mois", repeat: "mois", jour: 10, lien: "/studio/mois/", note: "Le 10 de chaque mois : récap des sorties du mois précédent (France + Japon). Choisis la cover en avant et exporte le carrousel directement dans le studio (lien ci-dessous). Visuel noir ou crème." },
     { id: "ev-maj", titre: "Fiches mises à jour — récap", type: "maj", repeat: "jeu", note: "Les séries à aller compléter sur le site." },
     { id: "ev-cxw", titre: "Vidéo Crows×Worst", type: "video", date: "2026-10-20", imp: true, note: "Finir la version 25-30 s (téléphone, bordures) et la publier." },
@@ -93,6 +93,9 @@ function migrer(d) {
   // « Récap du mois » : titre et note alignés tant que Will ne les a pas personnalisés (ancienne note « vers le 15 »).
   const rm = parId.get("ev-qn-mois"), seedRm = DEPART.events.find(e => e.id === "ev-qn-mois");
   if (rm && seedRm && /vers le 15/.test(rm.note || "")) { rm.titre = seedRm.titre; rm.note = seedRm.note; }
+  // « Quoi de neuf dans le gang » devient « Récap hebdo » (Will, 21/10/2026), sauf si Will l'a déjà renommé autrement.
+  const rh = parId.get("ev-qn-sem"), seedRh = DEPART.events.find(e => e.id === "ev-qn-sem");
+  if (rh && seedRh && /quoi de neuf/i.test(rh.titre || "")) { rh.titre = seedRh.titre; rh.note = seedRh.note; if (!rh.lien) rh.lien = seedRh.lien; }
   // Types : ajoute les manquants + met à jour les noms (cosmétique, aucune donnée de Will).
   const typById = new Map(d.types.map(t => [t.id, t]));
   for (const t of DEPART.types) { const ex = typById.get(t.id); if (ex) ex.nom = t.nom; else d.types.push(JSON.parse(JSON.stringify(t))); }
