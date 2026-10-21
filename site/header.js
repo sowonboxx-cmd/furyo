@@ -156,6 +156,15 @@
     ".sh-more{order:3;flex:0 0 100%;margin:0 -2px 10px!important}}" +
     "@media (min-width:720px){.sh-plus .bm{display:none}}" +
     ".adm-b.srch{background:#2A2A2D;border:0;width:100%;font:inherit;color:#F5F5F7;text-align:left;cursor:pointer}.adm-b.srch svg{width:20px;height:20px}" +
+    // Téléphone (Will, 21/10/2026) : rubriques Actualités · Calendrier · Collection ; loupe à gauche de l'avatar pour tous ;
+    // pour l'admin, le nombre de news à valider juste avant la loupe.
+    "@media (max-width:719px){.sh-search{display:grid!important;order:3;position:static!important;transform:none!important;flex:none;width:30px;height:34px;place-items:center;color:#fff}.sh-search svg{width:19px;height:19px}" +
+    ".sh-adm{display:flex!important;order:2;position:static!important;transform:none!important;margin:0!important;gap:6px}.sh-adm .sh-bo,.sh-adm .sh-sj{display:none!important}" +
+    ".sh-adm .sh-val{pointer-events:auto!important;font-size:0!important;width:auto!important;height:auto!important;padding:0!important;background:transparent!important}" +
+    ".sh-adm .sh-val b{display:grid!important;place-items:center;min-width:20px!important;height:20px!important;padding:0 6px!important;border-radius:10px!important;background:#BC002D!important;color:#fff!important;font:700 12px/1 Inter,system-ui,sans-serif!important}.sh-adm .sh-val[data-n='0']{display:none!important}" +
+    ".sh-me{order:4!important}.sh-more{order:9!important}" +
+    ".sh-nav{justify-content:flex-start!important;padding-left:clamp(4px,2vw,10px)!important;gap:clamp(6px,2.1vw,12px)!important}.sh-nav a{font-size:clamp(12.5px,3.45vw,15.5px)!important}" +
+    ".sh-in{gap:0 clamp(5px,1.6vw,9px)!important;padding:0 10px 0 12px!important}.sh-search{width:26px!important}.sh-me{width:32px!important;height:32px!important}}" +
     ".me-srch{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;margin:0 0 14px;border:0;border-radius:22px;background:#2C2C2F;color:#F5F5F7;font:600 14.5px Inter,system-ui,sans-serif;cursor:pointer}.me-srch svg{width:18px;height:18px}";
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   // Squelettes de chargement (Will, 06/10/2026) : des blocs gris qui pulsent à la place du contenu, puis la page finale.
@@ -198,13 +207,14 @@
     '<div class="sh-top"><button class="sh-btn sh-me" id="sh-me" aria-label="Mon compte"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.3 4.2-7 8.5-7s7.7 2.7 8.5 7z"/></svg></span></button>' +
     '<a class="sh-logo" href="/" aria-label="FuryoGang, accueil"><img src="/img/logo-furyogang.png" alt="FuryoGang" width="900" height="218"><img class="sh-lr" src="/img/logo-rond.png" alt="" width="276" height="276"></a>' +
     '<a class="sh-btn sh-search" id="sh-search" href="/series/" aria-label="Rechercher sur le site">' + ICON_S + '</a></div>' +
-    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries") + a("ecran", "/films/", "À l'écran", 0, 0, "sh-m0") + a("cal", "/calendrier/", "Calendrier") +
+    '<nav class="sh-nav" aria-label="Rubriques">' + a("actu", "/?vue=actus", "Actualités") + a("series", "/series/", "Séries", 0, 0, "sh-m0") + a("ecran", "/films/", "À l'écran", 0, 0, "sh-m0") + a("cal", "/calendrier/", "Calendrier") +
     // « Au Japon » (Will, 12/10/2026) : ordinateur seulement, juste avant Ma collection qui reste à droite, ouvre le Direct du Japon (magazines et séries en ligne).
     a("jp", "/japon/", "Au Japon", 0, 0, "sh-m0") +
 a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) +
     '<button class="sh-plus" id="sh-plus" type="button" aria-label="Autres rubriques" aria-expanded="false" aria-controls="sh-more"><span class="bm" aria-hidden="true"><i></i><i></i><i></i></span><svg class="b" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="x" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
     "</nav>" +
-    '<div class="sh-more" id="sh-more" hidden>' + a("ecran", "/films/", "À l'écran") + a("mk", "/auteurs/", "Mangakas") + a("cm", "/communaute/", "Communauté") + a("cxw", "/crows-x-worst/", "Crows × Worst") + "</div>" +
+    // Menu ☰ du téléphone (Will, 21/10/2026) : Séries en haut à gauche, Crows × Worst en haut à droite, puis le reste.
+    '<div class="sh-more" id="sh-more" hidden>' + a("series", "/series/", "Séries") + a("cxw", "/crows-x-worst/", "Crows × Worst") + a("ecran", "/films/", "À l'écran") + a("mk", "/auteurs/", "Mangakas") + a("cm", "/communaute/", "Communauté") + a("jp", "/japon/", "Au Japon") + "</div>" +
     "</div></header>";
   var me = document.currentScript;
   me.insertAdjacentHTML("beforebegin", html);
