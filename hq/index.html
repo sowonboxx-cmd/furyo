@@ -943,7 +943,9 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Récap hebdo / récap du mois : une vraie couverture en vignette, comme les tomes (Will, 21/10/2026).
   // Hebdo → une sortie de la semaine d'avant ; mois → une sortie du mois récapitulé (France d'abord).
   // Récap hebdo / récap du mois : vignette 毎週 (chaque semaine) / 毎月 (chaque mois) + FURYOGANG vertical (Will, 21/10/2026, maquette 2C).
-  function evCover(e) { return !e ? "" : e.type === "qn-sem" ? "毎週" : e.type === "qn-mois" ? "毎月" : ""; }
+  // + Fiches mises à jour : 更新 (kōshin, « mise à jour ») ; Concours : 抽選 (chūsen, « tirage au sort ») — Will, 21/10/2026.
+  var EV_KJ = { "qn-sem": "毎週", "qn-mois": "毎月", maj: "更新", concours: "抽選" };
+  function evCover(e) { return (e && EV_KJ[e.type]) || ""; }
   function renderSemaine() {
     var l = lundi(calCur), today = iso(new Date()), h = '<div class="calpan"><div class="wk">';
     for (var i = 0; i < 7; i++) {
