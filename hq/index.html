@@ -603,7 +603,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
-  var CATS = ["Aujourd'hui", "Lancement", "Premium", "Site", "Base", "Réseaux", "Magazine", "Ressources", "À venir", "Plus tard", "Divers"];
+  var CATS = ["Aujourd'hui", "Lancement", "Premium", "Site", "Communauté", "Base", "Réseaux", "Magazine", "Ressources", "À venir", "Plus tard", "Divers"];
   function route() {
     var h = (location.hash || "#home").slice(1); if (!document.getElementById(h)) h = "home";
     document.querySelectorAll(".sec").forEach(function (s) { s.classList.toggle("on", s.id === h); });

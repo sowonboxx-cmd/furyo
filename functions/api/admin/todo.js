@@ -40,6 +40,10 @@ const AJOUTS = [
   { id: "c181082", t: "Sécurité (facultatif) : règle Cloudflare de limitation sur /api/admin/login (5 essais par minute)", cat: "Lancement" },
   { id: "c181090", t: "Vidéo Crows×Worst : la finir et la publier (format téléphone 25-30 s)", cat: "Réseaux", prio: "haut" },
   { id: "c181091", t: "Concours figurine : publier le visuel mardi ou mercredi (fiche prête)", cat: "Réseaux", prio: "haut" },
+  // Communauté : classements et statistiques globaux, pour commencer (Will, 21/10/2026).
+  { id: "c211001", t: "Statistiques : classement des mangas les plus collectionnés et des plus lus, en japonais et en français", cat: "Communauté" },
+  { id: "c211002", t: "Ma collection : afficher le titre le plus collectionné, le plus lu et le plus possédé par l'ensemble des membres (global)", cat: "Communauté" },
+  { id: "c211003", t: "Ma collection : en cliquant sur une série de sa collection (ex. Crows), voir combien de membres la possèdent aussi, et lesquels", cat: "Communauté" },
   { id: "c181060", t: "Au Japon : ajouter les prépublications en ligne (Champion Cross, Comic Zenon, Yanmaga Web…) dans la page L'actualité manga au Japon, avec la liste de ce qui sort (ex. WORST Gaiden Saburoku Santa)", cat: "Site" },
 ];
 // Corrections ponctuelles appliquées une seule fois (Will, 18/10/2026) : del = supprimer, done = cocher, t = nouveau texte.
