@@ -87,9 +87,9 @@ button:disabled{opacity:.5;cursor:default}
 .qn .tiles .cap{font:600 27px/1.2 "FGInter";color:var(--mut)}
 /* final CTA */
 /* Fond mur de couvertures bien visible + carte sombre arrondie par-dessus (version d'origine préférée par Will, 20/10/2026). */
-.qn .wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:8px;opacity:var(--wo,.4)}
+.qn .wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:8px;opacity:var(--wo,.32)}
 .qn .wall img{width:100%;height:100%;object-fit:cover}
-.qn[data-th="creme"] .wall{opacity:calc(var(--wo,.4) - .1)}
+.qn[data-th="creme"] .wall{opacity:calc(var(--wo,.32) - .1)}
 .qn .shade{position:absolute;inset:0;background:rgba(0,0,0,.28)}
 .qn[data-th="creme"] .shade{background:rgba(243,237,225,.22)}
 .qn .panel{position:absolute;left:42px;right:42px;top:150px;bottom:116px;z-index:4;background:var(--bg);border-radius:40px;padding:58px 54px;display:flex;flex-direction:column}
@@ -99,6 +99,7 @@ button:disabled{opacity:.5;cursor:default}
 .qn .steps .n{width:60px;height:60px;border-radius:50%;background:var(--cr);color:var(--bg);font:700 34px/60px "FGAntonio";text-align:center;flex:none}
 .qn .steps p{font:500 34px/1.4 "FGInter";color:var(--cr)}
 .qn .steps p b{font-weight:700}
+.qn .steps.one .st{align-items:center}.qn .steps.one p{white-space:nowrap;font-size:31px;letter-spacing:-.01em}
 .qn .prem{margin-top:40px;background:#BC002D;color:#fff;border-radius:22px;padding:34px 38px}
 .qn .prem b{font:700 36px "FGAntonio";letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:12px}
 .qn .prem p{font:500 30px/1.4 "FGInter"}
@@ -118,7 +119,7 @@ button:disabled{opacity:.5;cursor:default}
     <span class="seg" role="group" aria-label="Thème"><button data-th="noir" aria-pressed="true">Noir</button><button data-th="creme" aria-pressed="false">Crème</button></span>
     <label>Couverture en avant <select id="feat"></select></label>
     <span class="seg" id="fmt" role="group" aria-label="Format"><button data-fmt="ig" aria-pressed="true">Instagram</button><button data-fmt="x" aria-pressed="false">X (4 images)</button></span>
-    <label>Fond de la fin <select id="wo"><option value=".25">Très sombre</option><option value=".32">Sombre</option><option value=".4" selected>Moyen</option><option value=".48">Clair</option><option value=".62">Très clair (avant)</option></select></label>
+    <label>Fond de la fin <select id="wo"><option value=".25">Très sombre</option><option value=".32" selected>Sombre</option><option value=".4">Moyen</option><option value=".48">Clair</option><option value=".62">Très clair (avant)</option></select></label>
     <label id="accw" hidden>Accroche X <select id="acc"></select></label>
     <button class="main" id="dl" disabled>Télécharger les images</button>
     <span id="msg">Chargement…</span>
@@ -139,11 +140,11 @@ button:disabled{opacity:.5;cursor:default}
   var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
   var chunk = function (a, n) { var o = []; for (var i = 0; i < a.length; i += n) o.push(a.slice(i, i + n)); return o; };
   var VIDE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-  var theme = "noir", D = null, slides = [], tour = 0, featIdx = 0, fmt = "ig", wo = ".4", accI = 0;
+  var theme = "noir", D = null, slides = [], tour = 0, featIdx = 0, fmt = "ig", wo = ".32", accI = 1;
   // Version X (Twitter, 4 images max) : couverture, 1re page Japon, 1re page France, puis une fin qui pousse au clic vers le récap (Will, 21/10/2026).
   var ACC = [
     function (m) { return "Tout le récap<br>du mois en un clic"; },
-    function (m) { return "Toutes les sorties<br>de " + esc(nomMois(m)) + " ici"; },
+    function (m) { return "Toutes les sorties<br>de " + esc(nomMois(m)) + "<br>sur le site"; },
     function (m) { return "Les sorties du mois,<br>c'est par ici"; },
     function (m) { return "Voir tout<br>le récap de " + esc(nomMois(m)); },
     function (m) { return "Toutes les sorties<br>FuryoGang du mois"; },
@@ -240,8 +241,8 @@ button:disabled{opacity:.5;cursor:default}
         '<div class="wall">' + wall + '</div><div class="shade"></div>' +
         '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
         '<div class="panel"><h2 contenteditable>' + ACC[accI](D.m) + '</h2>' +
-        '<div class="steps"><div class="st"><div class="n">1</div><p contenteditable>Vois tout ce qui est sorti <b>au Japon et en France</b> ce mois-ci</p></div>' +
-        '<div class="st"><div class="n">2</div><p contenteditable>Coche tes tomes et ajoute-les à <b>ta collection</b> en un clic</p></div></div>' +
+        '<div class="steps one"><div class="st"><div class="n">1</div><p contenteditable>Vois tout ce qui est sorti au <b>Japon</b> et en <b>France</b></p></div>' +
+        '<div class="st"><div class="n">2</div><p contenteditable>Coche tes tomes et ajoute-les à <b>ta collection</b></p></div></div>' +
         CONCOURS +
         '<div class="cta">' + url + '</div></div>' +
         '<div class="bot"><span class="nav" data-prev></span><span class="dots" data-dots></span><span class="nav nx">furyogang.com</span></div></div>';
@@ -326,6 +327,7 @@ button:disabled{opacity:.5;cursor:default}
     }).catch(function (e) { $("#msg").textContent = "Échec : " + (e && e.message || "une image n'a pas pu être chargée"); }).finally(function () { b.disabled = false; });
   };
   $("#acc").innerHTML = ACC.map(function (f, i) { return '<option value="' + i + '">' + f("2026-09").replace(/<br>/g, " ").replace(/septembre/, "…") + "</option>"; }).join("");
+  $("#acc").value = String(accI);
   $("#acc").onchange = function () { accI = Number($("#acc").value) || 0; if (D) construire(); };
   $("#wo").onchange = function () { wo = $("#wo").value; if (D) construire(); };
   document.querySelectorAll("#fmt button").forEach(function (bt) { bt.onclick = function () {
