@@ -243,7 +243,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .chip-ev .im{font-size:9px}
 .milestone{display:flex;align-items:center;gap:6px;font:700 11px "FGInter";color:#cfcfd4;cursor:pointer;background:none;border:0;padding:2px;width:100%;text-align:left}
 .milestone .d{width:11px;height:11px;border:2px solid var(--blue);transform:rotate(45deg);border-radius:2px;flex:none}
-.wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+/* Semaine (Will, 21/10/2026) : chaque jour garde une largeur lisible (260 px mini). Si l'écran est trop étroit,
+   on fait glisser la semaine à l'horizontale et elle s'ouvre sur aujourd'hui, tout à gauche. */
+.wk{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#3a3a40 transparent;padding-bottom:6px}
+.wk .wcol{flex:1 0 260px;min-width:0;scroll-snap-align:start}
 .wcol{background:var(--s2);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:9px;min-height:360px}
 .wcol .wh{font:700 13px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
 .wcol .wh b{font-size:19px;color:var(--cr)}
@@ -351,7 +354,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .cedit label.ck{flex-direction:row;align-items:center;gap:9px;text-transform:none;letter-spacing:0;font-size:14px;color:var(--cr)}
 .cedit label.ck input{width:20px;height:20px}
 .callg{display:none}
-@media (max-width:860px){.mgrid,.mhead,.wk{grid-template-columns:repeat(2,1fr)}.kb{grid-template-columns:1fr}h1{font-size:48px}.cell .add{color:var(--mut);height:auto}}
+@media (max-width:860px){.mgrid,.mhead{grid-template-columns:repeat(2,1fr)}.kb{grid-template-columns:1fr}h1{font-size:48px}.cell .add{color:var(--mut);height:auto}}
 /* Mobile : calendrier éditorial simplifié — uniquement la vue semaine, un jour à la fois, qu'on fait défiler à l'horizontale (Will, 20/10/2026). */
 @media (max-width:719px){
   /* Titre « Calendrier éditorial » masqué sur mobile — inutile, prend de la place (Will, 20/10/2026). */
@@ -1002,7 +1005,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var R = { mois: renderMois, semaine: renderSemaine, kanban: renderKanban, gantt: renderGantt };
     $("#calview").innerHTML = (R[calView] || renderMois)();
     // Mobile : on centre le défilement sur le jour d'aujourd'hui.
-    if (mob && calView === "semaine") { var wk = $("#calview .wk"), to = wk && wk.querySelector(".wcol.to"); if (wk && to) wk.scrollLeft = Math.max(0, to.offsetLeft - wk.offsetLeft - 4); }
+    // Semaine (mobile et ordinateur) : si les 7 jours ne tiennent pas, aujourd'hui s'affiche tout à gauche (les jours passés restent accessibles en glissant).
+    if (calView === "semaine") { var wk = $("#calview .wk"), to = wk && wk.querySelector(".wcol.to"); if (wk && to && wk.scrollWidth > wk.clientWidth + 2) wk.scrollLeft = Math.max(0, to.offsetLeft - wk.offsetLeft - 4); }
     $("#projrow").innerHTML = projets().map(function (p) { return '<span class="pj"><i style="background:' + p.couleur + '"></i>' + esc(p.nom) + "</span>"; }).join("") + '<button class="projadd" id="projadd">+ Projet</button>';
     var nc = $("#n-cal"); if (nc) nc.textContent = CAL.events.filter(function (e) { return !e.fait; }).length + " à publier";
   }
