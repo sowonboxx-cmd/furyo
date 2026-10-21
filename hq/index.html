@@ -372,6 +372,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   /* Légende des pastilles (types) retirée sur mobile : on les retrouve dans le projet. */
   #calendrier .projrow{display:none}
 }
+.nofi{font-style:normal;color:#F2B33D}
 </style>
 </head>
 <body>
@@ -936,7 +937,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       var d = new Date(l); d.setDate(l.getDate() + i); var is = iso(d), its = itemsJour(d);
       h += '<div class="wcol' + (is === today ? " to" : "") + '" data-date="' + is + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
       h += its.length ? its.map(function (it) {
-        if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
+        if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
         if (it.kind === "news") { var ni = it.n, ncol = itemColor(it), nbg = ni.image ? "background-image:url('" + esc(ni.image) + "')" : 'background:' + ncol; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov" style="' + nbg + '">' + (ni.image ? '' : '<b>N</b>') + '</span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
         var c = itemColor(it);
         return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? "Publiée · " + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
@@ -1151,7 +1152,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     Promise.all([
       fetch("/api/admin/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }),
       fetch("/api/admin/todo", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
-      fetch("/api/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
+      fetch("/api/calendrier?tout=1", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
       // Sorties enrichies (série, comptes, résumé sortie) : les mêmes données que la Validation,
       // pour que les légendes du calendrier soient IDENTIQUES à celles du back-office (Will, 19/10/2026).
       fetch("/api/admin/sorties?passe=1", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),

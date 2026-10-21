@@ -15,7 +15,10 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Admin : on sert la version prête tout de suite et on la reconstruit en arrière-plan si elle a plus de 30 s
   // (avant, chaque chargement admin attendait Notion : 6 s).
   const admin = await isAdmin(request, env).catch(() => false);
-  return cached(request, waitUntil, "/api/calendrier", admin ? 30 : 600, async () => {
+  // ?tout=1 (admin, calendrier éditorial du QG) : aussi les tomes des séries pas encore en ligne, pour ne rater
+  // aucune sortie à poster (Will, 21/10/2026 : TSUYOSHI T.32 absent car série « À valider »).
+  const tout = admin && new URL(request.url).searchParams.has("tout");
+  return cached(request, waitUntil, tout ? "/api/calendrier?tout=1" : "/api/calendrier", admin ? 30 : 600, async () => {
     // Fenêtre normale : 45 derniers jours. TEST (oct. 2026) : on affiche aussi depuis le 1er juillet pour vérifier les couvertures ; supprimer SHOW_FROM pour revenir à la normale.
     const SHOW_FROM = "2026-07-01";
     const d45 = new Date(Date.now() - 45 * 864e5).toISOString().slice(0, 10);
@@ -31,7 +34,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       toutesEditions(env, waitUntil),
       // Seulement les séries « En ligne · public » : les éditions et tomes référencés pour la bibliothèque (séries pas encore
       // validées) ne doivent pas apparaître dans le calendrier (Will, 06/10/2026).
-      queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: filtreVisible() } }),
+      queryAll(env.NOTION_TOKEN, { ...SERIES, body: tout ? {} : { filter: filtreVisible() } }),
     ]);
     const series = {};
     for (const r of sRows) {

@@ -20,7 +20,7 @@ async function charger(env, request) {
   const passe = new URL(request.url).searchParams.has("passe");
   const today = jour(), debut = passe ? jour(new Date(Date.now() - 60 * 864e5)) : today, fin = jour(new Date(Date.now() + 30 * 864e5));
   const [cal, posted] = await Promise.all([
-    fetch(new URL("/api/calendrier", request.url).toString()).then(r => r.ok ? r.json() : {}).catch(() => ({})),
+    fetch(new URL(passe ? "/api/calendrier?tout=1" : "/api/calendrier", request.url).toString(), passe ? { headers: { cookie: request.headers.get("cookie") || "" } } : undefined).then(r => r.ok ? r.json() : {}).catch(() => ({})),
     queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { and: [
       { property: "Date de sortie", date: { on_or_after: debut } },
       { property: "Sortie postée", checkbox: { equals: true } },
