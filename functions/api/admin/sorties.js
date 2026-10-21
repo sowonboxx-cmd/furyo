@@ -38,7 +38,8 @@ async function ajouterComptes(env, items) {
   const ids = new Set(items.map(x => x.seriesId).filter(Boolean));
   if (!ids.size) return;
   const [sRows, auRows, edRows] = await Promise.all([
-    queryAll(env.NOTION_TOKEN, { ...SERIES, body: { filter: { property: "Statut", select: { equals: "En ligne · public" } } } }).catch(() => []),
+    // Toutes les séries (pas seulement en ligne) : le calendrier éditorial montre aussi les sorties des fiches pas encore publiques.
+    queryAll(env.NOTION_TOKEN, { ...SERIES }).catch(() => []),
     queryAll(env.NOTION_TOKEN, { ...AUTEURS }).catch(() => []),
     queryAll(env.NOTION_TOKEN, { ...EDITEURS }).catch(() => []),
   ]);
@@ -69,7 +70,9 @@ async function ajouterComptes(env, items) {
     x.tome = { n: x.n, pays, pub, flag: x.n === 1 ? "premier" : (/termin/i.test(statut || "") && x.n && total && x.n === total) ? "dernier" : "" };
     const mag = s.editeurs.map(k => editeurs[k]).find(e => e && /Magazine|Plateforme/.test(e.type) && e.x);
     // xEd : compte X de l'éditeur de CE tome (FR ou JP), cité dans « Sortie aujourd'hui chez @… » (Will, 21/10/2026).
-    x.comptes = { xEd: ed && ed.x ? [ed.x] : [], x: uniq([...aut.map(c => c.x), ...(s.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]) };
+    // Éditeur du tome retrouvé aussi par son nom (beaucoup de séries n'ont pas encore la relation « Éditeurs (fiches) »).
+    const edNom = (ed && ed.x) ? ed : Object.values(editeurs).find(e => e.x && norm(e.nom) && (norm(pub) === norm(e.nom) || norm(pub).startsWith(norm(e.nom)) || norm(e.nom).startsWith(norm(pub))));
+    x.comptes = { xEd: edNom && edNom.x ? [edNom.x] : [], x: uniq([...aut.map(c => c.x), ...(s.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]) };
   }
 }
 
