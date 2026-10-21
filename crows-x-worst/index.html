@@ -766,6 +766,21 @@ body.cf-open .sh{position:fixed;left:0;right:0;top:0;z-index:130}
   .cfp .cf-f .k{font-size:10.5px}.cfp .cf-f .v{font-size:14.5px}
 }
 </style>
+<style>
+/* Encart carte : mêmes textes que la carte de l'accueil (Will, 21/10/2026) ; sur téléphone, carte de fond zoomée ×1,6 */
+.mt-k{font:700 13px var(--f-body);color:#4CD07D;text-transform:uppercase;letter-spacing:.08em;margin-top:auto}
+.mt .mt-t{font-size:84px;line-height:.92}
+.mt-x{font-style:normal;color:#E5483A;font-size:.62em;margin:0 .14em;vertical-align:.14em}
+.mt .mt-d{font-size:19px;max-width:20ch;line-height:1.3;color:#CFCFD4}
+.mt .mt-txt{gap:12px;justify-content:flex-end}
+.mt .mt-go{margin-top:10px}
+@media (max-width:699px){
+  .mt .mt-txt{gap:8px}
+  .mt-k{margin-top:0;font-size:12px}
+  .mt .mt-t{font-size:56px}
+  .mt .mt-d{font-size:16px;max-width:none}
+}
+</style>
 </head>
 <body>
 <script src="/site/header.js?v=65"></script>
@@ -827,12 +842,12 @@ body.cf-open .sh{position:fixed;left:0;right:0;top:0;z-index:130}
     
     <h1><a href="#" class="home-link" data-home aria-label="Retour à l'accueil de la chronologie">CROWS<span class="x">×</span>WORST</a></h1>
     <div class="stats" id="stats"></div>
-    <button class="mt" id="mapTeaser" data-map-open aria-label="Ouvrir la carte dynamique de l'univers">
+    <button class="mt" id="mapTeaser" data-map-open aria-label="Ouvrir la carte interactive CROWS × WORST">
       <span class="mt-view" aria-hidden="true"></span>
       <span class="mt-txt">
-        <span class="mt-tag">Interactif</span>
-        <span class="mt-t">Carte dynamique <br>de l'univers</span>
-        <span class="mt-d">Toutes les œuvres CROWS × WORST sur une seule carte, dans l'ordre de l'histoire. Déplace-toi, zoome et ouvre chaque série.</span>
+        <span class="mt-k">Carte interactive</span>
+        <span class="mt-t">CROWS<i class="mt-x">×</i>WORST</span>
+        <span class="mt-d">Toutes les œuvres de l'univers de Hiroshi Takahashi</span>
         <span class="mt-go">Explorer la carte<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
       </span>
     </button>
@@ -1610,7 +1625,7 @@ function mtPreview(force){
   // que si la largeur change, sinon les images disparaissent et réapparaissent sans arrêt.
   if (!force && view.firstChild && mtPreview.w === w) return;
   mtPreview.w = w;
-  const s = (mob ? 170 * 0.98 : h * 1.0) / CV.H, gap = 220, step = (CV.W + gap) * s;
+  const s = (mob ? 280 * 0.98 : h * 1.0) / CV.H, gap = 220, step = (CV.W + gap) * s;
   // Deux copies côte à côte (trois si l'écran est large) qui défilent en boucle : la carte ne s'arrête jamais
   const n = Math.max(2, Math.ceil(w / step) + 1);
   let html = "";
