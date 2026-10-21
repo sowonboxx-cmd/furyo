@@ -767,7 +767,7 @@ body.cf-open .sh{position:fixed;left:0;right:0;top:0;z-index:130}
 }
 </style>
 <style>
-/* Encart carte : mêmes textes que la carte de l'accueil (Will, 21/10/2026) ; sur téléphone, carte de fond zoomée ×1,6 */
+/* Encart carte : mêmes textes que la carte de l'accueil (Will, 21/10/2026) ; sur téléphone, carte de fond zoomée ×2 */
 .mt-k{font:700 13px var(--f-body);color:#4CD07D;text-transform:uppercase;letter-spacing:.08em;margin-top:auto}
 .mt .mt-t{font-size:84px;line-height:.92}
 .mt-x{font-style:normal;color:#E5483A;font-size:.62em;margin:0 .14em;vertical-align:.14em}
@@ -1625,7 +1625,7 @@ function mtPreview(force){
   // que si la largeur change, sinon les images disparaissent et réapparaissent sans arrêt.
   if (!force && view.firstChild && mtPreview.w === w) return;
   mtPreview.w = w;
-  const s = (mob ? 280 * 0.98 : h * 1.0) / CV.H, gap = 220, step = (CV.W + gap) * s;
+  const s = (mob ? 360 * 0.98 : h * 1.0) / CV.H, gap = 220, step = (CV.W + gap) * s;
   // Deux copies côte à côte (trois si l'écran est large) qui défilent en boucle : la carte ne s'arrête jamais
   const n = Math.max(2, Math.ceil(w / step) + 1);
   let html = "";
