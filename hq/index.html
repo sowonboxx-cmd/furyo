@@ -1154,7 +1154,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       fetch("/api/calendrier", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
       // Sorties enrichies (série, comptes, résumé sortie) : les mêmes données que la Validation,
       // pour que les légendes du calendrier soient IDENTIQUES à celles du back-office (Will, 19/10/2026).
-      fetch("/api/admin/sorties", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
+      fetch("/api/admin/sorties?passe=1", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
       // News déjà publiées : elles apparaissent aussi dans le calendrier, cliquables (légende X/IG/TikTok à copier) — Will, 19/10/2026.
       fetch("/api/admin/veille", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
     ]).then(function (res) {

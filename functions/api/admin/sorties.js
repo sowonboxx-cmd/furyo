@@ -14,17 +14,20 @@ const nid = id => id.replace(/-/g, "");
 // Date du jour à Paris (le serveur est en UTC).
 const jour = (d = new Date()) => d.toLocaleDateString("sv", { timeZone: "Europe/Paris" });
 
+// ?passe=1 (calendrier du QG) : inclut aussi les sorties des 60 derniers jours, sinon une sortie déjà parue
+// cochée « postée » revenait décochée au rafraîchissement (Will, 21/10/2026, Gorilla T.1 du 19/10).
 async function charger(env, request) {
-  const today = jour(), fin = jour(new Date(Date.now() + 30 * 864e5));
+  const passe = new URL(request.url).searchParams.has("passe");
+  const today = jour(), debut = passe ? jour(new Date(Date.now() - 60 * 864e5)) : today, fin = jour(new Date(Date.now() + 30 * 864e5));
   const [cal, posted] = await Promise.all([
     fetch(new URL("/api/calendrier", request.url).toString()).then(r => r.ok ? r.json() : {}).catch(() => ({})),
     queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { and: [
-      { property: "Date de sortie", date: { on_or_after: today } },
+      { property: "Date de sortie", date: { on_or_after: debut } },
       { property: "Sortie postée", checkbox: { equals: true } },
     ] } } }).catch(() => []),
   ]);
   const ok = new Set(posted.map(r => nid(r.id)));
-  const items = (cal.items || []).filter(x => x.date >= today && x.date <= fin && (x.prec || "Jour") === "Jour")
+  const items = (cal.items || []).filter(x => x.date >= debut && x.date <= fin && (x.prec || "Jour") === "Jour")
     .map(x => ({ ...x, poste: ok.has(x.id) ? 1 : 0 }));
   return { today, items };
 }
