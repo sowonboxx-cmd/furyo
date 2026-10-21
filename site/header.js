@@ -50,6 +50,7 @@
     ".adm-h .x{width:42px;height:42px;border-radius:50%;background:#2a2a2e;color:#98989D;display:grid;place-items:center;font-size:26px;border:0;cursor:pointer;line-height:1}" +
     ".adm-s{display:flex;align-items:center;gap:13px;height:64px;background:#1f1f22;border-radius:18px;padding:0 20px;margin-bottom:20px;cursor:text;width:100%;border:0;color:inherit;text-align:left}.adm-s svg{width:26px;height:26px;color:#98989D;flex:none}.adm-s span{color:#98989D;font-size:20px}" +
     ".adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}" +
+    ".adm-srch{display:flex;align-items:center;gap:12px;width:100%;height:54px;margin:0 0 12px;padding:0 18px;border:0;border-radius:16px;background:#1e1e22;color:#9a9aa0;font:500 16px Inter,system-ui,sans-serif;text-align:left;cursor:pointer}.adm-srch svg{width:20px;height:20px;flex:none;color:#F5F5F7}.adm-srch span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media (max-width:600px){.adm-srch{height:46px;margin-bottom:9px;padding:0 14px;border-radius:13px;font-size:15px}}" +
     ".adm-qt{position:relative;display:flex;align-items:center;gap:16px;background:#1e1e22;border:0;border-radius:18px;padding:18px 20px;text-decoration:none;color:inherit}.adm-qt.wide{grid-column:1/3}" +
     ".adm-qt .ic{width:54px;height:54px;border-radius:16px;background:#305887;display:grid;place-items:center;flex:none}.adm-qt .ic svg{width:28px;height:28px;color:#fff}" +
     ".adm-qt h3{margin:0;font:700 24px/1 FGAntonio,sans-serif;text-transform:uppercase;letter-spacing:.01em;color:#fff}.adm-qt small{display:block;color:#9a9aa0;font-size:15px;margin-top:4px}" +
@@ -340,6 +341,9 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
   }
   function close() { fs.hidden = true; document.body.classList.remove("fs-open"); }
   document.getElementById("sh-search").addEventListener("click", function (e) { e.preventDefault(); open(); });
+  // Recherche ouvrable depuis l'accès rapide admin des pages sans en-tête (back-office, HQ) : /#recherche (Will, 21/10/2026).
+  window.FG_SEARCH = open;
+  if (location.hash === "#recherche") { history.replaceState(null, "", location.pathname + location.search); setTimeout(open, 50); }
   document.getElementById("fs-x").addEventListener("click", close);
   fs.addEventListener("click", function (e) { if (e.target === fs) close(); });
   res.addEventListener("click", function (e) {
@@ -464,6 +468,8 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     var sjSub = SJ && SJ.n ? (SJ.n + " à poster") : "France + Japon";
     pop.innerHTML = '<div class="adm-card" role="dialog" aria-label="Accès rapide admin">' +
       '<div class="adm-h"><a class="adm-logo" href="/" aria-label="Retour au site"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a><button class="x" type="button" aria-label="Fermer">×</button></div>' +
+      // Recherche, au-dessus d'Actualités : sur téléphone, la loupe n'est plus dans l'en-tête (Will, 21/10/2026).
+      '<button type="button" class="adm-srch" data-srch>' + ICON_S + '<span>Rechercher sur le site</span></button>' +
       '<div class="adm-grid">' +
         qt("news", "Actualités", "à relire", "/admin/#validation", n !== "0" ? n : "") +
         qt("sort", "Sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
@@ -478,6 +484,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       '</div>' +
       '<button class="adm-out2" type="button">Se déconnecter</button></div>';
     pop.querySelector(".x").onclick = function () { pop.hidden = true; };
+    pop.querySelector(".adm-srch").onclick = function () { pop.hidden = true; open(); };
     fetch("/api/admin/couvertures?count=1", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
       if (!j) return; COUV = j.n || 0; var a = pop.querySelector("[data-couv]"); if (!a) return;
       a.querySelector("small").textContent = COUV ? COUV + " à remplir" : "tout est rempli";
