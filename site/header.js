@@ -216,6 +216,8 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
   var set = function () { var h = document.getElementById("sh"); if (h) document.documentElement.style.setProperty("--sh-h", h.offsetHeight + "px"); };
   set(); addEventListener("resize", set); addEventListener("load", set);
 
+  // Barre d'état de l'iPhone (Safari) de la même couleur que l'en-tête, pour la continuité (Will, 21/10/2026).
+  (function () { var m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement("meta"); m.name = "theme-color"; document.head.appendChild(m); } m.content = "#141416"; })();
   /* ---------- Recherche instantanée ---------- */
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var norm = function (s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9぀-ヿ㐀-鿿]+/g, " ").trim(); };
