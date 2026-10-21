@@ -1327,6 +1327,29 @@ restoreFromHash();
 initNav(); render(); observe();
 restoring = false;
 
+// Compteurs de tomes synchronisés avec le site (mêmes données que les fiches) : on rafraîchit
+// depuis /api/crows, qui compte le dernier tome DÉJÀ SORTI. Le jour d'une sortie, ça monte tout seul. (Will, 21/10/2026)
+(function syncVolumes(){
+  fetch("/api/crows").then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+    if (!j || !Array.isArray(j.works)) return;
+    var by = {}; j.works.forEach(function (w) { by[String(w.nid || "").replace(/-/g, "")] = w; });
+    var changed = false;
+    DATA.works.forEach(function (w) {
+      var l = by[String(w.nid || "").replace(/-/g, "")]; if (!l) return;
+      if (l.vol != null && l.vol !== w.vol) { w.vol = l.vol; w.volText = String(l.vol); changed = true; }
+      if (l.volFr != null && l.volFr !== w.volFr) { w.volFr = l.volFr; changed = true; }
+      if (l.stJP && l.stJP !== w.stJP) { w.stJP = l.stJP; changed = true; }
+      if (l.stFR && l.stFR !== w.stFR) { w.stFR = l.stFR; changed = true; }
+    });
+    if (changed) {
+      try { render(); observe(); } catch (e) {}
+      try { if (document.body.classList.contains("list-mode")) renderList(); } catch (e) {}
+      try { if (CV.built) { CV.built = false; cvBuild(); } } catch (e) {}
+      try { if (typeof mtPreview === "function") mtPreview(true); } catch (e) {}
+    }
+  }).catch(function () {});
+})();
+
 // ===== Carte de l'univers : canvas infini (ordinateur) =====
 const CV = { el: document.getElementById("cv"), world: document.getElementById("cvWorld"), x: 0, y: 0, s: 1, W: 0, H: 0, built: false };
 const TW = 150, SLOT = 330, COLG = 34, ERAG = 96, TOP = 210, ROWS = 2;
