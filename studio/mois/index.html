@@ -107,6 +107,12 @@ button:disabled{opacity:.5;cursor:default}
 .qn .prem .kz{position:absolute;right:60px;width:auto;height:480px;z-index:5;pointer-events:none}
 /* Bouton ma-collection : pleine largeur, centré, police texte FGInter (comme le screenshot de Will, 20/10/2026). */
 .qn .cta{margin-top:auto;width:100%;text-align:center;background:var(--cr);color:var(--bg);font:800 37px "FGInter",system-ui,sans-serif;letter-spacing:.005em;padding:24px 20px;border-radius:999px}
+.capx{max-width:640px;margin:0 0 22px;background:#17171b;border-radius:16px;padding:14px 16px}
+.capx-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.capx-h b{font:700 13px "FGInter";text-transform:uppercase;letter-spacing:.06em;color:#9a9aa0}
+.capx-h button{height:36px;padding:0 14px;border:0;border-radius:10px;background:#2A6FD0;color:#fff;font:700 13.5px "FGInter";cursor:pointer}
+.capx-h button.ok{background:#4DAB9A;color:#000}
+.capx textarea{width:100%;box-sizing:border-box;background:#0c0c0e;color:#F5F5F7;border:0;border-radius:10px;padding:12px;font:500 14.5px/1.5 "FGInter";resize:vertical}
 </style>
 </head>
 <body>
@@ -126,6 +132,7 @@ button:disabled{opacity:.5;cursor:default}
     <button class="main" id="dl" disabled>Télécharger les images</button>
     <span id="msg">Chargement…</span>
   </div>
+  <div class="capx" id="capx" hidden><div class="capx-h"><b>Légende X</b><button type="button" id="capcp">Copier la légende</button></div><textarea id="captx" rows="8" readonly></textarea></div>
   <div class="grid" id="grid"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
@@ -261,6 +268,16 @@ button:disabled{opacity:.5;cursor:default}
     }
 
     slides = out; afficher();
+    // Légende X à copier (Will, 21/10/2026) : chiffres et lien du mois mis à jour tout seuls.
+    $("#capx").hidden = fmt !== "x";
+    if (fmt === "x") {
+      var M = nomMois(D.m).charAt(0).toUpperCase() + nomMois(D.m).slice(1), n = D.jp.length + D.fr.length;
+      $("#captx").value = M + " : " + n + " sortie" + (n > 1 ? "s" : "") + " furyō, yakuza et crime.\n" +
+        "🇯🇵 " + D.jp.length + " au Japon · 🇫🇷 " + D.fr.length + " en France\n\n" +
+        "Le récap complet, et coche ce que t'as déjà 👇\n" +
+        "↗ furyogang.com/recap/" + D.m + "\n\n" +
+        "🎁 Concours tous les mois pour les membres";
+    }
   }
 
   function afficher() {
@@ -341,6 +358,13 @@ button:disabled{opacity:.5;cursor:default}
   $("#acc").innerHTML = ACC.map(function (f, i) { return '<option value="' + i + '">' + f("2026-09").replace(/<br>/g, " ").replace(/septembre/, "…") + "</option>"; }).join("");
   $("#acc").value = String(accI);
   $("#acc").onchange = function () { accI = Number($("#acc").value) || 0; if (D) construire(); };
+  $("#capcp").onclick = function () {
+    var t = $("#captx"), b = $("#capcp"), ok = function () { b.classList.add("ok"); b.textContent = "Copiée ✓"; setTimeout(function () { b.classList.remove("ok"); b.textContent = "Copier la légende"; }, 1500); };
+    t.removeAttribute("readonly"); t.focus(); t.select(); t.setSelectionRange(0, t.value.length);
+    var done = false; try { done = document.execCommand("copy"); } catch (e) {}
+    t.setAttribute("readonly", ""); if (done) return ok();
+    if (navigator.clipboard) navigator.clipboard.writeText(t.value).then(ok).catch(function () {});
+  };
   $("#wo").onchange = function () { wo = $("#wo").value; if (D) construire(); };
   document.querySelectorAll("#fmt button").forEach(function (bt) { bt.onclick = function () {
     fmt = bt.dataset.fmt; document.querySelectorAll("#fmt button").forEach(function (x) { x.setAttribute("aria-pressed", x === bt); });
