@@ -256,6 +256,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .wcard .t,.wcard .m,.rcard .ri .t,.rcard .ri .m{display:block}
 .wcard .t{font:600 13px "FGInter";line-height:1.25;color:var(--cr);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wcard .m{font:700 10.5px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);margin-top:7px}
+.rcard .im{display:inline-block;margin-top:6px;font:700 9.5px "FGInter";text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:4px 7px;border-radius:6px;align-self:flex-start}
 .wcard .im{display:inline-block;margin-top:7px;font:700 9.5px "FGInter";text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:4px 7px;border-radius:7px}
 .rcard{position:relative;background:#1f1f25;border-radius:11px;padding:9px 30px 9px 9px;display:flex;gap:10px;align-items:center;cursor:pointer;border:0;text-align:left;width:100%}
 .rcard .cov{width:40px;height:56px;border-radius:5px;flex:none;background:#262630 center/cover no-repeat;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
@@ -935,6 +936,17 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     }
     return h + "</div></div>";
   }
+  // Récap hebdo / récap du mois : une vraie couverture en vignette, comme les tomes (Will, 21/10/2026).
+  // Hebdo → une sortie de la semaine d'avant ; mois → une sortie du mois récapitulé (France d'abord).
+  function evCover(e, is) {
+    if (!e || (e.type !== "qn-sem" && e.type !== "qn-mois")) return "";
+    var d = parseIso(is), lo, hi;
+    if (e.type === "qn-sem") { hi = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1)); lo = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() - 7)); }
+    else { var p = new Date(d.getFullYear(), d.getMonth() - 1, 1); lo = iso(p); hi = iso(new Date(p.getFullYear(), p.getMonth() + 1, 0)); }
+    var l = SORT.filter(function (x) { return x.cover && x.date >= lo && x.date <= hi; });
+    var x = l.filter(function (y) { return y.pays === "France"; })[0] || l[0];
+    return x ? x.cover : "";
+  }
   function renderSemaine() {
     var l = lundi(calCur), today = iso(new Date()), h = '<div class="calpan"><div class="wk">';
     for (var i = 0; i < 7; i++) {
@@ -943,6 +955,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       h += its.length ? its.map(function (it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
         if (it.kind === "news") { var ni = it.n, ncol = itemColor(it), nbg = ni.image ? "background-image:url('" + esc(ni.image) + "')" : 'background:' + ncol; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov" style="' + nbg + '">' + (ni.image ? '' : '<b>N</b>') + '</span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
+        var evc = it.kind === "ev" ? evCover(it.e, it.date) : "";
+        if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov" style="background-image:url(' + esc(evc) + ')"></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
         var c = itemColor(it);
         return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? "Publiée · " + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }).join("") : '<div class="wempty">—</div>';
