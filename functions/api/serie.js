@@ -74,13 +74,15 @@ export async function onRequestGet({ env, request, waitUntil }) {
     const row = await page(env.NOTION_TOKEN, id);
     const p = row.properties || {};
     if (!estVisible(p) && !(admin && estValidee(p))) return { error: "introuvable" };
-    const edIds = rel(p["Éditions"]);
-    const [eRows, tRows, nRows, bRows] = await Promise.all([
-      edIds.length ? queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } }) : [],
+    // Éditions trouvées par la relation côté ÉDITION (Série → cette série) : la relation « Éditions » côté
+    // série pouvait être vide et masquait alors tous les tomes (ex. gaiden CROWS×WORST). (Will, 21/10/2026)
+    const eRows = await queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } }).catch(() => []);
+    const edIds = eRows.map(e => e.id);
+    const [tRows, nRows, bRows] = await Promise.all([
       edIds.length ? queryAll(env.NOTION_TOKEN, { ...TOMES, body: {
         filter: { or: edIds.map(e => ({ property: "Édition", relation: { contains: e } })) },
         sorts: [{ property: "N°", direction: "ascending" }],
-      } }) : [],
+      } }).catch(() => []) : [],
       // News validées de la série (onglet News de la fiche).
       queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
         filter: { and: [
