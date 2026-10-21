@@ -161,7 +161,9 @@
     "@media (max-width:719px){.sh-search{display:grid!important;order:3;position:static!important;transform:none!important;flex:none;width:30px;height:34px;place-items:center;color:#fff}.sh-search svg{width:19px;height:19px}" +
     ".sh-adm{display:flex!important;order:2;position:static!important;transform:none!important;margin:0!important;gap:6px}.sh-adm .sh-bo,.sh-adm .sh-sj{display:none!important}" +
     ".sh-adm .sh-val{pointer-events:auto!important;font-size:0!important;width:auto!important;height:auto!important;padding:0!important;background:transparent!important}" +
-    ".sh-adm .sh-val b{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;min-width:21px!important;height:21px!important;padding:1px 6px 0!important;border-radius:11px!important;background:#BC002D!important;color:#fff!important;font:700 12px/21px Inter,system-ui,sans-serif!important;font-variant-numeric:tabular-nums;text-align:center}.sh-adm .sh-val[data-n='0']{display:none!important}" +
+    ".sh-adm .sh-val b{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;width:24px!important;min-width:24px!important;height:24px!important;padding:0!important;border-radius:50%!important;background:#BC002D!important;color:#fff!important;font:700 12px/1 -apple-system,BlinkMacSystemFont,Inter,system-ui,sans-serif!important;font-variant-numeric:tabular-nums;letter-spacing:-.03em;text-align:center}" +
+    // Plus de 99 : pastille allongée (Will, 21/10/2026 : pastille bien ronde, nombre centré).
+    ".sh-adm .sh-val[data-n='99+'] b,.sh-adm .sh-val.long b{width:auto!important;padding:0 7px!important;border-radius:12px!important}.sh-adm .sh-val[data-n='0']{display:none!important}" +
     ".sh-me{order:4!important}.sh-more{order:9!important}" +
     // ☰ remplacé par un « + » épais (Will, 21/10/2026) ; « × » quand le menu est ouvert.
     ".sh-plus{width:18px!important;display:grid!important;place-items:center}.sh-plus .pl{display:block;width:17px;height:17px}.sh-plus[aria-expanded=true] .pl{display:none}" +
@@ -411,7 +413,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     sjCount();
     var a = document.querySelector(".sh-val"); if (!a) return;
     fetch("/api/admin/veille?count=1", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
-      if (!j) return; var n = j.n || 0; a.setAttribute("data-n", n); a.querySelector("b").textContent = n > 99 ? "99+" : n;
+      if (!j) return; var n = j.n || 0; a.setAttribute("data-n", n); a.classList.toggle("long", n > 99); a.querySelector("b").textContent = n > 99 ? "99+" : n;
       a.setAttribute("aria-label", "Validation : " + n + " à relire");
     }).catch(function () {});
     clearTimeout(valTimer); valTimer = setTimeout(function () { if (!document.hidden) valCount(); else document.addEventListener("visibilitychange", function v() { if (!document.hidden) { document.removeEventListener("visibilitychange", v); valCount(); } }); }, 60000);
