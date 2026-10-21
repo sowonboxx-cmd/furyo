@@ -88,6 +88,12 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 /* Pastille d'avancement : rouge (0 %) → orange → vert (100 %) */
 .ob{height:26px;padding:0 9px;border-radius:7px;font-weight:700;display:inline-flex;align-items:center;color:hsl(var(--h) 75% 62%);background:hsl(var(--h) 55% 22%)}
 .leg{background:var(--ink-3);border-radius:12px;padding:10px 12px;margin-top:8px}
+.tx-t{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:6px 0 8px}.tx-t::-webkit-scrollbar{display:none}
+.tx-t button{flex:none;height:34px;padding:0 13px;border:0;border-radius:17px;background:var(--ink-3);color:var(--paper-2);font:600 13px var(--f-body,Inter),sans-serif;cursor:pointer}
+.tx-t button[aria-selected="true"]{background:var(--paper);color:var(--ink-2)}
+.tx-p[hidden]{display:none}
+.tx .leg{margin-top:0}
+.tx textarea{overflow:hidden;min-height:90px}
 .leg-h{display:flex;justify-content:space-between;align-items:center;font-size:13px}
 .leg pre{margin:8px 0 0;white-space:pre-wrap;font:inherit;font-size:13.5px;line-height:1.45;color:var(--paper)}
 .leg-no{margin:6px 0 0;font-size:12.5px;color:var(--paper-3)}
@@ -467,8 +473,9 @@ function draw(){
   LISTE_M = list;
   document.getElementById("list").innerHTML = list.slice(0, LIM_M).map(row).join("") || `<li class="empty">Rien ici pour l'instant.</li>`;
   plusM();
+  if (DEEP) { const li = document.querySelector(`.it[data-id="${DEEP}"]`); if (li) { li.classList.add("open"); try { compter(li); } catch (e) {} if (DEEP_SC) { DEEP_SC = false; setTimeout(() => li.scrollIntoView({ block: "start", behavior: "smooth" }), 60); } } }
 }
-let LIM_M = 40, LISTE_M = [];
+let LIM_M = 40, LISTE_M = [], DEEP = "", DEEP_SC = false;
 function plusM(){
   document.getElementById("plusm")?.remove();
   const ul = document.getElementById("list"), deja = ul.querySelectorAll("li.it").length;
@@ -500,12 +507,14 @@ function row(s){
       <input data-f="num" type="number" min="1" inputmode="numeric" value="${s.num || ""}" placeholder="automatique" style="max-width:160px">
       <label>Image de la fiche (crème)</label>
       <div class="dl"><button data-dl="post">${ICO_DL} Post 3:4</button><button data-dl="story">${ICO_DL} Story 9:16</button></div>
-      <label>Résumé de l'image <span class="lg" data-lg></span></label>
-      <textarea data-f="resumeImg" placeholder="${esc(s.resume)}">${esc(s.resumeImg)}</textarea>
-      <label>Résumé du site (peut être long)</label>
-      <textarea data-f="resume" placeholder="Résumé de la série">${esc(s.resume)}</textarea>
-      <label>Légendes réseaux sociaux</label>
-      ${["ig", "tt", "x"].map(k => `<div class="leg"><div class="leg-h"><b>${NOMS[k]}</b><span class="n" data-n="${k}"></span><button class="cp" data-cp="${k}" aria-label="Copier la légende ${NOMS[k]}">${ICO_COPY}</button></div><textarea data-f="${k}" placeholder="Pas encore de légende">${esc(s.leg && s.leg[k])}</textarea></div>`).join("")}
+      <!-- Textes en onglets, chacun affiché en entier (Will, 21/10/2026) -->
+      <label>Textes <span class="lg" data-lg></span></label>
+      <div class="tx" data-tx>
+        <div class="tx-t" role="tablist">${[["resumeImg", "Résumé image"], ["resume", "Résumé site"], ["ig", "Instagram"], ["tt", "TikTok"], ["x", "X"]].map(([k, n], i) => `<button type="button" role="tab" data-txk="${k}" aria-selected="${i === 0}">${n}</button>`).join("")}</div>
+        <div class="tx-p" data-txp="resumeImg"><textarea data-f="resumeImg" placeholder="${esc(s.resume)}">${esc(s.resumeImg)}</textarea></div>
+        <div class="tx-p" data-txp="resume" hidden><textarea data-f="resume" placeholder="Résumé de la série (peut être long)">${esc(s.resume)}</textarea></div>
+        ${["ig", "tt", "x"].map(k => `<div class="leg tx-p" data-txp="${k}" hidden><div class="leg-h"><b>${NOMS[k]}</b><span class="n" data-n="${k}"></span><button class="cp" data-cp="${k}" aria-label="Copier la légende ${NOMS[k]}">${ICO_COPY}</button></div><textarea data-f="${k}" placeholder="Pas encore de légende">${esc(s.leg && s.leg[k])}</textarea></div>`).join("")}
+      </div>
       <button class="save" data-save>Enregistrer le résumé et les légendes</button>
       <div class="links"><a href="${esc(s.notion)}" target="_blank" rel="noopener">Ouvrir dans Notion ↗</a>${s.visible ? `<a href="/series/${esc(s.slug)}" target="_blank" rel="noopener">Voir sur le site ↗</a>` : ""}${s.date ? `<span style="color:var(--paper-3)">Publiée le ${new Date(s.date + "T12:00:00").toLocaleDateString("fr-FR")}</span>` : ""}</div>
     </div></li>`;
@@ -594,7 +603,13 @@ async function imageFiche(s, fmt, li, btn){
 function route(){
   const h = location.hash.replace("#", "");
   document.querySelectorAll(".vm").forEach(m => m.remove());
-  if (h === "mangas") return ITEMS.length ? (shell(), draw()) : load();
+  if (h === "mangas") { DEEP = ""; return ITEMS.length ? (shell(), draw()) : load(); }
+  // Lien direct vers une fiche de la base (depuis le calendrier éditorial) : #mangas/<id ou slug> (Will, 21/10/2026).
+  if (h.startsWith("mangas/")) {
+    const k = decodeURIComponent(h.slice(7)).replace(/-/g, "");
+    const go = () => { const it = ITEMS.find(x => x.id === k || (x.slug || "").replace(/-/g, "") === k); if (!it) return; DEEP = it.id; DEEP_SC = true; Q = it.fr || it.t; const q = document.getElementById("q"); if (q) q.value = Q; draw(); };
+    return ITEMS.length ? (shell(), go()) : load().then(go);
+  }
   if (h === "validation") return veille();
   if (h === "maj") return veille(false, true);
   if (h === "sorties") return sorties();
@@ -1312,6 +1327,17 @@ addEventListener("keydown", e => { if (e.key === "Escape") document.querySelecto
 
 fetch("/api/admin/login").then(r => r.json()).then(j => j.ok ? route() : login(j.configured ? "" : "Mot de passe pas encore défini dans Cloudflare (ADMIN_PASSWORD).")).catch(() => login());
 
+// Onglets des textes : un seul texte à la fois, affiché en entier (hauteur ajustée au contenu).
+function txGrandir(ta){ if (!ta || ta.offsetParent === null) return; ta.style.height = "auto"; ta.style.height = (ta.scrollHeight + 4) + "px"; }
+function txMontrer(box, k){
+  box.querySelectorAll("[data-txk]").forEach(b => b.setAttribute("aria-selected", b.dataset.txk === k));
+  box.querySelectorAll("[data-txp]").forEach(p => { p.hidden = p.dataset.txp !== k; });
+  txGrandir(box.querySelector(`[data-txp="${k}"] textarea`));
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-txk]"); if (!b) return; e.preventDefault(); txMontrer(b.closest("[data-tx]"), b.dataset.txk); });
+document.addEventListener("input", e => { if (e.target.closest && e.target.closest("[data-tx]")) txGrandir(e.target); });
+// Fiche ouverte : le premier onglet prend tout de suite la hauteur de son texte.
+new MutationObserver(() => document.querySelectorAll("[data-tx]").forEach(box => { const p = box.querySelector("[data-txp]:not([hidden]) textarea"); if (p && !p.style.height) txGrandir(p); })).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class", "hidden", "open"], childList: true });
 // Éditeur plein écran : un clic dans un résumé ou une légende (ou sur le titre X / Instagram / TikTok) ouvre tous les textes
 // de la fiche en grand, avec des onglets ; « Enregistrer » enregistre directement (Will, 05/10/2026).
 const ED_CH = [["resumeImg", "Résumé de l'image"], ["resume", "Résumé du site"], ["ig", "Instagram"], ["tt", "TikTok"], ["x", "X"]];
