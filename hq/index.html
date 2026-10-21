@@ -317,7 +317,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .ctabs button[aria-pressed=true]{background:var(--blue);color:#fff}
 .ctabs svg{display:block}
 .cbox{background:var(--s2);border-radius:14px;padding:14px 15px;position:relative}
-.cbox p{font:400 13.5px/1.5 "FGInter";color:var(--cr);white-space:pre-wrap;margin:0;padding-right:52px}
+.cbox p{font:400 13.5px/1.5 "FGInter";color:var(--cr);white-space:pre-wrap;margin:0;padding-right:52px;-webkit-user-select:text;user-select:text}
 .cbox .cp{position:absolute;top:10px;right:10px;background:var(--blue);color:#fff;border:0;border-radius:9px;width:36px;height:32px;display:grid;place-items:center;padding:0;cursor:pointer}
 .cbox .cp svg{width:17px;height:17px;display:block}
 .cbox .cp.ok{background:var(--ok);color:#000}
@@ -1010,19 +1010,31 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   var IC_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
   var IC_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
   // Copie robuste (mobile compris) : clipboard API avec repli execCommand si elle échoue ou n'existe pas, puis coche verte (Will, 20/10/2026).
+  // Copie (Will, 21/10/2026, « le copier-coller ne marche plus ») : 1) ancienne méthode tout de suite, dans le geste
+  // (la plus sûre sur iPhone), 2) sinon presse-papiers moderne, 3) sinon le texte est sélectionné à l'écran pour copier à la main.
   function copyTexte(txt, btn) {
     txt = String(txt || "");
     var ok = function () { if (!btn) return; btn.classList.add("ok"); btn.innerHTML = IC_CHECK; setTimeout(function () { btn.classList.remove("ok"); btn.innerHTML = IC_COPY; }, 1400); };
-    var repli = function () {
-      try {
-        var ta = document.createElement("textarea"); ta.value = txt; ta.setAttribute("readonly", "");
-        ta.style.position = "fixed"; ta.style.top = "0"; ta.style.left = "0"; ta.style.opacity = "0"; ta.style.fontSize = "16px";
-        document.body.appendChild(ta); ta.focus(); ta.select(); try { ta.setSelectionRange(0, txt.length); } catch (e) {}
-        var done = document.execCommand("copy"); ta.remove(); if (done) ok();
-      } catch (e) {}
+    var main = function () {
+      var p = btn && btn.parentNode && btn.parentNode.querySelector("p");
+      if (p) { var r = document.createRange(); r.selectNodeContents(p); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+      var m = $("#calmsg"); if (m) m.textContent = "Copie bloquée par le navigateur : le texte est sélectionné, fais « Copier ».";
     };
-    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(ok).catch(repli); }
-    else repli();
+    var done = false;
+    try {
+      var ta = document.createElement("textarea"); ta.value = txt;
+      ta.contentEditable = "true"; ta.readOnly = false;
+      ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:0;opacity:0;font-size:16px";
+      document.body.appendChild(ta);
+      var rg = document.createRange(); rg.selectNodeContents(ta); var sl = getSelection(); sl.removeAllRanges(); sl.addRange(rg);
+      ta.focus({ preventScroll: true }); ta.setSelectionRange(0, txt.length);
+      done = document.execCommand("copy");
+      ta.remove(); sl.removeAllRanges();
+      if (btn && btn.focus) btn.focus({ preventScroll: true });
+    } catch (e) { done = false; }
+    if (done) return ok();
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok).catch(main);
+    else main();
   }
   var IC_BOOK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v13"/><path d="M4 5h5a3 3 0 0 1 3 3 3 3 0 0 1 3-3h5v13h-5a3 3 0 0 0-3 3 3 3 0 0 0-3-3H4z"/></svg>';
   // Slug public de la fiche (même logique que lib/notion.js) : Titre FR sinon le titre SERIES.
