@@ -2,6 +2,12 @@
 // Rapide : un index slug → page (gardé en cache) évite de relire toute la base Séries à chaque fiche,
 // puis la page série, ses éditions et ses tomes sont lus en parallèle.
 // Les sources restent dans Notion : elles ne sont pas renvoyées.
+const CXW_SANS = new Set(["katte-ni-takahashi-hiroshi"]); // exceptions validées par Will
+const pastilleCxw = p => /^crows\s*x\s*worst$/i.test(text(p["Univers"]).trim())
+  && !/s[ée]rie s[ée]par[ée]e/i.test(text(p["Époque"]) + " " + text(p["Relation"]))
+  && !/^qp\b/i.test(text(p["SERIES"]).trim())
+  && !/hommage/i.test(text(p["Relation"]))
+  && !CXW_SANS.has(slugify(text(p["SERIES"])));
 import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
 import { estVisible, estValidee } from "../../lib/site.js";
 import { isAdmin } from "../../lib/admin.js";
@@ -102,6 +108,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
       univers: text(p["Univers"]),
+      // Pastille « UNIVERS · CROWS × WORST » : univers CROWS X WORST, sauf la famille QP (série séparée),
+      // les hommages et les bonus Hiroshi Takahashi (Junk Rank Family, Kiku, Hey ! Riki…) (Will, 21/10/2026).
+      cxw: pastilleCxw(p),
       pubJP: list(p["Éditeur Japonais"]).join(", "), pubFR: list(p["Éditeur Français"]).join(", "),
       mag: text(p["Magazine"]), genres: list(p["Genre"]), type: text(p["Type"]), y1: num(p["Année Début"]), y2: num(p["Année Fin"]),
       prepub: date(p["Date début prépub JP"]), prepubFin: date(p["Date fin prépub JP"]), t1JP: date(p["Date tome 1 JP"]), t1FR: date(p["Date tome 1 FR"]),

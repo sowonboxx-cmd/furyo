@@ -676,7 +676,7 @@ function render(){
 }
 // Pastille « Univers CROWS × WORST ↗ » (Will, 21/10/2026) : sur les séries de l'univers, juste après le type, vers la chronologie.
 const CXW_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
-const cxwHTML = s => /^crows\s*x\s*worst$/i.test((s.univers || "").trim()) ? `<a class="cxw" href="/crows-x-worst/" aria-label="Voir l'univers CROWS × WORST"><i class="k">Univers</i><i class="t">CROWS</i><i class="x">×</i><i class="t">WORST</i><i class="ar">${CXW_SVG}</i></a>` : "";
+const cxwHTML = s => (s.cxw ?? /^crows\s*x\s*worst$/i.test((s.univers || "").trim())) ? `<a class="cxw" href="/crows-x-worst/" aria-label="Voir l'univers CROWS × WORST"><i class="k">Univers</i><i class="t">CROWS</i><i class="x">×</i><i class="t">WORST</i><i class="ar">${CXW_SVG}</i></a>` : "";
 const tagsHTML = s => s.type || (s.genres || []).length || cxwHTML(s) ? `<div class="tags">${s.type ? `<b>${esc(s.type)}</b>` : ""}${cxwHTML(s)}${(s.genres || []).map(g => `<span>${esc(g)}</span>`).join("")}</div>` : "";
 let DESK = false;
 matchMedia("(min-width:900px)").addEventListener("change", () => { if (DATA && DATA.serie) render(); });
