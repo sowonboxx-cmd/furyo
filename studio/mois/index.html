@@ -103,6 +103,8 @@ button:disabled{opacity:.5;cursor:default}
 .qn .prem{margin-top:40px;background:#BC002D;color:#fff;border-radius:22px;padding:34px 38px}
 .qn .prem b{font:700 36px "FGAntonio";letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:12px}
 .qn .prem p{font:500 30px/1.4 "FGInter"}
+.qn .prem.kzp{position:relative;padding-right:300px}
+.qn .prem .kz{position:absolute;right:60px;width:auto;height:480px;z-index:5;pointer-events:none}
 /* Bouton ma-collection : pleine largeur, centré, police texte FGInter (comme le screenshot de Will, 20/10/2026). */
 .qn .cta{margin-top:auto;width:100%;text-align:center;background:var(--cr);color:var(--bg);font:800 37px "FGInter",system-ui,sans-serif;letter-spacing:.005em;padding:24px 20px;border-radius:999px}
 </style>
@@ -150,7 +152,16 @@ button:disabled{opacity:.5;cursor:default}
     function (m) { return "Toutes les sorties<br>FuryoGang du mois"; },
     function (m) { return "Clique, coche,<br>collectionne"; }
   ];
-  var CONCOURS = '<div class="prem"><b>Concours</b><p contenteditable>Chaque mois, un membre de FuryoGang est tiré au sort et gagne un tome sorti en France.</p></div>';
+  // Encart Concours avec Kizu (illustration Studio Niceguy, utilisée avec l'accord de l'auteur) à cheval sur le rouge et le noir (Will, 21/10/2026, maquette 3A, halo fin).
+  var CONCOURS = '<div class="prem kzp"><b>Concours</b><p contenteditable>Chaque mois, un membre de FuryoGang est tiré au sort et gagne un tome sorti en France.</p><img class="kz" src="/img/niceguy/kizu.png" alt=""></div>';
+  // Kizu : les pieds touchent le bouton du bas, la tête ne passe jamais sur les étapes.
+  function placerKizu(q) {
+    var pr = q.querySelector(".prem.kzp"), im = pr && pr.querySelector("img.kz"), cta = q.querySelector(".cta"), st = q.querySelector(".steps");
+    if (!im || !cta || !st) return;
+    var bas = cta.offsetTop - 4, haut = st.offsetTop + st.offsetHeight + 12, h = Math.min(480, bas - haut);
+    im.style.height = h + "px";
+    im.style.bottom = -(cta.offsetTop - (pr.offsetTop + pr.offsetHeight) - 4) + "px";
+  }
 
   // Mois par défaut : le mois précédent (le récap se poste au début du mois suivant).
   var now = new Date();
@@ -264,6 +275,7 @@ button:disabled{opacity:.5;cursor:default}
     var echelle = function () { slides.forEach(function (s) { var f = s.el.querySelector(".frame"); s.el.querySelector(".sc").style.transform = "scale(" + f.clientWidth / 1080 + ")"; }); };
     g.querySelectorAll(".qn img").forEach(function (im) { im.addEventListener("error", function () { var c = im.closest("[data-cell]"); if (c) c.remove(); else { im.src = VIDE; im.style.visibility = "hidden"; } }); });
     echelle(); window.onresize = echelle; numeroter();
+    slides.forEach(function (s) { var q = s.el.querySelector(".qn"); placerKizu(q); q.addEventListener("input", function () { placerKizu(q); }); });
     $("#msg").textContent = slides.length + " images · " + moisAn(D.m) + " (" + D.jp.length + " au Japon, " + D.fr.length + " en France)";
     $("#dl").disabled = false;
   }
