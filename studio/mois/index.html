@@ -132,7 +132,7 @@ button:disabled{opacity:.5;cursor:default}
     <button class="main" id="dl" disabled>Télécharger les images</button>
     <span id="msg">Chargement…</span>
   </div>
-  <div class="capx" id="capx" hidden><div class="capx-h"><b>Légende X</b><button type="button" id="capcp">Copier la légende</button></div><textarea id="captx" rows="8" readonly></textarea></div>
+  <div class="capx" id="capx"><div class="capx-h"><b>Légende X</b><button type="button" id="capcp">Copier la légende</button></div><textarea id="captx" rows="8" readonly></textarea></div>
   <div class="grid" id="grid"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
@@ -269,15 +269,16 @@ button:disabled{opacity:.5;cursor:default}
 
     slides = out; afficher();
     // Légende X à copier (Will, 21/10/2026) : chiffres et lien du mois mis à jour tout seuls.
-    $("#capx").hidden = fmt !== "x";
-    if (fmt === "x") {
+    $("#capx").hidden = false; $("#capx b").textContent = fmt === "x" ? "Légende X" : "Légende Instagram";
+    if (true) {
       var M = nomMois(D.m).charAt(0).toUpperCase() + nomMois(D.m).slice(1), n = D.jp.length + D.fr.length;
       // Tomes visibles sur les 4 images X : la 1re page Japon et la 1re page France.
-      var vus = Math.min(PAR_PAGE, D.jp.length) + Math.min(PAR_PAGE, D.fr.length), cache = n - vus;
+      // Sur Instagram, le carrousel montre tout : pas de « tu en vois N », et le lien n'est pas cliquable (lien en bio).
+      var vus = fmt === "x" ? Math.min(PAR_PAGE, D.jp.length) + Math.min(PAR_PAGE, D.fr.length) : n, cache = n - vus;
       $("#captx").value = M + " : " + n + " sortie" + (n > 1 ? "s" : "") + " furyō, yakuza et crime.\n" +
         "🇯🇵 " + D.jp.length + " au Japon · 🇫🇷 " + D.fr.length + " en France\n\n" +
-        (cache > 0 ? "Ici tu en vois " + vus + ". Les " + cache + " autres sont sur le site 👇\n" : "Le récap complet est sur le site 👇\n") +
-        "↗ furyogang.com/recap/" + D.m + "\n\n" +
+        (cache > 0 ? "Ici tu en vois " + vus + ". Les " + cache + " autres sont sur le site 👇\n" : "Coche celles que t'as déjà, tout est sur le site 👇\n") +
+        "↗ furyogang.com/recap/" + D.m + (fmt === "x" ? "" : " (lien en bio)") + "\n\n" +
         "🎁 Concours tous les mois pour les membres";
     }
   }
