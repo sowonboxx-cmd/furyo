@@ -165,7 +165,7 @@ async function construire(request, env) {
     // Magazine (ou plateforme web) de prépublication : cité sur X entre les auteurs et l'éditeur français (Will, 16/10/2026).
     const mags = i.serie.editeurs.map(k => editeurs[k]).filter(e => e && /Magazine|Plateforme/.test(e.type) && e.x);
     i.comptes = {
-      x: uniq([...aut.map(c => c.x), ...(i.serie.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xMag: mags.slice(0, 1).map(e => e.x),
+      x: uniq([...aut.map(c => c.x), ...(i.serie.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xJP: i.serie.editeurs.map(k => editeurs[k]).filter(e => e && /JP/.test(e.type) && e.x).slice(0, 1).map(e => e.x), xMag: mags.slice(0, 1).map(e => e.x),
       ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]),
     };
   }
@@ -190,7 +190,8 @@ async function construire(request, env) {
     const ed = fr || jp;
     const aut = i.serie.auteurs.map(k => auteurs[nid(k)]).filter(Boolean);
     const mag = eds2.find(e => /Magazine|Plateforme/.test(e.type) && e.x);
-    i.comptes = { x: uniq([...aut.map(c => c.x), ...(i.serie.twX || [])]), xFR: ed && ed.x ? [ed.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), ed && ed.ig]), tt: uniq([...aut.map(c => c.tt), ed && ed.tt]) };
+    const jpX = eds2.find(e => /JP/.test(e.type) && e.x);
+    i.comptes = { x: uniq([...aut.map(c => c.x), ...(i.serie.twX || [])]), xFR: ed && ed.x ? [ed.x] : [], xJP: jpX && jpX !== ed ? [jpX.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), ed && ed.ig]), tt: uniq([...aut.map(c => c.tt), ed && ed.tt]) };
   }
   // Liens directs pour vérifier (Will, 16/10/2026) : lecture en ligne, lecture d'essai, site du magazine / de la plateforme.
   for (const i of items) {

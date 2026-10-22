@@ -72,7 +72,8 @@ async function ajouterComptes(env, items) {
     // xEd : compte X de l'éditeur de CE tome (FR ou JP), cité dans « Sortie aujourd'hui chez @… » (Will, 21/10/2026).
     // Éditeur du tome retrouvé aussi par son nom (beaucoup de séries n'ont pas encore la relation « Éditeurs (fiches) »).
     const edNom = (ed && ed.x) ? ed : Object.values(editeurs).find(e => e.x && norm(e.nom) && (norm(pub) === norm(e.nom) || norm(pub).startsWith(norm(e.nom)) || norm(e.nom).startsWith(norm(pub))));
-    x.comptes = { xEd: edNom && edNom.x ? [edNom.x] : [], x: uniq([...aut.map(c => c.x), ...(s.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]) };
+    const jpE = s.editeurs.map(k => editeurs[k]).find(e => e && /JP/.test(e.type) && e.x);
+    x.comptes = { xEd: edNom && edNom.x ? [edNom.x] : [], x: uniq([...aut.map(c => c.x), ...(s.twX || [])]), xFR: fr && fr.x ? [fr.x] : [], xJP: jpE ? [jpE.x] : [], xMag: mag ? [mag.x] : [], ig: uniq([...aut.map(c => c.ig), fr && fr.ig]), tt: uniq([...aut.map(c => c.tt), fr && fr.tt]) };
   }
 }
 

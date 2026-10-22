@@ -21,14 +21,15 @@
   // Poids X : un lien compte pour 23 caractères.
   var poidsX = function (t) { return [].concat.apply([], String(t).replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|fr|jp|net|org|io)(\/\S*)?/gi, "x".repeat(23)).split("").map(function (c) { return c; })).length; };
   // Ligne « X @… » : une seule ligne (42 caractères), auteurs d'abord, éditeur français toujours présent s'il existe.
-  var LIGNE_X = 42;
-  function choixX(aut, fr, tient, mag) {
-    var f = [...new Set((fr || []).filter(Boolean))].slice(0, 1), m = [...new Set((mag || []).filter(Boolean))].filter(function (h) { return !f.includes(h); }).slice(0, 1);
-    var a = [...new Set((aut || []).filter(Boolean))].filter(function (h) { return !f.includes(h) && !m.includes(h); });
+  // Ordre de priorité (Will, 22/10/2026) : l'auteur, puis l'éditeur français, puis l'éditeur japonais, puis le magazine.
+  // Quand ça ne tient pas, on retire en partant de la fin (magazine d'abord). Ligne de 60 caractères au plus.
+  var LIGNE_X = 60;
+  function choixX(aut, fr, tient, mag, jp) {
+    var vu = new Set(), prio = [];
+    [].concat(aut || [], (fr || []).slice(0, 1), (jp || []).slice(0, 1), (mag || []).slice(0, 1)).filter(Boolean).forEach(function (h) { var k = h.toLowerCase(); if (!vu.has(k)) { vu.add(k); prio.push(h); } });
     var ligne = function (hs) { return hs.map(function (h) { return "@" + h; }).join(" · ").length; };
-    // Les auteurs passent avant le magazine : on retire d'abord le magazine, puis les auteurs un par un (Will, 22/10/2026).
-    for (var k = a.length; k >= 0; k--) for (var mm of [m, []]) { var hs = [...a.slice(0, k), ...mm, ...f]; if (!hs.length) return []; if (ligne(hs) <= LIGNE_X && tient(hs)) return hs; }
-    return f;
+    for (var k = prio.length; k > 0; k--) { var hs = prio.slice(0, k); if (ligne(hs) <= LIGNE_X && tient(hs)) return hs; }
+    return [];
   }
   function postX(i, rs) {
     var s = i.serie || {}, c = i.comptes || {}, t = i.tome || {};
@@ -38,7 +39,7 @@
     var base = (/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)) + i.titre + "\n" + ligneSortie(i, edAt) + (rs ? "\n\n" + rs : "") + "\n\n↗ furyogang.com/series/" + s.slug;
     // Pas de double mention : un compte déjà cité dans « chez @Éditeur » ne revient pas dans la liste (Will, 21/10/2026).
     var sansEd = function (l) { return (l || []).filter(function (h) { return !edAt || h.toLowerCase() !== edAt.slice(1).toLowerCase(); }); };
-    var hs = choixX(sansEd(c.x), sansEd(t.pays === "France" && edAt ? [] : c.xFR), function (h) { return poidsX(base + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag);
+    var hs = choixX(sansEd(c.x), sansEd(t.pays === "France" && edAt ? [] : c.xFR), function (h) { return poidsX(base + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag, sansEd(c.xJP));
     return base + (hs.length ? "\n" + hs.map(function (h) { return "@" + h; }).join(" · ") : "");
   }
   function resumeAuto(i) {
@@ -64,6 +65,7 @@
   // Catégorie en première ligne des posts (la même que sur le site et dans Notion) ; rien pour une sortie.
   function catLigne(i) {
     if (/^sortie/.test(i.catChoisie || i.cat)) return "";
+    if ([i.catChoisie || i.cat, i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2].includes("tirage")) return ""; // « Tomes en circulation » : déjà sur le visuel (Will, 22/10/2026)
     var k = i.catChoisie || i.cat, k2 = i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2;
     return NEWS_CATS.includes(k) ? [VCATS[k]].concat(k2 && k2 !== k && NEWS_CATS.includes(k2) ? [VCATS[k2]] : []).join(" · ") + "\n" : "";
   }
@@ -95,7 +97,7 @@
     }
     var txt = (i.texte || "").trim();
     if (i.cat === "prepub" && i.tweet) return {
-      x: i.tweet + (s.slug ? "\n↗ " + url : "") + ((c.x || []).length || (c.xFR || []).length || (c.xMag || []).length ? "\n" + choixX(c.x, c.xFR, function () { return true; }, c.xMag).map(function (h) { return "@" + h; }).join(" · ") : ""),
+      x: i.tweet + (s.slug ? "\n↗ " + url : "") + ((c.x || []).length || (c.xFR || []).length || (c.xMag || []).length ? "\n" + choixX(c.x, c.xFR, function () { return true; }, c.xMag, c.xJP).map(function (h) { return "@" + h; }).join(" · ") : ""),
       ig: "📖 " + i.titre + (txt ? "\n\n" + txt : "") + "\n\n" + i.tweet + "\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n" + tags.join(" "),
       tt: "📖 " + i.titre + "\n\n" + i.tweet + "\n\n📖 Infos sur furyogang.com\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
     };
@@ -110,7 +112,7 @@
     trouve: for (var min of (autX.length ? [2, nbC, 0] : [nbC, 0])) for (var t of titres) for (var r of resumes) {  // titre complet d'abord, quitte à raccourcir le résumé
       var b = catLigne(i) + t + (r ? "\n" + r : "") + "\n\n↗ " + url;
       if (poidsX(b) > 280) continue;
-      var h = choixX(c.x, c.xFR, function (l) { return poidsX(b + "\n" + l.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag);
+      var h = choixX(c.x, c.xFR, function (l) { return poidsX(b + "\n" + l.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag, c.xJP);
       if (h.length && poidsX(b + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) > 280) h = [];
       if (min === 2 ? aAut(h) : h.length >= min) { xBase = b; hs = h; break trouve; }
     }
