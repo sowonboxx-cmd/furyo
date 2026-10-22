@@ -14,7 +14,11 @@ export async function onRequestGet(ctx) {
   // pour l'accueil (Will, 17/10/2026).
   const recents = (j.items || []).slice().sort((a, b) => String(b.inscrit || "").localeCompare(String(a.inscrit || ""))).slice(0, 8)
     .map(x => ({ pseudo: x.pseudo || "Membre", photo: x.photo || "", inscrit: x.inscrit || "" }));
-  return J({ locked: true, total: j.total || 0, recents });
+  // Arrivées du jour et de la semaine (depuis lundi), à l'heure de Paris, pour le widget « La famille du gang » (Will, 22/10/2026).
+  const jour = d => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(d);
+  const now = new Date(), auj = jour(now), dow = (new Date(auj + "T12:00:00Z").getUTCDay() + 6) % 7, lundi = jour(new Date(now.getTime() - dow * 864e5));
+  const dates = (j.items || []).filter(x => x.inscrit).map(x => jour(new Date(x.inscrit)));
+  return J({ locked: true, total: j.total || 0, recents, auj: dates.filter(d => d === auj).length, sem: dates.filter(d => d >= lundi).length });
 }
 async function liste({ request, env, waitUntil }) {
   // ?u=<identifiant> : un seul membre (page publique furyogang.com/membres/<identifiant>).

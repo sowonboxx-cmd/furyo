@@ -426,6 +426,18 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .dmb-r img,.dmb-r i{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#38383B;display:grid;place-items:center;font:700 20px Inter,sans-serif;font-style:normal;color:#fff}
 .dmb-r span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dmb-r span.ph{width:44px;height:10px;border-radius:5px;background:#38383B}
 .dmb-r .dmb-x{cursor:default}
+#m-gang{position:relative;overflow:hidden;padding:18px}
+.gw-kj{position:absolute;right:-14px;top:-26px;font:900 150px/1 "Noto Sans JP","FGJP",sans-serif;color:#BC002D;opacity:.22;pointer-events:none}
+.gw-ey{position:relative;font:700 11.5px Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.gw-n{position:relative;display:flex;align-items:flex-end;gap:10px;margin-top:8px}
+.gw-n>span:first-child{font:700 64px/.9 Antonio,"Arial Narrow",sans-serif;color:#F5F5F7}
+.gw-n>span:last-child{font:700 20px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;padding-bottom:6px;color:#F5F5F7}
+.gw-st{position:relative;display:flex;gap:14px;margin-top:12px;font-size:13px;color:#CFCFD4}.gw-st:empty{display:none}.gw-st b{color:#4CD07D}
+.gw-stk{position:relative;display:flex;margin-top:14px}.gw-stk:empty{display:none}
+.gw-stk>*{display:block;margin-left:-12px;border-radius:50%;border:3px solid #000;flex:none}.gw-stk>*:first-child{margin-left:0}
+.gw-stk img,.gw-stk i{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#38383B;display:grid;place-items:center;font:700 17px Inter,sans-serif;font-style:normal;color:#fff}
+.gw-stk a{transition:transform .15s}.gw-stk a:hover{transform:translateY(-3px);position:relative;z-index:1}
+.gw-cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:46px;margin-top:16px;border:0;border-radius:23px;background:#BC002D;color:#fff;font:700 14.5px Inter,sans-serif;cursor:pointer}.gw-cta[hidden]{display:none}
 .dmb-go{width:100%;height:44px;margin-top:16px;border:0;border-radius:22px;background:#305887;color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
 .dmk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .dmk a{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:16px;background:#1C1C1E;color:#F5F5F7;text-decoration:none;text-align:center;min-width:0}
@@ -837,6 +849,11 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
         </ul>
         <p class="m-note">Prochain Monthly Champion le 6 oct. · <a href="https://bigcomics.jp/episodes/d4caca9984016">Lire Kujou no Taizai en ligne (JP)<svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a></p>
       </section>
+      <!-- La famille du gang (Will, 22/10/2026) : nombre de membres, arrivées du jour et de la semaine, têtes des derniers inscrits -->
+      <section class="box" id="m-gang" hidden><div class="gw-kj" lang="ja" aria-hidden="true">仲間</div><div class="gw-ey">La famille du gang</div>
+        <div class="gw-n"><span id="gw-n">0</span><span>membres<br>dans le gang</span></div><div class="gw-st" id="gw-st"></div><div class="gw-stk" id="gw-stk"></div>
+        <button type="button" class="gw-cta" id="gw-cta" hidden>C'est à ton tour<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+      </section>
       <section class="box" id="m-com" hidden>
         <div class="m-head"><div><h3>Derniers commentaires</h3></div></div>
         <div class="dcm" id="dcm"></div>
@@ -1014,7 +1031,7 @@ document.addEventListener("click", e => { if (e.target.closest("[data-vok]")) { 
 function sideN() {
   const mode = !!(DT.all || VUE_N === "actus"), box = document.getElementById("m-cats"); if (!box) return;
   box.hidden = !mode;
-  ["m-fr", "m-com"].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = mode ? "none" : ""; });
+  ["m-fr", "m-com", "m-gang"].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = mode ? "none" : ""; });
   if (!mode || !DT.news) return;
   const has = (it, k) => it.cat === k || (it.cats || []).some(c => c.k === k) || (k === "anime" && (it.cats || []).some(c => c.k === "bande-annonce"));
   const news = DT.news.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
@@ -1346,8 +1363,23 @@ getN("/api/avancement").then(a => {
   const last = (a.recentes || [])[0];
   document.getElementById("dav-last").innerHTML = `Une case = ${per} fiches.` + (last ? ` Dernière fiche : <b>${esc2(last.fr || last.t)}</b> (n°${last.rang}).` : "");
 });
+// La famille du gang (colonne de droite) : total, arrivées aujourd'hui et cette semaine (heure de Paris), têtes des derniers inscrits.
+function famille(m) {
+  const box = document.getElementById("m-gang"); if (!box || !m || !m.total || VUE_N === "magazines") return;
+  const jour = d => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(d);
+  const now = new Date(), auj = jour(now), dow = (new Date(auj + "T12:00:00Z").getUTCDay() + 6) % 7, lundi = jour(new Date(now.getTime() - dow * 864e5));
+  const list = (m.items || m.recents || []).filter(x => x.inscrit).slice().sort((a, b) => new Date(b.inscrit) - new Date(a.inscrit)), lien = !!m.items;
+  const nA = m.items ? list.filter(x => jour(new Date(x.inscrit)) === auj).length : (m.auj ?? list.filter(x => jour(new Date(x.inscrit)) === auj).length);
+  const nS = m.items ? list.filter(x => jour(new Date(x.inscrit)) >= lundi).length : (m.sem ?? list.filter(x => jour(new Date(x.inscrit)) >= lundi).length);
+  document.getElementById("gw-n").textContent = m.total.toLocaleString("fr-FR");
+  document.getElementById("gw-st").innerHTML = (nA ? `<span><b>+${nA}</b> aujourd'hui</span>` : "") + (nS ? `<span><b>+${nS}</b> cette semaine</span>` : "");
+  document.getElementById("gw-stk").innerHTML = list.slice(0, 7).map(x => { const t = x.photo ? `<img src="${esc2(x.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((x.pseudo || "?").charAt(0).toUpperCase())}</i>`;
+    return lien ? `<a href="${x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/"}" title="${esc2(x.pseudo || "Membre")}">${t}</a>` : `<span>${t}</span>`; }).join("");
+  const cta = document.getElementById("gw-cta"); cta.hidden = !!m.items; cta.onclick = () => window.FG_LOGIN && FG_LOGIN();
+  box.hidden = false; if (typeof eqN === "function") eqN();
+}
 // Ils ont rejoint le gang
-getN("/api/membres").then(m => {
+getN("/api/membres").then(m => { famille(m); return m; }).then(m => {
   const box = document.getElementById("dmb"); if (!m) { box.innerHTML = '<p class="m-note">Rejoins le gang en te connectant avec Google.</p>'; return; }
   // Sans connexion, on voit quand même les têtes des derniers inscrits (« recents »), sans pouvoir cliquer dessus (Will, 22/10/2026).
   const list = (m.items || m.recents || []).slice().sort((a, b) => new Date(b.inscrit) - new Date(a.inscrit)).slice(0, 6), lien = !!m.items;
