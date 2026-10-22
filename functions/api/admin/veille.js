@@ -94,6 +94,7 @@ async function construire(request, env) {
     return {
       id: nid(r.id), notion: r.url, cat, label: CATS[cat], type, champ, titre: court(prop), prop,
       date: date(p["Date de la news"]), cree: (r.created_time || "").slice(0, 10), creeT: r.created_time || "",
+      publie: (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "", // date de publication sur le site (Will, 22/10/2026)
       actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]), video: text(p["Vidéo"]),
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",

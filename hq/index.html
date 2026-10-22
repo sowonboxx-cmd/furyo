@@ -946,6 +946,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // + Fiches mises à jour : 更新 (kōshin, « mise à jour ») ; Concours : 抽選 (chūsen, « tirage au sort ») — Will, 21/10/2026.
   // Tous les types (Will, 21/10/2026) : couverture 表紙, fiches du mois 新作, mangaka 作家, membre 仲間, article 記事, vidéo 動画, autre 予定.
   var EV_KJ = { "qn-sem": "毎週", "qn-mois": "毎月", maj: "更新", concours: "抽選", couv: "表紙", fiche: "新作", mangaka: "作家", membre: "仲間", article: "記事", video: "動画", autre: "予定" };
+  // News publiées (Will, 22/10/2026) : même vignette kanji, selon la catégorie principale.
+  var NEWS_KJ = { "licence-fr": "仏版", "licence-jp": "連載", "couv-fr": "表紙", "couv-jp": "表紙", "sortie-fr": "発売", "sortie-jp": "発売", fin: "完結", pause: "休載", anime: "放送", adaptation: "実写", "bande-annonce": "予告", tirage: "部数", news: "速報", serie: "連載" };
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
   function renderSemaine() {
     var l = lundi(calCur), today = iso(new Date()), h = '<div class="calpan"><div class="wk">';
@@ -954,7 +956,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       h += '<div class="wcol' + (is === today ? " to" : "") + '" data-date="' + is + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
       h += its.length ? its.map(function (it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
-        if (it.kind === "news") { var ni = it.n, ncol = itemColor(it), nbg = ni.image ? "background-image:url('" + esc(ni.image) + "')" : 'background:' + ncol; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov" style="' + nbg + '">' + (ni.image ? '' : '<b>N</b>') + '</span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
+        if (it.kind === "news") { var ni = it.n; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
         var evc = it.kind === "ev" ? evCover(it.e, it.date) : "";
         if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + evc + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
         var c = itemColor(it);
@@ -1180,7 +1182,9 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     if (part.sx) { SORTX = {}; (part.sx.items || []).forEach(function (x) { if (x && x.id) SORTX[x.id] = x; }); }
     if (part.ve) {
       var vn = part.ve.items || [];
-      NEWS = vn.filter(function (x) { return x && x.enLigne && (x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.date || x.cree, titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || "", i: x }; });
+      // Jour de publication sur le site (Will, 22/10/2026), sinon l'ancienne date de la news.
+      var jourP = function (t) { return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(t)); };
+      NEWS = vn.filter(function (x) { return x && x.enLigne && (x.publie || x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.publie ? jourP(x.publie) : (x.date || x.cree), t: x.publie || "", titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || "", i: x }; });
       NEWSCOL = part.ve.cols || {};
       if (window.FGPost && part.ve.cats) FGPost.setCats(part.ve.cats);
     }

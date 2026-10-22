@@ -842,13 +842,15 @@ function vdraw(){
     const majs = VITEMS.filter(i => !i.vu && !i.enLigne && i.cat === "fiche");
     const mb = document.getElementById("majall"); if (mb) mb.disabled = !majs.length;
     document.getElementById("vhint").textContent = majs.length ? `${majs.length} mise${majs.length > 1 ? "s" : ""} à jour · « Tout appliquer », ou touche une ligne pour voir le détail` : "Aucune mise à jour de fiche en attente 👌";
-    document.getElementById("vl").innerHTML = majs.map(i => `<li class="vi" data-vid="${i.id}"><time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
+    document.getElementById("vl").innerHTML = majs.map(i => `<li class="vi" data-vid="${i.id}">${VF === "pub" && i.publie ? `<time title="Publiée le">${esc(dCourt(jourParisA(i.publie)))}</time>` : `<time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time>`}<span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
     return;
   }
   // Actualités et veille = uniquement les vraies actus. On retire les couvertures ET les sorties (déjà dans « Prochaines sorties »
   // + le calendrier) ainsi que les mises à jour de fiche (écran dédié). Will, 19/10/2026.
   const masque = i => /^(couv|sortie)/.test(i.cat || "") || i.cat === "fiche";
-  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne && !masque(i)), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne);
+  // Publiées : de la plus récemment publiée à la plus ancienne (date de publication, sinon de repérage) — Will, 22/10/2026.
+  const tPub = i => i.publie || i.creeT || i.cree || i.date || "";
+  const actifs = VITEMS.filter(i => !i.vu && !i.enLigne && !masque(i)), gardes = VITEMS.filter(i => i.vu && !i.enLigne), pubs = VITEMS.filter(i => i.enLigne).sort((a, b) => tPub(b).localeCompare(tPub(a)));
   const counts = {}; actifs.forEach(i => counts[i.cat] = (counts[i.cat] || 0) + 1);
   if (!["tout", "vu", "pub"].includes(VF) && !counts[VF]) VF = "tout";
   if (VF === "vu" && !gardes.length) VF = "tout";
@@ -867,7 +869,7 @@ function vdraw(){
     vs.parentNode.style.setProperty("--g", g); }
   const list = VF === "pub" ? pubs : VF === "vu" ? gardes : actifs.filter(i => VF === "tout" || i.cat === VF);
   document.getElementById("vhint").textContent = VF === "pub" ? `${list.length} news en ligne · touche une ligne pour changer le texte, l'image ou la vidéo` : VF === "vu" ? `${list.length} news gardées de côté · tu peux encore les publier` : actifs.length ? `${list.length} à relire · touche une ligne pour voir le détail` : "Rien à relire pour l'instant 👌";
-  document.getElementById("vl").innerHTML = list.map(i => `<li class="vi" data-vid="${i.id}"><time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time><span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
+  document.getElementById("vl").innerHTML = list.map(i => `<li class="vi" data-vid="${i.id}">${VF === "pub" && i.publie ? `<time title="Publiée le">${esc(dCourt(jourParisA(i.publie)))}</time>` : `<time title="Repérée le">${esc(dCourt(i.cree || i.date))}</time>`}<span class="pc" style="--c:${VCOL[i.cat]}">${esc(i.label)}</span><span class="t">${esc(i.titre)}</span></li>`).join("");
   const a = document.querySelector(".sh-val b"); if (a) a.textContent = actifs.length;
 }
 function vopen(id){
@@ -1006,6 +1008,7 @@ const poidsX = t => [...String(t).replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-
 // Post X d'une sortie : on garde autant de comptes que possible (auteurs puis éditeur) sans dépasser 280.
 // Ligne « X @… » : une seule ligne (42 caractères), auteurs d'abord, éditeur français toujours présent s'il existe.
 const LIGNE_X = 42;
+const jourParisA = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
 function choixX(aut, fr, tient, mag){
   // Auteurs, puis magazine de prépublication (Will, 16/10/2026), puis éditeur français toujours présent.
   const f = [...new Set((fr || []).filter(Boolean))].slice(0, 1), m = [...new Set((mag || []).filter(Boolean))].filter(h => !f.includes(h)).slice(0, 1);
@@ -1278,7 +1281,7 @@ async function vsend(btn, statut){
     if (i.enLigne) genOgCard(i); m.remove(); vdraw(); toast("Changements en ligne ✓"); return;
   }
   if (statut === "Vu" && i.enLigne) { i.enLigne = false; i.vu = true; m.remove(); vdraw(); toast("Retirée du site · rangée dans « Vu, pas sur le site »"); return; }
-  if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } genOgCard(i); m.remove(); vdraw(); toast("Publié sur le site ✓" + ficheMsg); if (ficheMsg) { toast.t && clearTimeout(toast.t); toast.t = setTimeout(() => document.getElementById("toast").classList.remove("on"), 5000); } return; }
+  if (statut === "Publié sur le site") { i.enLigne = true; i.vu = false; if (!i.publie) i.publie = new Date().toISOString(); if (vtx) i.texte = vtx.value; if (image !== null) i.imageChoisie = image; if (vc) { i.cat = vc.value; i.label = VCATS[vc.value]; } genOgCard(i); m.remove(); vdraw(); toast("Publié sur le site ✓" + ficheMsg); if (ficheMsg) { toast.t && clearTimeout(toast.t); toast.t = setTimeout(() => document.getElementById("toast").classList.remove("on"), 5000); } return; }
   // « Vu » : la news reste dans le back-office, rangée dans « Vu, pas sur le site ».
   // Prépublication publiée aussi en news : la news créée arrive dans la liste, à relire et publier comme les autres.
   if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(true); return; }
