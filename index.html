@@ -1071,6 +1071,8 @@ function renderN() {
     // Bandeau don sous les news de l'accueil ordinateur : le duo, « Tes potes lisent gratos » (Will, 06/10/2026).
     if (!DT.all && !DT.cat && DT.tab === "toutes" && list.length && window.FG_GANG) html += FG_GANG("bandeau");
     loadStatsN(list.slice(0, max));
+    // News en réserve pour combler le blanc sous la colonne de droite (Will, 22/10/2026).
+    DT.reste = home ? list.slice(max) : [];
   }
   feed.innerHTML = html;
   fitN(feed);
@@ -1302,7 +1304,20 @@ function equilibreN() {
   const kids = [...fil.children].filter(e => e.offsetHeight), top = fil.getBoundingClientRect().top;
   const hFil = kids.length ? Math.max(...kids.map(e => e.getBoundingClientRect().bottom)) - top : fil.offsetHeight;
   rows.forEach(r => r.style.display = "");
-  for (let k = rows.length - 1; k > 0 && side.offsetHeight > hFil + 8; k--) rows[k].style.display = "none";
+  // 1) Accueil : on ajoute des news au fil tant que la colonne de droite dépasse (Will, 22/10/2026)…
+  const feed = document.getElementById("feed"), mesure = () => { const k = [...fil.children].filter(e => e.offsetHeight); return k.length ? Math.max(...k.map(e => e.getBoundingClientRect().bottom)) - fil.getBoundingClientRect().top : fil.offsetHeight; };
+  let h = hFil; const ajout = [];
+  while (feed && (DT.reste || []).length && side.offsetHeight - h > 60) {
+    const ref = feed.querySelector(".dmore") || null, tmp = document.createElement("div"); tmp.innerHTML = rowN(DT.reste[0]);
+    const el = tmp.firstElementChild; if (!el) break;
+    const gap = side.offsetHeight - h; feed.insertBefore(el, ref); fitN(el);
+    if (el.offsetHeight > gap * 2) { el.remove(); break; } // une news bien plus haute que le blanc : on s'arrête
+    ajout.push(DT.reste.shift()); h = mesure();
+    const sm = feed.querySelector(".dmore small"); if (sm) { if (DT.reste.length) sm.textContent = DT.reste.length + " de plus"; else sm.remove(); }
+  }
+  if (ajout.length) { loadStatsN(ajout); viewsN(); }
+  // 2) …puis on retire des commentaires (au moins 1) si elle dépasse encore.
+  for (let k = rows.length - 1; k > 0 && side.offsetHeight > h + 8; k--) rows[k].style.display = "none";
 }
 let eqT = 0; const eqN = () => { clearTimeout(eqT); eqT = setTimeout(equilibreN, 120); };
 addEventListener("resize", eqN); addEventListener("load", eqN);
