@@ -422,9 +422,10 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .dav-g{display:grid;grid-template-columns:repeat(15,1fr);gap:4px}.dav-g i{height:16px;border-radius:4px;background:#2C2C2F}.dav-g i.on{background:#4CD07D}
 .dav .m-note{margin:0}.dav .m-note b{color:#F5F5F7}
 .dmb-r{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-.dmb-r a{display:flex;flex-direction:column;align-items:center;gap:6px;color:#CFCFD4;text-decoration:none;font-size:12.5px;min-width:0}
+.dmb-r a,.dmb-r .dmb-x{display:flex;flex-direction:column;align-items:center;gap:6px;color:#CFCFD4;text-decoration:none;font-size:12.5px;min-width:0}
 .dmb-r img,.dmb-r i{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#38383B;display:grid;place-items:center;font:700 20px Inter,sans-serif;font-style:normal;color:#fff}
 .dmb-r span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dmb-r span.ph{width:44px;height:10px;border-radius:5px;background:#38383B}
+.dmb-r .dmb-x{cursor:default}
 .dmb-go{width:100%;height:44px;margin-top:16px;border:0;border-radius:22px;background:#305887;color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
 .dmk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .dmk a{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:16px;background:#1C1C1E;color:#F5F5F7;text-decoration:none;text-align:center;min-width:0}
@@ -1348,8 +1349,9 @@ getN("/api/avancement").then(a => {
 // Ils ont rejoint le gang
 getN("/api/membres").then(m => {
   const box = document.getElementById("dmb"); if (!m) { box.innerHTML = '<p class="m-note">Rejoins le gang en te connectant avec Google.</p>'; return; }
-  const list = (m.items || []).slice().sort((a, b) => new Date(b.inscrit) - new Date(a.inscrit)).slice(0, 6);
-  box.innerHTML = (list.length ? `<div class="dmb-r">${list.map(x => `<a href="${x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/"}">${x.photo ? `<img src="${esc2(x.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((x.pseudo || "?").charAt(0).toUpperCase())}</i>`}<span>${esc2(x.pseudo || "Membre")}</span></a>`).join("")}</div>`
+  // Sans connexion, on voit quand même les têtes des derniers inscrits (« recents »), sans pouvoir cliquer dessus (Will, 22/10/2026).
+  const list = (m.items || m.recents || []).slice().sort((a, b) => new Date(b.inscrit) - new Date(a.inscrit)).slice(0, 6), lien = !!m.items;
+  box.innerHTML = (list.length ? `<div class="dmb-r">${list.map(x => `<${lien ? `a href="${x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/"}"` : 'span class="dmb-x"'}>${x.photo ? `<img src="${esc2(x.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((x.pseudo || "?").charAt(0).toUpperCase())}</i>`}<span>${esc2(x.pseudo || "Membre")}</span></${lien ? "a" : "span"}>`).join("")}</div>${lien ? "" : `<p class="m-note">${m.total || 0} membres dans le gang.</p>`}`
     : `<div class="dmb-r">${Array.from({ length: 6 }, () => '<a aria-hidden="true"><i></i><span class="ph"></span></a>').join("")}</div><p class="m-note">${m.total || 0} membres dans le gang. Connecte-toi pour voir qui en fait partie.</p>`) +
     (DT.me && DT.me.user ? "" : '<button type="button" class="dmb-go" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button>');
 });
