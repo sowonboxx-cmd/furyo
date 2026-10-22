@@ -248,6 +248,12 @@ async function traiter(request, env) {
   if (b.statut) {
     if (!STATUTS.includes(b.statut)) return json({ error: "statut inconnu" }, 400);
     props["Statut"] = { select: { name: b.statut } };
+    // Date de publication (Will, 22/10/2026) : la news prend sa place dans le fil le jour où elle est publiée,
+    // pas le jour où la veille l'a repérée. Gardée si elle existe déjà (une news republiée ne remonte pas).
+    if (b.statut === "Publié sur le site") {
+      const cur = await (await fetch(`https://api.notion.com/v1/pages/${b.id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } })).json().catch(() => ({}));
+      if (!cur.properties?.["Publiée le"]?.date?.start) props["Publiée le"] = { date: { start: new Date().toISOString() } };
+    }
   }
   if (typeof b.texte === "string") props["Résumé site"] = rt(b.texte.trim());
   if (typeof b.image === "string") {

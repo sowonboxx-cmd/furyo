@@ -21,6 +21,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
   // Pas de reconstruction forcée pour Will (elle rendait les pages news lentes) : le back-office vide le cache à chaque changement.
+  // Date de publication sur le site (Will, 22/10/2026) : prioritaire sur la date de repérage pour l'ordre et la date affichée.
+  const pubLe = p => (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "";
+  const jourParis = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
   return cached(request, waitUntil, "/api/news?v=9", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
@@ -55,7 +58,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       return {
         // Date affichée : le jour où la veille a repéré l'info (ordre chronologique, Will 04/10/2026) ;
         // la date de sortie d'un tome reste dans le texte de la news.
-        id: r.id.replace(/-/g, ""), cat: cat.k, catNom: cat.nom, catC: cat.c, cats: [{ k: cat.k, nom: cat.nom, c: cat.c }, ...autres], date: (r.created_time || "").slice(0, 10) || date(p["Date de la news"]), _t: r.created_time || "",
+        id: r.id.replace(/-/g, ""), cat: cat.k, catNom: cat.nom, catC: cat.c, cats: [{ k: cat.k, nom: cat.nom, c: cat.c }, ...autres], date: pubLe(p) ? jourParis(pubLe(p)) : (r.created_time || "").slice(0, 10) || date(p["Date de la news"]), _t: pubLe(p) || r.created_time || "",
         titre: s.t || prop, fr: s.fr, jp: s.jp, pub, label, t1, cover, pos: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null, texte: text(p["Résumé site"]), accroche: text(p["Accroche"]),
         // Lien externe facultatif (Will, 20/10/2026) : si rempli, la carte ouvre cette page (ex. /recap/2026-09/) au lieu de /actus/<slug>.
         lien: text(p["Lien"]) || "",
