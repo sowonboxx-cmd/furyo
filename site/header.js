@@ -33,6 +33,8 @@
     /* Ordinateur aussi (Will, 04/10/2026) : plus de pastilles Back-office / Validation, juste le nombre à valider ; tout passe par l'avatar */
     ".sh-bo{display:none!important}.sh-val{pointer-events:none;background:transparent!important;padding:0!important;height:auto!important;font-size:0!important}" +
     ".sh-val b{background:transparent!important;color:#8E8E93!important;font:600 13px Inter,system-ui,sans-serif!important;padding:0!important}.sh-val[data-n='0'] b{display:none!important}" +
+    /* Ordinateur (Will, 22/10/2026) : le nombre à valider est cliquable et ouvre directement les actus à valider */
+    ".sh-adm .sh-val{pointer-events:auto;cursor:pointer}.sh-adm .sh-val:hover b{color:#F5F5F7!important;text-decoration:underline;text-underline-offset:3px}" +
     ".adm-pop{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);font-family:Inter,system-ui,sans-serif}.adm-pop[hidden]{display:none}" +
     ".adm-box{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 60px);width:min(320px,calc(100% - 24px));box-sizing:border-box;padding:16px;background:#1C1C1E;border-radius:20px;display:flex;flex-direction:column;gap:10px;color:#F5F5F7}" +
     ".adm-u{display:flex;align-items:center;gap:12px;padding-bottom:6px;text-decoration:none;color:inherit}.adm-u img,.adm-u i{width:48px;height:48px;border-radius:24px;background:#38383B;object-fit:cover;display:block}.adm-u b{display:block;font-size:17px}.adm-u small{font-size:13px;color:#98989D}" +
