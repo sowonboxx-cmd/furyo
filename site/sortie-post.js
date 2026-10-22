@@ -26,7 +26,8 @@
     var f = [...new Set((fr || []).filter(Boolean))].slice(0, 1), m = [...new Set((mag || []).filter(Boolean))].filter(function (h) { return !f.includes(h); }).slice(0, 1);
     var a = [...new Set((aut || []).filter(Boolean))].filter(function (h) { return !f.includes(h) && !m.includes(h); });
     var ligne = function (hs) { return hs.map(function (h) { return "@" + h; }).join(" · ").length; };
-    for (var mm of [m, []]) for (var k = a.length; k >= 0; k--) { var hs = [...a.slice(0, k), ...mm, ...f]; if (!hs.length) return []; if (ligne(hs) <= LIGNE_X && tient(hs)) return hs; }
+    // Les auteurs passent avant le magazine : on retire d'abord le magazine, puis les auteurs un par un (Will, 22/10/2026).
+    for (var k = a.length; k >= 0; k--) for (var mm of [m, []]) { var hs = [...a.slice(0, k), ...mm, ...f]; if (!hs.length) return []; if (ligne(hs) <= LIGNE_X && tient(hs)) return hs; }
     return f;
   }
   function postX(i, rs) {
@@ -72,6 +73,14 @@
     if (!/^couv/.test(cat)) return false;
     return (i.tome && i.tome.pays === "Japon") || /jp$/.test(cat);
   }
+  // « Kujô l'implacable dépasse les 5 millions d'exemplaires » + « Kujô l'implacable, le manga de…, dépasse les 5 millions… » = redite.
+  function sansRedite(titre, txt) {
+    var mots = function (t) { return String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().split(/[^a-z0-9]+/).filter(function (w) { return w.length > 2; }); };
+    var ph = phrases(txt); if (ph.length < 2) return txt;
+    var mt = mots(titre), m1 = mots(ph[0]); if (mt.length < 3) return txt;
+    var commun = mt.filter(function (w) { return m1.includes(w); }).length;
+    return commun / mt.length >= 0.7 ? ph.slice(1).join(" ") : txt;
+  }
   function captions(i, rs) {
     var s = i.serie || {}, c = i.comptes || {}, url = s.slug ? "furyogang.com/series/" + s.slug : "furyogang.com";
     var tags = [...new Set([tagOf(s.t)].concat((s.genres || []).slice(0, 2).map(tagOf)).concat(["#manga", "#FuryoGang"]).concat(/-fr$/.test(i.cat) ? ["#mangafr"] : []))].filter(function (x) { return x.length > 1; });
@@ -91,15 +100,19 @@
       tt: "📖 " + i.titre + "\n\n" + i.tweet + "\n\n📖 Infos sur furyogang.com\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
     };
     var titres = [...new Set([i.titre, i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news)\s*:\s*/i, ""), String(i.serie && i.serie.t || i.titre)])];
+    // Pas de redite (Will, 22/10/2026) : si la 1re phrase du résumé redit le titre, on la retire des posts.
+    txt = sansRedite(i.titre, txt);
     var ph = phrases(txt), resumes = [...ph.map(function (_, n) { return ph.slice(0, n + 1).join(" "); }).reverse(), ""];
     var nbC = ((c.x || []).length + (c.xFR || []).length + (c.xMag || []).length) ? 1 : 0;
+    // L'auteur d'abord (Will, 22/10/2026) : on raccourcit le résumé plutôt que de perdre le compte de l'auteur.
+    var autX = (c.x || []).map(function (h) { return h.toLowerCase(); }), aAut = function (l) { return l.some(function (h) { return autX.includes(h.toLowerCase()); }); };
     var xBase = "", hs = [];
-    trouve: for (var min of [nbC, 0]) for (var r of resumes) for (var t of titres) {
+    trouve: for (var min of (autX.length ? [2, nbC, 0] : [nbC, 0])) for (var t of titres) for (var r of resumes) {  // titre complet d'abord, quitte à raccourcir le résumé
       var b = catLigne(i) + t + (r ? "\n" + r : "") + "\n\n↗ " + url;
       if (poidsX(b) > 280) continue;
       var h = choixX(c.x, c.xFR, function (l) { return poidsX(b + "\n" + l.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag);
       if (h.length && poidsX(b + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) > 280) h = [];
-      if (h.length >= min) { xBase = b; hs = h; break trouve; }
+      if (min === 2 ? aAut(h) : h.length >= min) { xBase = b; hs = h; break trouve; }
     }
     if (!xBase) xBase = catLigne(i) + titres[titres.length - 1] + "\n\n↗ " + url;
     var igL = (c.ig || []).length ? "\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : "", ttL = (c.tt || []).length ? "\n📣 " + c.tt.map(function (h) { return "@" + h; }).join(" ") : "";
@@ -125,7 +138,7 @@
 
   window.FGPost = {
     setCats: function (vcats, newsCats) { if (vcats) VCATS = vcats; if (newsCats) NEWS_CATS = newsCats; },
-    captions: captions, resumeAuto: resumeAuto, ajouteMagX: ajouteMagX,
+    captions: captions, resumeAuto: resumeAuto, ajouteMagX: ajouteMagX, sansRedite: sansRedite,
     postX: postX, choixX: choixX, ligneSortie: ligneSortie, catLigne: catLigne,
     poidsX: poidsX, phrases: phrases, resumeCourt: resumeCourt, tagOf: tagOf,
     estCouvertureJaponaise: estCouvertureJaponaise,
