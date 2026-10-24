@@ -116,6 +116,10 @@ details[open] .chev{transform:rotate(180deg)}
  .up-g{grid-template-columns:repeat(3,1fr);gap:10px}.up b{font-size:13px}
  .seo{grid-template-columns:1fr;padding:24px 20px}.seo h2{font-size:26px}
 }
+.web-i{max-width:760px;margin:-6px auto 18px;padding:0 16px;color:#98989D;font-size:14.5px;text-align:center}
+.web-g{max-width:1180px;margin:0 auto 10px;padding:0 16px}
+.sc .nx{margin:6px 0 0;font-size:13px;color:#CFCFD4}.sc .nx b{color:#F2B33D}
+.sc .pf{margin:4px 0 0;font:700 11px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#E5483A}
 </style>
 </head>
 <body>
@@ -135,6 +139,10 @@ details[open] .chev{transform:rotate(180deg)}
 
 <h2 id="series" class="jsec"><span lang="ja">連載中</span>Nos séries en prépublication</h2>
 <div class="acc" id="acc"></div>
+
+<h2 id="en-ligne" class="jsec"><span lang="ja">ウェブ連載</span>Lecture en ligne</h2>
+<p class="web-i">Les séries publiées chapitre par chapitre sur les plateformes en ligne japonaises (Manga One, Champion Cross, Comic Zenon…).</p>
+<div class="sc-g web-g" id="web"><p class="ph">Chargement</p></div>
 
 <h2 id="sorties" class="jsec"><span lang="ja">新刊</span>Prochaines sorties au Japon</h2>
 <div class="up-g" id="up"></div>
@@ -182,6 +190,7 @@ const today = new Date().toISOString().slice(0, 10);
 
 Promise.all([get("/api/prepub"), get("/api/biblio"), get("/api/calendrier")]).then(([p, b, c]) => {
   const P = (p && p.items || []).filter(x => !/\(en ligne\)/.test(x.mag));
+  const O = (p && p.items || []).filter(x => /\(en ligne\)/.test(x.mag)); // plateformes en ligne (Will, 24/10/2026)
   const BY = {}; (b && b.items || []).forEach(s => { BY[s.id] = s; });
   const ser = x => BY[(x.series || [])[0]] || {};
   const href = x => { const s = ser(x); return s.slug ? (s.fiche ? "/series/" : "/ma-collection/") + s.slug : ""; };
@@ -208,6 +217,19 @@ Promise.all([get("/api/prepub"), get("/api/biblio"), get("/api/calendrier")]).th
     const rd = x.read ? `<a class="rd" href="${esc(x.read)}" target="_blank" rel="noopener">Lire en ligne${ARR}</a>` : '<span class="rd off">Magazine papier</span>';
     return `<article class="sc">${lien(x, `<img src="${esc(cv(img, 300))}" alt="" loading="lazy">`)}<div>${lien(x, `<h4>${esc(nom(x))}</h4>`, "t")}<p lang="ja">${esc(x.jp)}</p><div class="sm"><b>${chap(x) || "Nouveau chapitre"}</b><span>${dm(x.date)}</span></div>${badges(x.hl)}${rd}</div></article>`; };
   document.getElementById("acc").innerHTML = groups.map(([m, l]) => `<details><summary><div class="mini">${l.slice(0, 5).map(x => `<img src="${esc(cv(ser(x).cover || x.cover, 120))}" alt="">`).join("")}</div><div class="sm1"><small lang="ja">${esc(MAG[m][0])}</small><b>${esc(m)}</b><em>${l.length} série${l.length > 1 ? "s" : ""} · ${esc(MAG[m][2])}</em></div>${CHEV}</summary><div class="sc-g">${l.map(scard).join("")}</div></details>`).join("");
+
+  // Lecture en ligne : une carte par série, le dernier chapitre paru et le prochain annoncé.
+  const wn = [...new Set(O.map(nom))];
+  const wcards = wn.map(n => {
+    const l = O.filter(x => nom(x) === n), paru = l.filter(x => x.status === "Paru").sort((a, z) => z.date.localeCompare(a.date))[0];
+    const next = l.filter(x => x.status === "À paraître" && x.date >= today).sort((a, z) => a.date.localeCompare(z.date))[0];
+    const x = paru || next; if (!x) return ""; const s = ser(x), img = s.cover || x.cover, plat = x.mag.replace(/\s*\(en ligne\)/, "");
+    const rd = x.read || x.link ? `<a class="rd" href="${esc(x.read || x.link)}" target="_blank" rel="noopener">Lire sur ${esc(plat)}${ARR}</a>` : "";
+    return { d: x.date, h: `<article class="sc">${lien(x, `<img src="${esc(cv(img, 300))}" alt="" loading="lazy">`)}<div>${lien(x, `<h4>${esc(n)}</h4>`, "t")}<p lang="ja">${esc((x.jp || "").split(" ")[0])}</p>
+      <div class="sm"><b>${paru ? chap(paru) || "Nouveau chapitre" : "Bientôt"}</b><span>${paru ? dm(paru.date) : ""}</span></div>
+      ${next ? `<p class="nx">Prochain : <b>${chap(next)}</b> le ${dm(next.date)}</p>` : ""}<p class="pf">${esc(plat)}</p>${badges(x.hl)}${rd}</div></article>` };
+  }).filter(Boolean).sort((a, z) => z.d.localeCompare(a.d));
+  document.getElementById("web").innerHTML = wcards.map(c => c.h).join("") || '<p class="ph">Aucune série en ligne pour le moment.</p>';
 
   // En-tête : couvertures de nos séries (pas les couvertures des magazines)
   const covs = [...new Set(latest.map(x => ser(x).cover).filter(Boolean))].slice(0, 12);
