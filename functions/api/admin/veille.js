@@ -116,7 +116,7 @@ async function construire(request, env) {
   for (const t of tRows) { const q = t.properties || {}, e = edById[rel(q["Édition"])[0]]; if (e) e.tomes.push({ n: num(q["N°"]) || 1, date: date(q["Date de sortie"]), prec: text(q["Précision date"]) || "Jour", cover: text(q["Couverture"]) }); }
   // « Tomes en circulation » (1re ou 2e catégorie) : on attache TOUTES les couvertures des tomes de la série,
   // pour générer le visuel dans la fenêtre Validation (le dernier tome en avant). Marche même pour une fiche non publique.
-  const circItems = items.filter(i => i.serie && (i.cat === "tirage" || i.cat2 === "tirage"));
+  const circItems = items.filter(i => i.serie && ["tirage", "extrait"].some(k => i.cat === k || i.cat2 === k)); // + extraits : la couverture du tome 1
   if (circItems.length) {
     const cIds = [...new Set(circItems.map(i => i.serie.id))];
     const cEr = await queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { or: cIds.slice(0, 100).map(id => ({ property: "Série", relation: { contains: id } })) } } }).catch(() => []);

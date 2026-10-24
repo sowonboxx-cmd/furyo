@@ -367,7 +367,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 <div class="toast" id="toast"></div>
 <script src="/site/fiche-card.js?v=4"></script>
 <script src="/site/tome-card.js?v=4"></script>
-<script src="/site/sortie-post.js?v=5"></script>
+<script src="/site/sortie-post.js?v=6"></script>
 <script src="/site/quickaccess.js?v=8"></script>
 <script src="/site/og-actu.js?v=1"></script>
 <script>
@@ -800,7 +800,7 @@ document.addEventListener("click", async e => {
 /* ---------- Validation : la veille à relire ---------- */
 // Catégories et couleurs : celles de Notion, envoyées par /api/admin/veille (lib/categories.js).
 let VCOL = {};
-const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "news"];
+const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "extrait", "news"];
 let VITEMS = [], VCATS = {}, VF = "tout", MAJ_MODE = false;
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
 async function veille(garder, maj){
@@ -877,6 +877,7 @@ function vopen(id){
   const news = i.news, pp = i.cat === "prepub";
   const site = news || pp; // onglet « Site » : texte de la news, ou annonce du magazine pour une prépublication
   const couv = /^couv/.test(i.cat);
+  const extr = !( i.cat === "tirage" || i.cat2 === "tirage") && (i.cat === "extrait" || i.cat2 === "extrait"); // « Extrait » : visuel E1 (Will, 24/10/2026)
   const circ = i.cat === "tirage" || i.cat2 === "tirage"; // « Tomes en circulation » (1re ou 2e catégorie) : visuel généré automatiquement (template F3)
   const img = news ? "" : i.image ? `<img class="cv${/^(couv|sortie|prepub)/.test(i.cat) ? " big" : ""}" src="/api/couv?u=${encodeURIComponent(i.image)}&w=600" alt="" onerror="this.remove()">` : "";
   const dt = (k, v) => v ? `<dt>${k}</dt><dd>${esc(v)}</dd>` : "";
@@ -899,7 +900,7 @@ function vopen(id){
     <h2>${esc(i.titre)}</h2>
     ${i.serie ? `<p class="sr">Série : <a href="/series/${esc(i.serie.slug)}" target="_blank" rel="noopener">${esc(i.serie.t)} ↗</a></p>` : ""}
     ${img}
-    ${circ ? vCircBloc(i) : news ? vimgBloc(i) : ""}
+    ${circ ? vCircBloc(i) : extr ? vExtBloc(i) + vimgBloc(i) : news ? vimgBloc(i) : ""}
     ${champs ? `<dl>${champs}</dl>` : ""}
     ${tomeIt ? `<label for="vrs">Résumé sortie (commun à tous les tomes de la série)</label>
     <div class="rs"><textarea id="vrs" maxlength="300">${esc(rs)}</textarea><button data-vrs>Enregistrer</button></div>` : ""}
@@ -922,6 +923,7 @@ function vopen(id){
   vcaps(m, i, true);
   vcount(m);
   if (circ) vCircInit(m, i);
+  if (extr) vExtInit(m, i);
 }
 // Image d'une news : celle choisie par Will (propriété « Image »), sinon celle trouvée automatiquement.
 // On peut en envoyer une (fichier ou copier-coller), coller une adresse, ou la retirer.
@@ -1053,6 +1055,57 @@ function vCircBloc(i){
       <button class="vcirc-dl" data-vcircdl="banner" type="button">${ICO_DL}Bannière</button>
     </div></div>`;
 }
+// ---- Visuel « Extrait » (catégorie extrait, template E1 validé par Will le 24/10/2026) ----
+// Couverture du tome (trouvée automatiquement, ou envoyée), 1 à 6 planches envoyées par Will (fond + éventail),
+// le titre en très grand, l'étiquette rouge, les auteurs, « Extrait sur <éditeur> · tome 1 le <date> ».
+function vExtBloc(i){
+  return `<div class="vcirc" id="vext">
+    <div class="vcirc-prev" id="vextprev"><span>Ajoute des planches pour générer le visuel…</span></div>
+    <div class="vcirc-ctl" style="flex-wrap:wrap">
+      <label class="vcirc-f">Planches<input id="vextpl" type="file" accept="image/*" multiple></label>
+      <label class="vcirc-f">Couverture<input id="vextcv" type="file" accept="image/*"></label>
+      <label class="vcirc-f">Étiquette<input id="vexttag" type="text" value="Lis le chapitre 1"></label>
+      <label class="vcirc-f">Éditeur<input id="vexted" type="text" placeholder="Kana"></label>
+      <label class="vcirc-f">Tome<input id="vextt" type="text" value="1" style="width:60px"></label>
+      <label class="vcirc-f">Sortie<input id="vextd" type="text" placeholder="13 novembre"></label>
+      <button class="vcirc-dl" data-vextdl type="button">${ICO_DL}Post 3:4</button>
+    </div></div>`;
+}
+let EXT_LIB, VEXTT;
+function extLib(){ if (window.FG_EXTRAIT) return Promise.resolve(); if (!EXT_LIB) EXT_LIB = unScript("/site/extrait-card.js?v=1"); return EXT_LIB; }
+const lireFichier = f => new Promise(ok => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(f); });
+async function vExtInit(m, i){
+  const s = i.serie || {};
+  // Éditeur et date : devinés depuis le texte de la news (« le 13 novembre chez Big Kana »), Will corrige si besoin.
+  const t = [i.titre, i.texte, i.prop].filter(Boolean).join(" ");
+  const d = (t.match(/\b(1er|\d{1,2})\s+(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\b/i) || [])[0] || "";
+  const ed = (t.match(/chez\s+(?:Big\s+)?([A-ZÉ][\wéè-]+)/) || [])[1] || (/kana/i.test(i.src || "") ? "Kana" : "");
+  m.querySelector("#vextd").value = d; m.querySelector("#vexted").value = ed;
+  m._ext = { titre: s.t || i.titre, auteurs: [s.scen, s.dess].filter((x, k, a) => x && a.indexOf(x) === k).join(" · "), planches: [], cover: "" };
+  // Couverture : le tome 1 français s'il existe (sinon le premier tome trouvé).
+  let toms = (i.tomes || []).filter(x => x.cover);
+  if (!toms.length && s.slug) { try { const j = await fetch("/api/serie?s=" + encodeURIComponent(s.slug)).then(r => r.json()); const eds = (j.editions || []).sort((a, b) => (b.pays === "France") - (a.pays === "France")); for (const e of eds) { const x = (e.tomes || []).filter(y => y.cover).sort((a, b) => (a.n || 0) - (b.n || 0)); if (x.length) { toms = x; break; } } } catch (e) {} }
+  m._ext.cover = (toms[0] || {}).cover || i.imageChoisie || i.image || "";
+  m.querySelector("#vextpl").onchange = async e => { m._ext.planches = await Promise.all([...e.target.files].slice(0, 6).map(lireFichier)); vExtRender(m); };
+  m.querySelector("#vextcv").onchange = async e => { if (e.target.files[0]) { m._ext.cover = await lireFichier(e.target.files[0]); vExtRender(m); } };
+  ["#vexttag", "#vexted", "#vextt", "#vextd"].forEach(q => m.querySelector(q).oninput = () => { clearTimeout(VEXTT); VEXTT = setTimeout(() => vExtRender(m), 500); });
+  vExtRender(m);
+}
+async function vExtRender(m){
+  const c = m._ext, prev = m.querySelector("#vextprev"); if (!c) return;
+  if (!c.cover && !c.planches.length) { prev.innerHTML = "<span>Pas de couverture trouvée : envoie la couverture et des planches.</span>"; return; }
+  prev.classList.add("busy");
+  try {
+    await extLib();
+    c.url = await FG_EXTRAIT.png({ titre: c.titre, auteurs: c.auteurs, cover: c.cover || c.planches[0], planches: c.planches,
+      tag: m.querySelector("#vexttag").value.trim(), editeur: m.querySelector("#vexted").value.trim(), tome: m.querySelector("#vextt").value.trim() || 1, sortie: m.querySelector("#vextd").value.trim() });
+    prev.innerHTML = `<img src="${c.url}" alt="">`;
+  } catch (e) { prev.innerHTML = "<span>Impossible de générer le visuel.</span>"; }
+  prev.classList.remove("busy");
+}
+document.addEventListener("click", async e => { const b = e.target.closest("[data-vextdl]"); if (!b) return; const m = b.closest(".vm"); const c = m && m._ext; if (!c || !c.url) return toast("Ajoute d'abord des planches");
+  const nom = (c.titre || "serie").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-extrait.png";
+  const a = document.createElement("a"); a.href = c.url; a.download = nom; document.body.appendChild(a); a.click(); a.remove(); toast("Image téléchargée ✓"); });
 // Le chiffre : on le trouve dans le texte de la news (celui que la veille a repéré). Will peut le corriger.
 function chiffreCirc(i){
   const t = [i.titre, i.texte, i.propose, i.actuel, i.prop].filter(Boolean).join("  ");

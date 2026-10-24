@@ -608,7 +608,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
   </section>
 </div>
 <script src="/site/badges.js?v=2"></script>
-<script src="/site/sortie-post.js?v=5"></script>
+<script src="/site/sortie-post.js?v=6"></script>
 <script src="/site/quickaccess.js?v=8"></script>
 <script>
 if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
@@ -947,7 +947,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Tous les types (Will, 21/10/2026) : couverture 表紙, fiches du mois 新作, mangaka 作家, membre 仲間, article 記事, vidéo 動画, autre 予定.
   var EV_KJ = { "qn-sem": "毎週", "qn-mois": "毎月", maj: "更新", concours: "抽選", couv: "表紙", fiche: "新作", mangaka: "作家", membre: "仲間", article: "記事", video: "動画", autre: "予定" };
   // News publiées (Will, 22/10/2026) : même vignette kanji, selon la catégorie principale.
-  var NEWS_KJ = { "licence-fr": "仏版", "licence-jp": "連載", "couv-fr": "表紙", "couv-jp": "表紙", "sortie-fr": "発売", "sortie-jp": "発売", fin: "完結", pause: "休載", anime: "放送", adaptation: "実写", "bande-annonce": "予告", tirage: "部数", news: "速報", serie: "連載" };
+  var NEWS_KJ = { "licence-fr": "仏版", "licence-jp": "連載", "couv-fr": "表紙", "couv-jp": "表紙", "sortie-fr": "発売", "sortie-jp": "発売", fin: "完結", pause: "休載", anime: "放送", adaptation: "実写", "bande-annonce": "予告", tirage: "部数", extrait: "試読", news: "速報", serie: "連載" };
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
   function renderSemaine() {
     var l = lundi(calCur), today = iso(new Date()), h = '<div class="calpan"><div class="wk">';
