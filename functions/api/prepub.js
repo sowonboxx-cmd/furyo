@@ -16,6 +16,7 @@ const MAG_LINK = {
   "Comic Zenon": "https://comic-zenon.com/",
   "Big Comics": "https://bigcomics.jp/",
   "Goraku": "https://www.nihonbungeisha.co.jp/goraku2",
+  "Manga One": "https://manga-one.com/",
 };
 
 export async function onRequestGet({ env, request, waitUntil }) {
