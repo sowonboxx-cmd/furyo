@@ -544,7 +544,11 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     location.href = "/api/auth/google?r=" + encodeURIComponent(location.pathname + location.search + location.hash);
   };
   if (/[?&]connexion=echec/.test(location.search)) { setTimeout(function () { openMe(); }, 400); history.replaceState(null, "", location.pathname + location.search.replace(/[?&]connexion=echec/, "").replace(/^&/, "?") + location.hash); }
-  if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j) { ME = j; drawAvatar(); } }).catch(function () {});
+  if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j) { ME = j; drawAvatar();
+    // Don enregistré : fenêtre « Merci, t'es Premium » une seule fois (Will, 25/10/2026). ?apercu=merci pour la voir.
+    var mc = j.merci || (j.user && /[?&]apercu=merci/.test(location.search) ? { pseudo: j.user.name, montant: 25, ans: 1, debut: "2026-12-01", fin: "2027-11-30", badge: "Donateur — Bancho", slug: j.user.slug, apercu: 1 } : null);
+    if (mc) { var sc = document.createElement("script"); sc.src = "/site/merci.js?v=1"; sc.onload = function () { window.FG_MERCI(mc); }; document.head.appendChild(sc); }
+  } }).catch(function () {});
   bindClose();
   meBox.addEventListener("click", function (e) { if (e.target === meBox) meBox.hidden = true; });
   // Retour en haut (mobile) : même flèche que la chronologie CROWS x WORST, qui a déjà la sienne.

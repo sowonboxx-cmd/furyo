@@ -4,6 +4,7 @@
 import { membre, cookieMembre } from "../../../lib/auth.js";
 import { isAdmin, adminExp, makeCookie, ADMIN_BADGE_MS, json } from "../../../lib/admin.js";
 import { lirePage } from "../../../lib/membres.js";
+import { cleMerci } from "../../../lib/merci.js";
 import { catalogue, badgeAdmin, idsBadges } from "../../../lib/badges.js";
 export async function onRequestGet({ request, env }) {
   const u = await membre(request, env);
@@ -20,6 +21,8 @@ export async function onRequestGet({ request, env }) {
     }
   }
   const body = { user: u ? { name: u.n, picture: u.p, num: u.k || null, slug: u.s || null, member: !!u.m } : null, admin };
+  // Remerciement d'un don en attente (fenêtre « Merci, t'es Premium », Will 25/10/2026).
+  if (u && u.m) { try { const mk = await env.STATS.get(cleMerci(u.m)); if (mk) body.merci = JSON.parse(mk); } catch (e) {} }
   if (!h["set-cookie"]) return json(body);
   const hd = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
   for (const c of h["set-cookie"]) hd.append("set-cookie", c);

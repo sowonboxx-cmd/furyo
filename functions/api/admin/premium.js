@@ -7,14 +7,18 @@
 //        calcule la durée (règles du 18/10), prolonge « Premium jusqu'au », ajoute au total, pose le badge donateur.
 //   POST { action: "fin", id, fin, debut? }  → corrige la date de fin à la main (fin vide = plus Premium)
 //   POST { action: "suppr", pid }            → retire une ligne de l'historique (ne touche pas au membre)
+//   POST { action: "merci", id|qui }         → (r)envoie l'e-mail de remerciement + la fenêtre, d'après la fiche du membre
+// À chaque don enregistré, le remerciement part tout seul (e-mail Brevo + fenêtre sur le site), sauf si « merci: false ».
 import { json, isAdmin } from "../../../lib/admin.js";
 import { text, num, date, queryAll } from "../../../lib/notion.js";
 import { MEMBRES, numMembre, patch, jourParis } from "../../../lib/membres.js";
 import { catalogue, idsBadges } from "../../../lib/badges.js";
 import { oublierAcces } from "../../../lib/acces.js";
+import { envoyerMerci, poserFenetre } from "../../../lib/merci.js";
 
 const CLE = "premium:paiements";
 const DEBUT_PAYANT = "2026-12-01"; // le Premium offert par un don démarre le 1er décembre (règle du 18/10/2026)
+const ids0 = r => idsBadges(r).map(x => String(x).replace(/-/g, ""));
 const nid = id => String(id || "").replace(/-/g, "");
 const lireLog = async env => { try { return JSON.parse((await env.STATS.get(CLE)) || "[]"); } catch (e) { return []; } };
 
@@ -75,6 +79,19 @@ export async function onRequestPost({ request, env }) {
     return json({ ok: true });
   }
 
+  if (b.action === "merci") {
+    // Depuis la fiche : montant = total donné, durée = de « Premium depuis » à « Premium jusqu'au ».
+    const ans = m.debut && m.fin ? Math.max(0, Math.round((new Date(m.fin + "T12:00:00Z") - new Date(m.debut + "T12:00:00Z")) / (365.25 * 864e5))) : 0;
+    const donneur = cat.find(x => ids0(r).includes(x.id) && /donateur/i.test(x.n));
+    const d = { email: m.email, pseudo: m.pseudo, num: m.num, slug: m.slug, montant: m.dons, total: m.dons, ans, debut: ans ? m.debut : "", fin: ans ? m.fin : "", badge: donneur ? donneur.n : "" };
+    if (!(d.montant > 0) && !ans) return json({ error: "ce membre n'a ni don ni Premium payé" }, 400);
+    await poserFenetre(env, m.id, d).catch(() => {});
+    const mail = await envoyerMerci(env, d);
+    for (const x of log) if (x.m === m.id && !x.mail) x.mail = mail.ok ? "ok" : mail.error;
+    await env.STATS.put(CLE, JSON.stringify(log));
+    return json({ ok: true, mail });
+  }
+
   if (b.action !== "paiement") return json({ error: "action inconnue" }, 400);
   const montant = Math.round(Number(String(b.montant).replace(",", ".")) * 100) / 100;
   if (!(montant > 0)) return json({ error: "montant invalide" }, 400);
@@ -103,8 +120,13 @@ export async function onRequestPost({ request, env }) {
   if (!res.ok) return json({ error: "Notion a refusé : " + (await res.text()).slice(0, 200) }, 502);
   oublierAcces(m.id);
 
-  const entree = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), t: Date.now(), jour, m: m.id, k: m.num, n: m.pseudo, e: m.email,
+  // Remerciement automatique (Will, 25/10/2026) : fenêtre sur le site + e-mail.
+  const d = { email: m.email, pseudo: m.pseudo, num: m.num, slug: m.slug, montant, total, ans, debut: ans ? debut : "", fin: ans ? fin : "", badge: cible ? cible.n : "" };
+  let mail = { ok: false, error: "désactivé" };
+  if (b.merci !== false) { await poserFenetre(env, m.id, d).catch(() => {}); mail = await envoyerMerci(env, d); }
+
+  const entree = { mail: mail.ok ? "ok" : mail.error, id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), t: Date.now(), jour, m: m.id, k: m.num, n: m.pseudo, e: m.email,
     montant, source, ans, debut: ans ? debut : "", fin: ans ? fin : "", badge: cible ? cible.n : "", note: String(b.note || "").slice(0, 200) };
   log.unshift(entree); await env.STATS.put(CLE, JSON.stringify(log.slice(0, 2000)));
-  return json({ ok: true, paiement: entree, total });
+  return json({ ok: true, paiement: entree, total, mail });
 }
