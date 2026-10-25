@@ -154,6 +154,7 @@
     (D.prepub || []).filter(function (it) { return /\(en ligne\)/i.test(it.mag || ""); }).forEach(function (it) { var k = it.entry.split(" · ")[0]; if (!seen[k]) { seen[k] = 1; items.push(it); } });
     return items.length ? { web: true, items: items, date: items.reduce(function (a, it) { return it.date > a ? it.date : a; }, "") } : null;
   }
+  var WEB_IMGS = ["/img/web/doom.jpg"];
   function mags() {
     var g = {}, order = [];
     (D.prepub || []).filter(function (it) { return !/\(en ligne\)/i.test(it.mag || ""); }).forEach(function (it) { var k = it.mag + "|" + it.issue; if (!g[k]) { g[k] = { mag: it.mag, issue: it.issue, date: it.date, cover: it.cover, link: it.link, items: [] }; order.push(k); } if (it.cover && !g[k].cover) g[k].cover = it.cover; g[k].items.push(it); });
@@ -162,7 +163,7 @@
     return out;
   }
   function webCard(m) {
-    var img = (m.items.filter(function (it) { return it.cover; })[0] || {}).cover; // image d'une des séries (ex. Doom), sinon « WEB »
+    var img = WEB_IMGS[Math.floor(Math.random() * WEB_IMGS.length)]; // images fixes qui alternent (Will, 25/10/2026) // image d'une des séries (ex. Doom), sinon « WEB »
     return '<article class="mh-mag mh-web"><div class="mh-magc">' + (img ? '<img src="' + esc(couv(img, 200)) + '" alt="" loading="lazy">' : '<span class="mh-webi">WEB</span>') + "</div><div class=\"mh-magt\"><small>Mis à jour le " + esc(dd(m.date)) + "</small><b>Séries en ligne</b>" +
       m.items.map(function (it) { var u = it.read || it.page, inner = "<span>" + esc(it.entry.split(" · ")[0]) + "</span><span>" + (it.ch ? "<em>Ch. " + esc(it.ch) + "</em>" : "") + (u ? '<b class="go"><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></b>' : "") + "</span>";
         return u ? '<a class="mh-ch" href="' + esc(u) + '" target="_blank" rel="noopener">' + inner + "</a>" : '<span class="mh-ch">' + inner + "</span>"; }).join("") + "</div></article>";
