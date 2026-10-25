@@ -88,7 +88,7 @@ export async function onRequestPost({ request, env }) {
   const total = Math.round((m.dons + montant) * 100) / 100;
 
   // Badge donateur : on garde un seul badge (le palier du total), les autres paliers sont retirés.
-  const nomBadge = n => cat.find(x => x.n.toLowerCase().startsWith(n));
+  const nomBadge = n => cat.find(x => x.n.toLowerCase().includes(n)); // « Donateur — Bancho »…
   const donneurs = PALIERS.map(([n]) => nomBadge(n)).filter(Boolean).map(x => x.id);
   const cible = nomBadge(palier(total));
   const ids = idsBadges(r).filter(id => !donneurs.includes(id)).concat(cible ? [cible.id] : []);
