@@ -397,6 +397,31 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 }
 .nofi{font-style:normal;color:#F2B33D}
 .macts .btn2.dbb{justify-content:center;padding:12px 14px}.macts .btn2.dbb svg{width:19px;height:18px;flex:none}
+
+/* Vue « Jours » (Will, 25/10/2026) : maquette A (ordinateur), E5+E6 (téléphone) */
+.jgrid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:16px;align-items:start}
+.japub{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#3a3a40 transparent}
+.apl-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.apl-h h2{margin:0;font:700 24px "FGAntonio";text-transform:uppercase}
+.apl-n{font:700 11px "FGInter";background:#26262c;color:var(--mut);border-radius:999px;padding:3px 9px}
+.apl{display:flex;flex-direction:column;gap:9px}
+.apl .rcard{padding-right:12px}.apl .rcard .t,.jcol .rcard .t,.jcol .wcard .t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.aps{display:inline-block;margin-top:6px;font:700 9.5px "FGInter";text-transform:uppercase;letter-spacing:.04em;padding:4px 7px;border-radius:7px;color:#F2B33D;background:rgba(242,179,61,.14)}
+.jdays{display:grid;grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr));gap:10px;min-height:560px}
+.jcol{min-height:0}.jcol .wh i{font-style:normal;font:700 11px "FGInter";text-transform:uppercase;color:var(--mut)}.jcol.to .wh i{color:var(--blue)}
+.jcol.to{box-shadow:inset 0 0 0 2px var(--blue)}
+.jadd{margin-top:auto;border:0;background:none;color:var(--mut);font:700 12.5px "FGInter";text-align:left;padding:6px 4px;cursor:pointer}.jadd:hover{color:var(--cr)}
+.jtabs{display:flex;gap:4px;background:var(--s1);border-radius:14px;padding:4px;margin-bottom:10px}.jtabs button{flex:1;height:40px;border:0;border-radius:10px;background:none;color:var(--mut);font:700 14px "FGInter";cursor:pointer}.jtabs button[aria-pressed=true]{background:var(--blue);color:#fff}
+.jpills{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 12px;padding:0 16px}.jpills::-webkit-scrollbar{display:none}
+.jp{position:relative;flex:none;width:58px;padding:9px 0;border:0;border-radius:12px;background:var(--s1);color:var(--cr);text-align:center;cursor:pointer}
+.jp b{display:block;font:700 22px/1 "FGAntonio"}.jp small{display:block;font:700 9.5px "FGInter";text-transform:uppercase;color:var(--mut);margin-top:3px}
+.jp i{position:absolute;top:5px;right:5px;min-width:16px;height:16px;border-radius:8px;background:#26262c;color:#cfcfd4;font:700 9.5px/16px "FGInter";font-style:normal}
+.jp.jtd b{color:var(--blue)}.jp.on{background:var(--blue)}.jp.on b,.jp.on small{color:#fff}.jp.on i{background:#fff;color:var(--blue)}
+.jstack{display:flex;flex-direction:column;gap:10px}.jstack .jcol{min-height:0}
+.jfold{display:block;width:100%;border:0;text-align:left;background:var(--s2);border-radius:14px;padding:12px;color:var(--cr);cursor:pointer}
+.jfold .wh{display:flex;justify-content:space-between;align-items:baseline;font:700 13px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut)}.jfold .wh b{font-size:22px;color:var(--cr)}.jfold .wh i{font-style:normal;font-size:12px}
+.jbars{display:flex;gap:6px;margin-top:8px}.jbars em{height:6px;flex:1;border-radius:3px}
+@media (max-width:1100px){.jgrid{grid-template-columns:300px minmax(0,1fr)}.jdays{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:719px){.japub{position:static;max-height:none}}
 </style>
 </head>
 <body>
@@ -951,7 +976,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
 
   // Calendrier éditorial — dashboard (Will, 19/10/2026) : Mois / Semaine / Kanban / Gantt,
   // projets colorés, vraies sorties de la base (/api/calendrier), pop-up compact à onglets.
-  var CAL = { types: [], events: [] }, TODO = [], SORT = [], SORTX = {}, NEWS = [], NEWSCOL = {}, calView = "semaine", calCur = new Date();
+  var CAL = { types: [], events: [] }, TODO = [], SORT = [], SORTX = {}, NEWS = [], NEWSCOL = {}, calView = "jours", calCur = new Date();
   var PSORTIE = { id: "sortie", nom: "Sortie de tome", couleur: "#7B8CEB" };
   var JJ = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
@@ -1023,6 +1048,11 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     return '<button class="chip-ev' + (dark ? " dark" : "") + (itemDone(it) ? " done" : "") + '" style="background:' + c + '" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + ">" + (itemImp(it) ? '<span class="im">● </span>' : "") + esc(itemTitle(it)) + "</button>";
   }
   function titreVue() {
+    if (calView === "jours") {
+      var t = new Date(); t.setHours(0, 0, 0, 0); var c = new Date(calCur); c.setHours(0, 0, 0, 0); var f2 = new Date(c); f2.setDate(c.getDate() + 3);
+      $("#calrange").textContent = c.getDate() + " " + MA[c.getMonth()] + " – " + f2.getDate() + " " + MA[f2.getMonth()];
+      return iso(c) === iso(t) ? "Aujourd'hui" : "Ces jours-là";
+    }
     if (calView === "semaine") {
       var l = lundi(calCur), f = new Date(l); f.setDate(f.getDate() + 6);
       $("#calrange").textContent = l.getDate() + "–" + f.getDate() + " " + MA[f.getMonth()];
@@ -1051,19 +1081,60 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // News publiées (Will, 22/10/2026) : même vignette kanji, selon la catégorie principale.
   var NEWS_KJ = { "licence-fr": "仏版", "licence-jp": "連載", "couv-fr": "表紙", "couv-jp": "表紙", "sortie-fr": "発売", "sortie-jp": "発売", fin: "完結", pause: "休載", anime: "放送", adaptation: "実写", "bande-annonce": "予告", tirage: "部数", extrait: "試読", news: "速報", serie: "連載" };
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
-  function renderSemaine() {
-    var l = lundi(calCur), today = iso(new Date()), h = '<div class="calpan"><div class="wk">';
-    for (var i = 0; i < 7; i++) {
-      var d = new Date(l); d.setDate(l.getDate() + i); var is = iso(d), its = itemsJour(d);
-      h += '<div class="wcol' + (is === today ? " to" : "") + '" data-date="' + is + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
-      h += its.length ? its.map(function (it) {
+  function carteCal(it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
         if (it.kind === "news") { var ni = it.n; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
         var evc = it.kind === "ev" ? evCover(it.e, it.date) : "";
         if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + evc + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
         var c = itemColor(it);
         return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? "Publiée · " + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
-      }).join("") : '<div class="wempty">—</div>';
+      }
+
+  // Vue « Jours » (Will, 25/10/2026, maquette A ordinateur / E5+E6 mobile) : aujourd'hui + les 3 jours suivants,
+  // la liste « À publier » (veille pas encore en ligne) à gauche. Les heures et la planification viendront avec la publication auto.
+  var APUB = [], jSel = null, jTab = "cal";
+  var JL = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
+  function carteAPub(x) {
+    var col = NEWSCOL[x.cat] || "#4C9BFF", img = x.image ? (/^https?:/.test(x.image) ? "/api/couv?u=" + encodeURIComponent(x.image) + "&w=120" : x.image) : "";
+    return '<a class="rcard" href="/admin/#validation" style="text-decoration:none"><span class="cov' + (img ? "" : " kjc") + '"' + (img ? ' style="background-image:url(\'' + esc(img) + '\')"' : "") + '>' + (img ? "" : '<span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[x.cat] || "速報") + "</span>") + '</span><span class="ri"><span class="t">' + esc(x.titre) + '</span><span class="m" style="color:' + col + '">' + esc(x.label || "News") + (x.src ? " · " + esc(x.src) : "") + '</span><span class="aps">À relire</span></span></a>';
+  }
+  function listeAPub() {
+    return '<div class="apl-h"><h2>À publier</h2><span class="apl-n">' + APUB.length + '</span></div>' +
+      (APUB.length ? '<div class="apl">' + APUB.map(carteAPub).join("") + "</div>" : '<p class="wempty">Rien en attente : la veille est à jour.</p>');
+  }
+  function colJour(d, to) {
+    var its = itemsJour(d), is = iso(d), dem = iso(new Date(Date.now() + 864e5)) === is;
+    return '<div class="wcol jcol' + (to ? " to" : "") + '" data-date="' + is + '"><div class="wh"><span>' + JL[d.getDay()] + " <b>" + d.getDate() + '</b></span><i>' + (to ? "Aujourd'hui" : dem ? "Demain" : "") + "</i></div>" +
+      (its.length ? its.map(carteCal).join("") : '<div class="wempty">—</div>') + '<button class="jadd" data-add="' + is + '">＋ Ajouter</button></div>';
+  }
+  function renderJours() {
+    var mob = matchMedia("(max-width:719px)").matches, base = new Date(calCur); base.setHours(0, 0, 0, 0);
+    var today = iso(new Date());
+    if (!mob) {
+      var cols = ""; for (var i = 0; i < 4; i++) { var d = new Date(base); d.setDate(base.getDate() + i); cols += colJour(d, iso(d) === today); }
+      return '<div class="jgrid"><div class="calpan japub">' + listeAPub() + '</div><div class="calpan"><div class="jdays">' + cols + "</div></div></div>";
+    }
+    // Téléphone : onglets Calendrier / À publier, puis les jours en pastilles (chiffre en haut à droite).
+    var t0 = new Date(); t0.setHours(0, 0, 0, 0); if (!jSel) jSel = iso(t0);
+    var pills = "", list = [];
+    for (var k = -1; k < 13; k++) { var dd = new Date(t0); dd.setDate(t0.getDate() + k); list.push(dd); }
+    pills = list.map(function (dd) { var n = itemsJour(dd).length, is = iso(dd); return '<button class="jp' + (is === jSel ? " on" : "") + (is === today ? " jtd" : "") + '" data-jsel="' + is + '">' + (n && jTab === "cal" ? "<i>" + n + "</i>" : "") + "<b>" + dd.getDate() + "</b><small>" + JL[dd.getDay()] + "</small></button>"; }).join("");
+    var h = '<div class="jtabs"><button data-jtab="cal" aria-pressed="' + (jTab === "cal") + '">Calendrier</button><button data-jtab="pub" aria-pressed="' + (jTab === "pub") + '">À publier · ' + APUB.length + "</button></div>";
+    if (jTab === "pub") return h + '<div class="calpan japub">' + listeAPub() + "</div>";
+    h += '<div class="jpills">' + pills + "</div>";
+    var sel = parseIso(jSel), rest = "";
+    for (var r = 1; r <= 3; r++) {
+      var dr = new Date(sel); dr.setDate(sel.getDate() + r); var it2 = itemsJour(dr), dem2 = iso(new Date(Date.now() + 864e5)) === iso(dr);
+      rest += '<button class="jfold" data-jsel="' + iso(dr) + '"><span class="wh"><span>' + JL[dr.getDay()] + " <b>" + dr.getDate() + "</b> <i>" + (dem2 ? "Demain" : "") + '</i></span><span class="apl-n">' + it2.length + ' ▸</span></span><span class="jbars">' + (it2.length ? it2.map(function (x) { return '<em style="background:' + itemColor(x) + '"></em>'; }).join("") : '<em style="background:#26262c"></em>') + "</span></button>";
+    }
+    return h + '<div class="jstack">' + colJour(sel, jSel === today) + rest + "</div>";
+  }
+  function renderSemaine() {
+    var l = lundi(calCur), today = iso(new Date()), h = '<div class="calpan"><div class="wk">';
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(l); d.setDate(l.getDate() + i); var is = iso(d), its = itemsJour(d);
+      h += '<div class="wcol' + (is === today ? " to" : "") + '" data-date="' + is + '"><div class="wh">' + JJ[i] + " <b>" + d.getDate() + "</b></div>";
+      h += its.length ? its.map(carteCal).join("") : '<div class="wempty">—</div>';
       h += "</div>";
     }
     return h + "</div></div>";
@@ -1118,9 +1189,9 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function renderView() {
     // Mobile : uniquement la vue semaine (un jour à la fois, défilement horizontal).
     var mob = matchMedia("(max-width:719px)").matches;
-    if (mob && calView !== "semaine") calView = "semaine";
+    if (mob && calView !== "semaine" && calView !== "jours") calView = "jours";
     $("#caltitre").textContent = titreVue();
-    var R = { mois: renderMois, semaine: renderSemaine, kanban: renderKanban, gantt: renderGantt };
+    var R = { jours: renderJours, mois: renderMois, semaine: renderSemaine, kanban: renderKanban, gantt: renderGantt };
     $("#calview").innerHTML = (R[calView] || renderMois)();
     // Mobile : on centre le défilement sur le jour d'aujourd'hui.
     // Semaine (mobile et ordinateur) : si les 7 jours ne tiennent pas, aujourd'hui s'affiche tout à gauche (les jours passés restent accessibles en glissant).
@@ -1287,6 +1358,10 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       // Jour de publication sur le site (Will, 22/10/2026), sinon l'ancienne date de la news.
       var jourP = function (t) { return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(t)); };
       NEWS = vn.filter(function (x) { return x && x.enLigne && (x.publie || x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.publie ? jourP(x.publie) : (x.date || x.cree), t: x.publie || "", titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || "", i: x }; });
+      if (part.ve.apub) APUB = part.ve.apub;
+      else APUB = vn.filter(function (x) { return x && !x.enLigne && !x.vu && x.cat !== "fiche" && !/^(couv|sortie)/.test(x.cat || ""); })
+        .sort(function (a, b) { return String(b.creeT || b.cree || "").localeCompare(String(a.creeT || a.cree || "")); }).slice(0, 60)
+        .map(function (x) { var h = ""; try { h = new URL(x.src).hostname.replace(/^www\./, ""); } catch (e) {} return { id: x.id, titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || (x.serie && x.serie.cover) || "", src: h }; });
       NEWSCOL = part.ve.cols || {};
       if (window.FGPost && part.ve.cats) FGPost.setCats(part.ve.cats);
     }
@@ -1309,23 +1384,25 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     }).catch(function () { if (!vu) $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
     // Sorties enrichies (légendes identiques à la Validation, coches « postée ») et news publiées : en arrière-plan.
     j("/api/admin/sorties?passe=1").then(function (sx) { calAppliquer({ sx: sx }); garder("sx", sx); if (vu) calRedessiner(); }).catch(function () {});
-    j("/api/admin/veille").then(function (ve) { calAppliquer({ ve: ve }); garder("ve", { items: (ve.items || []).filter(function (x) { return x && x.enLigne; }), cols: ve.cols, cats: ve.cats }); if (vu) calRedessiner(); }).catch(function () {});
+    j("/api/admin/veille").then(function (ve) { calAppliquer({ ve: ve }); garder("ve", { items: (ve.items || []).filter(function (x) { return x && x.enLigne; }), apub: APUB, cols: ve.cols, cats: ve.cats }); if (vu) calRedessiner(); }).catch(function () {});
   }
   function calPost(body, cb) {
     fetch("/api/admin/calendrier", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); calLoad(); if (cb) cb(); }).catch(function (e) { var m = $("#calmsg"); if (m) m.textContent = "Erreur : " + (e.message || "réessaie"); });
   }
   // ---- Events ----
   document.querySelectorAll(".dtabs button").forEach && null;
-  $("#dtabs").innerHTML = [["mois", "Mois"], ["semaine", "Semaine"]].map(function (t) { return '<button data-v="' + t[0] + '" aria-pressed="' + (t[0] === calView) + '">' + t[1] + "</button>"; }).join("");
+  $("#dtabs").innerHTML = [["jours", "Jours"], ["semaine", "Semaine"], ["mois", "Mois"]].map(function (t) { return '<button data-v="' + t[0] + '" aria-pressed="' + (t[0] === calView) + '">' + t[1] + "</button>"; }).join("");
   $("#dtabs").addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (!b) return; calView = b.dataset.v; document.querySelectorAll("#dtabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); renderView(); });
-  $("#calprev").addEventListener("click", function () { if (calView === "semaine") calCur.setDate(calCur.getDate() - 7); else calCur.setMonth(calCur.getMonth() - 1); calCur = new Date(calCur); renderView(); });
-  $("#calnext").addEventListener("click", function () { if (calView === "semaine") calCur.setDate(calCur.getDate() + 7); else calCur.setMonth(calCur.getMonth() + 1); calCur = new Date(calCur); renderView(); });
+  $("#calprev").addEventListener("click", function () { if (calView === "jours" && matchMedia("(max-width:719px)").matches && jSel) { var q = parseIso(jSel); q.setDate(q.getDate() - 1); jSel = iso(q); renderView(); return; } if (calView === "jours") calCur.setDate(calCur.getDate() - 1); else if (calView === "semaine") calCur.setDate(calCur.getDate() - 7); else calCur.setMonth(calCur.getMonth() - 1); calCur = new Date(calCur); renderView(); });
+  $("#calnext").addEventListener("click", function () { if (calView === "jours" && matchMedia("(max-width:719px)").matches && jSel) { var q = parseIso(jSel); q.setDate(q.getDate() + 1); jSel = iso(q); renderView(); return; } if (calView === "jours") calCur.setDate(calCur.getDate() + 1); else if (calView === "semaine") calCur.setDate(calCur.getDate() + 7); else calCur.setMonth(calCur.getMonth() + 1); calCur = new Date(calCur); renderView(); });
   $("#caladd").addEventListener("click", function () { formEv(null); });
   $("#calview").addEventListener("click", function (ev) {
     // Pastille « publié » : on coche en direct sans ouvrir la carte. Synchronisé avec la Validation (même champ Notion).
     var ck = ev.target.closest("[data-chk]"); if (ck) { ev.preventDefault(); ev.stopPropagation(); togglePublie(ck); return; }
     var it = ev.target.closest("[data-k]"); if (it) { openItem(it.dataset.k, it.dataset.id); return; }
-    var ad = ev.target.closest("[data-add]"); if (ad) { if (calView !== "semaine") { calCur = parseIso(ad.dataset.add); } formEvDate(ad.dataset.add); }
+    var jt = ev.target.closest("[data-jtab]"); if (jt) { jTab = jt.dataset.jtab; renderView(); return; }
+    var js = ev.target.closest("[data-jsel]"); if (js) { jSel = js.dataset.jsel; renderView(); var p = $("#calview .jp.on"); if (p) p.scrollIntoView({ inline: "center", block: "nearest" }); return; }
+    var ad = ev.target.closest("[data-add]"); if (ad) { if (calView !== "semaine" && calView !== "jours") { calCur = parseIso(ad.dataset.add); } formEvDate(ad.dataset.add); }
   });
   // Coche / décoche « publié » depuis la pastille. Sortie → base Tomes (Sortie postée) ; événement → Publié du calendrier.
   function togglePublie(ck) {
