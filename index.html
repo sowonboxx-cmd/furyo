@@ -432,7 +432,8 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .gw-n{position:relative;display:flex;align-items:flex-end;gap:10px;margin-top:8px}
 .gw-n>span:first-child{font:700 64px/.9 Antonio,"Arial Narrow",sans-serif;color:#F5F5F7}
 .gw-n>span:last-child{font:700 20px/1.1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;padding-bottom:6px;color:#F5F5F7}
-.gw-st{position:relative;display:flex;gap:14px;margin-top:12px;font-size:13px;color:#CFCFD4}.gw-st:empty{display:none}.gw-st b{color:#4CD07D}
+.gw-pr{display:inline-flex;align-items:center;gap:5px}.gw-pr svg{width:15px;height:15px}.gw-st .gw-pr b{color:#3DB0FF}
+.gw-st{position:relative;display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:13px;color:#CFCFD4}.gw-st:empty{display:none}.gw-st b{color:#4CD07D}
 .gw-stk{position:relative;display:flex;margin-top:14px}.gw-stk:empty{display:none}
 .gw-stk>*{display:block;margin-left:-12px;border-radius:50%;border:3px solid #000;flex:none}.gw-stk>*:first-child{margin-left:0}
 .gw-stk img,.gw-stk i{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#38383B;display:grid;place-items:center;font:700 17px Inter,sans-serif;font-style:normal;color:#fff}
@@ -1387,7 +1388,9 @@ function famille(m) {
   const nA = m.items ? list.filter(x => jour(new Date(x.inscrit)) === auj).length : (m.auj ?? list.filter(x => jour(new Date(x.inscrit)) === auj).length);
   const nS = m.items ? list.filter(x => jour(new Date(x.inscrit)) >= lundi).length : (m.sem ?? list.filter(x => jour(new Date(x.inscrit)) >= lundi).length);
   document.getElementById("gw-n").textContent = m.total.toLocaleString("fr-FR");
-  document.getElementById("gw-st").innerHTML = (nA ? `<span><b>+${nA}</b> aujourd'hui</span>` : "") + (nS ? `<span><b>+${nS}</b> cette semaine</span>` : "");
+  const nP = m.premium || 0; // membres Premium payés (Will, 25/10/2026)
+  document.getElementById("gw-st").innerHTML = (nA ? `<span><b>+${nA}</b> aujourd'hui</span>` : "") + (nS ? `<span><b>+${nS}</b> cette semaine</span>` : "") +
+    (nP ? `<span class="gw-pr"><svg viewBox="0 0 40 40" aria-hidden="true"><path fill="#0095F6" d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Z"/><path fill="#fff" d="m17.204 27.822-7.1-7.115 2.2-2.193 4.9 4.909 10.396-10.414 2.2 2.193Z"/></svg><b>${nP}</b> Premium</span>` : "");
   document.getElementById("gw-stk").innerHTML = list.slice(0, 7).map(x => { const t = x.photo ? `<img src="${esc2(x.photo)}" alt="" referrerpolicy="no-referrer" loading="lazy">` : `<i>${esc2((x.pseudo || "?").charAt(0).toUpperCase())}</i>`;
     return lien ? `<a href="${x.slug ? "/membres/" + encodeURIComponent(x.slug) : "/communaute/"}" title="${esc2(x.pseudo || "Membre")}">${t}</a>` : `<span>${t}</span>`; }).join("");
   const cta = document.getElementById("gw-cta"); cta.hidden = !!m.items; cta.onclick = () => window.FG_LOGIN && FG_LOGIN();

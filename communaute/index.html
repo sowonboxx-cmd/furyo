@@ -180,7 +180,7 @@ document.addEventListener("input", e => { if (e.target.id === "q") { Q = e.targe
   const [rc, rm] = await Promise.all([get("/api/communaute").catch(() => null), get("/api/membres").catch(() => null)]);
   if (!rc || rc.status === 401) {
     const t = rm ? await rm.json().catch(() => ({})) : {};
-    document.getElementById("corps").innerHTML = `<div class="lock"><h2>Réservé aux membres</h2><p>Le classement des collections et la liste des membres sont réservés au gang.${t.total ? ` Déjà <b>${t.total}</b> membre${t.total > 1 ? "s" : ""}.` : ""}<br>Connecte-toi en un clic avec Google, c'est gratuit.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Rejoindre le gang</button></div>`;
+    document.getElementById("corps").innerHTML = `<div class="lock"><h2>Réservé aux membres</h2><p>Le classement des collections et la liste des membres sont réservés au gang.${t.total ? ` Déjà <b>${t.total}</b> membre${t.total > 1 ? "s" : ""}${t.premium ? `, dont <b>${t.premium}</b> Premium` : ""}.` : ""}<br>Connecte-toi en un clic avec Google, c'est gratuit.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Rejoindre le gang</button></div>`;
     return;
   }
   const c = await rc.json().catch(() => ({})), m = rm ? await rm.json().catch(() => ({})) : {};

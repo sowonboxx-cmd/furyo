@@ -18,7 +18,7 @@ export async function onRequestGet(ctx) {
   const jour = d => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(d);
   const now = new Date(), auj = jour(now), dow = (new Date(auj + "T12:00:00Z").getUTCDay() + 6) % 7, lundi = jour(new Date(now.getTime() - dow * 864e5));
   const dates = (j.items || []).filter(x => x.inscrit).map(x => jour(new Date(x.inscrit)));
-  return J({ locked: true, total: j.total || 0, recents, auj: dates.filter(d => d === auj).length, sem: dates.filter(d => d >= lundi).length });
+  return J({ locked: true, total: j.total || 0, premium: j.premium || 0, recents, auj: dates.filter(d => d === auj).length, sem: dates.filter(d => d >= lundi).length });
 }
 async function liste({ request, env, waitUntil }) {
   // ?u=<identifiant> : un seul membre (page publique furyogang.com/membres/<identifiant>).
@@ -42,6 +42,8 @@ async function liste({ request, env, waitUntil }) {
       items.push(fiche(r, { admin: await estAdminEmail(r.properties["Email"]?.email, env), cat }));
     }
     items.sort((a, b) => (a.num || 1e9) - (b.num || 1e9));
-    return { items, total: items.length, catalogue: cat };
+    // Membres Premium payés (badge Premium automatique, date de fin pas passée), affichés à côté du nombre de membres (Will, 25/10/2026).
+    const premium = items.filter(x => (x.badges || []).some(b => b.r === "premium")).length;
+    return { items, total: items.length, premium, catalogue: cat };
   });
 }

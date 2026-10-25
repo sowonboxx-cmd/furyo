@@ -254,7 +254,9 @@ function draw() {
   const stats = [[P.tot, "Tomes", "var(--paper)"], [P.fr, "FR", "#4C7BD9"], [P.jp, "JP", "var(--red)"], [P.abonnes, "Abonné" + (P.abonnes > 1 ? "s" : ""), "var(--gold)"]];
   const cam = P.moi ? `<button type="button" class="cam" data-cam aria-label="Changer ma photo" title="Changer ma photo">${CAM}</button>` : "";
   const avw = cls => `<div class="avw">${avt.replace('class="avt"', `class="avt${cls}"`)}${cam}</div>`;
-  const prem = m.badges.some(b => b.r === "vip" || b.r === "admin") ? `<span class="prem">${PREM}Premium</span>` : "";
+  // Statut à côté du pseudo (Will, 25/10/2026) : même coche bleue, texte selon le statut. Admin > VIP (à vie, retiré à la main) > Premium (payé).
+  const statut = m.badges.some(b => b.r === "admin") ? "Admin" : m.badges.some(b => b.r === "vip") ? "VIP" : m.badges.some(b => b.r === "premium") ? "Premium" : "";
+  const prem = statut ? `<span class="prem">${PREM}${statut}</span>` : "";
   const ico = socIcons(r);
   const p4 = PF ? `<div class="p4">
       <div class="band${rang1 ? "" : " n"}">${rang1 ? CROWN : ""}<span>${P.rang ? `N°${P.rang} du classement · ` : ""}Membre n°${m.num || "?"}</span></div>
@@ -263,7 +265,7 @@ function draw() {
       <div class="bar">${stats.map(([n, l, c]) => `<div><b style="color:${c}">${n ?? 0}</b><span>${l}</span></div>`).join("")}</div></div>` : "";
   const covs = P.recents && P.recents.length ? `<div class="covs">${P.recents.map(t => `<a class="cv" href="${t.slug ? "/series/" + esc(t.slug) : "#"}" title="${esc((t.titre || "") + (t.seul ? " · tome " + t.n : " · " + t.nb + " tome" + (t.nb > 1 ? "s" : "")))}"><i>${t.cover ? `<img src="/api/couv?w=300&u=${encodeURIComponent(t.cover)}" alt="" loading="lazy">` : ""}<em>${t.seul ? "T." + t.n : t.nb}</em></i><b>${esc(t.titre || "")}</b></a>`).join("")}</div>` : `<p class="vid">Pas encore de tomes dans sa collection.</p>`;
   app.innerHTML = `<div class="d1">
-    <aside class="pcard">${p4}<section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avw("")}<h1>${esc(m.pseudo || "Membre")}</h1>${m.badges.some(b => b.r === "vip" || b.r === "admin") ? `<span class="prem">${PREM}Premium</span>` : ""}
+    <aside class="pcard">${p4}<section class="pf">${rang1 ? `<span class="crn">${CROWN}</span>` : ""}${avw("")}<h1>${esc(m.pseudo || "Membre")}</h1>${prem}
       <span class="meta">Membre n°${m.num || "?"}${P.rang ? ` · ${P.rang === 1 ? "1er" : P.rang + "e"} du classement` : ""}${estAdmin ? " · Administrateur" : ""}</span>
       ${PF && !P.moi ? `<button class="fbtn" data-suivre aria-pressed="${!!P.on}">${P.on ? "Suivi" : "Suivre"}</button>` : ""}</section>
       ${PF ? `<div class="st4">${stats.map(([n, l, c]) => `<div><b style="color:${c}">${n}</b><span>${l}</span></div>`).join("")}</div>` : ""}
