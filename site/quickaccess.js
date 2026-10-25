@@ -89,7 +89,17 @@
     fetch("/api/admin/sorties?count=1", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j) SJ = { n: j.n || 0 }; go(); }).catch(go);
   }
 
-  function openPop() { loadData(render); }
+  // Admin : le nouveau menu H1 (le même que sur le site, Will 25/10/2026). Sinon l'ancien accès rapide.
+  function openPop() {
+    if (!ME) { fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { ME = j || { admin: false }; openPop(); }).catch(function () { loadData(render); }); return; }
+    if (ME && ME.admin) {
+      if (window.FG_ADMPOP) return window.FG_ADMPOP(ME, null);
+      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=1";
+      sc.onload = function () { window.FG_ADMPOP(ME, null); }; sc.onerror = function () { loadData(render); };
+      document.head.appendChild(sc); return;
+    }
+    loadData(render);
+  }
 
   // Transforme un élément (ou en crée un) en bouton avatar qui ouvre l'accès rapide.
   function mount(el) {
