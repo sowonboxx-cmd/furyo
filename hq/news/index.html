@@ -71,8 +71,10 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .pl3{display:flex;gap:8px}.btn{height:44px;padding:0 16px;border-radius:22px;border:0;display:grid;place-items:center;font:700 13.5px I;white-space:nowrap;color:#fff;background:#26262c}.btn.gh{background:none;color:#8c8c93}.btn.pri{background:#2A6FD0}.btn:disabled{opacity:.5}
 .note{font-size:11.5px;color:#8c8c93;grid-column:1/-1;margin:-4px 0 0}
 /* focus */
-.fg{flex:1;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:start;margin-top:4px}.fg.w{grid-template-columns:minmax(380px,.8fr) minmax(0,1.4fr)}
-.fg .ph .pf{height:min(calc(100vh - 330px),760px)}
+.fg{flex:1;display:grid;grid-template-columns:minmax(0,620px) auto;justify-content:center;gap:32px;align-items:stretch;margin-top:4px}.fg.w{grid-template-columns:minmax(380px,.8fr) minmax(0,1.4fr);justify-content:stretch;gap:28px;align-items:start}
+/* focus validé le 26/10 (« direct 1 ») : téléphone à droite, même hauteur que le cadre, texte toujours affiché en entier */
+.fg .edp{display:flex;flex-direction:column}.fg .ta{resize:none;overflow:hidden}.fg>.ph{gap:0}.fg>.ph .pf{height:min(calc(100vh - 330px),760px)}
+.live{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font:700 11.5px I;letter-spacing:.08em;color:#9CC3FF;background:#0f1a2a;padding:7px 11px;border-radius:11px;text-transform:uppercase}.live i{width:7px;height:7px;border-radius:50%;background:#FF4D4D;box-shadow:0 0 0 3px rgba(255,77,77,.25)}
 .edp{background:#141416;border:1px solid #2A6FD0;border-radius:22px;padding:18px 20px}.edp h2{display:flex;align-items:center;gap:10px;margin:0 0 4px;font:700 26px A;text-transform:uppercase}.edp h2 svg{width:22px;height:22px}.sub{color:#8c8c93;font-size:12.5px;margin:0 0 6px}
 .lbl{display:flex;justify-content:space-between;font:700 11px I;letter-spacing:.08em;text-transform:uppercase;color:#8c8c93;margin:14px 0 6px}.lbl em{font-style:normal;color:#7BC67E;letter-spacing:0}.lbl em.ko{color:#FF8A80}
 .ta,.inp{width:100%;background:#0c0c0e;border:1.5px solid #2C2C2F;border-radius:14px;padding:12px 14px;font:400 15px/1.55 I;color:#fff;resize:vertical;outline:none}.ta:focus,.inp:focus{border-color:#2A6FD0;box-shadow:0 0 0 4px rgba(42,111,208,.18)}
@@ -179,8 +181,9 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function focus() {
     var web = V === "site";
     var prev = web ? '<div>' + browser("site").replace('class="ph web"', 'class="ph web" style="cursor:default"').replace('<span class="ed">Modifier</span>', '') + '</div>'
-      : '<div class="ph"><span class="phl">' + IC[V] + NOMS[V] + ' · aperçu en direct</span><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block" id="live">' + ({ x: scrX, ig: scrIG, tt: scrTT })[V]() + '</span></span><span class="ed" style="color:#8c8c93">Taille réelle d’un iPhone, réduite</span></div>';
-    return haut() + '<div class="fg' + (web ? " w" : "") + '">' + editeur(V) + prev + '</div>' + navBar() + plan();
+      : '<div class="ph"><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block" id="live">' + ({ x: scrX, ig: scrIG, tt: scrTT })[V]() + '</span></span></div>';
+    var ed = web ? editeur(V) : editeur(V).replace("</h2>", '<span class="live"><i></i>Aperçu en direct →</span></h2>');
+    return haut() + '<div class="fg' + (web ? " w" : "") + '">' + ed + prev + '</div>' + navBar() + plan();
   }
   function mobile() {
     var k = V === "all" ? "site" : V;
@@ -204,6 +207,15 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     fit();
   }
   function fit() {
+    // Les zones de texte s'agrandissent pour tout montrer d'un coup (Will, 26/10).
+    document.querySelectorAll("textarea.ta").forEach(function (t) { t.style.height = "auto"; t.style.height = (t.scrollHeight + 3) + "px"; });
+    // Focus : le téléphone prend toute la hauteur dispo, le cadre de modification fait la même hauteur.
+    var g = $(".fg:not(.w)");
+    if (g && !mob()) { var e = g.querySelector(".edp"), pf = g.querySelector(".ph .pf");
+      if (e && pf) { var bas = ($(".nav") ? $(".nav").offsetHeight : 0) + ($(".plan") ? $(".plan").offsetHeight : 0) + 40;
+        var dispo = Math.max(480, innerHeight - (g.getBoundingClientRect().top + scrollY) - bas);
+        e.style.minHeight = "0"; var H = Math.max(dispo, e.offsetHeight); if (H > dispo + 40) H = Math.max(dispo, Math.min(H, innerHeight - 40));
+        e.style.minHeight = H + "px"; pf.style.height = H + "px"; pf.style.width = (H * 390 / 844) + "px"; } }
     var r = $(".row");
     if (r) { var cs = getComputedStyle(r), pd = parseFloat(cs.paddingTop), rh = r.clientHeight - pd * 2 - 60, aw = r.clientWidth - pd * 2 - 90, pw = Math.max(150, Math.min(rh * 390 / 844, aw * .6 / 4));
       r.querySelectorAll(".ph:not(.web) .pf").forEach(function (p) { p.style.width = pw + "px"; p.style.height = (pw * 844 / 390) + "px"; }); }
