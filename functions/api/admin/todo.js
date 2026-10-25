@@ -46,7 +46,7 @@ const AJOUTS = [
   { id: "c211003", t: "Ma collection : en cliquant sur une série de sa collection (ex. Crows), voir combien de membres la possèdent aussi, et lesquels", cat: "Communauté" },
   // Publication automatique sur X, Instagram, TikTok et Facebook depuis le site (Will, 25/10/2026) : à lancer mardi / mercredi.
   { id: "c251001", t: "Publication automatique : récupérer la page Facebook Four You Gang, passer Instagram en compte pro relié à la page, puis créer l'app Meta avec Claude (Notes > Publication automatique)", cat: "Réseaux", prio: "haut", dt: "2026-10-27" },
-  { id: "c251003", t: "Merci Premium : créer le compte Resend (envoi d'e-mails, gratuit) ; Claude branche l'e-mail de remerciement + la fenêtre « Merci, t'es Premium » sur le site, envoyés tout seuls à l'enregistrement d'un don (maquettes validées le 25/10)", cat: "Site", prio: "haut", dt: "2026-11-10" },
+  { id: "c251003", t: "Merci Premium : sur Brevo, authentifier furyogang.com + expéditeur merci@furyogang.com ; mettre la clé API dans Cloudflare (secret BREVO_API_KEY). Ensuite QG > Premium & dons > « ✉ Merci » sur J L pour tester (code déjà en ligne)", cat: "Site", prio: "haut", dt: "2026-10-25" },
   { id: "c251002", t: "Publication automatique : maquettes de la fenêtre « Publier partout » (aperçus X, Instagram, TikTok, Facebook + Planifier), puis le code", cat: "Réseaux", prio: "haut", dt: "2026-10-28" },
   { id: "c181060", t: "Au Japon : ajouter les prépublications en ligne (Champion Cross, Comic Zenon, Yanmaga Web…) dans la page L'actualité manga au Japon, avec la liste de ce qui sort (ex. WORST Gaiden Saburoku Santa)", cat: "Site" },
 ];
