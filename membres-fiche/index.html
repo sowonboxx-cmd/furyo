@@ -123,6 +123,7 @@ main{max-width:1240px;padding-left:20px;padding-right:20px}
 /* Membre Premium (badge VIP ou admin) : étiquette bleue sous le pseudo, façon compte vérifié (Will, 07/10/2026) */
 .prem{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:13px;background:#0095F61F;color:#3DB0FF;font:700 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;margin-top:6px}
 .prem svg{width:15px;height:15px;flex:none}
+.prem.vip{background:#BC002D33;color:#FF5A6E}
 @media (min-width:980px){
   .d1{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start}
   .pcard{position:sticky;top:84px}
@@ -256,7 +257,8 @@ function draw() {
   const avw = cls => `<div class="avw">${avt.replace('class="avt"', `class="avt${cls}"`)}${cam}</div>`;
   // Statut à côté du pseudo (Will, 25/10/2026) : même coche bleue, texte selon le statut. Admin > VIP (à vie, retiré à la main) > Premium (payé).
   const statut = m.badges.some(b => b.r === "admin") ? "Admin" : m.badges.some(b => b.r === "vip") ? "VIP" : m.badges.some(b => b.r === "premium") ? "Premium" : "";
-  const prem = statut ? `<span class="prem">${PREM}${statut}</span>` : "";
+  // VIP en rouge FuryoGang (Will, 25/10/2026) ; Admin et Premium restent en bleu.
+  const prem = statut ? `<span class="prem${statut === "VIP" ? " vip" : ""}">${statut === "VIP" ? PREM.replace('fill="#0095F6"', 'fill="#E5483A"') : PREM}${statut}</span>` : "";
   const ico = socIcons(r);
   const p4 = PF ? `<div class="p4">
       <div class="band${rang1 ? "" : " n"}">${rang1 ? CROWN : ""}<span>${P.rang ? `N°${P.rang} du classement · ` : ""}Membre n°${m.num || "?"}</span></div>
