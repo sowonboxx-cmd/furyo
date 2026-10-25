@@ -433,7 +433,14 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       document.body.appendChild(pop);
       pop.addEventListener("click", function (e) { if (e.target === pop) pop.hidden = true; });
     }
-    if (ME.admin) { admGrid(pop); return; }
+    // Menu admin H1 (Will, 25/10/2026) : chargé à part ; l'ancienne grille reste en secours si le fichier ne charge pas.
+    if (ME.admin) {
+      pop.hidden = true;
+      if (window.FG_ADMPOP) { window.FG_ADMPOP(ME, open); return; }
+      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=1";
+      sc.onload = function () { window.FG_ADMPOP(ME, open); }; sc.onerror = function () { admGrid(pop); };
+      document.head.appendChild(sc); return;
+    }
     pop.classList.remove("center");
     var n = (document.querySelector(".sh-val") || { getAttribute: function () { return "0"; } }).getAttribute("data-n") || "0";
     pop.innerHTML = '<div class="adm-box" role="dialog" aria-label="Mon compte">' +
