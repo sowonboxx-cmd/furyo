@@ -470,6 +470,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 .sj{overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}.sj-track{display:flex;transition:transform .5s ease}
 .sj-s{flex:0 0 100%;display:grid;grid-template-columns:78px minmax(0,1fr);gap:14px;align-items:start;min-width:0}
 .sj-c img,.sj-c .ph{width:78px;aspect-ratio:7/10;object-fit:cover;border-radius:8px;background:#305887;display:grid;place-items:center;color:#fff;font:700 18px Antonio,sans-serif}
+.sj-c .ph{padding:6px;text-align:center;line-height:1.05;font-size:15px;text-transform:uppercase;overflow-wrap:anywhere}
 .sj-t{min-width:0}.sj-t small{display:block;font:600 12px Inter,sans-serif;color:#98989D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
 .sj-t small a{color:#CFCFD4;text-decoration:none}.sj-t small a:hover{color:#fff;text-decoration:underline}
 .sj-t ul{list-style:none;margin:0;padding:0}
@@ -1338,13 +1339,13 @@ getN("/api/prepub").then(j => {
   const box = document.querySelector("#m-jp .jp"); if (!box) return;
   const mags = magsN(j.items).sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 6);
   if (!mags.length) return;
-  const issue = v => { v = String(v || ""); const m = v.match(/No\.?\s*(\d+)/i) || v.match(/第?(\d+)号/); if (m) return "n°" + m[1]; const k = v.match(/(\d+\/\d+)号/); return k ? k[1] : v; };
+  const issue = v => { v = String(v || ""); const k = v.match(/(\d+\/\d+(?:・\d+)?)\s*号/); if (k) return k[1]; const m = v.match(/No\.?\s*(\d+)/i) || v.match(/第?(\d+)号/); return m ? "n°" + m[1] : v; }; // « 11/6・13号 » gardé tel quel (Goraku)
   const card = m => {
     const t = new Date().toLocaleDateString("sv"), paru = !m.date || m.date <= t;
     const head = m.web ? `Mis à jour le ${escN(ddN(m.date))} · Séries en ligne` : `${paru ? "Sorti le" : "Sort le"} ${escN(ddN(m.date))} · ${m.link ? `<a href="${escN(m.link)}" target="_blank" rel="noopener">${escN(m.mag)} ${escN(issue(m.issue))}</a>` : `${escN(m.mag)} ${escN(issue(m.issue))}`}`;
     const rows = m.items.map(it => { const u = it.read || it.page, nm = escN(it.entry.split(" · ")[0]), right = it.status === "Pause" ? '<em class="p">Pause</em>' : it.ch ? `<em>Ch. ${escN(it.ch)}</em>` : "";
       return `<li>${u ? `<a href="${escN(u)}" target="_blank" rel="noopener">${nm}</a>` : `<span>${nm}</span>`}${right}${(it.hl || []).includes("Dernier chapitre") ? "<i>Fin</i>" : ""}</li>`; }).join("");
-    const cov = m.cover ? `<img src="${escN(couvN(m.cover, 200))}" alt="" loading="lazy">` : `<span class="ph">WEB</span>`;
+    const cov = m.cover ? `<img src="${escN(couvN(m.cover, 200))}" alt="" loading="lazy">` : `<span class="ph">${m.web ? "WEB" : escN(m.mag || "")}</span>`; // sans couverture : le nom du magazine, « WEB » seulement pour les séries en ligne
     return `<div class="sj-s"><div class="sj-c">${m.link ? `<a href="${escN(m.link)}" target="_blank" rel="noopener">${cov}</a>` : cov}</div><div class="sj-t"><small>${head}</small><ul>${rows}</ul></div></div>`;
   };
   box.outerHTML = `<div class="sj" id="sj"><div class="sj-track">${mags.map(card).join("")}</div><div class="sj-dots">${mags.map((_, i) => `<button type="button" aria-label="Magazine ${i + 1}"${i ? "" : ' aria-current="true"'}></button>`).join("")}</div></div>`;
