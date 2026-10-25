@@ -670,7 +670,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 </div>
 <script src="/site/badges.js?v=2"></script>
 <script src="/site/sortie-post.js?v=6"></script>
-<script src="/site/quickaccess.js?v=10"></script>
+<script src="/site/quickaccess.js?v=11"></script>
 <script>
 if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
 (function () {
@@ -1096,7 +1096,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   var JL = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
   function carteAPub(x) {
     var col = NEWSCOL[x.cat] || "#4C9BFF", img = x.image ? (/^https?:/.test(x.image) ? "/api/couv?u=" + encodeURIComponent(x.image) + "&w=120" : x.image) : "";
-    return '<a class="rcard" href="/admin/#validation/' + encodeURIComponent(x.id) + '" style="text-decoration:none"><span class="cov' + (img ? "" : " kjc") + '"' + (img ? ' style="background-image:url(\'' + esc(img) + '\')"' : "") + '>' + (img ? "" : '<span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[x.cat] || "速報") + "</span>") + '</span><span class="ri"><span class="t">' + esc(x.titre) + '</span><span class="m" style="color:' + col + '">' + esc(x.label || "News") + (x.src ? " · " + esc(x.src) : "") + '</span><span class="aps">À relire</span></span></a>';
+    return '<a class="rcard" href="/hq/news/#' + encodeURIComponent(x.id) + '" style="text-decoration:none"><span class="cov' + (img ? "" : " kjc") + '"' + (img ? ' style="background-image:url(\'' + esc(img) + '\')"' : "") + '>' + (img ? "" : '<span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[x.cat] || "速報") + "</span>") + '</span><span class="ri"><span class="t">' + esc(x.titre) + '</span><span class="m" style="color:' + col + '">' + esc(x.label || "News") + (x.src ? " · " + esc(x.src) : "") + '</span><span class="aps">À relire</span></span></a>';
   }
   function listeAPub() {
     return '<div class="apl-h"><h2>À publier</h2><span class="apl-n">' + APUB.length + '</span></div>' +

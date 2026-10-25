@@ -98,6 +98,9 @@ async function construire(request, env) {
       actuel: text(p["Valeur actuelle"]), propose: vp, texte: text(p["Résumé site"]), video: text(p["Vidéo"]),
       src, relais: text(p["Source relais"]), niveau: text(p["Niveau source"]),
       image: (vp.match(/https?:\/\/\S+?(?:\.(?:jpe?g|png|webp)|\/cover|snsbooks\/\d+)(?=[\s,)]|$)/i) || [])[0] || "",
+      // Studio de la news (Will, 26/10/2026) : légendes modifiées à la main (vide = automatique) et jour/heure prévus.
+      legX: text(p["Légende X"]), legIG: text(p["Légende Instagram"]), legTT: text(p["Légende TikTok"]),
+      planif: (p["Planifiée le"] && p["Planifiée le"].date && p["Planifiée le"].date.start) || "",
       serie: s, news, vu: vu(r), enLigne: pub(r), imageChoisie: text(p["Image"]), accroche: text(p["Accroche"]), cadrage: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null,
       cat2: (categoriesDe(catN)[1] || {}).k || "", // 2e catégorie (Notion en accepte plusieurs ; le back-office en gère deux)
     };
@@ -257,6 +260,13 @@ async function traiter(request, env) {
     }
   }
   if (typeof b.texte === "string") props["Résumé site"] = rt(b.texte.trim());
+  for (const [k, nom] of [["legX", "Légende X"], ["legIG", "Légende Instagram"], ["legTT", "Légende TikTok"], ["accroche", "Accroche"]])
+    if (typeof b[k] === "string") props[nom] = rt(b[k].trim().slice(0, 2000));
+  if (b.planif !== undefined) {
+    const v = String(b.planif || "");
+    if (v && !/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)?)?$/.test(v)) return json({ error: "date de planification invalide" }, 400);
+    props["Planifiée le"] = { date: v ? { start: v, time_zone: /T/.test(v) && !/[+-]\d{2}:\d{2}$|Z$/.test(v) ? "Europe/Paris" : undefined } : null };
+  }
   if (typeof b.image === "string") {
     const v = b.image.trim();
     if (v && !/^https:\/\//.test(v)) return json({ error: "L'image doit être une adresse https." }, 400);
