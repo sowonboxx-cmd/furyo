@@ -368,7 +368,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 <script src="/site/fiche-card.js?v=4"></script>
 <script src="/site/tome-card.js?v=4"></script>
 <script src="/site/sortie-post.js?v=6"></script>
-<script src="/site/quickaccess.js?v=9"></script>
+<script src="/site/quickaccess.js?v=10"></script>
 <script src="/site/og-actu.js?v=1"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -610,6 +610,8 @@ function route(){
     const go = () => { const it = ITEMS.find(x => x.id === k || (x.slug || "").replace(/-/g, "") === k); if (!it) return; DEEP = it.id; DEEP_SC = true; Q = it.fr || it.t; const q = document.getElementById("q"); if (q) q.value = Q; draw(); };
     return ITEMS.length ? (shell(), go()) : load().then(go);
   }
+  // Lien direct vers une news (depuis le calendrier éditorial, Will 25/10/2026) : #validation/<id> ouvre sa fenêtre.
+  if (h.startsWith("validation/")) { const id = decodeURIComponent(h.slice(11)); return Promise.resolve(veille()).then(() => { const go = (k) => { if (typeof VITEMS !== "undefined" && VITEMS.find(x => x.id === id)) vopen(id); else if (k < 40) setTimeout(() => go(k + 1), 250); }; go(0); }); }
   if (h === "validation") return veille();
   if (h === "maj") return veille(false, true);
   if (h === "sorties") return sorties();

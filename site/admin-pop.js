@@ -103,7 +103,7 @@
     var c = CAT[n.cat] || CAT.news, img = n.image ? couv(n.image) : "";
     var cv = img ? '<span class="cv" style="background-image:url(\'' + esc(img) + '\')"></span>' : '<span class="cv kjc"><em>FURYOGANG</em><i lang="ja">' + c[1] + '</i></span>';
     var etat = n.statut === "publiee" ? '<span class="ap-chk">' + S.ok + '</span>' : '<span class="ap-dot"></span>';
-    return '<div class="ap-nr"><span class="h">' + esc(n.heure || "") + '</span><a class="ap-c" href="/admin/#validation">' + cv +
+    return '<div class="ap-nr"><span class="h">' + esc(n.heure || "") + '</span><a class="ap-c" href="/admin/#validation/' + encodeURIComponent(n.id) + '">' + cv +
       '<span class="ri"><span class="bar" style="background:' + c[0] + '"></span><span class="t">' + esc(n.titre) + '</span><span class="m" style="color:' + c[0] + '">' + esc(n.label || "News") + '</span></span>' +
       '<span class="rt"><b>' + esc(n.heure || "") + '</b>' + etat + '</span></a></div>';
   }

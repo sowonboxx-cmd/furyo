@@ -437,7 +437,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     if (ME.admin) {
       pop.hidden = true;
       if (window.FG_ADMPOP) { window.FG_ADMPOP(ME, open); return; }
-      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=1";
+      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=2";
       sc.onload = function () { window.FG_ADMPOP(ME, open); }; sc.onerror = function () { admGrid(pop); };
       document.head.appendChild(sc); return;
     }
