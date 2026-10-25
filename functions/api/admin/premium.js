@@ -17,6 +17,9 @@ import { oublierAcces } from "../../../lib/acces.js";
 import { envoyerMerci, poserFenetre, garderCleBrevo } from "../../../lib/merci.js";
 
 const CLE = "premium:paiements";
+const CLE_MERCI = "premium:mercis"; // { <id membre>: [horodatage des e-mails de remerciement envoyés] } (Will, 25/10/2026)
+const lireMercis = async env => { try { return JSON.parse((await env.STATS.get(CLE_MERCI)) || "{}"); } catch (e) { return {}; } };
+const noterMerci = async (env, id) => { const m = await lireMercis(env); (m[id] = m[id] || []).push(Date.now()); await env.STATS.put(CLE_MERCI, JSON.stringify(m)); };
 const DEBUT_PAYANT = "2026-12-01"; // le Premium offert par un don démarre le 1er décembre (règle du 18/10/2026)
 const ids0 = r => idsBadges(r).map(x => String(x).replace(/-/g, ""));
 const nid = id => String(id || "").replace(/-/g, "");
@@ -49,7 +52,7 @@ export async function onRequestGet({ request, env, waitUntil }) {
   try { waitUntil(garderCleBrevo(env)); } catch (e) {}
   const { rows, cat } = await tous(env);
   const membres = rows.map(r => ligne(r, cat)).sort((a, b) => (a.num || 1e9) - (b.num || 1e9));
-  return json({ ok: true, aujourdhui: jourParis(), debutPayant: DEBUT_PAYANT, membres, paiements: await lireLog(env) });
+  return json({ ok: true, aujourdhui: jourParis(), debutPayant: DEBUT_PAYANT, membres, paiements: await lireLog(env), mercis: await lireMercis(env) });
 }
 
 export async function onRequestPost({ request, env }) {
@@ -88,6 +91,7 @@ export async function onRequestPost({ request, env }) {
     if (!(d.montant > 0) && !ans) return json({ error: "ce membre n'a ni don ni Premium payé" }, 400);
     await poserFenetre(env, m.id, d).catch(() => {});
     const mail = await envoyerMerci(env, d);
+    if (mail.ok) await noterMerci(env, m.id);
     for (const x of log) if (x.m === m.id && !x.mail) x.mail = mail.ok ? "ok" : mail.error;
     await env.STATS.put(CLE, JSON.stringify(log));
     return json({ ok: true, mail });
@@ -124,7 +128,7 @@ export async function onRequestPost({ request, env }) {
   // Remerciement automatique (Will, 25/10/2026) : fenêtre sur le site + e-mail.
   const d = { email: m.email, pseudo: m.pseudo, num: m.num, slug: m.slug, montant, total, ans, debut: ans ? debut : "", fin: ans ? fin : "", badge: cible ? cible.n : "" };
   let mail = { ok: false, error: "désactivé" };
-  if (b.merci !== false) { await poserFenetre(env, m.id, d).catch(() => {}); mail = await envoyerMerci(env, d); }
+  if (b.merci !== false) { await poserFenetre(env, m.id, d).catch(() => {}); mail = await envoyerMerci(env, d); if (mail.ok) await noterMerci(env, m.id); }
 
   const entree = { mail: mail.ok ? "ok" : mail.error, id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), t: Date.now(), jour, m: m.id, k: m.num, n: m.pseudo, e: m.email,
     montant, source, ans, debut: ans ? debut : "", fin: ans ? fin : "", badge: cible ? cible.n : "", note: String(b.note || "").slice(0, 200) };

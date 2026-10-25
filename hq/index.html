@@ -191,7 +191,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .pm-t td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}.pm-t td small{display:block;color:var(--mut);font-size:12px}
 .pm-t .ok{color:var(--ok,#4CD07D);font-weight:700}.pm-t .warn{color:#F2B33D;font-weight:700}.pm-t .ko{color:#E54839;font-weight:700}
 .pm-t img{width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px}.pm-bd{display:inline-block;font-size:11px;padding:2px 7px;border-radius:999px;background:#2a2a2d;margin:2px 3px 0 0}
-.pm-mc{display:inline-block;margin:4px 0 0;height:26px;padding:0 10px;border:0;border-radius:13px;background:#F2B33D;color:#000;font:700 12px Inter,sans-serif;cursor:pointer}.pm-mc:disabled{background:#2a2a2d;color:#CFCFD4;cursor:default}
+.pm-mc{display:inline-block;margin:4px 0 0;height:26px;padding:0 10px;border:0;border-radius:13px;background:#F2B33D;color:#000;font:700 12px Inter,sans-serif;cursor:pointer}.pm-mc.fait{background:#1f3b2a;color:#7BC67E}.pm-mc:disabled{background:#2a2a2d;color:#CFCFD4;cursor:default}
 .pm-fin{padding:5px 6px;font-size:13px}.pm-h{font:700 22px "FGAntonio";text-transform:uppercase;margin:28px 0 10px}
 .pm-l{display:flex;gap:12px;align-items:center;background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:6px;font-size:14px}.pm-l small{color:var(--mut)}.pm-l .mt{margin-left:auto;font:700 20px "FGAntonio";color:#F2B33D}.pm-l button{background:none;border:0;color:var(--mut);cursor:pointer;font-size:16px}
 .dn .rg{font:700 12px "FGInter";border:1px solid var(--line);background:transparent;color:var(--cr);border-radius:999px;padding:6px 10px;cursor:pointer}
@@ -884,7 +884,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   dnLoad();
 
   // ---- Premium & dons (Will, 25/10/2026) ----
-  var PM = { membres: [], paiements: [], auj: "" }, PMF = "premium";
+  var PM = { membres: [], paiements: [], mercis: {}, auj: "" }, PMF = "premium";
   var ansPour = function (m) { return m < 25 ? 0 : m < 50 ? 1 : m < 100 ? 2 : 4 + Math.floor((m - 100) / 25); };
   var fr = function (iso) { return iso ? iso.split("-").reverse().join("/") : ""; };
   var jours = function (iso) { return Math.round((new Date(iso + "T12:00:00") - new Date(PM.auj + "T12:00:00")) / 864e5); };
@@ -906,7 +906,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     if (PMF !== "tous" || q) l.sort(function (a, b) { return (a.fin || "9").localeCompare(b.fin || "9"); });
     $("#pmt").innerHTML = l.length ? '<table><thead><tr><th>N°</th><th>Membre</th><th>Donné</th><th>Premium</th><th>Fin</th><th>Reste</th><th>Badges</th></tr></thead><tbody>' + l.map(function (m) {
       var j = m.fin ? jours(m.fin) : null, st = !m.fin ? '<span>—</span>' : j < 0 ? '<span class="ko">Expiré</span>' : j <= 30 ? '<span class="warn">' + j + ' j</span>' : '<span class="ok">' + (j > 400 ? Math.round(j / 30.4) + " mois" : j + " j") + "</span>";
-      return '<tr><td>' + (m.num || "") + '</td><td>' + (m.photo ? '<img src="' + esc(m.photo) + '" alt="" referrerpolicy="no-referrer">' : "") + (m.slug ? '<a href="/membres/' + esc(m.slug) + '/" target="_blank">' + esc(m.pseudo) + "</a>" : esc(m.pseudo)) + '<small>' + esc(m.email) + '</small></td><td>' + (m.dons ? m.dons.toLocaleString("fr-FR") + " €" : "—") + '</td><td>' + esc(m.source || "—") + (m.debut ? '<small>depuis le ' + fr(m.debut) + "</small>" : "") + '</td><td><input class="pm-fin" type="date" value="' + esc(m.fin) + '" data-pm-fin="' + esc(m.id) + '" title="Modifier la date de fin"></td><td>' + st + '</td><td>' + m.badges.map(function (b) { return '<span class="pm-bd">' + esc(b) + "</span>"; }).join("") + (m.dons > 0 || (m.fin && m.debut) ? '<button type="button" class="pm-mc" data-pm-merci="' + esc(m.id) + '" title="Envoyer l\'e-mail de remerciement et la fenêtre sur le site">✉ Merci</button>' : "") + "</td></tr>";
+      return '<tr><td>' + (m.num || "") + '</td><td>' + (m.photo ? '<img src="' + esc(m.photo) + '" alt="" referrerpolicy="no-referrer">' : "") + (m.slug ? '<a href="/membres/' + esc(m.slug) + '/" target="_blank">' + esc(m.pseudo) + "</a>" : esc(m.pseudo)) + '<small>' + esc(m.email) + '</small></td><td>' + (m.dons ? m.dons.toLocaleString("fr-FR") + " €" : "—") + '</td><td>' + esc(m.source || "—") + (m.debut ? '<small>depuis le ' + fr(m.debut) + "</small>" : "") + '</td><td><input class="pm-fin" type="date" value="' + esc(m.fin) + '" data-pm-fin="' + esc(m.id) + '" title="Modifier la date de fin"></td><td>' + st + '</td><td>' + m.badges.map(function (b) { return '<span class="pm-bd">' + esc(b) + "</span>"; }).join("") + (m.dons > 0 || (m.fin && m.debut) ? (function () { var e = PM.mercis[m.id] || [], der = e.length ? new Date(e[e.length - 1]).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }) : "";
+        return '<button type="button" class="pm-mc' + (der ? " fait" : "") + '" data-pm-merci="' + esc(m.id) + '" data-pm-der="' + der + '" title="' + (der ? "Merci déjà envoyé (" + e.length + " fois). Cliquer pour renvoyer." : "Envoyer l\'e-mail de remerciement et la fenêtre sur le site") + '">' + (der ? "✓ Merci envoyé le " + der : "✉ Merci") + "</button>"; })() : "") + "</td></tr>";
     }).join("") + "</tbody></table>" : "<p>Personne ici.</p>";
   }
   function pmHist() {
@@ -922,7 +923,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   }
   function pmLoad() {
     fetch("/api/admin/premium", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
-      if (!d.ok) throw 0; PM.membres = d.membres; PM.paiements = d.paiements; PM.auj = d.aujourdhui;
+      if (!d.ok) throw 0; PM.membres = d.membres; PM.paiements = d.paiements; PM.mercis = d.mercis || {}; PM.auj = d.aujourdhui;
       $("#pmdl").innerHTML = PM.membres.map(function (m) { return '<option value="' + m.num + '">' + esc(m.pseudo + " · " + m.email) + "</option>"; }).join("");
       if (!$("#pmf").date.value) $("#pmf").date.value = PM.auj;
       pmKpi(); pmTable(); pmHist(); pmPrev();
@@ -940,8 +941,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   $("#pmq").addEventListener("input", pmTable);
   $("#pmflt").addEventListener("click", function (e) { var b = e.target.closest("[data-pm]"); if (!b) return; PMF = b.dataset.pm; $("#pmflt").querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); pmTable(); });
   $("#pmt").addEventListener("click", function (e) { var b = e.target.closest("[data-pm-merci]"); if (!b) return; var m = PM.membres.find(function (x) { return x.id === b.dataset.pmMerci; });
-    if (!confirm("Envoyer le remerciement à " + (m ? m.pseudo + " (" + m.email + ")" : "ce membre") + " ? (e-mail + fenêtre sur le site)")) return; b.disabled = true; b.textContent = "Envoi…";
-    pmPost({ action: "merci", id: b.dataset.pmMerci }).then(function (d) { b.textContent = d.ok && d.mail && d.mail.ok ? "✉ Envoyé" : "✉ " + ((d.mail && d.mail.error) || d.error || "Erreur"); }); });
+    if (!confirm((b.dataset.pmDer ? "⚠ Merci DÉJÀ envoyé le " + b.dataset.pmDer + ".\n\nLe renvoyer quand même à " : "Envoyer le remerciement à ") + (m ? m.pseudo + " (" + m.email + ")" : "ce membre") + " ? (e-mail + fenêtre sur le site)")) return; b.disabled = true; b.textContent = "Envoi…";
+    pmPost({ action: "merci", id: b.dataset.pmMerci }).then(function (d) { if (d.ok && d.mail && d.mail.ok) pmLoad(); else b.textContent = "✉ " + ((d.mail && d.mail.error) || d.error || "Erreur"); }); });
   $("#pmt").addEventListener("change", function (e) { var i = e.target.closest("[data-pm-fin]"); if (!i) return; pmPost({ action: "fin", id: i.dataset.pmFin, fin: i.value }).then(function (d) { if (!d.ok) alert(d.error || "Erreur"); pmLoad(); }); });
   $("#pmh").addEventListener("click", function (e) { var b = e.target.closest("[data-pm-del]"); if (!b || !confirm("Retirer cette ligne de l'historique ? (le membre n'est pas modifié)")) return; pmPost({ action: "suppr", pid: b.dataset.pmDel }).then(pmLoad); });
   $("#dnl").addEventListener("click", function (e) { var b = e.target.closest("[data-pm-from]"); if (!b) return; var f = $("#pmf"); f.qui.value = b.dataset.pmFrom; f.montant.value = b.dataset.pmMt || ""; pmPrev(); f.scrollIntoView({ behavior: "smooth", block: "start" }); f.montant.focus(); });
