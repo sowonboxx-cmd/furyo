@@ -501,8 +501,8 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     <div class="pm-t" id="pmt"><p>Chargement…</p></div>
     <h2 class="pm-h">Historique des paiements</h2>
     <div id="pmh"></div>
-    <h2 class="pm-h">Clics « Je soutiens »</h2>
-    <p class="lead">Chaque fois qu'un membre clique « Je soutiens » sur la page Premium, il apparaît ici avant d'aller sur PayPal. Quand un paiement arrive sur PayPal, retrouve le membre avec le pseudo écrit sur PayPal, ou avec l'heure et le montant. Pose ensuite son badge sur sa fiche (Kobun, Bancho, Shogun, Oyabun) et coche « Traité ». Le Premium des donateurs démarre le 1er décembre.</p>
+    <h2 class="pm-h">Clics « Je soutiens » <small style="font:600 13px Inter,sans-serif;color:#F2B33D;letter-spacing:0;text-transform:none;margin-left:8px">pas des paiements</small></h2>
+    <p class="lead">Ici, ce sont seulement les membres qui ont <b>cliqué</b> « Je soutiens » sur la page Premium, avant d'arriver sur PayPal. Beaucoup ne vont pas jusqu'au bout : <b>rien n'est payé tant que tu n'as pas reçu l'argent sur PayPal</b>. Quand un paiement arrive vraiment, retrouve le membre (code FG ou pseudo dans la note PayPal, sinon l'heure et le montant), clique « Enregistrer » et mets le montant <b>reçu</b> : le site s'occupe du Premium et du badge. Coche ensuite la case pour classer le clic. Un clic sans paiement : coche-le aussi, il passe dans « Traités ».</p>
     <div class="filt" id="dnf"><button type="button" data-dn="todo" aria-pressed="true">À traiter</button><button type="button" data-dn="fait" aria-pressed="false">Traités</button><button type="button" data-dn="tout" aria-pressed="false">Tout</button></div>
     <div id="dnl"><p>Chargement…</p></div>
   </section>
@@ -866,7 +866,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function dnList() {
     var l = DN.filter(function (d) { return DNF === "tout" || (DNF === "fait" ? d.fait : !d.fait); });
     $("#dnl").innerHTML = l.map(function (d) {
-      return '<div class="dn' + (d.fait ? " ok" : "") + '"><input type="checkbox" data-dn-id="' + esc(d.id) + '"' + (d.fait ? " checked" : "") + ' title="Traité"><div><b>' + (d.s ? '<a href="/membres/' + esc(d.s) + '/" target="_blank">' + esc(d.n || d.s) + "</a>" : esc(d.n || "Membre")) + "</b><small>" + esc(d.e) + " · " + dnDate(d.t) + '</small></div><span class="cd">' + esc(d.code) + '</span><span class="mt">' + (d.montant === "libre" ? "Libre" : d.montant + " €") + '</span><button type="button" class="rg" data-pm-from="' + esc(d.k || d.e) + '" data-pm-mt="' + (d.montant === "libre" ? "" : d.montant) + '">Enregistrer</button></div>';
+      return '<div class="dn' + (d.fait ? " ok" : "") + '"><input type="checkbox" data-dn-id="' + esc(d.id) + '"' + (d.fait ? " checked" : "") + ' title="Classer (payé et enregistré, ou pas payé)"><div><b>' + (d.s ? '<a href="/membres/' + esc(d.s) + '/" target="_blank">' + esc(d.n || d.s) + "</a>" : esc(d.n || "Membre")) + "</b><small>" + esc(d.e) + " · " + dnDate(d.t) + '</small></div><span class="cd">' + esc(d.code) + '</span><span class="mt">' + (d.montant === "libre" ? "Libre" : d.montant + " €") + '</span><button type="button" class="rg" data-pm-from="' + esc(d.k || d.e) + '" data-pm-mt="' + (d.montant === "libre" ? "" : d.montant) + '">Enregistrer</button></div>';
     }).join("") || "<p>Rien ici pour l'instant.</p>";
   }
   function dnLoad() {
