@@ -44,6 +44,9 @@ const AJOUTS = [
   { id: "c211001", t: "Statistiques : classement des mangas les plus collectionnés et des plus lus, en japonais et en français", cat: "Communauté" },
   { id: "c211002", t: "Ma collection : afficher le titre le plus collectionné, le plus lu et le plus possédé par l'ensemble des membres (global)", cat: "Communauté" },
   { id: "c211003", t: "Ma collection : en cliquant sur une série de sa collection (ex. Crows), voir combien de membres la possèdent aussi, et lesquels", cat: "Communauté" },
+  // Publication automatique sur X, Instagram, TikTok et Facebook depuis le site (Will, 25/10/2026) : à lancer mardi / mercredi.
+  { id: "c251001", t: "Publication automatique : récupérer la page Facebook Four You Gang, passer Instagram en compte pro relié à la page, puis créer l'app Meta avec Claude (Notes > Publication automatique)", cat: "Réseaux", prio: "haut", dt: "2026-10-27" },
+  { id: "c251002", t: "Publication automatique : maquettes de la fenêtre « Publier partout » (aperçus X, Instagram, TikTok, Facebook + Planifier), puis le code", cat: "Réseaux", prio: "haut", dt: "2026-10-28" },
   { id: "c181060", t: "Au Japon : ajouter les prépublications en ligne (Champion Cross, Comic Zenon, Yanmaga Web…) dans la page L'actualité manga au Japon, avec la liste de ce qui sort (ex. WORST Gaiden Saburoku Santa)", cat: "Site" },
 ];
 // Corrections ponctuelles appliquées une seule fois (Will, 18/10/2026) : del = supprimer, done = cocher, t = nouveau texte.
@@ -53,6 +56,7 @@ const CORRECTIONS = [
   { id: "k181003", cible: "c181071", done: true },
   { id: "k181004", cible: "c181026", done: true, t: "Badges donateurs : Kobun, Bancho, Shogun, Oyabun + Légende du Gang (QG > Badges)" },
   { id: "k181005", cible: "r026", del: true },
+  { id: "k251001", cible: "c181060", done: true }, // Au Japon : section « Lecture en ligne » faite le 24/10/2026
   { id: "k181006", cible: "r016", t: "Search Console : sitemap fait (764 pages, 0 erreur). Reste Bing Webmaster Tools : importer depuis Search Console" },
 ];
 async function lire(env) {
@@ -74,7 +78,7 @@ async function lire(env) {
     const d = new Date().toISOString().slice(0, 10);
     for (const a of neufs.slice().reverse()) {
       const old = a.remplace ? l.find(x => x.t === a.remplace) : null;
-      if (old) { old.t = a.t; old.cat = a.cat; } else if (!l.some(x => x.id === a.id)) l.unshift({ id: a.id, t: a.t, cat: a.cat, prio: a.prio || "moyen", done: false, d });
+      if (old) { old.t = a.t; old.cat = a.cat; } else if (!l.some(x => x.id === a.id)) l.unshift({ id: a.id, t: a.t, cat: a.cat, prio: a.prio || "moyen", ...(a.dt ? { dt: a.dt } : {}), done: false, d });
     }
     await env.STATS.put(CLE, JSON.stringify(l));
     await env.STATS.put(CLE + ":ajouts", JSON.stringify(vus.concat(neufs.map(a => a.id))));
