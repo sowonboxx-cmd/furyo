@@ -547,7 +547,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
   if (/^https?:$/.test(location.protocol)) fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j) { ME = j; drawAvatar();
     // Don enregistré : fenêtre « Merci, t'es Premium » une seule fois (Will, 25/10/2026). ?apercu=merci pour la voir.
     var mc = j.merci || (j.user && /[?&]apercu=merci/.test(location.search) ? { pseudo: j.user.name, montant: 25, ans: 1, debut: "2026-12-01", fin: "2027-11-30", badge: "Donateur — Bancho", slug: j.user.slug, apercu: 1 } : null);
-    if (mc) { var sc = document.createElement("script"); sc.src = "/site/merci.js?v=1"; sc.onload = function () { window.FG_MERCI(mc); }; document.head.appendChild(sc); }
+    if (mc) { var sc = document.createElement("script"); sc.src = "/site/merci.js?v=2"; sc.onload = function () { window.FG_MERCI(mc); }; document.head.appendChild(sc); }
   } }).catch(function () {});
   bindClose();
   meBox.addEventListener("click", function (e) { if (e.target === meBox) meBox.hidden = true; });
