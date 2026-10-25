@@ -24,6 +24,14 @@
     ".fmc p{margin:0 0 10px;font:500 14px/1.5 Inter,sans-serif;color:#D8D8DC}.fmc p b{color:#fff}" +
     ".fmc .ul{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 18px}.fmc .ul span{font:600 12px Inter,sans-serif;background:#1C1C1E;color:#CFCFD4;padding:6px 10px;border-radius:12px}" +
     ".fmc .bt{display:flex;gap:10px}.fmc .bt a,.fmc .bt button{flex:1;height:46px;border:0;border-radius:23px;display:grid;place-items:center;font:700 14.5px Inter,sans-serif;text-decoration:none;cursor:pointer}.fmc .bt a{background:#F2B33D;color:#000}.fmc .bt button{background:#2C2C2E;color:#fff}" +
+    ".fmc .sh{margin:4px 0 18px;padding:14px 16px 16px;border-radius:16px;background:#1C1C1E;border:1px solid #2C2C2E}" +
+    ".fmc .sh b.t{display:block;font:700 20px/1.1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;color:#fff}" +
+    ".fmc .sh small{display:block;margin:4px 0 12px;font:500 12.5px/1.4 Inter,sans-serif;color:#9a9aa0}.fmc .sh small em{font-style:normal;color:#F08AC0;font-weight:700}" +
+    ".fmc .rs{display:flex;gap:6px;margin-bottom:8px}.fmc .rs button{flex:1;height:34px;border:1px solid #38383B;border-radius:17px;background:transparent;color:#CFCFD4;font:700 12.5px Inter,sans-serif;cursor:pointer}.fmc .rs button[aria-pressed=true]{background:#F5F5F7;color:#000;border-color:#F5F5F7}" +
+    ".fmc .in{display:flex;align-items:center;gap:6px;height:42px;padding:0 6px 0 14px;border-radius:21px;background:#111;border:1px solid #38383B}.fmc .in span{color:#8E8E93;font:700 15px Inter,sans-serif}.fmc .in input{flex:1;min-width:0;height:100%;border:0;background:none;color:#fff;font:500 15px Inter,sans-serif;outline:none}" +
+    ".fmc .in button{height:32px;padding:0 14px;border:0;border-radius:16px;background:#F2B33D;color:#000;font:700 13px Inter,sans-serif;cursor:pointer}" +
+    ".fmc .sh label{display:flex;align-items:center;gap:8px;margin-top:10px;font:500 12.5px Inter,sans-serif;color:#CFCFD4;cursor:pointer}.fmc .sh label input{width:16px;height:16px;accent-color:#F2B33D}" +
+    ".fmc .sh .okm{margin:0;font:600 14px/1.4 Inter,sans-serif;color:#7BC67E}" +
     "@media (max-width:520px){.fmc .top{min-height:236px;padding:20px 18px 22px}.fmc .top .im{height:176px;right:0}.fmc .bul{font-size:15px}.fmc .top h2{font-size:30px}.fmc .cd b{font-size:22px}}";
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var court = function (iso) { if (!iso) return ""; var p = iso.split("-"); return p[2] + "/" + p[1] + "/" + p[0].slice(2); };
@@ -49,7 +57,12 @@
       '<div class="cd"><span><b>' + eur(d.montant || 0) + "</b><i>Ton soutien</i></span>" + (P ? "<span><b>" + court(d.debut) + "</b><i>Début</i></span><span><b>" + court(d.fin) + "</b><i>Fin</i></span>" : "") + "</div>" +
       "<p>" + txt + "</p>" +
       (P ? '<div class="ul"><span>Lu</span><span>Envie</span><span>Panier</span><span>Statistiques</span><span>Classements</span><span>Tirage du mois</span><span>+ tout le site</span></div>' : "") +
-      '<p style="margin-bottom:18px">FuryoGang tient grâce à des gens comme toi. Le gang te dit merci.</p>' +
+      '<p style="margin-bottom:14px">FuryoGang tient grâce à des gens comme toi. Le gang te dit merci.</p>' +
+      // Shoutout (Will, 25/10/2026) : le membre donne son @ pour être remercié publiquement → badge « Connecté ».
+      '<form class="sh" data-fmc-sh><b class="t">On te remercie en public ?</b><small>Donne ton @ : le gang te tague dans son prochain post. Et tu débloques le badge <em>Connecté</em>.</small>' +
+      '<div class="rs"><button type="button" data-r="x" aria-pressed="true">X</button><button type="button" data-r="instagram" aria-pressed="false">Instagram</button><button type="button" data-r="tiktok" aria-pressed="false">TikTok</button></div>' +
+      '<div class="in"><span>@</span><input name="compte" placeholder="ton_pseudo" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40"><button type="submit">Envoyer</button></div>' +
+      '<label><input type="checkbox" name="mention" checked> OK pour être mentionné sur les réseaux FuryoGang</label></form>' +
       '<div class="bt"><a href="' + (d.slug ? "/membres/" + encodeURIComponent(d.slug) + "/" : "/ma-collection/") + '">Voir mon profil</a><button type="button" data-fmc-x>Fermer</button></div></div></div>';
     document.body.appendChild(o);
     var vu = false;
@@ -58,5 +71,15 @@
     var k = function (e) { if (e.key === "Escape") close(); };
     document.addEventListener("keydown", k);
     o.addEventListener("click", function (e) { if (e.target === o || e.target.closest(".x,[data-fmc-x]")) close(); else if (e.target.closest("a")) lu(); });
+    var f = o.querySelector("[data-fmc-sh]"), R = "x";
+    f.addEventListener("click", function (e) { var b = e.target.closest("[data-r]"); if (!b) return; R = b.dataset.r; f.querySelectorAll("[data-r]").forEach(function (x) { x.setAttribute("aria-pressed", x === b); }); f.compte.focus(); });
+    f.addEventListener("submit", function (e) {
+      e.preventDefault(); var c = f.compte.value.trim().replace(/^@+/, ""), men = f.mention.checked; if (!c) { f.compte.focus(); return; }
+      var bt = f.querySelector("[type=submit]"); bt.disabled = true; bt.textContent = "…";
+      fetch("/api/merci", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ reseau: R, compte: c, mention: men, garder: true }) })
+        .then(function (r) { return r.json(); }).then(function (j) {
+          f.innerHTML = j && j.enregistre ? '<p class="okm">C\'est noté, @' + esc(c) + " ✓ Badge Connecté débloqué." + (men ? " Guette ton fil, le gang arrive." : "") + "</p>" : '<p class="okm" style="color:#FF8A80">Oups, réessaie depuis ton profil.</p>';
+        }).catch(function () { bt.disabled = false; bt.textContent = "Envoyer"; });
+    });
   };
 })();

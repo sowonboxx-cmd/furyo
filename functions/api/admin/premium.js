@@ -40,6 +40,7 @@ function ligne(r, cat) {
     photo: text(p["Photo"]), inscrit: r.created_time, fin: date(p["Premium jusqu'au"]), debut: date(p["Premium depuis"]),
     dons: num(p["Dons (€)"]) || 0, source: text(p["Premium source"]), notes: text(p["Notes"]),
     badges: cat.filter(b => ids.has(b.id)).map(b => b.n),
+    x: text(p["X"]), instagram: text(p["Instagram"]), tiktok: text(p["TikTok"]), mention: !!(p["Mention OK"] && p["Mention OK"].checkbox),
   };
 }
 async function tous(env) {
