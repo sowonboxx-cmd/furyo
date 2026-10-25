@@ -154,7 +154,7 @@
     (D.prepub || []).filter(function (it) { return /\(en ligne\)/i.test(it.mag || ""); }).forEach(function (it) { var k = it.entry.split(" · ")[0]; if (!seen[k]) { seen[k] = 1; items.push(it); } });
     return items.length ? { web: true, items: items, date: items.reduce(function (a, it) { return it.date > a ? it.date : a; }, "") } : null;
   }
-  var WEB_IMGS = ["/img/web/doom.jpg"];
+  var WEB_IMGS = ["/img/web/doom.jpg", "/img/web/saigo-no-furyou.jpg", "/img/web/tataki.jpg", "/img/web/ushijima-kun.jpg"];
   function mags() {
     var g = {}, order = [];
     (D.prepub || []).filter(function (it) { return !/\(en ligne\)/i.test(it.mag || ""); }).forEach(function (it) { var k = it.mag + "|" + it.issue; if (!g[k]) { g[k] = { mag: it.mag, issue: it.issue, date: it.date, cover: it.cover, link: it.link, items: [] }; order.push(k); } if (it.cover && !g[k].cover) g[k].cover = it.cover; g[k].items.push(it); });
