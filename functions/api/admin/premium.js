@@ -14,7 +14,7 @@ import { text, num, date, queryAll } from "../../../lib/notion.js";
 import { MEMBRES, numMembre, patch, jourParis } from "../../../lib/membres.js";
 import { catalogue, idsBadges } from "../../../lib/badges.js";
 import { oublierAcces } from "../../../lib/acces.js";
-import { envoyerMerci, poserFenetre } from "../../../lib/merci.js";
+import { envoyerMerci, poserFenetre, garderCleBrevo } from "../../../lib/merci.js";
 
 const CLE = "premium:paiements";
 const DEBUT_PAYANT = "2026-12-01"; // le Premium offert par un don démarre le 1er décembre (règle du 18/10/2026)
@@ -44,8 +44,9 @@ async function tous(env) {
   return { rows, cat };
 }
 
-export async function onRequestGet({ request, env }) {
+export async function onRequestGet({ request, env, waitUntil }) {
   if (!(await isAdmin(request, env))) return json({ error: "réservé aux admins" }, 401);
+  try { waitUntil(garderCleBrevo(env)); } catch (e) {}
   const { rows, cat } = await tous(env);
   const membres = rows.map(r => ligne(r, cat)).sort((a, b) => (a.num || 1e9) - (b.num || 1e9));
   return json({ ok: true, aujourdhui: jourParis(), debutPayant: DEBUT_PAYANT, membres, paiements: await lireLog(env) });
