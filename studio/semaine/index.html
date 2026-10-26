@@ -128,12 +128,16 @@ button:disabled{opacity:.5;cursor:default}
   // Données publiques chargées une fois ; les chiffres privés (membres, collections, films) à chaque semaine.
   var pub = Promise.all(["/api/calendrier", "/api/prepub", "/api/news", "/api/avancement", "/api/series"].map(get));
   var D = null, slides = [], tour = 0;
+  var estTirage = function (n) { return n.cat === "tirage" || (n.cats || []).some(function (c) { return c.k === "tirage"; }); };
   var VIDE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
   function charger() {
     var du = lundi($("#du").value || auj), au = dec(du, 6); $("#du").value = du;
     var moi = ++tour; $("#msg").textContent = "Chargement…"; $("#dl").disabled = true;
-    return Promise.all([pub, get("/api/admin/semaine?du=" + du + "&au=" + au)]).then(function (r) {
+    // News « Tomes en circulation » de la semaine : on demande la couverture du dernier tome paru de la série (Will, 26/10/2026).
+    var adm = pub.then(function (p) { var sids = (p[2].items || []).filter(function (n) { return n.date >= du && n.date <= au && n.sid && estTirage(n); }).map(function (n) { return n.sid; });
+      return get("/api/admin/semaine?du=" + du + "&au=" + au + (sids.length ? "&sids=" + sids.join(",") : "")); });
+    return Promise.all([pub, adm]).then(function (r) {
       var p = r[0], cal = (p[0].items || []), news = (p[2].items || []).filter(function (n) { return n.date >= du && n.date <= au; });
       var ids = news.map(function (n) { return n.id; }).join(",");
       return (ids ? get("/api/stats?ids=" + ids) : Promise.resolve({})).then(function (st) {
@@ -142,6 +146,8 @@ button:disabled{opacity:.5;cursor:default}
         news.forEach(function (n) { n.v = (vues[n.id] || {}).v || 0; });
         news.sort(function (a, b) { return b.v - a.v; });
         D = { du: du, au: au, cal: cal, prepub: p[1].items || [], news: news, av: p[3] || {}, series: {}, adm: r[1] && r[1].ok ? r[1] : null };
+        var der = (D.adm && D.adm.derniers) || {};
+        news.forEach(function (n) { if (estTirage(n) && n.sid && der[n.sid]) { if (!n.cover0) n.cover0 = n.cover; n.cover = der[n.sid].cover; } });
         (p[4].items || []).forEach(function (s) { D.series[s.slug] = s; });
         construire();
       });
