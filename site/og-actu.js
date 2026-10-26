@@ -109,7 +109,7 @@
       return { type: "extrait", titre: s.fr || s.t || (i.serie && (i.serie.fr || i.serie.t)) || i.titre, cover: cover, cover2: cover2, planches: planches,
         cta: C.cta || (ch ? "Lis le chapitre " + ch : "Lis l'extrait"), auteurs: aut.join(" · "),
         editeur: C.editeur || nomEd(i.src) || nomEd(i.relais) || nomEd(s.extraitFR) || String(s.pubFR || "").replace(/\s*\(.*$/, "").split(",").pop().trim(),
-        quand: C.quand != null && C.quand !== "" ? C.quand : d1 ? "tome 1 le " + jourL(d1) : m ? "tome 1 le " + m[1] : "", pays: C.pays || pays };
+        lire: C.lire || "", quand: C.quand != null && C.quand !== "" ? C.quand : d1 ? "tome 1 le " + jourL(d1) : m ? "tome 1 le " + m[1] : "", pays: C.pays || pays };
     });
   }
   // JPEG 1200×630 et envoi dans R2 (og/f/actu-<id8>.jpg), repris comme og:image de la news.
@@ -117,7 +117,7 @@
   // Extrait : la carte devient aussi l'image de la news (hero, carrousel) ; les miniatures prennent la couverture (Carte.couv).
   function imageNews(id, d) {
     var id8 = String(id || "").replace(/-/g, "").slice(-8);
-    var carte = { couv: d.cover || "", planches: d.planches || [], cta: d.cta || "", editeur: d.editeur || "", quand: d.quand || "", pays: d.pays || "France" };
+    var carte = { couv: d.cover || "", planches: d.planches || [], cta: d.cta || "", editeur: d.editeur || "", quand: d.quand || "", pays: d.pays || "France", lire: d.lire || "" };
     return fetch("/api/admin/veille", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, image: "https://furyogang.com/api/ogcard/actu-" + id8 + ".jpg?v=" + Date.now().toString(36), cadrage: 50, carte: carte }) }).then(function (r) { return r.json(); });
   }
   function envoyer(id, d) { return png(d).then(function (p) { return jpeg(p, .9); }).then(function (j) { return fetch("/api/admin/ogcard", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, data: j }) }).then(function (r) { return r.json(); }); }); }

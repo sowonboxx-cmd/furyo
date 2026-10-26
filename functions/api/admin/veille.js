@@ -266,7 +266,7 @@ async function traiter(request, env) {
     if (typeof b[k] === "string") props[nom] = rt(b[k].trim().slice(0, 2000));
   if (b.carte !== undefined) {
     const c = b.carte && typeof b.carte === "object" ? b.carte : null, u = x => /^(https:\/\/|\/)\S+$/.test(String(x || "")) ? String(x).slice(0, 500) : "";
-    const o = c ? { couv: u(c.couv), planches: (Array.isArray(c.planches) ? c.planches : []).map(u).filter(Boolean).slice(0, 2), cta: String(c.cta || "").slice(0, 60), editeur: String(c.editeur || "").slice(0, 40), quand: String(c.quand || "").slice(0, 60), pays: c.pays === "Japon" ? "Japon" : "France" } : null;
+    const o = c ? { couv: u(c.couv), planches: (Array.isArray(c.planches) ? c.planches : []).map(u).filter(Boolean).slice(0, 2), cta: String(c.cta || "").slice(0, 60), editeur: String(c.editeur || "").slice(0, 40), quand: String(c.quand || "").slice(0, 60), lire: /^https:\/\/\S+$/.test(String(c.lire || "")) ? String(c.lire).slice(0, 600) : "", pays: c.pays === "Japon" ? "Japon" : "France" } : null;
     props["Carte"] = rt(o ? JSON.stringify(o) : "");
   }
   if (b.planif !== undefined) {

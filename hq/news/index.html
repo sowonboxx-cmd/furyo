@@ -191,7 +191,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       '<div class="lbl">Planches derrière (2 max)</div><div class="pls">' + (C.planches || []).map(function (u, k) { return '<div class="slot"><img src="' + esc(couv(u, 160)) + '"><button data-cdel="' + k + '">×</button></div>'; }).join("") +
       ((C.planches || []).length < 2 ? '<label class="up" title="Envoyer une planche">＋<input type="file" accept="image/*" data-up="planche"></label>' : '') + '</div>' +
       '<div class="row2" style="margin-top:4px"><div><div class="lbl">Étiquette</div><input class="inp" data-c="cta" placeholder="Lis le chapitre 1" value="' + esc(C.cta || "") + '"></div><div><div class="lbl">Éditeur</div><input class="inp" data-c="editeur" placeholder="auto" value="' + esc(C.editeur || "") + '"></div></div>' +
-      '<div class="lbl">Tome / date</div><input class="inp" data-c="quand" placeholder="tome 1 le 13 novembre" value="' + esc(C.quand || "") + '"></div>';
+      '<div class="lbl">Tome / date</div><input class="inp" data-c="quand" placeholder="tome 1 le 13 novembre" value="' + esc(C.quand || "") + '">' +
+      '<div class="lbl">Lien de lecture en ligne (bouton « Lire » de la news)</div><input class="inp" data-c="lire" placeholder="https://… lecteur de l’éditeur" value="' + esc(C.lire || "") + '"></div>';
   }
   function editeur(k) {
     if (k === "site") return '<div class="edp"><h2>' + IC.site + 'Article du site</h2><div class="lbl">Accroche (sur l’accueil) <em>' + accroche().length + ' / 120</em></div><input class="inp" data-f="accroche" maxlength="160" value="' + esc(accroche()) + '">' +
