@@ -11,6 +11,7 @@ import { queryAll, check, text, num } from "../../../lib/notion.js";
 import { MEMBRES } from "../../../lib/membres.js";
 import { editionsParSerie } from "../../../lib/memo.js";
 
+const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const FILMS = { dataSource: "dfca009b-7891-49a4-8a1d-fd665dcacd77", database: "fe4b3db3d00c411ca3c1a25aff6bfadb" };
 const nid = id => String(id || "").replace(/-/g, "");
 const J = /^\d{4}-\d{2}-\d{2}$/;
@@ -24,19 +25,30 @@ export async function onRequestGet({ request, env, waitUntil }) {
     const dans = d => d && d.slice(0, 10) >= du && d.slice(0, 10) <= au;
 
     const sids = (q.get("sids") || "").split(",").map(nid).filter(x => /^[0-9a-f]{32}$/.test(x)).slice(0, 20);
-    const [mRows, fRows, eds] = await Promise.all([
+    const [mRows, fRows, eds, sRows] = await Promise.all([
       queryAll(env.NOTION_TOKEN, { ...MEMBRES }).catch(() => []),
       queryAll(env.NOTION_TOKEN, { ...FILMS, body: { filter: { and: [
         { timestamp: "created_time", created_time: { on_or_after: du } },
         { timestamp: "created_time", created_time: { on_or_before: au + "T23:59:59+02:00" } },
       ] } } }).catch(() => []),
       sids.length ? editionsParSerie(env, waitUntil).catch(() => ({})) : {},
+      sids.length ? queryAll(env.NOTION_TOKEN, { ...SERIES }).catch(() => []) : [],
     ]);
+    // Une saga compte toutes ses parties (The Fable → The second contact, The third secret) : on prend les suites
+    // dont l'« Œuvre mère » est la série de la news, puis le tome paru le plus récent, édition japonaise d'abord (Will, 26/10/2026).
+    const norm = x => String(x || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "");
+    const nomDe = {}, filles = {};
+    for (const r of sRows) { const p = r.properties || {}, id = nid(r.id); nomDe[id] = text(p["SERIES"]);
+      const m = norm(text(p["Œuvre mère"])); if (m) (filles[m] = filles[m] || []).push(id); }
     const auj = new Date().toISOString().slice(0, 10), derniers = {};
     for (const sid of sids) {
-      const l = (eds[sid] || []).slice().sort((a, b) => (a.pays === "Japon" ? 0 : 1) - (b.pays === "Japon" ? 0 : 1));
-      for (const e of l) { const t = e.tomes.filter(t => t.cover && (t.paru || (t.date && t.date <= auj))).sort((a, b) => b.n - a.n)[0];
-        if (t) { derniers[sid] = { cover: local(t.cover), n: t.n, pays: e.pays }; break; } }
+      const fam = [sid, ...(filles[norm(nomDe[sid])] || [])];
+      for (const pays of ["Japon", "France"]) {
+        let best = null;
+        for (const id of fam) for (const e of (eds[id] || [])) if (e.pays === pays) for (const t of e.tomes)
+          if (t.cover && (t.paru || (t.date && t.date <= auj)) && (!best || (t.date || "") > (best.date || "") || ((t.date || "") === (best.date || "") && t.n > best.n))) best = t;
+        if (best) { derniers[sid] = { cover: local(best.cover), n: best.n, pays }; break; }
+      }
     }
     const membres = {};
     for (const r of mRows) { const p = r.properties || {}; if (check(p["Masqué"])) continue;
