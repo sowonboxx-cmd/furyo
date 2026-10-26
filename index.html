@@ -821,7 +821,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
 <script src="/site/gang.js?v=24"></script>
-<script src="/site/home-m.js?v=62" defer></script>
+<script src="/site/home-m.js?v=63" defer></script>
 <div class="page">
 
 
@@ -979,7 +979,7 @@ function sliderN(l) {
   const sl = l.map((it, i) => { const t = it.fr || it.titre, img = couvN(it.cover, 1400), pos = it.pos == null ? 20 : it.pos;
     return `<a class="dsl-s${i ? "" : " on"}" href="${escN(linkN(it))}" data-i="${i}">${img ? `<img src="${escN(img)}" alt="Image de la news : ${escN(t)}" style="object-position:center ${pos}%"${i ? ' loading="lazy"' : ""}>` : ""}` +
       `<span class="dsl-t"><div class="dm">${catsN(it).map(c => `<span style="color:${c[2]}">${escN(c[1])}</span>`).join("<span>·</span>")}<span>·</span><span>${escN(dslDate(it.date))}</span></div><h2>${escN(t)}</h2><p>${escN(it.accroche || SENT(it.texte)[0] || "")}</p></span></a>`; }).join("");
-  const th = l.map((it, i) => { const c = dslCat(it), img = couvN(it.cover, 480), pos = it.pos == null ? 20 : it.pos;
+  const th = l.map((it, i) => { const c = dslCat(it), img = couvN(it.vignette || it.cover, 480), pos = it.pos == null ? 20 : it.pos;
     return `<button type="button" class="${i ? "" : "on"}" data-sl="${i}" aria-label="${escN(it.fr || it.titre)}"><i></i>${img ? `<img src="${escN(img)}" alt="" loading="lazy" style="object-position:center ${pos}%">` : '<span class="ph0"></span>'}` +
       `<small><span class="k" style="color:${c[2]}">${escN(c[1])}</span><span class="d">· ${escN(dslDate(it.date))}</span></small><b>${escN(it.fr || it.titre)}</b></button>`; }).join("");
   return `<section class="dsl" id="dsl" aria-roledescription="carrousel" aria-label="À la une"><div class="dsl-v">${sl}<button type="button" class="dsl-nx p" data-sln="-1" aria-label="Précédente">${DSL_FL}</button><button type="button" class="dsl-nx n" data-sln="1" aria-label="Suivante">${DSL_FL}</button></div><div class="dsl-th">${th}</div></section>`;
@@ -996,7 +996,7 @@ document.addEventListener("click", e => { const t = e.target.closest("[data-sl]"
 document.addEventListener("mouseover", e => { if (e.target.closest("#dsl .dsl-v")) clearTimeout(DSL.t); });
 document.addEventListener("mouseout", e => { const v = e.target.closest("#dsl .dsl-v"); if (v && !v.contains(e.relatedTarget)) { clearTimeout(DSL.t); DSL.t = setTimeout(() => slGo(DSL.i + 1), DSL.ms); } });
 function rowN(it) {
-  const t = it.fr || it.titre, img = couvN(it.cover, 360);
+  const t = it.fr || it.titre, img = couvN(it.vignette || it.cover, 360);
   return `<article class="dr" data-img data-id="${escN(it.id)}"><a class="dr-i" href="${escN(linkN(it))}" tabindex="-1">${img ? `<img src="${escN(img)}" alt="" loading="lazy" onload="${wideN}">` : "<span></span>"}</a>` +
     `<div class="dr-b"><a class="dr-a" href="${escN(linkN(it))}">${metaN(it)}<h3>${escN(t)}</h3><p data-full="${escN(it.texte)}" data-l="3">${escN(it.texte)}</p></a>${actsN(it)}</div></article>`;
 }
@@ -1043,7 +1043,7 @@ function sideN() {
     if (k === "anime") { const v = l.find(it => ytId(it.video)); if (v) { vid = vidN(v); l = l.filter(it => it !== v); } }
     const fl = k === "licence-fr" ? FLAG_FR : k === "licence-jp" ? FLAG_JP : "";
     return `<section class="box"><div class="m-head"><div><small class="m-eye">${fl}${escN(sub)}</small><h3><a class="h3a" href="/?cat=${k}" data-cat-go="${k}">${escN(t)}</a></h3></div></div>` +
-      vid + (l.length ? `<div class="sc">${l.map(it => `<a class="sc-r" href="${escN(linkN(it))}">${it.cover ? `<img src="${escN(couvN(it.cover, 160))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span><b>${escN(it.fr || it.titre)}</b><small>${escN(relN(it.date))}</small></span></a>`).join("")}</div>` : vid ? "" : '<p class="m-note">Rien de nouveau pour l\'instant.</p>') + "</section>";
+      vid + (l.length ? `<div class="sc">${l.map(it => `<a class="sc-r" href="${escN(linkN(it))}">${it.cover ? `<img src="${escN(couvN(it.vignette || it.cover, 160))}" alt="" loading="lazy">` : '<span class="ph"></span>'}<span><b>${escN(it.fr || it.titre)}</b><small>${escN(relN(it.date))}</small></span></a>`).join("")}</div>` : vid ? "" : '<p class="m-note">Rien de nouveau pour l\'instant.</p>') + "</section>";
   }).join("");
   if (box.dataset.h !== html) { box.innerHTML = html; box.dataset.h = html; }
 }

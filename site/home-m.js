@@ -55,7 +55,7 @@
   function fitM(r) { if (window.FG_FIT2) window.FG_FIT2(r || root); }
   function cardO(it) {
     return '<article class="mh-o"><a class="mh-hit" href="' + esc(link(it)) + '"><div class="mh-ot">' + meta(it) + '<h3>' + esc(it.fr || it.titre) + '</h3>' + pf(it.texte, it.accroche) + "</div>" +
-      (it.cover ? '<img src="' + esc(couv(it.cover, 240)) + '" alt="" loading="lazy">' : "") + "</a>" + acts(it) + "</article>";
+      (it.cover ? '<img src="' + esc(couv(it.vignette || it.cover, 240)) + '" alt="" loading="lazy">' : "") + "</a>" + acts(it) + "</article>";
   }
   // Catégorie affichée : une seule, « News » seulement s'il n'y a rien d'autre (Will, 17/10/2026).
   function prim(it) {
@@ -66,7 +66,7 @@
   // catégorie en texte et date écrite en haut à droite, titre sur une ligne, accroche sur deux lignes, actions en bas.
   function cardR(it) {
     var t = prim(it);
-    return '<article class="mh-r"><a class="mh-hit" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 280)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') +
+    return '<article class="mh-r"><a class="mh-hit" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.vignette || it.cover, 280)) + '" alt="" loading="lazy">' : '<span class="mh-noimg"></span>') +
       '<div class="mh-rt"><div class="mh-ctl"><span style="color:' + t[2] + '">' + esc(t[1]) + '</span><em>' + esc(dd(it.date)) + "</em></div><h3>" + esc(it.fr || it.titre) + "</h3>" + pf(it.texte, it.accroche) + "</div></a>" + acts(it) + "</article>";
   }
   // La plus récente en grand
@@ -297,7 +297,7 @@
     if (!list.length) return "";
     return '<section class="mh-sec" aria-label="À lire aussi">' + head2("À lire aussi", "", "", "") + '<div class="mh-la">' + list.map(function (it) {
       var t = prim(it);
-      return '<a href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 200)) + '" alt="" loading="lazy">' : '<i class="mh-noimg"></i>') + '<span><small><i style="color:' + t[2] + '">' + esc(t[1]) + "</i> · " + esc(dd(it.date)) + "</small><b>" + esc(it.fr || it.titre) + "</b><em>" + esc(it.accroche || it.texte || "") + "</em></span></a>";
+      return '<a href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.vignette || it.cover, 200)) + '" alt="" loading="lazy">' : '<i class="mh-noimg"></i>') + '<span><small><i style="color:' + t[2] + '">' + esc(t[1]) + "</i> · " + esc(dd(it.date)) + "</small><b>" + esc(it.fr || it.titre) + "</b><em>" + esc(it.accroche || it.texte || "") + "</em></span></a>";
     }).join("") + '</div><a class="mh-all" href="/?vue=actus">Voir toutes les actualités</a></section>';
   }
 

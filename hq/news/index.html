@@ -86,6 +86,9 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .chips{display:flex;flex-wrap:wrap;gap:6px}.chip{padding:7px 11px;border-radius:10px;background:#1f1f25;font:700 12px I;color:#cfcfd4;border:0}.chip.on{background:#0f2a3d;color:#3DB0FF}
 .imgs{display:flex;gap:8px;flex-wrap:wrap}.imgs button{padding:0;border:2px solid transparent;border-radius:9px;background:none;opacity:.7}.imgs button.on{border-color:#2A6FD0;opacity:1}.imgs img{width:60px;height:80px;border-radius:7px;object-fit:cover}
 .ai{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}.ai button{padding:9px 12px;border-radius:12px;background:#1f1f25;border:0;color:#fff;font:700 12.5px I}.ai .p{background:#2A6FD0}
+.up{display:inline-flex;align-items:center;justify-content:center;width:60px;height:80px;border-radius:9px;border:2px dashed #3a3a42;color:#8c8c93;font:700 22px I;cursor:pointer;position:relative}.up input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.crt{margin-top:16px;padding:14px;border-radius:16px;background:#0f0f12;border:1px solid #26262c}.crt h4{margin:0 0 4px;font:700 18px A;text-transform:uppercase}
+.pls{display:flex;gap:10px;flex-wrap:wrap}.pls .slot{position:relative;width:60px;height:80px;border-radius:7px;overflow:hidden;background:#1f1f25}.pls .slot img{width:100%;height:100%;object-fit:cover}.pls .slot button{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:0;background:#000c;color:#fff;font:700 12px I;padding:0;line-height:20px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .nav{display:flex;gap:8px;margin-top:14px}.nav button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:12px;background:#17171b;border:0;color:#fff;font:700 13.5px I}.nav svg{width:16px;height:16px}.nav small{color:#7BC67E}.nav button.on{box-shadow:inset 0 0 0 1.5px #2A6FD0;background:#0f1a2a}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#fff;color:#000;font:700 14px I;padding:12px 18px;border-radius:14px;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.4)}
@@ -105,7 +108,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 <body>
 <div class="app" id="app"><p class="vide">Chargement…</p></div>
 <script src="/site/sortie-post.js?v=6"></script>
-<script src="/site/og-actu.js?v=2"></script>
+<script src="/site/og-actu.js?v=3"></script>
 <script>
 (function () {
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -175,11 +178,26 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   }
   function navBar() { return '<div class="nav">' + [["all", "Vue d’ensemble", IC.all], ["site", "Site", IC.web], ["x", "X", IC.x], ["ig", "Instagram", IC.ig], ["tt", "TikTok", IC.tt]].map(function (t) { return '<button data-v="' + t[0] + '" class="' + (V === t[0] ? "on" : "") + '">' + t[2] + t[1] + (t[0] === "all" ? "" : "<small>✓</small>") + '</button>'; }).join("") + '</div>'; }
   function compteur(k) { if (k === "x") { var n = poidsX(D.x); return '<em class="' + (n > 280 ? "ko" : "") + '">' + n + ' / 280</em>'; } var m = (D[k] || "").length; return '<em>' + m + (k === "site" ? " car." : " / 2 200") + '</em>'; }
-  function imgPick() { return '<div class="imgs">' + IMGS.map(function (u) { return '<button data-img="' + esc(u) + '" class="' + (u === img() ? "on" : "") + '"><img src="' + esc(couv(u, 160)) + '"></button>'; }).join("") + '</div>'; }
+  function imgPick() { return '<div class="imgs">' + IMGS.map(function (u) { return '<button data-img="' + esc(u) + '" class="' + (u === img() ? "on" : "") + '"><img src="' + esc(couv(u, 160)) + '"></button>'; }).join("") + '<label class="up" title="Envoyer une image">＋<input type="file" accept="image/*" data-up="image"></label></div>'; }
+  // Carte « Extrait » : couverture, planches, étiquette, éditeur, tome (Will, 26/10/2026). Vide = automatique.
+  var estExtrait = function () { return N.cat === "extrait" || N.cat2 === "extrait"; };
+  function carteEd() {
+    if (!estExtrait()) return "";
+    var C = D.carte, cv = C.couv || "";
+    var choix = IMGS.filter(function (u) { return !/\/api\/ogcard\//.test(u); });
+    return '<div class="crt"><h4>Image de la news · Extrait</h4><p class="sub">La carte sert d’image à la news (en grand) et d’aperçu du lien ; les miniatures prennent la couverture.</p>' +
+      '<div class="lbl">Couverture (devant)</div><div class="imgs">' + choix.map(function (u) { return '<button data-ccouv="' + esc(u) + '" class="' + (u === cv ? "on" : "") + '"><img src="' + esc(couv(u, 160)) + '"></button>'; }).join("") +
+      (cv && choix.indexOf(cv) < 0 ? '<button class="on" data-ccouv="' + esc(cv) + '"><img src="' + esc(couv(cv, 160)) + '"></button>' : '') + '<label class="up" title="Envoyer la couverture">＋<input type="file" accept="image/*" data-up="couv"></label></div>' +
+      '<div class="lbl">Planches derrière (2 max)</div><div class="pls">' + (C.planches || []).map(function (u, k) { return '<div class="slot"><img src="' + esc(couv(u, 160)) + '"><button data-cdel="' + k + '">×</button></div>'; }).join("") +
+      ((C.planches || []).length < 2 ? '<label class="up" title="Envoyer une planche">＋<input type="file" accept="image/*" data-up="planche"></label>' : '') + '</div>' +
+      '<div class="row2" style="margin-top:4px"><div><div class="lbl">Étiquette</div><input class="inp" data-c="cta" placeholder="Lis le chapitre 1" value="' + esc(C.cta || "") + '"></div><div><div class="lbl">Éditeur</div><input class="inp" data-c="editeur" placeholder="auto" value="' + esc(C.editeur || "") + '"></div></div>' +
+      '<div class="lbl">Tome / date</div><input class="inp" data-c="quand" placeholder="tome 1 le 13 novembre" value="' + esc(C.quand || "") + '"></div>';
+  }
   function editeur(k) {
     if (k === "site") return '<div class="edp"><h2>' + IC.site + 'Article du site</h2><div class="lbl">Accroche (sur l’accueil) <em>' + accroche().length + ' / 120</em></div><input class="inp" data-f="accroche" maxlength="160" value="' + esc(accroche()) + '">' +
       '<div class="lbl">Résumé du site ' + compteur("site") + '</div><textarea class="ta" data-f="site" style="min-height:220px">' + esc(D.site) + '</textarea>' +
       '<div class="lbl">Visuel</div>' + imgPick() + '<div class="lbl">Ou colle l’adresse d’une image</div><input class="inp" data-f="image" placeholder="https://…" value="' + esc(D.image || N.imageChoisie || "") + '">' +
+      carteEd() +
       '<div class="lbl">Image de partage du lien (X, WhatsApp, LinkedIn…)</div><div id="ogp" style="position:relative;width:100%;aspect-ratio:1200/630;border-radius:12px;overflow:hidden;background:#000"><div class="ogs" style="position:absolute;left:0;top:0;transform-origin:0 0"></div></div>' +
       '<div class="ai"><button data-gen>Refaire les textes réseaux depuis l’article</button><a class="btn" style="height:auto;padding:9px 12px;border-radius:12px;font-size:12.5px;text-decoration:none" href="/admin/#validation/' + encodeURIComponent(N.id) + '">Catégorie, vidéo, recadrage… (back-office)</a></div></div>';
     var sub = { x: "Le post qui part sur @FuryoGang. L’aperçu se met à jour pendant que tu tapes.", ig: "Publication sur @furyogang. La légende s’affiche sous l’image.", tt: "Publication photo sur @furyogang. La légende s’affiche en bas de l’image : le visuel TikTok garde le titre en haut et le bas libre." }[k];
@@ -238,11 +256,30 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   document.addEventListener("click", function (e) {
     var v = e.target.closest("[data-v]"); if (v) { V = v.dataset.v; draw(); scrollTo(0, 0); return; }
     var im = e.target.closest("[data-img]"); if (im) { D.image = im.dataset.img; draw(); return; }
+    var cc = e.target.closest("[data-ccouv]"); if (cc) { D.carte.couv = D.carte.couv === cc.dataset.ccouv ? "" : cc.dataset.ccouv; draw(); return; }
+    var cd = e.target.closest("[data-cdel]"); if (cd) { D.carte.planches.splice(+cd.dataset.cdel, 1); draw(); return; }
     var au = e.target.closest("[data-auto]"); if (au) { var c = gen(); D[au.dataset.auto] = c[au.dataset.auto]; draw(); return; }
     if (e.target.closest("[data-gen]")) { var g = gen(); D.x = g.x; D.ig = g.ig; D.tt = g.tt; draw(); toast("Textes réseaux refaits depuis l’article ✓"); return; }
     var a = e.target.closest("[data-act]"); if (a) act(a.dataset.act, a);
   });
+  // Envoi d'image (comme dans la veille) : redimensionnée à 1400 px, gardée par le site (/api/admin/image).
+  function envoyerImage(file) {
+    return createImageBitmap(file).then(function (bm) { var k = Math.min(1, 1400 / bm.width); var c = document.createElement("canvas"); c.width = Math.round(bm.width * k); c.height = Math.round(bm.height * k); c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height); return new Promise(function (ok) { c.toBlob(ok, "image/jpeg", .88); }); }).catch(function () { return file; })
+      .then(function (blob) { return fetch("/api/admin/image", { method: "POST", credentials: "same-origin", headers: { "content-type": blob.type || "image/jpeg" }, body: blob }); })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Envoi impossible"); return j.url; }); });
+  }
+  document.addEventListener("change", function (e) {
+    var t = e.target; if (!t.dataset || !t.dataset.up || !t.files || !t.files[0]) return;
+    var k = t.dataset.up; toast("Envoi de l’image…");
+    envoyerImage(t.files[0]).then(function (u) {
+      if (k === "image") { IMGS.unshift(u); D.image = u; }
+      else if (k === "couv") { IMGS.push(u); D.carte.couv = u; }
+      else { D.carte.planches = (D.carte.planches || []).concat(u).slice(0, 2); }
+      toast("Image envoyée ✓ (pense à enregistrer)"); draw();
+    }).catch(function (er) { toast(er.message || "Envoi impossible"); });
+  });
   document.addEventListener("input", function (e) {
+    var c = e.target.dataset && e.target.dataset.c; if (c) { D.carte[c] = e.target.value; clearTimeout(ogApercu._t); ogApercu._t = setTimeout(ogApercu, 400); return; }
     var f = e.target.dataset && e.target.dataset.f; if (!f) return;
     if (f === "image") { D.image = e.target.value.trim(); } else D[f] = e.target.value;
     if (e.target.id === "ph") D.heure = e.target.value;
@@ -260,6 +297,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     var g = gen();
     [["x", "legX"], ["ig", "legIG"], ["tt", "legTT"]].forEach(function (p) { var v = D[p[0]] === g[p[0]] ? "" : D[p[0]]; if (v !== (N[p[1]] || "")) b[p[1]] = v; });
     if (D.image && D.image !== (N.imageChoisie || "") && /^https:\/\//.test(D.image)) b.image = D.image;
+    if (JSON.stringify(D.carte || {}) !== JSON.stringify(N.carte || {})) b.carte = D.carte;
     for (var k in extra) b[k] = extra[k];
     return b;
   }
@@ -273,7 +311,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       .then(function (r) {
         btn.disabled = false;
         if (!r.ok) { toast(r.j.error || "Échec, réessaie"); return; }
-        N.texte = D.site; N.accroche = accroche(); if (b.image) N.imageChoisie = b.image; ["legX", "legIG", "legTT"].forEach(function (p) { if (p in b) N[p] = b[p]; });
+        N.texte = D.site; N.accroche = accroche(); if (b.carte) N.carte = JSON.parse(JSON.stringify(b.carte)); if (b.image) N.imageChoisie = b.image; ["legX", "legIG", "legTT"].forEach(function (p) { if (p in b) N[p] = b[p]; });
         if (k === "planifier") { N.planif = extra.planif; toast("Planifiée le " + new Date(jour + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) + " à " + h + " ✓"); }
         else if (k === "publier") { N.enLigne = true; toast("En ligne sur le site ✓"); ogEnvoyer(); }
         else if (k === "vu" || k === "retirer") { toast(k === "vu" ? "Gardée de côté ✓" : "Retirée du site ✓"); setTimeout(function () { location.href = "/hq/#calendrier"; }, 900); return; }
@@ -285,7 +323,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   /* ---------- image de partage du lien (og:image, 1200×630) ---------- */
   // Extrait : carte « Extrait 1 » (Will, 26/10/2026) ; autres news : carte « dossier » du back-office.
   function ogDonnees() {
-    var i = Object.assign({}, N, { texte: D.site, accroche: accroche(), imageChoisie: img() || N.imageChoisie });
+    var i = Object.assign({}, N, { texte: D.site, accroche: accroche(), imageChoisie: img() || N.imageChoisie, carte: D.carte });
     if ((N.cat === "extrait" || N.cat2 === "extrait") && window.FG_OGACTU && FG_OGACTU.donneesExtrait) return FG_OGACTU.donneesExtrait(i);
     var phr = String(D.site || "").replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s/)[0].slice(0, 150);
     return Promise.resolve({ titre: (N.serie && N.serie.t) || titre(), cat: (CATS[N.cat] && CATS[N.cat] !== "News" ? CATS[N.cat] : CATS[N.cat2] || CATS[N.cat] || "News"), date: N.date || N.cree, desc: accroche() || phr, cover: img() || (N.serie && N.serie.cover) || "" });
@@ -296,7 +334,10 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   }
   function ogEnvoyer() {
     if (!window.FG_OGACTU || !N.id) return;
-    ogDonnees().then(function (d) { return FG_OGACTU.envoyer(N.id, d); }).then(function (j) { if (j && j.ok) toast("Image de partage du lien à jour ✓"); }).catch(function () {});
+    ogDonnees().then(function (d) { return FG_OGACTU.envoyer(N.id, d).then(function (j) {
+      if (!(j && j.ok)) return;
+      if (d.type === "extrait") return FG_OGACTU.imageNews(N.id, d).then(function () { toast("Carte à jour : image de la news et aperçu du lien ✓"); });
+      toast("Image de partage du lien à jour ✓"); }); }).catch(function () {});
   }
 
   /* ---------- chargement ---------- */
@@ -305,7 +346,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     CATS = ve.cats || {}; COLS = ve.cols || {};
     N = (ve.items || []).filter(function (x) { return x.id === ID; })[0];
     if (!N) { $("#app").innerHTML = '<p class="vide">Cette news n’est plus dans la veille.<br><a href="/hq/#calendrier">Retour au calendrier</a></p>'; return; }
-    D.site = N.texte || "";
+    D.site = N.texte || ""; D.carte = JSON.parse(JSON.stringify(N.carte || {}));
     var g = gen(); D.x = N.legX || g.x; D.ig = N.legIG || g.ig; D.tt = N.legTT || g.tt;
     if (N.planif) { var p = N.planif.match(/^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}))?/); if (p) { D.jour = p[1]; if (p[2]) D.heure = p[2]; } }
     IMGS = [N.imageChoisie, N.image, N.serie && N.serie.cover].concat((N.tomes || []).map(function (t) { return t.cover; })).filter(function (u, i, a) { return u && a.indexOf(u) === i; }).slice(0, 6);

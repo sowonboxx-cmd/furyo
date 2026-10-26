@@ -101,6 +101,8 @@ async function construire(request, env) {
       // Studio de la news (Will, 26/10/2026) : légendes modifiées à la main (vide = automatique) et jour/heure prévus.
       legX: text(p["Légende X"]), legIG: text(p["Légende Instagram"]), legTT: text(p["Légende TikTok"]),
       planif: (p["Planifiée le"] && p["Planifiée le"].date && p["Planifiée le"].date.start) || "",
+      // Carte (image de la news + partage du lien, Will 26/10/2026) : { couv, planches, cta, editeur, quand, pays }.
+      carte: (() => { const t = text(p["Carte"]) || "null"; try { return JSON.parse(t); } catch (e) { try { return JSON.parse(t.replace(/'/g, '"')); } catch (e2) { return null; } } })(), // guillemets simples tolérés (saisie à la main dans Notion)
       serie: s, news, vu: vu(r), enLigne: pub(r), imageChoisie: text(p["Image"]), accroche: text(p["Accroche"]), cadrage: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null,
       cat2: (categoriesDe(catN)[1] || {}).k || "", // 2e catégorie (Notion en accepte plusieurs ; le back-office en gère deux)
     };
@@ -262,6 +264,11 @@ async function traiter(request, env) {
   if (typeof b.texte === "string") props["Résumé site"] = rt(b.texte.trim());
   for (const [k, nom] of [["legX", "Légende X"], ["legIG", "Légende Instagram"], ["legTT", "Légende TikTok"], ["accroche", "Accroche"]])
     if (typeof b[k] === "string") props[nom] = rt(b[k].trim().slice(0, 2000));
+  if (b.carte !== undefined) {
+    const c = b.carte && typeof b.carte === "object" ? b.carte : null, u = x => /^(https:\/\/|\/)\S+$/.test(String(x || "")) ? String(x).slice(0, 500) : "";
+    const o = c ? { couv: u(c.couv), planches: (Array.isArray(c.planches) ? c.planches : []).map(u).filter(Boolean).slice(0, 2), cta: String(c.cta || "").slice(0, 60), editeur: String(c.editeur || "").slice(0, 40), quand: String(c.quand || "").slice(0, 60), pays: c.pays === "Japon" ? "Japon" : "France" } : null;
+    props["Carte"] = rt(o ? JSON.stringify(o) : "");
+  }
   if (b.planif !== undefined) {
     const v = String(b.planif || "");
     if (v && !/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)?)?$/.test(v)) return json({ error: "date de planification invalide" }, 400);

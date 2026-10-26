@@ -73,10 +73,12 @@
   }
 
   // d = { type: "extrait", titre, cover, cover2, cta, auteurs, editeur, quand, pays }
-  function cardExtrait(d, e1, e2) {
-    var c1 = e1 || couv(d.cover), c2 = e2 || couv(d.cover2), t = String(d.titre || ""), cls = t.length > 14 ? " xs" : t.length > 10 ? " s" : "";
+  // e = images déjà en data URL (export) : [couverture, 2e visuel ou planche 1, planche 2]
+  function cardExtrait(d, e1, e2, e3) {
+    var pl = (d.planches || []).filter(Boolean), c1 = e1 || couv(d.cover), c2 = e2 || couv(pl[0] || d.cover2), c3 = pl[1] ? (e3 || couv(pl[1])) : "", t = String(d.titre || ""), cls = t.length > 14 ? " xs" : t.length > 10 ? " s" : "";
     return '<div class="oge">' + (c2 || c1 ? '<div class="bg" style="background-image:url(\'' + (c2 || c1) + '\')"></div>' : '') + '<div class="sh"></div>' +
-      (c2 ? '<img class="im" src="' + c2 + '" alt="" style="left:250px;top:70px;width:270px;height:430px;transform:rotate(5deg)">' : '') +
+      (c3 ? '<img class="im" src="' + c3 + '" alt="" style="left:330px;top:96px;width:250px;height:400px;transform:rotate(10deg);object-position:center 30%">' : '') +
+      (c2 ? '<img class="im" src="' + c2 + '" alt="" style="left:' + (c3 ? 230 : 250) + 'px;top:70px;width:270px;height:430px;transform:rotate(' + (c3 ? 4 : 5) + 'deg);object-position:center 30%">' : '') +
       (c1 ? '<img class="im" src="' + c1 + '" alt="" style="left:' + (c2 ? 70 : 140) + 'px;top:58px;width:330px;height:470px;transform:rotate(-3deg)">' : '') +
       '<img class="lg" src="/img/logo-furyogang.png" alt="FuryoGang">' +
       '<div class="tx"><div class="t' + cls + '">' + esc(t) + '</div>' +
@@ -95,20 +97,29 @@
       var s = d.serie || {}, eds = d.editions || [], jp = eds.find(function (e) { return e.pays === "Japon"; }), fr = eds.find(function (e) { return e.pays === "France"; });
       var t1 = function (e) { var t = e && (e.tomes || []).filter(function (x) { return x.cover; }).sort(function (a, b) { return (a.n || 0) - (b.n || 0); }); return t && t.length ? t : []; };
       var tj = t1(jp), tf = t1(fr), txt = [i.titre, i.texte, i.accroche].join(" ");
-      var cover = (tj[0] && tj[0].cover) || (tf[0] && tf[0].cover) || i.imageChoisie || (i.serie && i.serie.cover) || "";
-      var cover2 = i.planche || (tf[0] && tf[0].cover !== cover ? tf[0].cover : "") || (tj[1] && tj[1].cover) || "";
+      var C = i.carte || {}, propre = function (u) { return u && !/\/api\/ogcard\//.test(u) ? u : ""; };
+      // Par défaut la couverture française du tome 1 (les extraits sont en français), sinon la japonaise (Will, 26/10/2026).
+      var cover = propre(C.couv) || (tf[0] && tf[0].cover) || (tj[0] && tj[0].cover) || propre(i.imageChoisie) || (i.serie && i.serie.cover) || "";
+      var planches = (C.planches || []).filter(Boolean).slice(0, 2);
+      var cover2 = planches.length ? "" : ((tj[0] && tj[0].cover !== cover ? tj[0].cover : "") || (tf[0] && tf[0].cover !== cover ? tf[0].cover : "") || (tj[1] && tj[1].cover) || "");
       var ch = (txt.match(/chapitre\s+(\d+)/i) || [])[1] || (/premier chapitre|chapitre 1\b/i.test(txt) ? "1" : "");
       var aut = []; [s.scen, s.dess].forEach(function (a) { String(a || "").split(/\s*[,&]\s*/).forEach(function (x) { x = x.trim(); if (x && aut.indexOf(x) < 0) aut.push(x); }); });
       var auj = new Date().toISOString().slice(0, 10), pays = fr || !jp ? "France" : "Japon";
       var d1 = s.t1FR && s.t1FR >= auj ? s.t1FR : "", m = txt.match(/tome 1[^.]*?le (\d{1,2}(?:er)? [a-zéû]+)/i);
-      return { type: "extrait", titre: s.fr || s.t || (i.serie && (i.serie.fr || i.serie.t)) || i.titre, cover: cover, cover2: cover2,
-        cta: ch ? "Lis le chapitre " + ch : "Lis l'extrait", auteurs: aut.join(" · "),
-        editeur: nomEd(i.src) || nomEd(s.extraitFR) || String(s.pubFR || "").replace(/\s*\(.*$/, "").split(",").pop().trim(),
-        quand: d1 ? "tome 1 le " + jourL(d1) : m ? "tome 1 le " + m[1] : "", pays: pays };
+      return { type: "extrait", titre: s.fr || s.t || (i.serie && (i.serie.fr || i.serie.t)) || i.titre, cover: cover, cover2: cover2, planches: planches,
+        cta: C.cta || (ch ? "Lis le chapitre " + ch : "Lis l'extrait"), auteurs: aut.join(" · "),
+        editeur: C.editeur || nomEd(i.src) || nomEd(i.relais) || nomEd(s.extraitFR) || String(s.pubFR || "").replace(/\s*\(.*$/, "").split(",").pop().trim(),
+        quand: C.quand != null && C.quand !== "" ? C.quand : d1 ? "tome 1 le " + jourL(d1) : m ? "tome 1 le " + m[1] : "", pays: C.pays || pays };
     });
   }
   // JPEG 1200×630 et envoi dans R2 (og/f/actu-<id8>.jpg), repris comme og:image de la news.
   function jpeg(png, q) { return new Promise(function (ok) { var img = new Image(); img.onload = function () { var c = document.createElement("canvas"); c.width = 1200; c.height = 630; var x = c.getContext("2d"); x.fillStyle = "#000"; x.fillRect(0, 0, 1200, 630); x.drawImage(img, 0, 0, 1200, 630); try { ok(c.toDataURL("image/jpeg", q || .9)); } catch (e) { ok(png); } }; img.onerror = function () { ok(png); }; img.src = png; }); }
+  // Extrait : la carte devient aussi l'image de la news (hero, carrousel) ; les miniatures prennent la couverture (Carte.couv).
+  function imageNews(id, d) {
+    var id8 = String(id || "").replace(/-/g, "").slice(-8);
+    var carte = { couv: d.cover || "", planches: d.planches || [], cta: d.cta || "", editeur: d.editeur || "", quand: d.quand || "", pays: d.pays || "France" };
+    return fetch("/api/admin/veille", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, image: "https://furyogang.com/api/ogcard/actu-" + id8 + ".jpg?v=" + Date.now().toString(36), cadrage: 50, carte: carte }) }).then(function (r) { return r.json(); });
+  }
   function envoyer(id, d) { return png(d).then(function (p) { return jpeg(p, .9); }).then(function (j) { return fetch("/api/admin/ogcard", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, data: j }) }).then(function (r) { return r.json(); }); }); }
 
   function charger(src) { return window.htmlToImage ? Promise.resolve() : new Promise(function (ok, ko) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
@@ -118,9 +129,10 @@
     var box = document.createElement("div");
     box.style.cssText = "position:fixed;left:-20000px;top:0;width:1200px;height:630px;overflow:hidden;pointer-events:none";
     var lib = charger("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js");
-    var cov = dataUrl(couv(d.cover)), cov2 = d.type === "extrait" ? dataUrl(couv(d.cover2)) : Promise.resolve(null), logo = d.type === "extrait" ? dataUrl("/img/logo-furyogang.png") : Promise.resolve(null);
-    return Promise.all([lib, cov, fonts(), cov2, logo]).then(function (r) {
-      box.innerHTML = d.type === "extrait" ? cardExtrait(d, r[1], r[3]) : card(d, r[1] || couv(d.cover));
+    var ex = d.type === "extrait", pl = ex ? (d.planches || []).filter(Boolean) : [];
+    var cov = dataUrl(couv(d.cover)), cov2 = ex ? dataUrl(couv(pl[0] || d.cover2)) : Promise.resolve(null), cov3 = pl[1] ? dataUrl(couv(pl[1])) : Promise.resolve(null), logo = ex ? dataUrl("/img/logo-furyogang.png") : Promise.resolve(null);
+    return Promise.all([lib, cov, fonts(), cov2, logo, cov3]).then(function (r) {
+      box.innerHTML = ex ? cardExtrait(d, r[1], r[3], r[5]) : card(d, r[1] || couv(d.cover));
       if (r[4]) { var lg = box.querySelector(".lg"); if (lg) lg.src = r[4]; }
       document.body.appendChild(box);
       return images(box).then(function () { return r[2]; });
@@ -139,5 +151,5 @@
     }).finally(function () { box.remove(); });
   }
 
-  window.FG_OGACTU = { card: card, cardExtrait: cardExtrait, png: png, jpeg: jpeg, envoyer: envoyer, donneesExtrait: donneesExtrait, SIZE: SIZE };
+  window.FG_OGACTU = { card: card, cardExtrait: cardExtrait, png: png, jpeg: jpeg, envoyer: envoyer, imageNews: imageNews, donneesExtrait: donneesExtrait, SIZE: SIZE };
 })();

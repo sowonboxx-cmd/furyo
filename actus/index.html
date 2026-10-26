@@ -414,7 +414,7 @@ body{background:#000}
     return '<section class="nd-box"><div class="nd-bh"><h2>Autres actualités</h2></div>' + o.map(function (it) {
       var cs = it.cats && it.cats.length ? it.cats : [{ k: it.cat, nom: it.catNom || "News", c: it.catC || "#D4D4D8" }];
       var c = cs.filter(function (x) { return x.k !== "news" && x.k !== "annonce"; })[0] || cs[0], st = OST.s[it.id] || {};
-      return '<a class="na-r" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 280)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
+      return '<a class="na-r" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.vignette || it.cover, 280)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
         '<div class="rt"><div class="ctl"><span style="color:' + esc(c.c || "#D4D4D8") + '">' + esc(c.nom || "News") + "</span><em>" + esc(dShort(it.date)) + "</em></div><h3>" + esc(it.fr || it.titre) + "</h3><p>" + esc(it.accroche || it.texte || "") + "</p></div>" +
         '<div class="ac"><span>' + I.stat + nf(st.v || 0) + "</span><span>" + I.heart + nf(st.l || 0) + "</span><span>" + I.book + '</span><span class="c">' + I.com + nf(OST.c[it.id] || 0) + "</span></div></a>";
     }).join("") + '<a class="nd-btn nd-more" href="/?vue=actus">Toutes les actualités</a></section>';
@@ -424,7 +424,7 @@ body{background:#000}
     if (!o.length) return "";
     return '<section class="nd-box"><div class="nd-bh"><h2>Autres actualités</h2></div>' + o.map(function (it) {
       var c = (it.cats && it.cats[0]) || { nom: it.catNom || "News", c: it.catC || "#D4D4D8" };
-      return '<a class="nd-o" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.cover, 160)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
+      return '<a class="nd-o" href="/actus/' + esc(slug(it.fr || it.titre)) + "-" + esc(String(it.id).slice(-8)) + '">' + (it.cover ? '<img src="' + esc(couv(it.vignette || it.cover, 160)) + '" alt="" loading="lazy">' : '<span class="ph"></span>') +
         '<span><i class="om"><em style="font-style:normal;color:' + esc(c.c) + '">' + esc(c.nom) + "</em> · " + esc(dShort(it.date)) + "</i><b>" + esc(it.fr || it.titre) + '</b><p data-full="' + esc(it.accroche || it.texte || "") + '">' + esc(it.texte || "") + "</p></span></a>";
     }).join("") + '<a class="nd-btn nd-more" href="/?vue=actus">Toutes les actualités</a></section>';
   }
