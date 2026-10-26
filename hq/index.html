@@ -1535,6 +1535,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     { nm: "Nouveaux membres", ds: "Bienvenue aux nouveaux arrivés dans le gang.", freq: "Au fil de l'eau", cat: "Membres" },
     { nm: "Membres qui ont donné", ds: "Remercier ceux qui ont soutenu / donné.", freq: "Au fil de l'eau", cat: "Membres" },
     { nm: "Cadeau du mois", ds: "Chaque mois, un tirage : une figurine à un membre Premium, et un contenu Furyo (figurine, manga, fascicule ou pièce spéciale) à un membre non-Premium. Annonce du gagnant.", freq: "Mensuel", cat: "Communauté" },
+    // Interviews (Will, 26/10/2026) : les membres posent leurs questions, formulaire réservé aux inscrits.
+    { nm: "Interview mangaka", ds: "Interview d'un mangaka par FuryoGang. Appel à questions avant : les membres proposent leurs questions via un formulaire sur le site, réservé aux inscrits (seule condition : avoir un compte). On choisit les meilleures et on cite les pseudos. Post d'appel à questions, puis post de l'interview publiée. Une interview par mois, faite par Will. Double objectif : contenu exclusif + inscriptions.", freq: "Mensuel", cat: "Communauté", ajout: "interview1" },
     { nm: "Rejoins le gang — avantages", ds: "Post d'incitation à s'inscrire : chaque mois une figurine à gagner pour les membres Premium et un contenu Furyo (figurine, manga, fascicule, pièce spéciale) pour un membre non-Premium.", freq: "Mensuel", cat: "Communauté" },
     // Promo des pages du site (Will, 24/10/2026) : chaque page importante mérite son post, à faire tourner.
     { nm: "Page Au Japon", ds: "furyogang.com/japon : les derniers numéros des magazines japonais, nos séries en prépublication, la lecture en ligne (Manga One, Champion Cross…) et les prochaines sorties au Japon. Promo pas encore faite.", freq: "Ponctuel", cat: "Pages du site", pg: 1 },
@@ -1557,6 +1559,10 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     try { if (!localStorage.getItem(K + "-pages1")) { var noms = v.map(function (x) { return x.nm; });
       DEF.filter(function (d) { return d.pg && noms.indexOf(d.nm) < 0; }).forEach(function (d) { v.push({ id: uid(), nm: d.nm, ds: d.ds, freq: d.freq, cat: d.cat }); });
       localStorage.setItem(K, JSON.stringify(v)); localStorage.setItem(K + "-pages1", "1"); } } catch (e) {}
+    // Types ajoutés plus tard (champ « ajout ») : glissés une seule fois dans une liste déjà enregistrée.
+    try { var noms2 = v.map(function (x) { return x.nm; }), neuf = 0;
+      DEF.filter(function (d) { return d.ajout && !localStorage.getItem(K + "-" + d.ajout) && noms2.indexOf(d.nm) < 0; }).forEach(function (d) { v.push({ id: uid(), nm: d.nm, ds: d.ds, freq: d.freq, cat: d.cat }); neuf = 1; });
+      DEF.forEach(function (d) { if (d.ajout) localStorage.setItem(K + "-" + d.ajout, "1"); }); if (neuf) localStorage.setItem(K, JSON.stringify(v)); } catch (e) {}
     return v;
   }
   function save() { try { localStorage.setItem(K, JSON.stringify(list)); } catch (e) {} }
