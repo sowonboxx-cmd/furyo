@@ -10,13 +10,16 @@ async function up({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   if (!env.COUV) return json({ error: "stockage indisponible" }, 500);
   let b = {}; try { b = await request.json(); } catch (e) {}
+  // Récap de la semaine (Will, 26/10/2026) : { nom: "semaine-AAAA-SS", data } depuis le studio Quoi de neuf.
+  const nom = /^semaine-\d{4}-\d{2}$/.test(String(b.nom || "")) ? String(b.nom) : "";
   const id8 = String(b.id || "").replace(/-/g, "").slice(-8);
-  if (!/^[0-9a-f]{8}$/.test(id8)) return json({ error: "news inconnue" }, 400);
+  if (!nom && !/^[0-9a-f]{8}$/.test(id8)) return json({ error: "news inconnue" }, 400);
   const m = String(b.data || "").match(/^data:(image\/(?:png|jpeg));base64,([A-Za-z0-9+/=]+)$/);
   if (!m) return json({ error: "image invalide" }, 400);
   const bin = atob(m[2]); const bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   if (bytes.length > 4_000_000) return json({ error: "image trop lourde" }, 400);
-  await env.COUV.put("og/f/actu-" + id8 + ".jpg", bytes, { httpMetadata: { contentType: m[1] } });
-  return json({ ok: true, url: "/img/og/f/actu-" + id8 + ".jpg" });
+  const cle = nom ? nom + ".jpg" : "actu-" + id8 + ".jpg";
+  await env.COUV.put("og/f/" + cle, bytes, { httpMetadata: { contentType: m[1] } });
+  return json({ ok: true, url: nom ? "/api/ogcard/" + cle : "/img/og/f/" + cle });
 }

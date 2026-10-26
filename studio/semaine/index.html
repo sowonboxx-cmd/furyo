@@ -50,6 +50,11 @@ button:disabled{opacity:.5;cursor:default}
 [contenteditable]:hover{outline:3px dashed rgba(255,255,255,.35);outline-offset:4px}
 [contenteditable]:focus{outline:3px solid #fff;outline-offset:4px}
 
+/* ——— Image de partage du lien (1200 × 630, maquette A « éventail », Will 26/10/2026) ——— */
+.og{width:1200px;height:630px;position:relative;overflow:hidden;background:#0c0c0e;color:#F2EFE9;font-family:"FGInter",sans-serif;text-align:left;line-height:normal}
+.og *{box-sizing:border-box;margin:0;padding:0}
+.og .A{font-family:"FGAntonio";font-weight:700;text-transform:uppercase;line-height:.9}
+.og .cv{position:absolute;object-fit:cover;border:6px solid #fff;border-radius:4px;box-shadow:0 26px 60px rgba(0,0,0,.7);aspect-ratio:300/430;background:#222}
 /* ——— Les images (1080 × 1440) ——— */
 .qn{--bg:#0c0c0e;--bg2:#17171a;--line:#2a2a2e;--cr:#F2EFE9;--mut:#9a968f;--red:#BC002D;width:1080px;height:1440px;position:relative;overflow:hidden;background:var(--bg);color:var(--cr);font-family:"FGInter",sans-serif;line-height:normal;text-align:left}
 .qn *{box-sizing:border-box;margin:0;padding:0}
@@ -100,6 +105,9 @@ button:disabled{opacity:.5;cursor:default}
   </div>
   <details class="choix" id="choix" open><summary>Choisir ce qui est mis en avant</summary><div id="choixC"></div></details>
   <div class="grid" id="grid"></div>
+  <div class="cap"><h2>Image de partage du lien <span style="display:flex;gap:8px;align-items:center"><span id="ogmsg" style="text-transform:none;letter-spacing:0;font-weight:500"></span><button id="ogup">Mettre à jour</button></span></h2>
+    <p class="sub" style="font-size:13px;margin:0 0 10px">Ce qu'on voit quand le lien de la page web est partagé (X, WhatsApp, LinkedIn, Discord…). Mise à jour toute seule à chaque ouverture du studio et à chaque choix.</p>
+    <div class="frame" id="ogf" style="aspect-ratio:1200/630;max-width:760px"><div class="sc" id="ogsc"></div></div></div>
   <div class="cap"><h2>Légende Instagram <button id="cp">Copier</button></h2><textarea id="leg"></textarea></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
@@ -305,6 +313,8 @@ button:disabled{opacity:.5;cursor:default}
     }
     // 1 · Couverture (après coup : elle résume ce qui a été retenu)
     var collL = unique(fr.concat(jp).map(function (x) { return x.cover; }).concat(fiches.map(function (x) { return x.img; })).filter(Boolean), function (u) { return u; });
+    // Par défaut, la première sortie japonaise au centre (comme la page web) ; sinon l'ordre choisi par Will.
+    if (jp.length && collL.indexOf(jp[0].cover) > 0) { collL.splice(collL.indexOf(jp[0].cover), 1); collL.unshift(jp[0].cover); }
     var coll = enAvant(collL, kU, choix().couv, 5);
     SEC.couv = { nom: "Page 1 · couvertures", list: collL, feat: coll, kf: kU, max: 5, img: function (u) { return u; }, lab: function () { return ""; } };
     var tuiles = [[fr.length + jp.length, "sortie"], [chap.length, "chapitre JP", "chapitres JP"], [fiches.length, "fiche", "fiches", 1], [films.length, "film"], [D.news.length, "actu"], [adm ? adm.membres.nouveaux.length : 0, "nouveau membre", "nouveaux membres", 1]]
@@ -333,7 +343,8 @@ button:disabled{opacity:.5;cursor:default}
     out.push({ k: "fin", nom: "Fin", html: fin });
 
     var ord = {}; ["couv", "jp", "fr", "actus"].forEach(function (k) { if (SEC[k]) ord[k] = SEC[k]; }); SEC = ord; panneau();
-    slides = out; afficher();
+    D.og = { coll: coll, nT: fr.length + jp.length, nC: chap.length, nF: fiches.length };
+    slides = out; afficher(); ogDessin();
     legende({ jp: SEC.jp ? SEC.jp.feat.concat(jp.filter(function (x) { return SEC.jp.feat.indexOf(x) < 0; })) : jp, fr: SEC.fr ? SEC.fr.feat.concat(fr.filter(function (x) { return SEC.fr.feat.indexOf(x) < 0; })) : fr, chap: chap, actus: actus, fiches: fiches, films: films, adm: adm });
   }
 
@@ -350,6 +361,29 @@ button:disabled{opacity:.5;cursor:default}
     echelle(); window.onresize = echelle; numeroter();
     $("#msg").textContent = slides.length + " images pour la semaine du " + jour(D.du) + " au " + jour(D.au) + (D.adm ? "" : " (connecte-toi au back-office pour les chiffres membres et films)");
     $("#dl").disabled = false;
+  }
+  // Image de partage du lien de /recap/semaine/AAAA-SS/ : titre à gauche, éventail de couvertures à droite.
+  function anSem(du) { return { an: new Date(dec(du, 3) + "T12:00:00Z").getUTCFullYear(), n: semaineISO(du) }; }
+  function ogDessin() {
+    var o = D.og, c = o.coll.slice(0, 5), W = anSem(D.du), ord = c.length >= 5 ? [1, 2, 0, 3, 4] : c.length === 4 ? [1, 0, 2, 3] : c.length === 3 ? [1, 0, 2] : c.length === 2 ? [0, 1] : [0];
+    var mid = (ord.length - 1) / 2, chiffres = [[o.nT, "sortie", "sorties"], [o.nC, "chapitre", "chapitres"], [o.nF, "nouvelle fiche", "nouvelles fiches"]].filter(function (t) { return t[0]; }).map(function (t) { return t[0] + " " + (t[0] > 1 ? t[2] : t[1]); }).join(" · ");
+    var per = (D.du.slice(5, 7) === D.au.slice(5, 7) ? +D.du.slice(8, 10) : court(D.du)) + " → " + court(D.au);
+    $("#ogsc").innerHTML = '<div class="og"><div style="position:absolute;inset:0;background:radial-gradient(circle at 78% 60%,#3a0010 0,#0c0c0e 55%)"></div>' +
+      '<img src="' + LOGO + '" style="position:absolute;left:64px;top:56px;height:46px">' +
+      '<div style="position:absolute;left:64px;top:150px;width:600px"><div style="font:700 22px FGInter;letter-spacing:.22em;text-transform:uppercase;color:#9a968f">Le récap de la semaine</div>' +
+      '<div class="A" style="font-size:84px;margin-top:16px">Quoi de neuf<br><span style="color:#BC002D">dans le gang&nbsp;?</span></div>' +
+      '<div style="display:inline-block;margin-top:30px;background:#BC002D;color:#fff;font:700 22px FGInter;letter-spacing:.12em;text-transform:uppercase;padding:12px 20px;border-radius:8px">Semaine ' + W.n + ' · ' + per + '</div>' +
+      (chiffres ? '<div style="margin-top:18px;font:600 22px FGInter;color:#cfcbc4">' + chiffres + '</div>' : '') + '</div>' +
+      ord.map(function (ci, i) { var k = i - mid, f = Math.abs(k) < .01; return c[ci] ? '<img class="cv" src="' + couv(c[ci]) + '" style="height:' + (f ? 420 : 340) + 'px;left:' + (960 + k * 100) + 'px;bottom:' + (f ? 70 : 60) + 'px;transform:translateX(-50%) rotate(' + (k * 7) + 'deg);transform-origin:bottom center;z-index:' + (10 - Math.round(Math.abs(k) * 2)) + '">' : ""; }).join("") + '</div>';
+    var f = $("#ogf"); $("#ogsc").style.transform = "scale(" + f.clientWidth / 1200 + ")";
+    clearTimeout(ogDessin._t); ogDessin._t = setTimeout(ogEnvoyer, 2500);
+  }
+  function ogEnvoyer() {
+    if (!D || !D.og) return; var W = anSem(D.du), nom = "semaine-" + W.an + "-" + String(W.n).padStart(2, "0");
+    $("#ogmsg").textContent = "Envoi…";
+    fontCSS().then(function (fcss) { return jpeg($("#ogsc .og"), fcss, 1200, 630); }).then(function (u) {
+      return fetch("/api/admin/ogcard", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ nom: nom, data: u }) }).then(function (r) { return r.json(); });
+    }).then(function (j) { $("#ogmsg").textContent = j && j.ok ? "À jour ✓" : "Échec : " + ((j && j.error) || "?"); }).catch(function (e) { $("#ogmsg").textContent = "Échec de l'envoi"; });
   }
   function numeroter() {
     var on = slides.filter(function (s) { return !s.off; }), n = on.length;
@@ -385,13 +419,13 @@ button:disabled{opacity:.5;cursor:default}
     return polices;
   }
   fontCSS();
-  function jpeg(node, fcss) {
+  function jpeg(node, fcss, w, h) {
     // Les images passent en data URL avant le dessin (Safari), puis on redessine jusqu'à ce que le résultat soit stable.
     return Promise.all([].map.call(node.querySelectorAll("img"), function (im) {
       if (/^data:/.test(im.src)) return null;
       return dataUrl(im.getAttribute("src")).then(function (u) { im.src = u; return new Promise(function (ok) { if (im.complete) ok(); else im.onload = im.onerror = ok; }); }).catch(function () { im.src = VIDE; im.style.visibility = "hidden"; });
     })).then(function () {
-      var opts = { width: 1080, height: 1440, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, backgroundColor: "#0c0c0e", imagePlaceholder: VIDE,
+      var opts = { width: w || 1080, height: h || 1440, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, backgroundColor: "#0c0c0e", imagePlaceholder: VIDE,
         filter: function () { return true; } };
       var essai = function (k, prev) { return htmlToImage.toJpeg(node, opts).then(function (u) {
         if (k >= 4 || (prev && Math.abs(u.length - prev.length) < 300 && k >= 2)) return u;
@@ -419,6 +453,8 @@ button:disabled{opacity:.5;cursor:default}
       $("#msg").textContent = files.length + " images téléchargées.";
     }).catch(function (e) { $("#msg").textContent = "Échec : " + (e && e.message || (e && e.type ? "une image n'a pas pu être chargée" : e)); }).finally(function () { b.disabled = false; });
   };
+  $("#ogup").onclick = ogEnvoyer;
+  addEventListener("resize", function () { var f = $("#ogf"); if (f) $("#ogsc").style.transform = "scale(" + f.clientWidth / 1200 + ")"; });
   $("#cp").onclick = function () { navigator.clipboard.writeText($("#leg").value).then(function () { $("#cp").textContent = "Copié"; setTimeout(function () { $("#cp").textContent = "Copier"; }, 1500); }); };
   $("#du").onchange = charger;
   $("#prev").onclick = function () { $("#du").value = dec(lundi($("#du").value), -7); charger(); };
