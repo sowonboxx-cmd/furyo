@@ -211,6 +211,11 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px}
     return '<section class="sec">' + tete(cls === "fr" ? "#E255A1" : "#FFA344", nomPays, list.length + " tome" + (list.length > 1 ? "s" : ""), kj) + '<div class="grid">' + list.map(carte).join("") + "</div></section>";
   }
   // Ordre : ce que Will a mis en avant dans le studio d'abord, puis le reste.
+  // Chapitres en ligne (Manga One, Champion Cross…) sans couverture de magazine : l'image de la série si on l'a,
+  // sinon une des images « lecture en ligne » envoyées par Will, à tour de rôle (Will, 26/10/2026).
+  var WEB = { "tataki": "tataki", "nine-peaks": "nine-peaks", "ushijima": "ushijima-kun", "saigo-no-furyou": "saigo-no-furyou", "saburoku-santa": "saburoku-santa", "doom": "doom" }, webN = 0;
+  var WEB_ALL = ["doom", "saigo-no-furyou", "tataki", "ushijima-kun", "nine-peaks", "saburoku-santa"];
+  function imgWeb(t) { var s = slugify(t); for (var k in WEB) if (s.indexOf(k) >= 0) return "/img/web/" + WEB[k] + ".jpg"; return "/img/web/" + WEB_ALL[webN++ % WEB_ALL.length] + ".jpg"; }
   var kT = function (x) { return [x.seriesId || x.series, x.n, x.pays, x.date].join("|"); };
   function ordre(list, kf, sel) { if (!sel || !sel.length) return list; var m = {}; list.forEach(function (x) { m[kf(x)] = x; }); var a = sel.map(function (k) { return m[k]; }).filter(Boolean); return a.concat(list.filter(function (x) { return a.indexOf(x) < 0; })); }
 
@@ -292,7 +297,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px}
 
       var h = section("Au Japon", "jp", jp, "日本") + section("En France", "fr", fr, "仏国") + JOIN;
       if (chap.length) h += '<section class="sec">' + tete("#529CCA", chap.length + " chapitre" + (chap.length > 1 ? "s" : "") + ", " + mags.length + " magazine" + (mags.length > 1 ? "s" : "")) + '<div class="mags">' + chap.map(function (c) { var t = c.entry.split(" · ")[0], hl = (c.hl || [])[0];
-        return '<a class="mag" href="/japon/">' + (c.cover ? '<img src="' + couv(c.cover) + '" alt="" loading="lazy">' : '<div class="no">WEB</div>') + '<div style="min-width:0"><b>' + esc(t) + '</b><span>' + esc(c.mag) + (c.ch ? " · ch. " + c.ch : "") + (hl ? ' · <em>' + esc(hl) + '</em>' : "") + "</span></div></a>"; }).join("") + "</div></section>";
+        return '<a class="mag" href="/japon/">' + (c.cover ? '<img src="' + couv(c.cover) + '" alt="" loading="lazy">' : '<img src="' + imgWeb(t) + '" alt="" loading="lazy">') + '<div style="min-width:0"><b>' + esc(t) + '</b><span>' + esc(c.mag) + (c.ch ? " · ch. " + c.ch : "") + (hl ? ' · <em>' + esc(hl) + '</em>' : "") + "</span></div></a>"; }).join("") + "</div></section>";
       if (actus.length) h += '<section class="sec">' + tete("#D4D4D8", "À ne pas rater", "", "速報") + '<div class="nws">' + actus.map(function (n) { var a = (n.accroche || "").trim() || String(n.texte || "").slice(0, 140);
         return '<a class="nw" href="' + esc(n.lien || ("/actus/" + slugify(n.fr || n.titre).slice(0, 60) + "-" + String(n.id).slice(-8))) + '"><img src="' + couv(n.cover) + '" alt="" loading="lazy"><div style="min-width:0"><span class="pill" style="background:' + (n.catC || "#D4D4D8") + '">' + esc(n.catNom || "News") + '</span><h3>' + esc(n.fr || n.titre) + '</h3><p>' + esc(a) + "</p></div></a>"; }).join("") + "</div></section>";
       if (fiches.length) { var av = p[3] || {}, on = Math.max(1, Math.round((av.pct || 0) / 5));
