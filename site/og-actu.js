@@ -16,6 +16,21 @@
     '.oga .oga-badge{display:inline-block;background:#E0123F;color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.07em;padding:11px 20px 9px;border-radius:8px}',
     '.oga .oga-title{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:96px;line-height:.96;letter-spacing:.01em;color:#fff;text-transform:uppercase;margin:22px 0 0;overflow-wrap:anywhere}',
     '.oga .oga-title.oga-s{font-size:76px}.oga .oga-title.oga-xs{font-size:60px}',
+    /* Extrait (Will, 26/10/2026, « Extrait 1 ») : couverture + planche à gauche, titre géant, pastille « Lis le chapitre 1 », auteurs, éditeur */
+    '.oge{width:1200px;height:630px;position:relative;overflow:hidden;background:#0c0c0e;font-family:"FGInter",sans-serif;line-height:normal;text-align:left;color:#F2EFE9}',
+    '.oge *{box-sizing:border-box}',
+    '.oge .bg{position:absolute;inset:-30px;background-size:cover;background-position:center;filter:grayscale(1) blur(2px);opacity:.22}',
+    '.oge .sh{position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,12,14,.35),rgba(12,12,14,.92) 55%)}',
+    '.oge .im{position:absolute;object-fit:cover;border:6px solid #fff;border-radius:3px;box-shadow:0 26px 60px rgba(0,0,0,.75);background:#222}',
+    '.oge .lg{position:absolute;right:56px;top:46px;height:40px}',
+    '.oge .tx{position:absolute;left:600px;right:50px;top:50%;transform:translateY(-50%)}',
+    '.oge .t{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;line-height:.88;font-size:122px;white-space:nowrap}',
+    '.oge .t.s{font-size:96px}.oge .t.xs{font-size:76px;white-space:normal}',
+    '.oge .pl{display:inline-block;margin-top:22px;background:#BC002D;color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:34px;letter-spacing:.04em;text-transform:uppercase;padding:10px 22px 12px;border-radius:6px}',
+    '.oge .au{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase;margin-top:26px}',
+    '.oge .sr{font-weight:500;font-size:21px;color:#cfcbc4;margin-top:10px}.oge .sr b{color:#fff}',
+    '.oge .fl{display:inline-block;width:30px;height:20px;vertical-align:-3px;margin-left:8px;border-radius:3px;background:linear-gradient(90deg,#0055A4 0 33%,#fff 33% 66%,#EF4135 66%)}',
+    '.oge .fl.jp{background:#fff;position:relative}.oge .fl.jp:after{content:"";position:absolute;left:50%;top:50%;width:11px;height:11px;margin:-5.5px;border-radius:50%;background:#BC002D}',
     '.oga .oga-desc{font-family:"FGInter",sans-serif;font-weight:500;font-size:34px;line-height:1.4;color:#e9e9ec;margin-top:22px;max-width:560px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}'
   ].join("\n");
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
@@ -57,6 +72,45 @@
       '</div></div>';
   }
 
+  // d = { type: "extrait", titre, cover, cover2, cta, auteurs, editeur, quand, pays }
+  function cardExtrait(d, e1, e2) {
+    var c1 = e1 || couv(d.cover), c2 = e2 || couv(d.cover2), t = String(d.titre || ""), cls = t.length > 14 ? " xs" : t.length > 10 ? " s" : "";
+    return '<div class="oge">' + (c2 || c1 ? '<div class="bg" style="background-image:url(\'' + (c2 || c1) + '\')"></div>' : '') + '<div class="sh"></div>' +
+      (c2 ? '<img class="im" src="' + c2 + '" alt="" style="left:250px;top:70px;width:270px;height:430px;transform:rotate(5deg)">' : '') +
+      (c1 ? '<img class="im" src="' + c1 + '" alt="" style="left:' + (c2 ? 70 : 140) + 'px;top:58px;width:330px;height:470px;transform:rotate(-3deg)">' : '') +
+      '<img class="lg" src="/img/logo-furyogang.png" alt="FuryoGang">' +
+      '<div class="tx"><div class="t' + cls + '">' + esc(t) + '</div>' +
+      '<div class="pl">' + esc(d.cta || "Lis l'extrait") + ' →</div>' +
+      (d.auteurs ? '<div class="au">' + esc(d.auteurs) + '</div>' : '') +
+      ((d.editeur || d.quand) ? '<div class="sr">' + (d.editeur ? 'Extrait sur <b>' + esc(d.editeur) + '</b>' : 'Extrait') + (d.quand ? ' · ' + esc(d.quand) : '') + '<span class="fl' + (d.pays === "Japon" ? " jp" : "") + '"></span></div>' : '') +
+      '</div></div>';
+  }
+  var MOISL = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  var jourL = function (iso) { var p = String(iso || "").split("-"); return p.length < 3 ? "" : (+p[2] === 1 ? "1er" : +p[2]) + " " + MOISL[+p[1] - 1]; };
+  var nomEd = function (u) { var h = String(u || "").replace(/^https?:\/\/(www\.)?/, "").split("/")[0]; var M = { "kana.fr": "Kana", "pika.fr": "Pika", "glenat.com": "Glénat", "ki-oon.com": "Ki-oon", "kurokawa.fr": "Kurokawa", "akata.fr": "Akata", "mangetsu.fr": "Mangetsu", "meian.fr": "Meian", "vega-livres.fr": "Vega-Dupuis", "kaze.fr": "Kaze", "komikku-editions.fr": "Komikku", "soleilprod.com": "Soleil" }; return M[h] || ""; };
+  // Données de la carte « Extrait » à partir d'une news de la veille (back-office ou studio) : fiche série publique /api/serie.
+  function donneesExtrait(i) {
+    var slug = i.serie && i.serie.slug;
+    return (slug ? fetch("/api/serie?s=" + encodeURIComponent(slug)).then(function (r) { return r.json(); }).catch(function () { return {}; }) : Promise.resolve({})).then(function (d) {
+      var s = d.serie || {}, eds = d.editions || [], jp = eds.find(function (e) { return e.pays === "Japon"; }), fr = eds.find(function (e) { return e.pays === "France"; });
+      var t1 = function (e) { var t = e && (e.tomes || []).filter(function (x) { return x.cover; }).sort(function (a, b) { return (a.n || 0) - (b.n || 0); }); return t && t.length ? t : []; };
+      var tj = t1(jp), tf = t1(fr), txt = [i.titre, i.texte, i.accroche].join(" ");
+      var cover = (tj[0] && tj[0].cover) || (tf[0] && tf[0].cover) || i.imageChoisie || (i.serie && i.serie.cover) || "";
+      var cover2 = i.planche || (tf[0] && tf[0].cover !== cover ? tf[0].cover : "") || (tj[1] && tj[1].cover) || "";
+      var ch = (txt.match(/chapitre\s+(\d+)/i) || [])[1] || (/premier chapitre|chapitre 1\b/i.test(txt) ? "1" : "");
+      var aut = []; [s.scen, s.dess].forEach(function (a) { String(a || "").split(/\s*[,&]\s*/).forEach(function (x) { x = x.trim(); if (x && aut.indexOf(x) < 0) aut.push(x); }); });
+      var auj = new Date().toISOString().slice(0, 10), pays = fr || !jp ? "France" : "Japon";
+      var d1 = s.t1FR && s.t1FR >= auj ? s.t1FR : "", m = txt.match(/tome 1[^.]*?le (\d{1,2}(?:er)? [a-zéû]+)/i);
+      return { type: "extrait", titre: s.fr || s.t || (i.serie && (i.serie.fr || i.serie.t)) || i.titre, cover: cover, cover2: cover2,
+        cta: ch ? "Lis le chapitre " + ch : "Lis l'extrait", auteurs: aut.join(" · "),
+        editeur: nomEd(i.src) || nomEd(s.extraitFR) || String(s.pubFR || "").replace(/\s*\(.*$/, "").split(",").pop().trim(),
+        quand: d1 ? "tome 1 le " + jourL(d1) : m ? "tome 1 le " + m[1] : "", pays: pays };
+    });
+  }
+  // JPEG 1200×630 et envoi dans R2 (og/f/actu-<id8>.jpg), repris comme og:image de la news.
+  function jpeg(png, q) { return new Promise(function (ok) { var img = new Image(); img.onload = function () { var c = document.createElement("canvas"); c.width = 1200; c.height = 630; var x = c.getContext("2d"); x.fillStyle = "#000"; x.fillRect(0, 0, 1200, 630); x.drawImage(img, 0, 0, 1200, 630); try { ok(c.toDataURL("image/jpeg", q || .9)); } catch (e) { ok(png); } }; img.onerror = function () { ok(png); }; img.src = png; }); }
+  function envoyer(id, d) { return png(d).then(function (p) { return jpeg(p, .9); }).then(function (j) { return fetch("/api/admin/ogcard", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, data: j }) }).then(function (r) { return r.json(); }); }); }
+
   function charger(src) { return window.htmlToImage ? Promise.resolve() : new Promise(function (ok, ko) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
   function images(el) { return Promise.all([].map.call(el.querySelectorAll("img"), function (im) { return im.complete && im.naturalWidth ? null : new Promise(function (ok) { im.onload = im.onerror = ok; }); })); }
 
@@ -64,15 +118,16 @@
     var box = document.createElement("div");
     box.style.cssText = "position:fixed;left:-20000px;top:0;width:1200px;height:630px;overflow:hidden;pointer-events:none";
     var lib = charger("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js");
-    var cov = dataUrl(couv(d.cover));
-    return Promise.all([lib, cov, fonts()]).then(function (r) {
-      box.innerHTML = card(d, r[1] || couv(d.cover));
+    var cov = dataUrl(couv(d.cover)), cov2 = d.type === "extrait" ? dataUrl(couv(d.cover2)) : Promise.resolve(null), logo = d.type === "extrait" ? dataUrl("/img/logo-furyogang.png") : Promise.resolve(null);
+    return Promise.all([lib, cov, fonts(), cov2, logo]).then(function (r) {
+      box.innerHTML = d.type === "extrait" ? cardExtrait(d, r[1], r[3]) : card(d, r[1] || couv(d.cover));
+      if (r[4]) { var lg = box.querySelector(".lg"); if (lg) lg.src = r[4]; }
       document.body.appendChild(box);
       return images(box).then(function () { return r[2]; });
     }).then(function (fcss) {
       var names = ['700 40px "FGAntonio"', '500 40px "FGInter"'];
       return Promise.all(names.map(function (f) { return document.fonts.load(f, "A"); })).then(function () {
-        var opts = { width: 1200, height: 630, pixelRatio: 1, fontEmbedCSS: fcss, cacheBust: false };
+        var opts = { width: 1200, height: 630, pixelRatio: 1, fontEmbedCSS: fcss, cacheBust: false, backgroundColor: "#0c0c0e" };
         var essai = function (k, prev) {
           return htmlToImage.toPng(box.firstChild, opts).then(function (u) {
             if (k >= 4 || (prev && Math.abs(u.length - prev.length) < 200 && k >= 2)) return u;
@@ -84,5 +139,5 @@
     }).finally(function () { box.remove(); });
   }
 
-  window.FG_OGACTU = { card: card, png: png, SIZE: SIZE };
+  window.FG_OGACTU = { card: card, cardExtrait: cardExtrait, png: png, jpeg: jpeg, envoyer: envoyer, donneesExtrait: donneesExtrait, SIZE: SIZE };
 })();

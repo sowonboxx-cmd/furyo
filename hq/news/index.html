@@ -105,6 +105,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 <body>
 <div class="app" id="app"><p class="vide">Chargement…</p></div>
 <script src="/site/sortie-post.js?v=6"></script>
+<script src="/site/og-actu.js?v=2"></script>
 <script>
 (function () {
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -179,6 +180,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     if (k === "site") return '<div class="edp"><h2>' + IC.site + 'Article du site</h2><div class="lbl">Accroche (sur l’accueil) <em>' + accroche().length + ' / 120</em></div><input class="inp" data-f="accroche" maxlength="160" value="' + esc(accroche()) + '">' +
       '<div class="lbl">Résumé du site ' + compteur("site") + '</div><textarea class="ta" data-f="site" style="min-height:220px">' + esc(D.site) + '</textarea>' +
       '<div class="lbl">Visuel</div>' + imgPick() + '<div class="lbl">Ou colle l’adresse d’une image</div><input class="inp" data-f="image" placeholder="https://…" value="' + esc(D.image || N.imageChoisie || "") + '">' +
+      '<div class="lbl">Image de partage du lien (X, WhatsApp, LinkedIn…)</div><div id="ogp" style="position:relative;width:100%;aspect-ratio:1200/630;border-radius:12px;overflow:hidden;background:#000"><div class="ogs" style="position:absolute;left:0;top:0;transform-origin:0 0"></div></div>' +
       '<div class="ai"><button data-gen>Refaire les textes réseaux depuis l’article</button><a class="btn" style="height:auto;padding:9px 12px;border-radius:12px;font-size:12.5px;text-decoration:none" href="/admin/#validation/' + encodeURIComponent(N.id) + '">Catégorie, vidéo, recadrage… (back-office)</a></div></div>';
     var sub = { x: "Le post qui part sur @FuryoGang. L’aperçu se met à jour pendant que tu tapes.", ig: "Publication sur @furyogang. La légende s’affiche sous l’image.", tt: "Publication photo sur @furyogang. La légende s’affiche en bas de l’image : le visuel TikTok garde le titre en haut et le bas libre." }[k];
     return '<div class="edp"><h2>' + IC[k] + NOMS[k] + '</h2><p class="sub">' + sub + '</p><div class="lbl">' + (k === "x" ? "Texte" : "Légende") + ' ' + compteur(k) + '</div><textarea class="ta" data-f="' + k + '">' + esc(D[k]) + '</textarea>' +
@@ -200,7 +202,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function draw() {
     var y = scrollY, f = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.f : null;
     $("#app").innerHTML = mob() ? mobile() : (V === "all" ? vue() : focus());
-    fit(); scrollTo(0, y);
+    fit(); scrollTo(0, y); ogApercu();
     if (f) { var el = $('[data-f="' + f + '"]'); if (el) { el.focus(); el.setSelectionRange && el.setSelectionRange(el.value.length, el.value.length); } }
   }
   // Aperçu en direct sans tout redessiner (le curseur reste en place).
@@ -273,11 +275,28 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
         if (!r.ok) { toast(r.j.error || "Échec, réessaie"); return; }
         N.texte = D.site; N.accroche = accroche(); if (b.image) N.imageChoisie = b.image; ["legX", "legIG", "legTT"].forEach(function (p) { if (p in b) N[p] = b[p]; });
         if (k === "planifier") { N.planif = extra.planif; toast("Planifiée le " + new Date(jour + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) + " à " + h + " ✓"); }
-        else if (k === "publier") { N.enLigne = true; toast("En ligne sur le site ✓"); }
+        else if (k === "publier") { N.enLigne = true; toast("En ligne sur le site ✓"); ogEnvoyer(); }
         else if (k === "vu" || k === "retirer") { toast(k === "vu" ? "Gardée de côté ✓" : "Retirée du site ✓"); setTimeout(function () { location.href = "/hq/#calendrier"; }, 900); return; }
-        else toast("Changements enregistrés ✓");
+        else { toast("Changements enregistrés ✓"); if (N.enLigne) ogEnvoyer(); }
         draw();
       }).catch(function () { btn.disabled = false; toast("Erreur réseau"); });
+  }
+
+  /* ---------- image de partage du lien (og:image, 1200×630) ---------- */
+  // Extrait : carte « Extrait 1 » (Will, 26/10/2026) ; autres news : carte « dossier » du back-office.
+  function ogDonnees() {
+    var i = Object.assign({}, N, { texte: D.site, accroche: accroche(), imageChoisie: img() || N.imageChoisie });
+    if ((N.cat === "extrait" || N.cat2 === "extrait") && window.FG_OGACTU && FG_OGACTU.donneesExtrait) return FG_OGACTU.donneesExtrait(i);
+    var phr = String(D.site || "").replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s/)[0].slice(0, 150);
+    return Promise.resolve({ titre: (N.serie && N.serie.t) || titre(), cat: (CATS[N.cat] && CATS[N.cat] !== "News" ? CATS[N.cat] : CATS[N.cat2] || CATS[N.cat] || "News"), date: N.date || N.cree, desc: accroche() || phr, cover: img() || (N.serie && N.serie.cover) || "" });
+  }
+  function ogApercu() {
+    var b = $("#ogp"); if (!b || !window.FG_OGACTU) return;
+    ogDonnees().then(function (d) { var sc = $("#ogp .ogs"); if (!sc) return; sc.innerHTML = d.type === "extrait" ? FG_OGACTU.cardExtrait(d) : FG_OGACTU.card(d); sc.style.transform = "scale(" + b.clientWidth / 1200 + ")"; });
+  }
+  function ogEnvoyer() {
+    if (!window.FG_OGACTU || !N.id) return;
+    ogDonnees().then(function (d) { return FG_OGACTU.envoyer(N.id, d); }).then(function (j) { if (j && j.ok) toast("Image de partage du lien à jour ✓"); }).catch(function () {});
   }
 
   /* ---------- chargement ---------- */

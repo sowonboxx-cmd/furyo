@@ -369,7 +369,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 <script src="/site/tome-card.js?v=4"></script>
 <script src="/site/sortie-post.js?v=6"></script>
 <script src="/site/quickaccess.js?v=11"></script>
-<script src="/site/og-actu.js?v=1"></script>
+<script src="/site/og-actu.js?v=2"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const root = document.getElementById("root");
@@ -1301,6 +1301,8 @@ async function genOgCard(i){
     if (!window.FG_OGACTU) return;
     const labels = [VCATS[i.cat], VCATS[i.cat2]].filter(Boolean);
     const badge = labels.find(l => l.toLowerCase() !== "news") || labels[0] || "News";
+    // Extrait (Will, 26/10/2026) : carte « Extrait 1 » (couverture + planche, « Lis le chapitre 1 », auteurs, éditeur, date du tome 1).
+    if ([i.cat, i.cat2].includes("extrait") && FG_OGACTU.donneesExtrait) { await FG_OGACTU.envoyer(i.id, await FG_OGACTU.donneesExtrait(i)); return; }
     const cover = await ogCover(i);
     const png = await FG_OGACTU.png({ titre: (i.serie && i.serie.t) || i.titre, cat: badge, date: i.date || i.cree, desc: i.accroche || ogPhrase(i.texte), cover });
     const jpg = await pngToJpeg(png, 0.9);
