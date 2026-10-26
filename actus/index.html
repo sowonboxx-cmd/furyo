@@ -502,7 +502,7 @@ body{background:#000}
       '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' +
       '<div class="nd-tx"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
       (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div></div>" +
-      '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><div class="na-text">' + txt(N.texte) + "</div>" + lireD() + " + vid(N.video) +
+      '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><div class="na-text">' + txt(N.texte) + "</div>" + lireD() + vid(N.video) +
       (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
       '<aside class="nd-col">' + fiche() + (window.FG_GANG ? FG_GANG("widget") : "") + dernier() + autres() + mangakas() + "</aside></div>";
     chargerTweets();
