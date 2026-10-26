@@ -23,7 +23,7 @@
     '.oge .sh{position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,12,14,.35),rgba(12,12,14,.92) 55%)}',
     '.oge .im{position:absolute;object-fit:cover;border:6px solid #fff;border-radius:3px;box-shadow:0 26px 60px rgba(0,0,0,.75);background:#222}',
     '.oge .lg{position:absolute;right:56px;top:46px;height:40px}',
-    '.oge .tx{position:absolute;left:668px;right:44px;top:50%;transform:translateY(-50%)}',
+    '.oge .tx{position:absolute;left:632px;right:44px;top:50%;transform:translateY(-50%)}',
     '.oge .t{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;line-height:.88;font-size:116px;white-space:nowrap}',
     '.oge .t.s{font-size:90px}.oge .t.xs{font-size:72px;white-space:normal}',
     '.oge .pl{display:inline-block;margin-top:22px;background:#BC002D;color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:34px;letter-spacing:.04em;text-transform:uppercase;padding:10px 22px 12px;border-radius:6px}',

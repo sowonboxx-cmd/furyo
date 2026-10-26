@@ -24,7 +24,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Date de publication sur le site (Will, 22/10/2026) : prioritaire sur la date de repérage pour l'ordre et la date affichée.
   const pubLe = p => (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "";
   const jourParis = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
-  return cached(request, waitUntil, "/api/news?v=11", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=12", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -63,6 +63,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
         // Lien externe facultatif (Will, 20/10/2026) : si rempli, la carte ouvre cette page (ex. /recap/2026-09/) au lieu de /actus/<slug>.
         lien: text(p["Lien"]) || "",
         // Carte « Extrait » (Will, 26/10/2026) : l'image de la news est la carte paysage ; les miniatures prennent la couverture du tome 1.
+        // carte : true quand l'image de la news est une carte complète (titre écrit dessus) → bannières sans texte du site.
         vignette: (() => { try { const t = text(p["Carte"]) || "null"; let c; try { c = JSON.parse(t); } catch (e) { c = JSON.parse(t.replace(/'/g, '"')); } return c && c.couv ? (/^\//.test(c.couv) ? "https://furyogang.com" + c.couv : c.couv) : ""; } catch (e) { return ""; } })(),
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),
@@ -92,7 +93,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     }
     items.sort((a, b) => b._t.localeCompare(a._t));
     // sid : la série liée (Studio Quoi de neuf : dernier tome paru pour les news « Tomes en circulation », Will 26/10/2026).
-    items.forEach(i => { if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._sid; delete i._n; delete i._pays; delete i._t; });
+    items.forEach(i => { if (i.vignette && /\/api\/ogcard\//.test(i.cover || "")) i.carte = true; else i.vignette = ""; if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._sid; delete i._n; delete i._pays; delete i._t; });
     return { items };
   });
 }
