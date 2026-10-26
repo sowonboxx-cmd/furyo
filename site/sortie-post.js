@@ -101,6 +101,29 @@
       ig: "📖 " + i.titre + (txt ? "\n\n" + txt : "") + "\n\n" + i.tweet + "\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n" + tags.join(" "),
       tt: "📖 " + i.titre + "\n\n" + i.tweet + "\n\n📖 Infos sur furyogang.com\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
     };
+    // Extrait (standard Will, 27/10/2026) : « <Série> / Extrait du chapitre N », le résumé, puis les comptes (auteurs · éditeur),
+    // et le lien de la news en dernier (X l'affiche en carte « Extrait » et masque l'adresse).
+    if (i.cat === "extrait" || i.cat2 === "extrait") {
+      var nomS = s.fr || s.t || String(i.titre || "").split(" : ")[0];
+      var chM = String([i.titre, i.accroche, txt].join(" ")).match(/chapitre\s+(\d+)/i), chN = chM ? chM[1] : (/premier chapitre/i.test(txt + i.titre) ? "1" : "");
+      var tete = nomS + "\n" + (chN ? "Extrait du chapitre " + chN : "Extrait");
+      var slugN = String(i.fr || nomS).replace(/œ/g, "oe").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+      var lien = "https://furyogang.com/actus/" + slugN + "-" + String(i.id || "").replace(/-/g, "").slice(-8);
+      var phE = phrases(sansRedite(nomS, txt)), resE = [...phE.map(function (_, n) { return phE.slice(0, n + 1).join(" "); }).reverse(), ""];
+      var xE = "";
+      for (var rE of resE) {
+        var bE = tete + (rE ? "\n\n" + rE : "");
+        var hE = choixX(c.x, c.xFR, function (l) { return poidsX(bE + "\n\n" + l.map(function (x) { return "@" + x; }).join(" · ") + "\n" + lien) <= 280; }, [], c.xJP);
+        var cand = bE + (hE.length ? "\n\n" + hE.map(function (x) { return "@" + x; }).join(" · ") : "") + "\n" + lien;
+        if (poidsX(cand) <= 280) { xE = cand; break; }
+      }
+      var resIG = txt ? "\n\n" + txt : "";
+      return {
+        x: xE || tete + "\n" + lien,
+        ig: tete + resIG + "\n\n📖 Le lien pour le lire est sur furyogang.com (lien en bio)." + ((c.ig || []).length ? "\n\n" + c.ig.map(function (h) { return "@" + h; }).join(" · ") : "") + "\n\n" + tags.join(" "),
+        tt: tete + (txt ? "\n\n" + resumeCourt(txt) : "") + "\n\n📖 Le lien pour le lire : furyogang.com (lien en bio)" + ((c.tt || []).length ? "\n" + c.tt.map(function (h) { return "@" + h; }).join(" · ") : "") + "\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
+      };
+    }
     var titres = [...new Set([i.titre, i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news)\s*:\s*/i, ""), String(i.serie && i.serie.t || i.titre)])];
     // Pas de redite (Will, 22/10/2026) : si la 1re phrase du résumé redit le titre, on la retire des posts.
     txt = sansRedite(i.titre, txt);
