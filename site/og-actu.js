@@ -26,7 +26,7 @@
     '.oge .tx{position:absolute;left:632px;right:44px;top:50%;transform:translateY(-50%)}',
     '.oge .t{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;line-height:.88;font-size:116px;white-space:nowrap}',
     '.oge .t.s{font-size:90px}.oge .t.xs{font-size:72px;white-space:normal}',
-    '.oge .pl{display:inline-block;margin-top:22px;background:#BC002D;color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:34px;letter-spacing:.04em;text-transform:uppercase;padding:10px 22px 12px;border-radius:6px}',
+    '.oge .pl{display:inline-block;margin-top:22px;background:#BC002D;color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:34px;letter-spacing:.04em;text-transform:uppercase;padding:10px 26px 12px;border-radius:6px;text-align:center}',
     '.oge .au{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase;margin-top:26px}',
     '.oge .sr{font-weight:500;font-size:21px;color:#cfcbc4;margin-top:10px}.oge .sr b{color:#fff}',
     '.oge .fl{display:inline-block;width:30px;height:20px;vertical-align:-3px;margin-left:8px;border-radius:3px;background:linear-gradient(90deg,#0055A4 0 33%,#fff 33% 66%,#EF4135 66%)}',
@@ -82,7 +82,7 @@
       (c1 ? '<img class="im" src="' + c1 + '" alt="" style="left:' + (c2 ? 70 : 140) + 'px;top:58px;width:330px;height:470px;transform:rotate(-3deg)">' : '') +
       '<img class="lg" src="/img/logo-furyogang.png" alt="FuryoGang">' +
       '<div class="tx"><div class="t' + cls + '">' + esc(t) + '</div>' +
-      '<div class="pl">' + esc(d.cta || "Lis l'extrait") + ' →</div>' +
+      '<div class="pl">' + esc(String(d.cta || "Lis l'extrait").replace(/\s*[→>]+\s*$/, "")) + '</div>' +
       (d.auteurs ? '<div class="au">' + esc(d.auteurs) + '</div>' : '') +
       ((d.editeur || d.quand) ? '<div class="sr">' + (d.editeur ? 'Extrait sur <b>' + esc(d.editeur) + '</b>' : 'Extrait') + (d.quand ? ' · ' + esc(d.quand) : '') + '<span class="fl' + (d.pays === "Japon" ? " jp" : "") + '"></span></div>' : '') +
       '</div></div>';

@@ -366,7 +366,7 @@ body{background:#000}
     root.classList.remove("nd");
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
-    root.innerHTML = '<div class="na-hero' + (N.carte ? " kc" : "") + '">' + (N.carte && (N.planche || N.vignette) ? '<span class="kbg" style="background-image:url(\'' + esc(couv(N.planche || N.vignette, 800)) + '\')"></span>' : "") + (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "") +
+    root.innerHTML = '<div class="na-hero' + (N.carte ? " kc" : "") + '">' +  (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "") +
       (N.cover && N.credit ? '<span class="cr" lang="' + (/^©[^ ]/.test(N.credit) ? "ja" : "fr") + '">' + esc(N.credit) + "</span>" : "") +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
         (N.jp ? '<span class="na-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<span class="na-meta">' + esc(dLong(N.date) || "") + "</span></div></div>" +
