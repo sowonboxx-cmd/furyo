@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quoi de neuf dans le gang ? — Le récap de la semaine · FuryoGang</title>
+<meta name="description" content="Le récap de la semaine FuryoGang : les sorties manga au Japon et en France, les chapitres en magazine, les actus à ne pas rater et les nouvelles fiches.">
+<!-- Récap de la semaine « Quoi de neuf dans le gang ? » (Will, 26/10/2026, maquette 1). Adresse : /recap/semaine/AAAA-SS/
+     (année + numéro de semaine ISO). Se remplit tout seul avec les API publiques ; les choix du studio /studio/semaine/
+     (tomes mis en avant, couvertures du haut, news) viennent de /api/recap-semaine. Le récap du mois est à /recap/mois/AAAA-MM/. -->
+<style>
+@font-face{font-family:"FGNoto";src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:900}
+@font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+:root{--bg:#0c0c0e;--bg2:#17171a;--line:#262630;--cr:#F2EFE9;--mut:#9a968f;--red:#BC002D}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--cr);font-family:"FGInter",system-ui,sans-serif;font-weight:500;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(16px,3vw,34px)}
+/* HERO */
+.hero{position:relative;border-radius:26px;overflow:hidden;background:#0c0c0e;margin-bottom:46px}
+.hero .wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:1fr;gap:6px;opacity:.5}
+.hero .wall img{width:100%;height:100%;object-fit:cover}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.7),rgba(12,12,14,.55) 45%,rgba(12,12,14,.9))}
+.hero .in{position:relative;z-index:2;padding:clamp(28px,5vw,64px) clamp(20px,4vw,56px);text-align:center}
+.hero .k{font:700 clamp(13px,2.4vw,24px) "FGInter";letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
+.hero h1{font:700 clamp(46px,11vw,150px)/.9 "FGAntonio";text-transform:uppercase;letter-spacing:.004em;margin-top:10px}
+.hero h1 em{font-style:normal;color:var(--red);display:block}
+.fan{position:relative;height:clamp(210px,33vw,400px);margin:clamp(18px,3vw,30px) 0}
+.fan img{position:absolute;left:50%;bottom:0;height:clamp(172px,27vw,330px);width:auto;aspect-ratio:300/430;object-fit:cover;border:5px solid #fff;border-radius:4px;box-shadow:0 18px 40px rgba(0,0,0,.55);transform-origin:bottom center;filter:brightness(.82)}
+.fan img.feat{height:clamp(210px,33vw,400px);border-width:6px;box-shadow:0 30px 66px rgba(0,0,0,.8);filter:none}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,22px);max-width:720px;margin:0 auto}
+.tiles>div{background:rgba(23,23,26,.82);border:2px solid var(--line);border-radius:18px;padding:clamp(16px,3vw,28px)}
+.tiles .fl{display:inline-flex;align-items:center;justify-content:center;width:46px;height:32px;border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.tiles .fl.jp{background:#fff}.tiles .fl.jp i{width:15px;height:15px;border-radius:50%;background:var(--red);display:block}
+.tiles .fl.fr i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#0055A4 0 33.34%,#fff 33.34% 66.67%,#EF4135 66.67% 100%)}
+.tiles b{display:block;font:700 clamp(54px,10vw,120px)/.9 "FGAntonio";margin:8px 0 2px}
+.tiles .cap{font:600 clamp(14px,2.4vw,24px) "FGInter";color:var(--mut)}
+/* SECTIONS */
+.sec{margin-bottom:44px}
+.sechd{display:flex;align-items:center;gap:16px;margin:0 0 22px}
+.sechd .fl{display:inline-flex;align-items:center;justify-content:center;width:54px;height:37px;border-radius:6px;overflow:hidden;border:1px solid var(--line);flex:none}
+.sechd .fl.jp{background:#fff}.sechd .fl.jp i{width:18px;height:18px;border-radius:50%;background:var(--red);display:block}
+.sechd .fl.fr i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#0055A4 0 33.34%,#fff 33.34% 66.67%,#EF4135 66.67% 100%)}
+.sechd h2{font:700 clamp(32px,6vw,58px) "FGAntonio";text-transform:uppercase;letter-spacing:.01em}
+.sechd .n{margin-left:auto;font:700 18px "FGAntonio";letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:clamp(14px,2.4vw,26px)}
+.card{display:block;position:relative}
+.card .cw{position:relative}
+.card .cov{width:100%;aspect-ratio:300/430;object-fit:cover;border:4px solid #fff;border-radius:5px;box-shadow:0 12px 26px rgba(0,0,0,.45);background:#222;display:block;transition:transform .15s}
+.card:hover .cov{transform:translateY(-4px)}
+.card .nb{position:absolute;right:-6px;top:-6px;background:var(--red);color:#fff;font:700 clamp(15px,2.6vw,22px)/1 "FGAntonio";padding:7px 10px;border-radius:6px}
+.card .add{position:absolute;left:8px;bottom:8px;right:8px;opacity:0;transition:opacity .15s;background:rgba(188,0,45,.95);color:#fff;font:700 15px "FGInter";text-align:center;padding:10px;border-radius:9px}
+.card:hover .add{opacity:1}
+.card .t{font:700 clamp(17px,2.8vw,22px)/1.12 "FGAntonio";text-transform:uppercase;margin-top:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .s{font:500 clamp(12px,2.2vw,15px) "FGInter";color:var(--mut);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card{cursor:pointer}
+/* LIGHTBOX */
+.lb{position:fixed;inset:0;z-index:80;background:rgba(8,8,10,.94);display:none;flex-direction:column;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0) + 18px) 16px calc(env(safe-area-inset-bottom,0) + 18px);opacity:0;transition:opacity .18s}
+.lb.on{display:flex;opacity:1}
+.lb .x{position:absolute;top:calc(env(safe-area-inset-top,0) + 14px);right:16px;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.1);border:0;color:#fff;font:400 26px/1 system-ui;cursor:pointer;z-index:3}
+.lb .nav{position:absolute;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.1);border:0;color:#fff;font:400 30px/1 system-ui;cursor:pointer;display:grid;place-items:center;z-index:3}
+.lb .nav:disabled{opacity:.25;cursor:default}
+.lb .np{left:14px}.lb .nn{right:14px}
+.lb .stage{flex:1;display:flex;align-items:center;justify-content:center;width:100%;min-height:0;padding:8px 0}
+.lb .stage img{max-height:100%;max-width:min(560px,86vw);object-fit:contain;border:5px solid #fff;border-radius:5px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.lb .meta{text-align:center;margin-top:16px;max-width:560px}
+.lb .meta .fl{display:inline-flex;align-items:center;justify-content:center;width:30px;height:21px;border-radius:4px;overflow:hidden;border:1px solid var(--line);vertical-align:middle;margin-right:7px}
+.lb .meta .fl.jp{background:#fff}.lb .meta .fl.jp i{width:10px;height:10px;border-radius:50%;background:var(--red);display:block}
+.lb .meta .fl.fr i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#0055A4 0 33.34%,#fff 33.34% 66.67%,#EF4135 66.67% 100%)}
+.lb .meta h3{font:700 clamp(24px,5vw,34px) "FGAntonio";text-transform:uppercase;display:inline}
+.lb .meta .sub{font:500 15px "FGInter";color:var(--mut);margin-top:6px}
+.lb .acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.lb .acts a{font:800 16px "FGInter";padding:14px 24px;border-radius:999px}
+.lb .acts .col{background:var(--red);color:#fff}
+.lb .acts .fic{background:rgba(255,255,255,.12);color:#fff}
+.lb .count{position:absolute;top:calc(env(safe-area-inset-top,0) + 20px);left:50%;transform:translateX(-50%);font:600 14px "FGInter";color:var(--mut)}
+/* CTA bas */
+.cta{background:var(--bg2);border:1px solid var(--line);border-radius:24px;padding:clamp(28px,5vw,52px);text-align:center;margin:10px 0 60px}
+.cta h3{font:700 clamp(34px,6vw,64px)/1 "FGAntonio";text-transform:uppercase}
+.cta p{font:600 clamp(16px,2.6vw,26px) "FGInter";color:var(--mut);margin-top:14px}
+.cta a.btn{display:inline-block;margin-top:26px;background:var(--red);color:#fff;font:800 clamp(18px,3vw,30px) "FGInter";padding:18px 36px;border-radius:999px}
+.load{text-align:center;color:var(--mut);padding:60px 0;font-size:15px}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px}
+/* ——— Récap de la semaine (Will, 26/10/2026 : maquette 1, grilles de 6 comme le récap du mois) ——— */
+.hero .dts{display:inline-block;margin-top:18px;font:700 clamp(13px,1.6vw,17px) "FGInter";letter-spacing:.12em;text-transform:uppercase;background:var(--red);color:#fff;padding:9px 16px;border-radius:8px}
+.hero{margin-top:26px}
+.tiles.t4{grid-template-columns:repeat(4,1fr);max-width:860px}
+.tiles.t4 b{font-size:clamp(40px,6vw,70px)}
+.tiles.t4 .cap{font-size:clamp(11px,1.4vw,14px);letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media (max-width:900px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.card .t{font-size:14px}.card .s{font-size:11px}.card .cov{border-width:3px}.card .nb{font-size:13px;padding:5px 7px}.tiles.t4{grid-template-columns:repeat(2,1fr)}}
+.kj{margin-left:18px;font:900 clamp(30px,5vw,56px)/1 "FGNoto",serif;color:var(--red)}
+.sechd .dot{width:12px;height:12px;border-radius:50%;flex:none}
+/* T'es pas encore dans le gang ? */
+.join{position:relative;border-radius:26px;overflow:hidden;background:linear-gradient(100deg,var(--red),#7d001e);display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);align-items:end;gap:clamp(16px,3vw,40px);padding:0 clamp(18px,4vw,48px);margin:16px 0 60px}
+.join .duo{width:100%;max-width:330px;margin-top:30px;display:block}
+.join .tx{padding:clamp(26px,4vw,48px) 0}
+.join .kk{font:700 13px "FGInter";letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.78)}
+.join h2{font:700 clamp(40px,6vw,80px)/.95 "FGAntonio";text-transform:uppercase;margin:10px 0 0}
+.join h3{font:700 clamp(24px,3.4vw,40px)/1 "FGAntonio";text-transform:uppercase;margin:16px 0 0;color:#fff}
+.join h3 em{font-style:normal;background:#fff;color:var(--red);padding:2px 10px;border-radius:6px}
+.join ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px 22px;margin:22px 0 26px}
+.join li{display:flex;gap:12px;align-items:flex-start;font:500 14.5px/1.45 "FGInter";color:rgba(255,255,255,.92)}
+.join li b{display:block;color:#fff;font-weight:700;font-size:15.5px}
+.join li i{flex:none;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;font-style:normal;font-size:16px}
+.join .go{display:inline-block;background:#fff;color:var(--red);font:800 17px "FGInter";padding:16px 28px;border-radius:999px;border:0;cursor:pointer}
+.join .go small{display:block;font:600 12px "FGInter";color:rgba(255,255,255,.75);margin-top:10px}
+@media (max-width:760px){.join{grid-template-columns:1fr}.join .duo{max-width:220px;margin:26px auto 0;order:2}.join .tx{padding-bottom:0}.join ul{grid-template-columns:1fr}}
+/* prépublication, actus, fiches, suite */
+.mags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.mag{display:flex;gap:14px;align-items:center;background:var(--bg2);border-radius:14px;padding:12px 14px;min-width:0}
+.mag img,.mag .no{width:44px;height:62px;object-fit:cover;border-radius:3px;background:#26262c;flex:none}
+.mag .no{display:grid;place-items:center;font:700 11px "FGInter";color:var(--mut)}
+.mag b{display:block;font:700 18px/1.1 "FGAntonio";text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mag span{font-size:13px;color:var(--mut)}.mag em{font-style:normal;color:#FFA344}
+.nws{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.nw{display:flex;gap:18px;align-items:center;background:var(--bg2);border-radius:20px;padding:16px;transition:background .15s}
+.nw:hover{background:#1f1f24}
+.nw img{width:110px;height:155px;object-fit:cover;border-radius:10px;flex:none;background:#222}
+.pill{display:inline-block;padding:5px 11px;border-radius:999px;font:700 11px "FGInter";letter-spacing:.06em;text-transform:uppercase;color:#0c0c0e}
+.nw h3{font:700 24px/1.02 "FGAntonio";text-transform:uppercase;margin:10px 0 6px}
+.nw p{font-size:13.5px;line-height:1.45;color:#cfcbc4}
+.fis{display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap}
+.fis a{width:150px}.fis img{width:100%;aspect-ratio:300/430;object-fit:cover;border:4px solid #fff;border-radius:5px;background:#222}
+.fis a span{display:block;font:700 18px "FGAntonio";text-transform:uppercase;margin-top:10px}
+.prog{flex:1;min-width:240px;padding-left:20px}
+.prog b{font:700 30px "FGAntonio";text-transform:uppercase}.prog b span{color:var(--mut)}
+.prog .bar{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;margin:12px 0 16px}.prog .bar i{height:14px;border-radius:3px;background:#2a2a2e}.prog .bar i.on{background:var(--red)}
+.prog a{display:inline-block;white-space:nowrap;background:#1f1f24;padding:13px 20px;border-radius:30px;font:700 14px "FGInter"}
+.next{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}
+.next .cov{width:100%;aspect-ratio:300/430;object-fit:cover;border:3px solid #fff;border-radius:4px;background:#222}
+.next b{display:block;font-size:13px;margin-top:8px}.next span{font-size:12px;color:var(--mut)}
+@media (max-width:900px){.mags,.nws{grid-template-columns:1fr}.next{grid-template-columns:repeat(3,minmax(0,1fr))}.prog{padding-left:0}.fis a{width:100px}}
+
+</style>
+</head>
+<body>
+<script src="/site/header.js?v=80"></script>
+<div class="wrap">
+  <section class="hero" id="hero">
+    <div class="wall" id="wall"></div><div class="shade"></div>
+    <div class="in">
+      <div class="k">Le récap de la semaine</div>
+      <h1>Quoi de neuf<em>dans le gang ?</em></h1>
+      <div class="dts" id="sem">…</div>
+      <div class="fan" id="fan"></div>
+      <div class="tiles t4" id="tiles"></div>
+    </div>
+  </section>
+  <div id="content"><div class="load">Chargement de la semaine…</div></div>
+  <footer>FuryoGang — Quoi de neuf dans le gang ?, le récap de la semaine. Toutes les couvertures appartiennent à leurs éditeurs respectifs.</footer>
+</div>
+
+<div class="lb" id="lb" role="dialog" aria-label="Couverture en grand">
+  <div class="count" id="lbCount"></div>
+  <button class="x" id="lbX" aria-label="Fermer">&times;</button>
+  <button class="nav np" id="lbP" aria-label="Précédent">&#8249;</button>
+  <div class="stage"><img id="lbImg" src="" alt=""></div>
+  <button class="nav nn" id="lbN" aria-label="Suivant">&#8250;</button>
+  <div class="meta">
+    <div><span class="fl" id="lbFl"><i></i></span><h3 id="lbTit"></h3></div>
+    <div class="sub" id="lbSub"></div>
+    <div class="acts" id="lbActs"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  var MC = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var couv = function (u) { if (!u) return ""; if (/^\//.test(u)) return u; return "/api/couv?u=" + encodeURIComponent(u); };
+  var nn = function (n) { return n == null ? "" : "T." + String(n).padStart(2, "0"); };
+  var jm = function (j) { return j.slice(8, 10) + "/" + j.slice(5, 7); };
+  var court = function (j) { return +j.slice(8, 10) + " " + MC[+j.slice(5, 7) - 1]; };
+  var jour = function (j) { return (+j.slice(8, 10) === 1 ? "1er" : +j.slice(8, 10)) + " " + MOIS[+j.slice(5, 7) - 1]; };
+  var J = function (d) { return d.toISOString().slice(0, 10); };
+  var dec = function (j, n) { var d = new Date(j + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return J(d); };
+  var lundi = function (j) { var d = new Date(j + "T12:00:00Z"); return dec(j, -((d.getUTCDay() + 6) % 7)); };
+  function slugify(s) { return String(s || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
+  function semaineISO(j) { var d = new Date(j + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + 3 - (d.getUTCDay() + 6) % 7); var y = new Date(Date.UTC(d.getUTCFullYear(), 0, 4)); return { an: d.getUTCFullYear(), n: 1 + Math.round(((d - y) / 864e5 - 3 + (y.getUTCDay() + 6) % 7) / 7) }; }
+  function lundiISO(an, n) { var j4 = an + "-01-04"; return dec(lundi(j4), (n - 1) * 7); }
+
+  // Semaine depuis l'adresse (/recap/semaine/2026-43/), sinon celle en cours à partir du jeudi, sinon la précédente.
+  var auj = new Date().toLocaleDateString("sv", { timeZone: "Europe/Paris" });
+  var mm = location.pathname.match(/\/recap\/semaine\/(\d{4})-(\d{1,2})\/?$/), du;
+  if (mm) du = lundiISO(+mm[1], +mm[2]);
+  else { var wd = (new Date(auj + "T12:00:00Z").getUTCDay() + 6) % 7; du = wd >= 3 ? lundi(auj) : dec(lundi(auj), -7);
+    var w0 = semaineISO(du); history.replaceState(null, "", "/recap/semaine/" + w0.an + "-" + String(w0.n).padStart(2, "0") + "/"); }
+  var au = dec(du, 6), W = semaineISO(du);
+  var periode = du.slice(5, 7) === au.slice(5, 7) ? (+du.slice(8, 10) === 1 ? "1er" : +du.slice(8, 10)) + " au " + jour(au) : jour(du) + " au " + jour(au);
+  $("#sem").textContent = "Semaine " + W.n + " · du " + periode + " " + au.slice(0, 4);
+  document.title = "Quoi de neuf dans le gang ? Semaine " + W.n + " — Le récap de la semaine · FuryoGang";
+
+  var ALL = [];
+  function pays(x) { return x.pays === "France" ? "fr" : "jp"; }
+  function titreDe(x) { return x.pays === "France" ? (x.fr || x.series) : x.series; }
+  function carte(x) {
+    var titre = titreDe(x);
+    return '<div class="card" data-i="' + x._i + '" role="button" tabindex="0" aria-label="' + esc(titre) + '">' +
+      '<div class="cw"><img class="cov" src="' + couv(x.cover) + '" alt="' + esc(titre) + '" loading="lazy">' + (x.n != null ? '<div class="nb">' + nn(x.n) + "</div>" : "") + '<div class="add">+ Ma collection</div></div>' +
+      '<div class="t">' + esc(titre) + '</div><div class="s">' + esc([court(x.date), x.pub].filter(Boolean).join(" · ")) + "</div></div>";
+  }
+  function tete(dot, nom, n, kj) { return '<div class="sechd"><i class="dot" style="background:' + dot + '"></i><h2>' + nom + '</h2>' + (n ? '<span class="n">' + n + '</span>' : '') + (kj ? '<span class="kj">' + kj + '</span>' : '') + '</div>'; }
+  function section(nomPays, cls, list, kj) {
+    if (!list.length) return "";
+    return '<section class="sec">' + tete(cls === "fr" ? "#E255A1" : "#FFA344", nomPays, list.length + " tome" + (list.length > 1 ? "s" : ""), kj) + '<div class="grid">' + list.map(carte).join("") + "</div></section>";
+  }
+  // Ordre : ce que Will a mis en avant dans le studio d'abord, puis le reste.
+  var kT = function (x) { return [x.seriesId || x.series, x.n, x.pays, x.date].join("|"); };
+  function ordre(list, kf, sel) { if (!sel || !sel.length) return list; var m = {}; list.forEach(function (x) { m[kf(x)] = x; }); var a = sel.map(function (k) { return m[k]; }).filter(Boolean); return a.concat(list.filter(function (x) { return a.indexOf(x) < 0; })); }
+
+  // ---------- Lightbox ----------
+  var LB = { i: -1 };
+  function lbShow(i) {
+    if (i < 0 || i >= ALL.length) return;
+    LB.i = i; var x = ALL[i], p = pays(x), slug = slugify(titreDe(x));
+    $("#lbImg").src = couv(x.cover); $("#lbImg").alt = titreDe(x);
+    $("#lbFl").className = "fl " + p;
+    $("#lbTit").textContent = titreDe(x) + (x.n != null ? " · " + nn(x.n) : "");
+    $("#lbSub").textContent = [jm(x.date) + "/" + m.slice(0, 4), x.pub, p === "fr" ? "France" : "Japon"].filter(Boolean).join(" · ");
+    // Collection toujours ; fiche seulement si elle existe
+    var acts = '<a class="col" href="/ma-collection/' + esc(slug) + '">+ Ajouter à ma collection</a>';
+    if (x.fiche !== false && x.seriesId) acts += '<a class="fic" href="/series/' + esc(slug) + '">Voir la fiche</a>';
+    $("#lbActs").innerHTML = acts;
+    $("#lbCount").textContent = (i + 1) + " / " + ALL.length;
+    $("#lbP").disabled = (i <= 0); $("#lbN").disabled = (i >= ALL.length - 1);
+    $("#lb").classList.add("on"); document.documentElement.style.overflow = "hidden";
+  }
+  function lbClose() { $("#lb").classList.remove("on"); document.documentElement.style.overflow = ""; LB.i = -1; }
+  $("#lbX").onclick = lbClose;
+  $("#lbP").onclick = function () { lbShow(LB.i - 1); };
+  $("#lbN").onclick = function () { lbShow(LB.i + 1); };
+  $("#lb").addEventListener("click", function (e) { if (e.target === $("#lb") || e.target.closest(".stage")) lbClose(); });
+  addEventListener("keydown", function (e) { if (LB.i < 0) return; if (e.key === "Escape") lbClose(); else if (e.key === "ArrowRight") lbShow(LB.i + 1); else if (e.key === "ArrowLeft") lbShow(LB.i - 1); });
+  (function () { var sx = 0; $("#lb").addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true }); $("#lb").addEventListener("touchend", function (e) { var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) lbShow(LB.i + (dx < 0 ? 1 : -1)); }, { passive: true }); })();
+  document.addEventListener("click", function (e) { var c = e.target.closest(".card"); if (c) lbShow(+c.dataset.i); });
+  document.addEventListener("keydown", function (e) { if ((e.key === "Enter" || e.key === " ") && document.activeElement && document.activeElement.classList.contains("card")) { e.preventDefault(); lbShow(+document.activeElement.dataset.i); } });
+
+  var m = du.slice(0, 7);
+
+  function eventail(lst) {
+    if (!lst.length) { $("#fan").style.display = "none"; return; }
+    var f = lst[0], others = lst.slice(1, window.innerWidth < 560 ? 3 : 5), arr = others.slice(); arr.splice(Math.floor(arr.length / 2), 0, f);
+    var nf = arr.length, sp = Math.max(60, Math.min(170, window.innerWidth / 8.5));
+    $("#fan").innerHTML = arr.map(function (u, i) { var k = i - (nf - 1) / 2, ft = u === f;
+      return '<img class="' + (ft ? "feat" : "") + '" src="' + couv(u) + '" alt="" style="transform:translateX(calc(-50% + ' + (k * sp) + 'px)) rotate(' + (ft ? 0 : k * 7) + 'deg);z-index:' + (ft ? 99 : 30 - Math.abs(Math.round(k))) + '">'; }).join("");
+  }
+
+  // T'es pas encore dans le gang ? (Will, 26/10/2026) : affiché aux visiteurs, pas aux membres connectés.
+  var JOIN = '<section class="join" id="join"><img class="duo" src="/img/don/duo.webp" alt=""><div class="tx"><div class="kk">Pendant ce temps-là</div>' +
+    '<h2>T\'es pas encore<br>dans le gang ?</h2><h3>Chaque mois, <em>un membre gagne</em></h3>' +
+    '<ul><li><i>🎁</i><div><b>Le cadeau du mois</b>Un tirage chaque mois parmi les membres : figurine, manga, fascicule ou pièce collector.</div></li>' +
+    '<li><i>🏆</i><div><b>Le concours d\'ouverture</b>Une figurine à gagner pour fêter le lancement du site.</div></li>' +
+    '<li><i>📚</i><div><b>Ta collection</b>Coche tes tomes en un clic, retrouve ce que tu as et ce qu\'il te manque.</div></li>' +
+    '<li><i>🥇</i><div><b>Le classement du gang</b>Grimpe en ajoutant tes tomes et débloque des badges sur ton profil.</div></li>' +
+    '<li><i>🎙️</i><div><b>Les interviews de mangakas</b>Pose tes questions, réservées aux membres inscrits.</div></li>' +
+    '<li><i>⭐</i><div><b>Premium offert</b>Jusqu\'au 30 novembre, tout le site débloqué pour tous les membres.</div></li></ul>' +
+    '<button class="go" type="button" onclick="window.FG_LOGIN ? FG_LOGIN() : (location.href=\'/ma-collection/\')">Je m\'inscris, c\'est gratuit →</button></div></section>';
+
+  Promise.all([get("/api/calendrier"), get("/api/prepub"), get("/api/news"), get("/api/avancement"), get("/api/series")]).then(function (p) {
+    var dans = function (d) { return d && d >= du && d <= au; };
+    var cal = p[0].items || [], series = {}; (p[4].items || []).forEach(function (s) { series[s.slug] = s; });
+    var news = (p[2].items || []).filter(function (n) { return dans(n.date) && !/\/recap\//.test(n.lien || ""); });
+    var estTirage = function (n) { return n.cat === "tirage" || (n.cats || []).some(function (c) { return c.k === "tirage"; }); };
+    var sids = news.filter(function (n) { return n.sid && estTirage(n); }).map(function (n) { return n.sid; });
+    return get("/api/recap-semaine?du=" + du + (sids.length ? "&sids=" + sids.join(",") : "")).then(function (rs) {
+      var C = rs.choix || {}, der = rs.derniers || {};
+      news.forEach(function (n) { if (estTirage(n) && der[n.sid]) n.cover = der[n.sid].cover; });
+      var tomes = cal.filter(function (x) { return dans(x.date) && x.cover; }).sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+      var jp = ordre(tomes.filter(function (x) { return x.pays === "Japon"; }), kT, C.jp), fr = ordre(tomes.filter(function (x) { return x.pays === "France"; }), kT, C.fr);
+      ALL = jp.concat(fr); ALL.forEach(function (x, i) { x._i = i; });
+      var chap = (p[1].items || []).filter(function (x) { return dans(x.date) && x.status === "Paru"; }), mags = [];
+      chap.forEach(function (c) { if (mags.indexOf(c.mag) < 0) mags.push(c.mag); });
+      var fiches = ((p[3] || {}).recentes || []).filter(function (x) { return dans(x.date); }).map(function (x) { var s = series[x.slug] || {}; return { t: x.fr || x.t, slug: x.slug, img: s.cover }; });
+      var actus = ordre(news, function (n) { return n.id; }, C.actus).slice(0, 3);
+      var vu = {}, proch = cal.filter(function (x) { return x.date > au && x.date <= dec(au, 7) && x.cover; }).filter(function (x) { var k = x.seriesId + x.pays; if (vu[k]) return false; vu[k] = 1; return true; }).slice(0, 6);
+
+      // Haut de page
+      var tout = jp.concat(fr), urls = []; tout.forEach(function (x) { if (urls.indexOf(x.cover) < 0) urls.push(x.cover); });
+      var fan = C.couv && C.couv.length ? C.couv.slice(0, 5) : [];
+      if (!fan.length) { fan = urls.slice(0, 5); if (jp.length) fan = [jp[0].cover].concat(fan.filter(function (u) { return u !== jp[0].cover; })).slice(0, 5); }
+      $("#wall").innerHTML = urls.concat(urls, urls).slice(0, 24).map(function (u) { return '<img src="' + couv(u) + '" alt="">'; }).join("");
+      eventail(fan); addEventListener("resize", function () { clearTimeout(eventail._t); eventail._t = setTimeout(function () { eventail(fan); }, 150); });
+      var st = [[tomes.length, "sortie" + (tomes.length > 1 ? "s" : "")], [chap.length, "chapitre" + (chap.length > 1 ? "s" : "") + " JP"], [fiches.length ? "+" + fiches.length : 0, "fiche" + (fiches.length > 1 ? "s" : "")], [news.length, "actu" + (news.length > 1 ? "s" : "")]].filter(function (t) { return t[0]; });
+      $("#tiles").style.gridTemplateColumns = "repeat(" + Math.min(st.length, window.innerWidth < 560 ? 2 : 4) + ",1fr)";
+      $("#tiles").innerHTML = st.map(function (t) { return '<div><b>' + t[0] + '</b><div class="cap">' + t[1] + '</div></div>'; }).join("");
+
+      var h = section("Au Japon", "jp", jp, "日本") + section("En France", "fr", fr, "仏国") + JOIN;
+      if (chap.length) h += '<section class="sec">' + tete("#529CCA", chap.length + " chapitre" + (chap.length > 1 ? "s" : "") + ", " + mags.length + " magazine" + (mags.length > 1 ? "s" : "")) + '<div class="mags">' + chap.map(function (c) { var t = c.entry.split(" · ")[0], hl = (c.hl || [])[0];
+        return '<a class="mag" href="/japon/">' + (c.cover ? '<img src="' + couv(c.cover) + '" alt="" loading="lazy">' : '<div class="no">WEB</div>') + '<div style="min-width:0"><b>' + esc(t) + '</b><span>' + esc(c.mag) + (c.ch ? " · ch. " + c.ch : "") + (hl ? ' · <em>' + esc(hl) + '</em>' : "") + "</span></div></a>"; }).join("") + "</div></section>";
+      if (actus.length) h += '<section class="sec">' + tete("#D4D4D8", "À ne pas rater", "", "速報") + '<div class="nws">' + actus.map(function (n) { var a = (n.accroche || "").trim() || String(n.texte || "").slice(0, 140);
+        return '<a class="nw" href="' + esc(n.lien || ("/actus/" + slugify(n.fr || n.titre).slice(0, 60) + "-" + String(n.id).slice(-8))) + '"><img src="' + couv(n.cover) + '" alt="" loading="lazy"><div style="min-width:0"><span class="pill" style="background:' + (n.catC || "#D4D4D8") + '">' + esc(n.catNom || "News") + '</span><h3>' + esc(n.fr || n.titre) + '</h3><p>' + esc(a) + "</p></div></a>"; }).join("") + "</div></section>";
+      if (fiches.length) { var av = p[3] || {}, on = Math.max(1, Math.round((av.pct || 0) / 5));
+        h += '<section class="sec">' + tete("var(--red)", "+" + fiches.length + " fiche" + (fiches.length > 1 ? "s" : ""), "", "新着") + '<div class="fis">' + fiches.map(function (f) { return '<a href="/series/' + esc(f.slug) + '">' + (f.img ? '<img src="' + couv(f.img) + '" alt="" loading="lazy">' : "") + "<span>" + esc(f.t) + "</span></a>"; }).join("") +
+          '<div class="prog"><b>' + (av.enLigne || 0) + ' fiches en ligne <span>/ ' + (av.total || 0) + '</span></b><div class="bar">' + Array.from({ length: 20 }, function (_, i) { return '<i class="' + (i < on ? "on" : "") + '"></i>'; }).join("") + '</div><a href="/ma-collection/">Ajouter à ma collection →</a></div></div></section>'; }
+      if (proch.length) h += '<section class="sec">' + tete("var(--red)", "Ça arrive", "Semaine prochaine") + '<div class="next">' + proch.map(function (x) { return '<div><img class="cov" src="' + couv(x.cover) + '" alt="" loading="lazy"><b>' + esc(titreDe(x)) + " " + nn(x.n) + '</b><span>' + court(x.date) + " · " + (x.pays === "France" ? "🇫🇷" : "🇯🇵") + "</span></div>"; }).join("") + "</div></section>";
+      $("#content").innerHTML = tomes.length || chap.length || news.length ? h : '<div class="load">Rien d\'enregistré pour cette semaine.</div>';
+      // Membre connecté : pas d'appel à l'inscription.
+      get("/api/auth/me").then(function (me) { if (me && me.user) { var j = $("#join"); if (j) j.remove(); } });
+    });
+  }).catch(function () { $("#content").innerHTML = '<div class="load">Impossible de charger la semaine pour l\'instant.</div>'; });
+})();
+</script>
+</body>
+</html>

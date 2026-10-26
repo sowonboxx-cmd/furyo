@@ -95,6 +95,7 @@ button:disabled{opacity:.5;cursor:default}
     <button id="next" aria-label="Semaine suivante">→</button>
     <label><input id="pseudos" type="checkbox" checked style="width:auto;height:auto"> Citer les pseudos du top</label>
     <button class="main" id="dl" disabled>Télécharger les images</button>
+    <a id="web" target="_blank" style="font-size:13px;color:var(--paper-2);text-decoration:underline">Page web de la semaine ↗</a>
     <span id="msg">Chargement…</span>
   </div>
   <details class="choix" id="choix" open><summary>Choisir ce qui est mis en avant</summary><div id="choixC"></div></details>
@@ -137,7 +138,9 @@ button:disabled{opacity:.5;cursor:default}
     // News « Tomes en circulation » de la semaine : on demande la couverture du dernier tome paru de la série (Will, 26/10/2026).
     var adm = pub.then(function (p) { var sids = (p[2].items || []).filter(function (n) { return n.date >= du && n.date <= au && n.sid && estTirage(n); }).map(function (n) { return n.sid; });
       return get("/api/admin/semaine?du=" + du + "&au=" + au + (sids.length ? "&sids=" + sids.join(",") : "")); });
-    return Promise.all([pub, adm]).then(function (r) {
+    var srv = get("/api/recap-semaine?frais=1&du=" + du);
+    return Promise.all([pub, adm, srv]).then(function (r) {
+      var sc = r[2] && r[2].choix; if (sc && Object.keys(sc).length) CH["qdn:" + du] = sc;
       var p = r[0], cal = (p[0].items || []), news = (p[2].items || []).filter(function (n) { return n.date >= du && n.date <= au; });
       var ids = news.map(function (n) { return n.id; }).join(",");
       return (ids ? get("/api/stats?ids=" + ids) : Promise.resolve({})).then(function (st) {
@@ -149,6 +152,8 @@ button:disabled{opacity:.5;cursor:default}
         var der = (D.adm && D.adm.derniers) || {};
         news.forEach(function (n) { if (estTirage(n) && n.sid && der[n.sid]) { if (!n.cover0) n.cover0 = n.cover; n.cover = der[n.sid].cover; } });
         (p[4].items || []).forEach(function (s) { D.series[s.slug] = s; });
+        var sw = semaineISO(du), an = new Date(dec(du, 3) + "T12:00:00Z").getUTCFullYear();
+        $("#web").href = "/recap/semaine/" + an + "-" + String(sw).padStart(2, "0") + "/";
         construire();
       });
     }).catch(function (e) { if (moi === tour) { $("#dl").disabled = true; $("#msg").textContent = "Souci de chargement — recharge la page (et connecte-toi au back-office)."; console.error(e); } });
@@ -184,7 +189,10 @@ button:disabled{opacity:.5;cursor:default}
   // Choix de Will par semaine : tomes Japon / France, couvertures de la page 1, news de « À ne pas rater » (gardé dans ce navigateur).
   var CH = {};
   function choix() { var k = "qdn:" + D.du; if (!CH[k]) { try { CH[k] = JSON.parse(localStorage.getItem(k) || "{}") || {}; } catch (e) { CH[k] = {}; } } return CH[k]; }
-  function garderChoix() { try { localStorage.setItem("qdn:" + D.du, JSON.stringify(choix())); } catch (e) {} }
+  // Gardé sur le serveur (la page publique /recap/semaine/ suit les mêmes choix) et dans ce navigateur en secours.
+  function garderChoix() { var c = choix(); try { localStorage.setItem("qdn:" + D.du, JSON.stringify(c)); } catch (e) {}
+    fetch("/api/admin/semaine", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ du: D.du, choix: c }) })
+      .then(function (r) { if (!r.ok) throw 0; fetch("/api/recap-semaine?frais=1&du=" + D.du).catch(function () {}); }).catch(function () { $("#msg").textContent = "Choix gardé dans ce navigateur seulement (connexion au back-office ?)"; }); }
   function enAvant(list, kf, sel, max) { if (!sel) return list.slice(0, max); var m = {}; list.forEach(function (x) { m[kf(x)] = x; }); return sel.map(function (k) { return m[k]; }).filter(Boolean).slice(0, max); }
   var kT = function (x) { return [x.seriesId || x.series, x.n, x.pays, x.date].join("|"); };
   var kU = function (u) { return u; }, kN = function (n) { return n.id; };

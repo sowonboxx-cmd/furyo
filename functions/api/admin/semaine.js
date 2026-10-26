@@ -9,9 +9,8 @@
 import { json, isAdmin } from "../../../lib/admin.js";
 import { queryAll, check, text, num } from "../../../lib/notion.js";
 import { MEMBRES } from "../../../lib/membres.js";
-import { editionsParSerie } from "../../../lib/memo.js";
+import { derniersTomes } from "../../../lib/derniers.js";
 
-const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const FILMS = { dataSource: "dfca009b-7891-49a4-8a1d-fd665dcacd77", database: "fe4b3db3d00c411ca3c1a25aff6bfadb" };
 const nid = id => String(id || "").replace(/-/g, "");
 const J = /^\d{4}-\d{2}-\d{2}$/;
@@ -25,31 +24,14 @@ export async function onRequestGet({ request, env, waitUntil }) {
     const dans = d => d && d.slice(0, 10) >= du && d.slice(0, 10) <= au;
 
     const sids = (q.get("sids") || "").split(",").map(nid).filter(x => /^[0-9a-f]{32}$/.test(x)).slice(0, 20);
-    const [mRows, fRows, eds, sRows] = await Promise.all([
+    const [mRows, fRows] = await Promise.all([
       queryAll(env.NOTION_TOKEN, { ...MEMBRES }).catch(() => []),
       queryAll(env.NOTION_TOKEN, { ...FILMS, body: { filter: { and: [
         { timestamp: "created_time", created_time: { on_or_after: du } },
         { timestamp: "created_time", created_time: { on_or_before: au + "T23:59:59+02:00" } },
       ] } } }).catch(() => []),
-      sids.length ? editionsParSerie(env, waitUntil).catch(() => ({})) : {},
-      sids.length ? queryAll(env.NOTION_TOKEN, { ...SERIES }).catch(() => []) : [],
     ]);
-    // Une saga compte toutes ses parties (The Fable → The second contact, The third secret) : on prend les suites
-    // dont l'« Œuvre mère » est la série de la news, puis le tome paru le plus récent, édition japonaise d'abord (Will, 26/10/2026).
-    const norm = x => String(x || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "");
-    const nomDe = {}, filles = {};
-    for (const r of sRows) { const p = r.properties || {}, id = nid(r.id); nomDe[id] = text(p["SERIES"]);
-      const m = norm(text(p["Œuvre mère"])); if (m) (filles[m] = filles[m] || []).push(id); }
-    const auj = new Date().toISOString().slice(0, 10), derniers = {};
-    for (const sid of sids) {
-      const fam = [sid, ...(filles[norm(nomDe[sid])] || [])];
-      for (const pays of ["Japon", "France"]) {
-        let best = null;
-        for (const id of fam) for (const e of (eds[id] || [])) if (e.pays === pays) for (const t of e.tomes)
-          if (t.cover && (t.paru || (t.date && t.date <= auj)) && (!best || (t.date || "") > (best.date || "") || ((t.date || "") === (best.date || "") && t.n > best.n))) best = t;
-        if (best) { derniers[sid] = { cover: local(best.cover), n: best.n, pays }; break; }
-      }
-    }
+    const derniers = await derniersTomes(env, waitUntil, sids);
     const membres = {};
     for (const r of mRows) { const p = r.properties || {}; if (check(p["Masqué"])) continue;
       membres[nid(r.id)] = { pseudo: text(p["Pseudo"]), photo: text(p["Photo"]), inscrit: r.created_time }; }
@@ -77,4 +59,15 @@ export async function onRequestGet({ request, env, waitUntil }) {
   } catch (e) {
     return json({ error: "erreur serveur : " + String(e && e.message || e).slice(0, 200) }, 500);
   }
+}
+
+// POST /api/admin/semaine { du, choix } : ce que Will met en avant dans le studio Quoi de neuf (tomes JP / FR, couvertures
+// de la page 1, news de « À ne pas rater »). Gardé dans KV « qdn:<lundi> » : sert aussi la page publique /recap/semaine/.
+export async function onRequestPost({ request, env }) {
+  if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
+  const b = await request.json().catch(() => ({}));
+  if (!J.test(b.du || "")) return json({ error: "du attendu" }, 400);
+  const c = {}; for (const k of ["jp", "fr", "couv", "actus"]) if (Array.isArray(b.choix && b.choix[k])) c[k] = b.choix[k].map(String).slice(0, 10).map(x => x.slice(0, 600));
+  await env.STATS.put("qdn:" + b.du, JSON.stringify(c));
+  return json({ ok: true });
 }

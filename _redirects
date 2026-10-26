@@ -1,3 +1,8 @@
+# Récaps (Will, 26/10/2026) : /recap/mois/AAAA-MM/ (récap du mois) et /recap/semaine/AAAA-SS/ (Quoi de neuf dans le gang, récap de la semaine).
+/recap/mois/* /recap/mois/index.html 200
+/recap/semaine/* /recap/semaine/index.html 200
+/recap/2026-09/ /recap/mois/2026-09/ 301
+/recap/2026-09 /recap/mois/2026-09/ 301
 /crows-x-worst/oeuvres /crows-x-worst/index.html 200
 /crows-x-worst/en-cours /crows-x-worst/index.html 200
 /crows-x-worst/en-francais /crows-x-worst/index.html 200

@@ -254,7 +254,7 @@ button:disabled{opacity:.5;cursor:default}
     out.push({ k: "fin", nom: "Fin · Collection", html: fin });
 
     if (fmt === "x") {
-      var url = "furyogang.com/recap/" + D.m;
+      var url = "furyogang.com/recap/mois/" + D.m;
       var finX = '<div class="qn" data-th="' + theme + '" style="--wo:' + wo + '">' +
         '<div class="wall">' + wall + '</div><div class="shade"></div>' +
         '<div class="top c"><img src="' + LOGO + '" alt=""></div>' +
@@ -278,7 +278,7 @@ button:disabled{opacity:.5;cursor:default}
       $("#captx").value = M + " : " + n + " sortie" + (n > 1 ? "s" : "") + ".\n" +
         "🇯🇵 " + D.jp.length + " au Japon · 🇫🇷 " + D.fr.length + " en France\n\n" +
         (cache > 0 ? "Ici tu en vois " + vus + ".\nLes " + cache + " autres sont sur le site 👇\n" : "Coche celles que t'as déjà.\nTout est sur le site 👇\n") +
-        "↗ furyogang.com/recap/" + D.m + (fmt === "x" ? "" : " (lien en bio)");
+        "↗ furyogang.com/recap/mois/" + D.m + (fmt === "x" ? "" : " (lien en bio)");
     }
   }
 
