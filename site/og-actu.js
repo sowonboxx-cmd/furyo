@@ -23,9 +23,9 @@
     '.oge .sh{position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,12,14,.35),rgba(12,12,14,.92) 55%)}',
     '.oge .im{position:absolute;object-fit:cover;border:6px solid #fff;border-radius:3px;box-shadow:0 26px 60px rgba(0,0,0,.75);background:#222}',
     '.oge .lg{position:absolute;right:56px;top:46px;height:40px}',
-    '.oge .tx{position:absolute;left:600px;right:50px;top:50%;transform:translateY(-50%)}',
-    '.oge .t{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;line-height:.88;font-size:122px;white-space:nowrap}',
-    '.oge .t.s{font-size:96px}.oge .t.xs{font-size:76px;white-space:normal}',
+    '.oge .tx{position:absolute;left:668px;right:44px;top:50%;transform:translateY(-50%)}',
+    '.oge .t{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;line-height:.88;font-size:116px;white-space:nowrap}',
+    '.oge .t.s{font-size:90px}.oge .t.xs{font-size:72px;white-space:normal}',
     '.oge .pl{display:inline-block;margin-top:22px;background:#BC002D;color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:34px;letter-spacing:.04em;text-transform:uppercase;padding:10px 22px 12px;border-radius:6px}',
     '.oge .au{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase;margin-top:26px}',
     '.oge .sr{font-weight:500;font-size:21px;color:#cfcbc4;margin-top:10px}.oge .sr b{color:#fff}',
@@ -77,8 +77,8 @@
   function cardExtrait(d, e1, e2, e3) {
     var pl = (d.planches || []).filter(Boolean), c1 = e1 || couv(d.cover), c2 = e2 || couv(pl[0] || d.cover2), c3 = pl[1] ? (e3 || couv(pl[1])) : "", t = String(d.titre || ""), cls = t.length > 14 ? " xs" : t.length > 10 ? " s" : "";
     return '<div class="oge">' + (c2 || c1 ? '<div class="bg" style="background-image:url(\'' + (c2 || c1) + '\')"></div>' : '') + '<div class="sh"></div>' +
-      (c3 ? '<img class="im" src="' + c3 + '" alt="" style="left:330px;top:96px;width:250px;height:400px;transform:rotate(10deg);object-position:center 30%">' : '') +
-      (c2 ? '<img class="im" src="' + c2 + '" alt="" style="left:' + (c3 ? 230 : 250) + 'px;top:70px;width:270px;height:430px;transform:rotate(' + (c3 ? 4 : 5) + 'deg);object-position:center 30%">' : '') +
+      (c3 ? '<img class="im" src="' + c3 + '" alt="" style="left:300px;top:96px;width:250px;height:400px;transform:rotate(9deg);object-position:center 30%">' : '') +
+      (c2 ? '<img class="im" src="' + c2 + '" alt="" style="left:' + (c3 ? 215 : 250) + 'px;top:70px;width:270px;height:430px;transform:rotate(' + (c3 ? 4 : 5) + 'deg);object-position:center 30%">' : '') +
       (c1 ? '<img class="im" src="' + c1 + '" alt="" style="left:' + (c2 ? 70 : 140) + 'px;top:58px;width:330px;height:470px;transform:rotate(-3deg)">' : '') +
       '<img class="lg" src="/img/logo-furyogang.png" alt="FuryoGang">' +
       '<div class="tx"><div class="t' + cls + '">' + esc(t) + '</div>' +
