@@ -102,7 +102,7 @@ async function construire(request, env) {
       legX: text(p["Légende X"]), legIG: text(p["Légende Instagram"]), legTT: text(p["Légende TikTok"]),
       planif: (p["Planifiée le"] && p["Planifiée le"].date && p["Planifiée le"].date.start) || "",
       // Carte (image de la news + partage du lien, Will 26/10/2026) : { couv, planches, cta, editeur, quand, pays }.
-      carte: (() => { const t = text(p["Carte"]) || "null"; try { return JSON.parse(t); } catch (e) { try { return JSON.parse(t.replace(/'/g, '"')); } catch (e2) { return null; } } })(), // guillemets simples tolérés (saisie à la main dans Notion)
+      carte: (() => { const t = (text(p["Carte"]) || "null").replace(/\\([{}\[\]])/g, "$1"); try { return JSON.parse(t); } catch (e) { try { return JSON.parse(t.replace(/'/g, '"')); } catch (e2) { return null; } } })(), // guillemets simples tolérés (saisie à la main dans Notion)
       serie: s, news, vu: vu(r), enLigne: pub(r), imageChoisie: text(p["Image"]), accroche: text(p["Accroche"]), cadrage: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null,
       cat2: (categoriesDe(catN)[1] || {}).k || "", // 2e catégorie (Notion en accepte plusieurs ; le back-office en gère deux)
     };

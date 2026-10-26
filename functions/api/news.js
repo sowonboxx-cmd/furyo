@@ -17,6 +17,8 @@ async function page(token, id) {
   return r.ok ? r.json() : null;
 }
 
+// Propriété « Carte » (JSON) : tolère la saisie à la main dans Notion (guillemets simples, accolades échappées).
+const lireCarte = t => { t = String(t || "").replace(/\\([{}\[\]])/g, "$1").trim(); if (!t) return null; try { return JSON.parse(t); } catch (e) { try { return JSON.parse(t.replace(/'/g, '"')); } catch (e2) { return null; } } };
 export async function onRequestGet({ env, request, waitUntil }) {
   if (!env.NOTION_TOKEN) return new Response(JSON.stringify({ error: "NOTION_TOKEN manquant" }), { status: 503 });
   // Quand Will (connecté au back-office) ouvre le site, on reconstruit tout de suite : il voit toujours ses dernières validations.
@@ -24,7 +26,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Date de publication sur le site (Will, 22/10/2026) : prioritaire sur la date de repérage pour l'ordre et la date affichée.
   const pubLe = p => (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "";
   const jourParis = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
-  return cached(request, waitUntil, "/api/news?v=12", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=13", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -64,7 +66,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         lien: text(p["Lien"]) || "",
         // Carte « Extrait » (Will, 26/10/2026) : l'image de la news est la carte paysage ; les miniatures prennent la couverture du tome 1.
         // carte : true quand l'image de la news est une carte complète (titre écrit dessus) → bannières sans texte du site.
-        vignette: (() => { try { const t = text(p["Carte"]) || "null"; let c; try { c = JSON.parse(t); } catch (e) { c = JSON.parse(t.replace(/'/g, '"')); } return c && c.couv ? (/^\//.test(c.couv) ? "https://furyogang.com" + c.couv : c.couv) : ""; } catch (e) { return ""; } })(),
+        vignette: (() => { const c = lireCarte(text(p["Carte"])); return c && c.couv ? (/^\//.test(c.couv) ? "https://furyogang.com" + c.couv : c.couv) : ""; })(),
+        _extrait: [cat, ...autres].some(c => c.k === "extrait"), _image: text(p["Image"]),
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),
         // Plusieurs sources possibles dans « Source officielle » (liens séparés par un espace ou un retour à la ligne).
@@ -91,9 +94,15 @@ export async function onRequestGet({ env, request, waitUntil }) {
         if (t) i.cover = text(t.properties["Couverture"]);
       }
     }
+    // Extrait sans image choisie par Will : la carte « Extrait » générée à la publication (R2 og/f/actu-<id8>.jpg)
+    // devient l'image de la news par défaut (Will, 27/10/2026). Une image mise à la main reste prioritaire.
+    if (env.COUV) await Promise.all(items.filter(i => i._extrait && (!i._image || /\/api\/ogcard\//.test(i._image))).map(async i => {
+      const id8 = i.id.slice(-8), o = await env.COUV.head("og/f/actu-" + id8 + ".jpg").catch(() => null);
+      if (o) { const avant = i.cover; i.cover = "https://furyogang.com/api/ogcard/actu-" + id8 + ".jpg?v=" + (o.uploaded ? new Date(o.uploaded).getTime().toString(36) : "1"); i.pos = 50; if (!i.vignette && !/\/api\/ogcard\//.test(avant || "")) i.vignette = avant || ""; }
+    }));
     items.sort((a, b) => b._t.localeCompare(a._t));
     // sid : la série liée (Studio Quoi de neuf : dernier tome paru pour les news « Tomes en circulation », Will 26/10/2026).
-    items.forEach(i => { if (i.vignette && /\/api\/ogcard\//.test(i.cover || "")) i.carte = true; else i.vignette = ""; if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._sid; delete i._n; delete i._pays; delete i._t; });
+    items.forEach(i => { if (/\/api\/ogcard\//.test(i.cover || "")) i.carte = true; else i.vignette = ""; if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._extrait; delete i._image; delete i._sid; delete i._n; delete i._pays; delete i._t; });
     return { items };
   });
 }
