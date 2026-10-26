@@ -53,9 +53,13 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .ttnav{position:absolute;left:0;right:0;bottom:0;height:80px;background:#000;z-index:4;display:flex;justify-content:space-around;align-items:center;font-size:11px;color:#ccc}.ttnav b{background:#fff;color:#000;border-radius:8px;padding:2px 12px;font-size:20px}
 /* visuel TikTok 9:16 (option 1 validée) : titre en haut, images au milieu, bas libre pour la légende */
 .t9{position:absolute;inset:0;overflow:hidden;background:#0c0c0e}.t9bg{position:absolute;inset:-20px;background:center/cover;filter:grayscale(1) blur(2px);opacity:.28}.t9sh{position:absolute;inset:0;background:linear-gradient(#0c0c0ecc,transparent 30%,transparent 60%,#0c0c0e)}
-.t9logo{position:absolute;top:96px;left:50%;transform:translateX(-50%);height:26px}.t9tag{position:absolute;top:140px;left:50%;transform:translateX(-50%);color:#fff;font:700 18px A;text-transform:uppercase;padding:4px 12px 6px;border-radius:4px;white-space:nowrap}
-.t9t{position:absolute;top:174px;left:14px;right:14px;text-align:center;font:700 64px/.95 A;color:#fff;text-transform:uppercase;text-shadow:0 8px 30px #000}
-.t9img{position:absolute;top:330px;left:50%;transform:translateX(-50%) rotate(-3deg);width:230px;height:300px;object-fit:cover;border:5px solid #fff;box-shadow:0 20px 40px rgba(0,0,0,.6)}
+/* visuel TikTok : logo, étiquette, titre puis couverture collée juste dessous (Will, 26/10) */
+.t9c{position:absolute;top:92px;left:14px;right:14px;display:flex;flex-direction:column;align-items:center}
+.t9logo{height:26px;margin-bottom:16px}.t9tag{color:#fff;font:700 18px A;text-transform:uppercase;padding:4px 12px 6px;border-radius:4px;white-space:nowrap}
+.t9w{position:relative;margin-top:22px}.t9w .t9img{margin-top:0;display:block}.t9t+.t9tag{margin-top:14px}
+.t9w .t9tag{position:absolute;right:10px;bottom:-22px;transform:rotate(-3deg);font-size:22px;padding:5px 14px 7px;border:2px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.t9t{text-align:center;font:700 64px/.95 A;color:#fff;text-transform:uppercase;text-shadow:0 8px 30px #000}
+.t9img{margin-top:22px;transform:rotate(-3deg);width:262px;height:345px;object-fit:cover;border:5px solid #fff;box-shadow:0 20px 40px rgba(0,0,0,.6)}
 .sms{background:#0c0c0e;color:#f3f3f5}.smh{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid #222}.smh img{height:24px}.smb{padding:16px}
 .sk{display:inline-flex;align-items:center;gap:6px;font:700 12px I;text-transform:uppercase;letter-spacing:.06em}.sk i{width:8px;height:8px;border-radius:50%}
 .smb h3{font:700 32px/1 A;text-transform:uppercase;margin:10px 0 14px}.smb img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin-bottom:14px;background:#16181c}
@@ -138,7 +142,9 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function scrIG() { return '<div class="scr">' + SB + '<div class="igtop"><b>Publications</b></div><div class="igh"><img src="' + AV + '"><div><b>furyogang</b><small>' + esc((N.serie && N.serie.t) || "FuryoGang") + '</small></div><span>•••</span></div><div class="igimg"><img src="' + esc(couv(img(), 800)) + '"></div><div class="igact"><span>♡</span><span>💬</span><span>➤</span><span style="margin-left:auto">🔖</span></div><p class="igcap"><b>furyogang</b> ' + hl(D.ig) + '</p><p class="igd">' + esc(jourTxt()) + '</p></div>'; }
   function visuelTT() {
     var u = esc(couv(img(), 800));
-    return '<div class="t9"><div class="t9bg" style="background-image:url(\'' + u + '\')"></div><div class="t9sh"></div><img class="t9logo" src="' + LOGO + '"><div class="t9tag" style="background:' + col() + '">' + esc(N.label || "News") + '</div><div class="t9t">' + esc(courtTitre()) + '</div>' + (img() ? '<img class="t9img" src="' + u + '">' : '') + '</div>';
+    // Étiquette sous le coin bas droit de la couverture, bordure blanche fine (Will, 26/10).
+    var tag = '<div class="t9tag" style="background:' + col() + '">' + esc(N.label || "News") + '</div>';
+    return '<div class="t9"><div class="t9bg" style="background-image:url(\'' + u + '\')"></div><div class="t9sh"></div><div class="t9c"><img class="t9logo" src="' + LOGO + '"><div class="t9t">' + esc(courtTitre()) + '</div>' + (img() ? '<div class="t9w"><img class="t9img" src="' + u + '">' + tag + '</div>' : tag) + '</div></div>';
   }
   function courtTitre() { var t = (N.serie && (N.serie.fr || N.serie.t)) || titre().split(" : ")[0]; return t.length > 22 ? t.slice(0, 22) : t; }
   function scrTT() { return '<div class="scr tts"><div class="ttbg">' + visuelTT() + '</div>' + SB + '<div class="tttop"><span>Suivis</span><b>Pour toi</b></div><div class="ttrail"><img src="' + AV + '"><span>♥<small>J\'aime</small></span><span>💬<small>0</small></span><span>🔖<small>0</small></span><span>↪<small>Partager</small></span></div><div class="ttcap"><b>furyogang</b><p>' + hl(D.tt).replace(/<span class="lk">(#[^<]+)<\/span>/g, "<b>$1</b>") + '</p><span class="ttm">♫ son original - furyogang</span></div><div class="ttnav"><span>Accueil</span><span>Amis</span><b>＋</b><span>Boîte</span><span>Profil</span></div></div>'; }
