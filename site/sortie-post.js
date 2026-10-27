@@ -125,7 +125,7 @@
       };
     }
     // Titre sans le magazine ni « Nouvelle série : » d'abord (Will, 27/10/2026), puis le titre complet, puis le nom de la série.
-    var titres = [...new Set([i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news)\s*:\s*/i, ""), i.titre, String(i.serie && i.serie.t || i.titre)])];
+    var titres = [...new Set([i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news|fin de série|hommage|extrait)\s*:\s*/i, "").replace(/\s+[—–-]\s+série terminée.*$/i, ""), i.titre, String(i.serie && i.serie.t || i.titre)])];
     // Pas de redite (Will, 22/10/2026) : si la 1re phrase du résumé redit le titre, on la retire des posts.
     txt = sansRedite(i.titre, txt);
     var ph = phrases(txt), resumes = [...ph.map(function (_, n) { return ph.slice(0, n + 1).join(" "); }).reverse(), ""];
