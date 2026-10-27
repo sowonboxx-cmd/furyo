@@ -24,7 +24,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .x{width:34px;height:34px;border-radius:10px;background:#17171b;display:grid;place-items:center;font:700 16px I;text-decoration:none;border:0;color:#fff}
 .tt{display:flex;align-items:baseline;gap:14px;font:700 clamp(24px,2.6vw,46px)/1.02 A;text-transform:uppercase;margin:14px 0}.kj{font:900 .7em J;color:#BC002D;flex:none}
 /* vue d'ensemble */
-.row{flex:1;min-height:420px;display:flex;gap:clamp(10px,1.2vw,22px);align-items:center;padding:clamp(12px,1.4vw,22px);border-radius:22px;background:radial-gradient(ellipse at 50% 0,#1d1d22,#0c0c0e 70%)}
+.ed2{display:flex;gap:12px;align-items:center}.sw{display:inline-flex;align-items:center;gap:5px;font:700 12px I;color:#cfcfd4;background:#1f1f25;padding:4px 9px;border-radius:9px;cursor:pointer}.sw svg{width:13px;height:13px}.sw:hover{background:#2A6FD0;color:#fff}
+.row{justify-content:center;flex:1;min-height:420px;display:flex;gap:clamp(10px,1.2vw,22px);align-items:center;padding:clamp(12px,1.4vw,22px);border-radius:22px;background:radial-gradient(ellipse at 50% 0,#1d1d22,#0c0c0e 70%)}
 .ph{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;border:0;background:none;color:inherit;padding:0;font:inherit}
 .phl{display:flex;align-items:center;gap:7px;font:700 14px A;text-transform:uppercase;white-space:nowrap}.phl svg{width:15px;height:15px}
 .ok{width:18px;height:18px;border-radius:50%;background:#2E7D4F;display:grid;place-items:center;font:800 10px I}.ok.no{background:#3a3a40}
@@ -181,7 +182,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       '<p class="note">' + (N.enLigne ? "News déjà en ligne : les changements du texte et de l'image partent tout de suite sur le site." : "La publication automatique sur X, Instagram et TikTok arrive avec la connexion des comptes : en attendant, « Planifier à la une » enregistre les textes, le jour et l'heure ; la news se met en ligne avec « À la une » ou « Brève ».") + '</p></div>';
   }
   function vue() {
-    return haut() + '<div class="row">' + browser("site") + phone("site", scrSM(), "Site · mobile", IC.site, true) + phone("x", scrX(), "X", IC.x, true) + phone("ig", scrIG(), "Instagram", IC.ig, true) + phone("tt", scrTT(), "TikTok", IC.tt, true) + '</div>' + plan();
+    // Vue d'ensemble : les 4 téléphones au centre ; le site ordinateur s'ouvre en grand d'un clic (Will, 27/10/2026).
+    return haut() + '<div class="row">' + phone("site", scrSM(), "Site · mobile", IC.site, true).replace('<span class="ed">Modifier</span>', '<span class="ed2"><span class="ed">Modifier</span><span class="sw" data-v="site" role="button">' + IC.web + 'Site ordinateur</span></span>') + phone("x", scrX(), "X", IC.x, true) + phone("ig", scrIG(), "Instagram", IC.ig, true) + phone("tt", scrTT(), "TikTok", IC.tt, true) + '</div>' + plan();
   }
   function navBar() { return '<div class="nav">' + [["all", "Vue d’ensemble", IC.all], ["site", "Site", IC.web], ["x", "X", IC.x], ["ig", "Instagram", IC.ig], ["tt", "TikTok", IC.tt]].map(function (t) { return '<button data-v="' + t[0] + '" class="' + (V === t[0] ? "on" : "") + '">' + t[2] + t[1] + (t[0] === "all" ? "" : "<small>✓</small>") + '</button>'; }).join("") + '</div>'; }
   function compteur(k) { if (k === "x") { var n = poidsX(D.x); return '<em class="' + (n > 280 ? "ko" : "") + '">' + n + ' / 280</em>'; } var m = (D[k] || "").length; return '<em>' + m + (k === "site" ? " car." : " / 2 200") + '</em>'; }
@@ -251,7 +253,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
         e.style.minHeight = "0"; var H = Math.max(dispo, e.offsetHeight); if (H > dispo + 40) H = Math.max(dispo, Math.min(H, innerHeight - 40));
         e.style.minHeight = H + "px"; pf.style.height = H + "px"; pf.style.width = (H * 390 / 844) + "px"; } }
     var r = $(".row");
-    if (r) { var cs = getComputedStyle(r), pd = parseFloat(cs.paddingTop), rh = r.clientHeight - pd * 2 - 60, aw = r.clientWidth - pd * 2 - 90, pw = Math.max(150, Math.min(rh * 390 / 844, aw * .6 / 4));
+    if (r) { var cs = getComputedStyle(r), pd = parseFloat(cs.paddingTop), rh = r.clientHeight - pd * 2 - 60, aw = r.clientWidth - pd * 2 - 90, pw = Math.max(150, Math.min(rh * 390 / 844, aw * .8 / 4));
       r.querySelectorAll(".ph:not(.web) .pf").forEach(function (p) { p.style.width = pw + "px"; p.style.height = (pw * 844 / 390) + "px"; }); }
     document.querySelectorAll(".fit").forEach(function (f) {
       var w = +f.dataset.w, p = f.parentNode, s = p.clientWidth / w; f.style.width = w + "px"; f.style.transform = "scale(" + s + ")";

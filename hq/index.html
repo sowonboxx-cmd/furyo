@@ -1253,7 +1253,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function openItem(kind, id) {
     modalTab = "tw";
     if (kind === "sortie") return openSortie(SORT.find(function (s) { return s.id === id; }));
-    if (kind === "news") return openNews(NEWS.find(function (n) { return n.id === id; }));
+    // News publiée : on rouvre son studio (les 4 téléphones) pour la modifier et l'enregistrer (Will, 27/10/2026).
+    if (kind === "news") { location.href = "/hq/news/#" + encodeURIComponent(id); return; }
     if (kind === "todo") return openTodo(TODO.find(function (t) { return t.id === id; }));
     openEv(CAL.events.find(function (e) { return e.id === id; }));
   }
