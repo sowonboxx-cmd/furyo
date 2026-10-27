@@ -26,7 +26,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Date de publication sur le site (Will, 22/10/2026) : prioritaire sur la date de repérage pour l'ordre et la date affichée.
   const pubLe = p => (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "";
   const jourParis = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
-  return cached(request, waitUntil, "/api/news?v=15", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=16", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -64,6 +64,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         titre: s.t || prop, fr: s.fr, jp: s.jp, pub, label, t1, cover, pos: p["Cadrage"] && p["Cadrage"].number != null ? p["Cadrage"].number : null, texte: text(p["Résumé site"]), accroche: text(p["Accroche"]),
         // Lien externe facultatif (Will, 20/10/2026) : si rempli, la carte ouvre cette page (ex. /recap/2026-09/) au lieu de /actus/<slug>.
         lien: text(p["Lien"]) || "",
+        // Brève (Will, 27/10/2026) : dans le fil, jamais en grand en une de l'accueil.
+        breve: !!(p["Brève"] && p["Brève"].checkbox),
         // Carte « Extrait » (Will, 26/10/2026) : l'image de la news est la carte paysage ; les miniatures prennent la couverture du tome 1.
         // carte : true quand l'image de la news est une carte complète (titre écrit dessus) → bannières sans texte du site.
         ...(() => { const c = lireCarte(text(p["Carte"])) || {}, abs = u => !u ? "" : /^\//.test(u) ? "https://furyogang.com" + u : u;

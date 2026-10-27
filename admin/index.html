@@ -917,8 +917,8 @@ function vopen(id){
     <div class="act">${i.enLigne ? `
       <button class="go" data-vsave style="grid-column:1/3">Enregistrer les changements</button>
       <button class="rej" data-vs="Vu" style="grid-column:1/3">Retirer du site</button>` : `
-      <button class="go" data-vs="${news ? "Publié sur le site" : pp ? "Validé" : "À appliquer à la fiche"}">${news ? "Publier sur le site" : pp ? "Mettre à jour les magazines" : "Appliquer à la fiche"}</button>
-      ${pp ? `<button data-vs="Validé" data-news="1" style="grid-column:1/3">Mettre à jour + créer une news</button><button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : i.vu ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Rejeter</button>` : `<button data-vs="Vu">${news ? "Vu, pas sur le site" : "Vu, rien à faire"}</button>
+      <button class="go" data-vs="${news ? "Publié sur le site" : pp ? "Validé" : "À appliquer à la fiche"}">${news ? "À la une" : pp ? "Mettre à jour les magazines" : "Appliquer à la fiche"}</button>${news ? `<button data-vs="Publié sur le site" data-breve="1">Brève</button>` : ""}
+      ${pp ? `<button data-vs="Validé" data-news="1" style="grid-column:1/3">Mettre à jour + créer une news</button><button class="rej" data-vs="Rejeté" style="grid-column:1/3">Écarter</button>` : i.vu ? `<button class="rej" data-vs="Rejeté" style="grid-column:1/3">Rejeter</button>` : `<button data-vs="Vu">${news ? "Mettre de côté" : "Vu, rien à faire"}</button>
       <button class="rej" data-vs="Rejeté">Rejeter</button>`}`}
     </div></div>`;
   document.body.appendChild(m);
@@ -1327,7 +1327,7 @@ async function vsend(btn, statut){
   // La catégorie (celle affichée en haut, modifiable) est toujours enregistrée dans Notion pour une news publiée.
   const vc2 = m.querySelector("#vcat2"), c2 = vc2 && vc2.value !== (vc && vc.value) ? vc2.value : "";
   const categorie = vc && (statut === "Publié sur le site" || (!statut && (vc.value !== i.cat || c2 !== (i.cat2 || "")))) ? [VCATS[vc.value], ...(c2 ? [VCATS[c2]] : [])] : "";
-  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(cadrage !== undefined ? { cadrage } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}), ...(btn.dataset.news ? { news: true } : {}) }) }).catch(() => null);
+  const r = await fetch("/api/admin/veille", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, ...(statut ? { statut } : {}), ...(statut === "Publié sur le site" ? { breve: btn.dataset.breve === "1" } : {}), ...(image !== null && image !== (i.imageChoisie || "") ? { image } : {}), ...(texte !== i.texte ? { texte } : {}), ...(cadrage !== undefined ? { cadrage } : {}), ...(categorie ? { categorie } : {}), ...(vv && video !== (i.video || "") ? { video } : {}), slug: i.serie && i.serie.slug, ...(i.base ? { base: i.base } : {}), ...(btn.dataset.news ? { news: true } : {}) }) }).catch(() => null);
   btn.classList.remove("busy");
   if (!r || !r.ok) { const j = r ? await r.json().catch(() => ({})) : {}; toast(j.error || "Échec, réessaie"); return; }
   const rj = await r.clone().json().catch(() => ({}));
@@ -1344,7 +1344,7 @@ async function vsend(btn, statut){
   if (statut === "Validé" && btn.dataset.news) { m.remove(); toast("Magazines mis à jour ✓ · news créée, à valider"); veille(true); return; }
   if (statut === "Vu" && i.base !== "prepub") { i.vu = true; if (vtx) i.texte = vtx.value; } else VITEMS = VITEMS.filter(x => x.id !== id);
   m.remove(); vdraw();
-  toast(statut === "Publié sur le site" ? "Publié sur le site ✓" : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Fiche mise à jour ✓" + ficheMsg : statut === "Vu" ? "Rangée dans « Vu, pas sur le site »" : i.base === "prepub" ? "Écartée" : "Rejeté");
+  toast(statut === "Publié sur le site" ? (btn.dataset.breve === "1" ? "En ligne en brève ✓" : "En ligne, à la une ✓") : statut === "Validé" ? "Magazines mis à jour ✓ (pas de news)" : statut === "À appliquer à la fiche" ? "Fiche mise à jour ✓" + ficheMsg : statut === "Vu" ? "Rangée dans « Vu, pas sur le site »" : i.base === "prepub" ? "Écartée" : "Rejeté");
 }
 // Catégorie changée dans la fiche : couleur, puis légendes régénérées avec le nouveau nom.
 document.addEventListener("change", e => {

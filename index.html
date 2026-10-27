@@ -826,7 +826,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
 <script src="/site/gang.js?v=24"></script>
-<script src="/site/home-m.js?v=64" defer></script>
+<script src="/site/home-m.js?v=65" defer></script>
 <div class="page">
 
 
@@ -1071,7 +1071,11 @@ function renderN() {
   if (list) {
     const home = !(DT.all || DT.cat || DT.tab !== "toutes"), nSl = home ? Math.min(4, list.length) : 0;
     const max = home ? nSl + 4 : list.length;
-    html = list.length ? (home && nSl > 1 ? sliderN(list.slice(0, nSl)) + list.slice(nSl, max).map(rowN).join("") : list.slice(0, max).map((it, i) => i === 0 ? heroN(it) : rowN(it)).join("")) : note(DT.tab === "signets" && !DT.cat ? "Aucun signet pour l'instant : clique sur l'icône signet d'une news pour la garder ici." : "Aucune actualité dans cette catégorie pour l'instant.");
+    // Brèves (Will, 27/10/2026) : jamais dans le carrousel ni en grande news ; elles restent dans le fil, à leur place.
+    if (home) { const une = list.filter(it => !it.breve).slice(0, 4); list = une.concat(list.filter(it => une.indexOf(it) < 0)); }
+    const nSlU = home ? list.filter(it => !it.breve).slice(0, 4).length : 0;
+    const premierUne = list.length && !list[0].breve;
+    html = list.length ? (home && nSlU > 1 ? sliderN(list.slice(0, nSlU)) + list.slice(nSlU, max).map(rowN).join("") : list.slice(0, max).map((it, i) => i === 0 && premierUne ? heroN(it) : rowN(it)).join("")) : note(DT.tab === "signets" && !DT.cat ? "Aucun signet pour l'instant : clique sur l'icône signet d'une news pour la garder ici." : "Aucune actualité dans cette catégorie pour l'instant.");
     // « Voir toutes les actualités » toujours présent sous les 5 news de l'accueil (Will, 05/10/2026).
     if (list.length > max) html += `<button type="button" class="box dmore" data-all>Voir toutes les actualités<small>${list.length - max} de plus</small></button>`;
     else if (!DT.all && !DT.cat && DT.tab === "toutes" && list.length) html += `<a class="box dmore" href="/?vue=actus">Voir toutes les actualités</a>`;

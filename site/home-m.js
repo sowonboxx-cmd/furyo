@@ -341,7 +341,9 @@
     }
     // Accueil
     var feed;
-    if (TAB === "toutes") feed = news.length ? heroH(news[0]) + news.slice(1, 3).map(cardO).join("") : D.news ? '<p class="mh-note">Pas encore d\'actualité.</p>' : (window.FG_SK ? FG_SK.b("100%", 0, 0).replace("height:0px", "height:min(52.7vh,408px)") + FG_SK.cards(2) : '<p class="mh-note">Chargement…</p>');
+    // Brèves (Will, 27/10/2026) : jamais en grand ni dans le bandeau qui défile.
+    var une = news.filter(function (it) { return !it.breve; }), reste = news.filter(function (it) { return une.slice(0, SL_N).indexOf(it) < 0; });
+    if (TAB === "toutes") feed = news.length ? (une.length ? heroH(une[0]) : "") + news.filter(function (it) { return it !== une[0]; }).slice(0, 2).map(cardO).join("") : D.news ? '<p class="mh-note">Pas encore d\'actualité.</p>' : (window.FG_SK ? FG_SK.b("100%", 0, 0).replace("height:0px", "height:min(52.7vh,408px)") + FG_SK.cards(2) : '<p class="mh-note">Chargement…</p>');
     else if (!(D.me && D.me.user)) feed = '<div class="mh-lock"><b>' + (TAB === "feed" ? "Ton fil personnalisé" : "Tes signets") + "</b><p>" + (TAB === "feed" ? "Les news des séries que tu suis, rien que pour toi." : "Retrouve toutes les news que tu as gardées.") + ' Réservé aux membres.</p><button type="button" onclick="window.FG_LOGIN && FG_LOGIN()">Devenir membre</button></div>';
     else if (TAB === "feed") { var fl = D.follow; var mine = fl ? news.filter(function (it) { return fl.indexOf(slug(it.fr || it.titre)) >= 0 || fl.indexOf(slug(it.titre)) >= 0; }) : [];
       feed = fl == null ? '<p class="mh-note">Chargement…</p>' : mine.length ? mine.map(cardO).join("") : '<p class="mh-note">' + (fl.length ? "Pas encore de news pour les séries que tu suis." : "Suis tes séries avec le bouton + en haut de leur fiche : leurs news apparaîtront ici.") + "</p>"; }
@@ -351,9 +353,9 @@
     if (TAB === "toutes" && news.length) {
       // Dernières fiches juste sous les news ; puis la France, le ruban, et un bloc « Japon » (sorties + prépublications) annoncé par un séparateur (Will, 17/10/2026).
       // Sorties en France, ruban, puis Dernières fiches ; le bloc Mangakas est retiré de l'accueil (Will, 17/10/2026, 14 h 56).
-      root.innerHTML = slider(news.slice(0, SL_N)) + cetteSemaine(news) + grille(news.slice(SL_N, SL_N + 4)) +
+      root.innerHTML = slider(une.slice(0, SL_N)) + cetteSemaine(news) + grille(reste.slice(0, 4)) +
         (function () { var x = window.FG_GANG ? FG_GANG("mobile") : ""; return x ? '<div class="mh-gang" data-fgm style="padding:0 16px;margin:24px 0">' + x + "</div>" : ""; })() + '<div data-fgpap="mobile"></div>' +
-        sortiesFR() + bande() + railFiches() + japon() + railJP() + direct() + lireAussi(news.slice(SL_N + 4, SL_N + 8)) + famille() + crows() + avance() + membres();
+        sortiesFR() + bande() + railFiches() + japon() + railJP() + direct() + lireAussi(reste.slice(4, 8)) + famille() + crows() + avance() + membres();
       slStart();
     } else root.innerHTML = '<div class="mh-feed">' + feed + "</div>" + sortiesFR() + railJP() + railFiches() + direct() + crows() + avance() + membres() + mangakas();
     fitM();
