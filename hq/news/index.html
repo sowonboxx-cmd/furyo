@@ -377,6 +377,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       '<div class="lbl">Résumé du site ' + compteur("site") + '</div><textarea class="ta" data-f="site" style="min-height:220px">' + esc(D.site) + '</textarea>' +
       '<div class="lbl">Visuel</div>' + imgPick() + '<div class="lbl">Ou colle l’adresse d’une image</div><input class="inp" data-f="image" placeholder="https://…" value="' + esc(D.image || N.imageChoisie || "") + '">' +
       carteEd() +
+      '<div class="lbl">Carrousel de l’accueil · téléphone et ordinateur</div>' + carrousels() +
       '<div class="lbl">Image de partage du lien (X, WhatsApp, LinkedIn…)</div><div id="ogp" style="position:relative;width:100%;aspect-ratio:1200/630;border-radius:12px;overflow:hidden;background:#000"><div class="ogs" style="position:absolute;left:0;top:0;transform-origin:0 0"></div></div>' +
       '<div class="ai"><button data-gen>Refaire les textes réseaux depuis l’article</button><a class="btn" style="height:auto;padding:9px 12px;border-radius:12px;font-size:12.5px;text-decoration:none" href="/admin/#validation/' + encodeURIComponent(N.id) + '">Catégorie, vidéo, recadrage… (back-office)</a></div></div>';
     var sub = { x: "Le post qui part sur @FuryoGang. L’aperçu se met à jour pendant que tu tapes.", ig: "Publication sur @furyogang. La légende s’affiche sous l’image.", tt: "Publication photo sur @furyogang. La légende s’affiche en bas de l’image : le visuel TikTok garde le titre en haut et le bas libre." }[k];
@@ -525,8 +526,21 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     var phr = String(D.site || "").replace(/\s+/g, " ").trim().split(/(?<=[.!?])\s/)[0].slice(0, 150);
     return Promise.resolve({ titre: (N.serie && N.serie.t) || titre(), cat: (CATS[N.cat] && CATS[N.cat] !== "News" ? CATS[N.cat] : CATS[N.cat2] || CATS[N.cat] || "News"), date: N.date || N.cree, desc: accroche() || phr, cover: img() || (N.serie && N.serie.cover) || "" });
   }
+  // Aperçu des carrousels de l'accueil (Will, 27/10/2026) : même image, même pastille, même titre que le vrai site.
+  function carrousels() {
+    var sr = N.serie || {}, t = (ban() && ban().titre) || sr.fr || sr.t || titre(), ch = D.carte && D.carte.chiffre ? ' <em style="font-style:normal;color:#F2B33D;white-space:nowrap">' + esc(D.carte.chiffre) + '</em>' : '';
+    var mob = (D.carte && D.carte.mobile) || imgSite(), pos = N.cadrage != null ? N.cadrage : 20, lab = N.label || "News";
+    var d = new Date((N.publie || N.cree || Date.now())); var dd = isNaN(d) ? "" : d.getDate() + " " + ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."][d.getMonth()];
+    return '<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">' +
+      '<div style="position:relative;width:300px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#1C1C1E;color:#fff"><img src="' + esc(couv(mob, 800)) + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center ' + pos + '%"><span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 38%,rgba(0,0,0,.9))"></span>' +
+        '<span style="position:absolute;top:7px;right:7px;padding:3px 6px;border-radius:5px;background:rgba(0,0,0,.72);font:700 9px I;text-transform:uppercase">' + esc(dd) + '</span><span style="position:absolute;left:10px;right:10px;bottom:12px;display:flex;flex-direction:column;align-items:flex-start;gap:5px"><span style="padding:3px 6px;border-radius:4px;background:' + col() + ';color:#111;font:700 8.5px I;letter-spacing:.06em;text-transform:uppercase">' + esc(lab) + '</span><b style="max-width:100%;font:700 19px/1.02 A;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(t) + ch + '</b></span></div>' +
+      '<div style="position:relative;width:420px;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#1C1C1E;color:#fff"><img src="' + esc(couv(N.coverM || imgSite(), 1200)) + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center ' + pos + '%"><span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.85))"></span>' +
+        '<span style="position:absolute;left:14px;right:14px;bottom:12px"><small style="font:700 10px I;text-transform:uppercase;color:' + col() + '">' + esc(lab) + ' <span style="color:#cfcfd4">· ' + esc(dd) + '</span></small><b style="display:block;margin-top:4px;font:700 24px/1 A;text-transform:uppercase">' + esc(t) + ch + '</b><span style="display:block;margin-top:4px;font:500 11px/1.3 I;color:#d9d9de;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(accroche()) + '</span></span></div></div>' +
+      '<p class="sub" style="margin-top:6px">À gauche l’accueil téléphone, à droite l’accueil ordinateur.</p>';
+  }
   function ogApercu() {
     var b = $("#ogp"); if (!b || !window.FG_OGACTU) return;
+    if (D.carte && D.carte.og) { b.innerHTML = '<img src="' + esc(D.carte.og) + '" style="width:100%;height:100%;object-fit:cover;display:block">'; return; }
     if (ban()) { b.innerHTML = '<img src="' + esc(imgSite()) + '" style="width:100%;height:100%;object-fit:cover;display:block">'; return; }
     ogDonnees().then(function (d) { var sc = $("#ogp .ogs"); if (!sc) return; sc.innerHTML = d.type === "extrait" ? FG_OGACTU.cardExtrait(d) : FG_OGACTU.card(d); sc.style.transform = "scale(" + b.clientWidth / 1200 + ")"; });
   }
