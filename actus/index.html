@@ -243,9 +243,10 @@ body{background:#000}
 /* Bouton de lecture : bloc téléphone */
 .lx-m{background:#141416;border-radius:20px;padding:18px;margin:16px 0;border:1px solid #2a2a2e;position:relative;z-index:1}
 .lx-h{display:flex;gap:16px;align-items:center}.lx-h img{width:84px;height:118px;object-fit:cover;border-radius:6px;flex:none}
-.lx-t{display:inline-block;background:#E5483A;color:#000;font:700 11px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:6px}
-.lx-h b{display:block;font:700 26px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:#fff;margin-top:10px}.lx-h small{display:block;font:500 13px Inter,sans-serif;color:#9a968f;margin-top:4px}
-.lx-go{margin-top:14px;display:flex;justify-content:center;align-items:center;gap:10px;background:#BC002D;color:#fff;font:700 16px Inter,sans-serif;padding:14px;border-radius:14px;text-decoration:none}
+.lx-l{display:flex;gap:8px;align-items:center}.lx-l .na-pill{height:24px;line-height:24px;padding:0 10px;font-size:12px;border-radius:7px;color:#000}.lx-l b{font:700 18px Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:#fff}
+.lx-n{margin:10px 0 0;font:700 28px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:#fff}.lx-jp{display:block;font:500 13px "Noto Sans JP",sans-serif;color:#9a968f;margin-top:4px}.lx-h small{display:block;font:500 12.5px Inter,sans-serif;color:#8e8e93;margin-top:6px}
+.lx-go{margin-top:16px;display:flex;justify-content:center;align-items:center;gap:10px;background:#BC002D;color:#fff;font:700 16px Inter,sans-serif;padding:14px;border-radius:14px;text-decoration:none}
+.na-hero.kc .na-ht{display:none}.na-hero.kc{height:auto;overflow:hidden}
 /* Bouton de lecture : encart ordinateur */
 .lx-d{display:flex;align-items:center;gap:22px;margin:24px 0 6px;padding:18px 20px;border-radius:18px;background:linear-gradient(100deg,#2a0a12,#141416 62%);border:1px solid #3a1620;text-decoration:none;color:#fff;transition:border-color .15s}
 .lx-d:hover{border-color:#BC002D}.lx-i{display:flex;flex:none;align-items:center;padding-left:4px}.lx-i img{width:78px;height:110px;object-fit:cover;border:3px solid #fff;border-radius:3px;box-shadow:0 8px 18px rgba(0,0,0,.5)}.lx-i img+img{margin-left:-28px}
@@ -332,10 +333,13 @@ body{background:#000}
   // Bouton de lecture des extraits (Will, 27/10/2026) : bloc « C » sur téléphone, encart « B » sur ordinateur.
   var BOOK = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>';
   function chapLire() { var m = String([N.titre, N.accroche, N.texte].join(" ")).match(/chapitre\s+(\d+)/i); return m ? m[1] : "1"; }
+  // Téléphone, news avec carte (maquette 1, Will 27/10/2026) : la bannière reste seule ; pastille, chapitre, titres FR / JP, date et bouton dans ce bloc.
   function lireM() {
-    if (!N.lire) return "";
-    return '<div class="lx-m"><div class="lx-h">' + (N.vignette ? '<img src="' + esc(couv(N.vignette, 240)) + '" alt="">' : "") + '<div><span class="lx-t">Extrait gratuit</span><b>Chapitre ' + esc(chapLire()) + '</b><small>Lecteur officiel ' + esc(N.pub || "de l’éditeur") + '</small></div></div>' +
-      '<a class="lx-go" href="' + esc(N.lire) + '" target="_blank" rel="noopener">' + BOOK + 'Lire en ligne</a></div>';
+    if (!N.carte) return "";
+    var c0 = (N.cats && N.cats[0]) || { nom: N.catNom || "Extrait", c: N.catC || "#E5483A" };
+    return '<div class="lx-m"><div class="lx-h">' + (N.vignette ? '<img src="' + esc(couv(N.vignette, 240)) + '" alt="">' : "") + '<div><div class="lx-l"><span class="na-pill" style="background:' + c0.c + '">' + esc(c0.nom) + "</span>" + (N.lire ? "<b>Chapitre " + esc(chapLire()) + "</b>" : "") + "</div>" +
+      '<h1 class="lx-n">' + esc(N.fr || N.titre) + "</h1>" + (N.jp ? '<span class="lx-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<small>' + esc(dLong(N.date) || "") + "</small></div></div>" +
+      (N.lire ? '<a class="lx-go" href="' + esc(N.lire) + '" target="_blank" rel="noopener">' + BOOK + "Lire en ligne</a>" : "") + "</div>";
   }
   function lireD() {
     if (!N.lire) return "";
