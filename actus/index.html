@@ -355,7 +355,9 @@ body{background:#000}
     var f = document.querySelector("[data-fl]"); if (!f || f._go) return; f._go = 1;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var im = [].slice.call(f.querySelectorAll("img")), i = 0;
-    (function step() { setTimeout(function () { if (!document.body.contains(f)) return; im[i].classList.remove("on"); i = (i + 1) % im.length; im[i].classList.add("on"); step(); }, i === 0 ? 2600 : 1600); })();
+    // La couverture ne s'attarde pas à l'arrivée (Will, 27/10/2026) : ça défile tout de suite ; un peu plus long au tour suivant.
+    var premier = true;
+    (function step() { setTimeout(function () { if (!document.body.contains(f)) return; im[i].classList.remove("on"); i = (i + 1) % im.length; im[i].classList.add("on"); premier = false; step(); }, i === 0 ? (premier ? 500 : 1600) : 1600); })();
   }
   function lireD() {
     if (!N.lire) return "";
