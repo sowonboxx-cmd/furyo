@@ -77,7 +77,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
           if (c.desktop) r.coverD = abs(c.desktop); if (c.fond) r.fond = abs(c.fond); if (c.fondPos) r.fondPos = String(c.fondPos);
           { const au = c.auteurs || [s.scen, s.dess].join(", ").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*/).filter((x, i, a) => x && a.indexOf(x) === i).join(" · "); if (au) r.aut = au; } if (c.editeur) r.ed = String(c.editeur); if (c.quand) r.quand = String(c.quand); if (c.pays) r.paysC = String(c.pays); if (c.collection) r.label = String(c.collection);
           // Tomes en circulation (Will, 27/10/2026) : chiffre affiché en jaune après le titre (« +5 millions ») ; image téléphone (16:9) sans passer par la bannière dessinée.
-          if (c.chiffre) r.chiffre = String(c.chiffre); if (c.og) r.ogImg = abs(c.og); if (c.mobile && !c.banniere) r.coverM = abs(c.mobile);
+          if (c.chiffre) r.chiffre = String(c.chiffre); if (c.og) r.ogImg = abs(c.og); if (Array.isArray(c.tomes)) r.tomes = c.tomes.slice(0, 6).map(abs).filter(Boolean); if (c.mobile && !c.banniere) r.coverM = abs(c.mobile);
           if (c.ogTitre) r.ogTitre = String(c.ogTitre); if (c.ogDesc) r.ogDesc = String(c.ogDesc);
           if (c.banniere) { r._b = 1; r.titreSous = true; if (c.mobile) r.coverM = abs(c.mobile); if (c.titre) { r.titre = String(c.titre); r.fr = String(c.titre); } if (c.jp) r.jp = String(c.jp); }
           return r; })(),

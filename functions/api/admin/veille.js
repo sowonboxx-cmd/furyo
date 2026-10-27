@@ -277,6 +277,7 @@ async function traiter(request, env) {
     // Tomes en circulation (Will, 27/10/2026) : chiffre en jaune après le titre, image téléphone 16:9 et visuels réseaux.
     if (o && String(c.chiffre || "").trim()) o.chiffre = String(c.chiffre).trim().slice(0, 30);
     if (o && u(c.og)) o.og = u(c.og);
+    if (o && Array.isArray(c.tomes)) o.tomes = c.tomes.map(u).filter(Boolean).slice(0, 6);
     if (o && !c.banniere) for (const k of ["mobile", "ig", "tt"]) if (u(c[k])) o[k] = u(c[k]);
     if (o && c.fondPos) o.fondPos = String(c.fondPos).slice(0, 20);
     if (o && c.collection) o.collection = String(c.collection).slice(0, 40);

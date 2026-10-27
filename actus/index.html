@@ -396,7 +396,7 @@ body{background:#000}
     root.classList.remove("nd");
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
-    root.innerHTML = '<div class="na-hero' + (N.carte ? " kc" : "") + (N.titreSous ? " kt" : "") + '">' +  (N.cover ? '<img src="' + esc(couv(N.coverM || N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "") +
+    root.innerHTML = '<div class="na-hero' + (N.carte ? " kc" : "") + (N.titreSous ? " kt" : "") + '">' + (heroTomes() || (N.cover ? '<img src="' + esc(couv(N.coverM || N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "")) +
       (N.cover && N.credit ? '<span class="cr" lang="' + (/^©[^ ]/.test(N.credit) ? "ja" : "fr") + '">' + esc(N.credit) + "</span>" : "") +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + (N.chiffre ? ' <em style="font-style:normal;color:#F2B33D;white-space:nowrap">' + esc(N.chiffre) + "</em>" : "") + "</h1>" +
         (N.jp ? '<span class="na-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<span class="na-meta">' + esc(dLong(N.date) || "") + "</span></div></div>" +
@@ -536,6 +536,19 @@ body{background:#000}
     if (ADMIN !== null) return go();
     ADMIN = false;
     fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { ADMIN = !!(j && j.admin); go(); }).catch(function () {});
+  }
+  // Tomes en circulation sur téléphone (Will, 27/10/2026) : fond en couleur atténuée + couvertures dessinées en HTML,
+  // pour garder la même marge à droite quelle que soit la largeur de l'écran (l'image 16:9 était rognée).
+  function heroTomes() {
+    if (!N.tomes || !N.tomes.length || !N.fond) return "";
+    var W = root.clientWidth || innerWidth, H = Math.min(innerHeight * 0.42, 326), k = N.tomes.length, M = 16;
+    var hl = Math.round(H * 0.5), h = Math.round(hl * 0.86), wl = Math.round(hl * 0.7), w = Math.round(h * 0.7);
+    var zone = W * 0.62, f = Math.min(0.82, (zone - wl) / Math.max(1, w * (k - 1))), x = W - M - wl, top = 14;
+    var out = '<div class="ntb" style="position:absolute;inset:0;background:url(' + esc(N.fond) + ') ' + esc(N.fondPos || "40% 30%") + '/cover;filter:saturate(.6) brightness(.62)"></div><div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.15),rgba(0,0,0,0) 40%,rgba(0,0,0,.5) 85%)"></div>';
+    var cv = N.tomes.map(function (u, i) { var last = i === k - 1, hh = last ? hl : h, ww = last ? wl : w;
+      return '<img src="' + esc(couv(u, 300)) + '" alt="" style="position:absolute;inset:auto;left:' + 0 + 'px;top:' + (last ? top : top + Math.round((hl - h) / 2)) + 'px;width:' + ww + 'px;height:' + hh + 'px;object-fit:cover;border:2px solid #fff;border-radius:3px;box-sizing:border-box;box-shadow:0 10px 22px rgba(0,0,0,.7);z-index:' + (i + 1) + '" data-i="' + i + '">'; });
+    var xs = []; xs[k - 1] = x; for (var i = k - 2; i >= 0; i--) { x -= w * f; xs[i] = x; }
+    return out + cv.map(function (s, i) { return s.replace("left:0px", "left:" + Math.round(xs[i]) + "px"); }).join("");
   }
   function renderD() {
     root.classList.add("nd");
