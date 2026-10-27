@@ -67,7 +67,8 @@
     if (/^sortie/.test(i.catChoisie || i.cat)) return "";
     if ([i.catChoisie || i.cat, i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2].includes("tirage")) return ""; // « Tomes en circulation » : déjà sur le visuel (Will, 22/10/2026)
     var k = i.catChoisie || i.cat, k2 = i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2;
-    return NEWS_CATS.includes(k) ? [VCATS[k]].concat(k2 && k2 !== k && NEWS_CATS.includes(k2) ? [VCATS[k2]] : []).join(" · ") + "\n" : "";
+    var nom = function (c) { return c === "news" ? "Annonce" : VCATS[c]; }; // sur les réseaux, « Annonce » plutôt que « News » (Will, 27/10/2026)
+    return NEWS_CATS.includes(k) ? [nom(k)].concat(k2 && k2 !== k && NEWS_CATS.includes(k2) ? [nom(k2)] : []).join(" · ") + "\n" : "";
   }
   // Couverture japonaise = X uniquement, pas d'Instagram ni de TikTok (Will, 19/10/2026).
   function estCouvertureJaponaise(i) {
