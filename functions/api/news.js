@@ -26,7 +26,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Date de publication sur le site (Will, 22/10/2026) : prioritaire sur la date de repérage pour l'ordre et la date affichée.
   const pubLe = p => (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "";
   const jourParis = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
-  return cached(request, waitUntil, "/api/news?v=17", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=18", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
