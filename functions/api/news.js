@@ -72,6 +72,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
           // Carte « Extrait » : couverture (miniatures), planche (fondu sous la bannière), lien de lecture en ligne (bouton « Lire »).
           const r = { vignette: abs(c.couv), planche: abs((c.planches || [])[0] || ""), planche2: abs((c.planches || [])[1] || ""), pages: (c.planches || []).slice(0, 12).map(abs).filter(Boolean), lire: /^https:\/\//.test(c.lire || "") ? c.lire : "" };
           // Bannière dessinée (hommage, grosse news, Will 27/10/2026) : l'image porte déjà le titre ; version téléphone à part, titre de la news au choix.
+          if (c.ogTitre) r.ogTitre = String(c.ogTitre); if (c.ogDesc) r.ogDesc = String(c.ogDesc);
           if (c.banniere) { r._b = 1; r.titreSous = true; if (c.mobile) r.coverM = abs(c.mobile); if (c.titre) { r.titre = String(c.titre); r.fr = String(c.titre); } if (c.jp) r.jp = String(c.jp); }
           return r; })(),
         _extrait: [cat, ...autres].some(c => c.k === "extrait"), _image: text(p["Image"]),
