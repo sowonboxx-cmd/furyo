@@ -69,9 +69,24 @@ const DEPART = [
   c("p-premium", "Premium", "会員", "r", "site", "pr", "Ce que donne le Premium (offert à tous jusqu'au 30/11).", { pages: ["/premium/"] }),
   c("p-avancement", "La base FuryoGang", "進捗", "r", "site", "pr", "Combien de fiches sont en ligne et ce qui arrive. Bon pour un post « palier ».", { pages: ["/avancement/"] }),
 ];
+const k = (nom, oeuvre, note = "", x = "") => ({ nom, oeuvre, note, x, st: "att" });
+const CONTACTS = [
+  k("Dai Suzuki", "Drop OG, Gokusatsudō Gregor", "Ami de Will", "guregooal"),
+  k("Ryū Itō", "King of Ants (dessin)"),
+  k("Masami Nobe", "Gorilla"),
+  k("Shinsuke Takahashi", "Shōnan Seven", "Déjà rencontré"),
+  k("Yōsuke Ueki", "Gabu", "Il suit FuryoGang"),
+  k("Shinobu Seguchi", "Prisoner Riku", "Plutôt dans le furyō maintenant"),
+  k("Hiroshi Takahashi", "Crows, Worst", "Soyons fous"),
+  k("Daisuke Watanabe", "Zenaku no Kuzu, Konno Chika (scénario)", "M'a déjà répondu une fois, assez actif"),
+  k("Hiromasa Okushima", "SHOUT!", "Sur un malentendu"),
+  k("Auteur de Ganki", "Ganki", "Nom à vérifier (Daijuna Yanauchi ?)"),
+];
 async function lire(env) {
   let d = null; try { d = await env.STATS.get(CLE, "json"); } catch (e) {}
   if (!d || !Array.isArray(d.items)) d = { v: V, items: DEPART };
+  // Interview mangaka : liste de départ des mangakas à contacter (Will, 27/10/2026), ajoutée une fois si absente.
+  const itw = d.items.find(x => x.id === "interview"); if (itw && !Array.isArray(itw.contacts)) itw.contacts = CONTACTS;
   return d;
 }
 export async function onRequestGet({ request, env }) {

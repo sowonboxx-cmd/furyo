@@ -440,6 +440,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 /* Contenu régulier du site (Will, 27/10/2026) */
 .cr-kj{font:900 30px "FGJP",sans-serif;color:var(--red);margin-right:14px;vertical-align:6px}
 .cr-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.cr-q{flex:1;min-width:220px;display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--s1);border:1px solid var(--line);border-radius:12px}.cr-q svg{width:18px;height:18px;color:var(--mut);flex:none}.cr-q input{flex:1;min-width:0;border:0;background:transparent;color:inherit;font:500 15px "FGInter",sans-serif;outline:none}
+.cr-k{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}.cr-k:first-of-type{border-top:0}.cr-kst{flex:none;min-width:96px;height:28px;border:0;border-radius:8px;font:700 11px "FGInter",sans-serif;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.cr-kx{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}.cr-kx b{font-weight:700}.cr-kx span{color:var(--mut);font-size:13.5px}.cr-kx em{flex-basis:100%;font-style:normal;color:var(--mut);font-size:12.5px}
+.cr-ksum{margin-left:10px;display:inline-flex;gap:10px}.cr-ksum i{font-style:normal;font-size:11px;letter-spacing:.04em}
 .cr-seg{display:inline-flex;flex-wrap:wrap;background:var(--s1);border-radius:12px;padding:4px;gap:2px}.cr-seg button{border:0;background:none;font:600 13px "FGInter";padding:7px 12px;border-radius:9px;color:var(--mut);cursor:pointer}.cr-seg button.on{background:#26262b;color:#fff}
 .cr-chip{display:inline-flex;align-items:center;gap:6px;border:0;font:600 12.5px "FGInter";padding:6px 11px;border-radius:999px;background:var(--s1);color:#cfcfd4;cursor:pointer;text-decoration:none}.cr-chip i{width:8px;height:8px;border-radius:50%}.cr-chip span{color:#77777e}.cr-chip.on{background:#fff;color:#000}
 .cr-tag{display:inline-flex;align-items:center;gap:5px;font:700 10.5px "FGInter";letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:6px;white-space:nowrap}.cr-tag i{width:6px;height:6px;border-radius:50%}.cr-tf{background:#26262b;color:#d6d6db}
@@ -1528,7 +1532,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   var GR = { h: "Chaque semaine", m: "Chaque mois", f: "Au fil de l’eau", r: "Rotation : la promo des pages du site, une ou deux par mois", p: "Sans rythme fixe" };
   var ST = { ok: "En place", ko: "À construire", pr: "Promo à faire", id: "Idée" };
   var STA = { ok: "Prêt", ko: "À faire", id: "Plus tard" };
-  var L = null, F = { fq: "", st: "", cat: "" }, EDIT = false;
+  var L = null, F = { fq: "", st: "", cat: "", q: "" }, EDIT = false;
   var box = function () { return $("#crapp"); };
   var auj = function () { return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date()); };
   var dFr = function (d) { if (!d) return ""; var x = new Date(d + "T12:00:00"); return isNaN(x) ? d : x.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: x.getFullYear() === new Date().getFullYear() ? undefined : "numeric" }); };
@@ -1545,9 +1549,12 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   }
   /* ---------- liste ---------- */
   function liste() {
-    var vis = L.filter(function (c) { return (!F.fq || c.fq === F.fq) && (!F.st || c.st === F.st) && (!F.cat || c.cat === F.cat); });
+    var nrm = function (s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }, q = nrm(F.q).trim();
+    var vis = L.filter(function (c) { return (!F.fq || c.fq === F.fq) && (!F.st || c.st === F.st) && (!F.cat || c.cat === F.cat) &&
+      (!q || q.split(/\s+/).every(function (m) { return nrm([c.nm, c.kj, c.ds, (c.montre || []).join(" "), (c.pages || []).join(" "), (c.contacts || []).map(function (k) { return k.nom + " " + k.oeuvre; }).join(" ")].join(" ")).indexOf(m) >= 0; })); });
     var seg = function (k, opts) { return '<span class="cr-seg">' + opts.map(function (o) { return '<button data-f="' + k + '" data-v="' + o[0] + '" class="' + (F[k] === o[0] ? "on" : "") + '">' + o[1] + '</button>'; }).join("") + '</span>'; };
     var h = '<h1><span class="cr-kj">発信</span>Contenu régulier du site</h1><p class="lead">Tout ce qu’on publie régulièrement pour faire vivre le site : récaps, sorties, fiches, membres, et la promo de chaque page. Clique un contenu pour voir son détail, ses assets et le planifier.</p>' +
+      '<div class="cr-bar"><label class="cr-q"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="cr-q" type="search" placeholder="Rechercher un contenu (ex. interview)" value="' + esc(F.q) + '" autocomplete="off"></label></div>' +
       '<div class="cr-bar">' + seg("fq", [["", "Tout"], ["h", "Hebdo"], ["m", "Mensuel"], ["f", "Au fil de l’eau"], ["r", "Rotation"], ["p", "Sans rythme"]]) + seg("st", [["", "Tous"], ["ok", "En place"], ["ko", "À construire"], ["pr", "Promo à faire"], ["id", "Idées"]]) + '</div>' +
       '<div class="cr-bar">' + Object.keys(CAT).map(function (k) { return '<button class="cr-chip' + (F.cat === k ? " on" : "") + '" data-f="cat" data-v="' + (F.cat === k ? "" : k) + '"><i style="background:' + CAT[k][1] + '"></i>' + CAT[k][0] + ' <span>' + L.filter(function (c) { return c.cat === k; }).length + '</span></button>'; }).join("") + '</div>';
     ["h", "m", "f", "r", "p"].forEach(function (f) {
@@ -1582,7 +1589,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       (c.pages && c.pages.length ? '<div class="lbl">Pages du site concernées</div><div class="cr-t">' + c.pages.map(function (p) { return '<a class="cr-chip" href="' + esc(p) + '" target="_blank" rel="noopener">furyogang.com' + esc(p.replace(/^https?:\/\/[^/]+/, "")) + ' ↗</a>'; }).join("") + '</div>' : '') +
       (c.pages && c.pages.length && /^\//.test(c.pages[0]) && !/#/.test(c.pages[0]) ? '<div class="lbl">Aperçu de la page</div><div class="cr-prev"><iframe src="' + esc(c.pages[0]) + '" loading="lazy" tabindex="-1"></iframe><a href="' + esc(c.pages[0]) + '" target="_blank" rel="noopener" aria-label="Ouvrir la page"></a></div>' : '') +
       (!c.montre?.length && !c.pages?.length ? '<p class="lead" style="margin:0">Pas encore de détail. « Modifier » pour ajouter ce que le post montre et les pages concernées.</p>' : '') + '</div>' +
-      (c.id === "cadeau" || (c.gagnants && c.gagnants.length) ? gagnants(c) : '') + '</div>' +
+      (c.id === "cadeau" || (c.gagnants && c.gagnants.length) ? gagnants(c) : '') + (c.id === "interview" || (c.contacts && c.contacts.length) ? contacts(c) : '') + '</div>' +
       '<div class="cr-side"><div class="cr-box"><div class="lbl" style="margin-top:0">Publication</div><div class="cr-2"><div><small>Dernière fois</small><b class="' + (c.last ? "" : "cr-red") + '">' + (c.last ? esc(dFr(c.last)) : "JAMAIS") + '</b>' + (c.last ? '<em>' + ilya(c.last) + '</em>' : '') + '</div><div><small>Prochaine conseillée</small><b>' + esc(c.next || "—") + '</b></div></div>' +
         (c.rythme ? '<p class="cr-note">Rythme : ' + esc(c.rythme) + '</p>' : '') +
         '<div class="cr-pub"><input class="cr-in" id="cr-pnote" placeholder="Où ? (Insta, X, TikTok, site…)"><button class="cr-btn" data-pub>Publié aujourd’hui</button></div></div>' +
@@ -1595,6 +1602,16 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       '<div class="cr-plan"><input type="date" class="cr-in" id="cr-pdate" value="' + auj() + '"><button class="cr-btn pri" data-plan>Planifier dans le calendrier</button></div>' +
       '<div class="cr-acts"><button class="cr-btn gh" data-edit>Modifier</button><button class="cr-btn gh cr-del" data-del>Supprimer</button></div></div></div>';
     return h;
+  }
+  /* Mangakas à contacter (Will, 27/10/2026) : clic sur la pastille = À contacter → Contacté → OK → Pas OK. */
+  var CST = { att: ["À contacter", "#98989D"], env: ["Contacté", "#529CCA"], ok: ["OK", "#4CD07D"], non: ["Pas OK", "#E5483A"] }, CORD = ["att", "env", "ok", "non"];
+  function contacts(c) {
+    var l = c.contacts || [], n = function (s) { return l.filter(function (k) { return (k.st || "att") === s; }).length; };
+    return '<div class="cr-box" style="margin-top:12px"><div class="lbl" style="margin-top:0">Mangakas à contacter <span class="cr-n">' + l.length + '</span><span class="cr-ksum">' + CORD.map(function (s) { return n(s) ? '<i style="color:' + CST[s][1] + '">' + n(s) + ' ' + CST[s][0].toLowerCase() + '</i>' : ''; }).join("") + '</span></div>' +
+      (l.length ? l.map(function (k, i) { var s = CST[k.st || "att"];
+        return '<div class="cr-k"><button class="cr-kst" data-kst="' + i + '" style="background:' + s[1] + '22;color:' + s[1] + '" title="Changer le statut">' + s[0] + '</button><div class="cr-kx"><b>' + esc(k.nom) + '</b>' + (k.oeuvre ? '<span>' + esc(k.oeuvre) + '</span>' : '') + (k.note ? '<em>' + esc(k.note) + '</em>' : '') + '</div>' +
+          (k.x ? '<a class="cr-dl" href="https://x.com/' + esc(k.x) + '" target="_blank" rel="noopener" title="X">@' + esc(k.x) + '</a>' : '') + '<button class="cr-x" data-kdel="' + i + '">×</button></div>'; }).join("") : '<p class="cr-note" style="margin:0 0 10px">Personne pour l’instant.</p>') +
+      '<div class="cr-gadd"><input class="cr-in" id="cr-kn" placeholder="Mangaka"><input class="cr-in" id="cr-ko" placeholder="Œuvre"><input class="cr-in" id="cr-kt" placeholder="Note (facultatif)"><button class="cr-btn gh" data-kadd>Ajouter</button></div></div>';
   }
   function gagnants(c) {
     var g = c.gagnants || [], qui = {};
@@ -1660,6 +1677,9 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var as = e.target.closest("[data-ast]"); if (as) { var a = c.assets[+as.dataset.ast]; a.st = a.st === "ok" ? "id" : a.st === "id" ? "ko" : "ok"; sauver(c); draw(); return; }
     var ad = e.target.closest("[data-adel]"); if (ad) { c.assets.splice(+ad.dataset.adel, 1); sauver(c); draw(); return; }
     if (e.target.closest("[data-aadd]")) { var nm = ($("#cr-anm").value || "").trim(), u = ($("#cr-aurl").value || "").trim(); if (!nm && !u) return; c.assets = c.assets || []; c.assets.push({ nm: nm || "Asset", st: u ? "ok" : "ko", url: u }); sauver(c, "Asset ajouté ✓"); draw(); return; }
+    var ks = e.target.closest("[data-kst]"); if (ks) { var k = c.contacts[+ks.dataset.kst]; k.st = CORD[(CORD.indexOf(k.st || "att") + 1) % CORD.length]; sauver(c); draw(); return; }
+    var kd = e.target.closest("[data-kdel]"); if (kd) { var kk = c.contacts[+kd.dataset.kdel]; if (!confirm("Retirer " + kk.nom + " ?")) return; c.contacts.splice(+kd.dataset.kdel, 1); sauver(c); draw(); return; }
+    if (e.target.closest("[data-kadd]")) { var kn = ($("#cr-kn").value || "").trim(); if (!kn) return; c.contacts = c.contacts || []; c.contacts.push({ nom: kn, oeuvre: ($("#cr-ko").value || "").trim(), note: ($("#cr-kt").value || "").trim(), st: "att" }); sauver(c, "Ajouté ✓"); draw(); return; }
     var gd = e.target.closest("[data-gdel]"); if (gd) { c.gagnants.splice(+gd.dataset.gdel, 1); sauver(c); draw(); return; }
     if (e.target.closest("[data-gadd]")) { var q = ($("#cr-gq").value || "").trim(); if (!q) return; c.gagnants = c.gagnants || [];
       if (c.gagnants.some(function (x) { return String(x.qui).trim().toLowerCase() === q.toLowerCase(); }) && !confirm(q + " a déjà gagné. L’ajouter quand même ?")) return;
@@ -1668,6 +1688,10 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       var ty = { cadeau: "concours", interview: "article", "fiche-mangaka": "mangaka", "video-manga": "video" }[c.id] || (c.cat === "membres" ? "membre" : c.id === "qdn" ? "qn-sem" : c.id === "recap-mois" ? "qn-mois" : "autre");
       fetch("/api/admin/calendrier", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ ev: { titre: c.nm, type: ty, date: d, lien: "/hq/#vivre/" + c.id, note: c.ds || "" } }) })
         .then(function (r) { if (!r.ok) throw 0; c.next = dFr(d); sauver(c); toast("Planifié le " + dFr(d) + " ✓ (calendrier éditorial)"); draw(); }).catch(function () { toast("Échec, réessaie"); }); return; }
+  });
+  document.addEventListener("input", function (e) {
+    if (e.target.id !== "cr-q") return; F.q = e.target.value; var pos = e.target.selectionStart; draw();
+    var i = $("#cr-q"); if (i) { i.focus(); try { i.setSelectionRange(pos, pos); } catch (x) {} }
   });
   document.addEventListener("change", function (e) {
     if (e.target.id !== "cr-aup" || !e.target.files || !e.target.files[0]) return;
