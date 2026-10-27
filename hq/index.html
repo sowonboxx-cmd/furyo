@@ -374,6 +374,20 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .cedit label.ck{flex-direction:row;align-items:center;gap:9px;text-transform:none;letter-spacing:0;font-size:14px;color:var(--cr)}
 .cedit label.ck input{width:20px;height:20px}
 .callg{display:none}
+/* Pop-ups du calendrier : tout tient dans l'écran, sans défiler (Will, 27/10/2026). Ordinateur : deux colonnes
+   (infos, visuels et actions à gauche ; légendes à droite) ; le texte d'une légende très longue défile dans sa case. */
+.modal-ov{padding:12px}
+.modal{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);padding:20px 22px;box-sizing:border-box}
+.modal .mslab{margin:12px 0 7px}.modal .macts{margin-top:14px}.modal .chips{margin-bottom:10px}.modal .sdate{margin:0 0 10px}
+.modal .cbox p{max-height:34vh;overflow:auto}
+@media (max-width:899px){.modal .cbox p{max-height:22vh}.modal .dlb{padding:9px 12px}.modal .mh .cov{width:46px;height:64px}.modal h2{font-size:24px}.modal .fichelink{padding:6px 6px 6px 12px}.modal .chkbig{width:40px;height:40px}}
+@media (min-width:900px){
+  .modal.two{width:min(1060px,96vw);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 30px;overflow:hidden}
+  .modal.two .mcol-r{display:flex;flex-direction:column;min-height:0}
+  .modal.two .mcol-r .cbox{flex:1;min-height:0;display:flex}
+  .modal.two .mcol-r .cbox p{max-height:calc(100vh - 170px);max-height:calc(100dvh - 170px);overflow:auto}
+  .modal.two .mcol-r>.mslab:first-child{margin-top:4px}
+}
 @media (max-width:860px){.mgrid,.mhead{grid-template-columns:repeat(2,1fr)}.kb{grid-template-columns:1fr}h1{font-size:48px}.cell .add{color:var(--mut);height:auto}}
 /* Mobile : calendrier éditorial simplifié — uniquement la vue semaine, un jour à la fois, qu'on fait défiler à l'horizontale (Will, 20/10/2026). */
 @media (max-width:719px){
@@ -1169,6 +1183,16 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   }
   // ---- Modal ----
   var host = document.createElement("div"); host.id = "calmodalhost"; document.body.appendChild(host);
+  // Pop-up sur ordinateur : légendes dans une colonne à droite pour que tout tienne sans défiler (Will, 27/10/2026).
+  new MutationObserver(function () {
+    var m = host.querySelector(".modal"); if (!m || m.dataset.l || innerWidth < 900) return; m.dataset.l = 1;
+    var tabs = m.querySelector(".ctabs"); if (!tabs) return;
+    var lab = tabs.previousElementSibling, box = tabs.nextElementSibling;
+    var r = document.createElement("div"), l = document.createElement("div"); r.className = "mcol-r"; l.className = "mcol-l";
+    [].slice.call(m.children).forEach(function (c) { if (c.id !== "mx" && c !== lab && c !== tabs && c !== box) l.appendChild(c); });
+    if (lab && lab.classList.contains("mslab")) r.appendChild(lab); r.appendChild(tabs); if (box && box.classList.contains("cbox")) r.appendChild(box);
+    m.appendChild(l); m.appendChild(r); m.classList.add("two");
+  }).observe(host, { childList: true });
   var modalCap = null, modalTab = "tw";
   var IC_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
   var IC_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
