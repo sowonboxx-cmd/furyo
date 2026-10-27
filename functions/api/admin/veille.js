@@ -220,7 +220,9 @@ async function construire(request, env) {
 
 async function traiter(request, env) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
+  await etape("admin ok");
   let b = {}; try { b = await request.json(); } catch (e) {}
+  await etape("json ok");
   if (!/^[0-9a-f]{32}$/.test(b.id || "")) return json({ error: "élément inconnu" }, 400);
   // Prépublication : « Validé » coche la case Validé, « Vu » ou « Rejeté » coche Écarté.
   if (b.base === "prepub") {
@@ -258,6 +260,7 @@ async function traiter(request, env) {
     // Date de publication (Will, 22/10/2026) : la news prend sa place dans le fil le jour où elle est publiée,
     // pas le jour où la veille l'a repérée. Gardée si elle existe déjà (une news republiée ne remonte pas).
     if (b.statut === "Publié sur le site") {
+      await etape("lecture page");
       const cur = await (await fetch(`https://api.notion.com/v1/pages/${b.id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } })).json().catch(() => ({}));
       if (!cur.properties?.["Publiée le"]?.date?.start) props["Publiée le"] = { date: { start: new Date().toISOString() } };
     }
@@ -295,11 +298,13 @@ async function traiter(request, env) {
     props["Catégorie"] = { multi_select: noms.map(name => ({ name })) };
   }
   if (!Object.keys(props).length) return json({ error: "rien à changer" }, 400);
+  await etape("PATCH Notion : " + Object.keys(props).join(","));
   const r = await fetch(`https://api.notion.com/v1/pages/${b.id}`, {
     method: "PATCH",
     headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" },
     body: JSON.stringify({ properties: props }),
   });
+  await etape("Notion a répondu " + r.status);
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
   // News publiée = fiche à jour en même temps (Will, 06/10/2026) : les « Mise à jour fiche » en attente pour la même série sont appliquées.
   // « À appliquer à la fiche » (écran Mises à jour de fiche) applique aussi tout de suite, sans attendre une news (Will, 19/10/2026).
@@ -362,6 +367,12 @@ async function appliquerFiche(env, newsId) {
 // elle est reconstruite en arrière-plan pour le chargement suivant. Chaque action (valider, rejeter…) la reconstruit aussi.
 // Le cache n'est lu qu'après la vérification admin : la liste n'est jamais servie à quelqu'un d'autre.
 const CLE = "https://furyogang.com/__cache/admin-veille-v1";
+// Diagnostic temporaire (502 sur « Brève », 27/10/2026) : chaque étape de l'enregistrement est notée dans KV (sans contenu), lisible sur /api/diag-veille.
+let TRACE = null;
+async function etape(nom) {
+  if (!TRACE) return; const n = ++TRACE.n;
+  try { await TRACE.env.STATS.put(`dbg:v:${TRACE.id}:${String(n).padStart(2, "0")}`, JSON.stringify({ t: Date.now() - TRACE.t0, e: String(nom).slice(0, 300) }), { expirationTtl: 172800 }); } catch (e) {}
+}
 async function reconstruire(request, env) {
   const data = await construire(request, env);
   // Badge « Actualités et veille » : on ne compte que les vraies actus (pas couvertures, pas sorties, pas mises à jour de fiche — écrans à part, Will 19/10/2026).
@@ -380,11 +391,15 @@ export async function onRequestGet({ request, env, waitUntil }) {
   return count ? json({ n: data.n }) : json(data);
 }
 export async function onRequestPost({ request, env, waitUntil }) {
+  TRACE = { env, id: new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14) + Math.random().toString(36).slice(2, 5), n: 0, t0: Date.now() };
+  await etape("début");
   const b = await request.clone().json().catch(() => ({}));
+  await etape("corps lu : " + Object.keys(b).join(","));
   // Toujours une réponse JSON lisible, même si quelque chose plante (sinon le studio n'affiche que « Erreur réseau »).
   let r;
   try { r = await traiter(request, env); }
-  catch (e) { return json({ error: "Le serveur a planté : " + String((e && e.message) || e).slice(0, 200) }, 500); }
+  catch (e) { await etape("plantage : " + String((e && e.message) || e)); return json({ error: "Le serveur a planté : " + String((e && e.message) || e).slice(0, 200) }, 500); }
+  await etape("réponse " + r.status);
   if (r.ok) {
     // Corrige tout de suite la liste en cache (même règle que l'écran), puis la reconstruit en arrière-plan.
     try {
