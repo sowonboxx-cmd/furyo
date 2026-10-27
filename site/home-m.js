@@ -235,21 +235,25 @@
     function arm() { clearInterval(slTimer); if (matchMedia("(prefers-reduced-motion:reduce)").matches) return; slTimer = setInterval(function () { if (!document.hidden && document.body.contains(tr)) to(cur() + 1); else if (!document.body.contains(tr)) clearInterval(slTimer); }, 5500); }
     arm();
   }
-  // « Cette semaine » : pastilles qui défilent au doigt, avec le nombre de la semaine (lundi → dimanche) ou des 7 derniers jours pour les news.
+  // « Cette semaine » (maquette F3, Will 27/10/2026) : gros boutons sur deux lignes qui défilent au doigt.
+  // Le nom, puis le nombre de la semaine en rouge avec son unité (« 12 tomes ») ; ensuite les pages du site, avec une petite phrase.
   function cetteSemaine(news) {
     var w = semaine(), d7 = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10);
     var has = function (it, re) { return re.test(it.cat || "") || (it.cats || []).some(function (c) { return re.test(c.k); }); };
     var rec = news.filter(function (it) { return (it.date || "") >= d7; });
+    var pl = function (n, un, plu) { return n > 1 ? plu : un; };
     var P = [
-      ["Sorties", (D.cal || []).filter(function (x) { return x.date >= w[0] && x.date <= w[1]; }).length, "/calendrier/"],
-      ["Couvertures", rec.filter(function (it) { return has(it, /^couv/); }).length, "/?cat=couv-fr"],
-      ["Prépubs", (D.prepub || []).filter(function (x) { return x.date >= w[0] && x.date <= w[1]; }).length, "/?vue=magazines"],
-      ["Fiches", (D.av && D.av.semaine) || 0, "/avancement/"],
-      ["Fins de série", rec.filter(function (it) { return has(it, /^fin$/); }).length, "/?cat=fin"],
-      ["News", rec.length, "/?vue=actus"]
+      ["Sorties", (D.cal || []).filter(function (x) { return x.date >= w[0] && x.date <= w[1]; }).length, "/calendrier/", "tome", "tomes"],
+      ["News", rec.length, "/?vue=actus", "publiée", "publiées"],
+      ["Prépubs", (D.prepub || []).filter(function (x) { return x.date >= w[0] && x.date <= w[1]; }).length, "/?vue=magazines", "chapitre", "chapitres"],
+      ["Couvertures", rec.filter(function (it) { return has(it, /^couv/); }).length, "/?cat=couv-fr", "dévoilée", "dévoilées"],
+      ["Fiches", (D.av && D.av.semaine) || 0, "/avancement/", "nouvelle", "nouvelles"],
+      ["Fins de série", rec.filter(function (it) { return has(it, /^fin$/); }).length, "/?cat=fin", "série finie", "séries finies"]
     ].filter(function (p) { return p[1] > 0; });
-    if (!P.length) return "";
-    return '<nav class="mh-wk" aria-label="Cette semaine"><span class="k">Cette semaine</span>' + P.map(function (p) { return '<a href="' + p[2] + '">' + esc(p[0]) + "<b>" + p[1] + "</b></a>"; }).join("") + "</nav>";
+    var PG = [["Calendrier", "France + Japon", "/calendrier/"], ["Au Japon", "les magazines", "/japon/"], ["Séries", "toutes les fiches", "/series/"], ["À l’écran", "films, dramas", "/films/"]];
+    return '<div class="mh-wkc">Cette semaine</div><nav class="mh-wk" aria-label="Cette semaine">' +
+      P.map(function (p) { return '<a href="' + p[2] + '"><b>' + esc(p[0]) + '</b><small class="n"><em>' + p[1] + "</em> " + pl(p[1], p[3], p[4]) + "</small></a>"; }).join("") +
+      PG.map(function (p) { return '<a class="pg" href="' + p[2] + '"><b>' + esc(p[0]) + "</b><small>" + p[1] + "</small></a>"; }).join("") + "</nav>";
   }
   // Dernières news en carrés sur deux colonnes : catégorie sur l'image, date en pastille en haut à droite.
   function grille(list) {
