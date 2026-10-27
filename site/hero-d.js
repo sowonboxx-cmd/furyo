@@ -22,13 +22,18 @@
     couv = couv || function (u) { return u; }; esc = esc || function (s) { return String(s == null ? "" : s); };
     if (!N) return "";
     if (N.coverD) return '<img class="hd-im" src="' + esc(couv(N.coverD, 2000)) + '" alt="">';
-    var ext = (N.cats || []).some(function (c) { return c && c.k === "extrait"; }) || N.cat === "extrait";
-    var fond = N.fond || N.planche || "";
-    if (!ext || !fond || !N.vignette) return "";
+    var a = function (k) { return (N.cats || []).some(function (c) { return c && c.k === k; }) || N.cat === k; };
+    // Gabarits : Extrait (Hell Dogs 3a) et Nouvelle licence FR (Licence A, Will 27/10/2026) — même mise en page.
+    var ext = a("extrait"), lic = a("licence-fr");
+    var fond = N.fond || (ext ? N.planche : "") || "", vig = N.vignette || (lic ? N.cover : "");
+    if (!(ext || lic) || !fond || !vig) return "";
     var aut = String(N.aut || "").split(/\s*[·,&]\s*/).filter(Boolean);
     var ed = N.ed || N.pub || "", q = maj(N.quand || "");
+    if (lic && !q && N.t1) { var p = String(N.t1).split("/"), M = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]; q = "Tome 1 le " + (+p[0]) + " " + M[+p[1] - 1]; }
+    var l1 = lic ? (ed ? "Chez <em>" + esc(ed) + "</em>" + (N.label && N.label !== ed ? " · " + esc(N.label) : "") : "") : (ed ? "Extrait sur <em>" + esc(ed) + "</em>" : "Extrait");
+    var drap = N.paysC === "Japon" ? " 🇯🇵" : (N.paysC || lic) ? " 🇫🇷" : "";
     return '<div class="hd-bg" style="background-image:url(\'' + esc(couv(fond, 2000)) + '\');background-position:' + esc(N.fondPos || "50% 70%") + (N.fond ? "" : ";filter:grayscale(1) brightness(.6)") + '"></div><div class="hd-gr"></div>' +
-      '<img class="hd-cv" src="' + esc(couv(N.vignette, 400)) + '" alt="">' +
-      (aut.length || ed || q ? '<div class="hd-au">' + (aut.length ? "<b>" + aut.map(esc).join("<br>") + "</b>" : "") + "<span>" + (ed ? "Extrait sur <em>" + esc(ed) + "</em>" : "Extrait") + (q ? "<br>" + esc(q) + (N.paysC === "Japon" ? " 🇯🇵" : N.paysC ? " 🇫🇷" : "") : "") + "</span></div>" : "");
+      '<img class="hd-cv" src="' + esc(couv(vig, 400)) + '" alt="">' +
+      (aut.length || l1 || q ? '<div class="hd-au">' + (aut.length ? "<b>" + aut.map(esc).join("<br>") + "</b>" : "") + "<span>" + l1 + (q ? (l1 ? "<br>" : "") + esc(q) + drap : "") + "</span></div>" : "");
   };
 })();

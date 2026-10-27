@@ -139,7 +139,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 <div class="app" id="app"><p class="vide">Chargement…</p></div>
 <script src="/site/sortie-post.js?v=7"></script>
 <script src="/site/og-actu.js?v=6"></script>
-<script src="/site/hero-d.js?v=2"></script>
+<script src="/site/hero-d.js?v=3"></script>
 <script>
 (function () {
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -294,7 +294,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function heroNews() {
     var c = D.carte || {}, sr = N.serie || {}, ext = estExtrait();
     var aut = c.auteurs || [sr.scen, sr.dess].join(", ").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*/).filter(function (x, i, a) { return x && a.indexOf(x) === i; }).join(" · ");
-    return { coverD: c.desktop || "", fond: c.fond || "", fondPos: c.fondPos || "", vignette: c.couv || "", planche: (c.planches || [])[0] || "", aut: aut, ed: c.editeur || "", quand: c.quand || "", paysC: c.pays || "", cats: [{ k: N.cat }, { k: N.cat2 }], cat: N.cat };
+    return { coverD: c.desktop || "", fond: c.fond || "", fondPos: c.fondPos || "", vignette: c.couv || "", cover: img(), label: c.collection || "", planche: (c.planches || [])[0] || "", aut: aut, ed: c.editeur || "", quand: c.quand || "", paysC: c.pays || "", cats: [{ k: N.cat }, { k: N.cat2 }], cat: N.cat };
   }
   function scrWeb() {
     var c = D.carte || {}, sr = N.serie || {}, H = heroNews(), hd = window.FG_HEROD ? FG_HEROD(H, function (u, w) { return couv(u, w); }, esc) : "";

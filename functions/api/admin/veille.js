@@ -275,6 +275,7 @@ async function traiter(request, env) {
     // Bannière dessinée (Will, 27/10/2026) : version téléphone, visuels Instagram / TikTok, titre de la news.
     for (const k of ["desktop", "fond"]) if (o && u(c[k])) o[k] = u(c[k]);
     if (o && c.fondPos) o.fondPos = String(c.fondPos).slice(0, 20);
+    if (o && c.collection) o.collection = String(c.collection).slice(0, 40);
     if (o && c.auteurs) o.auteurs = String(c.auteurs).slice(0, 120);
     if (o && String(c.ogTitre || "").trim()) o.ogTitre = String(c.ogTitre).trim().slice(0, 140);
     if (o && String(c.ogDesc || "").trim()) o.ogDesc = String(c.ogDesc).trim().slice(0, 300);
