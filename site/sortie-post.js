@@ -136,13 +136,13 @@
     trouve: for (var min of (autX.length ? [2, nbC, 0] : [nbC, 0])) for (var t of titres) for (var r of resumes) {  // titre complet d'abord, quitte à raccourcir le résumé
       // Ligne vide entre le titre et le texte ; « Plus d'infos sur le site 👇 » au-dessus du lien quand ça tient (Will, 27/10/2026).
       var b = catLigne(i) + t + (r ? "\n\n" + r : "") + "\n\nPlus d'infos sur le site 👇\n" + url;
-      if (poidsX(b) > 280) b = catLigne(i) + t + (r ? "\n\n" + r : "") + "\n\n↗ " + url;
+      if (poidsX(b) > 280) b = catLigne(i) + t + (r ? "\n\n" + r : "") + "\n\n" + url; // lien web seul, sans flèche (Will, 27/10/2026)
       if (poidsX(b) > 280) continue;
       var h = choixX(c.x, c.xFR, function (l) { return poidsX(b + "\n" + l.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag, c.xJP);
       if (h.length && poidsX(b + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) > 280) h = [];
       if (min === 2 ? aAut(h) : h.length >= min) { xBase = b; hs = h; break trouve; }
     }
-    if (!xBase) xBase = catLigne(i) + titres[titres.length - 1] + "\n\n↗ " + url;
+    if (!xBase) xBase = catLigne(i) + titres[titres.length - 1] + "\n\n" + url;
     var igL = (c.ig || []).length ? "\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : "", ttL = (c.tt || []).length ? "\n📣 " + c.tt.map(function (h) { return "@" + h; }).join(" ") : "";
     return {
       x: xBase + (hs.length ? "\n" + hs.map(function (h) { return "@" + h; }).join(" · ") : ""),
