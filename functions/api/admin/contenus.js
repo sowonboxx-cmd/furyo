@@ -80,7 +80,7 @@ const CONTACTS = [
   k("Hiroshi Takahashi", "Crows, Worst", "Soyons fous"),
   k("Daisuke Watanabe", "Zenaku no Kuzu, Konno Chika (scénario)", "M'a déjà répondu une fois, assez actif"),
   k("Hiromasa Okushima", "SHOUT!", "Sur un malentendu"),
-  k("Auteur de Ganki", "Ganki", "Nom à vérifier (Daijuna Yanauchi ?)"),
+  k("Daiki Yanauchi", "Gang King"),
 ];
 async function lire(env) {
   let d = null; try { d = await env.STATS.get(CLE, "json"); } catch (e) {}
