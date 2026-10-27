@@ -193,6 +193,10 @@ body{background:#000}
 .na-seg>*+*{border-left:1px solid #2C2C2E}.na-seg svg{width:19px;height:19px}.na-seg .p{color:#4C9BFF}.na-seg .p.off{color:#2F5F99;cursor:default;text-align:center;line-height:1.2}.na-seg .on{color:#AEAEB2}
 .na-srcs{background:#1C1C1E;border-radius:14px;overflow:hidden}
 .na-srcs .h{padding:12px 14px 4px;font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8E8E93}
+.mk-b{background:#1C1C1E;border-radius:14px;overflow:hidden}.mk-r{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-top:1px solid #2C2C2E}.mk-r:first-child{border-top:0}
+.mk-n{display:flex;flex-direction:column;min-width:0;color:#F5F5F7;text-decoration:none}.mk-n b{font:700 14.5px/1.2 Inter,sans-serif}.mk-n small{font:500 12px Inter,sans-serif;color:#8E8E93;margin-top:2px}
+.mk-ps{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}.mk-p{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:15px;background:#2C2C2E;color:#F5F5F7;text-decoration:none;font:700 12.5px Inter,sans-serif;white-space:nowrap}.mk-p:hover{background:#3a3a3e}.mk-no{font:500 12px Inter,sans-serif;color:#6e6e73}
+.mk-d{margin-top:10px}.mk-dn{text-decoration:none}.mk-dn em{font-style:normal;font-weight:500;color:var(--paper-3)}
 .na-srcw{display:flex;flex-direction:column;gap:8px}.na-srch{padding:0 4px;font:600 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8E8E93}
 .na-srcs img{width:22px;height:22px;border-radius:5px;flex:none;background:#2C2C2E}
 .na-srcs a{display:flex;align-items:center;gap:12px;min-height:50px;padding:6px 14px;color:#F5F5F7;text-decoration:none;font:600 14.5px/1.25 Inter,sans-serif}
@@ -380,6 +384,28 @@ body{background:#000}
     return m ? '<div class="na-vid"><iframe src="https://www.youtube-nocookie.com/embed/' + m[1] + '" title="Vidéo de la news" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>' : "";
   }
   // Bloc « Sources » : une ligne par source, favicon + nom du site (x.com, youtube.com…) ; la vidéo de la news n'y est pas répétée (Will, 05/10/2026).
+  // Mangaka de la série (Will, 27/10/2026) : nom, rôle et pastilles cliquables vers leurs comptes (X, Instagram…).
+  function mkInfos() {
+    var A = (CTX && CTX.auteurs) || [], sr = (CTX && CTX.serie) || {}, sc = String(sr.scen || ""), de = String(sr.dess || "");
+    return A.filter(function (a) { return a && a.name; }).map(function (a) {
+      var n = a.name.toLowerCase(), s = sc.toLowerCase().indexOf(n) >= 0, d = de.toLowerCase().indexOf(n) >= 0;
+      var role = s && d ? "Histoire et dessin" : s ? "Scénario" : d ? "Dessin" : "Mangaka";
+      var L = []; if (/^https?:/.test(a.x || "")) L.push(["X", a.x, "@" + String(a.x).replace(/\/+$/, "").split("/").pop()]); if (/^https?:/.test(a.ig || "")) L.push(["Instagram", a.ig, "@" + String(a.ig).replace(/\/+$/, "").split("/").pop()]);
+      return { name: a.name, slug: a.slug, role: role, L: L };
+    });
+  }
+  var IC_X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L1.9 3h6.4l4.4 5.8L17.8 3zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5z"/></svg>';
+  var IC_IG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>';
+  function mkPills(m) { return m.L.map(function (l) { return '<a class="mk-p" href="' + esc(l[1]) + '" target="_blank" rel="noopener">' + (l[0] === "X" ? IC_X : IC_IG) + "<span>" + esc(l[2]) + "</span></a>"; }).join(""); }
+  function mkM() {
+    var M = mkInfos(); if (!M.length) return "";
+    return '<div class="na-srcw"><div class="na-srch">' + (M.length > 1 ? "Mangaka · " + M.length : "Mangaka") + '</div><div class="mk-b">' + M.map(function (m) {
+      return '<div class="mk-r"><a class="mk-n" href="/auteurs/' + esc(m.slug) + '"><b>' + esc(m.name) + "</b><small>" + esc(m.role) + '</small></a><div class="mk-ps">' + (mkPills(m) || '<small class="mk-no">Pas de réseau public</small>') + "</div></div>"; }).join("") + "</div></div>";
+  }
+  function mkD() {
+    var M = mkInfos(); if (!M.length) return "";
+    return '<div class="nd-src mk-d"><span>Mangaka</span>' + M.map(function (m) { return '<a href="/auteurs/' + esc(m.slug) + '" class="mk-dn">' + esc(m.name) + ' <em>' + esc(m.role) + '</em></a>' + mkPills(m); }).join("") + "</div>";
+  }
   function srcsM() {
     var L = (N.srcs && N.srcs.length ? N.srcs : (N.src ? [{ u: N.src }] : [])).map(function (x) {
       var host = ""; try { host = new URL(x.u).hostname.replace(/^www\./, "").replace(/^twitter\.com$/, "x.com"); } catch (e) {}
@@ -407,7 +433,7 @@ body{background:#000}
         (CTX && CTX.serie && !CTX.serie.visible ? '<span class="p off">' + I.fiche + "Fiche bientôt en ligne</span>" :
         '<a class="p" href="/series/' + esc(CTX && CTX.serie && CTX.serie.slug || slug(N.titre)) + '">' + I.fiche + "Voir la fiche</a>") +
         '<button type="button" data-soon="liste">' + I.book + "Ma liste</button></div>" +
-      srcsM() + preview() + '<div class="na-ao">' + autresM() + "</div></div>";
+      srcsM() + mkM() + preview() + '<div class="na-ao">' + autresM() + "</div></div>";
     if (window.FG_FIT2) FG_FIT2(root);
     chargerTweets(); feuilleter(); boutonModif();
   }
@@ -563,7 +589,7 @@ body{background:#000}
       '<div class="nd-tx' + (sous ? " nd-txs" : "") + '"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + (N.chiffre ? ' <em style="font-style:normal;color:#F2B33D;white-space:nowrap">' + esc(N.chiffre) + "</em>" : "") + "</h1>" +
       (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div>" + (sous ? "" : "</div>") +
       '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><div class="na-text">' + txt(N.texte) + "</div>" + lireD() + vid(N.video) +
-      (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
+      (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + mkD() + acts() + "</main>" + comD() + "</div>" +
       '<aside class="nd-col">' + fiche() + (window.FG_GANG ? FG_GANG("widget") : "") + dernier() + autres() + mangakas() + "</aside></div>";
     chargerTweets(); boutonModif();
   }
