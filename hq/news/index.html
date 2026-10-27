@@ -184,6 +184,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     plus: '<path d="M12 5v14M5 12h14"/>',
     livre: '<path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/>',
     stats: '<path d="M5 19v-6M10 19V8M15 19v-9M20 19v-4"/>',
+    dl: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
     copier: '<rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/>'
   };
   // Copier le texte d'un réseau en un clic (Will, 27/10/2026), sur ordinateur comme sur téléphone.
@@ -234,6 +235,17 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function lienLive() { var l = $("#lienp"); if (l) l.innerHTML = scrLien(); ogRemplir();
     var a = $('[data-c="ogTitre"]'); if (a) { var e1 = a.previousElementSibling.querySelector("em"); if (e1) e1.textContent = ogT().length + " / 90"; }
     var b = $('[data-c="ogDesc"]'); if (b) { var e2 = b.previousElementSibling.querySelector("em"); if (e2) e2.textContent = ogD().length + " / 158"; } }
+  // Télécharger l'image d'un réseau en un clic (Will, 27/10/2026).
+  function imgReseau(k) { return k === "tt" ? ((ban() && ban().tt) || couvSoc()) : imgSoc(); }
+  function telecharger(k, el) {
+    var u = imgReseau(k); if (!u) { toast("Pas d'image pour ce réseau"); return; }
+    var nom = lienNews().replace(/.*\/actus\//, "").replace(/-[0-9a-f]{8}$/, "") + "-" + { x: "x", ig: "instagram", tt: "tiktok" }[k];
+    var go = function (h, ext) { var a = document.createElement("a"); a.href = h; a.download = nom + "." + ext; document.body.appendChild(a); a.click(); a.remove(); toast("Image téléchargée ✓"); if (el) { el.classList.add("on"); setTimeout(function () { el.classList.remove("on"); }, 1200); } };
+    if (/^data:/.test(u)) return go(u, /^data:image\/jpe?g/.test(u) ? "jpg" : "png");
+    fetch(/^https?:/.test(u) ? couv(u) : u).then(function (r) { if (!r.ok) throw 0; return r.blob(); }).then(function (b) {
+      var h = URL.createObjectURL(b); go(h, /png/.test(b.type) ? "png" : /webp/.test(b.type) ? "webp" : "jpg"); setTimeout(function () { URL.revokeObjectURL(h); }, 4000);
+    }).catch(function () { window.open(u, "_blank"); });
+  }
   /* ---------- écrans à la taille réelle ---------- */
   var SB = '<div class="sbar"><b>' + "13:00" + '</b><span>●●●● 5G ▮</span></div>';
   function scrX() { return '<div class="scr">' + SB + '<div class="xtop"><span>←</span><b>Post</b></div><div class="xpost"><div class="xh"><img src="' + AV + '"><div><b>FuryoGang ' + VF + '</b><small>@FuryoGang</small></div></div><p class="xt">' + hl(D.x) + '</p>' + (imgSoc() ? '<img class="xi" src="' + esc(/^data:/.test(imgSoc()) ? imgSoc() : couv(imgSoc(), 800)) + '">' : '') + '<p class="xm">' + esc(heure()) + ' · ' + esc(jourTxt()) + ' · <b>Programmé</b></p><div class="xa">' + [P.xBulle, P.xRt, P.coeur, P.xVues, P.signet, P.xPartage].map(function (d) { return SV(d, { w: 20, sw: 1.8 }); }).join("") + '</div></div></div>'; }
@@ -264,7 +276,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   }
   function scrSM() { if (estExtrait2()) return scrSMExtrait(); if (ban()) return '<div class="scr sms">' + SB + smHead() + '<div class="smban"><img src="' + esc(couv(ban().mobile || imgSite(), 800)) + '"></div><div class="smb" style="padding-top:6px">' + sk() + '<h3>' + esc(ban().titre || titre()) + '</h3><p>' + esc(D.site) + '</p></div>' + smStats() + '</div>'; return '<div class="scr sms">' + SB + smHead() + '<div class="smb">' + sk() + '<h3>' + esc(titre()) + '</h3>' + (imgSite() ? '<img src="' + esc(couv(imgSite(), 800)) + '">' : '') + '<p>' + esc(D.site) + '</p>' + (N.src ? '<span class="sl">Voir la source ↗</span>' : '') + '</div>' + smStats() + '</div>'; }
   function scrWeb() { return '<div class="webs"><div class="wph"><img src="' + LOGO + '"><span>Actualités · Calendrier · Collection · Communauté</span></div><div class="wpb"><div>' + sk() + '<h3>' + esc(titre()) + '</h3><p>' + esc(D.site) + '</p>' + (N.src ? '<span class="sl">Voir la source ↗</span>' : '') + '</div><div>' + (imgSite() ? '<img class="wi" src="' + esc(couv(imgSite(), 1000)) + '">' : '') + (N.serie ? '<div class="wser"><b>La série</b><div>' + (N.serie.cover ? '<img src="' + esc(couv(N.serie.cover, 200)) + '">' : '') + '<span>' + esc(N.serie.fr || N.serie.t || "") + '</span></div></div>' : '') + '</div></div></div>'; }
-  function phone(k, scr, lab, ic, editable) { return '<button class="ph" data-v="' + k + '"><span class="phl">' + ic + lab + '<span class="ok">✓</span></span><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block">' + scr + '</span></span>' + (editable ? '<span class="ed2"><span class="ed">Modifier</span>' + (k !== "site" ? '<span class="sw" data-copy="' + k + '" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier</span>' : '') + '</span>' : '') + '</button>'; }
+  function phone(k, scr, lab, ic, editable) { return '<button class="ph" data-v="' + k + '"><span class="phl">' + ic + lab + '<span class="ok">✓</span></span><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block">' + scr + '</span></span>' + (editable ? '<span class="ed2"><span class="ed">Modifier</span>' + (k !== "site" ? '<span class="sw" data-copy="' + k + '" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier</span><span class="sw" data-dl="' + k + '" role="button">' + SV(P.dl, { w: 14, sw: 2.2 }) + 'Image</span>' : '') + '</span>' : '') + '</button>'; }
   function browser(k) { return '<button class="ph web" data-v="' + k + '"><span class="phl">' + IC.web + 'Site · ordinateur<span class="ok">✓</span></span><span class="bw"><span class="bwb"><i></i><i></i><i></i><span>furyogang.com/actus/…</span></span><span class="bwin" style="display:block"><span class="fit" data-w="1280" style="display:block">' + scrWeb() + '</span></span></span><span class="ed">Modifier</span></button>'; }
   function jourTxt() { var d = D.jour || demain(); var x = new Date(d + "T12:00:00"); return x.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }); }
 
@@ -328,7 +340,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       '<div class="ai"><button data-gen>Refaire les textes réseaux depuis l’article</button><a class="btn" style="height:auto;padding:9px 12px;border-radius:12px;font-size:12.5px;text-decoration:none" href="/admin/#validation/' + encodeURIComponent(N.id) + '">Catégorie, vidéo, recadrage… (back-office)</a></div></div>';
     var sub = { x: "Le post qui part sur @FuryoGang. L’aperçu se met à jour pendant que tu tapes.", ig: "Publication sur @furyogang. La légende s’affiche sous l’image.", tt: "Publication photo sur @furyogang. La légende s’affiche en bas de l’image : le visuel TikTok garde le titre en haut et le bas libre." }[k];
     return '<div class="edp"><h2>' + IC[k] + NOMS[k] + '</h2><p class="sub">' + sub + '</p><div class="lbl">' + (k === "x" ? "Texte" : "Légende") + ' <span class="lbr">' + compteur(k) + '<span class="cp" data-copy="' + k + '" role="button" title="Copier le texte">' + SV(P.copier, { w: 15, sw: 2.2 }) + 'Copier</span></span></div><textarea class="ta" data-f="' + k + '">' + esc(D[k]) + '</textarea>' +
-      (estExtrait() && k !== "tt" ? '<div class="lbl">Visuel ' + (k === "x" ? "(si tu postes une image plutôt que le lien)" : "Instagram 3:4") + '</div><div class="ai" style="margin-top:0"><button data-extdl>' + (D.extPng ? "Télécharger le visuel 3:4" : "Visuel en préparation…") + '</button></div>' : '<div class="lbl">Image</div>' + imgPick()) + '<div class="ai"><button data-auto="' + k + '">Revenir au texte automatique</button></div></div>';
+      (estExtrait() && k !== "tt" ? '<div class="lbl">Visuel ' + (k === "x" ? "(si tu postes une image plutôt que le lien)" : "Instagram 3:4") + '</div><div class="ai" style="margin-top:0"><button data-extdl>' + (D.extPng ? "Télécharger le visuel 3:4" : "Visuel en préparation…") + '</button></div>' : '<div class="lbl">Image</div>' + imgPick()) + '<div class="ai"><button data-dl="' + k + '">' + SV(P.dl, { w: 15, sw: 2.2 }) + ' Télécharger l’image ' + NOMS[k] + '</button><button data-auto="' + k + '">Revenir au texte automatique</button></div></div>';
   }
   function focus() {
     if (V === "lien") return haut() + '<div class="fg">' + edLien().replace("</h2>", '<span class="live"><i></i>Aperçu en direct →</span></h2>') + '<div class="ph lfo"><span class="lpf2" id="lienp">' + scrLien() + '</span></div></div>' + navBar() + plan();
@@ -385,6 +397,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   /* ---------- actions ---------- */
   document.addEventListener("click", function (e) {
     if (e.target.closest("[data-ogauto]")) { delete D.carte.ogTitre; delete D.carte.ogDesc; draw(); return; }
+    var dlb = e.target.closest("[data-dl]");
+    if (dlb) { e.preventDefault(); e.stopPropagation(); telecharger(dlb.getAttribute("data-dl"), dlb); return; }
     var cpu = e.target.closest("[data-copy-url]");
     if (cpu) { e.preventDefault(); copier(lienNews(), cpu); return; }
     var cpb = e.target.closest("[data-copy]");
