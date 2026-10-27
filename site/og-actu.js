@@ -114,11 +114,11 @@
   }
   // JPEG 1200×630 et envoi dans R2 (og/f/actu-<id8>.jpg), repris comme og:image de la news.
   function jpeg(png, q) { return new Promise(function (ok) { var img = new Image(); img.onload = function () { var c = document.createElement("canvas"); c.width = 1200; c.height = 630; var x = c.getContext("2d"); x.fillStyle = "#000"; x.fillRect(0, 0, 1200, 630); x.drawImage(img, 0, 0, 1200, 630); try { ok(c.toDataURL("image/jpeg", q || .9)); } catch (e) { ok(png); } }; img.onerror = function () { ok(png); }; img.src = png; }); }
-  // Extrait : la carte devient aussi l'image de la news (hero, carrousel) ; les miniatures prennent la couverture (Carte.couv).
+  // Extrait : enregistre la carte ; le site la prend comme image de la news tout seul (functions/api/news.js), le champ Image reste libre.
   function imageNews(id, d) {
     var id8 = String(id || "").replace(/-/g, "").slice(-8);
     var carte = { couv: d.cover || "", planches: d.planches || [], cta: d.cta || "", editeur: d.editeur || "", quand: d.quand || "", pays: d.pays || "France", lire: d.lire || "" };
-    return fetch("/api/admin/veille", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, image: "https://furyogang.com/api/ogcard/actu-" + id8 + ".jpg?v=" + Date.now().toString(36), cadrage: 50, carte: carte }) }).then(function (r) { return r.json(); });
+    return fetch("/api/admin/veille", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, carte: carte }) }).then(function (r) { return r.json(); });
   }
   function envoyer(id, d) { return png(d).then(function (p) { return jpeg(p, .9); }).then(function (j) { return fetch("/api/admin/ogcard", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: id, data: j }) }).then(function (r) { return r.json(); }); }); }
 

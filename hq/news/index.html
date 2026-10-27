@@ -108,7 +108,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 <body>
 <div class="app" id="app"><p class="vide">Chargement…</p></div>
 <script src="/site/sortie-post.js?v=7"></script>
-<script src="/site/og-actu.js?v=5"></script>
+<script src="/site/og-actu.js?v=6"></script>
 <script>
 (function () {
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -135,17 +135,22 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   var poidsX = function (t) { return [].concat.apply([], [String(t).replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|fr|jp|net|org|io)(\/\S*)?/gi, "xxxxxxxxxxxxxxxxxxxxxxx")]).join("").length; };
   var col = function () { return COLS[N.cat] || "#E5483A"; };
   var titre = function () { return D.titre || N.titre || "News"; };
-  var img = function () { return D.image || N.imageChoisie || N.image || (N.serie && N.serie.cover) || ""; };
+  // La carte paysage (/api/ogcard/…) ne sert qu'au site et à l'aperçu du lien : jamais comme visuel Instagram / TikTok / X.
+  var estOg = function (u) { return /\/api\/ogcard\//.test(u || ""); };
+  var img = function () { return [D.image, N.imageChoisie, N.image, N.serie && N.serie.cover].filter(function (u) { return u && !estOg(u); })[0] || ""; };
+  // Visuel des réseaux (Will, 27/10/2026) : extrait = visuel « Extrait » 3:4 (FG_EXTRAIT, comme dans la veille) ; sinon l'image de la news.
+  var couvSoc = function () { return (D.carte && D.carte.couv) || img(); };
+  var imgSoc = function () { return (N && (N.cat === "extrait" || N.cat2 === "extrait") && D.extPng) || img(); };
   var accroche = function () { return D.accroche != null ? D.accroche : (N.accroche || ""); };
   var heure = function () { return D.heure || "13:00"; };
   var demain = function () { var d = new Date(Date.now() + 864e5); return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(d); };
 
   /* ---------- écrans à la taille réelle ---------- */
   var SB = '<div class="sbar"><b>' + "13:00" + '</b><span>●●●● 5G ▮</span></div>';
-  function scrX() { return '<div class="scr">' + SB + '<div class="xtop"><span>←</span><b>Post</b></div><div class="xpost"><div class="xh"><img src="' + AV + '"><div><b>FuryoGang ' + VF + '</b><small>@FuryoGang</small></div></div><p class="xt">' + hl(D.x) + '</p>' + (img() ? '<img class="xi" src="' + esc(couv(img(), 800)) + '">' : '') + '<p class="xm">' + esc(heure()) + ' · ' + esc(jourTxt()) + ' · <b>Programmé</b></p><div class="xa"><span>💬</span><span>🔁</span><span>♡</span><span>📊</span><span>🔖</span><span>↗</span></div></div></div>'; }
-  function scrIG() { return '<div class="scr">' + SB + '<div class="igtop"><b>Publications</b></div><div class="igh"><img src="' + AV + '"><div><b>furyogang</b><small>' + esc((N.serie && N.serie.t) || "FuryoGang") + '</small></div><span>•••</span></div><div class="igimg"><img src="' + esc(couv(img(), 800)) + '"></div><div class="igact"><span>♡</span><span>💬</span><span>➤</span><span style="margin-left:auto">🔖</span></div><p class="igcap"><b>furyogang</b> ' + hl(D.ig) + '</p><p class="igd">' + esc(jourTxt()) + '</p></div>'; }
+  function scrX() { return '<div class="scr">' + SB + '<div class="xtop"><span>←</span><b>Post</b></div><div class="xpost"><div class="xh"><img src="' + AV + '"><div><b>FuryoGang ' + VF + '</b><small>@FuryoGang</small></div></div><p class="xt">' + hl(D.x) + '</p>' + (img() ? '<img class="xi" src="' + esc(/^data:/.test(imgSoc()) ? imgSoc() : couv(imgSoc(), 800)) + '">' : '') + '<p class="xm">' + esc(heure()) + ' · ' + esc(jourTxt()) + ' · <b>Programmé</b></p><div class="xa"><span>💬</span><span>🔁</span><span>♡</span><span>📊</span><span>🔖</span><span>↗</span></div></div></div>'; }
+  function scrIG() { return '<div class="scr">' + SB + '<div class="igtop"><b>Publications</b></div><div class="igh"><img src="' + AV + '"><div><b>furyogang</b><small>' + esc((N.serie && N.serie.t) || "FuryoGang") + '</small></div><span>•••</span></div><div class="igimg"><img src="' + esc(/^data:/.test(imgSoc()) ? imgSoc() : couv(imgSoc(), 800)) + '"></div><div class="igact"><span>♡</span><span>💬</span><span>➤</span><span style="margin-left:auto">🔖</span></div><p class="igcap"><b>furyogang</b> ' + hl(D.ig) + '</p><p class="igd">' + esc(jourTxt()) + '</p></div>'; }
   function visuelTT() {
-    var u = esc(couv(img(), 800));
+    var u = esc(couv(couvSoc(), 800));
     // Étiquette sous le coin bas droit de la couverture, bordure blanche fine (Will, 26/10).
     var tag = '<div class="t9tag" style="background:' + col() + '">' + esc(N.label || "News") + '</div>';
     return '<div class="t9"><div class="t9bg" style="background-image:url(\'' + u + '\')"></div><div class="t9sh"></div><div class="t9c"><img class="t9logo" src="' + LOGO + '"><div class="t9t">' + esc(courtTitre()) + '</div>' + (img() ? '<div class="t9w"><img class="t9img" src="' + u + '">' + tag + '</div>' : tag) + '</div></div>';
@@ -205,7 +210,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       '<div class="ai"><button data-gen>Refaire les textes réseaux depuis l’article</button><a class="btn" style="height:auto;padding:9px 12px;border-radius:12px;font-size:12.5px;text-decoration:none" href="/admin/#validation/' + encodeURIComponent(N.id) + '">Catégorie, vidéo, recadrage… (back-office)</a></div></div>';
     var sub = { x: "Le post qui part sur @FuryoGang. L’aperçu se met à jour pendant que tu tapes.", ig: "Publication sur @furyogang. La légende s’affiche sous l’image.", tt: "Publication photo sur @furyogang. La légende s’affiche en bas de l’image : le visuel TikTok garde le titre en haut et le bas libre." }[k];
     return '<div class="edp"><h2>' + IC[k] + NOMS[k] + '</h2><p class="sub">' + sub + '</p><div class="lbl">' + (k === "x" ? "Texte" : "Légende") + ' ' + compteur(k) + '</div><textarea class="ta" data-f="' + k + '">' + esc(D[k]) + '</textarea>' +
-      '<div class="lbl">Image</div>' + imgPick() + '<div class="ai"><button data-auto="' + k + '">Revenir au texte automatique</button></div></div>';
+      (estExtrait() && k !== "tt" ? '<div class="lbl">Visuel ' + (k === "x" ? "(si tu postes une image plutôt que le lien)" : "Instagram 3:4") + '</div><div class="ai" style="margin-top:0"><button data-extdl>' + (D.extPng ? "Télécharger le visuel 3:4" : "Visuel en préparation…") + '</button></div>' : '<div class="lbl">Image</div>' + imgPick()) + '<div class="ai"><button data-auto="' + k + '">Revenir au texte automatique</button></div></div>';
   }
   function focus() {
     var web = V === "site";
@@ -223,7 +228,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function draw() {
     var y = scrollY, f = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.f : null;
     $("#app").innerHTML = mob() ? mobile() : (V === "all" ? vue() : focus());
-    fit(); scrollTo(0, y); ogApercu();
+    fit(); scrollTo(0, y); ogApercu(); extGen();
     if (f) { var el = $('[data-f="' + f + '"]'); if (el) { el.focus(); el.setSelectionRange && el.setSelectionRange(el.value.length, el.value.length); } }
   }
   // Aperçu en direct sans tout redessiner (le curseur reste en place).
@@ -259,6 +264,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   document.addEventListener("click", function (e) {
     var v = e.target.closest("[data-v]"); if (v) { V = v.dataset.v; draw(); scrollTo(0, 0); return; }
     var im = e.target.closest("[data-img]"); if (im) { D.image = im.dataset.img; draw(); return; }
+    if (e.target.closest("[data-extdl]")) { if (!D.extPng) return; var a = document.createElement("a"); a.href = D.extPng; a.download = String((N.serie && N.serie.slug) || "extrait") + "-extrait.png"; document.body.appendChild(a); a.click(); a.remove(); toast("Visuel téléchargé ✓"); return; }
     var cc = e.target.closest("[data-ccouv]"); if (cc) { D.carte.couv = D.carte.couv === cc.dataset.ccouv ? "" : cc.dataset.ccouv; draw(); return; }
     var cd = e.target.closest("[data-cdel]"); if (cd) { D.carte.planches.splice(+cd.dataset.cdel, 1); draw(); return; }
     var au = e.target.closest("[data-auto]"); if (au) { var c = gen(); D[au.dataset.auto] = c[au.dataset.auto]; draw(); return; }
@@ -337,6 +343,18 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function ogApercu() {
     var b = $("#ogp"); if (!b || !window.FG_OGACTU) return;
     ogDonnees().then(function (d) { var sc = $("#ogp .ogs"); if (!sc) return; sc.innerHTML = d.type === "extrait" ? FG_OGACTU.cardExtrait(d) : FG_OGACTU.card(d); sc.style.transform = "scale(" + b.clientWidth / 1200 + ")"; });
+  }
+  // Visuel Instagram des extraits (1080 × 1440), régénéré quand la carte change.
+  var EXT_LIB = null, extCle = "";
+  function extGen() {
+    if (!(N.cat === "extrait" || N.cat2 === "extrait") || !window.FG_OGACTU) return;
+    ogDonnees().then(function (d) {
+      var q = String(d.quand || ""), m = q.match(/tome\s*(\d+)\s*le\s*(.+)$/i);
+      var e = { titre: d.titre, auteurs: d.auteurs, cover: d.cover, planches: (d.planches && d.planches.length ? d.planches : [d.cover2]).filter(Boolean).slice(0, 2), tag: d.cta || "Lis le chapitre 1", editeur: d.editeur, tome: m ? m[1] : 1, sortie: m ? m[2] : "", pays: d.pays === "Japon" ? "jp" : "fr" };
+      var cle = JSON.stringify(e); if (cle === extCle && D.extPng) return; extCle = cle;
+      if (!EXT_LIB) EXT_LIB = new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/extrait-card.js?v=1"; sc.onload = ok; sc.onerror = ko; document.head.appendChild(sc); });
+      return EXT_LIB.then(function () { return FG_EXTRAIT.png(e); }).then(function (u) { if (cle !== extCle) return; D.extPng = u; if (V === "all" && !mob()) draw(); else live(); });
+    }).catch(function () {});
   }
   function ogEnvoyer() {
     if (!window.FG_OGACTU || !N.id) return;
