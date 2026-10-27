@@ -70,7 +70,10 @@ export async function onRequestGet({ env, request, waitUntil }) {
         // carte : true quand l'image de la news est une carte complète (titre écrit dessus) → bannières sans texte du site.
         ...(() => { const c = lireCarte(text(p["Carte"])) || {}, abs = u => !u ? "" : /^\//.test(u) ? "https://furyogang.com" + u : u;
           // Carte « Extrait » : couverture (miniatures), planche (fondu sous la bannière), lien de lecture en ligne (bouton « Lire »).
-          return { vignette: abs(c.couv), planche: abs((c.planches || [])[0] || ""), planche2: abs((c.planches || [])[1] || ""), pages: (c.planches || []).slice(0, 12).map(abs).filter(Boolean), lire: /^https:\/\//.test(c.lire || "") ? c.lire : "" }; })(),
+          const r = { vignette: abs(c.couv), planche: abs((c.planches || [])[0] || ""), planche2: abs((c.planches || [])[1] || ""), pages: (c.planches || []).slice(0, 12).map(abs).filter(Boolean), lire: /^https:\/\//.test(c.lire || "") ? c.lire : "" };
+          // Bannière dessinée (hommage, grosse news, Will 27/10/2026) : l'image porte déjà le titre ; version téléphone à part, titre de la news au choix.
+          if (c.banniere) { r._b = 1; r.titreSous = true; if (c.mobile) r.coverM = abs(c.mobile); if (c.titre) { r.titre = String(c.titre); r.fr = String(c.titre); } if (c.jp) r.jp = String(c.jp); }
+          return r; })(),
         _extrait: [cat, ...autres].some(c => c.k === "extrait"), _image: text(p["Image"]),
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),
@@ -106,7 +109,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     }));
     items.sort((a, b) => b._t.localeCompare(a._t));
     // sid : la série liée (Studio Quoi de neuf : dernier tome paru pour les news « Tomes en circulation », Will 26/10/2026).
-    items.forEach(i => { if (/\/api\/ogcard\//.test(i.cover || "")) i.carte = true; else i.vignette = ""; if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._extrait; delete i._image; delete i._sid; delete i._n; delete i._pays; delete i._t; });
+    items.forEach(i => { if (/\/api\/ogcard\//.test(i.cover || "") || i._b) i.carte = true; else i.vignette = ""; delete i._b; if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._extrait; delete i._image; delete i._sid; delete i._n; delete i._pays; delete i._t; });
     return { items };
   });
 }

@@ -272,6 +272,8 @@ async function traiter(request, env) {
   if (b.carte !== undefined) {
     const c = b.carte && typeof b.carte === "object" ? b.carte : null, u = x => /^(https:\/\/|\/)\S+$/.test(String(x || "")) ? String(x).slice(0, 500) : "";
     const o = c ? { couv: u(c.couv), planches: (Array.isArray(c.planches) ? c.planches : []).map(u).filter(Boolean).slice(0, 12), cta: String(c.cta || "").slice(0, 60), editeur: String(c.editeur || "").slice(0, 40), quand: String(c.quand || "").slice(0, 60), lire: /^https:\/\/\S+$/.test(String(c.lire || "")) ? String(c.lire).slice(0, 600) : "", pays: c.pays === "Japon" ? "Japon" : "France" } : null;
+    // Bannière dessinée (Will, 27/10/2026) : version téléphone, visuels Instagram / TikTok, titre de la news.
+    if (o && c.banniere) Object.assign(o, { banniere: true, mobile: u(c.mobile), ig: u(c.ig), tt: u(c.tt), titre: String(c.titre || "").slice(0, 160), jp: String(c.jp || "").slice(0, 80) });
     props["Carte"] = rt(o ? JSON.stringify(o) : "");
   }
   if (b.planif !== undefined) {

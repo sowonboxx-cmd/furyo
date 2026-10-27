@@ -247,7 +247,7 @@ body{background:#000}
 .lx-l{display:flex;gap:8px;align-items:center}.lx-l .na-pill{height:24px;line-height:24px;padding:0 10px;font-size:12px;border-radius:7px;color:#000}.lx-l b{font:700 18px Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:#fff}
 .lx-n{margin:10px 0 0;font:700 28px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:#fff}.lx-jp{display:block;font:500 13px "Noto Sans JP",sans-serif;color:#9a968f;margin-top:4px}.lx-h small{display:block;font:500 12.5px Inter,sans-serif;color:#8e8e93;margin-top:6px}
 .lx-go{margin-top:16px;display:flex;justify-content:center;align-items:center;gap:10px;background:#BC002D;color:#fff;font:700 16px Inter,sans-serif;padding:14px;border-radius:14px;text-decoration:none}
-.na-hero.kc .na-ht{display:none}.na-hero.kc{height:auto;overflow:hidden}
+.na-hero.kc:not(.kt) .na-ht{display:none}.na-hero.kc{height:auto;overflow:hidden}
 /* Fondu du bas de la bannière (option B, Will 27/10/2026) */
 .na-hero.kc>img{-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent)}
 /* Bouton de lecture : encart ordinateur */
@@ -255,6 +255,9 @@ body{background:#000}
 .lx-d:hover{border-color:#BC002D}.lx-i{display:flex;flex:none;align-items:center;padding-left:4px}.lx-i img{width:78px;height:110px;object-fit:cover;border:3px solid #fff;border-radius:3px;box-shadow:0 8px 18px rgba(0,0,0,.5)}.lx-i img+img{margin-left:-28px}
 .lx-x{flex:1;min-width:0}.lx-x b{display:block;font:700 30px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase}.lx-x small{display:block;font:500 14px Inter,sans-serif;color:#cfcbc4;margin-top:8px}
 .lx-b{flex:none;display:inline-flex;align-items:center;gap:8px;background:#BC002D;padding:13px 18px;border-radius:12px;font:700 15px Inter,sans-serif}
+</style>
+<style>/* Bannière dessinée (titre déjà sur l'image) : le titre du site passe dessous, sur ordinateur comme sur téléphone (Will, 27/10/2026) */
+.nd-hero.kt::after{display:none}.nd-tx.nd-txs{position:static;padding:22px 4px 4px;text-shadow:none}.nd-tx.nd-txs h1{font-size:52px}
 </style>
 <style>/* Carte complète en image de news, mobile (hors media query ordinateur) */
 .na-hero.kc{height:auto;overflow:visible}.na-hero.kc img{position:relative;display:block;height:auto;aspect-ratio:1200/630;object-position:center!important}.na-hero.kc::after{display:none}.na-hero.kc .na-ht{position:static;padding:14px 20px 0}.na-hero.kc .cr{display:none}</style>
@@ -338,7 +341,7 @@ body{background:#000}
   function chapLire() { var m = String([N.titre, N.accroche, N.texte].join(" ")).match(/chapitre\s+(\d+)/i); return m ? m[1] : "1"; }
   // Téléphone, news avec carte (maquette 1, Will 27/10/2026) : la bannière reste seule ; pastille, chapitre, titres FR / JP, date et bouton dans ce bloc.
   function lireM() {
-    if (!N.carte) return "";
+    if (!N.carte || N.titreSous) return "";
     var c0 = (N.cats && N.cats[0]) || { nom: N.catNom || "Extrait", c: N.catC || "#E5483A" };
     return '<div class="lx-m"><div class="lx-h">' + vignettes() + '<div><div class="lx-l"><span class="na-pill" style="background:' + c0.c + '">' + esc(c0.nom) + "</span>" + (N.lire ? "<b>Chapitre " + esc(chapLire()) + "</b>" : "") + "</div>" +
       '<h1 class="lx-n">' + esc(N.fr || N.titre) + "</h1>" + (N.jp ? '<span class="lx-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<small>' + esc(dLong(N.date) || "") + "</small></div></div>" +
@@ -388,7 +391,7 @@ body{background:#000}
     root.classList.remove("nd");
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
-    root.innerHTML = '<div class="na-hero' + (N.carte ? " kc" : "") + '">' +  (N.cover ? '<img src="' + esc(couv(N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "") +
+    root.innerHTML = '<div class="na-hero' + (N.carte ? " kc" : "") + (N.titreSous ? " kt" : "") + '">' +  (N.cover ? '<img src="' + esc(couv(N.coverM || N.cover, 1000)) + '" alt="Image de la news : ' + esc(titre) + '"' + (N.pos == null ? "" : ' style="object-position:center ' + N.pos + '%"') + '>' : "") +
       (N.cover && N.credit ? '<span class="cr" lang="' + (/^©[^ ]/.test(N.credit) ? "ja" : "fr") + '">' + esc(N.credit) + "</span>" : "") +
       '<div class="na-ht"><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
         (N.jp ? '<span class="na-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<span class="na-meta">' + esc(dLong(N.date) || "") + "</span></div></div>" +
@@ -520,10 +523,10 @@ body{background:#000}
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     var pos = N.pos == null ? 0 : N.pos;
-    root.innerHTML = '<div class="nd-hero' + (N.cover ? "" : " noimg") + (N.carte ? " kc" : "") + '">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1600)) + '" alt="Image de la news : ' + esc(titre) + '" style="object-position:center ' + pos + '%">' + (N.credit ? '<span class="cr">' + esc(N.credit) + "</span>" : "") : "") +
-      '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' +
-      '<div class="nd-tx"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
-      (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div></div>" +
+    root.innerHTML = '<div class="nd-hero' + (N.cover ? "" : " noimg") + (N.carte ? " kc" : "") + (N.titreSous ? " kt" : "") + '">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1600)) + '" alt="Image de la news : ' + esc(titre) + '" style="object-position:center ' + pos + '%">' + (N.credit ? '<span class="cr">' + esc(N.credit) + "</span>" : "") : "") +
+      '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' + (N.titreSous ? "</div>" : "") +
+      '<div class="nd-tx' + (N.titreSous ? " nd-txs" : "") + '"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
+      (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div>" + (N.titreSous ? "" : "</div>") +
       '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><div class="na-text">' + txt(N.texte) + "</div>" + lireD() + vid(N.video) +
       (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
       '<aside class="nd-col">' + fiche() + (window.FG_GANG ? FG_GANG("widget") : "") + dernier() + autres() + mangakas() + "</aside></div>";
