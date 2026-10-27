@@ -19,6 +19,28 @@
     ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
   };
   var CSS = [
+
+    /* Calendrier éditorial (Will, 27/10/2026, maquette cal 2) : les jours en haut, 4 jours en grand, design du calendrier du QG */
+    ".apc{background:#0c0c0e;border:1px solid #232327;border-radius:20px;padding:14px;margin-bottom:12px}",
+    ".apc-t{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.apc-t h2{margin:0 6px 0 2px;font:700 30px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase}",
+    ".apc-dc{display:flex;align-items:center;gap:10px;background:#141416;border-radius:14px;padding:6px 6px 6px 14px}.apc-dc .k{display:block;font:700 10.5px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#3d8bff}.apc-dc .v{display:block;font:700 17px/1.1 Antonio,sans-serif;text-transform:uppercase}",
+    ".apc-ar{width:34px;height:34px;border:0;border-radius:10px;background:#1f1f24;color:#fff;font:700 16px Inter,sans-serif;cursor:pointer}.apc-ar:disabled{opacity:.3;cursor:default}",
+    ".apc-lg{display:flex;gap:12px;align-items:center;font:600 12px Inter,sans-serif;color:#8c8c93}.apc-lg i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}",
+    ".apc-go{margin-left:auto;height:40px;padding:0 16px;border-radius:12px;background:#2A6FD0;color:#fff!important;font:700 14px Inter,sans-serif;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}",
+    ".apc-pl{display:flex;gap:7px;margin-bottom:12px}.apc-pl button{flex:1;min-width:0;border:0;color:#F5F5F7;text-align:center;background:#141416;border-radius:13px;padding:8px 0 7px;position:relative;cursor:pointer}",
+    ".apc-pl b{display:block;font:700 22px/1 Antonio,sans-serif}.apc-pl small{display:block;font:700 10px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8c8c93;margin-top:3px}.apc-pl .on{background:#2A6FD0}.apc-pl .on small{color:#dbe7ff}.apc-pl .td:not(.on) b{color:#3d8bff}",
+    ".apc-pl i{position:absolute;top:-5px;right:6px;min-width:18px;height:18px;border-radius:9px;background:#2a2a30;color:#fff;font:800 10.5px/18px Inter,sans-serif;font-style:normal;padding:0 5px}",
+    ".apc-pl .br{display:flex;gap:2px;justify-content:center;margin:5px auto 0;width:70%;height:3px}.apc-pl .br span{flex:1;max-width:14px;height:3px;border-radius:2px}",
+    ".apc-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}",
+    ".apc-col{background:#17171b;border-radius:14px;padding:10px 7px 8px;min-height:150px}",
+    ".apc-col h4{margin:0 2px 9px;display:flex;align-items:baseline;gap:4px;font:700 13px Antonio,sans-serif;text-transform:uppercase;color:#8c8c93}.apc-col h4 b{font:700 20px/1 Antonio,sans-serif;color:#fff}.apc-col.td h4 b{color:#3d8bff}.apc-col h4 em{margin-left:auto;font:700 9.5px Inter,sans-serif;font-style:normal;letter-spacing:.08em;color:#3d8bff}",
+    ".apc-cd{display:flex;gap:8px;align-items:flex-start;background:#1f1f24;border-radius:10px;padding:6px;margin-bottom:6px;position:relative;transition:background .15s}.apc-cd:hover{background:#26262c}",
+    ".apc-cd .cv{width:28px;height:39px;border-radius:4px;flex:none;background:#2a2a30 center/cover}.apc-cd .cv.kj{background:#BC002D;display:grid;place-items:center;color:#fff;font:900 11px/1.05 'Noto Sans JP',sans-serif;writing-mode:vertical-rl;letter-spacing:.05em}",
+    ".apc-cd .tx{min-width:0;flex:1}.apc-cd b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:700 12px/1.22 Inter,sans-serif;padding-right:12px}",
+    ".apc-cd small{display:block;font:700 10px Antonio,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#8c8c93;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+    ".apc-cd .d{position:absolute;right:6px;top:7px;width:8px;height:8px;border-radius:50%}.apc-p{background:#4DAB9A}.apc-a{background:#F2B33D}.apc-r{background:#ff5a5a}",
+    ".apc-more{display:block;text-align:center;font:700 12px Inter,sans-serif;color:#8c8c93;padding:4px}.apc-vide{color:#55555c;margin:4px 3px;font-size:13px}",
+    "@media (max-width:760px){.apc-t h2{font-size:24px}.apc-go{margin-left:0}.apc-lg{order:5;width:100%}.apc-pl{overflow-x:auto;scrollbar-width:none}.apc-pl button{flex:none;width:48px}.apc-cols{grid-template-columns:1fr}.apc-col:nth-child(n+2){display:none}}",
     ".ap-o{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;font-family:Inter,system-ui,sans-serif;color:#f3f3f5}",
     ".ap{position:relative;width:min(1080px,100%);box-sizing:border-box;background:#0c0c0e;border:1px solid #2C2C2F;border-radius:24px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);text-align:left}",
     ".ap *{box-sizing:border-box}.ap a{color:inherit;text-decoration:none}",
@@ -81,7 +103,33 @@
   var MOIS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."], JOURS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
   var couv = function (u) { return /^https?:/.test(u || "") ? "/api/couv?u=" + encodeURIComponent(u) + "&w=120" : (u || ""); };
   var nb = function (n) { return n == null ? "–" : Number(n).toLocaleString("fr-FR"); };
-  var D = null, FILT = "Tout";
+  var D = null, FILT = "Tout", CSEL = null;
+  var JC = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
+  var addJ = function (d, n) { var x = new Date(d + "T12:00:00Z"); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+  var dowJ = function (d) { return new Date(d + "T12:00:00Z").getUTCDay(); };
+  var lundiDe = function (d) { return addJ(d, -((dowJ(d) + 6) % 7)); };
+  var MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+  var jm = function (d) { var x = new Date(d + "T12:00:00Z"); return x.getUTCDate() + " " + MC[x.getUTCMonth()]; };
+  function calBloc() {
+    var C = D && D.cal, auj = (D && D.aujourdhui) || new Date().toISOString().slice(0, 10);
+    if (!CSEL) CSEL = auj;
+    var L = lundiDe(CSEL), sem = [0, 1, 2, 3, 4, 5, 6].map(function (i) { return addJ(L, i); }), J = function (d) { return (C && C.jours[d]) || []; };
+    var cette = L === lundiDe(auj);
+    var h = '<div class="apc"><div class="apc-t"><h2>Calendrier éditorial</h2><div class="apc-dc"><span><span class="k">' + (cette ? "Cette semaine" : "Semaine") + '</span><span class="v">' + jm(sem[0]) + ' – ' + jm(sem[6]) + '</span></span>' +
+      '<button type="button" class="apc-ar" data-cw="-1" aria-label="Semaine précédente"' + (C && addJ(L, -1) < C.du ? " disabled" : "") + '>‹</button><button type="button" class="apc-ar" data-cw="1" aria-label="Semaine suivante"' + (C && addJ(L, 7) > C.au ? " disabled" : "") + '>›</button></div>' +
+      '<span class="apc-lg"><span><i class="apc-p"></i>Publié</span><span><i class="apc-a"></i>À publier</span><span><i class="apc-r"></i>En retard</span></span><a class="apc-go" href="/hq/#calendrier">Ouvrir le calendrier →</a></div>';
+    h += '<div class="apc-pl">' + sem.map(function (d) { var l = J(d), w = new Date(d + "T12:00:00Z");
+      return '<button type="button" data-cj="' + d + '" class="' + (d === CSEL ? "on" : "") + (d === auj ? " td" : "") + '"><b>' + w.getUTCDate() + '</b><small>' + JC[w.getUTCDay()] + '</small>' + (l.length ? '<i>' + l.length + '</i>' : '') +
+        '<span class="br">' + l.slice(0, 6).map(function (e) { return '<span class="apc-' + e.st + '"></span>'; }).join("") + '</span></button>'; }).join("") + '</div>';
+    if (!C) return h + '<div class="ap-sk" style="width:60%"></div></div>';
+    h += '<div class="apc-cols">' + [0, 1, 2, 3].map(function (i) { var d = addJ(CSEL, i), l = J(d), w = new Date(d + "T12:00:00Z");
+      return '<div class="apc-col' + (d === auj ? " td" : "") + '"><h4>' + JC[w.getUTCDay()] + ' <b>' + w.getUTCDate() + '</b>' + (d === auj ? '<em>AUJOURD’HUI</em>' : d === addJ(auj, 1) ? '<em style="color:#8c8c93">DEMAIN</em>' : '') + '</h4>' +
+        (l.length ? l.slice(0, 7).map(function (e) {
+          var cv = e.img ? '<span class="cv" style="background-image:url(\'' + esc(couv(e.img)) + '\')"></span>' : '<span class="cv kj" lang="ja">' + esc(e.kj || "予定") + '</span>';
+          return '<a class="apc-cd" href="' + esc(e.u || "/hq/#calendrier") + '">' + cv + '<span class="tx"><b>' + esc(e.t) + '</b><small>' + (e.h ? esc(e.h) + " · " : "") + esc(e.s || "") + '</small></span><span class="d apc-' + e.st + '"></span></a>'; }).join("") +
+          (l.length > 7 ? '<a class="apc-more" href="/hq/#calendrier">+' + (l.length - 7) + ' de plus</a>' : '') : '<p class="apc-vide">—</p>') + '</div>'; }).join("") + '</div></div>';
+    return h;
+  }
 
   function dateTodo(dt, auj) {
     if (!dt) return "";
@@ -119,6 +167,7 @@
       '<a href="' + (u.slug ? "/membres/" + encodeURIComponent(u.slug) + "/" : "/profil/") + '"><b>' + esc(u.name || "Admin") + ' <span class="ap-pill">' + S.pm + 'Admin</span></b><small>' + JOURS[now.getDay()] + " " + now.getDate() + " " + ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"][now.getMonth()] + ' · voir mon profil</small></a>' +
       '<span class="ap-hr"><button type="button" class="srt" data-ap-srch>' + S.se + 'Rechercher</button><button type="button" class="x" data-ap-x aria-label="Fermer">×</button></span></div>' +
       '<button type="button" class="ap-srm" data-ap-srch><span>' + S.se + '</span>Rechercher</button>' +
+      calBloc() +
       // 1. Actualités + Couvertures | Mangas Database
       '<div class="ap-g ap-g2"><div class="ap-st">' +
         '<a class="ap-t ap-gr" href="/admin/#validation"><span class="ic">' + S.news + '</span><div><h3>Actualités et veille</h3><p>À relire avant publication</p></div><span class="n">' + (D ? nb(D.veille.n) : "…") + '</span></a>' +
@@ -131,12 +180,10 @@
         '<div class="nn"><b>' + (f ? nb(f.total) : "…") + '</b><span>membres<br>dans le gang</span></div>' +
         (f ? '<div class="s"><span><b>+' + f.auj + '</b> aujourd\'hui</span><span><b>+' + f.sem + '</b> cette semaine</span><span class="p">' + S.pm + ' <b>' + f.premium + '</b> Premium</span></div>' +
           '<div class="av">' + f.recents.map(function (r) { return r.photo ? '<img src="' + esc(r.photo) + '" alt="" referrerpolicy="no-referrer" title="' + esc(r.pseudo) + '">' : '<i title="' + esc(r.pseudo) + '">' + esc(r.pseudo.charAt(0).toUpperCase()) + '</i>'; }).join("") + '</div>' : '') + '</a>' +
-        '<div class="ap-sq">' + [["cal", "Calendrier éditorial", "/hq/#calendrier", j.length ? j.length + " aujourd'hui" : "Le planning"], ["pm", "Premium & dons", "/hq/#dons", f ? f.premium + " Premium" : "Dons, abonnés"], ["hq", "HQ", "/hq/", "Ressources"], ["st", "Statistiques", "/admin/#stats", "Clics Google"], ["cm", "Communauté", "/communaute/", f ? nb(f.total) + " membres" : "Les membres"], ["bo", "Back-office", "/admin/", "Fiches, réglages"]].map(function (r) {
+        '<div class="ap-sq">' + [["cal", "Contenu régulier", "/hq/#vivre", "Récaps, promos"], ["pm", "Premium & dons", "/hq/#dons", f ? f.premium + " Premium" : "Dons, abonnés"], ["hq", "HQ", "/hq/", "Ressources"], ["st", "Statistiques", "/admin/#stats", "Clics Google"], ["cm", "Communauté", "/communaute/", f ? nb(f.total) + " membres" : "Les membres"], ["bo", "Back-office", "/admin/", "Fiches, réglages"]].map(function (r) {
           return '<a href="' + r[2] + '"><span class="i">' + S[r[0]] + '</span><div><b>' + r[1] + '</b><small>' + r[3] + '</small></div></a>'; }).join("") + '</div></div>' +
       // 3. Aujourd'hui | To-do
-      '<div class="ap-g ap-g3"><div class="ap-pan"><div class="ap-sh"><h2>Aujourd\'hui <span>· ' + j.length + ' news</span></h2><a href="/hq/#calendrier">Calendrier →</a></div>' +
-        (j.length ? '<div class="ap-tags">' + (pub ? '<span class="ap-tag" style="color:#4DAB9A;background:rgba(77,171,154,.16)">' + pub + ' publiée' + (pub > 1 ? "s" : "") + '</span>' : '') + (plan ? '<span class="ap-tag" style="color:#9CC3FF;background:rgba(42,111,208,.18)">' + plan + ' planifiée' + (plan > 1 ? "s" : "") + '</span>' : '') + (prochaine && prochaine.heure ? '<span class="ap-tag" style="background:#26262c;color:#cfcfd4">Prochaine ' + esc(prochaine.heure) + '</span>' : '') + '</div>' : '') +
-        '<div class="ap-day">' + (D ? (j.length ? j.map(carte).join("") : '<p class="ap-vide">Rien de publié aujourd\'hui pour l\'instant. Les news validées apparaîtront ici avec leur heure.</p>') : sk) + '</div></div>' +
+      '<div class="ap-g" style="grid-template-columns:1fr">' +
         '<div class="ap-pan"><div class="ap-sh"><h2>To-do' + (D ? ' <span style="color:#F2B33D">· ' + (D.todo.semaine ? D.todo.semaine + " cette semaine" : D.todo.total + " à faire") + '</span>' : '') + '</h2><a href="/hq/#todo">' + (D ? D.todo.total + " en tout" : "") + ' →</a></div>' +
         (D ? '<div class="ap-fl">' + ["Tout"].concat(topCats).map(function (c) { return '<button type="button" data-tf="' + esc(c) + '" aria-pressed="' + (FILT === c) + '">' + esc(c) + '</button>'; }).join("") + '</div><div class="ap-td" data-td-l>' + todoRows() + '</div>' +
           '<form class="ap-add" data-td-add><input name="t" placeholder="Ajouter une tâche" maxlength="300" autocomplete="off"><button type="submit">＋</button></form>' : sk) + '</div></div>' +
@@ -157,6 +204,8 @@
       if (e.target === o || e.target.closest("[data-ap-x]")) return close();
       if (e.target.closest("[data-ap-srch]")) { close(); if (ouvrirRecherche) ouvrirRecherche(); return; }
       if (e.target.closest("[data-ap-out]")) { fetch("/api/auth/me", { method: "DELETE" }).then(function () { location.reload(); }); return; }
+      var cw = e.target.closest("[data-cw]"); if (cw) { CSEL = addJ(CSEL || (D && D.aujourdhui), 7 * +cw.dataset.cw); draw(); return; }
+      var cj = e.target.closest("[data-cj]"); if (cj) { CSEL = cj.dataset.cj; draw(); return; }
       var tf = e.target.closest("[data-tf]"); if (tf) { FILT = tf.dataset.tf; draw(); return; }
       var td = e.target.closest("[data-td]");
       if (td && D) {

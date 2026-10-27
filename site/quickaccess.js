@@ -94,7 +94,7 @@
     if (!ME) { fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { ME = j || { admin: false }; openPop(); }).catch(function () { loadData(render); }); return; }
     if (ME && ME.admin) {
       if (window.FG_ADMPOP) return window.FG_ADMPOP(ME, null);
-      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=3";
+      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=4";
       sc.onload = function () { window.FG_ADMPOP(ME, null); }; sc.onerror = function () { loadData(render); };
       document.head.appendChild(sc); return;
     }
