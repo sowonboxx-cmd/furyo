@@ -61,6 +61,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .t9w .t9tag{position:absolute;right:10px;bottom:-22px;transform:rotate(-3deg);font-size:22px;padding:5px 14px 7px;border:2px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.5)}
 .t9t{text-align:center;font:700 64px/.95 A;color:#fff;text-transform:uppercase;text-shadow:0 8px 30px #000}
 .t9img{margin-top:22px;transform:rotate(-3deg);width:262px;height:345px;object-fit:cover;border:5px solid #fff;box-shadow:0 20px 40px rgba(0,0,0,.6)}
+.lnk{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:10px 0 2px}.lnk a{display:inline-flex;align-items:center;gap:4px;color:#6ea8ff;font:600 13.5px I;text-decoration:none}.lnk a:hover{color:#a9cbff}.lnk .lnw{background:#1f5133;color:#bff0cc;padding:6px 12px;border-radius:9px}.lnk .lnw:hover{color:#fff}.lsp{width:1px;height:18px;background:#2a2a30}.lnoff{font:500 12.5px I;color:#77777e}
 .lbr{display:flex;align-items:center;gap:10px}.cp{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:9px;background:#1f1f24;color:#e8e8ea;font:700 12px I;letter-spacing:0;text-transform:none;cursor:pointer;-webkit-tap-highlight-color:transparent}.cp:hover{background:#2a2a30}.cp.on,.sw.on{background:#1f5133;color:#bff0cc}
 .smh2{display:flex;align-items:center;gap:7px;padding:8px 10px;border-bottom:1px solid #222}.smh2 img{width:32px;height:32px;border-radius:50%;flex:none}.smh2 svg,.smn{flex:none}.smh2 nav{display:flex;align-items:center;gap:6px;flex:1;min-width:0;font:700 14.5px A;text-transform:uppercase;letter-spacing:.01em}.smh2 nav b{font-weight:700;box-shadow:inset 0 -3px #BC002D;padding:10px 0}.smh2 nav span{color:#f3f3f5}.smh2 .smav{width:32px;height:32px;border-radius:50%;object-fit:cover}.smn{font:700 13px I;font-style:normal;color:#fff;background:#BC002D;min-width:26px;height:26px;border-radius:13px;display:grid;place-items:center;padding:0 6px}.smh2>i{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3a6db8,#c9d6ec)}
 .smban img{display:block;width:100%;aspect-ratio:1200/630;object-fit:cover;-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent)}
@@ -220,11 +221,24 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function jourTxt() { var d = D.jour || demain(); var x = new Date(d + "T12:00:00"); return x.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }); }
 
   /* ---------- écrans ---------- */
+  // Liens utiles en haut du studio (Will, 27/10/2026) : la news en ligne (ouvrir / copier le lien), sources, lecture d'essai, Notion.
+  function lienNews() {
+    var b = (D.carte && D.carte.banniere && D.carte.titre) || (N.serie && (N.serie.fr || N.serie.t)) || titre().split(" : ").pop();
+    var sl = String(b).replace(/œ/g, "oe").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "news";
+    return "https://furyogang.com/actus/" + sl + "-" + String(N.id || "").replace(/-/g, "").slice(-8);
+  }
+  function liens() {
+    var L = [], fl = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>';
+    var a = function (u, t) { if (/^https?:\/\//.test(u || "")) L.push('<a href="' + esc(u) + '" target="_blank" rel="noopener">' + t + fl + '</a>'); };
+    var news = N.enLigne ? '<a class="lnw" href="' + esc(lienNews()) + '" target="_blank" rel="noopener">Voir la news' + fl + '</a><span class="cp" data-copy-url="1" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier le lien</span>' : '<span class="lnoff">Lien de la news dès la mise en ligne</span>';
+    a(N.src, "Source officielle"); a(N.relais, "Source relais"); a((N.serie && N.serie.essai) || (D.carte && D.carte.lire), "Lecture d'essai"); a("https://www.notion.so/" + String(N.id || "").replace(/-/g, ""), "Notion");
+    return '<div class="lnk">' + news + '<span class="lsp"></span>' + L.join("") + '</div>';
+  }
   function haut() {
     var stat = N.enLigne ? '<span class="etat ok">En ligne</span>' : N.planif ? '<span class="etat pl">Planifiée</span>' : '<span class="etat val">À relire</span>';
     var host = ""; try { host = new URL(N.src).hostname.replace(/^www\./, ""); } catch (e) {}
-    return '<div class="tb"><a class="bk" href="/hq/#calendrier">‹ Calendrier éditorial</a><span class="cat"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>' + stat + (host ? '<a class="src" href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(host) + ' ↗</a>' : '') +
-      '<span class="pr4">' + (N.enLigne ? "Sur le site" : "4 réseaux prêts") + '</span><a class="x" href="/hq/#calendrier" aria-label="Fermer">×</a></div><h1 class="tt"><span class="kj" lang="ja">' + (CATK[N.cat] || "速報") + '</span><span>' + esc(titre()) + '</span></h1>';
+    return '<div class="tb"><a class="bk" href="/hq/#calendrier">‹ Calendrier éditorial</a><span class="cat"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>' + stat + 
+      '<span class="pr4">' + (N.enLigne ? "Sur le site" : "4 réseaux prêts") + '</span><a class="x" href="/hq/#calendrier" aria-label="Fermer">×</a></div>' + liens() + '<h1 class="tt"><span class="kj" lang="ja">' + (CATK[N.cat] || "速報") + '</span><span>' + esc(titre()) + '</span></h1>';
   }
   function bt(act, cls, t, sub) { return '<button class="btn bt2 ' + cls + '" data-act="' + act + '"><b>' + t + '</b><small>' + sub + '</small></button>'; }
   function plan() {
@@ -318,6 +332,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 
   /* ---------- actions ---------- */
   document.addEventListener("click", function (e) {
+    var cpu = e.target.closest("[data-copy-url]");
+    if (cpu) { e.preventDefault(); copier(lienNews(), cpu); return; }
     var cpb = e.target.closest("[data-copy]");
     if (cpb) { e.preventDefault(); e.stopPropagation(); copier(D[cpb.getAttribute("data-copy")] || "", cpb); return; }
     var v = e.target.closest("[data-v]"); if (v) { V = v.dataset.v; draw(); scrollTo(0, 0); return; }
