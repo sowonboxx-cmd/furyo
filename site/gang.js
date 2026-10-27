@@ -107,6 +107,7 @@
   };
   window.FG_GANG.premium = function (force) {
     if (!OFFERT || document.querySelector(".fgp-o")) return;
+    if (matchMedia("(max-width:860px)").matches || location.pathname === "/") { if (force) location.href = "/premium/"; return; }
     var K = "fg_pp7";
     try { if (!force && localStorage.getItem(K)) return; localStorage.setItem(K, String(Date.now())); } catch (e) {}
     var o = document.createElement("div"); o.className = "fgp-o"; o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "FuryoGang Premium");
@@ -216,7 +217,10 @@
       if (pg) { var d = document.createElement("div"); d.className = "fgpap-st"; /* plus collant (Will, 21/10/2026) : en haut de la page, part au défilement */ d.innerHTML = petite(); pg.insertBefore(d, pg.firstChild); }
     }
   };
+  // Plus de fenêtre sur téléphone ni sur l'accueil (Will, 27/10/2026) : on va directement à la page Premium, qui dit déjà tout.
+  var sansFenetre = function () { return matchMedia("(max-width:860px)").matches || location.pathname === "/"; };
   window.FG_GANG.pap = function () {
+    if (sansFenetre()) { location.href = DONS; return; }
     if (document.querySelector(".fgx-o")) return;
     var o = document.createElement("div"); o.className = "fgx-o"; o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "Premium avant Premium");
     var tr = function (a, b) { return '<div class="fx-tr"><b>' + a + "</b><span>" + b + "</span></div>"; };
