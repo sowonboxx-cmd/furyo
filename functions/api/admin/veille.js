@@ -276,6 +276,7 @@ async function traiter(request, env) {
     for (const k of ["desktop", "fond"]) if (o && u(c[k])) o[k] = u(c[k]);
     // Tomes en circulation (Will, 27/10/2026) : chiffre en jaune après le titre, image téléphone 16:9 et visuels réseaux.
     if (o && String(c.chiffre || "").trim()) o.chiffre = String(c.chiffre).trim().slice(0, 30);
+    if (o && u(c.og)) o.og = u(c.og);
     if (o && !c.banniere) for (const k of ["mobile", "ig", "tt"]) if (u(c[k])) o[k] = u(c[k]);
     if (o && c.fondPos) o.fondPos = String(c.fondPos).slice(0, 20);
     if (o && c.collection) o.collection = String(c.collection).slice(0, 40);

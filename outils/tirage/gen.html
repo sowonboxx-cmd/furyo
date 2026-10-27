@@ -1,22 +1,31 @@
 <!doctype html><html><head><meta charset="utf-8"><style>
 /* Générateur des visuels « Tomes en circulation » (Will, 27/10/2026) : design « Rangée droite », fond = dessin de la dernière couverture
    en couleur atténuée (fond.py), couvertures des derniers tomes bien droites à droite, la plus récente devant en plus grand. Aucun texte. */
+@font-face{font-family:A;src:url(../../fonts/Antonio.ttf);font-weight:100 700}@font-face{font-family:I;src:url(../../fonts/Inter.ttf);font-weight:100 900}
 body{margin:0;background:#000}
+.pl{display:inline-block;border-radius:9px;background:#529CCA;color:#08121a;font:800 25px I;padding:10px 18px;letter-spacing:.06em;text-transform:uppercase}
+.nm{font:700 80px/.98 A;text-transform:uppercase;color:#fff;max-width:560px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:16px}
+.nb{font:700 144px/.9 A;text-transform:uppercase;color:#F2B33D;white-space:nowrap;margin-top:8px}
 .f{position:relative;overflow:hidden;background:#0b0b0c}
 .bg{position:absolute;inset:0;background-repeat:no-repeat}
 .cv{position:absolute;object-fit:cover;border:solid #fff;box-sizing:border-box;border-radius:4px}
 </style></head><body><script>
-var Q = new URLSearchParams(location.search), CV = Q.get("cv").split(","), BG = Q.get("bg");
-var F = { d: [2100, 800, { right: 96.5, zone: 40, h: 60, hl: 66, y: 17, yl: 15 }, 5, "50% 30%"], m: [1280, 720, { right: 94, zone: 48, h: 48, hl: 54, y: 17, yl: 15 }, 7, "38% 30%"], o: [1200, 630, { right: 95, zone: 56, h: 64, hl: 72, y: 18, yl: 13 }, 5, "38% 30%"] };
+var Q = new URLSearchParams(location.search), CV = Q.get("cv").split(","), BG = Q.get("bg"), NOM = Q.get("nom") || "", N1 = Q.get("n1") || "", N2 = Q.get("n2") || "";
+var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+var F = { d: [2100, 800, { right: 96.5, zone: 40, h: 60, hl: 66, y: 17, yl: 15 }, 5, "50% 30%"], m: [1280, 720, { right: 94, zone: 48, h: 48, hl: 54, y: 17, yl: 15 }, 7, "38% 30%"], o: [1200, 630, { right: 95, zone: 56, h: 64, hl: 72, y: 18, yl: 13 }, 5, "38% 30%"],
+  // Image du lien (maquette O1b validée par Will, 27/10/2026) : pastille, série (2 lignes max), chiffre en jaune, bloc calé au-dessus de la pastille de titre de X téléphone.
+  l: [1200, 630, { right: 95, zone: 42, h: 50 / 0.86, hl: 62, y: 8, yl: 8, rowL: 1 }, 4, "38% 30%"] };
 var H = "";
 Object.keys(F).forEach(function (f) {
   var W = F[f][0], Hh = F[f][1], P = F[f][2], bd = F[f][3], r = W / Hh, k = CV.length;
   var hs = CV.map(function (_, i) { return i === k - 1 ? P.hl : P.h * 0.86; }), ws = hs.map(function (h) { return h * 0.7 / r; });
   var autres = ws.slice(0, -1).reduce(function (a, b) { return a + b; }, 0), fc = Math.min(0.82, (P.zone - ws[k - 1]) / autres);
   var x = P.right - ws[k - 1], xs = []; xs[k - 1] = x; for (var i = k - 2; i >= 0; i--) { x -= ws[i] * fc; xs[i] = x; }
-  var c = CV.map(function (s, i) { var y = i === k - 1 ? P.yl : P.y + (P.hl - P.h * 0.86) * 0.35;
+  var c = CV.map(function (s, i) { var y = i === k - 1 ? P.yl : P.rowL ? P.y + (P.hl - P.h * 0.86) / 2 : P.y + (P.hl - P.h * 0.86) * 0.35;
     return '<img class="cv" src="' + s + '" style="border-width:' + bd + 'px;box-shadow:0 ' + bd * 6 + 'px ' + bd * 13 + 'px rgba(0,0,0,.75);height:' + hs[i] + '%;width:' + ws[i].toFixed(3) + '%;left:' + xs[i].toFixed(3) + '%;top:' + y.toFixed(2) + '%;z-index:' + (i + 1) + '">'; }).join("");
-  H += '<div class="f" id="' + f + '" style="width:' + W + 'px;height:' + Hh + 'px"><div class="bg" style="background:url(' + BG + ') ' + F[f][4] + '/cover;filter:saturate(.6) brightness(.62)"></div><div class="bg" style="background:linear-gradient(90deg,rgba(0,0,0,.15),rgba(0,0,0,0) 40%,rgba(0,0,0,.55) 85%)"></div>' + c + '</div>';
+  var grad = f === "l" ? "linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.35) 52%,rgba(0,0,0,.45))" : "linear-gradient(90deg,rgba(0,0,0,.15),rgba(0,0,0,0) 40%,rgba(0,0,0,.55) 85%)";
+  var txt = f !== "l" ? "" : '<div style="position:absolute;left:56px;width:560px;bottom:150px;z-index:20;display:flex;flex-direction:column;align-items:flex-start"><span class="pl">Tomes en circulation</span><div class="nm">' + esc(NOM) + '</div><div class="nb"' + (N1.length > 4 ? ' style="font-size:128px"' : '') + '>' + esc(N1) + (N2 ? ' <span style="font-size:.62em">' + esc(N2) + '</span>' : '') + '</div></div>';
+  H += '<div class="f" id="' + f + '" style="width:' + W + 'px;height:' + Hh + 'px"><div class="bg" style="background:url(' + BG + ') ' + F[f][4] + '/cover;filter:saturate(.6) brightness(.62)"></div><div class="bg" style="background:' + grad + '"></div>' + c + txt + '</div>';
 });
 document.body.innerHTML = H;
 </script></body></html>

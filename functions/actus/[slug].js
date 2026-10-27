@@ -30,7 +30,7 @@ export async function onRequestGet({ request, env, params }) {
     // qui porte le vrai contenu. Évite une page news vide (pas de série reliée). (Will, 20/10/2026)
     if (n.lien) return Response.redirect(n.lien, 302);
     const seo = seoNews(n, `${SITE}/actus/${slug}`);
-    const og = await carte(env, request, ogFiche("actu", String(n.id).slice(-8)));
+    const og = n.ogImg ? "" : await carte(env, request, ogFiche("actu", String(n.id).slice(-8)));
     if (og) { seo.image = og; seo.carte = "summary_large_image"; }
     const out = new Response(page.body, page);
     out.headers.set("x-seo", encodeURIComponent(JSON.stringify(seo)));

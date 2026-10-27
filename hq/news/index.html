@@ -224,6 +224,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   var ogD = function () { return (D.carte && D.carte.ogDesc) || ogAuto().d; };
   // Image du lien : bannière dessinée ou carte Extrait telles quelles ; sinon la carte de partage générée.
   function ogImg() {
+    if (D.carte && D.carte.og) return '<img src="' + esc(D.carte.og) + '">';
     if (ban()) return '<img src="' + esc(imgSite()) + '">';
     if (estExtrait()) return '<img src="' + esc(carteNews()) + '">';
     return '<span class="ogs2"></span>';
