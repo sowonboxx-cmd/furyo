@@ -261,6 +261,7 @@ body{background:#000}
 </style>
 <style>/* Carte complète en image de news, mobile (hors media query ordinateur) */
 .na-hero.kc{height:auto;overflow:visible}.na-hero.kc img{position:relative;display:block;height:auto;aspect-ratio:1200/630;object-position:center!important}.na-hero.kc::after{display:none}.na-hero.kc .na-ht{position:static;padding:14px 20px 0}.na-hero.kc .cr{display:none}</style>
+<script src="/site/hero-d.js?v=1"></script>
 </head>
 <body>
 <script src="/site/header.js?v=83"></script>
@@ -523,10 +524,13 @@ body{background:#000}
     var cs = N.cats && N.cats.length ? N.cats : [{ nom: N.catNom || "News", c: N.catC || "#D4D4D8" }], titre = N.fr || N.titre;
     document.title = titre + " : " + (N.texte || "").slice(0, 60) + " | FuryoGang";
     var pos = N.pos == null ? 0 : N.pos;
-    root.innerHTML = '<div class="nd-hero' + (N.cover ? "" : " noimg") + (N.carte ? " kc" : "") + (N.titreSous ? " kt" : "") + '">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1600)) + '" alt="Image de la news : ' + esc(titre) + '" style="object-position:center ' + pos + '%">' + (N.credit ? '<span class="cr">' + esc(N.credit) + "</span>" : "") : "") +
-      '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' + (N.titreSous ? "</div>" : "") +
-      '<div class="nd-tx' + (N.titreSous ? " nd-txs" : "") + '"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
-      (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div>" + (N.titreSous ? "" : "</div>") +
+    // Bannière ordinateur toujours en 21:8 avec le titre dessus (Will, 27/10/2026) : image dédiée (coverD) ou gabarit « Extrait ».
+    var hd = window.FG_HEROD ? FG_HEROD(N, couv, esc) : "", sous = N.titreSous && !hd;
+    root.innerHTML = (hd ? '<div class="nd-hero hd">' + hd :
+      '<div class="nd-hero' + (N.cover ? "" : " noimg") + (N.carte ? " kc" : "") + (sous ? " kt" : "") + '">' + (N.cover ? '<img src="' + esc(couv(N.cover, 1600)) + '" alt="Image de la news : ' + esc(titre) + '" style="object-position:center ' + pos + '%">' + (N.credit ? '<span class="cr">' + esc(N.credit) + "</span>" : "") : "")) +
+      '<a class="nd-crumb" href="/?vue=actus">← Toutes les actualités</a>' + (sous ? "</div>" : "") +
+      '<div class="nd-tx' + (sous ? " nd-txs" : "") + '"><span class="nd-date">' + esc(rel(N.date)) + '</span><span class="na-pills">' + cs.map(function (c) { return '<span class="na-pill" style="background:' + c.c + '">' + esc(c.nom) + "</span>"; }).join("") + "</span><h1>" + esc(titre) + "</h1>" +
+      (N.jp ? '<span class="nd-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + "</div>" + (sous ? "" : "</div>") +
       '<div class="nd-grid"><div class="nd-col"><main class="nd-box nd-main"><div class="na-text">' + txt(N.texte) + "</div>" + lireD() + vid(N.video) +
       (N.src ? '<div class="nd-src"><span>Source</span><a href="' + esc(N.src) + '" target="_blank" rel="noopener">' + esc((N.srcName || "Officielle") + (handle(N.src) ? " · " + handle(N.src) : "")) + ARR + "</a></div>" : "") + acts() + "</main>" + comD() + "</div>" +
       '<aside class="nd-col">' + fiche() + (window.FG_GANG ? FG_GANG("widget") : "") + dernier() + autres() + mangakas() + "</aside></div>";

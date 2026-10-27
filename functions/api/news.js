@@ -72,6 +72,10 @@ export async function onRequestGet({ env, request, waitUntil }) {
           // Carte « Extrait » : couverture (miniatures), planche (fondu sous la bannière), lien de lecture en ligne (bouton « Lire »).
           const r = { vignette: abs(c.couv), planche: abs((c.planches || [])[0] || ""), planche2: abs((c.planches || [])[1] || ""), pages: (c.planches || []).slice(0, 12).map(abs).filter(Boolean), lire: /^https:\/\//.test(c.lire || "") ? c.lire : "" };
           // Bannière dessinée (hommage, grosse news, Will 27/10/2026) : l'image porte déjà le titre ; version téléphone à part, titre de la news au choix.
+          // Bannière ordinateur (21:8, sans texte : le titre du site passe dessus) — Will, 27/10/2026.
+          // desktop = image toute faite (hommage…) ; fond = image de fond du gabarit « Extrait » (couverture droite + auteurs à droite).
+          if (c.desktop) r.coverD = abs(c.desktop); if (c.fond) r.fond = abs(c.fond); if (c.fondPos) r.fondPos = String(c.fondPos);
+          { const au = c.auteurs || [s.scen, s.dess].join(", ").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*/).filter((x, i, a) => x && a.indexOf(x) === i).join(" · "); if (au) r.aut = au; } if (c.editeur) r.ed = String(c.editeur); if (c.quand) r.quand = String(c.quand); if (c.pays) r.paysC = String(c.pays);
           if (c.ogTitre) r.ogTitre = String(c.ogTitre); if (c.ogDesc) r.ogDesc = String(c.ogDesc);
           if (c.banniere) { r._b = 1; r.titreSous = true; if (c.mobile) r.coverM = abs(c.mobile); if (c.titre) { r.titre = String(c.titre); r.fr = String(c.titre); } if (c.jp) r.jp = String(c.jp); }
           return r; })(),
