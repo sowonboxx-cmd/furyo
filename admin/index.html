@@ -802,7 +802,7 @@ document.addEventListener("click", async e => {
 /* ---------- Validation : la veille à relire ---------- */
 // Catégories et couleurs : celles de Notion, envoyées par /api/admin/veille (lib/categories.js).
 let VCOL = {};
-const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "extrait", "news"];
+const NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "extrait", "hommage", "news"];
 let VITEMS = [], VCATS = {}, VF = "tout", MAJ_MODE = false;
 const dCourt = d => d ? d.slice(8, 10) + "/" + d.slice(5, 7) : "";
 async function veille(garder, maj){

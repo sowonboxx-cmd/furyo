@@ -14,7 +14,7 @@
 (function () {
   // Catégories : par défaut les deux sorties ; côté admin, FGPost.setCats() les remplace par celles de la veille.
   var VCATS = { "sortie-fr": "Sortie française", "sortie-jp": "Sortie japonaise" };
-  var NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "extrait", "news"];
+  var NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "extrait", "hommage", "news"];
 
   var phrases = function (t) { return (String(t || "").replace(/\s+/g, " ").trim().match(/[^.!?…]+(?:[.!?…]+|$)(?=\s|$)/g) || []).map(function (x) { return x.trim(); }).filter(Boolean); };
   function resumeCourt(t) { return phrases(t)[0] || ""; }

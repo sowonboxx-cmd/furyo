@@ -1047,7 +1047,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Tous les types (Will, 21/10/2026) : couverture 表紙, fiches du mois 新作, mangaka 作家, membre 仲間, article 記事, vidéo 動画, autre 予定.
   var EV_KJ = { "qn-sem": "毎週", "qn-mois": "毎月", maj: "更新", concours: "抽選", couv: "表紙", fiche: "新作", mangaka: "作家", membre: "仲間", article: "記事", video: "動画", autre: "予定" };
   // News publiées (Will, 22/10/2026) : même vignette kanji, selon la catégorie principale.
-  var NEWS_KJ = { "licence-fr": "仏版", "licence-jp": "連載", "couv-fr": "表紙", "couv-jp": "表紙", "sortie-fr": "発売", "sortie-jp": "発売", fin: "完結", pause: "休載", anime: "放送", adaptation: "実写", "bande-annonce": "予告", tirage: "部数", extrait: "試読", news: "速報", serie: "連載" };
+  var NEWS_KJ = { "licence-fr": "仏版", "licence-jp": "連載", "couv-fr": "表紙", "couv-jp": "表紙", "sortie-fr": "発売", "sortie-jp": "発売", fin: "完結", pause: "休載", anime: "放送", adaptation: "実写", "bande-annonce": "予告", tirage: "部数", extrait: "試読", hommage: "追悼", news: "速報", serie: "連載" };
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
   function carteCal(it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
