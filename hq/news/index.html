@@ -18,7 +18,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .tb{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid #1f1f23}
 .bk{font:700 13px I;color:#8c8c93;text-decoration:none}.bk:hover{color:#fff}
 .cat{display:inline-flex;align-items:center;gap:6px;font:700 12px I;padding:5px 10px;border-radius:9px;background:#26262c}.cat i{width:7px;height:7px;border-radius:50%}
-.st{font:700 11px I;text-transform:uppercase;padding:5px 9px;border-radius:8px}.st.val{color:#F2B33D;background:rgba(242,179,61,.14)}.st.ok{color:#7BC67E;background:rgba(123,198,126,.14)}.st.pl{color:#9CC3FF;background:rgba(42,111,208,.18)}
+.etat{white-space:nowrap;flex:none;font:700 11px I;text-transform:uppercase;padding:5px 9px;border-radius:8px}.etat.val{color:#F2B33D;background:rgba(242,179,61,.14)}.etat.ok{color:#7BC67E;background:rgba(123,198,126,.14)}.etat.pl{color:#9CC3FF;background:rgba(42,111,208,.18)}.etat.etat{width:auto;height:auto;display:inline-block;border-radius:8px;font:700 11px I;line-height:1.2}
 .src{font-size:12px;color:#8c8c93;text-decoration:none}.src:hover{color:#fff}
 .pr4{margin-left:auto;font:700 12px I;color:#7BC67E;background:#1f3b2a;padding:6px 10px;border-radius:9px}
 .x{width:34px;height:34px;border-radius:10px;background:#17171b;display:grid;place-items:center;font:700 16px I;text-decoration:none;border:0;color:#fff}
@@ -96,7 +96,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .vide{display:grid;place-items:center;min-height:80vh;color:#8c8c93;text-align:center;line-height:1.6}
 /* téléphone (maquette « modif 5 ») */
 @media (max-width:860px){
-  .app{padding:0 14px 0}.tt{font-size:26px}.src,.st.val{display:none}
+  .app{padding:0 14px 0}.tt{font-size:26px}.src,.etat.val{display:none}
   .mt{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -14px 12px;padding:0 14px}.mt::-webkit-scrollbar{display:none}
   .mt button{flex:none;display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border-radius:12px;background:#17171b;border:0;color:#cfcfd4;font:700 13px I}.mt svg{width:15px;height:15px}.mt button.on{background:#2A6FD0;color:#fff}
   .mprev{display:flex;justify-content:center;padding:14px;border-radius:20px;background:radial-gradient(ellipse at 50% 0,#1d1d22,#0c0c0e 70%)}.mprev .pf{width:min(260px,72vw)}
@@ -141,33 +141,35 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   var img = function () { return [D.image, N.imageChoisie, N.image, N.serie && N.serie.cover].filter(function (u) { return u && !estOg(u); })[0] || ""; };
   // Visuel des réseaux (Will, 27/10/2026) : extrait = visuel « Extrait » 3:4 (FG_EXTRAIT, comme dans la veille) ; sinon l'image de la news.
   var couvSoc = function () { return (D.carte && D.carte.couv) || img(); };
-  var imgSoc = function () { return (N && (N.cat === "extrait" || N.cat2 === "extrait") && D.extPng) || img(); };
+  var imgSoc = function () { return (N && (N.cat === "extrait" || N.cat2 === "extrait") && D.extPng) || couvSoc(); };
+  // Image du site : la carte paysage compte ici (c'est l'image de la news sur furyogang.com).
+  var imgSite = function () { return [D.image, N.imageChoisie, N.image].filter(Boolean)[0] || couvSoc(); };
   var accroche = function () { return D.accroche != null ? D.accroche : (N.accroche || ""); };
   var heure = function () { return D.heure || "13:00"; };
   var demain = function () { var d = new Date(Date.now() + 864e5); return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(d); };
 
   /* ---------- écrans à la taille réelle ---------- */
   var SB = '<div class="sbar"><b>' + "13:00" + '</b><span>●●●● 5G ▮</span></div>';
-  function scrX() { return '<div class="scr">' + SB + '<div class="xtop"><span>←</span><b>Post</b></div><div class="xpost"><div class="xh"><img src="' + AV + '"><div><b>FuryoGang ' + VF + '</b><small>@FuryoGang</small></div></div><p class="xt">' + hl(D.x) + '</p>' + (img() ? '<img class="xi" src="' + esc(/^data:/.test(imgSoc()) ? imgSoc() : couv(imgSoc(), 800)) + '">' : '') + '<p class="xm">' + esc(heure()) + ' · ' + esc(jourTxt()) + ' · <b>Programmé</b></p><div class="xa"><span>💬</span><span>🔁</span><span>♡</span><span>📊</span><span>🔖</span><span>↗</span></div></div></div>'; }
+  function scrX() { return '<div class="scr">' + SB + '<div class="xtop"><span>←</span><b>Post</b></div><div class="xpost"><div class="xh"><img src="' + AV + '"><div><b>FuryoGang ' + VF + '</b><small>@FuryoGang</small></div></div><p class="xt">' + hl(D.x) + '</p>' + (imgSoc() ? '<img class="xi" src="' + esc(/^data:/.test(imgSoc()) ? imgSoc() : couv(imgSoc(), 800)) + '">' : '') + '<p class="xm">' + esc(heure()) + ' · ' + esc(jourTxt()) + ' · <b>Programmé</b></p><div class="xa"><span>💬</span><span>🔁</span><span>♡</span><span>📊</span><span>🔖</span><span>↗</span></div></div></div>'; }
   function scrIG() { return '<div class="scr">' + SB + '<div class="igtop"><b>Publications</b></div><div class="igh"><img src="' + AV + '"><div><b>furyogang</b><small>' + esc((N.serie && N.serie.t) || "FuryoGang") + '</small></div><span>•••</span></div><div class="igimg"><img src="' + esc(/^data:/.test(imgSoc()) ? imgSoc() : couv(imgSoc(), 800)) + '"></div><div class="igact"><span>♡</span><span>💬</span><span>➤</span><span style="margin-left:auto">🔖</span></div><p class="igcap"><b>furyogang</b> ' + hl(D.ig) + '</p><p class="igd">' + esc(jourTxt()) + '</p></div>'; }
   function visuelTT() {
     var u = esc(couv(couvSoc(), 800));
     // Étiquette sous le coin bas droit de la couverture, bordure blanche fine (Will, 26/10).
     var tag = '<div class="t9tag" style="background:' + col() + '">' + esc(N.label || "News") + '</div>';
-    return '<div class="t9"><div class="t9bg" style="background-image:url(\'' + u + '\')"></div><div class="t9sh"></div><div class="t9c"><img class="t9logo" src="' + LOGO + '"><div class="t9t">' + esc(courtTitre()) + '</div>' + (img() ? '<div class="t9w"><img class="t9img" src="' + u + '">' + tag + '</div>' : tag) + '</div></div>';
+    return '<div class="t9"><div class="t9bg" style="background-image:url(\'' + u + '\')"></div><div class="t9sh"></div><div class="t9c"><img class="t9logo" src="' + LOGO + '"><div class="t9t">' + esc(courtTitre()) + '</div>' + (couvSoc() ? '<div class="t9w"><img class="t9img" src="' + u + '">' + tag + '</div>' : tag) + '</div></div>';
   }
   function courtTitre() { var t = (N.serie && (N.serie.fr || N.serie.t)) || titre().split(" : ")[0]; return t.length > 22 ? t.slice(0, 22) : t; }
   function scrTT() { return '<div class="scr tts"><div class="ttbg">' + visuelTT() + '</div>' + SB + '<div class="tttop"><span>Suivis</span><b>Pour toi</b></div><div class="ttrail"><img src="' + AV + '"><span>♥<small>J\'aime</small></span><span>💬<small>0</small></span><span>🔖<small>0</small></span><span>↪<small>Partager</small></span></div><div class="ttcap"><b>furyogang</b><p>' + hl(D.tt).replace(/<span class="lk">(#[^<]+)<\/span>/g, "<b>$1</b>") + '</p><span class="ttm">♫ son original - furyogang</span></div><div class="ttnav"><span>Accueil</span><span>Amis</span><b>＋</b><span>Boîte</span><span>Profil</span></div></div>'; }
   function sk() { return '<span class="sk" style="color:' + col() + '"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>'; }
-  function scrSM() { return '<div class="scr sms">' + SB + '<div class="smh"><img src="' + LOGO + '"><span>☰</span></div><div class="smb">' + sk() + '<h3>' + esc(titre()) + '</h3>' + (img() ? '<img src="' + esc(couv(img(), 800)) + '">' : '') + '<p>' + esc(D.site) + '</p>' + (N.src ? '<span class="sl">Voir la source ↗</span>' : '') + '</div></div>'; }
-  function scrWeb() { return '<div class="webs"><div class="wph"><img src="' + LOGO + '"><span>Actualités · Calendrier · Collection · Communauté</span></div><div class="wpb"><div>' + sk() + '<h3>' + esc(titre()) + '</h3><p>' + esc(D.site) + '</p>' + (N.src ? '<span class="sl">Voir la source ↗</span>' : '') + '</div><div>' + (img() ? '<img class="wi" src="' + esc(couv(img(), 1000)) + '">' : '') + (N.serie ? '<div class="wser"><b>La série</b><div>' + (N.serie.cover ? '<img src="' + esc(couv(N.serie.cover, 200)) + '">' : '') + '<span>' + esc(N.serie.fr || N.serie.t || "") + '</span></div></div>' : '') + '</div></div></div>'; }
+  function scrSM() { return '<div class="scr sms">' + SB + '<div class="smh"><img src="' + LOGO + '"><span>☰</span></div><div class="smb">' + sk() + '<h3>' + esc(titre()) + '</h3>' + (imgSite() ? '<img src="' + esc(couv(imgSite(), 800)) + '">' : '') + '<p>' + esc(D.site) + '</p>' + (N.src ? '<span class="sl">Voir la source ↗</span>' : '') + '</div></div>'; }
+  function scrWeb() { return '<div class="webs"><div class="wph"><img src="' + LOGO + '"><span>Actualités · Calendrier · Collection · Communauté</span></div><div class="wpb"><div>' + sk() + '<h3>' + esc(titre()) + '</h3><p>' + esc(D.site) + '</p>' + (N.src ? '<span class="sl">Voir la source ↗</span>' : '') + '</div><div>' + (imgSite() ? '<img class="wi" src="' + esc(couv(imgSite(), 1000)) + '">' : '') + (N.serie ? '<div class="wser"><b>La série</b><div>' + (N.serie.cover ? '<img src="' + esc(couv(N.serie.cover, 200)) + '">' : '') + '<span>' + esc(N.serie.fr || N.serie.t || "") + '</span></div></div>' : '') + '</div></div></div>'; }
   function phone(k, scr, lab, ic, editable) { return '<button class="ph" data-v="' + k + '"><span class="phl">' + ic + lab + '<span class="ok">✓</span></span><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block">' + scr + '</span></span>' + (editable ? '<span class="ed">Modifier</span>' : '') + '</button>'; }
   function browser(k) { return '<button class="ph web" data-v="' + k + '"><span class="phl">' + IC.web + 'Site · ordinateur<span class="ok">✓</span></span><span class="bw"><span class="bwb"><i></i><i></i><i></i><span>furyogang.com/actus/…</span></span><span class="bwin" style="display:block"><span class="fit" data-w="1280" style="display:block">' + scrWeb() + '</span></span></span><span class="ed">Modifier</span></button>'; }
   function jourTxt() { var d = D.jour || demain(); var x = new Date(d + "T12:00:00"); return x.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }); }
 
   /* ---------- écrans ---------- */
   function haut() {
-    var stat = N.enLigne ? '<span class="st ok">En ligne</span>' : N.planif ? '<span class="st pl">Planifiée</span>' : '<span class="st val">À relire</span>';
+    var stat = N.enLigne ? '<span class="etat ok">En ligne</span>' : N.planif ? '<span class="etat pl">Planifiée</span>' : '<span class="etat val">À relire</span>';
     var host = ""; try { host = new URL(N.src).hostname.replace(/^www\./, ""); } catch (e) {}
     return '<div class="tb"><a class="bk" href="/hq/#calendrier">‹ Calendrier éditorial</a><span class="cat"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>' + stat + (host ? '<a class="src" href="' + esc(N.src) + '" target="_blank" rel="noopener">Source : ' + esc(host) + ' ↗</a>' : '') +
       '<span class="pr4">' + (N.enLigne ? "Sur le site" : "4 réseaux prêts") + '</span><a class="x" href="/hq/#calendrier" aria-label="Fermer">×</a></div><h1 class="tt"><span class="kj" lang="ja">' + (CATK[N.cat] || "速報") + '</span><span>' + esc(titre()) + '</span></h1>';
