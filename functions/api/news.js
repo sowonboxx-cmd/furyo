@@ -26,7 +26,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Date de publication sur le site (Will, 22/10/2026) : prioritaire sur la date de repérage pour l'ordre et la date affichée.
   const pubLe = p => (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "";
   const jourParis = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
-  return cached(request, waitUntil, "/api/news?v=16", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=17", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -76,6 +76,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
           // desktop = image toute faite (hommage…) ; fond = image de fond du gabarit « Extrait » (couverture droite + auteurs à droite).
           if (c.desktop) r.coverD = abs(c.desktop); if (c.fond) r.fond = abs(c.fond); if (c.fondPos) r.fondPos = String(c.fondPos);
           { const au = c.auteurs || [s.scen, s.dess].join(", ").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*/).filter((x, i, a) => x && a.indexOf(x) === i).join(" · "); if (au) r.aut = au; } if (c.editeur) r.ed = String(c.editeur); if (c.quand) r.quand = String(c.quand); if (c.pays) r.paysC = String(c.pays); if (c.collection) r.label = String(c.collection);
+          // Tomes en circulation (Will, 27/10/2026) : chiffre affiché en jaune après le titre (« +5 millions ») ; image téléphone (16:9) sans passer par la bannière dessinée.
+          if (c.chiffre) r.chiffre = String(c.chiffre); if (c.mobile && !c.banniere) r.coverM = abs(c.mobile);
           if (c.ogTitre) r.ogTitre = String(c.ogTitre); if (c.ogDesc) r.ogDesc = String(c.ogDesc);
           if (c.banniere) { r._b = 1; r.titreSous = true; if (c.mobile) r.coverM = abs(c.mobile); if (c.titre) { r.titre = String(c.titre); r.fr = String(c.titre); } if (c.jp) r.jp = String(c.jp); }
           return r; })(),
@@ -114,7 +116,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     }));
     items.sort((a, b) => b._t.localeCompare(a._t));
     // sid : la série liée (Studio Quoi de neuf : dernier tome paru pour les news « Tomes en circulation », Will 26/10/2026).
-    items.forEach(i => { if (/\/api\/ogcard\//.test(i.cover || "") || i._b) i.carte = true; else if (!i.fond) i.vignette = ""; delete i._b; if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._extrait; delete i._image; delete i._sid; delete i._n; delete i._pays; delete i._t; });
+    items.forEach(i => { if (/\/api\/ogcard\//.test(i.cover || "") || i._b) i.carte = true; else if (!i.fond && !i.chiffre) i.vignette = ""; delete i._b; if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._extrait; delete i._image; delete i._sid; delete i._n; delete i._pays; delete i._t; });
     return { items };
   });
 }

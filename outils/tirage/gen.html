@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+/* Générateur des visuels « Tomes en circulation » (Will, 27/10/2026) : design « Rangée droite », fond = dessin de la dernière couverture
+   en couleur atténuée (fond.py), couvertures des derniers tomes bien droites à droite, la plus récente devant en plus grand. Aucun texte. */
+body{margin:0;background:#000}
+.f{position:relative;overflow:hidden;background:#0b0b0c}
+.bg{position:absolute;inset:0;background-repeat:no-repeat}
+.cv{position:absolute;object-fit:cover;border:solid #fff;box-sizing:border-box;border-radius:4px}
+</style></head><body><script>
+var Q = new URLSearchParams(location.search), CV = Q.get("cv").split(","), BG = Q.get("bg");
+var F = { d: [2100, 800, { right: 96.5, zone: 40, h: 60, hl: 66, y: 17, yl: 15 }, 5, "50% 30%"], m: [1280, 720, { right: 94, zone: 48, h: 48, hl: 54, y: 17, yl: 15 }, 7, "38% 30%"], o: [1200, 630, { right: 95, zone: 56, h: 64, hl: 72, y: 18, yl: 13 }, 5, "38% 30%"] };
+var H = "";
+Object.keys(F).forEach(function (f) {
+  var W = F[f][0], Hh = F[f][1], P = F[f][2], bd = F[f][3], r = W / Hh, k = CV.length;
+  var hs = CV.map(function (_, i) { return i === k - 1 ? P.hl : P.h * 0.86; }), ws = hs.map(function (h) { return h * 0.7 / r; });
+  var autres = ws.slice(0, -1).reduce(function (a, b) { return a + b; }, 0), fc = Math.min(0.82, (P.zone - ws[k - 1]) / autres);
+  var x = P.right - ws[k - 1], xs = []; xs[k - 1] = x; for (var i = k - 2; i >= 0; i--) { x -= ws[i] * fc; xs[i] = x; }
+  var c = CV.map(function (s, i) { var y = i === k - 1 ? P.yl : P.y + (P.hl - P.h * 0.86) * 0.35;
+    return '<img class="cv" src="' + s + '" style="border-width:' + bd + 'px;box-shadow:0 ' + bd * 6 + 'px ' + bd * 13 + 'px rgba(0,0,0,.75);height:' + hs[i] + '%;width:' + ws[i].toFixed(3) + '%;left:' + xs[i].toFixed(3) + '%;top:' + y.toFixed(2) + '%;z-index:' + (i + 1) + '">'; }).join("");
+  H += '<div class="f" id="' + f + '" style="width:' + W + 'px;height:' + Hh + 'px"><div class="bg" style="background:url(' + BG + ') ' + F[f][4] + '/cover;filter:saturate(.6) brightness(.62)"></div><div class="bg" style="background:linear-gradient(90deg,rgba(0,0,0,.15),rgba(0,0,0,0) 40%,rgba(0,0,0,.55) 85%)"></div>' + c + '</div>';
+});
+document.body.innerHTML = H;
+</script></body></html>
