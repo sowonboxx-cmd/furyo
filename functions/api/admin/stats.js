@@ -62,5 +62,5 @@ export async function onRequestGet({ request, env, waitUntil }) {
   try {
     const r = await cached(request, waitUntil, "/__cache/admin-stats-v1", 3600, () => construire(env));
     return new Response(r.body, { status: r.status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
-  } catch (e) { return json({ error: String(e.message || e) }, 502); }
+  } catch (e) { return json({ error: String(e.message || e) }, 400); }
 }

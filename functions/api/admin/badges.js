@@ -46,7 +46,7 @@ export async function onRequestPost({ request, env }) {
   const id = nid(b.id);
   const r = id ? await fetch(`https://api.notion.com/v1/pages/${id}`, { method: "PATCH", headers: H(env.NOTION_TOKEN), body: JSON.stringify({ properties: props }) })
     : await fetch("https://api.notion.com/v1/pages", { method: "POST", headers: H(env.NOTION_TOKEN), body: JSON.stringify({ parent: { database_id: BADGES.database }, properties: props }) });
-  if (!r.ok) return json({ error: "Enregistrement impossible" }, 502);
+  if (!r.ok) return json({ error: "Enregistrement impossible" }, 400);
   oublierCatalogue();
   try { await caches.default.delete(new Request(new URL("/api/membres", request.url).toString())); } catch (e) {}
   return json({ ok: true, id: nid((await r.json()).id) });

@@ -79,7 +79,7 @@ export async function onRequestPost({ request, env }) {
     const props = { "Premium jusqu'au": { date: fin ? { start: fin } : null } };
     if (debut || b.debut === "") props["Premium depuis"] = { date: debut ? { start: debut } : null };
     const res = await patch(env.NOTION_TOKEN, r.id, props);
-    if (!res.ok) return json({ error: "Notion a refusé : " + (await res.text()).slice(0, 200) }, 502);
+    if (!res.ok) return json({ error: "Notion a refusé : " + (await res.text()).slice(0, 200) }, 400);
     oublierAcces(m.id);
     return json({ ok: true });
   }
@@ -123,7 +123,7 @@ export async function onRequestPost({ request, env }) {
     props["Premium source"] = { select: { name: source } };
   }
   const res = await patch(env.NOTION_TOKEN, r.id, props);
-  if (!res.ok) return json({ error: "Notion a refusé : " + (await res.text()).slice(0, 200) }, 502);
+  if (!res.ok) return json({ error: "Notion a refusé : " + (await res.text()).slice(0, 200) }, 400);
   oublierAcces(m.id);
 
   // Remerciement automatique (Will, 25/10/2026) : fenêtre sur le site + e-mail.

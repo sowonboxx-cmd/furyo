@@ -16,7 +16,7 @@ export async function onRequestPost({ request, env }) {
   const props = { "Badges": { relation: ids.map(x => ({ id: x })) } };
   if (b.points !== undefined && b.points !== "") { const n = Math.round(Number(b.points)); if (Number.isFinite(n)) props["Points"] = { number: Math.max(0, Math.min(n, 1e6)) }; }
   const r = await patch(env.NOTION_TOKEN, id, props);
-  if (!r.ok) return json({ error: "Enregistrement impossible" }, 502);
+  if (!r.ok) return json({ error: "Enregistrement impossible" }, 400);
   oublierAcces(id);
   // La liste publique est en cache : on la vide pour qu'elle suive tout de suite.
   try { await caches.default.delete(new Request(new URL("/api/membres", request.url).toString())); } catch (e) {}

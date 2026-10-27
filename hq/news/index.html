@@ -305,7 +305,9 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     return '<div class="plan"><div class="pl1"><span class="lb">Publier le</span><input class="pin" type="date" id="pj" value="' + esc(D.jour || demain()) + '"><input class="pin" type="time" id="ph" value="' + esc(heure()) + '" step="300"></div>' +
       '<div class="pl2">' + ["site", "x", "ig", "tt"].map(function (k) { return '<span class="nt">' + IC[k === "site" ? "site" : k] + NOMS[k] + '<small>' + esc(heure()) + '</small></span>'; }).join("") + '</div>' +
       // Mettre de côté / Brève / À la une (Will, 27/10/2026) : un sous-titre sous chaque bouton pour ne jamais se tromper.
-      '<div class="pl3">' + (N.enLigne ? '<button class="btn gh" data-act="retirer">Retirer du site</button>' + bt(N.breve ? "une" : "breve", "", N.breve ? "Passer à la une" : "Passer en brève", N.breve ? "grande news en haut de l’accueil" : "dans le fil, plus en une") + '<button class="btn pri" data-act="enreg">Enregistrer les changements</button>'
+      // Prépublication (magazines japonais) : mêmes boutons que la Validation du back-office (Will, 27/10/2026).
+      '<div class="pl3">' + (N.base === "prepub" ? bt("pp-vu", "gh", "Mettre de côté", "rien ne change") + bt("pp-rej", "gh", "Écarter", "ne plus la proposer") + bt("pp-news", "", "Mettre à jour + créer une news", "news à relire dans le calendrier") + bt("pp-maj", "pri", "Mettre à jour les magazines", "pages Magazines et Japon, sans news")
+        : N.enLigne ? '<button class="btn gh" data-act="retirer">Retirer du site</button>' + bt(N.breve ? "une" : "breve", "", N.breve ? "Passer à la une" : "Passer en brève", N.breve ? "grande news en haut de l’accueil" : "dans le fil, plus en une") + '<button class="btn pri" data-act="enreg">Enregistrer les changements</button>'
         : bt("vu", "gh", "Mettre de côté", "rien n’est publié") + bt("breve", "", "Brève", "dans le fil, sans passer en une") + bt("publier", "pri", "À la une", "grande news en haut de l’accueil") + bt("planifier", "", "Planifier à la une", "au jour et à l’heure choisis")) + '</div>' +
       '<p class="note">' + (N.enLigne ? "News déjà en ligne : les changements du texte et de l'image partent tout de suite sur le site." : "La publication automatique sur X, Instagram et TikTok arrive avec la connexion des comptes : en attendant, « Planifier à la une » enregistre les textes, le jour et l'heure ; la news se met en ligne avec « À la une » ou « Brève ».") + '</p></div>';
   }
@@ -455,6 +457,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function act(k, btn) {
     var jour = ($("#pj") || {}).value || demain(), h = ($("#ph") || {}).value || "13:00";
     var extra = k === "planifier" ? { planif: jour + "T" + h + ":00" } : k === "publier" ? { statut: "Publié sur le site", breve: false } : k === "breve" ? (N.enLigne ? { breve: true } : { statut: "Publié sur le site", breve: true }) : k === "une" ? { breve: false } : k === "planifier" ? { planif: jour + "T" + h + ":00", breve: false } : k === "vu" ? { statut: "Vu" } : k === "retirer" ? { statut: "Vu" } : {};
+    if (/^pp-/.test(k)) extra = { base: "prepub", statut: { "pp-vu": "Vu", "pp-rej": "Rejeté", "pp-news": "Validé", "pp-maj": "Validé" }[k], news: k === "pp-news" };
     // Rien de modifié sur une news en ligne : on refait quand même l'image (carte, aperçu du lien) — Will, 27/10/2026.
     var b = corps(extra); if (Object.keys(b).length < 2) { if (N.enLigne) { toast("Image en cours de mise à jour…"); ogEnvoyer(); } else toast("Rien à enregistrer"); return; }
     btn.disabled = true;
@@ -462,6 +465,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       .then(function (r) { return r.text().then(function (t) { var j = null; try { j = JSON.parse(t); } catch (e) {} return { ok: r.ok && j, st: r.status, j: j || { error: "Réponse inattendue du serveur (" + r.status + ")" + (t ? " : " + t.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 120) : "") } }; }); }, function () { throw "reseau"; })
       .then(function (r) {
         btn.disabled = false;
+        if (r.ok && /^pp-/.test(k)) { toast({ "pp-vu": "Mise de côté ✓", "pp-rej": "Écartée ✓", "pp-news": "Magazines à jour ✓ · news créée, à relire", "pp-maj": "Magazines à jour ✓" }[k]); setTimeout(function () { location.href = "/hq/#calendrier"; }, 1100); return; }
         if (!r.ok) { toast(r.st === 401 ? "Session expirée : reconnecte-toi puis réessaie" : (r.j.error || "Échec, réessaie")); return; }
         N.texte = D.site; N.accroche = accroche(); if (b.carte) N.carte = JSON.parse(JSON.stringify(b.carte)); if (b.image) N.imageChoisie = b.image; ["legX", "legIG", "legTT"].forEach(function (p) { if (p in b) N[p] = b[p]; });
         if (k === "planifier") { N.planif = extra.planif; toast("Planifiée le " + new Date(jour + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) + " à " + h + " ✓"); }

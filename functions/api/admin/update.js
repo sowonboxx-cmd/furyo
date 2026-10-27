@@ -20,7 +20,7 @@ async function maj({ request, env }) {
     const rf = await fetch(`https://api.notion.com/v1/pages/${b.id}`, { method: "PATCH",
       headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" },
       body: JSON.stringify({ properties: { "Statut": { select: { name: b.statut } } } }) });
-    if (!rf.ok) return json({ error: "Notion a refusé : " + (await rf.text()).slice(0, 300) }, 502);
+    if (!rf.ok) return json({ error: "Notion a refusé : " + (await rf.text()).slice(0, 300) }, 400);
     await Promise.all(["/api/films?v=3", "/api/films?v=3&admin=1"].map(k => caches.default.delete(new Request(new URL(k, request.url).toString()))));
     return json({ ok: true, statut: b.statut });
   }
@@ -48,7 +48,7 @@ async function maj({ request, env }) {
     headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" },
     body: JSON.stringify({ properties: props }),
   });
-  if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
+  if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 400);
   // Le site se met à jour tout de suite : on jette les versions en cache des listes publiques.
   const c = caches.default;
   await Promise.all(["/api/series?v=5", "/api/series?v=5&admin=1", "/__cache/admin-series-v2", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", "/api/biblio?v=3", "/api/biblio?v=3&id=" + b.id, ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString())))).catch(() => {});

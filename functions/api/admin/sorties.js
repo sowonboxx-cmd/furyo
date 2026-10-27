@@ -113,7 +113,7 @@ export async function onRequestPost({ request, env }) {
     headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" },
     body: JSON.stringify({ properties: { "Sortie postée": { checkbox: !!b.poste } } }),
   });
-  if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
+  if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 400);
   // La coche est reportée tout de suite dans la copie en cache du calendrier.
   try { const hit = await caches.default.match(new Request(CLE_PASSE)); const d = hit ? await hit.json() : null;
     if (d && d.items) { d.items.forEach(x => { if (x.id === b.id) x.poste = b.poste ? 1 : 0; }); await caches.default.put(new Request(CLE_PASSE), new Response(JSON.stringify(d), { headers: { "content-type": "application/json", "cache-control": "max-age=86400" } })); } } catch (e) {}

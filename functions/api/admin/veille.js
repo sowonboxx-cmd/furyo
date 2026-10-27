@@ -234,7 +234,7 @@ async function traiter(request, env) {
       headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" },
       body: JSON.stringify({ properties: pp }),
     });
-    if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
+    if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 400);
     await caches.default.delete(new Request(new URL("/api/prepub", request.url).toString()));
     // « Mettre à jour + créer une news » (Will, 05/10/2026) : une ligne News « À valider » dans la Veille, reprise du chapitre.
     if (b.news && b.statut === "Validé") {
@@ -249,7 +249,7 @@ async function traiter(request, env) {
         ...(/^https:\/\//.test(img) ? { "Image": { url: img } } : {}),
       };
       const c = await fetch("https://api.notion.com/v1/pages", { method: "POST", headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" }, body: JSON.stringify({ parent: { database_id: VEILLE.database }, properties: props }) });
-      if (!c.ok) return json({ error: "Magazines mis à jour, mais la news n'a pas pu être créée : " + (await c.text()).slice(0, 200) }, 502);
+      if (!c.ok) return json({ error: "Magazines mis à jour, mais la news n'a pas pu être créée : " + (await c.text()).slice(0, 200) }, 400);
     }
     return json({ ok: true });
   }
@@ -309,7 +309,7 @@ async function traiter(request, env) {
     body: JSON.stringify({ properties: props }),
   });
   await etape("Notion a répondu " + r.status);
-  if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 502);
+  if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 400);
   // News publiée = fiche à jour en même temps (Will, 06/10/2026) : les « Mise à jour fiche » en attente pour la même série sont appliquées.
   // « À appliquer à la fiche » (écran Mises à jour de fiche) applique aussi tout de suite, sans attendre une news (Will, 19/10/2026).
   let fiche = [];
