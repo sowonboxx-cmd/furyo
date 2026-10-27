@@ -124,7 +124,8 @@
         tt: tete + (txt ? "\n\n" + resumeCourt(txt) : "") + "\n\n📖 Le lien pour le lire : furyogang.com (lien en bio)" + ((c.tt || []).length ? "\n" + c.tt.map(function (h) { return "@" + h; }).join(" · ") : "") + "\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
       };
     }
-    var titres = [...new Set([i.titre, i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news)\s*:\s*/i, ""), String(i.serie && i.serie.t || i.titre)])];
+    // Titre sans le magazine ni « Nouvelle série : » d'abord (Will, 27/10/2026), puis le titre complet, puis le nom de la série.
+    var titres = [...new Set([i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news)\s*:\s*/i, ""), i.titre, String(i.serie && i.serie.t || i.titre)])];
     // Pas de redite (Will, 22/10/2026) : si la 1re phrase du résumé redit le titre, on la retire des posts.
     txt = sansRedite(i.titre, txt);
     var ph = phrases(txt), resumes = [...ph.map(function (_, n) { return ph.slice(0, n + 1).join(" "); }).reverse(), ""];
@@ -133,7 +134,9 @@
     var autX = (c.x || []).map(function (h) { return h.toLowerCase(); }), aAut = function (l) { return l.some(function (h) { return autX.includes(h.toLowerCase()); }); };
     var xBase = "", hs = [];
     trouve: for (var min of (autX.length ? [2, nbC, 0] : [nbC, 0])) for (var t of titres) for (var r of resumes) {  // titre complet d'abord, quitte à raccourcir le résumé
-      var b = catLigne(i) + t + (r ? "\n" + r : "") + "\n\n↗ " + url;
+      // Ligne vide entre le titre et le texte ; « Plus d'infos sur le site 👇 » au-dessus du lien quand ça tient (Will, 27/10/2026).
+      var b = catLigne(i) + t + (r ? "\n\n" + r : "") + "\n\nPlus d'infos sur le site 👇\n" + url;
+      if (poidsX(b) > 280) b = catLigne(i) + t + (r ? "\n\n" + r : "") + "\n\n↗ " + url;
       if (poidsX(b) > 280) continue;
       var h = choixX(c.x, c.xFR, function (l) { return poidsX(b + "\n" + l.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag, c.xJP);
       if (h.length && poidsX(b + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) > 280) h = [];

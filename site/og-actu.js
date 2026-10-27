@@ -60,7 +60,8 @@
     var cover = embedded || couv(d.cover);
     var t = String(d.titre || "");
     var cls = t.length > 22 ? " oga-xs" : t.length > 15 ? " oga-s" : "";
-    var badge = [String(d.cat || "News").toUpperCase(), dateFR(d.date)].filter(Boolean).join(" · ");
+    // Carte épurée (Will, 27/10/2026) : la catégorie et le nom de la série seulement — ni date, ni accroche (déjà dans l'article).
+    var badge = String(d.cat || "News").toUpperCase();
     return '<div class="oga">' +
       '<div class="oga-glow"></div>' +
       (cover ? '<img class="oga-cover" src="' + cover + '" alt="">' : '') +
@@ -68,7 +69,7 @@
         '<img class="oga-logo" src="/img/social/logo-blanc.png" alt="FuryoGang">' +
         '<span class="oga-badge">' + esc(badge) + '</span>' +
         '<div class="oga-title' + cls + '">' + esc(t) + '</div>' +
-        (d.desc ? '<div class="oga-desc">' + esc(d.desc) + '</div>' : '') +
+        
       '</div></div>';
   }
 
