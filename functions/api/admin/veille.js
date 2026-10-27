@@ -328,7 +328,7 @@ async function traiter(request, env) {
   if (b.statut === "Publié sur le site" || b.statut === "À appliquer à la fiche") fiche = await appliquerFiche(env, b.id).catch(() => []);
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
-  await Promise.all(["/api/news?v=9", "/api/news?v=18", "/api/crows", "/api/series?v=5", "/api/series?v=5&admin=1", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/news?v=9", "/api/news?v=19", "/api/crows", "/api/series?v=5", "/api/series?v=5&admin=1", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   return json({ ok: true, fiche });
 }
 

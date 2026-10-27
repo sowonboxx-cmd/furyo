@@ -14,7 +14,7 @@
 (function () {
   // Catégories : par défaut les deux sorties ; côté admin, FGPost.setCats() les remplace par celles de la veille.
   var VCATS = { "sortie-fr": "Sortie française", "sortie-jp": "Sortie japonaise" };
-  var NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "extrait", "hommage", "dedicace", "news"];
+  var NEWS_CATS = ["licence-fr", "licence-jp", "couv-fr", "couv-jp", "sortie-fr", "sortie-jp", "fin", "pause", "anime", "adaptation", "bande-annonce", "tirage", "extrait", "hommage", "dedicace", "remake", "news"];
 
   var phrases = function (t) { return (String(t || "").replace(/\s+/g, " ").trim().match(/[^.!?…]+(?:[.!?…]+|$)(?=\s|$)/g) || []).map(function (x) { return x.trim(); }).filter(Boolean); };
   function resumeCourt(t) { return phrases(t)[0] || ""; }
@@ -63,12 +63,16 @@
     return (auj ? "Sortie aujourd'hui" : q ? "Sortie le " + q : "Sortie") + (chez || t.pub ? " chez " + (chez || t.pub) : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
   }
   // Catégorie en première ligne des posts (la même que sur le site et dans Notion) ; rien pour une sortie.
+  // Sur X, « Remake » ne s'affiche pas en tête : le titre le dit déjà (Will, 27/10/2026).
+  function catLigneX(i) { var l = catLigne(i); return /^Remake\n$/.test(l) ? "" : l; }
   function catLigne(i) {
     if (/^sortie/.test(i.catChoisie || i.cat)) return "";
     if ([i.catChoisie || i.cat, i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2].includes("tirage")) return ""; // « Tomes en circulation » : déjà sur le visuel (Will, 22/10/2026)
     var k = i.catChoisie || i.cat, k2 = i.cat2Choisie !== undefined ? i.cat2Choisie : i.cat2;
-    var nom = function (c) { return c === "news" ? "Annonce" : VCATS[c]; }; // sur les réseaux, « Annonce » plutôt que « News » (Will, 27/10/2026)
-    return NEWS_CATS.includes(k) ? [nom(k)].concat(k2 && k2 !== k && NEWS_CATS.includes(k2) ? [nom(k2)] : []).join(" · ") + "\n" : "";
+    // « News » ne s'affiche pas en tête des posts (Will, 27/10/2026).
+    var ok = function (c) { return c && c !== "news" && NEWS_CATS.includes(c); };
+    if (!ok(k)) { k = k2; k2 = null; }
+    return ok(k) ? [VCATS[k]].concat(k2 && k2 !== k && ok(k2) ? [VCATS[k2]] : []).join(" · ") + "\n" : "";
   }
   // Couverture japonaise = X uniquement, pas d'Instagram ni de TikTok (Will, 19/10/2026).
   function estCouvertureJaponaise(i) {
@@ -136,14 +140,14 @@
     var xBase = "", hs = [];
     trouve: for (var min of (autX.length ? [2, nbC, 0] : [nbC, 0])) for (var t of titres) for (var r of resumes) {  // titre complet d'abord, quitte à raccourcir le résumé
       // Ligne vide entre le titre et le texte ; « Plus d'infos sur le site 👇 » au-dessus du lien quand ça tient (Will, 27/10/2026).
-      var b = catLigne(i) + t + (r ? "\n\n" + r : "") + "\n\nPlus d'infos sur le site 👇\n" + url;
-      if (poidsX(b) > 280) b = catLigne(i) + t + (r ? "\n\n" + r : "") + "\n\n" + url; // lien web seul, sans flèche (Will, 27/10/2026)
+      var b = catLigneX(i) + t + (r ? "\n\n" + r : "") + "\n\nPlus d'infos sur le site 👇\n" + url;
+      if (poidsX(b) > 280) b = catLigneX(i) + t + (r ? "\n\n" + r : "") + "\n\n" + url; // lien web seul, sans flèche (Will, 27/10/2026)
       if (poidsX(b) > 280) continue;
       var h = choixX(c.x, c.xFR, function (l) { return poidsX(b + "\n" + l.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag, c.xJP);
       if (h.length && poidsX(b + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) > 280) h = [];
       if (min === 2 ? aAut(h) : h.length >= min) { xBase = b; hs = h; break trouve; }
     }
-    if (!xBase) xBase = catLigne(i) + titres[titres.length - 1] + "\n\n" + url;
+    if (!xBase) xBase = catLigneX(i) + titres[titres.length - 1] + "\n\n" + url;
     var igL = (c.ig || []).length ? "\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : "", ttL = (c.tt || []).length ? "\n📣 " + c.tt.map(function (h) { return "@" + h; }).join(" ") : "";
     return {
       x: xBase + (hs.length ? "\n" + hs.map(function (h) { return "@" + h; }).join(" · ") : ""),
