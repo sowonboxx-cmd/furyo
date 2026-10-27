@@ -101,6 +101,8 @@ async function construire(request, env) {
       // Studio de la news (Will, 26/10/2026) : légendes modifiées à la main (vide = automatique) et jour/heure prévus.
       legX: text(p["Légende X"]), legIG: text(p["Légende Instagram"]), legTT: text(p["Légende TikTok"]),
       breve: !!(p["Brève"] && p["Brève"].checkbox),
+      // Calendrier éditorial (Will, 27/10/2026) : « À traiter » tant que la case est vide, « À publier » (vert) une fois relue.
+      prete: !!(p["Prête à publier"] && p["Prête à publier"].checkbox),
       planif: (p["Planifiée le"] && p["Planifiée le"].date && p["Planifiée le"].date.start) || "",
       // Carte (image de la news + partage du lien, Will 26/10/2026) : { couv, planches, cta, editeur, quand, pays }.
       carte: (() => { const t = (text(p["Carte"]) || "null").replace(/\\([{}\[\]])/g, "$1"); try { return JSON.parse(t); } catch (e) { try { return JSON.parse(t.replace(/'/g, '"')); } catch (e2) { return null; } } })(), // guillemets simples tolérés (saisie à la main dans Notion)
@@ -269,6 +271,7 @@ async function traiter(request, env) {
   for (const [k, nom] of [["legX", "Légende X"], ["legIG", "Légende Instagram"], ["legTT", "Légende TikTok"], ["accroche", "Accroche"]])
     if (typeof b[k] === "string") props[nom] = rt(b[k].trim().slice(0, 2000));
   if (typeof b.breve === "boolean") props["Brève"] = { checkbox: b.breve };
+  if (typeof b.prete === "boolean") props["Prête à publier"] = { checkbox: b.prete };
   if (b.carte !== undefined) {
     const c = b.carte && typeof b.carte === "object" ? b.carte : null, u = x => /^(https:\/\/|\/)\S+$/.test(String(x || "")) ? String(x).slice(0, 500) : "";
     const o = c ? { couv: u(c.couv), planches: (Array.isArray(c.planches) ? c.planches : []).map(u).filter(Boolean).slice(0, 12), cta: String(c.cta || "").slice(0, 60), editeur: String(c.editeur || "").slice(0, 40), quand: String(c.quand || "").slice(0, 60), lire: /^https:\/\/\S+$/.test(String(c.lire || "")) ? String(c.lire).slice(0, 600) : "", pays: c.pays === "Japon" ? "Japon" : "France" } : null;

@@ -127,7 +127,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .vide{display:grid;place-items:center;min-height:80vh;color:#8c8c93;text-align:center;line-height:1.6}
 /* téléphone (maquette « modif 5 ») */
 @media (max-width:860px){
-  .app{padding:0 14px 0}.tt{font-size:26px}.src,.etat.val{display:none}
+  .app{padding:0 14px 0}.tt{font-size:26px}.src{display:none}
   .mt{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -14px 12px;padding:0 14px}.mt::-webkit-scrollbar{display:none}
   .mt button{flex:none;display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border-radius:12px;background:#17171b;border:0;color:#cfcfd4;font:700 13px I}.mt svg{width:15px;height:15px}.mt button.on{background:#2A6FD0;color:#fff}
   .mprev{display:flex;justify-content:center;padding:14px;border-radius:20px;background:radial-gradient(ellipse at 50% 0,#1d1d22,#0c0c0e 70%)}.mprev .pf{width:min(260px,72vw)}
@@ -333,8 +333,16 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     a(N.src, "Source officielle"); a(N.relais, "Source relais"); a((N.serie && N.serie.essai) || (D.carte && D.carte.lire), "Lecture d'essai"); a("https://www.notion.so/" + String(N.id || "").replace(/-/g, ""), "Notion");
     return '<div class="lnk">' + news + '<span class="lsp"></span>' + L.join("") + '</div>';
   }
+  // Pastille « À traiter » ↔ « À publier » (Will, 27/10/2026).
+  document.addEventListener("click", function (ev) {
+    var p = ev.target.closest && ev.target.closest("[data-prete]"); if (!p || !N || p.dataset.busy) return;
+    var nx = !N.prete; N.prete = nx; p.dataset.busy = 1; p.className = "etat " + (nx ? "ok" : "val"); p.textContent = nx ? "À publier" : "À traiter";
+    fetch("/api/admin/veille", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: N.id, prete: nx }) })
+      .then(function (r) { if (!r.ok) throw 0; toast(nx ? "Prête à publier ✓" : "Repassée à traiter"); }).catch(function () { N.prete = !nx; p.className = "etat " + (!nx ? "ok" : "val"); p.textContent = !nx ? "À publier" : "À traiter"; toast("Échec, réessaie"); })
+      .then(function () { delete p.dataset.busy; });
+  });
   function haut() {
-    var stat = N.enLigne ? '<span class="etat ok">En ligne</span>' : N.planif ? '<span class="etat pl">Planifiée</span>' : '<span class="etat val">À relire</span>';
+    var stat = N.enLigne ? '<span class="etat ok">En ligne</span>' : N.planif ? '<span class="etat pl">Planifiée</span>' : '<span class="etat ' + (N.prete ? "ok" : "val") + '" data-prete="1" role="button" style="cursor:pointer" title="Clique pour changer le statut">' + (N.prete ? "À publier" : "À traiter") + '</span>';
     var host = ""; try { host = new URL(N.src).hostname.replace(/^www\./, ""); } catch (e) {}
     return '<div class="tb"><a class="bk" href="/hq/#calendrier">‹ Calendrier éditorial</a><span class="cat"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>' + stat + 
       '<span class="pr4">' + (N.enLigne ? "Sur le site" : "4 réseaux prêts") + '</span><a class="x" href="/hq/#calendrier" aria-label="Fermer">×</a></div>' + liens() + '<h1 class="tt"><span class="kj" lang="ja">' + (CATK[N.cat] || "速報") + '</span><span>' + esc(titre()) + '</span></h1>';

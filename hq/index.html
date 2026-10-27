@@ -419,7 +419,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .apl-n{font:700 11px "FGInter";background:#26262c;color:var(--mut);border-radius:999px;padding:3px 9px}
 .apl{display:flex;flex-direction:column;gap:9px}
 .apl .rcard{padding-right:12px}.apl .rcard .t,.jcol .rcard .t,.jcol .wcard .t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.aps{display:inline-block;margin-top:6px;font:700 9.5px "FGInter";text-transform:uppercase;letter-spacing:.04em;padding:4px 7px;border-radius:7px;color:#F2B33D;background:rgba(242,179,61,.14)}
+.aps{display:inline-block;margin-top:6px;font:700 9.5px "FGInter";text-transform:uppercase;letter-spacing:.04em;padding:4px 7px;border-radius:7px;color:#F2B33D;background:rgba(242,179,61,.14);cursor:pointer}.aps.ok{color:#0b2b10;background:#7BC67E}
 .jdays{display:grid;grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr));gap:10px;min-height:560px}
 .jcol{min-height:0}.jcol .wh i{font-style:normal;font:700 11px "FGInter";text-transform:uppercase;color:var(--mut)}.jcol.to .wh i{color:var(--blue)}
 .jcol.to{box-shadow:inset 0 0 0 2px var(--blue)}
@@ -1078,8 +1078,18 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   var JL = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
   function carteAPub(x) {
     var col = NEWSCOL[x.cat] || "#4C9BFF", img = x.image ? (/^https?:/.test(x.image) ? "/api/couv?u=" + encodeURIComponent(x.image) + "&w=120" : x.image) : "";
-    return '<a class="rcard" href="/hq/news/#' + encodeURIComponent(x.id) + '" style="text-decoration:none"><span class="cov' + (img ? "" : " kjc") + '"' + (img ? ' style="background-image:url(\'' + esc(img) + '\')"' : "") + '>' + (img ? "" : '<span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[x.cat] || "速報") + "</span>") + '</span><span class="ri"><span class="t">' + esc(x.titre) + '</span><span class="m" style="color:' + col + '">' + esc(x.label || "News") + (x.src ? " · " + esc(x.src) : "") + '</span><span class="aps">À relire</span></span></a>';
+    return '<a class="rcard" href="/hq/news/#' + encodeURIComponent(x.id) + '" style="text-decoration:none"><span class="cov' + (img ? "" : " kjc") + '"' + (img ? ' style="background-image:url(\'' + esc(img) + '\')"' : "") + '>' + (img ? "" : '<span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[x.cat] || "速報") + "</span>") + '</span><span class="ri"><span class="t">' + esc(x.titre) + '</span><span class="m" style="color:' + col + '">' + esc(x.label || "News") + (x.src ? " · " + esc(x.src) : "") + '</span><span class="aps' + (x.prete ? " ok" : "") + '" data-prete="' + esc(x.id) + '" role="button" title="Clique pour changer le statut">' + (x.prete ? "À publier" : "À traiter") + '</span></span></a>';
   }
+  // Pastille « À traiter » / « À publier » cliquable (Will, 27/10/2026) : on bascule sans ouvrir le studio.
+  document.addEventListener("click", function (ev) {
+    var p = ev.target.closest && ev.target.closest("[data-prete]"); if (!p) return;
+    ev.preventDefault(); ev.stopPropagation();
+    var id = p.dataset.prete, x = APUB.find(function (a) { return a.id === id; }); if (!x || p.dataset.busy) return;
+    var nx = !x.prete; x.prete = nx; p.dataset.busy = 1; p.classList.toggle("ok", nx); p.textContent = nx ? "À publier" : "À traiter";
+    fetch("/api/admin/veille", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, prete: nx }) })
+      .then(function (r) { if (!r.ok) throw 0; }).catch(function () { x.prete = !nx; p.classList.toggle("ok", !nx); p.textContent = !nx ? "À publier" : "À traiter"; alert("Échec, réessaie"); })
+      .then(function () { delete p.dataset.busy; });
+  }, true);
   function listeAPub() {
     return '<div class="apl-h"><h2>À publier</h2><span class="apl-n">' + APUB.length + '</span></div>' +
       (APUB.length ? '<div class="apl">' + APUB.map(carteAPub).join("") + "</div>" : '<p class="wempty">Rien en attente : la veille est à jour.</p>');
@@ -1354,7 +1364,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       if (part.ve.apub) APUB = part.ve.apub;
       else APUB = vn.filter(function (x) { return x && !x.enLigne && !x.vu && x.cat !== "fiche" && !/^(couv|sortie)/.test(x.cat || ""); })
         .sort(function (a, b) { return String(b.creeT || b.cree || "").localeCompare(String(a.creeT || a.cree || "")); }).slice(0, 60)
-        .map(function (x) { var h = ""; try { h = new URL(x.src).hostname.replace(/^www\./, ""); } catch (e) {} return { id: x.id, titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || (x.serie && x.serie.cover) || "", src: h }; });
+        .map(function (x) { var h = ""; try { h = new URL(x.src).hostname.replace(/^www\./, ""); } catch (e) {} return { id: x.id, titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || (x.serie && x.serie.cover) || "", src: h, prete: !!x.prete }; });
       NEWSCOL = part.ve.cols || {};
       if (window.FGPost && part.ve.cats) FGPost.setCats(part.ve.cats);
     }
