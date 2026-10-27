@@ -362,10 +362,10 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     var b = corps(extra); if (Object.keys(b).length < 2) { if (N.enLigne) { toast("Image en cours de mise à jour…"); ogEnvoyer(); } else toast("Rien à enregistrer"); return; }
     btn.disabled = true;
     fetch("/api/admin/veille", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(b) })
-      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (r) { return r.text().then(function (t) { var j = null; try { j = JSON.parse(t); } catch (e) {} return { ok: r.ok && j, st: r.status, j: j || { error: "Réponse inattendue du serveur (" + r.status + ")" + (t ? " : " + t.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 120) : "") } }; }); }, function () { throw "reseau"; })
       .then(function (r) {
         btn.disabled = false;
-        if (!r.ok) { toast(r.j.error || "Échec, réessaie"); return; }
+        if (!r.ok) { toast(r.st === 401 ? "Session expirée : reconnecte-toi puis réessaie" : (r.j.error || "Échec, réessaie")); return; }
         N.texte = D.site; N.accroche = accroche(); if (b.carte) N.carte = JSON.parse(JSON.stringify(b.carte)); if (b.image) N.imageChoisie = b.image; ["legX", "legIG", "legTT"].forEach(function (p) { if (p in b) N[p] = b[p]; });
         if (k === "planifier") { N.planif = extra.planif; toast("Planifiée le " + new Date(jour + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) + " à " + h + " ✓"); }
         else if (k === "publier") { N.enLigne = true; N.breve = false; toast("En ligne, à la une ✓"); ogEnvoyer(); }
@@ -373,8 +373,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
         else if (k === "une") { N.breve = false; toast("Passée à la une ✓"); }
         else if (k === "vu" || k === "retirer") { toast(k === "vu" ? "Mise de côté ✓" : "Retirée du site ✓"); setTimeout(function () { location.href = "/hq/#calendrier"; }, 900); return; }
         else { toast("Changements enregistrés ✓"); if (N.enLigne) ogEnvoyer(); }
-        draw();
-      }).catch(function () { btn.disabled = false; toast("Erreur réseau"); });
+        try { draw(); } catch (e) { console.error(e); }
+      }).catch(function (e) { btn.disabled = false; toast(e === "reseau" ? "Pas de connexion au serveur, réessaie" : "Enregistré, mais l'affichage a buggé : recharge la page"); console.error(e); });
   }
 
   /* ---------- image de partage du lien (og:image, 1200×630) ---------- */

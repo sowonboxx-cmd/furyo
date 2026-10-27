@@ -307,7 +307,7 @@ async function traiter(request, env) {
   if (b.statut === "Publié sur le site" || b.statut === "À appliquer à la fiche") fiche = await appliquerFiche(env, b.id).catch(() => []);
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
-  await Promise.all(["/api/news?v=9", "/api/crows", "/api/series?v=5", "/api/series?v=5&admin=1", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
+  await Promise.all(["/api/news?v=9", "/api/news?v=16", "/api/crows", "/api/series?v=5", "/api/series?v=5&admin=1", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
   return json({ ok: true, fiche });
 }
 
@@ -381,7 +381,10 @@ export async function onRequestGet({ request, env, waitUntil }) {
 }
 export async function onRequestPost({ request, env, waitUntil }) {
   const b = await request.clone().json().catch(() => ({}));
-  const r = await traiter(request, env);
+  // Toujours une réponse JSON lisible, même si quelque chose plante (sinon le studio n'affiche que « Erreur réseau »).
+  let r;
+  try { r = await traiter(request, env); }
+  catch (e) { return json({ error: "Le serveur a planté : " + String((e && e.message) || e).slice(0, 200) }, 500); }
   if (r.ok) {
     // Corrige tout de suite la liste en cache (même règle que l'écran), puis la reconstruit en arrière-plan.
     try {
