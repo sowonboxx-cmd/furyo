@@ -241,8 +241,9 @@ body{background:#000}
 .na-hero.kc{position:relative}.na-hero.kc .kbg{position:absolute;left:0;right:0;top:0;bottom:-40px;z-index:0;background-size:cover;background-position:center 20%;filter:grayscale(1);opacity:.32;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 62%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 62%,transparent 100%);pointer-events:none}
 .na-hero.kc>img,.na-hero.kc .na-ht{position:relative;z-index:1}
 /* Bouton de lecture : bloc téléphone */
-.lx-m{background:#141416;border-radius:20px;padding:18px;margin:16px 0;border:1px solid #2a2a2e;position:relative;z-index:1}
-.lx-h{display:flex;gap:16px;align-items:center}.lx-h img{width:84px;height:118px;object-fit:cover;border-radius:6px;flex:none}
+.lx-m{background:#141416;border-radius:20px;padding:18px;margin:16px 0;position:relative;z-index:1}
+.lx-h{display:flex;gap:16px;align-items:center}.lx-h>img{width:84px;height:118px;object-fit:cover;border-radius:6px;flex:none}
+.lx-fl{position:relative;width:84px;height:118px;flex:none}.lx-fl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:6px;opacity:0;transition:opacity .9s ease}.lx-fl img.on{opacity:1}
 .lx-l{display:flex;gap:8px;align-items:center}.lx-l .na-pill{height:24px;line-height:24px;padding:0 10px;font-size:12px;border-radius:7px;color:#000}.lx-l b{font:700 18px Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:#fff}
 .lx-n{margin:10px 0 0;font:700 28px/1 Antonio,"Arial Narrow",sans-serif;text-transform:uppercase;color:#fff}.lx-jp{display:block;font:500 13px "Noto Sans JP",sans-serif;color:#9a968f;margin-top:4px}.lx-h small{display:block;font:500 12.5px Inter,sans-serif;color:#8e8e93;margin-top:6px}
 .lx-go{margin-top:16px;display:flex;justify-content:center;align-items:center;gap:10px;background:#BC002D;color:#fff;font:700 16px Inter,sans-serif;padding:14px;border-radius:14px;text-decoration:none}
@@ -339,9 +340,22 @@ body{background:#000}
   function lireM() {
     if (!N.carte) return "";
     var c0 = (N.cats && N.cats[0]) || { nom: N.catNom || "Extrait", c: N.catC || "#E5483A" };
-    return '<div class="lx-m"><div class="lx-h">' + (N.vignette ? '<img src="' + esc(couv(N.vignette, 240)) + '" alt="">' : "") + '<div><div class="lx-l"><span class="na-pill" style="background:' + c0.c + '">' + esc(c0.nom) + "</span>" + (N.lire ? "<b>Chapitre " + esc(chapLire()) + "</b>" : "") + "</div>" +
+    return '<div class="lx-m"><div class="lx-h">' + vignettes() + '<div><div class="lx-l"><span class="na-pill" style="background:' + c0.c + '">' + esc(c0.nom) + "</span>" + (N.lire ? "<b>Chapitre " + esc(chapLire()) + "</b>" : "") + "</div>" +
       '<h1 class="lx-n">' + esc(N.fr || N.titre) + "</h1>" + (N.jp ? '<span class="lx-jp" lang="ja">' + esc(N.jp) + "</span>" : "") + '<small>' + esc(dLong(N.date) || "") + "</small></div></div>" +
       (N.lire ? '<a class="lx-go" href="' + esc(N.lire) + '" target="_blank" rel="noopener">' + BOOK + "Lire en ligne</a>" : "") + "</div>";
+  }
+  // Vignette du bloc : la couverture, puis les pages de l'extrait en fondu (sans zoom, Will 27/10/2026).
+  function vignettes() {
+    var l = [N.vignette].concat(N.pages || []).filter(Boolean);
+    if (!l.length) return "";
+    if (l.length < 2) return '<img src="' + esc(couv(l[0], 240)) + '" alt="">';
+    return '<span class="lx-fl" data-fl>' + l.map(function (u, i) { return '<img src="' + esc(couv(u, 240)) + '" alt=""' + (i ? ' loading="lazy"' : ' class="on"') + ">"; }).join("") + "</span>";
+  }
+  function feuilleter() {
+    var f = document.querySelector("[data-fl]"); if (!f || f._go) return; f._go = 1;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var im = [].slice.call(f.querySelectorAll("img")), i = 0;
+    (function step() { setTimeout(function () { if (!document.body.contains(f)) return; im[i].classList.remove("on"); i = (i + 1) % im.length; im[i].classList.add("on"); step(); }, i === 0 ? 2600 : 1600); })();
   }
   function lireD() {
     if (!N.lire) return "";
@@ -385,7 +399,7 @@ body{background:#000}
         '<button type="button" data-soon="liste">' + I.book + "Ma liste</button></div>" +
       srcsM() + preview() + '<div class="na-ao">' + autresM() + "</div></div>";
     if (window.FG_FIT2) FG_FIT2(root);
-    chargerTweets();
+    chargerTweets(); feuilleter();
   }
 
   // ---------- Ordinateur ----------

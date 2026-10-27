@@ -26,7 +26,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Date de publication sur le site (Will, 22/10/2026) : prioritaire sur la date de repérage pour l'ordre et la date affichée.
   const pubLe = p => (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "";
   const jourParis = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
-  return cached(request, waitUntil, "/api/news?v=14", 600, async () => {
+  return cached(request, waitUntil, "/api/news?v=15", 600, async () => {
     const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
@@ -68,7 +68,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
         // carte : true quand l'image de la news est une carte complète (titre écrit dessus) → bannières sans texte du site.
         ...(() => { const c = lireCarte(text(p["Carte"])) || {}, abs = u => !u ? "" : /^\//.test(u) ? "https://furyogang.com" + u : u;
           // Carte « Extrait » : couverture (miniatures), planche (fondu sous la bannière), lien de lecture en ligne (bouton « Lire »).
-          return { vignette: abs(c.couv), planche: abs((c.planches || [])[0] || ""), planche2: abs((c.planches || [])[1] || ""), lire: /^https:\/\//.test(c.lire || "") ? c.lire : "" }; })(),
+          return { vignette: abs(c.couv), planche: abs((c.planches || [])[0] || ""), planche2: abs((c.planches || [])[1] || ""), pages: (c.planches || []).slice(0, 12).map(abs).filter(Boolean), lire: /^https:\/\//.test(c.lire || "") ? c.lire : "" }; })(),
         _extrait: [cat, ...autres].some(c => c.k === "extrait"), _image: text(p["Image"]),
         // Source officielle (éditeur, magazine…) affichée sous la news ; la source relais reste dans Notion.
         src, srcName: sourceName(src),

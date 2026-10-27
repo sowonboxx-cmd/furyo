@@ -188,8 +188,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     return '<div class="crt"><h4>Image de la news · Extrait</h4><p class="sub">La carte sert d’image à la news (en grand) et d’aperçu du lien ; les miniatures prennent la couverture.</p>' +
       '<div class="lbl">Couverture (devant)</div><div class="imgs">' + choix.map(function (u) { return '<button data-ccouv="' + esc(u) + '" class="' + (u === cv ? "on" : "") + '"><img src="' + esc(couv(u, 160)) + '"></button>'; }).join("") +
       (cv && choix.indexOf(cv) < 0 ? '<button class="on" data-ccouv="' + esc(cv) + '"><img src="' + esc(couv(cv, 160)) + '"></button>' : '') + '<label class="up" title="Envoyer la couverture">＋<input type="file" accept="image/*" data-up="couv"></label></div>' +
-      '<div class="lbl">Planches derrière (2 max)</div><div class="pls">' + (C.planches || []).map(function (u, k) { return '<div class="slot"><img src="' + esc(couv(u, 160)) + '"><button data-cdel="' + k + '">×</button></div>'; }).join("") +
-      ((C.planches || []).length < 2 ? '<label class="up" title="Envoyer une planche">＋<input type="file" accept="image/*" data-up="planche"></label>' : '') + '</div>' +
+      '<div class="lbl">Planches (12 max) : les 2 premières vont sur la carte, toutes défilent sur la page (téléphone)</div><div class="pls">' + (C.planches || []).map(function (u, k) { return '<div class="slot"><img src="' + esc(couv(u, 160)) + '"><button data-cdel="' + k + '">×</button></div>'; }).join("") +
+      ((C.planches || []).length < 12 ? '<label class="up" title="Envoyer une planche">＋<input type="file" accept="image/*" data-up="planche"></label>' : '') + '</div>' +
       '<div class="row2" style="margin-top:4px"><div><div class="lbl">Étiquette</div><input class="inp" data-c="cta" placeholder="Lis le chapitre 1" value="' + esc(C.cta || "") + '"></div><div><div class="lbl">Éditeur</div><input class="inp" data-c="editeur" placeholder="auto" value="' + esc(C.editeur || "") + '"></div></div>' +
       '<div class="lbl">Tome / date</div><input class="inp" data-c="quand" placeholder="tome 1 le 13 novembre" value="' + esc(C.quand || "") + '">' +
       '<div class="lbl">Lien de lecture en ligne (bouton « Lire » de la news)</div><input class="inp" data-c="lire" placeholder="https://… lecteur de l’éditeur" value="' + esc(C.lire || "") + '"></div>';
@@ -275,7 +275,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     envoyerImage(t.files[0]).then(function (u) {
       if (k === "image") { IMGS.unshift(u); D.image = u; }
       else if (k === "couv") { IMGS.push(u); D.carte.couv = u; }
-      else { D.carte.planches = (D.carte.planches || []).concat(u).slice(0, 2); }
+      else { D.carte.planches = (D.carte.planches || []).concat(u).slice(0, 12); }
       toast("Image envoyée ✓ (pense à enregistrer)"); draw();
     }).catch(function (er) { toast(er.message || "Envoi impossible"); });
   });
