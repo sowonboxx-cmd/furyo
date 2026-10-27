@@ -61,10 +61,10 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 .t9w .t9tag{position:absolute;right:10px;bottom:-22px;transform:rotate(-3deg);font-size:22px;padding:5px 14px 7px;border:2px solid #fff;box-shadow:0 8px 20px rgba(0,0,0,.5)}
 .t9t{text-align:center;font:700 64px/.95 A;color:#fff;text-transform:uppercase;text-shadow:0 8px 30px #000}
 .t9img{margin-top:22px;transform:rotate(-3deg);width:262px;height:345px;object-fit:cover;border:5px solid #fff;box-shadow:0 20px 40px rgba(0,0,0,.6)}
-.smh2{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid #222}.smh2 img{width:34px;height:34px;border-radius:50%}.smh2 nav{display:flex;align-items:center;gap:10px;flex:1;font:700 17px A;text-transform:uppercase;letter-spacing:.01em}.smh2 nav b{font-weight:700;box-shadow:inset 0 -3px #BC002D;padding:10px 0}.smh2 nav span{color:#f3f3f5}.smh2>i{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3a6db8,#c9d6ec)}
+.smh2{display:flex;align-items:center;gap:7px;padding:8px 10px;border-bottom:1px solid #222}.smh2 img{width:32px;height:32px;border-radius:50%;flex:none}.smh2 svg,.smn{flex:none}.smh2 nav{display:flex;align-items:center;gap:6px;flex:1;min-width:0;font:700 14.5px A;text-transform:uppercase;letter-spacing:.01em}.smh2 nav b{font-weight:700;box-shadow:inset 0 -3px #BC002D;padding:10px 0}.smh2 nav span{color:#f3f3f5}.smh2 .smav{width:32px;height:32px;border-radius:50%;object-fit:cover}.smn{font:700 13px I;font-style:normal;color:#fff;background:#BC002D;min-width:26px;height:26px;border-radius:13px;display:grid;place-items:center;padding:0 6px}.smh2>i{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3a6db8,#c9d6ec)}
 .smban img{display:block;width:100%;aspect-ratio:1200/630;object-fit:cover;-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent)}
-.smx{background:#141416;border-radius:20px;padding:16px;margin:10px 16px 16px}.smxh{display:flex;gap:14px;align-items:center}.smxh>img{width:80px;height:112px;object-fit:cover;border-radius:6px;flex:none}
-.smxl{display:flex;gap:8px;align-items:center}.smxl span{height:24px;line-height:24px;padding:0 10px;font:700 12px I;border-radius:7px;color:#000;text-transform:uppercase;letter-spacing:.04em}.smxl b{font:700 18px A;text-transform:uppercase}
+.smx{background:#141416;border-radius:20px;padding:16px;margin:10px 16px 16px}.smxh{display:flex;gap:14px;align-items:center}.smxh>img{width:84px;height:118px;object-fit:cover;border-radius:6px;flex:none}
+.smxl{display:flex;gap:8px;align-items:center}.smxl span{height:24px;line-height:24px;padding:0 10px;font:700 12px/24px I;border-radius:7px;color:#000;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}.smxl b{font:700 18px A;text-transform:uppercase}
 .smx h4{margin:8px 0 0;font:700 28px/1 A;text-transform:uppercase}.smx em{display:block;font:500 12.5px J;font-style:normal;color:#9a968f;margin-top:4px}.smx small{display:block;font:500 12.5px I;color:#8e8e93;margin-top:6px}
 .smgo{margin-top:14px;display:flex;justify-content:center;align-items:center;gap:10px;background:#BC002D;color:#fff;font:700 16px I;padding:13px;border-radius:14px}
 .smst{display:flex;align-items:center;gap:22px;margin:0 16px 16px;padding:14px 18px;border-radius:18px;background:#141416;font:700 15px I;color:#e8e8ea}.smst span{display:flex;align-items:center;gap:7px}
@@ -151,7 +151,10 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   var couvSoc = function () { return (D.carte && D.carte.couv) || img(); };
   var imgSoc = function () { return (N && (N.cat === "extrait" || N.cat2 === "extrait") && D.extPng) || couvSoc(); };
   // Image du site : la carte paysage compte ici (c'est l'image de la news sur furyogang.com).
-  var imgSite = function () { return [D.image, N.imageChoisie, N.image].filter(Boolean)[0] || couvSoc(); };
+  // Extraits : la bannière du site est la carte de la news (/api/ogcard/actu-<8 derniers>.jpg), sauf image choisie à la main (Will, 27/10/2026).
+  var OGV = Date.now();
+  var carteNews = function () { return "/api/ogcard/actu-" + ID.slice(-8) + ".jpg?v=" + OGV; };
+  var imgSite = function () { var m = [D.image, N.imageChoisie].filter(Boolean)[0]; if (N && (N.cat === "extrait" || N.cat2 === "extrait")) return m || carteNews(); return m || N.image || couvSoc(); };
   var accroche = function () { return D.accroche != null ? D.accroche : (N.accroche || ""); };
   var heure = function () { return D.heure || "13:00"; };
   var demain = function () { var d = new Date(Date.now() + 864e5); return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(d); };
@@ -189,7 +192,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function chapN() { var m = String([titre(), accroche(), D.site].join(" ")).match(/chapitre\s+(\d+)/i); return m ? m[1] : "1"; }
   function dateLongue() { var d = N.enLigne && (N.publie || N.cree) ? new Date(N.publie || N.cree) : new Date((D.jour || demain()) + "T12:00:00"); var x = d; return isNaN(x) ? "" : x.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" }); }
   // En-tête du vrai site sur téléphone : logo rond, menu, recherche, avatar.
-  function smHead() { return '<div class="smh2"><img src="' + AV + '"><nav><b>Actualités</b><span>Calendrier</span><span>Collection</span>' + SV(P.plus, { w: 20, sw: 2.6 }) + '</nav>' + SV(P.loupe, { w: 20, sw: 2.4 }) + '<i></i></div>'; }
+  var MOI = { pic: "", n: 0 };
+  function smHead() { return '<div class="smh2"><img src="' + AV + '"><nav><b>Actualités</b><span>Calendrier</span><span>Collection</span>' + SV(P.plus, { w: 17, sw: 2.6 }) + '</nav>' + (MOI.n ? '<em class="smn">' + (MOI.n > 99 ? "99+" : MOI.n) + '</em>' : '') + SV(P.loupe, { w: 21, sw: 2.4 }) + (MOI.pic ? '<img class="smav" src="' + esc(MOI.pic) + '" referrerpolicy="no-referrer">' : '<i></i>') + '</div>'; }
   function smStats() { return '<div class="smst"><span>' + SV(P.stats, { w: 20 }) + '0</span><span>' + SV(P.coeur, { w: 20 }) + '0</span><span>' + SV(P.signet, { w: 20 }) + '</span><span style="margin-left:auto">' + SV(P.bulle, { w: 20 }) + '0</span></div>'; }
   // Extraits : copie de la vraie page (Will, 27/10/2026) — bannière seule avec fondu, bloc Extrait / Chapitre / titres / date / Lire en ligne, résumé, compteurs.
   function scrSMExtrait() {
@@ -407,6 +411,12 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 
   /* ---------- chargement ---------- */
   if (!ID) { $("#app").innerHTML = '<p class="vide">Aucune news choisie.<br><a href="/hq/#calendrier">Retour au calendrier</a></p>'; return; }
+  // Ton avatar et le nombre à valider, comme dans l'en-tête du vrai site.
+  Promise.all([fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+    fetch("/api/admin/veille?count=1", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })]).then(function (a) {
+    MOI.pic = (a[0] && a[0].user && a[0].user.picture) || ""; MOI.n = (a[1] && a[1].n) || 0;
+    if (N && (MOI.pic || MOI.n)) { try { draw(); } catch (e) {} }
+  });
   fetch("/api/admin/veille", { credentials: "same-origin" }).then(function (r) { if (r.status === 401) throw "auth"; return r.json(); }).then(function (ve) {
     CATS = ve.cats || {}; COLS = ve.cols || {};
     N = (ve.items || []).filter(function (x) { return x.id === ID; })[0];
