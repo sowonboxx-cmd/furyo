@@ -440,6 +440,8 @@ body{font-size:16px}
   <script>(function () { var a = document.getElementById("app"), f = /^\/series\/[^/]+/.test(location.pathname) || new URLSearchParams(location.search).get("s"); if (window.FG_SK) a.innerHTML = f ? FG_SK.fiche() : FG_SK.grid(12); })();</script>
 </div>
 <script>
+// Images glissées dans le texte d'une news (une adresse par ligne) : retirées des résumés, la page de la news les affiche.
+function sansImg(t) { return String(t || "").split("\n").filter(l => !/^(?:https?:\/\/\S+|\/img\/\S+)\.(?:jpe?g|png|webp)(?:\?\S*)?$/i.test(l.trim())).join("\n").replace(/\n{3,}/g, "\n\n").trim(); }
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 const tn = n => (Number.isInteger(n) && n < 10) ? "0" + n : String(n ?? "");
@@ -730,7 +732,7 @@ function panel(s, pubFR, pubJP, eds, ad){
       return `<li><time>${dd(b.date)}</time><span><b>${esc(ch)}</b>${b.fin ? `<i>Dernier</i>` : ""}<small>${esc(b.mag)}</small></span>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${b.read ? "Lire" : "Voir"}${ARRB}</a>` : ""}</li>`; }).join("")}</ul></section>` : "";
     if (!n.length) return `<p class="fx-none">Pas encore de news pour cette série.</p>` + breves;
     return `<div class="fx-news">${n.map(it => `<details class="fx-nw"><summary><span class="fx-nwm"><span class="fx-nwc" style="${it.catC ? `background:${it.catC};color:#000` : ""}">${esc(it.cat)}</span>${it.date ? `<time>${dd(it.date)}</time>` : ""}</span><b>${esc(it.titre)}</b><span class="fx-more">Lire la news</span></summary>
-      <div class="fx-nwb">${it.texte ? `<p>${esc(it.texte)}</p>` : ""}${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source : <b>${esc(it.srcName || "officielle")}</b><svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}</div></details>`).join("")}</div>` + breves;
+      <div class="fx-nwb">${it.texte ? `<p>${esc(sansImg(it.texte))}</p>` : ""}${it.src ? `<a href="${esc(it.src)}" target="_blank" rel="noopener">Source : <b>${esc(it.srcName || "officielle")}</b><svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></a>` : ""}</div></details>`).join("")}</div>` + breves;
   }
   if (TAB === "ad") return adPanel(ad, s);
   const cover = p => { const t = eds.filter(e => e.pays === p).flatMap(e => e.tomes).filter(t => t.cover).sort((a, b) => (a.n ?? 999) - (b.n ?? 999))[0]; return t ? couv(t.cover, 400) : (s.cover1 ? couv(s.cover1, 400) : ""); };
