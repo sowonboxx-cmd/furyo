@@ -1073,7 +1073,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
   function carteCal(it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
-        if (it.kind === "news") { var ni = it.n; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '"><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
+        if (it.kind === "news") { var ni = it.n, nim = ni.image ? (/^https?:/.test(ni.image) ? "/api/couv?u=" + encodeURIComponent(ni.image) + "&w=120" : ni.image) : ""; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '">' + (nim ? '<span class="cov" style="background-image:url(\'' + esc(nim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span>')<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
         var evc = it.kind === "ev" ? evCover(it.e, it.date) : "";
         if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + evc + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
         var c = itemColor(it);
@@ -1368,11 +1368,13 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       var vn = part.ve.items || [];
       // Jour de publication sur le site (Will, 22/10/2026), sinon l'ancienne date de la news.
       var jourP = function (t) { return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(t)); };
-      NEWS = vn.filter(function (x) { return x && x.enLigne && (x.publie || x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.publie ? jourP(x.publie) : (x.date || x.cree), t: x.publie || "", titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || "", i: x }; });
+      // Vignette = le visuel utilisé pour la publication (Instagram, TikTok, couverture, image du lien), sinon l'image de la news (Will, 28/10/2026).
+      var visuel = function (x) { var c = x.carte || {}, ic = x.imageChoisie && !/\/api\/ogcard\//.test(x.imageChoisie) ? x.imageChoisie : ""; return c.ig || c.tt || c.couv || ic || c.og || x.image || (x.serie && x.serie.cover) || ""; };
+      NEWS = vn.filter(function (x) { return x && x.enLigne && (x.publie || x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.publie ? jourP(x.publie) : (x.date || x.cree), t: x.publie || "", titre: x.titre, cat: x.cat, label: x.label, image: visuel(x), i: x }; });
       if (part.ve.apub) APUB = part.ve.apub;
       else APUB = vn.filter(function (x) { return x && !x.enLigne && !x.vu && x.cat !== "fiche" && !/^(couv|sortie)/.test(x.cat || ""); })
         .sort(function (a, b) { return String(b.creeT || b.cree || "").localeCompare(String(a.creeT || a.cree || "")); }).slice(0, 60)
-        .map(function (x) { var h = ""; try { h = new URL(x.src).hostname.replace(/^www\./, ""); } catch (e) {} return { id: x.id, titre: x.titre, cat: x.cat, label: x.label, image: x.imageChoisie || x.image || (x.serie && x.serie.cover) || "", src: h, prete: !!x.prete }; });
+        .map(function (x) { var h = ""; try { h = new URL(x.src).hostname.replace(/^www\./, ""); } catch (e) {} return { id: x.id, titre: x.titre, cat: x.cat, label: x.label, image: visuel(x), src: h, prete: !!x.prete }; });
       NEWSCOL = part.ve.cols || {};
       if (window.FGPost && part.ve.cats) FGPost.setCats(part.ve.cats);
     }

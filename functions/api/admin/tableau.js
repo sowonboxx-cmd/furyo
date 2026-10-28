@@ -96,7 +96,7 @@ function calendrier({ auj, lundi, calEd, calPub, sx, veille, todo }) {
   const jp = t => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(t));
   const hp = t => /T/.test(t) ? new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" }).format(new Date(t)) : "";
   (veille || []).forEach(i => {
-    const img = i.imageChoisie && !/\/api\/ogcard\//.test(i.imageChoisie) ? i.imageChoisie : (i.carte && i.carte.couv) || (i.serie && i.serie.cover) || "";
+    const c = i.carte || {}, img = c.ig || c.tt || c.couv || (i.imageChoisie && !/\/api\/ogcard\//.test(i.imageChoisie) ? i.imageChoisie : "") || c.og || i.image || (i.serie && i.serie.cover) || ""; // le visuel de la publication d'abord (Will, 28/10/2026)
     const base = { k: "news", t: (i.carte && i.carte.titre) || i.titre || i.prop || "News", s: i.label || "News", kj: NEWS_KJ[i.cat] || "速報", img: img && /^\//.test(img) ? img : img, u: "/hq/news/#" + i.id };
     if (i.enLigne && i.publie) { const d = jp(i.publie); if (jours[d]) jours[d].push({ ...base, h: hp(i.publie), st: "p" }); }
     else if (!i.enLigne && !i.vu && i.planif) { const d = jp(i.planif.length > 10 ? i.planif : i.planif + "T12:00:00"); if (jours[d]) jours[d].push({ ...base, h: hp(i.planif), st: etat(false, d) }); }
