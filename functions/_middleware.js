@@ -5,6 +5,24 @@
 import { SITE, balises, infosPage, jsonSite, texteFixe, OG_ACTUS } from "../lib/seo.js";
 import { isAdmin } from "../lib/admin.js";
 
+// Notion limite à ~3 requêtes/seconde : sur un 429 (rate_limited), on attend « retry_after » puis on réessaie,
+// jusqu'à 4 fois, pour toutes les requêtes du site vers api.notion.com (Will, 28/10/2026 : « Notion a refusé … 429 » dans le studio).
+if (!globalThis.__fgNotionRetry) {
+  globalThis.__fgNotionRetry = true;
+  const base = globalThis.fetch.bind(globalThis);
+  globalThis.fetch = async (input, init) => {
+    const u = typeof input === "string" ? input : input instanceof URL ? input.href : (input && input.url) || "";
+    if (!u.startsWith("https://api.notion.com/")) return base(input, init);
+    const req = typeof input === "string" || input instanceof URL ? null : input;
+    for (let essai = 0; ; essai++) {
+      const r = await base(req ? req.clone() : input, init);
+      if (r.status !== 429 || essai >= 4) return r;
+      const s = parseFloat(r.headers.get("retry-after") || "") || 1;
+      await new Promise(ok => setTimeout(ok, Math.min(Math.max(s, 0.4), 3) * 1000 * (1 + essai * 0.5)));
+    }
+  };
+}
+
 const OFFICIEL = "furyogang.com";
 const A_REDIRIGER = new Set(["furyo.pages.dev", "www.furyogang.com"]);
 const PRIVE = /^\/(admin|studio|profil|membres-fiche|hq)(\/|$)/;
