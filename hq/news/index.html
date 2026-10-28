@@ -177,7 +177,9 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   var img = function () { return [D.image, N.imageChoisie, N.image, N.serie && N.serie.cover].filter(function (u) { return u && !estOg(u); })[0] || ""; };
   // Visuel des réseaux (Will, 27/10/2026) : extrait = visuel « Extrait » 3:4 (FG_EXTRAIT, comme dans la veille) ; sinon l'image de la news.
   var couvSoc = function () { return (D.carte && D.carte.couv) || img(); };
-  var imgSoc = function () { return (N && (N.cat === "extrait" || N.cat2 === "extrait") && D.extPng) || (D.carte && D.carte.banniere && D.carte.ig) || couvSoc(); };
+  var imgSoc = function () { return (N && (N.cat === "extrait" || N.cat2 === "extrait") && D.extPng) || (D.carte && D.carte.ig) || couvSoc(); };
+  // Visuels réseaux faits sur mesure (carte.ig / carte.tt) : utilisés même sans « bannière dessinée », le site garde son affichage (Will, 28/10/2026).
+  var visTT = function () { return D.carte && D.carte.tt; };
   // Bannière dessinée (Will, 27/10/2026) : visuels faits à la main pour le téléphone, Instagram et TikTok.
   var ban = function () { return D.carte && D.carte.banniere ? D.carte : null; };
   // Image du site : la carte paysage compte ici (c'est l'image de la news sur furyogang.com).
@@ -258,7 +260,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     var a = $('[data-c="ogTitre"]'); if (a) { var e1 = a.previousElementSibling.querySelector("em"); if (e1) e1.textContent = ogT().length + " / 90"; }
     var b = $('[data-c="ogDesc"]'); if (b) { var e2 = b.previousElementSibling.querySelector("em"); if (e2) e2.textContent = ogD().length + " / 158"; } }
   // Télécharger l'image d'un réseau en un clic (Will, 27/10/2026).
-  function imgReseau(k) { return k === "tt" ? ((ban() && ban().tt) || couvSoc()) : imgSoc(); }
+  function imgReseau(k) { return k === "tt" ? (visTT() || couvSoc()) : imgSoc(); }
   function telecharger(k, el) {
     var u = imgReseau(k); if (!u) { toast("Pas d'image pour ce réseau"); return; }
     var nom = lienNews().replace(/.*\/actus\//, "").replace(/-[0-9a-f]{8}$/, "") + "-" + { x: "x", ig: "instagram", tt: "tiktok" }[k];
@@ -273,7 +275,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function scrX() { return '<div class="scr">' + SB + '<div class="xtop"><span>←</span><b>Post</b></div><div class="xpost"><div class="xh"><img src="' + AV + '"><div><b>FuryoGang ' + VF + '</b><small>@FuryoGang</small></div></div><p class="xt">' + hl(D.x) + '</p>' + (imgSoc() ? '<img class="xi" src="' + esc(/^data:/.test(imgSoc()) ? imgSoc() : couv(imgSoc(), 800)) + '">' : '') + '<p class="xm">' + esc(heure()) + ' · ' + esc(jourTxt()) + ' · <b>Programmé</b></p><div class="xa">' + [P.xBulle, P.xRt, P.coeur, P.xVues, P.signet, P.xPartage].map(function (d) { return SV(d, { w: 20, sw: 1.8 }); }).join("") + '</div></div></div>'; }
   function scrIG() { return '<div class="scr">' + SB + '<div class="igtop"><b>Publications</b></div><div class="igh"><img src="' + AV + '"><div><b>furyogang</b><small>' + esc((N.serie && N.serie.t) || "FuryoGang") + '</small></div><span>•••</span></div><div class="igimg"><img src="' + esc(/^data:/.test(imgSoc()) ? imgSoc() : couv(imgSoc(), 800)) + '"></div><div class="igact">' + SV(P.coeur, { w: 26 }) + SV(P.bulle, { w: 25 }) + SV(P.avion, { w: 24 }) + '<span style="margin-left:auto;display:flex">' + SV(P.signet, { w: 25 }) + '</span></div><p class="igcap"><b>furyogang</b> ' + hl(D.ig) + '</p><p class="igd">' + esc(jourTxt()) + '</p></div>'; }
   function visuelTT() {
-    if (ban() && ban().tt) return '<div class="t9"><img src="' + esc(ban().tt) + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain"></div>';
+    if (visTT()) return '<div class="t9"><img src="' + esc(visTT()) + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain"></div>';
     var u = esc(couv(couvSoc(), 800));
     // Étiquette sous le coin bas droit de la couverture, bordure blanche fine (Will, 26/10).
     var tag = '<div class="t9tag" style="background:' + col() + '">' + esc(N.label || "News") + '</div>';
