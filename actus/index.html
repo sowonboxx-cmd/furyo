@@ -34,7 +34,8 @@ a{color:inherit}
 .na-text{margin:0;font-size:16.5px;line-height:1.65;color:#E4E4E8;white-space:pre-line}.na-text p{margin:0 0 1em}.na-text p:last-child{margin-bottom:0}.na-acc{background:#1C1C1E;border-radius:14px;margin:0 0 8px;white-space:normal}.na-acc+p{margin-top:1em}.na-acc summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 16px;font-weight:700;color:#fff}.na-acc summary::-webkit-details-marker{display:none}.na-acc summary span{flex:1}.na-acc summary em{font-style:normal;font-size:13px;font-weight:600;color:#9A9AA0;white-space:nowrap}.na-acc summary em::after{content:" ▾"}.na-acc[open] summary em{font-size:0}.na-acc[open] summary em::after{font-size:13px;content:"Masquer ▴"}.na-acc>div{padding:0 16px 14px;white-space:pre-line;color:#D4D4D8;font-size:15.5px}
 .twitter-tweet{margin:1.2em 0!important;max-width:100%}.na-text .twitter-tweet-rendered{margin-left:0!important;margin-right:0!important}
 .na-text a{color:#4DA3FF;text-decoration:underline;text-underline-offset:2px;font-weight:600}.na-text a:hover{color:#7CC0FF}
-.na-fig{margin:1.2em 0;white-space:normal}.na-fig>div{display:grid;gap:8px}.na-gal>div{grid-template-columns:1fr 1fr}.na-fig a{display:block;line-height:0}.na-fig img{width:100%;height:auto;border-radius:10px;background:#1C1C1E}.na-fig figcaption{margin-top:8px;font-size:13.5px;line-height:1.45;color:#9A9AA0;font-weight:500}
+.na-fig{margin:1.2em 0;white-space:normal}.na-fig>div{display:grid;gap:8px;grid-template-columns:minmax(0,300px)}.na-gal>div{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.na-fig a{display:block;line-height:0;cursor:zoom-in}.na-fig img{width:100%;height:auto;aspect-ratio:3/4.2;object-fit:cover;object-position:top;border-radius:8px;background:#1C1C1E;transition:opacity .15s}.na-fig a:hover img{opacity:.85}
+.na-lb{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:16px}.na-lb img{max-width:100%;max-height:100%;border-radius:6px}.na-lb button{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:26px;cursor:pointer}.na-lb .p{left:12px}.na-lb .n{right:12px}.na-lb .x{top:28px;right:12px;transform:none;font-size:20px}.na-fig figcaption{margin-top:8px;font-size:13.5px;line-height:1.45;color:#9A9AA0;font-weight:500}
 .na-vid{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}.na-vid.mp4{aspect-ratio:auto;max-width:420px;margin:16px auto 0}.na-vid.mp4 video{display:block;width:100%;max-height:80vh;background:#000}.na-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .na-links{display:flex;flex-wrap:wrap;gap:8px}
 .na-fol{height:38px;padding:0 15px;border:0;border-radius:19px;display:inline-flex;align-items:center;gap:7px;background:#000;color:var(--paper);font:600 13.5px Inter,sans-serif;cursor:pointer}.na-fol svg{width:16px;height:16px}.na-fol.on{color:#AEAEB2}
@@ -354,6 +355,21 @@ body{background:#000}
       return '<details class="na-acc"><summary><span>' + esc(m[1]) + '</span><em>Voir le détail</em></summary><div>' + inl(m[2] || "") + '</div></details>';
     }).join("");
   }
+  // Galerie : clic sur une image du texte = visionneuse plein écran, flèches pour passer aux autres images de la news.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest(".na-fig a");
+    if (!a || e.metaKey || e.ctrlKey) return;
+    e.preventDefault();
+    var all = [].slice.call(document.querySelectorAll(".na-fig a")).filter(function (x) { return x.offsetParent; }), i = all.indexOf(a);
+    var lb = document.createElement("div"); lb.className = "na-lb";
+    lb.innerHTML = '<img alt=""><button class="p" aria-label="Précédente">‹</button><button class="n" aria-label="Suivante">›</button><button class="x" aria-label="Fermer">✕</button>';
+    var im = lb.querySelector("img"), go = function (k) { i = (k + all.length) % all.length; im.src = all[i].href; };
+    var fin = function () { lb.remove(); document.removeEventListener("keydown", kb); };
+    var kb = function (ev) { if (ev.key === "Escape") fin(); else if (ev.key === "ArrowLeft") go(i - 1); else if (ev.key === "ArrowRight") go(i + 1); };
+    lb.addEventListener("click", function (ev) { var b = ev.target.closest("button"); if (b && b.classList.contains("p")) go(i - 1); else if (b && b.classList.contains("n")) go(i + 1); else fin(); });
+    if (all.length < 2) { lb.querySelector(".p").remove(); lb.querySelector(".n").remove(); }
+    document.addEventListener("keydown", kb); document.body.appendChild(lb); go(i);
+  });
   // Charge le script X (widgets.js) pour transformer les blockquotes en tweets ; au re-rendu, on relance le scan.
   function chargerTweets() {
     if (!document.querySelector(".twitter-tweet")) return;
