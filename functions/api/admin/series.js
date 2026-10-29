@@ -68,6 +68,9 @@ async function construire(env, waitUntil) {
     const twSerie = [text(p["Twitter Author"]), text(p["Twitter Artist"]), text(p["Twitter Serie"])].map(handle).filter(Boolean);
     const mX = { aut: [...autC.map(c => c.x), ...twSerie], fr: frC.map(c => c.x), mag: magC.slice(0, 1).map(c => c.x) };
     for (const k of ["ig", "tt", "x"]) { const n = syncMentions(leg[k], k, k === "x" ? mX : mentionList(cs, k)); if (n !== leg[k]) { leg[k] = n; maj[NOMS[k]] = rt(n); } }
+    // Jamais de hashtag sur X (Will, 29/10/2026) : retirés de la légende et réenregistrés dans Notion.
+    { const sx = String(leg.x || "").replace(/(^|[ \t]+)#[\p{L}\p{N}_]+/gmu, "").replace(/[ \t]+$/gm, "").replace(/\n{3,}/g, "\n\n").trim();
+      if (sx !== String(leg.x || "").trim()) { leg.x = sx; maj[NOMS.x] = rt(sx); } }
     if (Object.keys(maj).length) aMettreAJour.push([r.id, maj]);
     return {
       // Date de création de la fiche dans Notion, pour le tri « Récemment ajoutées » (Will, 19/10/2026).
