@@ -1460,7 +1460,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Lightbox couverture.
   function openLightbox(u) { var o = document.createElement("div"); o.className = "lightbox"; o.innerHTML = '<img src="' + esc(u) + '" alt="">'; o.addEventListener("click", function () { o.remove(); }); document.body.appendChild(o); }
   // Génération du visuel « Sortie d'un tome » (design Soleil) via tome-card.js, chargé à la demande.
-  function ensureTomeLib() { return window.FG_TOME ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/tome-card.js?v=4"; sc.onload = ok; sc.onerror = ko; document.head.appendChild(sc); }); }
+  function ensureTomeLib() { return window.FG_TOME ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/tome-card.js?v=5"; sc.onload = ok; sc.onerror = ko; document.head.appendChild(sc); }); }
   function sortieToTomeData(s) {
     var clean = function (v) { return String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*,\s*|\s+&\s+|\s+et\s+/).map(function (x) { return x.trim(); }).filter(Boolean); };
     return { titre: s.series || s.fr, n: s.n, jp: s.jp, date: s.date, prec: s.prec || "Jour", cover: s.cover, auteurs: Array.from(new Set(clean(s.scen).concat(clean(s.dess)))), pays: s.pays };

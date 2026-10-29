@@ -27,7 +27,7 @@
     '.fgt .cover{position:absolute;left:50%;top:calc(var(--cy) - 456px);width:652px;height:912px;transform:translateX(-50%);object-fit:cover;box-sizing:border-box;border:12px solid #fff;box-shadow:0 40px 90px rgba(0,0,0,.55)}',
     '.fgt .num{position:absolute;left:72px;top:var(--cy);transform:translate(-50%,-50%);font-family:"FGAntonio",sans-serif;font-weight:700;font-size:124px;line-height:.8;letter-spacing:-.02em;color:var(--fg)}',
     '.fgt .jpw{position:absolute;left:calc(50% + var(--r));right:0;top:var(--cy);transform:translateY(-50%);display:flex;justify-content:center}',
-    '.fgt .jp{writing-mode:vertical-rl;font-family:"FGNotoJP",sans-serif;font-weight:900;font-size:var(--js,56px);line-height:1;letter-spacing:.06em;color:var(--fg);max-height:720px;overflow:hidden;white-space:nowrap}',
+    '.fgt .jp{writing-mode:vertical-rl;font-family:"FGNotoJP",sans-serif;font-weight:900;font-size:var(--js,56px);line-height:1;letter-spacing:.06em;color:var(--fg);background:none;white-space:nowrap}',
     '.fgt .info{position:absolute;left:64px;right:64px;top:calc(var(--cy) + 482px);display:flex;flex-direction:column;align-items:center;text-align:center}',
     '.fgt .date{font-family:"FGAntonio",sans-serif;font-weight:700;font-size:36px;letter-spacing:.06em;text-transform:uppercase;background:var(--red);color:#fff;padding:6px 20px;border-radius:6px}',
     '.fgt .title{margin-top:18px;font-family:"FGAntonio",sans-serif;font-weight:700;font-size:108px;line-height:.92;text-transform:uppercase;letter-spacing:.005em}',
