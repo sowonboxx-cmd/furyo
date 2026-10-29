@@ -6,6 +6,7 @@ import { text, date, rel, num, queryAll, cached } from "../../lib/notion.js";
 import { categorie, categoriesDe } from "../../lib/categories.js";
 import { sourceName } from "../../lib/source.js";
 import { credits, estFR } from "../../lib/credit.js";
+import { isAdmin } from "../../lib/admin.js";
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 
 const VEILLE = { dataSource: "d748cac9-fdb0-4d44-87e8-cef34669f0b2", database: "50ef27c3205646baa1be24f4a6fc25d3" };
@@ -26,11 +27,18 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Date de publication sur le site (Will, 22/10/2026) : prioritaire sur la date de repérage pour l'ordre et la date affichée.
   const pubLe = p => (p["Publiée le"] && p["Publiée le"].date && p["Publiée le"].date.start) || "";
   const jourParis = iso => new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(iso));
-  return cached(request, waitUntil, "/api/news?v=20", 600, async () => {
-    const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
+  // Aperçu d'une news pas encore publiée (Will, 29/10/2026) : /api/news?apercu=<id>, réservé aux admins, jamais en cache.
+  const apercu = (new URL(request.url).searchParams.get("apercu") || "").replace(/-/g, "");
+  if (apercu) {
+    if (!/^[0-9a-f]{32}$/.test(apercu) || !(await isAdmin(request, env).catch(() => false))) return new Response(JSON.stringify({ error: "Réservé aux admins" }), { status: 403 });
+    const pg = await page(env.NOTION_TOKEN, apercu);
+    return new Response(JSON.stringify(await bati(pg && !pg.archived ? [pg] : [])), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+  }
+  return cached(request, waitUntil, "/api/news?v=20", 600, async () => bati(await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
       filter: { property: "Statut", select: { equals: "Publié sur le site" } },
       sorts: [{ property: "Date de la news", direction: "descending" }],
-    } });
+    } })));
+  async function bati(rows) {
     const ids = [...new Set(rows.flatMap(r => rel(r.properties["Série"])))];
     const series = {};
     await Promise.all(ids.map(async id => {
@@ -119,5 +127,5 @@ export async function onRequestGet({ env, request, waitUntil }) {
     // sid : la série liée (Studio Quoi de neuf : dernier tome paru pour les news « Tomes en circulation », Will 26/10/2026).
     items.forEach(i => { if (/\/api\/ogcard\//.test(i.cover || "") || i._b) i.carte = true; else if (!i.fond && !i.chiffre) i.vignette = ""; delete i._b; if (i._sid) i.sid = String(i._sid).replace(/-/g, ""); delete i._extrait; delete i._image; delete i._sid; delete i._n; delete i._pays; delete i._t; });
     return { items };
-  });
+  }
 }

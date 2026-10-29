@@ -335,7 +335,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function liens() {
     var L = [], fl = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>';
     var a = function (u, t) { if (/^https?:\/\//.test(u || "")) L.push('<a href="' + esc(u) + '" target="_blank" rel="noopener">' + t + fl + '</a>'); };
-    var news = N.enLigne ? '<a class="lnw" href="' + esc(lienNews()) + '" target="_blank" rel="noopener">Voir la news' + fl + '</a><span class="cp" data-copy-url="1" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier le lien</span>' : '<span class="lnoff">Lien de la news dès la mise en ligne</span>';
+    var news = N.enLigne ? '<a class="lnw" href="' + esc(lienNews()) + '" target="_blank" rel="noopener">Voir la news' + fl + '</a><span class="cp" data-copy-url="1" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier le lien</span>' : '<a class="lnw" href="/actus/?apercu=' + esc(String(N.id || "").replace(/-/g, "")) + '" target="_blank" rel="noopener">Aperçu sur le site' + fl + '</a>';
     a(N.src, "Source officielle"); a(N.relais, "Source relais"); a((N.serie && N.serie.essai) || (D.carte && D.carte.lire), "Lecture d'essai"); a("https://www.notion.so/" + String(N.id || "").replace(/-/g, ""), "Notion");
     return '<div class="lnk">' + news + '<span class="lsp"></span>' + L.join("") + '</div>';
   }
