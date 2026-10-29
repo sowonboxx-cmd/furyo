@@ -93,11 +93,15 @@
     var tags = [...new Set([tagOf(s.t)].concat((s.genres || []).slice(0, 2).map(tagOf)).concat(["#manga", "#FuryoGang"]).concat(/-fr$/.test(i.cat) ? ["#mangafr"] : []))].filter(function (x) { return x.length > 1; });
     if (/^(couv|sortie)/.test(i.cat) && i.tome) {
       var res = rs ? "\n\n" + rs : "";
+      // Instagram / TikTok (Will, 29/10/2026) : plus de place, donc l'accroche puis le résumé complet de la fiche.
+      // Si l'accroche est déjà le début du résumé, on met juste le résumé complet (pas de redite).
+      var full = String(s.resume || "").trim(), r0 = String(rs || "").trim();
+      var resL = !full ? res : !r0 || full.indexOf(r0) === 0 ? "\n\n" + full : r0.indexOf(full) !== -1 ? res : res + "\n\n" + full;
       var jp = estCouvertureJaponaise(i);
       return {
         x: postX(i, rs),
-        ig: jp ? "" : catLigne(i) + "🆕 " + i.titre + (s.jp ? " (" + s.jp + ")" : "") + "\n📅 " + ligneSortie(i) + res + "\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio)." + ((c.ig || []).length ? "\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : "") + "\n\n" + tags.join(" "),
-        tt: jp ? "" : catLigne(i) + "🆕 " + i.titre + "\n📅 " + ligneSortie(i) + res + "\n\n📖 Fiche complète sur furyogang.com" + ((c.tt || []).length ? "\n📣 " + c.tt.map(function (h) { return "@" + h; }).join(" ") : "") + "\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
+        ig: jp ? "" : catLigne(i) + "🆕 " + i.titre + (s.jp ? " (" + s.jp + ")" : "") + "\n📅 " + ligneSortie(i) + resL + "\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio)." + ((c.ig || []).length ? "\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : "") + "\n\n" + tags.join(" "),
+        tt: jp ? "" : catLigne(i) + "🆕 " + i.titre + "\n📅 " + ligneSortie(i) + resL + "\n\n📖 Fiche complète sur furyogang.com" + ((c.tt || []).length ? "\n📣 " + c.tt.map(function (h) { return "@" + h; }).join(" ") : "") + "\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
       };
     }
     var txt = (i.texte || "").trim();
