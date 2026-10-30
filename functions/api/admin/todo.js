@@ -53,6 +53,7 @@ const AJOUTS = [
 ];
 // Corrections ponctuelles appliquées une seule fois (Will, 18/10/2026) : del = supprimer, done = cocher, t = nouveau texte.
 const CORRECTIONS = [
+  { id: "k301001", cible: "c251001", dt: "2026-11-02" }, // Publication automatique Meta décalée à lundi (Will, 30/10/2026)
   { id: "k181001", cible: "r009", del: true },
   { id: "k181002", cible: "c181020", done: true, t: "PayPal : liens de paiement créés (libre, 25, 50, 100 €) et branchés sur la page Premium" },
   { id: "k181003", cible: "c181071", done: true },
@@ -92,6 +93,7 @@ async function lire(env) {
       if (c.del) { l = l.filter(x => x.id !== c.cible); continue; }
       const x = l.find(y => y.id === c.cible); if (!x) continue;
       if (c.t) x.t = c.t;
+      if (c.dt) x.dt = c.dt;
       if (c.done) { x.done = true; x.fait = x.fait || d; }
     }
     vus = vus.concat(neufs.map(a => a.id));
