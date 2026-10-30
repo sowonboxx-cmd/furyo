@@ -91,6 +91,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .td .t{flex:1;line-height:1.45;outline:none}
 .td.done .t{color:var(--mut);text-decoration:line-through}
 .td .c{font:700 11px "FGInter";letter-spacing:.06em;text-transform:uppercase;color:var(--mut);white-space:nowrap;margin-top:3px}
+.td .tdd{position:relative;flex:none;margin-top:1px;padding:3px 9px;border-radius:999px;background:var(--s2,#26262a);color:var(--fg,#fff);font:600 12px "FGInter";white-space:nowrap;cursor:pointer}
+.td .tdd.vide{background:transparent;border:1px dashed var(--line);color:var(--mut)}.td .tdd.tard{color:var(--red)}
+.td .tdd input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
+.td .tdd input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
 .td .x{border:0;background:transparent;color:var(--mut);cursor:pointer;font-size:18px;line-height:1;padding:0 2px}
 .td .x:hover{color:var(--red)}
 .td .pdot{flex:none;width:16px;height:16px;border-radius:50%;border:0;margin:4px 0 0;cursor:pointer;box-shadow:0 0 0 3px rgba(255,255,255,.04)}
@@ -805,6 +809,13 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       .then(function (j) { items = j.items || []; $("#tdmsg").textContent = ""; dessiner(); })
       .catch(function (e) { $("#tdmsg").textContent = "Échec : " + e.message; });
   }
+  // Date d'une tâche modifiable (Will, 30/10/2026) : pastille cliquable qui ouvre le sélecteur de date ; synchronisée avec le calendrier.
+  function tdDate(x) {
+    var auj = new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+    var lab = !x.dt ? "+ Date" : x.dt === auj ? "Aujourd'hui" : new Date(x.dt + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+    var tard = x.dt && x.dt < auj && !x.done;
+    return '<label class="tdd' + (x.dt ? "" : " vide") + (tard ? " tard" : "") + '" title="Changer la date">' + esc(lab) + '<input type="date" value="' + esc(x.dt || "") + '" aria-label="Date de la tâche"></label>';
+  }
   function dessiner() {
     var reste = items.filter(function (x) { return !x.done; }).length;
     $("#n-todo").textContent = reste + " à faire";
@@ -817,11 +828,12 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var pr = function (x) { return { haut: 0, moyen: 1, bas: 2 }[x.prio || "moyen"]; };
     if (filtre !== "Fait") vis = vis.filter(function (x) { return !x.done; }).map(function (x, i) { return [x, i]; }).sort(function (a, b) { return rang(a[0]) - rang(b[0]) || pr(a[0]) - pr(b[0]) || a[1] - b[1]; }).map(function (a) { return a[0]; }).concat(filtre === "Tout" ? items.filter(function (x) { return x.done; }) : []);
     $("#tdl").innerHTML = vis.map(function (x) {
-      var p = x.prio || "moyen"; return '<div class="td' + (x.done ? " done" : "") + '" data-id="' + esc(x.id) + '"><input type="checkbox"' + (x.done ? " checked" : "") + ' aria-label="Fait"><button class="pdot p-' + p + '" title="Priorité (clic pour changer)" aria-label="Priorité"></button><div class="t" contenteditable="plaintext-only">' + esc(x.t) + '</div><span class="c">' + esc(x.cat) + '</span><button class="x" title="Supprimer" aria-label="Supprimer">×</button></div>';
+      var p = x.prio || "moyen"; return '<div class="td' + (x.done ? " done" : "") + '" data-id="' + esc(x.id) + '"><input type="checkbox"' + (x.done ? " checked" : "") + ' aria-label="Fait"><button class="pdot p-' + p + '" title="Priorité (clic pour changer)" aria-label="Priorité"></button><div class="t" contenteditable="plaintext-only">' + esc(x.t) + '</div>' + tdDate(x) + '<span class="c">' + esc(x.cat) + '</span><button class="x" title="Supprimer" aria-label="Supprimer">×</button></div>';
     }).join("") || '<p class="lead">Rien ici.</p>';
   }
   $("#filt").addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; filtre = b.textContent; dessiner(); });
-  $("#tdl").addEventListener("change", function (e) { var d = e.target.closest(".td"); if (d && e.target.type === "checkbox") api({ id: d.dataset.id, done: e.target.checked }); });
+  $("#tdl").addEventListener("change", function (e) { var d = e.target.closest(".td"); if (d && e.target.type === "checkbox") api({ id: d.dataset.id, done: e.target.checked });
+    else if (d && e.target.type === "date") api({ id: d.dataset.id, dt: e.target.value || "" }).then(function () { if (typeof calLoad === "function") calLoad(); }); });
   $("#tdl").addEventListener("click", function (e) { var pd = e.target.closest(".pdot"); if (pd) { var d0 = pd.closest(".td"), x0 = items.find(function (i) { return i.id === d0.dataset.id; }); var nx = { haut: "moyen", moyen: "bas", bas: "haut" }[(x0 && x0.prio) || "moyen"]; api({ id: d0.dataset.id, prio: nx }); return; }
   if (!e.target.classList.contains("x")) return; var d = e.target.closest(".td"); if (confirm("Supprimer cette tâche ?")) api({ id: d.dataset.id, del: true }); });
   $("#tdl").addEventListener("focusout", function (e) { var t = e.target; if (!t.classList || !t.classList.contains("t")) return; var d = t.closest(".td"), x = items.find(function (i) { return i.id === d.dataset.id; });
@@ -1325,11 +1337,18 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     h += '<div class="macts">' + (furl ? '<a class="btn2" href="/series/' + esc(fslug) + '" target="_blank" rel="noopener">' + IC_BOOK + 'Voir la fiche</a>' : "") + (s.seriesId ? '<a class="btn2 dbb" href="/admin/#mangas/' + esc(s.seriesId) + '" target="_blank" rel="noopener" title="Modifier la fiche dans Mangas Database" aria-label="Modifier la fiche dans Mangas Database">' + IC_DB + '</a>' : "") + '<span id="calmsg"></span><div class="pubtoggle"><span class="publbl">' + (po ? "Publié" : "À publier") + '</span><span class="chkbig ' + (po ? "on" : "off") + '" data-act="poste" role="button" aria-label="' + (po ? "Publié" : "À publier") + '" title="' + (po ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span></div></div>';
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "sortie"; host.dataset.id = s.id;
   }
+  // Changer la date d'une tâche depuis le calendrier (Will, 30/10/2026).
+  document.addEventListener("change", function (ev) {
+    if (!ev.target || ev.target.id !== "tddt") return; var id = host.dataset.id, v = ev.target.value || "";
+    fetch("/api/admin/todo", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: id, dt: v }) })
+      .then(function (r) { return r.json(); }).then(function (j) { if (j && j.items) { items = j.items; dessiner(); } closeModal(); calLoad(); }).catch(function () { alert("Échec, réessaie"); });
+  });
   function openTodo(t) {
     if (!t) return; modalCap = null;
     var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
     h += '<div class="chips"><span class="chip">' + esc(quand({ date: t.dt })) + '</span><span class="chip">To-do</span>' + (t.cat ? '<span class="chip">' + esc(t.cat) + "</span>" : "") + (t.prio === "haut" ? '<span class="chip imp">● Priorité</span>' : "") + "</div>";
     h += '<div class="mh"><div><h2>Tâche à faire</h2></div></div><div class="note">' + esc(t.t) + "</div>";
+    h += '<label class="mslab" style="display:block;margin-top:14px">Date</label><input type="date" id="tddt" value="' + esc(t.dt || "") + '" style="font:600 15px FGInter;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--s2,#26262a);color:inherit;color-scheme:dark">';
     h += '<div class="macts"><button class="btn2 p" data-act="tdone">Marquer faite</button><a class="btn2" href="#todo" id="mx2">Ouvrir la to-do</a></div>';
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "todo"; host.dataset.id = t.id;
   }
