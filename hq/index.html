@@ -572,7 +572,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 
   <section class="sec" id="dons">
     <h1>Premium &amp; dons</h1>
-    <p class="lead">Un don arrive sur PayPal : retrouve le membre (n°, e-mail ou pseudo), entre le montant, et c'est tout. Le site calcule la durée (25 € = 1 an, 50 € = 2 ans, 100 € = 4 ans, +1 an par 25 € au-delà), prolonge la date de fin, ajoute le don au total et pose le badge donateur du palier atteint (Kobun, Bancho, Shogun, Oyabun). Le badge Premium s'affiche tout seul tant que la date de fin n'est pas passée. Le Premium payé démarre le 1er décembre.</p>
+    <p class="lead">Un don arrive sur PayPal : retrouve le membre (n°, e-mail ou pseudo), entre le montant, et c'est tout. Le site calcule la durée de Premium Plus (25 € = 1 an, 50 € = 2 ans, 100 € = 4 ans, +1 an par 25 € au-delà), prolonge la date de fin, ajoute le don au total et pose le badge donateur du palier atteint (Kobun, Bancho, Shogun, Oyabun). Le badge Premium s'affiche tout seul tant que la date de fin n'est pas passée. Le Premium payé démarre le 1er décembre.</p>
     <div class="pm-k" id="pmk"></div>
     <form class="pm-f" id="pmf" autocomplete="off">
       <h3>Enregistrer un don</h3>
@@ -947,7 +947,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var a = ansPour(mt), deb = d > "2026-12-01" ? d : "2026-12-01"; if (m.fin && m.fin >= deb) { var x = new Date(m.fin + "T12:00:00Z"); x.setUTCDate(x.getUTCDate() + 1); deb = x.toISOString().slice(0, 10); }
     var fin = ""; if (a) { var y = new Date(deb + "T12:00:00Z"); y.setUTCFullYear(y.getUTCFullYear() + a); y.setUTCDate(y.getUTCDate() - 1); fin = y.toISOString().slice(0, 10); }
     var tot = (m.dons || 0) + mt, pal = tot >= 100 ? "Oyabun" : tot >= 50 ? "Shogun" : tot >= 25 ? "Bancho" : "Kobun";
-    $("#pmprev").textContent = m.pseudo + " (n°" + m.num + ") → " + (a ? a + " an" + (a > 1 ? "s" : "") + " de Premium, du " + fr(deb) + " au " + fr(fin) : "pas de Premium (moins de 25 €)") + " · total donné " + tot.toLocaleString("fr-FR") + " € · badge " + pal;
+    $("#pmprev").textContent = m.pseudo + " (n°" + m.num + ") → " + (a ? a + " an" + (a > 1 ? "s" : "") + " de Premium Plus, du " + fr(deb) + " au " + fr(fin) : "pas de Premium Plus (moins de 25 €)") + " · total donné " + tot.toLocaleString("fr-FR") + " € · badge " + pal;
   }
   function pmLoad() {
     fetch("/api/admin/premium", { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
