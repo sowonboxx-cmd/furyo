@@ -6,6 +6,8 @@
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var CAT = { "licence-fr": ["#529CCA", "仏版"], "licence-jp": ["#FF7369", "連載"], serie: ["#FF7369", "連載"], "couv-fr": ["#9A6DD7", "表紙"], "couv-jp": ["#4DAB9A", "表紙"], "sortie-fr": ["#E255A1", "発売"], "sortie-jp": ["#FFA344", "発売"], fin: ["#BA856F", "完結"], pause: ["#9B9A97", "休載"], anime: ["#FFDC49", "放送"], adaptation: ["#9B9A97", "実写"], "bande-annonce": ["#9A6DD7", "予告"], tirage: ["#529CCA", "部数"], extrait: ["#E5483A", "試読"], news: ["#D4D4D8", "速報"] };
   var S = {
+    fc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="15" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v12"/><path d="M7 11h5M7 15h3"/></svg>',
+    rd: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5c3-1.3 6.5-1.3 10 1 3.5-2.3 7-2.3 10-1v14c-3-1.3-6.5-1.3-10 1-3.5-2.3-7-2.3-10-1z"/><path d="M12 6v14"/></svg>',
     news: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.5l2.2 2.2L16 9"/><rect x="4" y="4" width="16" height="16" rx="4"/></svg>',
     couv: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/></svg>',
     db: '<svg viewBox="0 0 24 24"><g fill="#fff"><rect x="3.3" y="6" width="3.1" height="13" rx="0.7"/><rect x="7.1" y="4.3" width="3.1" height="14.7" rx="0.7"/><rect x="14.9" y="7" width="3.1" height="12" rx="0.7"/><rect x="2" y="19" width="20" height="2.5" rx="1.25"/></g><rect x="10.9" y="5.2" width="3.3" height="13.8" rx="0.7" fill="#E54839"/></svg>',
@@ -56,7 +58,7 @@
     ".ap-t h3{margin:0;font:700 19px/1 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase}.ap-t p{margin:3px 0 0;font-size:12px;color:#b8b8be}.ap-t>div{min-width:0;flex:1}",
     ".ap-t .n{margin-left:auto;min-width:40px;height:40px;border-radius:20px;display:grid;place-items:center;font:700 21px Antonio,sans-serif;padding:0 10px;flex:none}",
     ".ap-gr{background:linear-gradient(160deg,#1E3A2A,#000 75%);border:1px solid #2E7D4F}.ap-gr .ic,.ap-gr .n{background:#2E7D4F;color:#fff}",
-    ".ap-rd{background:linear-gradient(160deg,#3d1414,#000 75%);border:1px solid #E5483A}.ap-rd .ic,.ap-rd .n{background:#E5483A;color:#fff}",
+    ".ap-rd{background:linear-gradient(160deg,#3d1414,#000 75%);border:1px solid #E5483A}.ap-rd .ic,.ap-rd .n{background:#E5483A;color:#fff}.ap-bl{background:linear-gradient(160deg,#14233d,#000 75%);border:1px solid #2A6FD0}.ap-bl .ic{background:#2A6FD0;color:#fff}.ap-yl{background:linear-gradient(160deg,#3a2c0c,#000 75%);border:1px solid #D9A23A}.ap-yl .ic{background:#D9A23A;color:#111}.ap-fl2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}",
     ".ap-db{display:block;border-radius:18px;padding:14px 16px;background:linear-gradient(160deg,#142a44,#000 75%);border:1px solid #2A6FD0}",
     ".ap-db .hd{display:flex;align-items:center;gap:10px}.ap-db .ic{width:36px;height:36px;border-radius:10px;background:#2A6FD0;display:grid;place-items:center}.ap-db .ic svg{width:20px;height:20px}",
     ".ap-db h3{margin:0;font:700 19px Antonio,sans-serif;text-transform:uppercase}.ap-db .wk{margin-left:auto;font:700 11.5px Inter,sans-serif;color:#9CC3FF}",
@@ -172,6 +174,10 @@
       '<span class="ap-hr"><button type="button" class="srt" data-ap-srch>' + S.se + 'Rechercher</button><button type="button" class="x" data-ap-x aria-label="Fermer">×</button></span></div>' +
       '<button type="button" class="ap-srm" data-ap-srch><span>' + S.se + '</span>Rechercher</button>' +
       calBloc() +
+      // 0. Flashcards | Lecture : au-dessus d'Actualités et de Mangas Database, Will s'en sert tout le temps (02/11/2026). Pages privées, admin seulement.
+      '<div class="ap-g ap-fl2">' +
+        '<a class="ap-t ap-bl" href="/flashcard/"><span class="ic">' + S.fc + '</span><div><h3>Flashcards</h3><p>Mon carnet de japonais</p></div></a>' +
+        '<a class="ap-t ap-yl" href="/lecture/"><span class="ic">' + S.rd + '</span><div><h3>Lecture</h3><p>Chapitres traduits</p></div></a></div>' +
       // 1. Actualités + Couvertures | Mangas Database
       '<div class="ap-g ap-g2"><div class="ap-st">' +
         '<a class="ap-t ap-gr" href="/admin/#validation"><span class="ic">' + S.news + '</span><div><h3>Actualités et veille</h3><p>À relire avant publication</p></div><span class="n">' + (D ? nb(D.veille.n) : "…") + '</span></a>' +

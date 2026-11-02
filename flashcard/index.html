@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F3EEE4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141312" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Carnet">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Carnet · FuryoGang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* Carnet de japonais perso de Will (02/11/2026) : flashcards tirées de ses lectures de manga.
+   Privé, admin seulement (voir functions/_middleware.js), jamais indexé. Données : R2 « prive/flashcards/ » via /api/admin/prive.
+   Cartes : mot, kanji ou phrase ; toujours la phrase d'origine, la référence (manga, chapitre, page) et la planche.
+   Écriture : kanji = parfait, kana = juste aussi (le kanji est montré), jamais de rōmaji. Pas de bordures sur les boutons. */
+@font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:"FGJP";src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900;font-display:swap}
+:root{--bg:#F3EEE4;--card:#FFFDF8;--alt:#E9E2D5;--ink:#1C1B19;--mut:#5E584E;--red:#B8321F;--ok:#2F7A3E;--inv:#1C1B19;--invInk:#FFFDF8;--hero:#1C1B19;--heroInk:#FFFDF8;color-scheme:light}
+body.dark{--bg:#141312;--card:#22201D;--alt:#2D2A26;--ink:#F1ECE2;--mut:#ADA699;--red:#EE6A50;--ok:#7FC48B;--inv:#F1ECE2;--invInk:#141312;--hero:#5A1E15;--heroInk:#F6EEE6;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"FGInter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input{font:inherit;color:inherit}
+button{border:0;cursor:pointer;background:none;-webkit-tap-highlight-color:transparent}
+.k{font-family:"Shippori Mincho B1","FGJP",serif;font-weight:800}
+.jp{font-family:"FGJP",sans-serif}
+.wrap{max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 18px) 18px calc(env(safe-area-inset-bottom,0px) + 24px);min-height:100vh;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.chip{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--red);background:var(--alt);border-radius:6px;padding:4px 8px}
+.ico{width:44px;height:44px;border-radius:22px;background:var(--card);display:grid;place-items:center;color:var(--ink)}
+.ico svg{width:20px;height:20px}
+h1{margin:0;font-size:32px;font-weight:700;line-height:1.35}
+.hero{background:var(--hero);color:var(--heroInk);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.hero .row{display:flex;gap:22px}.hero .row div{display:flex;flex-direction:column}.hero .row b{font-size:34px;line-height:1.1}.hero .row span{font-size:12px;opacity:.75}
+.hero .meta{display:flex;justify-content:space-between;font-size:13px;font-weight:700;opacity:.75}
+.go{height:54px;border-radius:14px;background:var(--red);color:#FFFDF8;font-size:16px;font-weight:700;width:100%}
+.go:disabled{opacity:.5;cursor:default}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{background:var(--card);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px;text-align:left;color:var(--ink)}
+.tile svg{width:22px;height:22px;color:var(--red)}.tile b{font-size:16px}.tile small{font-size:12px;color:var(--mut)}
+.mode{background:var(--card);border-radius:16px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;min-height:56px}
+.mode b{font-size:15px}.mode span{font-size:13px;color:var(--mut)}
+.mode.on{background:var(--inv);color:var(--invInk)}.mode.on span{color:var(--invInk);opacity:.75}
+.foot{margin-top:auto;font-size:12px;color:var(--mut);text-align:center}
+.bar{height:4px;background:var(--alt);border-radius:2px}.bar i{display:block;height:4px;background:var(--red);border-radius:2px;transition:width .3s}
+.card{flex:1;min-height:420px;border-radius:24px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:22px;text-align:center;width:100%;color:var(--ink)}
+.card .big{font-size:84px;line-height:1.15;word-break:keep-all}
+.card .big.ph{font-size:30px;line-height:1.5}
+.card .kana{font-size:20px;letter-spacing:.2em;color:var(--mut)}
+.card .sens{font-size:23px;font-weight:700;line-height:1.35}
+.card .hint{font-size:14px;color:var(--mut);margin-top:14px}
+.ctx{background:var(--alt);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:4px;width:100%}
+.ctx .l{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--mut)}
+.ctx .j{font-size:18px;font-weight:700;line-height:1.5}.ctx .j mark{background:none;color:var(--red)}
+.ctx .r{font-size:13px;color:var(--mut)}
+.ctx .f{font-size:14px}
+.ctx .ref{font-size:12px;font-weight:700;color:var(--red);margin-top:6px}
+.btn{height:56px;border-radius:14px;background:var(--card);font-size:16px;font-weight:700;color:var(--ink);width:100%}
+.btn.inv{background:var(--inv);color:var(--invInk)}
+.btn.red{color:var(--red)}
+.btn.soft{background:var(--alt);color:var(--red);height:48px;font-size:15px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px}
+.ans{height:64px;border-radius:14px;border:0;background:var(--alt);font-size:28px;padding:0 16px;width:100%;color:var(--ink);outline:none}
+.res{background:var(--alt);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:4px;text-align:left}
+.res b{font-size:16px}.res .k{font-size:40px;line-height:1.2}
+.ok{color:var(--ok)}.ko{color:var(--red)}
+.srch{height:48px;border-radius:14px;background:var(--card);display:flex;align-items:center;gap:10px;padding:0 14px}
+.srch input{flex:1;border:0;background:transparent;font-size:15px;outline:none;color:var(--ink);min-width:0}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filters button{height:36px;padding:0 14px;border-radius:18px;background:var(--card);font-size:13px;font-weight:700}
+.filters button.on{background:var(--inv);color:var(--invInk)}
+.lrow{background:var(--card);border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;width:100%;text-align:left;color:var(--ink)}
+.lrow .t{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.lrow .t .k{font-size:26px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .t .k.ph{font-size:17px}
+.lrow .t span{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .t em{font-style:normal;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .t i{font-style:normal;font-size:11px;font-weight:700;color:var(--red)}
+.lrow .s{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:11px;color:var(--mut);flex:none}
+.todo{color:var(--red);font-weight:700}
+.list{display:flex;flex-direction:column;gap:8px}
+.empty{color:var(--mut);text-align:center;padding:30px 10px;font-size:15px;line-height:1.5}
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(20,19,18,.97);display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 14px) 14px 14px;gap:12px}
+.sheet[hidden]{display:none}
+.sheet .h{display:flex;justify-content:space-between;align-items:center;color:#F3EEE4;font-size:13px;font-weight:700}
+.sheet .x{width:44px;height:44px;border-radius:22px;background:#F3EEE4;color:#1C1B19;display:grid;place-items:center}
+.sheet img{flex:1;min-height:0;width:100%;object-fit:contain;border-radius:10px;background:#fff}
+.sheet p{margin:0;color:#D9D1C2;font-size:13px}
+.det{display:flex;flex-direction:column;gap:12px}
+.det .card{min-height:0;flex:none}
+.del{font-size:13px;color:var(--mut);text-decoration:underline;background:none;align-self:center;padding:10px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--inv);color:var(--invInk);border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600;z-index:60}
+.toast[hidden]{display:none}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="empty">Chargement du carnet…</div></div>
+<div class="sheet" id="sheet" hidden>
+  <div class="h"><span id="sheetT"></span><button class="x" id="sheetX" aria-label="Fermer la planche"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <img id="sheetI" alt="Planche du manga">
+  <p id="sheetP"></p>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script>
+(function () {
+  var API = "/api/admin/prive?f=";
+  var F_CARDS = "prive/flashcards/cards.json", F_PROG = "prive/flashcards/progress.json";
+  var CARDS = [], PROG = {}, VIEW = "home", MODE = "lire", Q = [], qi = 0, step = 0, FILTER = "Tous", SEARCH = "", DONE = 0, WRITE = { v: "", r: null, hint: false }, DETAIL = null;
+  var NEW_PER_DAY = 10, BOX = [0, 1, 3, 7, 14, 30, 60, 120];
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var today = function () { var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+  var addDays = function (n) { var d = new Date(); d.setDate(d.getDate() + n); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+  var kata2hira = function (s) { return String(s || "").replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }); };
+  var norm = function (s) { return kata2hira(String(s || "").replace(/[\s　、。！？!?・…「」『』〜～ー]/g, function (c) { return c === "ー" ? "ー" : ""; })); };
+
+  // Thème : suit le téléphone, sauf si Will a choisi (bouton lune/soleil).
+  var th = null; try { th = localStorage.getItem("fc_theme"); } catch (e) {}
+  var dark = th ? th === "dark" : (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.body.classList.toggle("dark", dark);
+  function toggleTheme() { dark = !dark; document.body.classList.toggle("dark", dark); try { localStorage.setItem("fc_theme", dark ? "dark" : "light"); } catch (e) {} render(); }
+
+  function toast(t) { var el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(function () { el.hidden = true; }, 1800); }
+  function get(f) { return fetch(API + encodeURIComponent(f), { credentials: "same-origin", cache: "no-store" }).then(function (r) { if (r.status === 404) return null; if (!r.ok) throw new Error(r.status); return r.json(); }); }
+  var saving = null;
+  function saveProg() {
+    clearTimeout(saving);
+    saving = setTimeout(function () {
+      fetch(API + encodeURIComponent(F_PROG), { method: "PUT", credentials: "same-origin", body: JSON.stringify(PROG) }).catch(function () { toast("Progression non enregistrée (hors ligne)"); });
+    }, 600);
+    try { localStorage.setItem("fc_prog", JSON.stringify(PROG)); } catch (e) {}
+  }
+  function saveCards() { return fetch(API + encodeURIComponent(F_CARDS), { method: "PUT", credentials: "same-origin", body: JSON.stringify(CARDS) }); }
+  function img(c) { return c.ref && c.ref.img ? API + encodeURIComponent(c.ref.img) : ""; }
+  function refTxt(c, short) {
+    var r = c.ref || {}; if (!r.manga) return "";
+    return (short ? r.manga.split(" ~")[0] : r.manga + (r.auteur ? " · " + r.auteur : "")) + (r.chapitre ? " · ch. " + r.chapitre : "") + (r.page != null ? " · p. " + r.page : "");
+  }
+  function typeLabel(c) { return c.type === "phrase" ? "PHRASE" : c.type === "kanji" ? "KANJI" : "MOT"; }
+  function st(c) { return PROG[c.id] || null; }
+  function isDue(c) { var p = st(c); return p && p.due <= today(); }
+  function isNew(c) { return !st(c); }
+  function newSeenToday() { var t = today(), n = 0; Object.keys(PROG).forEach(function (k) { if (PROG[k].first === t) n++; }); return n; }
+  function usable(c) { return !c.todo && c.jp && c.sens; }
+  function queue(mode) {
+    var pool = CARDS.filter(usable).filter(function (c) { return mode !== "ecrire" || c.type !== "phrase"; });
+    var due = pool.filter(isDue).sort(function (a, b) { return st(a).due < st(b).due ? -1 : 1; });
+    var left = Math.max(0, NEW_PER_DAY - newSeenToday());
+    var fresh = pool.filter(isNew).slice(0, left);
+    return due.concat(fresh);
+  }
+  function streak() {
+    var days = {}; Object.keys(PROG).forEach(function (k) { (PROG[k].log || []).forEach(function (d) { days[d] = 1; }); });
+    var n = 0, i = days[today()] ? 0 : 1;
+    while (days[addDays(-i)]) { n++; i++; }
+    return n;
+  }
+  function grade(c, g) {
+    var p = PROG[c.id] || { box: 0, n: 0, ok: 0, ko: 0, first: today(), log: [] };
+    p.n++; p.last = today(); if ((p.log || []).indexOf(today()) < 0) { p.log = (p.log || []).concat(today()).slice(-60); }
+    if (g === "su") { p.ok++; p.box = Math.min(BOX.length - 1, p.box + 1); p.due = addDays(BOX[p.box]); }
+    else if (g === "presque") { p.box = Math.max(1, p.box); p.due = addDays(1); }
+    else { p.ko++; p.box = 0; p.due = today(); Q.push(c); }
+    PROG[c.id] = p; saveProg();
+  }
+
+  var IC = {
+    lib: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h6v14H4zM14 5h6v14h-6z"/></svg>',
+    book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/></svg>',
+    moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>',
+    sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>',
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+    srch: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>'
+  };
+  function topbar(title, back) {
+    return '<div class="top">' + (back ? '<button class="ico" data-a="home" aria-label="Retour">' + IC.back + '</button>' : '<span class="eyebrow">FuryoGang · Carnet perso</span>') +
+      (title ? '<span class="eyebrow">' + esc(title) + '</span>' : '') +
+      '<button class="ico" data-a="theme" aria-label="' + (dark ? "Mode clair" : "Mode sombre") + '">' + (dark ? IC.sun : IC.moon) + '</button></div>';
+  }
+  function ctx(c) {
+    var ph = c.phrase || {};
+    if (!ph.jp) return refTxt(c) ? '<div class="ctx"><span class="ref">' + esc(refTxt(c)) + '</span></div>' : "";
+    var j = esc(ph.jp); if (c.type !== "phrase" && c.jp && ph.jp.indexOf(c.jp) >= 0) j = j.split(esc(c.jp)).join('<mark>' + esc(c.jp) + '</mark>');
+    var h = '<div class="ctx"><span class="l">LA PHRASE</span><span class="j jp">' + j + '</span>' + (ph.kana ? '<span class="r jp">' + esc(ph.kana) + '</span>' : '') + (ph.fr ? '<span class="f">' + esc(ph.fr) + '</span>' : '') + '<span class="ref">' + esc(refTxt(c)) + '</span></div>';
+    (c.autres || []).forEach(function (o) { h += '<div class="ctx"><span class="l">AILLEURS</span><span class="j jp">' + esc(o.jp) + '</span>' + (o.kana ? '<span class="r jp">' + esc(o.kana) + '</span>' : '') + '<span class="f">' + esc(o.fr) + '</span><span class="ref">' + esc(o.manga + (o.auteur ? " · " + o.auteur : "")) + '</span></div>'; });
+    if (c.note) h += '<div class="ctx"><span class="l">NOTE</span><span class="f">' + esc(c.note) + '</span></div>';
+    return h;
+  }
+
+  function vHome() {
+    var qr = queue(MODE), dueN = CARDS.filter(usable).filter(isDue).length, newN = Math.min(CARDS.filter(usable).filter(isNew).length, Math.max(0, NEW_PER_DAY - newSeenToday()));
+    var last = CARDS.slice().sort(function (a, b) { return (b.ajout || "") < (a.ajout || "") ? -1 : 1; })[0];
+    var todo = CARDS.filter(function (c) { return c.todo; }).length;
+    return topbar() +
+      '<h1>' + (qr.length ? qr.length + ' carte' + (qr.length > 1 ? 's' : '') + '<br>t’attend' + (qr.length > 1 ? 'ent' : '') : 'Tout est à jour<br>pour aujourd’hui') + '</h1>' +
+      '<div class="hero"><div class="meta"><span>AUJOURD’HUI</span><span>' + (qr.length ? '≈ ' + Math.max(1, Math.round(qr.length * 0.4)) + ' min' : '') + '</span></div>' +
+      '<div class="row"><div><b>' + dueN + '</b><span>à revoir</span></div><div><b>' + newN + '</b><span>nouvelles</span></div><div><b>' + streak() + '</b><span>jours de suite</span></div></div>' +
+      '<button class="go" data-a="start" ' + (queue(MODE).length ? '' : 'disabled') + '>' + (queue(MODE).length ? 'Commencer la session' : 'Rien à réviser') + '</button></div>' +
+      '<div class="grid2"><button class="tile" data-a="lib">' + IC.lib + '<b>Bibliothèque</b><small>' + CARDS.length + ' carte' + (CARDS.length > 1 ? 's' : '') + (todo ? ' · ' + todo + ' à compléter' : '') + '</small></button>' +
+      '<a class="tile" href="/lecture/" style="text-decoration:none">' + IC.book + '<b>Lecture</b><small>ajouter depuis un chapitre</small></a></div>' +
+      '<span class="eyebrow" style="margin-top:4px">Mode</span>' +
+      '<button class="mode' + (MODE === "lire" ? " on" : "") + '" data-a="mode" data-m="lire"><b>Japonais → français</b><span class="k" style="font-size:20px">忠</span></button>' +
+      '<button class="mode' + (MODE === "ecrire" ? " on" : "") + '" data-a="mode" data-m="ecrire"><b>Français → à écrire</b><span>kanji ou kana</span></button>' +
+      (last ? '<p class="foot">Dernier ajout : <span class="jp">' + esc(last.jp) + '</span> · ' + esc(refTxt(last, true)) + '</p>' : '');
+  }
+
+  function vSession() {
+    var c = Q[qi];
+    if (!c) return topbar("Session", true) + '<div class="card"><span class="k big" style="font-size:64px">済</span><span class="sens">Session terminée</span><span class="hint">' + DONE + ' carte' + (DONE > 1 ? 's' : '') + ' revue' + (DONE > 1 ? 's' : '') + '. À demain !</span></div><button class="btn inv" data-a="home">Retour à l’accueil</button>';
+    var pct = Math.round(qi / Q.length * 100);
+    var head = topbar((MODE === "ecrire" ? "À écrire" : "Session") + " · " + (qi + 1) + " / " + Q.length, true) + '<div class="bar"><i style="width:' + pct + '%"></i></div>';
+    if (MODE === "ecrire") return head + vWrite(c);
+    var ph = c.type === "phrase";
+    var h = head + '<button class="card" data-a="flip" aria-label="Retourner la carte"><span class="chip">' + typeLabel(c) + '</span>' +
+      (step >= 1 && c.kana ? '<span class="kana jp">' + esc(c.kana) + '</span>' : '') +
+      '<span class="k big' + (ph ? ' ph' : '') + '">' + esc(c.jp) + '</span>' +
+      (step >= 2 ? '<span class="sens">' + esc(c.sens) + '</span>' + ctx(c) : '<span class="hint">' + (step === 0 ? 'Lis-le, puis touche la carte' : 'Tu avais la bonne lecture ? Touche pour le sens') + '</span>') + '</button>';
+    if (step >= 2) {
+      if (img(c)) h += '<button class="btn soft" data-a="page">Voir la planche · p. ' + esc(c.ref.page) + '</button>';
+      h += '<div class="three"><button class="btn red" data-a="g" data-g="rate">Raté</button><button class="btn" data-a="g" data-g="presque">Presque</button><button class="btn inv" data-a="g" data-g="su">Su !</button></div>';
+    } else h += '<button class="btn inv" data-a="flip">' + (step === 0 && c.kana ? 'Voir la lecture' : 'Voir le sens') + '</button>';
+    return h;
+  }
+  function vWrite(c) {
+    var r = WRITE.r;
+    var h = '<div class="card" style="align-items:stretch;text-align:left;justify-content:center"><span class="chip" style="align-self:flex-start">' + typeLabel(c) + '</span>' +
+      '<span class="sens" style="font-size:26px">' + esc(c.sens) + '</span>';
+    if (c.phrase && c.phrase.fr) h += '<span class="hint" style="margin-top:0">« ' + esc(c.phrase.fr) + ' »</span>';
+    h += '<span class="ref" style="font-size:12px;font-weight:700;color:var(--red)">' + esc(refTxt(c, true)) + '</span>' +
+      '<input class="ans k" id="ans" lang="ja" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Écris en japonais…" value="' + esc(WRITE.v) + '"' + (r ? ' disabled' : '') + '>' +
+      '<span class="hint" style="margin-top:0;font-size:12px">Kanji de préférence. Les kana sont acceptés aussi.</span>';
+    if (WRITE.hint && !r) h += '<span class="hint" style="margin-top:0">Indice : ' + esc([...c.jp].length) + ' signe' + ([...c.jp].length > 1 ? 's' : '') + ', commence par <span class="k" style="color:var(--ink)">' + esc([...c.jp][0]) + '</span></span>';
+    if (r === "ok") h += '<div class="res"><b class="ok">Parfait, en kanji !</b><span class="k">' + esc(c.jp) + '</span><span class="jp" style="color:var(--mut)">' + esc(c.kana) + '</span></div>';
+    if (r === "kana") h += '<div class="res"><b class="ok">Juste ! Compté comme bon.</b><span style="font-size:14px;color:var(--mut)">Et en kanji, ça s’écrit :</span><span class="k">' + esc(c.jp) + '</span></div>';
+    if (r === "ko") h += '<div class="res"><b class="ko">Pas encore. La réponse :</b><span class="k">' + esc(c.jp) + '</span><span class="jp" style="color:var(--mut)">' + esc(c.kana) + ' · la carte revient bientôt</span></div>';
+    h += '</div>';
+    if (!r) h += '<div class="two"><button class="btn" data-a="whint">Indice</button><button class="btn inv" data-a="wcheck">Vérifier</button></div>';
+    else h += (img(c) ? '<button class="btn soft" data-a="page">Voir la planche · p. ' + esc(c.ref.page) + '</button>' : '') + '<button class="btn inv" data-a="wnext">Suivante</button>';
+    return h;
+  }
+
+  function vLib() {
+    var map = { Mots: "mot", Kanji: "kanji", Phrases: "phrase" };
+    var q = norm(SEARCH).toLowerCase();
+    var rows = CARDS.filter(function (c) { return FILTER === "Tous" || (FILTER === "À compléter" ? c.todo : c.type === map[FILTER]); })
+      .filter(function (c) { return !q || norm([c.jp, c.kana, c.sens, c.phrase && c.phrase.fr, c.ref && c.ref.manga].join(" ")).toLowerCase().indexOf(q) >= 0; })
+      .sort(function (a, b) { return (b.ajout || "") < (a.ajout || "") ? -1 : 1; });
+    var mangas = {}; CARDS.forEach(function (c) { if (c.ref && c.ref.manga) mangas[c.ref.manga.split(" ~")[0]] = 1; });
+    return topbar("Bibliothèque · " + CARDS.length, true) +
+      '<label class="srch">' + IC.srch + '<input id="q" placeholder="Kanji, kana ou français…" value="' + esc(SEARCH) + '" autocomplete="off"></label>' +
+      '<div class="filters">' + ["Tous", "Mots", "Kanji", "Phrases"].concat(CARDS.some(function (c) { return c.todo; }) ? ["À compléter"] : []).map(function (f) { return '<button data-a="filter" data-f="' + f + '" class="' + (f === FILTER ? "on" : "") + '">' + f + '</button>'; }).join("") + '</div>' +
+      '<span class="eyebrow">' + esc(Object.keys(mangas).join(" · ") || "") + '</span>' +
+      '<div class="list">' + (rows.length ? rows.map(function (c) {
+        var p = st(c), due = !p ? "nouvelle" : p.due <= today() ? "à revoir" : "le " + p.due.slice(8, 10) + "/" + p.due.slice(5, 7);
+        return '<button class="lrow" data-a="det" data-id="' + esc(c.id) + '"><span class="t"><span class="k' + (c.type === "phrase" ? " ph" : "") + '">' + esc(c.jp) + '</span><span class="jp">' + esc(c.kana || "") + '</span><em>' + (c.todo ? '<span class="todo">Claude complète la lecture et le sens</span>' : esc(c.sens)) + '</em><i>' + esc(refTxt(c, true)) + '</i></span><span class="s"><span class="chip">' + typeLabel(c) + '</span><span>' + due + '</span></span></button>';
+      }).join("") : '<div class="empty">' + (CARDS.length ? "Rien ne correspond." : "Le carnet est vide. Ajoute des mots depuis la lecture.") + '</div>') + '</div>';
+  }
+  function vDet() {
+    var c = CARDS.filter(function (x) { return x.id === DETAIL; })[0]; if (!c) { VIEW = "lib"; return vLib(); }
+    var p = st(c);
+    return '<div class="top"><button class="ico" data-a="lib" aria-label="Retour">' + IC.back + '</button><span class="eyebrow">' + typeLabel(c) + '</span><button class="ico" data-a="theme" aria-label="Thème">' + (dark ? IC.sun : IC.moon) + '</button></div>' +
+      '<div class="det"><div class="card"><span class="kana jp">' + esc(c.kana || "") + '</span><span class="k big' + (c.type === "phrase" ? " ph" : "") + '">' + esc(c.jp) + '</span><span class="sens">' + (c.todo ? '<span class="todo">Claude complète la lecture et le sens</span>' : esc(c.sens)) + '</span>' + ctx(c) + '</div>' +
+      (img(c) ? '<button class="btn soft" data-a="page">Voir la planche · p. ' + esc(c.ref.page) + '</button>' : '') +
+      (p ? '<p class="foot">Revue ' + p.n + ' fois · prochaine le ' + p.due.slice(8, 10) + '/' + p.due.slice(5, 7) + '</p>' : '<p class="foot">Jamais revue</p>') +
+      '<button class="del" data-a="del">Retirer cette carte du carnet</button></div>';
+  }
+
+  function render() {
+    var h = VIEW === "session" ? vSession() : VIEW === "lib" ? vLib() : VIEW === "det" ? vDet() : vHome();
+    $("app").innerHTML = h;
+    var a = $("ans"); if (a && !WRITE.r) { a.focus(); a.oninput = function () { WRITE.v = a.value; }; a.onkeydown = function (e) { if (e.key === "Enter") check(); }; }
+    var qq = $("q"); if (qq) { qq.oninput = function () { SEARCH = qq.value; var pos = qq.selectionStart; render(); var n = $("q"); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} }; }
+  }
+  function cur() { return VIEW === "det" ? CARDS.filter(function (x) { return x.id === DETAIL; })[0] : Q[qi]; }
+  function check() {
+    var c = Q[qi], v = norm(WRITE.v); if (!v) return;
+    WRITE.r = v === norm(c.jp) ? "ok" : (c.kana && v === norm(c.kana)) ? "kana" : "ko";
+    grade(c, WRITE.r === "ko" ? "rate" : "su"); render();
+  }
+  function openPage(c) {
+    $("sheetT").textContent = refTxt(c); $("sheetI").src = img(c);
+    $("sheetP").textContent = c.phrase && c.phrase.jp ? "La bulle : " + c.phrase.jp : "";
+    $("sheet").hidden = false;
+  }
+  $("sheetX").onclick = function () { $("sheet").hidden = true; };
+  $("sheet").onclick = function (e) { if (e.target === $("sheet")) $("sheet").hidden = true; };
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-a]"); if (!b) return;
+    var a = b.dataset.a;
+    if (a === "theme") toggleTheme();
+    else if (a === "home") { VIEW = "home"; render(); }
+    else if (a === "lib") { VIEW = "lib"; render(); window.scrollTo(0, 0); }
+    else if (a === "mode") { MODE = b.dataset.m; try { localStorage.setItem("fc_mode", MODE); } catch (x) {} render(); }
+    else if (a === "start") { Q = queue(MODE); qi = 0; step = 0; DONE = 0; WRITE = { v: "", r: null, hint: false }; VIEW = "session"; render(); }
+    else if (a === "flip") { var c = Q[qi]; step = step === 0 && !c.kana ? 2 : Math.min(2, step + 1); render(); }
+    else if (a === "g") { grade(Q[qi], b.dataset.g); DONE++; qi++; step = 0; render(); }
+    else if (a === "whint") { WRITE.hint = true; render(); }
+    else if (a === "wcheck") check();
+    else if (a === "wnext") { DONE++; qi++; WRITE = { v: "", r: null, hint: false }; render(); }
+    else if (a === "filter") { FILTER = b.dataset.f; render(); }
+    else if (a === "det") { DETAIL = b.dataset.id; VIEW = "det"; render(); window.scrollTo(0, 0); }
+    else if (a === "page") openPage(cur());
+    else if (a === "del") {
+      var c2 = cur(); if (!c2 || !confirm("Retirer « " + c2.jp + " » du carnet ?")) return;
+      CARDS = CARDS.filter(function (x) { return x.id !== c2.id; }); delete PROG[c2.id];
+      saveCards().then(function () { saveProg(); toast("Carte retirée"); VIEW = "lib"; render(); }).catch(function () { toast("Échec, réessaie"); });
+    }
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") $("sheet").hidden = true; });
+
+  try { MODE = localStorage.getItem("fc_mode") || "lire"; } catch (e) {}
+  Promise.all([get(F_CARDS), get(F_PROG).catch(function () { return null; })]).then(function (r) {
+    CARDS = Array.isArray(r[0]) ? r[0] : [];
+    PROG = r[1] && typeof r[1] === "object" ? r[1] : (function () { try { return JSON.parse(localStorage.getItem("fc_prog") || "{}"); } catch (e) { return {}; } })();
+    render();
+  }).catch(function () { $("app").innerHTML = '<div class="empty">Impossible de charger le carnet. Vérifie que tu es connecté en admin.</div>'; });
+})();
+</script>
+</body>
+</html>

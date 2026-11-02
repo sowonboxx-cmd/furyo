@@ -25,7 +25,7 @@ if (!globalThis.__fgNotionRetry) {
 
 const OFFICIEL = "furyogang.com";
 const A_REDIRIGER = new Set(["furyo.pages.dev", "www.furyogang.com"]);
-const PRIVE = /^\/(admin|studio|profil|membres-fiche|hq)(\/|$)/;
+const PRIVE = /^\/(admin|studio|profil|membres-fiche|hq|flashcard|lecture)(\/|$)/;
 
 export async function onRequest({ request, next, env }) {
   const url = new URL(request.url);
@@ -37,7 +37,8 @@ export async function onRequest({ request, next, env }) {
   // /hq/ : le QG de Will (ressources, to-do, projets). /ressources/ : documents de travail de Will (scans de magazines, murs d'affiches) pour trouver des idées de contenu.
   // Réservés aux admins connectés, jamais indexés (Will, 15/10/2026).
   // /studio/ aussi (18/10/2026) : les outils de visuels ne sont visibles que par les admins.
-  if (url.pathname.startsWith("/ressources/") || url.pathname === "/hq" || url.pathname.startsWith("/hq/") || url.pathname === "/studio" || url.pathname.startsWith("/studio/")) {
+  // /flashcard/ (carnet de japonais perso) et /lecture/ (chapitres traduits) : privés, admin seulement, jamais indexés (Will, 02/11/2026).
+  if (url.pathname.startsWith("/ressources/") || /^\/(flashcard|lecture)(\/|$)/.test(url.pathname) || url.pathname === "/hq" || url.pathname.startsWith("/hq/") || url.pathname === "/studio" || url.pathname.startsWith("/studio/")) {
     if (!(await isAdmin(request, env).catch(() => false))) return new Response("Introuvable", { status: 404, headers: { "x-robots-tag": "noindex" } });
     const r = await next(); const o = new Response(r.body, r); o.headers.set("x-robots-tag", "noindex, nofollow"); o.headers.set("cache-control", "private, max-age=3600"); return o;
   }

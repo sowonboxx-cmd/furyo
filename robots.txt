@@ -4,6 +4,8 @@ Disallow: /admin/
 Disallow: /studio/
 Disallow: /ressources/
 Disallow: /hq/
+Disallow: /flashcard/
+Disallow: /lecture/
 Disallow: /profil/
 Disallow: /api/admin/
 Disallow: /api/auth/

@@ -41,6 +41,8 @@
     couv: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/></svg>',
     srch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
     admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
+    fc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="15" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v12"/><path d="M7 11h5M7 15h3"/></svg>',
+    read: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5c3-1.3 6.5-1.3 10 1 3.5-2.3 7-2.3 10-1v14c-3-1.3-6.5-1.3-10 1-3.5-2.3-7-2.3-10-1z"/><path d="M12 6v14"/></svg>',
     hq: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V8l8-4 8 4v12"/><path d="M3 20h18M9.5 20v-4h5v4M8.5 11h2M13.5 11h2"/></svg>'
   };
 
@@ -59,6 +61,9 @@
       // Recherche au-dessus d'Actualités (Will, 21/10/2026) : ouvre la recherche du site.
       '<button type="button" class="fgq-srch">' + I.srch + '<span>Rechercher sur le site</span></button>' +
       '<div class="fgq-grid">' +
+        // Flashcards et Lecture tout en haut : Will s'en sert tout le temps (02/11/2026). Pages privées, admin seulement.
+        qt("fc", "Flashcards", "mon carnet de japonais", "/flashcard/", "") +
+        qt("read", "Lecture", "chapitres traduits", "/lecture/", "") +
         qt("news", "Actualités", "à relire", "/admin/#validation", n) +
         qt("sort", "Sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
         qt("cal", "Calendrier", "la semaine", "/hq/#calendrier", "") +
@@ -94,7 +99,7 @@
     if (!ME) { fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { ME = j || { admin: false }; openPop(); }).catch(function () { loadData(render); }); return; }
     if (ME && ME.admin) {
       if (window.FG_ADMPOP) return window.FG_ADMPOP(ME, null);
-      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=6";
+      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=7";
       sc.onload = function () { window.FG_ADMPOP(ME, null); }; sc.onerror = function () { loadData(render); };
       document.head.appendChild(sc); return;
     }
