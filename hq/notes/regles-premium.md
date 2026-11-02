@@ -28,9 +28,28 @@ Devenir membre : un compte Google, gratuit. Les messages « Rejoins le gang » p
 
 ## Prix : 2 € pour tout le monde, pour toujours (décidé le 02/11/2026)
 
-- Premium = **2 € par mois, pour tout le monde, tout le temps**. Jamais 3 € : même si des choses s'ajoutent (lexique, interviews…), le prix ne bouge pas. « C'est pour les fans. »
-- Ceux qui veulent donner plus passent par les **dons**, et ce sont eux qui ont les accès vraiment exclusifs.
-- **Concours** : par défaut, les donateurs (plus de 3 € ou un don) sont dans le **concours des figurines** ; les membres Premium à 2 € sont dans le **concours des mangas**.
+- Premium = **2 € par mois, pour tout le monde, tout le temps**. Jamais plus : même si des choses s'ajoutent (lexique, interviews…), le prix ne bouge pas. « C'est pour les fans. »
+
+## Premium Plus = Premium Donateur (décidé le 02/11/2026)
+
+Ce n'est pas un abonnement plus cher : c'est ce qu'on obtient en faisant un don, quel que soit le montant à partir de 25 €. Ceux qui font vivre le site ont les vrais exclusifs.
+
+| Don | Ce que ça donne |
+|---|---|
+| Moins de 25 € | Merci + badge Donateur (pour toujours), pas de Premium Plus |
+| 25 € | Premium Plus 1 an |
+| 50 € | Premium Plus 2 ans |
+| 100 € | Premium Plus 4 ans |
+| Au-delà | +1 an par tranche de 25 € (125 € = 5 ans, 150 € = 6 ans) |
+
+- **Premium Plus comprend tout le Premium**, plus : les **interviews une semaine avant tout le monde**, le **concours des figurines**, et les futurs exclusifs.
+- **Premium (2 €)** : concours des mangas.
+- Le **badge Donateur** reste pour toujours, même quand le Premium Plus est fini. Les dons s'additionnent pour le badge (Kobun, Bancho, Shogun, Oyabun).
+- Un abonné à 2 € qui fait un don de 25 € ou plus passe Premium Plus pour la durée du palier (il peut garder ou arrêter son abonnement).
+- Fin du Premium Plus : retour à Premium s'il est abonné, sinon membre gratuit. Ses listes sont gardées.
+- Toujours dire « pendant 1 an, 2 ans… », jamais « à vie ».
+- Les donateurs déjà enregistrés (ex. membre n°65, 25 € le 25/10) passent Premium Plus pour la durée déjà calculée.
+- À faire (Claude) : renommer « Premium » en « Premium Plus » pour les dons dans le QG (Premium & dons), la page /premium/ et le remerciement ; badge/coche Premium Plus à définir avec Will.
 
 ## Dons
 
