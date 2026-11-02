@@ -115,6 +115,9 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px}
 .mag .no{display:grid;place-items:center;font:700 11px "FGInter";color:var(--mut)}
 .mag b{display:block;font:700 18px/1.1 "FGAntonio";text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mag span{font-size:13px;color:var(--mut)}.mag em{font-style:normal;color:#FFA344}
+.ns{display:flex;gap:28px;align-items:center;background:var(--bg2);border-radius:24px;padding:22px;color:inherit;text-decoration:none;margin-bottom:14px}
+.ns img{width:240px;aspect-ratio:3/4;object-fit:cover;border-radius:14px;flex:none;background:#222}.ns h3{font:700 44px/1 "FGAntonio";text-transform:uppercase;margin:12px 0 10px}.ns p{font-size:15px;line-height:1.5;color:#cfcbc4;margin:0}
+@media (max-width:600px){.ns{flex-direction:column;align-items:flex-start}.ns img{width:100%}.ns h3{font-size:34px}}
 .nws{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .nw{display:flex;gap:18px;align-items:center;background:var(--bg2);border-radius:20px;padding:16px;transition:background .15s}
 .nw:hover{background:#1f1f24}
@@ -256,6 +259,13 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px}
       return '<img class="' + (ft ? "feat" : "") + '" src="' + couv(u) + '" alt="" style="transform:translateX(calc(-50% + ' + (k * sp) + 'px)) rotate(' + (ft ? 0 : k * 7) + 'deg);z-index:' + (ft ? 99 : 30 - Math.abs(Math.round(k))) + '">'; }).join("");
   }
 
+  // Éventail dans l'ordre choisi dans le studio, de gauche à droite ; celle du milieu en avant.
+  function eventailG(lst) {
+    var arr = lst.slice(0, window.innerWidth < 560 ? 3 : 5), nf = arr.length, mid = Math.floor((nf - 1) / 2), sp = Math.max(60, Math.min(170, window.innerWidth / 8.5));
+    if (!nf) { $("#fan").style.display = "none"; return; }
+    $("#fan").innerHTML = arr.map(function (u, i) { var k = i - (nf - 1) / 2, ft = i === mid;
+      return '<img class="' + (ft ? "feat" : "") + '" src="' + couv(u) + '" alt="" style="transform:translateX(calc(-50% + ' + (k * sp) + 'px)) rotate(' + (ft ? 0 : k * 7) + 'deg);z-index:' + (ft ? 99 : 30 - Math.abs(Math.round(k))) + '">'; }).join("");
+  }
   // T'es pas encore dans le gang ? (Will, 26/10/2026) : affiché aux visiteurs, pas aux membres connectés.
   var JOIN = '<section class="join" id="join"><img class="duo" src="/img/don/duo.webp" alt=""><div class="tx"><div class="kk">Pendant ce temps-là</div>' +
     '<h2>T\'es pas encore<br>dans le gang ?</h2><h3>Chaque mois, <em>un membre gagne</em></h3>' +
@@ -290,12 +300,20 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 0 50px}
       var fan = C.couv && C.couv.length ? C.couv.slice(0, 5) : [];
       if (!fan.length) { fan = urls.slice(0, 5); if (jp.length) fan = [jp[0].cover].concat(fan.filter(function (u) { return u !== jp[0].cover; })).slice(0, 5); }
       $("#wall").innerHTML = urls.concat(urls, urls).slice(0, 24).map(function (u) { return '<img src="' + couv(u) + '" alt="">'; }).join("");
+      var choisi = !!(C.couv && C.couv.length);
+      if (choisi) { eventailG(fan); addEventListener("resize", function () { clearTimeout(eventail._t); eventail._t = setTimeout(function () { eventailG(fan); }, 150); }); } else
       eventail(fan); addEventListener("resize", function () { clearTimeout(eventail._t); eventail._t = setTimeout(function () { eventail(fan); }, 150); });
       var st = [[tomes.length, "sortie" + (tomes.length > 1 ? "s" : "")], [chap.length, "chapitre" + (chap.length > 1 ? "s" : "") + " JP"], [fiches.length ? "+" + fiches.length : 0, "fiche" + (fiches.length > 1 ? "s" : "")], [news.length, "actu" + (news.length > 1 ? "s" : "")]].filter(function (t) { return t[0]; });
       $("#tiles").style.gridTemplateColumns = "repeat(" + Math.min(st.length, window.innerWidth < 560 ? 2 : 4) + ",1fr)";
       $("#tiles").innerHTML = st.map(function (t) { return '<div><b>' + t[0] + '</b><div class="cap">' + t[1] + '</div></div>'; }).join("");
 
-      var h = section("Au Japon", "jp", jp, "日本") + section("En France", "fr", fr, "仏国") + JOIN;
+      // Nouvelle série annoncée : tout en haut, c'est l'annonce de la semaine (Will, 02/11/2026).
+      var estNS = function (n) { return n.cat === "licence-jp" || n.cat === "licence-fr" || (n.cats || []).some(function (c) { return c.k === "licence-jp" || c.k === "licence-fr"; }); };
+      var lienN = function (n) { return n.lien || ("/actus/" + slugify(n.fr || n.titre).slice(0, 60) + "-" + String(n.id).slice(-8)); };
+      var nouv = news.filter(estNS);
+      var hNS = nouv.length ? '<section class="sec">' + tete("#F28B82", nouv.length > 1 ? "Nouvelles séries" : "Nouvelle série", "", "新連載") + nouv.map(function (n) { var a = (n.accroche || "").trim() || String(n.texte || "").slice(0, 200);
+        return '<a class="ns" href="' + esc(lienN(n)) + '"><img src="' + couv(n.ig || n.vignette || n.cover) + '" alt="" loading="lazy"><div style="min-width:0"><span class="pill" style="background:' + (n.catC || "#F28B82") + '">' + esc(n.catNom || "Nouvelle série") + '</span><h3>' + esc(n.fr || n.titre) + '</h3><p>' + esc(a) + '</p></div></a>'; }).join("") + "</section>" : "";
+      var h = hNS + section("Au Japon", "jp", jp, "日本") + section("En France", "fr", fr, "仏国") + JOIN;
       if (chap.length) h += '<section class="sec">' + tete("#529CCA", chap.length + " chapitre" + (chap.length > 1 ? "s" : "") + ", " + mags.length + " magazine" + (mags.length > 1 ? "s" : "")) + '<div class="mags">' + chap.map(function (c) { var t = c.entry.split(" · ")[0], hl = (c.hl || [])[0];
         return '<a class="mag" href="/japon/">' + (c.cover ? '<img src="' + couv(c.cover) + '" alt="" loading="lazy">' : '<img src="' + imgWeb(t) + '" alt="" loading="lazy">') + '<div style="min-width:0"><b>' + esc(t) + '</b><span>' + esc(c.mag) + (c.ch ? " · ch. " + c.ch : "") + (hl ? ' · <em>' + esc(hl) + '</em>' : "") + "</span></div></a>"; }).join("") + "</div></section>";
       if (actus.length) h += '<section class="sec">' + tete("#D4D4D8", "À ne pas rater", "", "速報") + '<div class="nws">' + actus.map(function (n) { var a = (n.accroche || "").trim() || String(n.texte || "").slice(0, 140);

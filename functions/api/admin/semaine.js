@@ -67,7 +67,7 @@ export async function onRequestPost({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
   const b = await request.json().catch(() => ({}));
   if (!J.test(b.du || "")) return json({ error: "du attendu" }, 400);
-  const c = {}; for (const k of ["jp", "fr", "couv", "actus"]) if (Array.isArray(b.choix && b.choix[k])) c[k] = b.choix[k].map(String).slice(0, 10).map(x => x.slice(0, 600));
+  const c = {}; for (const k of ["jp", "fr", "couv", "og", "actus"]) if (Array.isArray(b.choix && b.choix[k])) c[k] = b.choix[k].map(String).slice(0, 10).map(x => x.slice(0, 600));
   await env.STATS.put("qdn:" + b.du, JSON.stringify(c));
   return json({ ok: true });
 }
