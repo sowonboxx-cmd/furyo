@@ -63,6 +63,7 @@
       '<div class="fgq-grid">' +
         // Flashcards et Lecture tout en haut : Will s'en sert tout le temps (02/11/2026). Pages privées, admin seulement.
         qt("fc", "Flashcards", "mon carnet de japonais", "/flashcard/", "") +
+        qt("fc", "Lexique", "mots à valider", "/lexique/", "") +
         qt("read", "Lecture", "chapitres traduits", "/lecture/", "") +
         qt("news", "Actualités", "à relire", "/admin/#validation", n) +
         qt("sort", "Sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
@@ -99,7 +100,7 @@
     if (!ME) { fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { ME = j || { admin: false }; openPop(); }).catch(function () { loadData(render); }); return; }
     if (ME && ME.admin) {
       if (window.FG_ADMPOP) return window.FG_ADMPOP(ME, null);
-      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=7";
+      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=8";
       sc.onload = function () { window.FG_ADMPOP(ME, null); }; sc.onerror = function () { loadData(render); };
       document.head.appendChild(sc); return;
     }
