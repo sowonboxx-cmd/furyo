@@ -14,7 +14,7 @@
     ".fmc .top small{display:block;margin:0;font:700 11.5px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;opacity:.85;color:#fff}" +
     ".fmc .bul{display:inline-block;margin:16px 0 0;background:#000;color:#F2B33D;font:700 17px/1.05 Antonio,'Arial Narrow',sans-serif;letter-spacing:.03em;text-transform:uppercase;padding:8px 12px;border-radius:14px;transform:rotate(-3deg);white-space:nowrap}" +
     ".fmc .top h2{display:block;margin:18px 0 0;padding:0;font:700 44px/.95 Antonio,'Arial Narrow',sans-serif;text-transform:uppercase;color:#fff;letter-spacing:0;text-align:left;border:0;background:none}" +
-    ".fmc .top h2 span{display:block;white-space:nowrap}.fmc .top h2 .gd{color:#F2B33D;font-weight:inherit}" +
+    ".fmc .top h2 span{display:block;white-space:nowrap}.fmc .top h2 .gd{color:#F2B33D;font-weight:inherit;font-size:1.35em;line-height:0;vertical-align:-.06em}" +
     ".fmc .x{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border:0;border-radius:17px;background:rgba(0,0,0,.6);color:#fff;font:700 18px Inter,sans-serif;cursor:pointer;padding:0}" +
     ".fmc .bd{padding:20px 24px 24px}" +
     ".fmc .st{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}" +
