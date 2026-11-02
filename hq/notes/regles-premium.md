@@ -26,6 +26,12 @@ Devenir membre : un compte Google, gratuit. Les messages « Rejoins le gang » p
 - **Du 24 au 30 novembre** : fenêtre de rappel dans Ma collection (fin de l'offre, s'abonner, faire un don).
 - **1er décembre** : Premium à **2 € par mois**. Ceux qui ne sont pas abonnés repassent membres gratuits ; leurs listes Premium sont gardées jusqu'à leur retour, leurs tomes possédés restent.
 
+## Prix : 2 € pour tout le monde, pour toujours (décidé le 02/11/2026)
+
+- Premium = **2 € par mois, pour tout le monde, tout le temps**. Jamais 3 € : même si des choses s'ajoutent (lexique, interviews…), le prix ne bouge pas. « C'est pour les fans. »
+- Ceux qui veulent donner plus passent par les **dons**, et ce sont eux qui ont les accès vraiment exclusifs.
+- **Concours** : par défaut, les donateurs (plus de 3 € ou un don) sont dans le **concours des figurines** ; les membres Premium à 2 € sont dans le **concours des mangas**.
+
 ## Dons
 
 - Montants : 5, 10, 20, 50, 100 € ou libre.
