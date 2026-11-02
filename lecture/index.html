@@ -27,9 +27,9 @@ select{background:var(--card2);border-radius:10px;padding:8px 12px;font-size:14p
 .tg button{padding:6px 11px;border-radius:8px;font-size:13px;font-weight:600;color:#bbb}
 .tg button.on{background:#f5f5f5;color:#111}
 .strip{max-width:1500px;margin:0 auto;padding:0 20px 10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin}
-.strip button{flex:none;min-width:38px;height:32px;border-radius:8px;background:var(--card2);font-size:13px;font-weight:600;color:#ccc}
+.strip button{flex:none;position:relative;overflow:hidden;min-width:34px;height:34px;padding:0 7px;border-radius:9px;background:var(--card2);font-size:13px;font-weight:600;color:#d4d4d8}
 .strip button.on{background:var(--red);color:#fff}
-.strip button.has{box-shadow:inset 0 -3px 0 var(--yel)}
+.strip button.has::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--yel)}
 main{max-width:1500px;margin:0 auto;padding:20px 20px 110px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:22px;align-items:start}
 .pic{position:sticky;top:120px;background:#000;border-radius:22px;padding:12px;display:flex;flex-direction:column;gap:10px}
 .pic img{width:100%;max-height:calc(100vh - 210px);object-fit:contain;border-radius:10px;background:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
@@ -160,6 +160,6 @@ body{font-family:"FGInter",system-ui,sans-serif}
 </div>
 <div class="lb" id="lb"><img id="lbi" alt=""></div>
 <div class="sheet" id="sheet" hidden><div class="sh" id="sh" role="dialog" aria-label="Ajouter au carnet"></div></div>
-<script src="/lecture/lecture.js?v=3"></script>
+<script src="/lecture/lecture.js?v=4"></script>
 </body>
 </html>
