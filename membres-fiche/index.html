@@ -125,7 +125,7 @@ main{max-width:1240px;padding-left:20px;padding-right:20px}
 .prem svg{width:15px;height:15px;flex:none}
 .prem.vip{background:#BC002D33;color:#FF5A6E}
 .prem.plus{background:#F2B33D26;color:#F2B33D}
-.prem .pl{font-size:1.6em;line-height:0;font-weight:800}
+.prem svg.pls{width:12px;height:12px;margin-left:-1px}
 @media (min-width:980px){
   .d1{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start}
   .pcard{position:sticky;top:84px}
@@ -261,7 +261,7 @@ function draw() {
   // Premium + (donateurs, Will 02/11/2026) : coche et texte dorés.
   const statut = m.badges.some(b => b.r === "admin") ? "Admin" : m.badges.some(b => b.r === "vip") ? "VIP" : m.plus ? "Premium +" : m.badges.some(b => b.r === "premium") ? "Premium" : "";
   // VIP en rouge FuryoGang (Will, 25/10/2026) ; Admin et Premium restent en bleu.
-  const prem = statut ? `<span class="prem${statut === "VIP" ? " vip" : statut === "Premium +" ? " plus" : ""}">${statut === "VIP" ? PREM.replace('fill="#0095F6"', 'fill="#E5483A"') : statut === "Premium +" ? PREM.replace('fill="#0095F6"', 'fill="#F2B33D"') : PREM}${statut === "Premium +" ? 'Premium <b class="pl">+</b>' : statut}</span>` : "";
+  const prem = statut ? `<span class="prem${statut === "VIP" ? " vip" : statut === "Premium +" ? " plus" : ""}">${statut === "VIP" ? PREM.replace('fill="#0095F6"', 'fill="#E5483A"') : statut === "Premium +" ? PREM.replace('fill="#0095F6"', 'fill="#F2B33D"') : PREM}${statut === "Premium +" ? 'Premium ' + '<svg class="pls" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.6 0h2.8v4.6H12v2.8H7.4V12H4.6V7.4H0V4.6h4.6z" fill="currentColor"/></svg>' : statut}</span>` : "";
   const ico = socIcons(r);
   const p4 = PF ? `<div class="p4">
       <div class="band${rang1 ? "" : " n"}">${rang1 ? CROWN : ""}<span>${P.rang ? `N°${P.rang} du classement · ` : ""}Membre n°${m.num || "?"}</span></div>
