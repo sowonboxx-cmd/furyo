@@ -257,10 +257,10 @@ function draw() {
   const cam = P.moi ? `<button type="button" class="cam" data-cam aria-label="Changer ma photo" title="Changer ma photo">${CAM}</button>` : "";
   const avw = cls => `<div class="avw">${avt.replace('class="avt"', `class="avt${cls}"`)}${cam}</div>`;
   // Statut à côté du pseudo (Will, 25/10/2026) : même coche bleue, texte selon le statut. Admin > VIP (à vie, retiré à la main) > Premium (payé).
-  // Premium Plus (donateurs, Will 02/11/2026) : coche et texte dorés.
-  const statut = m.badges.some(b => b.r === "admin") ? "Admin" : m.badges.some(b => b.r === "vip") ? "VIP" : m.plus ? "Premium Plus" : m.badges.some(b => b.r === "premium") ? "Premium" : "";
+  // Premium + (donateurs, Will 02/11/2026) : coche et texte dorés.
+  const statut = m.badges.some(b => b.r === "admin") ? "Admin" : m.badges.some(b => b.r === "vip") ? "VIP" : m.plus ? "Premium +" : m.badges.some(b => b.r === "premium") ? "Premium" : "";
   // VIP en rouge FuryoGang (Will, 25/10/2026) ; Admin et Premium restent en bleu.
-  const prem = statut ? `<span class="prem${statut === "VIP" ? " vip" : statut === "Premium Plus" ? " plus" : ""}">${statut === "VIP" ? PREM.replace('fill="#0095F6"', 'fill="#E5483A"') : statut === "Premium Plus" ? PREM.replace('fill="#0095F6"', 'fill="#F2B33D"') : PREM}${statut}</span>` : "";
+  const prem = statut ? `<span class="prem${statut === "VIP" ? " vip" : statut === "Premium +" ? " plus" : ""}">${statut === "VIP" ? PREM.replace('fill="#0095F6"', 'fill="#E5483A"') : statut === "Premium +" ? PREM.replace('fill="#0095F6"', 'fill="#F2B33D"') : PREM}${statut}</span>` : "";
   const ico = socIcons(r);
   const p4 = PF ? `<div class="p4">
       <div class="band${rang1 ? "" : " n"}">${rang1 ? CROWN : ""}<span>${P.rang ? `N°${P.rang} du classement · ` : ""}Membre n°${m.num || "?"}</span></div>
