@@ -88,9 +88,14 @@
     try { history.replaceState(null, "", "#" + S.id + "/" + CH.id + "/" + p.page); } catch (e) {}
   }
   function bubbleFor(p, mot) { return (p.bulles || []).filter(function (b) { return b.jp && b.jp.indexOf(mot) >= 0; })[0] || null; }
+  // Compteurs du chapitre ouvert (pas de toute la bibliothèque) : mots cochés pour le lexique, cartes ajoutées au carnet, questions.
   function dock() {
-    var nl = Object.keys(PICKS.lexique || {}).length, nc = (CARDS || []).length, nq = (PICKS.questions || []).length;
-    $("dcount").textContent = "Lexique " + nl + " · Carnet " + nc + " · Questions " + nq;
+    if (!S || !CH) return;
+    var pre = S.id + "|" + CH.id + "|";
+    var nl = Object.keys(PICKS.lexique || {}).filter(function (k) { return k.indexOf(pre) === 0; }).length;
+    var nc = (CARDS || []).filter(function (c) { return c.ref && c.ref.serie === S.id && c.ref.chap === CH.id; }).length;
+    var nq = (PICKS.questions || []).filter(function (q) { return q.serie === S.id && q.chap === CH.id; }).length;
+    $("dcount").textContent = CH.titre + " · Lexique " + nl + " · Carnet " + nc + " · Questions " + nq;
   }
 
   // ---------- Ajouter au carnet : le mot, ses kanji, ou la phrase (la phrase et la planche restent toujours jointes) ----------
@@ -166,11 +171,6 @@
   };
   $("zoom").onclick = function () { $("lbi").src = $("img").src; $("lb").classList.add("on"); };
   $("lb").onclick = function () { $("lb").classList.remove("on"); };
-  $("copy").onclick = function () {
-    var lines = Object.keys(PICKS.lexique || {}).sort().map(function (k) { var a = k.split("|"); return a[1] + " p." + a[2] + " : " + a[3]; });
-    var txt = "À garder pour le lexique :\n" + lines.join("\n");
-    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { $("copy").textContent = "Copié !"; setTimeout(function () { $("copy").textContent = "Copier mes choix"; }, 1600); }).catch(function () { $("copy").textContent = "Copie bloquée"; });
-  };
 
   function route() {
     var m = (location.hash || "").slice(1).split("/");

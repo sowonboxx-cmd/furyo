@@ -77,6 +77,7 @@ body.nojp .jpl,body.nokana .kn{display:none}
 .sync.ok{background:var(--green)}
 .dock{position:fixed;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:20;display:flex;gap:8px;align-items:center;background:#000;border-radius:16px;padding:8px 8px 8px 14px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .dock span{font-size:13px;color:#ccc}
+.dock a{background:var(--yel);color:#111;font-weight:700;border-radius:11px;padding:9px 14px;font-size:14px;text-decoration:none;white-space:nowrap}
 .dock button{background:var(--yel);color:#111;font-weight:700;border-radius:11px;padding:9px 14px;font-size:14px}
 .dock button.ok{background:var(--green)}
 .empty{color:var(--mut);padding:30px;text-align:center;background:var(--card);border-radius:18px}
@@ -89,7 +90,8 @@ body.nojp .jpl,body.nokana .kn{display:none}
  .pic img{max-height:none}
  .b{grid-template-columns:1fr}.b .jpl,.b .kn,.b .nt{grid-column:1}
  .brand{font-size:28px}
- .dock{left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);padding:6px 6px 6px 12px;border-radius:14px}.dock span{font-size:11px;flex:1}.dock button{padding:8px 10px;font-size:12px}
+ .dock{left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);padding:6px 6px 6px 12px;border-radius:14px}.dock span{font-size:11px;flex:1}.dock a{background:var(--yel);color:#111;font-weight:700;border-radius:11px;padding:9px 14px;font-size:14px;text-decoration:none;white-space:nowrap}
+.dock a{padding:8px 10px;font-size:12px}
 }
 
 @font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
@@ -154,10 +156,10 @@ body{font-family:"FGInter",system-ui,sans-serif}
  </div>
  <div class="side" id="side"></div>
 </main>
-<div class="dock" id="dock"><span id="dcount"></span><button id="copy">Copier mes choix</button></div>
+<div class="dock" id="dock"><span id="dcount"></span><a id="tocarnet" href="/flashcard/">Mon carnet →</a></div>
 </div>
 <div class="lb" id="lb"><img id="lbi" alt=""></div>
 <div class="sheet" id="sheet" hidden><div class="sh" id="sh" role="dialog" aria-label="Ajouter au carnet"></div></div>
-<script src="/lecture/lecture.js?v=2"></script>
+<script src="/lecture/lecture.js?v=3"></script>
 </body>
 </html>
