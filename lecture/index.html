@@ -32,10 +32,11 @@ select{background:var(--card2);border-radius:10px;padding:8px 12px;font-size:14p
 .strip button.has{box-shadow:inset 0 -3px 0 var(--yel)}
 main{max-width:1500px;margin:0 auto;padding:20px 20px 110px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:22px;align-items:start}
 .pic{position:sticky;top:120px;background:#000;border-radius:22px;padding:12px;display:flex;flex-direction:column;gap:10px}
-.pic img{width:100%;max-height:calc(100vh - 210px);object-fit:contain;border-radius:10px;background:#fff;cursor:zoom-in}
+.pic img{width:100%;max-height:calc(100vh - 210px);object-fit:contain;border-radius:10px;background:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
 .nav{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .nav button{background:var(--card2);border-radius:12px;padding:10px 16px;font-weight:600;font-size:14px}
 .nav button:disabled{opacity:.35;cursor:default}
+.nav .zm{padding:10px 12px;display:grid;place-items:center}
 .nav .pn{font-family:"FGAntonio";font-size:30px}
 .side{display:flex;flex-direction:column;gap:14px}
 .resume{background:var(--card);border-radius:18px;padding:16px 20px;font-size:15px;color:#ddd}
@@ -149,7 +150,7 @@ body{font-family:"FGInter",system-ui,sans-serif}
 <main>
  <div class="pic">
   <img id="img" alt="Planche">
-  <div class="nav"><button id="prev">← Précédente</button><span class="pn" id="pn"></span><button id="next">Suivante →</button></div>
+  <div class="nav"><button id="prev">← Précédente</button><span class="pn" id="pn"></span><button id="zoom" aria-label="Agrandir la planche" class="zm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M11 8v6M8 11h6"/></svg></button><button id="next">Suivante →</button></div>
  </div>
  <div class="side" id="side"></div>
 </main>
@@ -157,6 +158,6 @@ body{font-family:"FGInter",system-ui,sans-serif}
 </div>
 <div class="lb" id="lb"><img id="lbi" alt=""></div>
 <div class="sheet" id="sheet" hidden><div class="sh" id="sh" role="dialog" aria-label="Ajouter au carnet"></div></div>
-<script src="/lecture/lecture.js?v=1"></script>
+<script src="/lecture/lecture.js?v=2"></script>
 </body>
 </html>

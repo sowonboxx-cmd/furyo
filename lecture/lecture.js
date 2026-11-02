@@ -159,7 +159,12 @@
   $("tjp").onclick = function () { document.body.classList.toggle("nojp"); $("tjp").classList.toggle("on"); };
   $("tkn").onclick = function () { document.body.classList.toggle("nokana"); $("tkn").classList.toggle("on"); };
   document.addEventListener("keydown", function (e) { if (ADD || /INPUT|TEXTAREA/.test((e.target || {}).tagName || "")) return; if (e.key === "ArrowRight") $("next").click(); if (e.key === "ArrowLeft") $("prev").click(); if (e.key === "Escape") $("lb").classList.remove("on"); });
-  $("img").onclick = function () { $("lbi").src = $("img").src; $("lb").classList.add("on"); };
+  // Toucher la planche : moitié droite = suivante, moitié gauche = précédente (pratique sur tablette). La loupe agrandit.
+  $("img").onclick = function (e) {
+    var r = $("img").getBoundingClientRect();
+    if (e.clientX - r.left > r.width / 2) $("next").click(); else $("prev").click();
+  };
+  $("zoom").onclick = function () { $("lbi").src = $("img").src; $("lb").classList.add("on"); };
   $("lb").onclick = function () { $("lb").classList.remove("on"); };
   $("copy").onclick = function () {
     var lines = Object.keys(PICKS.lexique || {}).sort().map(function (k) { var a = k.split("|"); return a[1] + " p." + a[2] + " : " + a[3]; });
