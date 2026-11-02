@@ -70,6 +70,16 @@ td{border-top:1px solid var(--line);padding:14px 8px;text-align:center}td:first-
 td.p{background:rgba(188,0,45,.12)}
 td i{font-style:normal;font-weight:800;font-size:16px}.y{color:#fff}td.p .y{color:#ff5a7a}.n{color:#55555A}
 td small{color:var(--mut);font-size:12.5px;font-weight:600}
+th.pp{color:#F2B33D;width:130px}
+td.pp{background:rgba(242,179,61,.10)}td.pp .y{color:#F2B33D}td.pp b{color:#F2B33D;font-size:13px}
+tr.plus td:first-child b{color:#F2B33D}
+.ppb{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:13px;background:#F2B33D26;color:#F2B33D;font:700 12px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.ppb svg.pls{width:11px;height:11px}
+.prs{display:flex;gap:22px;align-items:flex-end}.pr.pp b{color:#F2B33D}
+.ppn{margin:16px 0 0;color:var(--mut);font-size:14.5px;line-height:1.55}.ppn a{color:#F2B33D;font-weight:700}
+.plist{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.plist li{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.plist li svg{width:12px;height:12px;color:#F2B33D;flex:none}.don .plist li svg{color:#BC002D;width:14px;height:14px}
 .tab .btn{margin-top:22px}
 .don{display:block}
 .don .in{max-width:640px}
@@ -92,7 +102,7 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
 .av{display:inline-block;margin-left:8px;background:rgba(242,179,61,.16);color:var(--gold)!important;border-radius:6px;padding:2px 7px;font-size:11px!important;font-weight:800!important;vertical-align:1px}
 .don{position:relative}.don .dd{position:absolute;right:40px;top:26px;width:150px;transform:rotate(3deg)}
 .don h2,.don .in{max-width:calc(100% - 200px)}
-@media (max-width:760px){.sg{grid-template-columns:1fr}.hero .hj{position:relative;right:auto;top:auto;transform:rotate(3deg);width:150px;margin:0 0 18px auto}.wh .ng{display:none}.soon{padding:24px 18px}.don .dd{width:96px;right:18px;top:18px}.don h2,.don .in{max-width:none}.don h2{padding-right:100px}.tab{padding:24px 18px}.tab h2{font-size:26px}.pr b{font-size:34px}th{width:74px;font-size:11px}td{font-size:14px;padding:12px 4px}.tiers{grid-template-columns:1fr 1fr}.ti b{font-size:32px}}
+@media (max-width:760px){.sg{grid-template-columns:1fr}.hero .hj{position:relative;right:auto;top:auto;transform:rotate(3deg);width:150px;margin:0 0 18px auto}.wh .ng{display:none}.soon{padding:24px 18px}.don .dd{width:96px;right:18px;top:18px}.don h2,.don .in{max-width:none}.don h2{padding-right:100px}.tab{padding:24px 18px}.tab h2{font-size:26px}.pr b{font-size:34px}th{width:74px;font-size:11px}th.pp{width:78px;padding:10px 2px}th .ppb{font-size:9.5px;padding:0 6px;height:22px;letter-spacing:.03em;gap:3px}th .ppb svg.pls{width:9px;height:9px}.prs{gap:14px}td{font-size:14px;padding:12px 4px}.tiers{grid-template-columns:1fr 1fr}.ti b{font-size:32px}}
 @media (max-width:760px){
   main{padding:14px 12px 60px}
   .hero{padding:34px 22px 30px}.hero .kj{font-size:200px;top:-30px}
@@ -147,26 +157,28 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
     <p>Le site reste gratuit pour tout le monde : actus, fiches, calendrier, et tes tomes possédés sans limite. Premium débloque tout ce qui donne envie de participer.</p>
   </section>
 
-  <section class="tab"><div class="th"><h2>Gratuit ou Premium</h2><p class="pr"><b>2 €</b><span>par mois</span></p></div>
+  <section class="tab"><div class="th"><h2>Gratuit, Premium<br>ou Premium +</h2><div class="prs"><p class="pr"><b>2 €</b><span>par mois</span></p><p class="pr pp"><b>Don</b><span>dès 25 €</span></p></div></div>
     <table>
-      <thead><tr><th></th><th>Gratuit</th><th class="p">Premium</th></tr></thead>
+      <thead><tr><th></th><th>Gratuit</th><th class="p">Premium</th><th class="pp"><a href="#dons" class="ppb">Premium <svg class="pls" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.6 0h2.8v4.6H12v2.8H7.4V12H4.6V7.4H0V4.6h4.6z" fill="currentColor"/></svg></a></th></tr></thead>
       <tbody>
-        <tr><td>Actus, fiches séries, calendrier, Au Japon</td><td><i class="y">✓</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Bibliothèque des mangas possédés</td><td><i class="y">✓</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Mangas lus et statistiques de lecture</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Classements communautaires</td><td><small>Limité</small></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Liste des mangas à lire</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Panier : mangas à acheter plus tard</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Collections détaillées des autres membres</td><td><small>Limité</small></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Tirage au sort pour gagner un tome<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Tirage au sort pour gagner une figurine<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>FuryoGang Magazine : le magazine du mois<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Concours<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Bibliothèque de ressources du gang<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Interviews de mangakas en avant-première<small class="av">Bientôt</small></td><td><small>1 semaine après</small></td><td class="p"><i class="y">✓</i></td></tr>
-        <tr><td>Lexique Furyō Plus : l’argot japonais en détail<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td></tr>
+        <tr><td>Actus, fiches séries, calendrier, Au Japon</td><td><i class="y">✓</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Bibliothèque des mangas possédés</td><td><i class="y">✓</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Mangas lus et statistiques de lecture</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Classements communautaires</td><td><small>Limité</small></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Liste des mangas à lire</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Panier : mangas à acheter plus tard</td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Collections détaillées des autres membres</td><td><small>Limité</small></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Tirage au sort pour gagner un tome<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>FuryoGang Magazine : le magazine du mois<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Concours des mangas<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Bibliothèque de ressources du gang<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr><td>Lexique Furyō Plus : l’argot japonais en détail<small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="y">✓</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr class="plus"><td><b>Interviews de mangakas</b><small class="av">Bientôt</small></td><td><small>1 semaine après</small></td><td class="p"><small>À la sortie</small></td><td class="pp"><b>1 semaine avant</b></td></tr>
+        <tr class="plus"><td><b>Concours des figurines</b><small class="av">Bientôt</small></td><td><i class="n">–</i></td><td class="p"><i class="n">–</i></td><td class="pp"><i class="y">✓</i></td></tr>
+        <tr class="plus"><td><b>Et plus à venir, réservé aux Premium +</b></td><td><i class="n">–</i></td><td class="p"><i class="n">–</i></td><td class="pp"><i class="y">✓</i></td></tr>
       </tbody>
     </table>
+    <p class="ppn"><span class="ppb">Premium <svg class="pls" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.6 0h2.8v4.6H12v2.8H7.4V12H4.6V7.4H0V4.6h4.6z" fill="currentColor"/></svg></span> n'est pas un abonnement : c'est ce que t'obtiens en faisant un don de 25 € ou plus (1 an par tranche de 25 €). <a href="#dons">Voir les dons ↓</a></p>
     <button type="button" class="btn b1" onclick="this.textContent='Bientôt disponible'">Devenir Premium · 2 € par mois</button>
   </section>
 
@@ -186,16 +198,16 @@ td small{color:var(--mut);font-size:12.5px;font-weight:600}
     </div>
   </section>
 
-  <section class="don" id="dons" style="scroll-margin-top:120px"><img class="ch dj" src="/img/don/jinnai.webp" alt=""><span class="bul dk">On rackette pas.<br>On propose.</span><div class="dt"><small>Premium avant Premium</small>
+  <section class="don" id="dons" style="scroll-margin-top:120px"><img class="ch dj" src="/img/don/jinnai.webp" alt=""><span class="bul dk">On rackette pas.<br>On propose.</span><div class="dt"><small>Premium +</small>
     <h2>Un don, et t'es Premium +</h2>
-    <p class="in">C'est un don, pas un abonnement : il fait vivre le site, et à partir de 25 € <b>t'es Premium +</b> : tout le Premium, plus les interviews une semaine avant et le concours des figurines. Chaque donateur reçoit son badge sur son profil, selon le montant.</p></div>
+    <p class="in">C'est un don, pas un abonnement : il fait vivre le site, et à partir de 25 € <b>t'es Premium +</b>. Tu as tout le Premium, et en plus :</p><ul class="plist"><li><svg class="pls" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.6 0h2.8v4.6H12v2.8H7.4V12H4.6V7.4H0V4.6h4.6z" fill="currentColor"/></svg>Le concours des figurines</li><li><svg class="pls" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.6 0h2.8v4.6H12v2.8H7.4V12H4.6V7.4H0V4.6h4.6z" fill="currentColor"/></svg>Les interviews une semaine avant tout le monde</li><li><svg class="pls" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.6 0h2.8v4.6H12v2.8H7.4V12H4.6V7.4H0V4.6h4.6z" fill="currentColor"/></svg>Et plus à venir, réservé aux Premium +</li></ul><p class="in" style="margin-top:14px">Chaque donateur reçoit son badge sur son profil, selon le montant, et le garde pour toujours.</p></div>
     <div class="tiers">
       <div class="ti"><b>Libre</b><span>Le montant que tu veux</span><p>Un coup de main pour le gang.</p><em class="bdg" style="color:#98989D;background:#98989D26"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/></svg>Badge Kobun</em><button type="button" class="btn b3" data-don="libre">Je soutiens</button></div>
       <div class="ti"><b>25 €</b><span>Premium + 1 an</span><p>Premium + à partir du 1er décembre</p><em class="bdg" style="color:#E0955F;background:#E0955F26"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M14.5 6.5L18 3h3v3l-3.5 3.5M5 14l4 4M7 17l-3 3M3 19l2 2"/></svg>Badge Bancho</em><button type="button" class="btn b3" data-don="25">Je soutiens</button></div>
       <div class="ti"><b>50 €</b><span>Premium + 2 ans</span><p>Premium + à partir du 1er décembre</p><em class="bdg" style="color:#B38CFF;background:#B38CFF26"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>Badge Shogun</em><button type="button" class="btn b3" data-don="50">Je soutiens</button></div>
       <div class="ti top"><b>100 €</b><span>Premium + 4 ans</span><p>Premium + à partir du 1er décembre</p><em class="bdg" style="color:#E54839;background:#E5483926"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 21c-3.9 0-7-2.8-7-6.6 0-3.1 2.2-5.3 3.6-7.2.4 1.6 1.4 2.8 2.6 3.3C11 7 12.5 4.6 15 3c-.3 2.6.8 4.4 2.2 6 1.1 1.3 1.8 2.9 1.8 4.6C19 18 15.9 21 12 21z"/></svg>Badge Oyabun</em><button type="button" class="btn b3" data-don="100">Je soutiens</button></div>
     </div>
-    <p class="note">Connecte-toi d'abord : le bouton enregistre ton don à ton nom, puis ouvre PayPal (carte bancaire, Apple Pay ou compte PayPal), où tu tapes le montant de ton choix et ton pseudo. On active ton Premium (à partir du 1er décembre) et ton badge à la main.</p>
+    <p class="note">Connecte-toi d'abord : le bouton enregistre ton don à ton nom, puis ouvre PayPal (carte bancaire, Apple Pay ou compte PayPal), où tu tapes le montant de ton choix et ton pseudo. On active ton Premium + (à partir du 1er décembre) et ton badge à la main.</p>
   </section>
 
   <section class="faq"><h2>Questions</h2>
