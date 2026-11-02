@@ -5,7 +5,7 @@
 import { isAdmin, json } from "../../../lib/admin.js";
 
 const EMPREINTE = "a7ad332696732ec9078aa4d51daa755b2baed05687f95577925e7601ad1aaae1";
-const CHEMIN = /^prive\/(lecture|flashcards)\/[A-Za-z0-9._\/-]{1,200}$/;
+const CHEMIN = /^prive\/(lecture|flashcards|lexique)\/[A-Za-z0-9._\/-]{1,200}$/;
 const TYPES = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", json: "application/json; charset=utf-8", mp4: "video/mp4" };
 const MAX = 12 * 1024 * 1024;
 
@@ -25,7 +25,7 @@ export async function onRequest({ request, env }) {
   const url = new URL(request.url);
   const f = url.searchParams.get("f") || "";
   if (request.method === "GET" && url.searchParams.has("liste")) {
-    if (!/^prive\/(lecture|flashcards)\//.test(f)) return json({ error: "chemin" }, 400);
+    if (!/^prive\/(lecture|flashcards|lexique)\//.test(f)) return json({ error: "chemin" }, 400);
     const out = []; let cursor;
     do { const l = await env.COUV.list({ prefix: f, cursor, limit: 1000 }); l.objects.forEach(o => out.push({ k: o.key, s: o.size })); cursor = l.truncated ? l.cursor : null; } while (cursor && out.length < 20000);
     return json({ n: out.length, octets: out.reduce((a, o) => a + o.s, 0), fichiers: out });
