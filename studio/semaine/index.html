@@ -346,13 +346,13 @@ button:disabled{opacity:.5;cursor:default}
     // 8 · Fin
     // Couvertures au format normal (Will, 02/11/2026) : largeur fixe, hauteur selon l'image, plus grandes quand il y en a peu.
     var nP = Math.min(proch.length, 5), colP = nP <= 3 ? 3 : nP;
-    var c8 = proch.length ? '<div style="display:grid;grid-template-columns:repeat(' + colP + ',1fr);gap:22px;align-items:end">' + proch.slice(0, 5).map(function (x) {
-      return '<div data-cell><img class="cov" src="' + couv(x.cover) + '" style="width:100%;height:auto;max-height:' + (nP <= 3 ? 470 : 380) + 'px;object-fit:contain;background:none;border-width:4px"><div class="s" style="font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" contenteditable>' + esc((x.pays === "France" ? x.fr || x.series : x.series).replace(/^WORST Gaiden /, "")) + " " + nn(x.n) + "</div></div>"; }).join("") + "</div>" : "";
+    var c8 = proch.length ? '<div style="display:grid;grid-template-columns:repeat(' + colP + ',minmax(0,1fr));gap:22px;align-items:end">' + proch.slice(0, 5).map(function (x) {
+      return '<div data-cell><img class="cov" src="' + couv(x.cover) + '" style="width:100%;height:auto;border-width:4px"><div class="s" style="font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" contenteditable>' + esc((x.pays === "France" ? x.fr || x.series : x.series).replace(/^WORST Gaiden /, "")) + " " + nn(x.n) + "</div></div>"; }).join("") + "</div>" : "";
     var fin = '<div class="qn"><div class="top"><img src="' + LOGO + '" alt=""><div class="r">Quoi de neuf · <b data-n></b></div></div>' +
-      (proch.length ? '<div class="head" style="right:64px"><div class="chip"><i style="background:var(--red)"></i><span contenteditable>Semaine prochaine</span></div><h2 style="font-size:120px" contenteditable>Ça arrive</h2></div><div style="position:absolute;left:64px;right:64px;top:400px">' + c8 + "</div>" : "") +
-      '<div style="position:absolute;left:0;right:0;top:' + (proch.length ? 1010 : 300) + 'px;bottom:' + (proch.length ? 0 : 300) + 'px;background:var(--red)"></div>' +
-      '<div style="position:absolute;left:64px;right:64px;top:' + (proch.length ? 1060 : 420) + 'px"><div style="font:700 96px/1.04 FGAntonio;text-transform:uppercase" contenteditable>Tout est sur<br>furyogang.com</div></div>' +
-      '<div style="position:absolute;right:64px;top:' + (proch.length ? 1140 : 500) + 'px;background:#fff;color:var(--red);font:700 36px FGAntonio;letter-spacing:.12em;text-transform:uppercase;padding:18px 30px;border-radius:12px" contenteditable>Lien en bio</div>' +
+      (proch.length ? '<div class="head" style="right:64px"><div class="chip"><i style="background:var(--red)"></i><span contenteditable>Semaine prochaine</span></div><h2 style="font-size:120px" contenteditable>Ça arrive</h2></div><div style="position:absolute;left:64px;right:64px;top:380px;height:' + ((nP >= 4 ? 900 : 1010) - 400) + 'px;display:flex;align-items:center"><div style="width:100%">' + c8 + "</div></div>" : "") +
+      '<div style="position:absolute;left:0;right:0;top:' + (proch.length ? (nP >= 4 ? 900 : 1010) : 300) + 'px;bottom:' + (proch.length ? 0 : 300) + 'px;background:var(--red)"></div>' +
+      '<div style="position:absolute;left:64px;right:64px;top:' + (proch.length ? (nP >= 4 ? 960 : 1060) : 420) + 'px"><div style="font:700 96px/1.04 FGAntonio;text-transform:uppercase" contenteditable>Tout est sur<br>furyogang.com</div></div>' +
+      '<div style="position:absolute;right:64px;top:' + (proch.length ? (nP >= 4 ? 1040 : 1140) : 500) + 'px;background:#fff;color:var(--red);font:700 36px FGAntonio;letter-spacing:.12em;text-transform:uppercase;padding:18px 30px;border-radius:12px" contenteditable>Lien en bio</div>' +
       '<div class="bot"><span style="color:var(--cr)">@FuryoGang</span><span class="go">#FuryoGang</span></div></div>';
     out.push({ k: "fin", nom: "Fin", html: fin });
 
