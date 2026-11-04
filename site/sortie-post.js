@@ -135,6 +135,12 @@
     }
     // Titre sans le magazine ni « Nouvelle série : » d'abord (Will, 27/10/2026), puis le titre complet, puis le nom de la série.
     var titres = [...new Set([i.titre.replace(/\s*\([^)]*\)/g, "").replace(/^(nouvelle série|news|fin de série|hommage|extrait)\s*:\s*/i, "").replace(/\s+[—–-]\s+série terminée.*$/i, ""), i.titre, String(i.serie && i.serie.t || i.titre)])];
+    // Lien direct de la news sur X (Will, 04/11/2026) : toutes les news renvoient vers leur page, sauf les news de tomes
+    // (couvertures, sorties), qui gardent le lien de la fiche. Instagram et TikTok ne changent pas.
+    if (i.id && !/^(couv|sortie)/.test(i.cat || "")) {
+      var slN = String(s.fr || s.t || String(i.titre || "").split(" : ").pop()).replace(/œ/g, "oe").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "news";
+      url = "furyogang.com/actus/" + slN + "-" + String(i.id).replace(/-/g, "").slice(-8);
+    }
     // Pas de redite (Will, 22/10/2026) : si la 1re phrase du résumé redit le titre, on la retire des posts.
     txt = sansRedite(i.titre, txt);
     var ph = phrases(txt), resumes = [...ph.map(function (_, n) { return ph.slice(0, n + 1).join(" "); }).reverse(), ""];
