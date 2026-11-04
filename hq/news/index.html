@@ -395,9 +395,23 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       '<div class="lbl">Image de partage du lien (X, WhatsApp, LinkedIn…)</div><div id="ogp" style="position:relative;width:100%;aspect-ratio:1200/630;border-radius:12px;overflow:hidden;background:#000"><div class="ogs" style="position:absolute;left:0;top:0;transform-origin:0 0"></div></div>' +
       '<div class="ai"><button data-gen>Refaire les textes réseaux depuis l’article</button><a class="btn" style="height:auto;padding:9px 12px;border-radius:12px;font-size:12.5px;text-decoration:none" href="/admin/#validation/' + encodeURIComponent(N.id) + '">Catégorie, vidéo, recadrage… (back-office)</a></div></div>';
     var sub = { x: "Le post qui part sur @FuryoGang. L’aperçu se met à jour pendant que tu tapes.", ig: "Publication sur @furyogang. La légende s’affiche sous l’image.", tt: "Publication photo sur @furyogang. La légende s’affiche en bas de l’image : le visuel TikTok garde le titre en haut et le bas libre." }[k];
-    return '<div class="edp"><h2>' + IC[k] + NOMS[k] + '</h2><p class="sub">' + sub + '</p><div class="lbl">' + (k === "x" ? "Texte" : "Légende") + ' <span class="lbr">' + compteur(k) + '<span class="cp" data-copy="' + k + '" role="button" title="Copier le texte">' + SV(P.copier, { w: 15, sw: 2.2 }) + 'Copier</span></span></div><textarea class="ta" data-f="' + k + '">' + esc(D[k]) + '</textarea>' +
+    return '<div class="edp"><h2>' + IC[k] + NOMS[k] + '</h2><p class="sub">' + sub + '</p><div class="lbl">' + (k === "x" ? "Texte" : "Légende") + ' <span class="lbr">' + compteur(k) + '<span class="cp" data-copy="' + k + '" role="button" title="Copier le texte">' + SV(P.copier, { w: 15, sw: 2.2 }) + 'Copier</span></span></div><textarea class="ta" data-f="' + k + '">' + esc(D[k]) + '</textarea>' + (k === "x" ? lienXSw() : "") +
       (estExtrait() && k !== "tt" ? '<div class="lbl">Visuel ' + (k === "x" ? "(si tu postes une image plutôt que le lien)" : "Instagram 3:4") + '</div><div class="ai" style="margin-top:0"><button data-extdl>' + (D.extPng ? "Télécharger le visuel 3:4" : "Visuel en préparation…") + '</button></div>' : '<div class="lbl">Image</div>' + imgPick()) + '<div class="ai"><button data-dl="' + k + '">' + SV(P.dl, { w: 15, sw: 2.2 }) + ' Télécharger l’image ' + NOMS[k] + '</button><button data-auto="' + k + '">Revenir au texte automatique</button></div></div>';
   }
+  // Lien du post X au choix (Will, 04/11/2026) : la fiche de la série ou la news elle-même, même avant sa mise en ligne
+  // (l'adresse de la news ne change jamais, et une news planifiée se met en ligne toute seule à l'heure prévue).
+  var RE_LX = /(https:\/\/)?furyogang\.com\/(series|actus)\/[^\s]+|(https:\/\/)?furyogang\.com(?=\s|$)/;
+  function lienXActuel() { var m = String(D.x || "").match(RE_LX); return !m ? "" : /\/actus\//.test(m[0]) ? "news" : "fiche"; }
+  function lienXSw() {
+    var a = lienXActuel(), b = function (v, t) { return '<button data-lienx="' + v + '"' + (a === v ? ' style="background:#F2B33D;color:#000"' : "") + '>' + t + '</button>'; };
+    return '<div class="lbl">Lien dans le post</div><div class="ai" style="margin-top:0">' + b("news", "Lien de la news") + b("fiche", "Lien de la fiche") + '</div>';
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-lienx]"); if (!b || !N) return;
+    var sl = N.serie && N.serie.slug, u = b.dataset.lienx === "news" ? lienNews().replace(/^https:\/\//, "") : (sl ? "furyogang.com/series/" + sl : "furyogang.com");
+    if (RE_LX.test(D.x || "")) D.x = D.x.replace(RE_LX, u); else D.x = String(D.x || "").replace(/\s*$/, "") + "\n" + u;
+    draw(); toast(b.dataset.lienx === "news" ? "Lien de la news dans le post ✓" : "Lien de la fiche dans le post ✓");
+  });
   function focus() {
     if (V === "lien") return haut() + '<div class="fg">' + edLien().replace("</h2>", '<span class="live"><i></i>Aperçu en direct →</span></h2>') + '<div class="ph lfo"><span class="lpf2" id="lienp">' + scrLien() + '</span></div></div>' + navBar() + plan();
     var web = V === "site";
