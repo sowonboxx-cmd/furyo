@@ -34,6 +34,16 @@ export async function onRequestGet({ env, request, waitUntil }) {
     const pg = await page(env.NOTION_TOKEN, apercu);
     return new Response(JSON.stringify(await bati(pg && !pg.archived ? [pg] : [])), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
   }
+  // Aperçu du lien d'une news planifiée (Will, 04/11/2026) : /api/news?avance=<8 derniers caractères de l'id>.
+  // Sert seulement à /actus/<slug> pour donner à X le bon titre et la bonne image quand le tweet est préparé à l'avance.
+  const avance = (new URL(request.url).searchParams.get("avance") || "").toLowerCase();
+  if (avance) {
+    if (!/^[0-9a-f]{8}$/.test(avance)) return new Response(JSON.stringify({ items: [] }), { status: 400 });
+    const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: { filter: { and: [
+      { property: "Statut", select: { equals: "À valider" } }, { property: "Planifiée le", date: { is_not_empty: true } }] } } }).catch(() => []);
+    const r = rows.filter(x => x.id.replace(/-/g, "").endsWith(avance));
+    return new Response(JSON.stringify(await bati(r)), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+  }
   // Publication planifiée (Will, 04/11/2026) : une news « À valider » dont l'heure « Planifiée le » est passée est mise en ligne
   // toute seule. Son lien (connu à l'avance dans le studio) marche donc dès l'heure prévue, pour programmer le tweet en avance.
   // On passe aussi la news en « Publié sur le site » dans Notion (Publiée le = heure prévue), pour que le QG et le récap suivent.

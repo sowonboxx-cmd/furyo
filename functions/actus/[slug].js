@@ -25,6 +25,12 @@ export async function onRequestGet({ request, env, params }) {
       const r2 = await fetch(new URL("/api/news?refresh=1", request.url).toString(), { headers: { cookie: "" } }).catch(() => null);
       if (r2 && r2.ok) n = ((await r2.json()).items || []).find(x => String(x.id).endsWith(bout));
     }
+    // News planifiée pas encore en ligne : la page reste vide pour les visiteurs, mais l'aperçu du lien (titre, image)
+    // est déjà le bon, pour un tweet préparé à l'avance (Will, 04/11/2026).
+    if (!n && /^[0-9a-f]{8}$/.test(bout)) {
+      const r3 = await fetch(new URL("/api/news?avance=" + bout, request.url).toString(), { headers: { cookie: "" } }).catch(() => null);
+      if (r3 && r3.ok) n = ((await r3.json()).items || [])[0];
+    }
     if (!n) return page;
     // News avec un lien externe (ex. récap du mois) : la page /actus/ redirige vers ce lien,
     // qui porte le vrai contenu. Évite une page news vide (pas de série reliée). (Will, 20/10/2026)
