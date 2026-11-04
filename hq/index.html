@@ -418,6 +418,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 
 /* Vue « Jours » (Will, 25/10/2026) : maquette A (ordinateur), E5+E6 (téléphone) */
 .jgrid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:16px;align-items:start}
+.planh{color:#F2B33D;font-weight:700}
 .japub{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#3a3a40 transparent}
 .apl-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.apl-h h2{margin:0;font:700 24px "FGAntonio";text-transform:uppercase}
 .apl-n{font:700 11px "FGInter";background:#26262c;color:var(--mut);border-radius:999px;padding:3px 9px}
@@ -1047,7 +1048,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
 
   function chipEv(it) {
     var c = itemColor(it), dark = it.kind !== "sortie" && lisible(c);
-    return '<button class="chip-ev' + (dark ? " dark" : "") + (itemDone(it) ? " done" : "") + '" style="background:' + c + '" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + ">" + (itemImp(it) ? '<span class="im">● </span>' : "") + esc(itemTitle(it)) + "</button>";
+    return '<button class="chip-ev' + (dark ? " dark" : "") + (itemDone(it) ? " done" : "") + '" style="background:' + c + '" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + ">" + (itemImp(it) ? '<span class="im">● </span>' : "") + (it.kind === "news" && it.n.plan ? "🕒 " + (it.n.heure ? esc(it.n.heure) + " " : "") : "") + esc(itemTitle(it)) + "</button>";
   }
   function titreVue() {
     if (calView === "jours") {
@@ -1085,11 +1086,11 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
   function carteCal(it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
-        if (it.kind === "news") { var ni = it.n, nim = ni.image ? (/^https?:/.test(ni.image) ? "/api/couv?u=" + encodeURIComponent(ni.image) + "&w=120" : ni.image) : ""; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '">' + (nim ? '<span class="cov" style="background-image:url(\'' + esc(nim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span>') + '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Publiée · ' + esc(ni.label || "News") + '</span></span><span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span></button>"; }
+        if (it.kind === "news") { var ni = it.n, nim = ni.image ? (/^https?:/.test(ni.image) ? "/api/couv?u=" + encodeURIComponent(ni.image) + "&w=120" : ni.image) : ""; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '">' + (nim ? '<span class="cov" style="background-image:url(\'' + esc(nim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span>') + '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (ni.plan ? '<b class="planh">Planifiée' + (ni.heure ? " · " + esc(ni.heure) : "") + "</b> · " : "Publiée · ") + esc(ni.label || "News") + '</span></span>' + (ni.plan ? "" : '<span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span>") + "</button>"; }
         var evc = it.kind === "ev" ? evCover(it.e, it.date) : "";
         if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + evc + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
         var c = itemColor(it);
-        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? "Publiée · " + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
+        return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? (it.n.plan ? '<b class="planh">Planifiée' + (it.n.heure ? " · " + esc(it.n.heure) : "") + "</b> · " : "Publiée · ") + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }
 
   // Vue « Jours » (Will, 25/10/2026, maquette A ordinateur / E5+E6 mobile) : aujourd'hui + les 3 jours suivants,
@@ -1390,8 +1391,11 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       // Vignette = le visuel utilisé pour la publication (Instagram, TikTok, couverture, image du lien), sinon l'image de la news (Will, 28/10/2026).
       var visuel = function (x) { var c = x.carte || {}, ic = x.imageChoisie && !/\/api\/ogcard\//.test(x.imageChoisie) ? x.imageChoisie : ""; return c.ig || c.tt || c.couv || ic || c.og || x.image || (x.serie && x.serie.cover) || ""; };
       NEWS = vn.filter(function (x) { return x && x.enLigne && (x.publie || x.date || x.cree); }).map(function (x) { return { id: x.id, date: x.publie ? jourP(x.publie) : (x.date || x.cree), t: x.publie || "", titre: x.titre, cat: x.cat, label: x.label, image: visuel(x), i: x }; });
+      // News planifiées (Will, 04/11/2026) : elles quittent « À publier » et vont au jour prévu, « Planifiée · 12:00 ».
+      var heureP = function (t) { return /T\d/.test(t) ? new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" }).format(new Date(t)) : ""; };
+      vn.forEach(function (x) { if (x && !x.enLigne && !x.vu && x.planif) NEWS.push({ id: x.id, date: /T\d/.test(x.planif) ? jourP(x.planif) : x.planif.slice(0, 10), t: x.planif, plan: true, heure: heureP(x.planif), titre: x.titre, cat: x.cat, label: x.label, image: visuel(x), i: x }); });
       if (part.ve.apub) APUB = part.ve.apub;
-      else APUB = vn.filter(function (x) { return x && !x.enLigne && !x.vu && x.cat !== "fiche" && !/^(couv|sortie)/.test(x.cat || ""); })
+      else APUB = vn.filter(function (x) { return x && !x.enLigne && !x.vu && !x.planif && x.cat !== "fiche" && !/^(couv|sortie)/.test(x.cat || ""); })
         .sort(function (a, b) { return String(b.creeT || b.cree || "").localeCompare(String(a.creeT || a.cree || "")); }).slice(0, 60)
         .map(function (x) { var h = ""; try { h = new URL(x.src).hostname.replace(/^www\./, ""); } catch (e) {} return { id: x.id, titre: x.titre, cat: x.cat, label: x.label, image: visuel(x), src: h, prete: !!x.prete }; });
       NEWSCOL = part.ve.cols || {};
