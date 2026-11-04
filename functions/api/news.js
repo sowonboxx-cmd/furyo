@@ -34,10 +34,27 @@ export async function onRequestGet({ env, request, waitUntil }) {
     const pg = await page(env.NOTION_TOKEN, apercu);
     return new Response(JSON.stringify(await bati(pg && !pg.archived ? [pg] : [])), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
   }
-  return cached(request, waitUntil, "/api/news?v=21", 600, async () => bati(await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
-      filter: { property: "Statut", select: { equals: "Publié sur le site" } },
+  // Publication planifiée (Will, 04/11/2026) : une news « À valider » dont l'heure « Planifiée le » est passée est mise en ligne
+  // toute seule. Son lien (connu à l'avance dans le studio) marche donc dès l'heure prévue, pour programmer le tweet en avance.
+  // On passe aussi la news en « Publié sur le site » dans Notion (Publiée le = heure prévue), pour que le QG et le récap suivent.
+  return cached(request, waitUntil, "/api/news?v=21", 600, async () => {
+    const rows = await queryAll(env.NOTION_TOKEN, { ...VEILLE, body: {
+      filter: { or: [
+        { property: "Statut", select: { equals: "Publié sur le site" } },
+        { and: [{ property: "Statut", select: { equals: "À valider" } }, { property: "Planifiée le", date: { on_or_before: new Date().toISOString() } }] },
+      ] },
       sorts: [{ property: "Date de la news", direction: "descending" }],
-    } })));
+    } });
+    const auto = rows.filter(r => text(r.properties["Statut"]) !== "Publié sur le site");
+    for (const r of auto) {
+      const pl = date(r.properties["Planifiée le"]);
+      if (!pubLe(r.properties) && pl) r.properties["Publiée le"] = { date: { start: pl } };
+      waitUntil(fetch(`https://api.notion.com/v1/pages/${r.id}`, { method: "PATCH",
+        headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" },
+        body: JSON.stringify({ properties: { "Statut": { select: { name: "Publié sur le site" } }, ...(pl ? { "Publiée le": { date: { start: pl } } } : {}) } }) }).catch(() => {}));
+    }
+    return bati(rows);
+  });
   async function bati(rows) {
     const ids = [...new Set(rows.flatMap(r => rel(r.properties["Série"])))];
     const series = {};
