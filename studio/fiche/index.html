@@ -49,6 +49,7 @@ button.main{background:var(--red)}
     <select id="sel" aria-label="Série"></select>
     <label>N° <input id="n" type="number" min="1"></label>
     <label>sur <input id="tot" type="number" min="1"></label>
+    <select id="cv" aria-label="Couverture"><option value="">Couverture : tome 1</option></select>
     <label><input id="safe" type="checkbox" style="width:auto;height:auto"> Montrer les zones cachées (story)</label>
     <button class="main" id="dlAll">Télécharger les 4 PNG</button>
   </div>
@@ -172,7 +173,16 @@ async function pick(slug){
     n: rang ? rang.rang : (AV ? AV.enLigne : 1), tot: AV ? AV.total : 600, scen: "", dess: "", resume: "" };
   document.getElementById("n").value = cur.n; document.getElementById("tot").value = cur.tot;
   history.replaceState(null, "", "?s=" + s.slug); draw(); drawCaps();
-  try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resumeImg || j.serie.resume || ""; cur.resumeLong = j.serie.resume || ""; cur.pubJP = j.serie.pubJP || ""; cur.tomesJP = j.serie.tomesJP; draw(); drawCaps(); }
+  try { const j = await (await fetch("/api/serie?s=" + s.slug)).json(); if (j.serie && cur.slug === s.slug) { cur.scen = j.serie.scen; cur.dess = j.serie.dess; cur.resume = j.serie.resumeImg || j.serie.resume || ""; cur.resumeLong = j.serie.resume || ""; cur.pubJP = j.serie.pubJP || ""; cur.tomesJP = j.serie.tomesJP;
+      // Choix de la couverture (Will, 04/11/2026) : série terminée → dernier tome par défaut.
+      const tl = []; (j.editions || []).forEach(e => (e.tomes || []).forEach(t => { if (t.cover) tl.push({ n: t.n, c: t.cover, fr: e.pays === "France" }); }));
+      tl.sort((a, b) => (a.fr - b.fr) || a.n - b.n);
+      const cv = document.getElementById("cv");
+      cv.innerHTML = '<option value="">Couverture : par défaut</option>' + tl.map(t => `<option value="${esc(t.c)}">Tome ${t.n}${t.fr ? " (FR)" : " (JP)"}</option>`).join("");
+      const fini = /termin/i.test(j.serie.stJP || "") && !(j.serie.tomesFR > 0);
+      const der = tl.filter(t => !t.fr).pop();
+      if (fini && der) { cv.value = der.c; cur.cover = der.c; }
+      draw(); drawCaps(); }
     // Comptes officiels pour les @mentions (seulement si connecté au back-office).
     if (cur.id) { const r = await fetch("/api/admin/handles?id=" + cur.id); const m = document.getElementById("capMsg");
       if (r.ok) { const h = await r.json(); if (cur.slug === s.slug) { cur.handles = h; drawCaps(); } }
@@ -189,6 +199,7 @@ async function dl(key){
 document.addEventListener("click", e => { const b = e.target.closest("[data-dl]"); if (b) dl(b.dataset.dl); });
 document.getElementById("dlAll").onclick = async () => { for (const [th, fm] of VARIANTS) await dl(th + "-" + fm); };
 document.getElementById("sel").onchange = e => pick(e.target.value);
+document.getElementById("cv").onchange = e => { const s = LIST.find(x => x.slug === cur.slug); cur.cover = e.target.value || (s && s.cover); draw(); };
 document.getElementById("n").oninput = e => { cur.n = Math.max(1, +e.target.value || 1); draw(); drawCaps(); };
 document.getElementById("tot").oninput = e => { cur.tot = Math.max(cur.n, +e.target.value || cur.n); draw(); drawCaps(); };
 document.getElementById("safe").onchange = e => document.body.classList.toggle("show-safe", e.target.checked);
