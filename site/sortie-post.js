@@ -100,7 +100,7 @@
       var jp = estCouvertureJaponaise(i);
       return {
         x: postX(i, rs),
-        ig: jp ? "" : catLigne(i) + "🆕 " + i.titre + (s.jp ? " (" + s.jp + ")" : "") + "\n📅 " + ligneSortie(i) + resL + "\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio)." + ((c.ig || []).length ? "\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : "") + "\n\n" + tags.join(" "),
+        ig: jp ? "" : catLigne(i) + "🆕 " + i.titre + (s.jp ? " (" + s.jp + ")" : "") + "\n📅 " + ligneSortie(i) + resL + "\n\n📖 Fiche complète, extraits, trailer et couverture : toutes les infos sur furyogang.com (lien en bio)." + "\n\n" + tags.join(" ") + ((c.ig || []).length ? "\n\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : ""),
         tt: jp ? "" : catLigne(i) + "🆕 " + i.titre + "\n📅 " + ligneSortie(i) + resL + "\n\n📖 Fiche complète sur furyogang.com" + ((c.tt || []).length ? "\n📣 " + c.tt.map(function (h) { return "@" + h; }).join(" ") : "") + "\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
       };
     }
@@ -129,7 +129,7 @@
       var resIG = txt ? "\n\n" + txt : "";
       return {
         x: xE || tete + "\n" + lien,
-        ig: tete + resIG + "\n\n📖 Le lien pour le lire est sur furyogang.com (lien en bio)." + ((c.ig || []).length ? "\n\n" + c.ig.map(function (h) { return "@" + h; }).join(" · ") : "") + "\n\n" + tags.join(" "),
+        ig: tete + resIG + "\n\n📖 Le lien pour le lire est sur furyogang.com (lien en bio)." + "\n\n" + tags.join(" ") + ((c.ig || []).length ? "\n\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : ""),
         tt: tete + (txt ? "\n\n" + resumeCourt(txt) : "") + "\n\n📖 Le lien pour le lire : furyogang.com (lien en bio)" + ((c.tt || []).length ? "\n" + c.tt.map(function (h) { return "@" + h; }).join(" · ") : "") + "\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
       };
     }
@@ -155,7 +155,7 @@
     var igL = (c.ig || []).length ? "\n📣 " + c.ig.map(function (h) { return "@" + h; }).join(" ") : "", ttL = (c.tt || []).length ? "\n📣 " + c.tt.map(function (h) { return "@" + h; }).join(" ") : "";
     return {
       x: xBase + (hs.length ? "\n" + hs.map(function (h) { return "@" + h; }).join(" · ") : ""),
-      ig: catLigne(i) + "🆕 " + i.titre + (txt ? "\n\n" + txt : "") + "\n\n📖 Toutes les infos sur furyogang.com (lien en bio)." + igL + "\n\n" + tags.join(" "),
+      ig: catLigne(i) + "🆕 " + i.titre + (txt ? "\n\n" + txt : "") + "\n\n📖 Toutes les infos sur furyogang.com (lien en bio)." + "\n\n" + tags.join(" ") + (igL ? "\n" + igL : ""),
       tt: catLigne(i) + "🆕 " + i.titre + (txt ? "\n\n" + resumeCourt(txt) : "") + "\n\n📖 Infos sur furyogang.com" + ttL + "\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
     };
   }
