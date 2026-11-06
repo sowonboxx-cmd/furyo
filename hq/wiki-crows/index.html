@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#141416">
+<title>Wiki Crows × Worst (brouillon)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<style>
+:root{
+  --ink:#232325;--ink-2:#000;--ink-3:#38383B;--ink-4:#2C2C2E;
+  --paper:#F5F5F7;--paper-2:#CFCFD4;--paper-3:#98989D;
+  --red:#E5483A;--amber:#F2B33D;--ok:#8FBF7A;--lose:#E5483A;--draw:#9C978A;
+  --f-display:"Antonio","Arial Narrow",sans-serif;
+  --f-body:"Inter","Noto Sans JP","Hiragino Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button,select,input{font:inherit;color:inherit}
+input,select{font-size:16px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.jp{font-family:"Noto Sans JP",sans-serif}
+
+/* Bandeau brouillon */
+.draft{background:var(--amber);color:#000;font-size:12.5px;font-weight:600;padding:7px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.draft .seg{display:inline-flex;background:rgba(0,0,0,.12);border-radius:999px;padding:2px}
+.draft .seg button{border:0;background:none;padding:3px 10px;border-radius:999px;cursor:pointer;font-weight:600;font-size:12px}
+.draft .seg button.on{background:#000;color:var(--amber)}
+
+/* Barre du wiki */
+.wbar{position:sticky;top:0;z-index:20;background:rgba(35,35,37,.94);backdrop-filter:blur(10px)}
+.wbar .wrap{display:flex;align-items:center;gap:18px;height:56px}
+.wlogo{font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:.02em;white-space:nowrap}
+.wlogo b{color:var(--red)}
+.wnav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
+.wnav::-webkit-scrollbar{display:none}
+.wnav a{padding:7px 12px;border-radius:999px;font-weight:600;font-size:13.5px;color:var(--paper-2);white-space:nowrap}
+.wnav a.on{background:var(--paper);color:#000}
+.wsearch{position:relative}
+.wsearch input{width:220px;background:var(--ink-3);border:0;border-radius:999px;padding:8px 14px 8px 34px;outline:none}
+.wsearch svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.6}
+.sugg{position:absolute;right:0;top:44px;width:320px;background:var(--ink-2);border-radius:14px;padding:6px;display:none;max-height:420px;overflow:auto}
+.sugg.on{display:block}
+.sugg a{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:10px}
+.sugg a:hover,.sugg a.sel{background:var(--ink-3)}
+.sugg img,.sugg .ph{width:34px;height:34px;border-radius:8px;object-fit:cover;object-position:top;flex:none}
+.sugg small{display:block;color:var(--paper-3);font-size:12px}
+@media(max-width:760px){.wbar .wrap{flex-wrap:wrap;height:auto;padding-top:8px;padding-bottom:6px;gap:8px 12px}.wnav{order:3;flex-basis:100%}.wsearch{margin-left:auto}.wsearch input{width:150px}.wlogo{font-size:19px}.sugg{width:calc(100vw - 32px);right:-8px}.tbl th{top:100px}}
+
+/* Accueil */
+.hero{position:relative;overflow:hidden;padding:56px 0 40px}
+.hero .bg{position:absolute;inset:0;background:url(/crows-x-worst/img/crows-banner.jpg) center 30%/cover;filter:grayscale(1);opacity:.16}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(35,35,37,.2),var(--ink) 92%)}
+.hero .wrap{position:relative}
+.kick{font-family:var(--f-display);font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-size:14px}
+.hero h1{font-family:var(--f-display);font-size:clamp(44px,8vw,88px);line-height:.95;margin:8px 0 14px;font-weight:700;text-transform:uppercase}
+.hero h1 span{color:var(--red)}
+.hero p{max-width:620px;color:var(--paper-2);font-size:16.5px;margin:0}
+.logos{display:flex;gap:22px;align-items:center;margin:26px 0 0;flex-wrap:wrap}
+.logos img{height:34px;width:auto;opacity:.9}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:30px}
+.stat{background:var(--ink-2);border-radius:16px;padding:16px}
+.stat b{font-family:var(--f-display);font-size:38px;line-height:1;display:block}
+.stat span{color:var(--paper-3);font-size:13px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.sec{margin:42px 0}
+.sec h2{font-family:var(--f-display);text-transform:uppercase;font-size:28px;margin:0 0 4px;letter-spacing:.01em}
+.sec .sub{color:var(--paper-3);margin:0 0 16px;font-size:14px}
+.sec-h{display:flex;align-items:end;justify-content:space-between;gap:12px}
+.more{font-weight:600;font-size:13.5px;color:var(--red);white-space:nowrap}
+.portes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.portes{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.portes{grid-template-columns:1fr}}
+.porte{position:relative;background:var(--ink-2);border-radius:18px;padding:18px;min-height:150px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.porte h3{font-family:var(--f-display);font-size:24px;text-transform:uppercase;margin:0;position:relative}
+.porte p{margin:2px 0 0;color:var(--paper-3);font-size:13.5px;position:relative}
+.porte .faces{position:absolute;top:14px;left:18px;display:flex}
+.porte .faces img{width:46px;height:46px;border-radius:50%;object-fit:cover;object-position:top;margin-right:-12px;border:3px solid var(--ink-2)}
+.porte .ico{position:absolute;top:16px;right:18px;font-family:var(--f-display);font-size:13px;color:var(--paper-3)}
+.porte.lock::after{content:"PREMIUM";position:absolute;top:16px;right:18px;background:var(--amber);color:#000;font-weight:700;font-size:10.5px;padding:3px 8px;border-radius:999px;letter-spacing:.06em}
+.groupes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.grp{background:var(--ink-2);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.grp:hover{background:#111}
+.grp .faces{display:flex;flex:none}
+.grp .faces img,.grp .faces .ph{width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:top;margin-right:-10px;border:3px solid var(--ink-2)}
+.grp b{display:block;font-size:15px}
+.grp small{color:var(--paper-3)}
+.grp .n{margin-left:auto;font-family:var(--f-display);font-size:22px;color:var(--paper-3)}
+
+/* Personnages */
+.tool{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:22px 0 14px}
+.tool select{background:var(--ink-3);border:0;border-radius:999px;padding:8px 32px 8px 14px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23CFCFD4' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;max-width:210px;font-size:14px}
+.chip{background:var(--ink-3);border:0;border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:13.5px}
+.chip.on{background:var(--paper);color:#000}
+.views{margin-left:auto;display:inline-flex;background:var(--ink-3);border-radius:999px;padding:3px}
+.views button{border:0;background:none;padding:6px 12px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px;color:var(--paper-2)}
+.views button.on{background:var(--paper);color:#000}
+.count{color:var(--paper-3);font-size:13.5px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+@media(max-width:520px){.grid{grid-template-columns:repeat(3,1fr);gap:8px}}
+.card{background:var(--ink-2);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .15s}
+.card:hover{transform:translateY(-3px)}
+.card .im{aspect-ratio:3/4;background:var(--ink-3);overflow:hidden;position:relative}
+.card .im img{width:100%;height:100%;object-fit:cover;object-position:top;filter:grayscale(.15)}
+.card .im .ph,.ph{display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:34px;color:var(--paper-3);background:var(--ink-3);width:100%;height:100%}
+.card .t{padding:9px 10px 11px}
+.card b{display:block;font-size:13.5px;line-height:1.25}
+.card small{display:block;color:var(--paper-3);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .tag{position:absolute;left:8px;bottom:8px;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px}
+.card .dc{position:absolute;right:8px;top:8px;background:rgba(0,0,0,.7);font-size:10.5px;padding:2px 7px;border-radius:999px}
+@media(max-width:520px){.card b{font-size:12px}.card small{font-size:11px}}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px}
+.gal .card{border-radius:10px}.gal .t{display:none}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;color:var(--paper-3);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;position:sticky;top:56px;background:var(--ink)}
+.tbl td{padding:7px 10px;border-top:1px solid var(--ink-4);vertical-align:middle}
+.tbl tr{cursor:pointer}.tbl tbody tr:hover td{background:#1b1b1d}
+.tbl .who{display:flex;align-items:center;gap:10px;font-weight:600}
+.tbl .who img,.tbl .who .ph{width:32px;height:32px;border-radius:8px;object-fit:cover;object-position:top;flex:none;font-size:14px}
+.pill{display:inline-block;background:var(--ink-3);border-radius:999px;padding:2px 9px;font-size:12px;margin:1px 2px 1px 0;white-space:nowrap}
+.pill.r{background:var(--red);color:#fff}
+@media(max-width:700px){.tbl .hm{display:none}}
+.btnm{display:block;margin:22px auto 0;background:var(--paper);color:#000;border:0;border-radius:999px;padding:11px 22px;font-weight:700;cursor:pointer}
+
+/* Fiche */
+.fhero{position:relative;overflow:hidden}
+.fhero .bg{position:absolute;inset:-20px;background-size:cover;background-position:center 20%;filter:grayscale(1) blur(2px);opacity:.14}
+.fhero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,var(--ink))}
+.fhero .wrap{position:relative;display:grid;grid-template-columns:260px 1fr;gap:32px;padding-top:34px;padding-bottom:10px;align-items:end}
+@media(max-width:760px){.fhero .wrap{grid-template-columns:1fr;gap:18px}.fhero .por{max-width:220px}}
+.crumb{font-size:13px;color:var(--paper-3);margin-bottom:10px}.crumb a:hover{color:var(--paper)}
+.por{border-radius:20px;overflow:hidden;background:var(--ink-2);aspect-ratio:3/4}
+.por img{width:100%;height:100%;object-fit:cover;object-position:top}
+.fname{font-family:var(--f-display);text-transform:uppercase;font-size:clamp(42px,7vw,76px);line-height:.95;margin:0}
+.fjp{font-size:22px;color:var(--paper-2);margin:8px 0 0;font-weight:700}
+.fnick{color:var(--red);font-weight:700;margin:6px 0 0;font-size:15px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.fbody{display:grid;grid-template-columns:1fr 320px;gap:32px;margin-top:26px}
+.fbody>*{min-width:0}
+@media(max-width:900px){.fbody{grid-template-columns:1fr}}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-bottom:18px}
+.tabs button{border:0;background:var(--ink-3);border-radius:999px;padding:8px 14px;font-weight:600;font-size:13.5px;cursor:pointer;white-space:nowrap}
+.tabs button.on{background:var(--paper);color:#000}
+.tabs .lk{font-size:11px;margin-left:4px}
+.prose h3{font-family:var(--f-display);text-transform:uppercase;font-size:22px;margin:26px 0 6px}
+.prose h3:first-child{margin-top:0}
+.prose p{margin:0 0 12px;color:var(--paper-2);font-size:15.5px}
+.quote{background:var(--ink-2);border-radius:16px;padding:18px 20px;margin:16px 0;font-size:17px;font-weight:600;line-height:1.45}
+.quote small{display:block;color:var(--paper-3);font-weight:500;font-size:13px;margin-top:8px}
+.quote .jp{display:block;color:var(--paper-3);font-size:14px;margin-top:6px;font-weight:500}
+.ibox{background:var(--ink-2);border-radius:18px;padding:6px 16px;align-self:start;position:sticky;top:76px}
+.ibox dl{margin:0}
+.ibox .row{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--ink-4);font-size:14px}
+.ibox .row:first-child{border-top:0}
+.ibox dt{color:var(--paper-3);font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+.ibox dd{margin:0}
+.ibox dd a{color:var(--paper);text-decoration:underline;text-decoration-color:var(--red);text-underline-offset:3px}
+.fights{display:flex;flex-direction:column;gap:6px}
+.fight{display:flex;align-items:center;gap:10px;background:var(--ink-2);border-radius:12px;padding:9px 12px;font-size:14.5px}
+.fight .res{font-weight:700;font-size:11.5px;padding:3px 9px;border-radius:999px;flex:none;min-width:62px;text-align:center}
+.fight .res.v{background:var(--ok);color:#000}.fight .res.d{background:var(--lose);color:#fff}.fight .res.n{background:var(--draw);color:#000}
+.fight small{color:var(--paper-3);margin-left:auto;text-align:right}
+.bilan{display:flex;gap:8px;margin-bottom:14px}
+.bilan div{flex:1;background:var(--ink-2);border-radius:14px;padding:12px;text-align:center}
+.bilan b{font-family:var(--f-display);font-size:30px;display:block;line-height:1}
+.bilan span{font-size:12px;color:var(--paper-3)}
+.rank{display:flex;flex-direction:column;gap:8px}
+.rk{display:flex;align-items:center;gap:14px;background:var(--ink-2);border-radius:14px;padding:10px 14px}
+.rk .no{font-family:var(--f-display);font-size:34px;color:var(--red);width:28px;text-align:center}
+.rk .ppl{display:flex;gap:16px;flex-wrap:wrap}
+.rk .pp{display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer}
+.rk .pp img,.rk .pp .ph{width:40px;height:40px;border-radius:50%;object-fit:cover;object-position:top;font-size:16px}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--ink-3)}
+.tl .st{position:relative;margin-bottom:18px}
+.tl .st::before{content:"";position:absolute;left:-21px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--red)}
+.tl .st b{font-family:var(--f-display);text-transform:uppercase;font-size:19px;display:block}
+.tl .st em{font-style:normal;color:var(--paper-3);font-size:12.5px;font-weight:600}
+.tl .st p{margin:4px 0 0;color:var(--paper-2)}
+
+/* Verrous */
+.gate{position:relative}
+.gate .blur{filter:blur(6px);user-select:none;pointer-events:none;max-height:340px;overflow:hidden;mask-image:linear-gradient(180deg,#000 40%,transparent)}
+.gate .over{position:absolute;inset:auto 0 0 0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px 16px 6px}
+.gate .over b{font-family:var(--f-display);text-transform:uppercase;font-size:24px}
+.gate .over p{color:var(--paper-2);margin:4px 0 14px;max-width:420px}
+.cta{border:0;border-radius:999px;padding:11px 22px;font-weight:700;cursor:pointer;background:var(--amber);color:#000}
+.cta.red{background:var(--red);color:#fff}
+.note{background:var(--ink-2);border-radius:14px;padding:12px 14px;color:var(--paper-3);font-size:13.5px;margin-top:14px}
+footer.wf{color:var(--paper-3);font-size:12.5px;padding:40px 0 50px}
+footer.wf a{text-decoration:underline}
+.empty{color:var(--paper-3);padding:40px 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="draft">
+  <span>BROUILLON · visible par toi seul</span>
+  <span class="seg" id="as"><button data-as="visiteur">Visiteur</button><button data-as="membre" class="on">Membre</button><button data-as="premium">Premium</button></span>
+</div>
+<div class="wbar"><div class="wrap">
+  <a class="wlogo" href="#/">CROWS <b>×</b> WORST</a>
+  <nav class="wnav" id="nav">
+    <a href="#/" data-r="">Univers</a>
+    <a href="#/personnages" data-r="personnages">Personnages</a>
+    <a href="#/groupes" data-r="groupes">Lycées &amp; gangs</a>
+    <a href="#/generations" data-r="generations">Générations</a>
+    <a href="#/combats" data-r="combats">Combats</a>
+    <a href="/crows-x-worst/">Chronologie</a>
+  </nav>
+  <div class="wsearch">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" placeholder="Un personnage…" autocomplete="off">
+    <div class="sugg" id="sugg"></div>
+  </div>
+</div></div>
+<main id="app"></main>
+<footer class="wf"><div class="wrap">
+  Brouillon FuryoGang · base de départ importée du <a href="https://crowsxworst.fandom.com/" target="_blank" rel="noopener">Crows x Worst Wiki</a> (Fandom, licence CC BY-SA), à relire et réécrire avant publication. Noms japonais à compléter depuis Wikipédia JP.
+</div></footer>
+<script>
+(function () {
+  var P = [], BY = {}, AS = "membre";
+  var app = document.getElementById("app");
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var ini = function (n) { return esc(String(n || "?").split(/\s+/).map(function (w) { return w[0]; }).join("").slice(0, 2)); };
+  var face = function (p, cls) { return p && p.img ? '<img loading="lazy" src="' + esc(thumb(p.img)) + '" alt="" referrerpolicy="no-referrer"' + (cls ? ' class="' + cls + '"' : "") + '>' : '<span class="ph">' + ini(p && p.n) + "</span>"; };
+  var thumb = function (u) { return u; };
+  var GRP_FR = { "Suzuran": "Lycée Suzuran", "Hōsen": "Académie Hōsen", "T.F.O.A.": "T.F.O.A. (Busō Sensen)" };
+
+  /* Contenu rédigé à la main (brouillon) : Bōya Harumichi. Réécrit en français à partir des faits, pas une traduction mot à mot. */
+  var RICHE = {
+    "bouya-harumichi": {
+      img: "/crows-x-worst/img/char-boya.png",
+      aff: ["Suzuran", "Collège Kikyō", "P.A.D."], faction: ["Famille Harumichi"],
+      jp: "坊屋春道", lecture: "ぼうや はるみち",
+      surnom: "Le Singe doré",
+      intro: "Héros de <i>Crows</i>. Transféré à Suzuran au second semestre de sa deuxième année, Bōya Harumichi ne veut commander personne… et finit pourtant au sommet de tous les endroits où il passe.",
+      perso: [
+        "Loup solitaire, insouciant, toujours une blague en réserve : Bōya traverse la guerre des gangs de Toarushi comme s’il était en vacances. Mais il est fier d’être un « corbeau », un élève de Suzuran, parce que pour lui, ça veut dire être libre.",
+        "Derrière le sourire, il devient d’un sérieux mortel dès qu’un ami est touché. Il protège même ses anciens adversaires. Avec Rindaman, c’est un mélange de respect et de bagarres qui ne s’arrêtent jamais."
+      ],
+      citation: { fr: "Un corbeau, et alors ? C’est toujours mieux qu’un pauvre oiseau en cage qui a oublié comment voler.", ctx: "À Yasu, après sa première bagarre à Suzuran · Crows, tome 1" },
+      parcours: [
+        { t: "Primaire", e: "Avant Crows", p: "En sixième année, il corrige à lui seul une bande de collégiens. Son professeur principal le surnomme « Marubō »." },
+        { t: "Collège Kikyō", e: "Avant Crows", p: "Dès sa première année, il est déjà le boss de deux collèges. Un jour, quatre lycéens le coincent seul. Ses fidèles veulent le venger, et l’un d’eux y perd un œil. Bōya enchaîne alors les transferts." },
+        { t: "La légende de Dende", e: "Dernier collège, avec Zetton", p: "D’un coup de tête, il assomme un vice-principal pervers, puis le suspend nu, la tête en bas, sur le toit de l’école. L’histoire devient une légende locale." },
+        { t: "Arrivée à Suzuran", e: "2e année · Crows, tome 1", p: "Dans le train, il prend la défense de Yasu face à Akutsu et sa bande. En classe, Hiromi se moque de ses cheveux blonds : Bōya lui lance sa chaussure au visage, puis le met KO d’un seul coup de poing." },
+        { t: "La guerre contre Bandō", e: "2e année", p: "Il met hors de combat trente hommes de la faction de Bandō Hideto en trois jours, règle son compte à Yamazaki pour Yasu, puis affronte Bandō lui-même." },
+        { t: "Les Quatre Rois", e: "3e année", p: "Bōya, Ryūshin, Bulldog et Bitō Tatsuya sont appelés les Quatre Rois. Avec Ryūshin et Tatsuya, il forme le P.A.D. pour écraser les Snake Heads." },
+        { t: "Le plus fort du Japon", e: "3e année", p: "Kuzugami Tatsuo, « le délinquant le plus fort du Japon », chasse les Quatre Rois. Après sa victoire sur Zetton, Bōya le défie et le bat." }
+      ],
+      rivaux: [["Hayashida Megumi"], ["Kuzugami Tatsuo"], ["Bitō Tatsuya", "Kunō Ryūshin"], ["Kishima Kōchi", "Mayumi Tetsuji"], ["Sugihara Makoto"]],
+      combats: [
+        ["Tōjō", "v"], ["Hiromi", "v"], ["Akutsu + 4 hommes", "v"], ["Senda Naoki et sa bande", "v"], ["Yamazaki Tatsuya et sa bande", "v"], ["Bandō Hideto", "v"],
+        ["Rindaman", "d"], ["Rindaman", "n"], ["Sagawa Susumu", "v"], ["Mito Yasuyuki, Maki Seiji et leur bande", "v"], ["Ryūshin", "v"], ["Les 13 élites du T.F.O.A.", "v"],
+        ["Ryūshin", "v"], ["Kakuken", "v"], ["Arita", "v"], ["Kishima Kōchi", "v"], ["Bitō Tatsuya", "v"], ["Rindaman", "d"], ["Zetton", "v"],
+        ["Shiga, Ōshima et Mayumi", "d", "guet-apens"], ["Mayumi Tetsuji", "v"], ["Nakajima Shinsuke", "v"], ["Kuzugami Tatsuo", "v", "déjà blessé"], ["Kuzugami Tatsuo", "v"],
+        ["Kijima + 4 hommes", "v"], ["Kunisaki Suguru", "v"], ["Katsuma", "v"]
+      ]
+    }
+  };
+
+  /* Droits d'accès (maquette) : visiteur = aperçu, membre = fiches, premium = parcours détaillé + tous les combats. */
+  function peut(niv) { return niv === "visiteur" ? true : niv === "membre" ? AS !== "visiteur" : AS === "premium"; }
+  function verrou(niv, html, titre, texte) {
+    if (peut(niv)) return html;
+    var m = niv === "membre";
+    return '<div class="gate"><div class="blur">' + html + '</div><div class="over"><b>' + (titre || (m ? "Réservé aux membres" : "Réservé Premium")) + '</b><p>' + (texte || (m ? "Inscris-toi gratuitement pour voir les fiches complètes des personnages." : "Le parcours détaillé tome par tome, tous les combats et les rivalités sont réservés aux membres Premium.")) + '</p><button class="cta' + (m ? " red" : "") + '">' + (m ? "Créer mon compte" : "Passer Premium") + "</button></div></div>";
+  }
+
+  function compte(arr, key) { var c = {}; arr.forEach(function (p) { (Array.isArray(p[key]) ? p[key] : [p[key]]).forEach(function (v) { if (v) c[v] = (c[v] || 0) + 1; }); }); return Object.keys(c).map(function (k) { return [k, c[k]]; }).sort(function (a, b) { return b[1] - a[1]; }); }
+  function visages(list, n) { return list.filter(function (p) { return p.img; }).slice(0, n || 4).map(function (p) { return face(p); }).join(""); }
+  function vrais() { return P.filter(function (p) { return !p.m; }); }
+
+  /* ---------- Accueil ---------- */
+  function accueil() {
+    var V = vrais(), grp = compte(V, "a"), gens = compte(V, "g");
+    var top = V.slice().sort(function (a, b) { return b.c - a.c; }).slice(0, 12);
+    var h = '<section class="hero"><div class="bg"></div><div class="wrap">' +
+      '<div class="kick">L’encyclopédie FuryoGang</div><h1>L’univers<br>Crows <span>×</span> Worst</h1>' +
+      '<p>Tous les personnages, les lycées, les gangs, les générations et les combats de l’univers de Hiroshi Takahashi : <i>Crows</i>, <i>Worst</i>, <i>QP</i> et toutes les histoires parallèles, réunis et complétés tome après tome.</p>' +
+      '<div class="logos"><img src="/crows-x-worst/img/crows-logo.png" alt="Crows"><img src="/crows-x-worst/img/worst-logo.png" alt="Worst"><img src="/crows-x-worst/img/qp-logo.png" alt="QP"></div>' +
+      '<div class="stats"><div class="stat"><b>' + P.length.toLocaleString("fr-FR") + '</b><span>personnages</span></div><div class="stat"><b>' + grp.length + '</b><span>lycées, gangs et clans</span></div><div class="stat"><b>' + gens.length + '</b><span>générations et promos</span></div><div class="stat"><b>33</b><span>œuvres</span></div></div>' +
+      '</div></section><div class="wrap">';
+    h += '<section class="sec"><div class="sec-h"><div><h2>Explorer</h2><p class="sub">Choisis ta porte d’entrée.</p></div></div><div class="portes">' +
+      porte("#/personnages", "Personnages", P.length + " fiches, avec leur tête", V.slice(0, 5)) +
+      porte("#/groupes", "Lycées & gangs", "Suzuran, Hōsen, T.F.O.A., Empire Manji…", V.filter(function (p) { return p.a.indexOf("Hōsen") >= 0; }).slice(0, 5)) +
+      porte("#/generations", "Générations", "Les promos de Suzuran, les générations du T.F.O.A.", V.filter(function (p) { return /génération/.test(p.g); }).slice(0, 5)) +
+      porte("#/combats", "Combats", "Qui a battu qui, et dans quel tome", top.slice(0, 5), true) +
+      porte("#/", "Carte de Toarushi", "Les lycées et les quartiers sur une carte interactive", [], true, "Bientôt") +
+      porte("/crows-x-worst/", "Chronologie", "Toutes les œuvres dans l’ordre de l’histoire", []) +
+      "</div></section>";
+    h += '<section class="sec"><div class="sec-h"><div><h2>Les plus redoutés</h2><p class="sub">Les personnages qui ont le plus de combats à leur actif.</p></div><a class="more" href="#/personnages">Tous les personnages →</a></div><div class="grid">' + top.map(carte).join("") + "</div></section>";
+    h += '<section class="sec"><div class="sec-h"><div><h2>Lycées &amp; gangs</h2><p class="sub">Les camps les plus peuplés de Toarushi.</p></div><a class="more" href="#/groupes">Tout voir →</a></div><div class="groupes">' + grp.slice(0, 9).map(groupeCarte).join("") + "</div></section></div>";
+    return h;
+  }
+  function porte(href, t, p, ppl, prem, ico) { return '<a class="porte' + (prem ? " lock" : "") + '" href="' + href + '">' + (ppl.length ? '<div class="faces">' + visages(ppl, 5) + "</div>" : "") + (ico ? '<span class="ico">' + ico + "</span>" : "") + "<h3>" + t + "</h3><p>" + p + "</p></a>"; }
+  function groupeCarte(g) { var ppl = vrais().filter(function (p) { return p.a.indexOf(g[0]) >= 0; }); return '<div class="grp" data-grp="' + esc(g[0]) + '"><div class="faces">' + visages(ppl, 3) + '</div><div><b>' + esc(GRP_FR[g[0]] || g[0]) + "</b><small>" + ppl.filter(function (p) { return p.c; }).length + " combattants référencés</small></div><span class=\"n\">" + g[1] + "</span></div>"; }
+
+  /* ---------- Personnages ---------- */
+  var F = { o: "", a: "", g: "", m: true, v: "grille", lim: 120, tri: "nom" };
+  function carte(p) { return '<a class="card" href="#/perso/' + p.s + '"><div class="im">' + face(p) + (p.c ? '<span class="dc">' + p.c + " combat" + (p.c > 1 ? "s" : "") + "</span>" : "") + (p.d ? '<span class="tag">Décédé</span>' : "") + '</div><div class="t"><b>' + esc(p.n) + "</b><small>" + esc(p.a[0] || p.o[0] || "—") + (p.g ? " · " + esc(p.g) : "") + "</small></div></a>"; }
+  function filtres() {
+    return P.filter(function (p) { return (!F.m || !p.m) && (!F.o || p.o.indexOf(F.o) >= 0) && (!F.a || p.a.indexOf(F.a) >= 0) && (!F.g || p.g === F.g); })
+      .sort(function (a, b) { return F.tri === "combats" ? b.c - a.c : F.tri === "nom" ? (a.img ? 0 : 1) - (b.img ? 0 : 1) || a.n.localeCompare(b.n) : 0; });
+  }
+  function opts(list, cur, label) { return '<option value="">' + label + "</option>" + list.map(function (x) { return '<option value="' + esc(x[0]) + '"' + (x[0] === cur ? " selected" : "") + ">" + esc(x[0]) + " (" + x[1] + ")</option>"; }).join(""); }
+  function personnages() {
+    var L = filtres(), V = vrais();
+    var h = '<div class="wrap"><div class="sec" style="margin-top:28px"><h2>Personnages</h2><p class="sub">Toute la galerie de l’univers. Filtre par œuvre, par lycée ou par génération.</p>' +
+      '<div class="tool"><select data-f="o">' + opts(compte(V, "o"), F.o, "Toutes les œuvres") + '</select><select data-f="a">' + opts(compte(V, "a").slice(0, 80), F.a, "Tous les lycées et gangs") + '</select><select data-f="g">' + opts(compte(V, "g"), F.g, "Toutes les générations") + "</select>" +
+      '<select data-f="tri"><option value="nom"' + (F.tri === "nom" ? " selected" : "") + '>Tri : A → Z</option><option value="combats"' + (F.tri === "combats" ? " selected" : "") + ">Tri : nombre de combats</option></select>" +
+      '<button class="chip' + (F.m ? " on" : "") + '" data-m>Sans les simples mentions</button>' +
+      '<span class="views">' + [["grille", "Têtes"], ["liste", "Liste"], ["galerie", "Mosaïque"]].map(function (v) { return '<button data-v="' + v[0] + '" class="' + (F.v === v[0] ? "on" : "") + '">' + v[1] + "</button>"; }).join("") + "</span></div>" +
+      '<div class="count">' + L.length.toLocaleString("fr-FR") + " personnage" + (L.length > 1 ? "s" : "") + "</div>";
+    var S = L.slice(0, F.lim), body;
+    if (!L.length) body = '<div class="empty">Aucun personnage avec ces filtres.</div>';
+    else if (F.v === "liste") body = '<table class="tbl"><thead><tr><th>Personnage</th><th>Lycée / gang</th><th class="hm">Génération</th><th class="hm">Rôle</th><th class="hm">Œuvres</th><th>Combats</th></tr></thead><tbody>' + S.map(function (p) {
+      return '<tr data-go="' + p.s + '"><td><span class="who">' + face(p) + esc(p.n) + '</span></td><td>' + p.a.slice(0, 2).map(function (a) { return '<span class="pill">' + esc(a) + "</span>"; }).join("") + '</td><td class="hm">' + esc(p.g) + '</td><td class="hm">' + esc(p.r) + '</td><td class="hm">' + p.o.slice(0, 2).map(function (o) { return '<span class="pill">' + esc(o) + "</span>"; }).join("") + "</td><td>" + (p.c || "") + "</td></tr>";
+    }).join("") + "</tbody></table>";
+    else body = '<div class="' + (F.v === "galerie" ? "gal" : "grid") + '">' + S.map(carte).join("") + "</div>";
+    h += body + (L.length > F.lim ? '<button class="btnm" data-plus>Afficher plus (' + (L.length - F.lim) + " restants)</button>" : "") + "</div></div>";
+    return h;
+  }
+
+  /* ---------- Groupes / générations / combats ---------- */
+  function groupes() { var g = compte(vrais(), "a"); return '<div class="wrap"><div class="sec" style="margin-top:28px"><h2>Lycées &amp; gangs</h2><p class="sub">' + g.length + " lycées, collèges, gangs et clans yakuza. Clique pour voir leurs membres.</p><div class=\"groupes\">" + g.map(groupeCarte).join("") + "</div></div></div>"; }
+  function generations() {
+    var g = compte(vrais(), "g");
+    var suz = g.filter(function (x) { return /promo/.test(x[0]); }).sort(function (a, b) { return parseInt(a[0]) - parseInt(b[0]); });
+    var tf = g.filter(function (x) { return /génération/i.test(x[0]); });
+    var bloc = function (t, s, arr) { return '<div class="sec"><h2>' + t + '</h2><p class="sub">' + s + '</p><div class="groupes">' + arr.map(function (x) { var ppl = vrais().filter(function (p) { return p.g === x[0]; }); return '<div class="grp" data-gen="' + esc(x[0]) + '"><div class="faces">' + visages(ppl, 3) + "</div><div><b>" + esc(x[0]) + "</b><small>" + esc((ppl[0] && ppl[0].a[0]) || "") + '</small></div><span class="n">' + x[1] + "</span></div>"; }).join("") + "</div></div>"; };
+    return '<div class="wrap" style="margin-top:28px">' + bloc("Promos de Suzuran", "De la 1re promo à aujourd’hui.", suz) + bloc("Générations", "T.F.O.A., Kurotaki et les autres.", tf) + "</div>";
+  }
+  function combats() {
+    var top = vrais().filter(function (p) { return p.c; }).sort(function (a, b) { return b.c - a.c; });
+    var html = '<table class="tbl"><thead><tr><th>#</th><th>Personnage</th><th>Lycée / gang</th><th>Combats</th></tr></thead><tbody>' + top.slice(0, 60).map(function (p, i) { return '<tr data-go="' + p.s + '"><td>' + (i + 1) + '</td><td><span class="who">' + face(p) + esc(p.n) + "</span></td><td>" + esc(p.a[0] || "") + "</td><td>" + p.c + "</td></tr>"; }).join("") + "</tbody></table>";
+    return '<div class="wrap"><div class="sec" style="margin-top:28px"><h2>Combats</h2><p class="sub">' + top.length + " personnages ont au moins un combat référencé. Le détail (adversaire, résultat, tome et chapitre) est dans chaque fiche.</p>" + verrou("premium", html, "Le classement des combats", "Le classement complet et le détail de chaque combat sont réservés aux membres Premium.") + "</div></div>";
+  }
+
+  /* ---------- Fiche ---------- */
+  var TAB = "profil";
+  function fiche(slug) {
+    var p = BY[slug]; if (!p) return '<div class="wrap"><div class="empty">Personnage introuvable.</div></div>';
+    var R = RICHE[slug] || null, img = (R && R.img) || p.img;
+    if (R && R.combats) p = Object.assign({}, p, { c: R.combats.length, a: R.aff || p.a, f: R.faction || p.f });
+    var lien = function (n) { var q = P.find(function (x) { return x.n === n; }); return q ? '<a href="#/perso/' + q.s + '">' + esc(n) + "</a>" : esc(n); };
+    var rows = [["Surnom", R ? R.surnom : p.su], ["Lycée / gang", p.a.map(function (a) { return '<a href="#/personnages" data-af="' + esc(a) + '">' + esc(a) + "</a>"; }).join("<br>")], ["Faction", p.f.map(esc).join(", ")], ["Rôle", R ? "Chef" : p.r], ["Promo", p.g], ["Prédécesseur", ""], ["Successeur", ""], ["Statut", p.st], ["1re apparition", p.p], ["Œuvres", p.o.join(", ")]];
+    if (slug === "bouya-harumichi") { rows[5][1] = lien("Bandō Hideto"); rows[6][1] = lien("Hanazawa Saburō") + " (Zetton)"; rows[7][1] = "A quitté Suzuran"; rows[8][1] = "Crows, chapitre 1"; }
+    var ibox = '<aside class="ibox"><dl>' + rows.filter(function (r) { return r[1]; }).map(function (r) { return '<div class="row"><dt>' + r[0] + "</dt><dd>" + r[1] + "</dd></div>"; }).join("") + "</dl></aside>";
+    var h = '<section class="fhero"><div class="bg" style="background-image:url(\'' + esc(img || "/crows-x-worst/img/crows-banner.jpg") + '\')"></div><div class="wrap">' +
+      '<div class="por">' + (img ? '<img src="' + esc(img) + '" alt="" referrerpolicy="no-referrer">' : face(p)) + "</div><div>" +
+      '<div class="crumb"><a href="#/">Univers</a> › <a href="#/personnages">Personnages</a>' + (p.a[0] ? ' › <a href="#/personnages" data-af="' + esc(p.a[0]) + '">' + esc(p.a[0]) + "</a>" : "") + "</div>" +
+      '<h1 class="fname">' + esc(p.n) + "</h1>" + (R && R.jp ? '<p class="fjp jp">' + R.jp + ' <small style="font-size:14px;color:var(--paper-3);font-weight:500">' + R.lecture + "</small></p>" : '<p class="fjp" style="font-size:14px;color:var(--paper-3)">Nom japonais à compléter</p>') +
+      ((R ? R.surnom : p.su) ? '<p class="fnick">« ' + esc(R ? R.surnom : p.su) + " »</p>" : "") +
+      '<div class="badges">' + p.a.slice(0, 3).map(function (a) { return '<span class="pill r">' + esc(a) + "</span>"; }).join("") + (p.g ? '<span class="pill">' + esc(p.g) + "</span>" : "") + (p.c ? '<span class="pill">' + p.c + " combats</span>" : "") + (p.d ? '<span class="pill">Décédé</span>' : "") + "</div></div></div></section>";
+    var tabs = [["profil", "Profil"], ["parcours", "Parcours", "premium"], ["combats", "Combats" + (p.c ? " · " + p.c : "")], ["rivaux", "Rivaux", "premium"], ["apparitions", "Apparitions"]];
+    var tb = '<div class="tabs">' + tabs.map(function (t) { return '<button data-tab="' + t[0] + '" class="' + (TAB === t[0] ? "on" : "") + '">' + t[1] + (t[2] && AS !== "premium" ? '<span class="lk">🔒</span>' : "") + "</button>"; }).join("") + "</div>";
+    var c = "";
+    if (TAB === "profil") {
+      c = R ? '<div class="prose"><p style="font-size:17px;color:var(--paper)">' + R.intro + "</p><h3>Personnalité</h3>" + R.perso.map(function (x) { return "<p>" + x + "</p>"; }).join("") + '<div class="quote">« ' + R.citation.fr + ' »<small>' + R.citation.ctx + "</small></div></div>"
+        : '<div class="prose"><p style="font-size:17px;color:var(--paper)">' + esc(p.n) + (p.a[0] ? ", " + esc(p.a[0]) : "") + (p.g ? " (" + esc(p.g) + ")" : "") + ".</p><div class=\"note\">Fiche pas encore rédigée en français. La base vient du wiki anglais : texte à réécrire, nom japonais et tête à ajouter.</div></div>";
+      c = verrou("membre", c);
+    } else if (TAB === "parcours") {
+      c = R ? '<div class="tl">' + R.parcours.map(function (s) { return '<div class="st"><em>' + s.e + "</em><b>" + s.t + "</b><p>" + s.p + "</p></div>"; }).join("") + "</div>" : '<div class="empty">Parcours à rédiger.</div>';
+      c = verrou("premium", c);
+    } else if (TAB === "combats") {
+      if (R) {
+        var v = R.combats.filter(function (x) { return x[1] === "v"; }).length, d = R.combats.filter(function (x) { return x[1] === "d"; }).length, n = R.combats.length - v - d;
+        var lst = function (a) { return '<div class="fights">' + a.map(function (x) { return '<div class="fight"><span class="res ' + x[1] + '">' + { v: "Victoire", d: "Défaite", n: "Nul" }[x[1]] + "</span><span>" + lien(x[0]) + "</span>" + (x[2] ? "<small>" + x[2] + "</small>" : "") + "</div>"; }).join("") + "</div>"; };
+        c = '<div class="bilan"><div><b>' + v + '</b><span>victoires</span></div><div><b>' + n + '</b><span>nul</span></div><div><b>' + d + '</b><span>défaites</span></div></div>' + lst(R.combats.slice(0, 5)) + '<div style="height:6px"></div>' + verrou("premium", lst(R.combats.slice(5)), "Les " + (R.combats.length - 5) + " autres combats", "Tous les combats, avec le tome et le chapitre de chacun, sont réservés aux membres Premium.");
+      } else c = p.c ? verrou("premium", '<div class="note">' + p.c + " combats référencés, détail à importer.</div>") : '<div class="empty">Aucun combat référencé.</div>';
+    } else if (TAB === "rivaux") {
+      c = R ? '<p class="sub" style="color:var(--paper-3);margin:0 0 12px">À la fin de sa dernière année, Bōya classe lui-même ses adversaires les plus coriaces.</p><div class="rank">' + R.rivaux.map(function (g, i) { return '<div class="rk"><span class="no">' + (i + 1) + '</span><div class="ppl">' + g.map(function (n) { var q = P.find(function (x) { return x.n === n; }); return '<span class="pp"' + (q ? ' data-go="' + q.s + '"' : "") + ">" + face(q || { n: n }) + esc(n) + (n === "Hayashida Megumi" ? ' <small style="color:var(--paper-3)">(Rindaman)</small>' : "") + "</span>"; }).join("") + "</div></div>"; }).join("") + "</div>" : '<div class="empty">Rivalités à rédiger.</div>';
+      c = verrou("premium", c);
+    } else {
+      c = '<div class="groupes">' + p.o.map(function (o) { return '<div class="grp"><div><b>' + esc(o) + "</b><small>Apparaît dans cette œuvre</small></div></div>"; }).join("") + "</div>" + (p.o.length ? "" : '<div class="empty">À compléter.</div>');
+    }
+    return h + '<div class="wrap"><div class="fbody"><div>' + tb + c + "</div>" + ibox + "</div></div>";
+  }
+
+  /* ---------- Routeur ---------- */
+  function route() {
+    var r = (location.hash || "#/").slice(2), parts = r.split("/");
+    document.querySelectorAll("#nav a[data-r]").forEach(function (a) { a.classList.toggle("on", a.dataset.r === (parts[0] === "perso" ? "personnages" : parts[0])); });
+    app.innerHTML = parts[0] === "personnages" ? personnages() : parts[0] === "perso" ? fiche(parts[1]) : parts[0] === "groupes" ? groupes() : parts[0] === "generations" ? generations() : parts[0] === "combats" ? combats() : accueil();
+  }
+  window.addEventListener("hashchange", function () { TAB = "profil"; route(); scrollTo(0, 0); });
+  document.addEventListener("change", function (e) { var f = e.target.dataset.f; if (f) { F[f] = e.target.value; F.lim = 120; route(); } });
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-v],[data-m],[data-plus],[data-go],[data-grp],[data-gen],[data-af],[data-tab],[data-as]"); if (!t) return;
+    if (t.dataset.as) { AS = t.dataset.as; document.querySelectorAll("#as button").forEach(function (b) { b.classList.toggle("on", b === t); }); route(); return; }
+    if (t.dataset.v) { F.v = t.dataset.v; route(); }
+    else if ("m" in t.dataset) { F.m = !F.m; route(); }
+    else if ("plus" in t.dataset) { F.lim += 240; route(); }
+    else if (t.dataset.tab) { TAB = t.dataset.tab; route(); }
+    else if (t.dataset.go) location.hash = "#/perso/" + t.dataset.go;
+    else if (t.dataset.grp || t.dataset.af) { e.preventDefault(); F = Object.assign(F, { a: t.dataset.grp || t.dataset.af, g: "", o: "", lim: 120 }); location.hash = "#/personnages"; route(); }
+    else if (t.dataset.gen) { F = Object.assign(F, { g: t.dataset.gen, a: "", o: "", lim: 120 }); location.hash = "#/personnages"; route(); }
+  });
+  /* Recherche */
+  var q = document.getElementById("q"), sg = document.getElementById("sugg"), sel = 0;
+  var norm = function (s) { return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ou/g, "o").replace(/uu/g, "u"); };
+  q.addEventListener("input", function () {
+    var v = norm(q.value.trim()); if (!v) { sg.classList.remove("on"); return; }
+    var r = P.filter(function (p) { return norm(p.n + " " + p.su).indexOf(v) >= 0; }).sort(function (a, b) { return a.m - b.m || b.c - a.c; }).slice(0, 8); sel = 0;
+    sg.innerHTML = r.length ? r.map(function (p, i) { return '<a href="#/perso/' + p.s + '" class="' + (i ? "" : "sel") + '">' + face(p) + "<span>" + esc(p.n) + "<small>" + esc(p.a[0] || p.o[0] || "") + "</small></span></a>"; }).join("") : '<div class="empty" style="padding:14px">Personne.</div>';
+    sg.classList.add("on");
+  });
+  q.addEventListener("keydown", function (e) { var a = sg.querySelectorAll("a"); if (e.key === "Enter" && a[sel]) { location.hash = a[sel].getAttribute("href"); sg.classList.remove("on"); q.blur(); } if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); sel = Math.max(0, Math.min(a.length - 1, sel + (e.key === "ArrowDown" ? 1 : -1))); a.forEach(function (x, i) { x.classList.toggle("sel", i === sel); }); } });
+  document.addEventListener("click", function (e) { if (!e.target.closest(".wsearch")) sg.classList.remove("on"); else if (e.target.closest(".sugg a")) { sg.classList.remove("on"); q.value = ""; } });
+
+  fetch("persos.json").then(function (r) { return r.json(); }).then(function (d) { P = d; P.forEach(function (p) { BY[p.s] = p; }); route(); })
+    .catch(function () { app.innerHTML = '<div class="wrap"><div class="empty">Données introuvables.</div></div>'; });
+})();
+</script>
+</body>
+</html>
