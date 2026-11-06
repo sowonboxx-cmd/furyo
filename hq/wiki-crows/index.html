@@ -214,13 +214,13 @@ footer.wf a{text-decoration:underline}
   </nav>
   <div class="wsearch">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input id="q" placeholder="Un personnage…" autocomplete="off">
+    <input id="q" placeholder="Nom ou 漢字…" autocomplete="off">
     <div class="sugg" id="sugg"></div>
   </div>
 </div></div>
 <main id="app"></main>
 <footer class="wf"><div class="wrap">
-  Brouillon FuryoGang · base de départ importée du <a href="https://crowsxworst.fandom.com/" target="_blank" rel="noopener">Crows x Worst Wiki</a> (Fandom, licence CC BY-SA), à relire et réécrire avant publication. Noms japonais à compléter depuis Wikipédia JP.
+  Brouillon FuryoGang · base de départ importée du <a href="https://crowsxworst.fandom.com/" target="_blank" rel="noopener">Crows x Worst Wiki</a> (Fandom, licence CC BY-SA), à relire et réécrire avant publication. Noms japonais : Mangapedia et sources japonaises, à compléter.
 </div></footer>
 <script>
 (function () {
@@ -304,9 +304,9 @@ footer.wf a{text-decoration:underline}
 
   /* ---------- Personnages ---------- */
   var F = { o: "", a: "", g: "", m: true, v: "grille", lim: 120, tri: "nom" };
-  function carte(p) { return '<a class="card" href="#/perso/' + p.s + '"><div class="im">' + face(p) + (p.c ? '<span class="dc">' + p.c + " combat" + (p.c > 1 ? "s" : "") + "</span>" : "") + (p.d ? '<span class="tag">Décédé</span>' : "") + '</div><div class="t"><b>' + esc(p.n) + "</b><small>" + esc(p.a[0] || p.o[0] || "—") + (p.g ? " · " + esc(p.g) : "") + "</small></div></a>"; }
+  function carte(p) { return '<a class="card" href="#/perso/' + p.s + '"><div class="im">' + face(p) + (p.c ? '<span class="dc">' + p.c + " combat" + (p.c > 1 ? "s" : "") + "</span>" : "") + (p.d ? '<span class="tag">Décédé</span>' : "") + '</div><div class="t"><b>' + esc(p.n) + "</b>" + (p.jp ? '<small class="jp" style="color:var(--paper-2)">' + esc(p.jp) + "</small>" : "") + "<small>" + esc(p.a[0] || p.o[0] || "—") + (p.g ? " · " + esc(p.g) : "") + "</small></div></a>"; }
   function filtres() {
-    return P.filter(function (p) { return (!F.m || !p.m) && (!F.o || p.o.indexOf(F.o) >= 0) && (!F.a || p.a.indexOf(F.a) >= 0) && (!F.g || p.g === F.g); })
+    return P.filter(function (p) { return (!F.m || !p.m) && (!F.j || p.jp) && (!F.o || p.o.indexOf(F.o) >= 0) && (!F.a || p.a.indexOf(F.a) >= 0) && (!F.g || p.g === F.g); })
       .sort(function (a, b) { return F.tri === "combats" ? b.c - a.c : F.tri === "nom" ? (a.img ? 0 : 1) - (b.img ? 0 : 1) || a.n.localeCompare(b.n) : 0; });
   }
   function opts(list, cur, label) { return '<option value="">' + label + "</option>" + list.map(function (x) { return '<option value="' + esc(x[0]) + '"' + (x[0] === cur ? " selected" : "") + ">" + esc(x[0]) + " (" + x[1] + ")</option>"; }).join(""); }
@@ -315,13 +315,13 @@ footer.wf a{text-decoration:underline}
     var h = '<div class="wrap"><div class="sec" style="margin-top:28px"><h2>Personnages</h2><p class="sub">Toute la galerie de l’univers. Filtre par œuvre, par lycée ou par génération.</p>' +
       '<div class="tool"><select data-f="o">' + opts(compte(V, "o"), F.o, "Toutes les œuvres") + '</select><select data-f="a">' + opts(compte(V, "a").slice(0, 80), F.a, "Tous les lycées et gangs") + '</select><select data-f="g">' + opts(compte(V, "g"), F.g, "Toutes les générations") + "</select>" +
       '<select data-f="tri"><option value="nom"' + (F.tri === "nom" ? " selected" : "") + '>Tri : A → Z</option><option value="combats"' + (F.tri === "combats" ? " selected" : "") + ">Tri : nombre de combats</option></select>" +
-      '<button class="chip' + (F.m ? " on" : "") + '" data-m>Sans les simples mentions</button>' +
+      '<button class="chip' + (F.m ? " on" : "") + '" data-m>Sans les simples mentions</button>' + '<button class="chip' + (F.j ? " on" : "") + '" data-j>Avec nom japonais</button>' +
       '<span class="views">' + [["grille", "Têtes"], ["liste", "Liste"], ["galerie", "Mosaïque"]].map(function (v) { return '<button data-v="' + v[0] + '" class="' + (F.v === v[0] ? "on" : "") + '">' + v[1] + "</button>"; }).join("") + "</span></div>" +
       '<div class="count">' + L.length.toLocaleString("fr-FR") + " personnage" + (L.length > 1 ? "s" : "") + "</div>";
     var S = L.slice(0, F.lim), body;
     if (!L.length) body = '<div class="empty">Aucun personnage avec ces filtres.</div>';
     else if (F.v === "liste") body = '<table class="tbl"><thead><tr><th>Personnage</th><th>Lycée / gang</th><th class="hm">Génération</th><th class="hm">Rôle</th><th class="hm">Œuvres</th><th>Combats</th></tr></thead><tbody>' + S.map(function (p) {
-      return '<tr data-go="' + p.s + '"><td><span class="who">' + face(p) + esc(p.n) + '</span></td><td>' + p.a.slice(0, 2).map(function (a) { return '<span class="pill">' + esc(a) + "</span>"; }).join("") + '</td><td class="hm">' + esc(p.g) + '</td><td class="hm">' + esc(p.r) + '</td><td class="hm">' + p.o.slice(0, 2).map(function (o) { return '<span class="pill">' + esc(o) + "</span>"; }).join("") + "</td><td>" + (p.c || "") + "</td></tr>";
+      return '<tr data-go="' + p.s + '"><td><span class="who">' + face(p) + "<span>" + esc(p.n) + (p.jp ? '<small class="jp" style="display:block;color:var(--paper-3);font-weight:500;font-size:12px">' + esc(p.jp) + "</small>" : "") + '</span></span></td><td>' + p.a.slice(0, 2).map(function (a) { return '<span class="pill">' + esc(a) + "</span>"; }).join("") + '</td><td class="hm">' + esc(p.g) + '</td><td class="hm">' + esc(p.r) + '</td><td class="hm">' + p.o.slice(0, 2).map(function (o) { return '<span class="pill">' + esc(o) + "</span>"; }).join("") + "</td><td>" + (p.c || "") + "</td></tr>";
     }).join("") + "</tbody></table>";
     else body = '<div class="' + (F.v === "galerie" ? "gal" : "grid") + '">' + S.map(carte).join("") + "</div>";
     h += body + (L.length > F.lim ? '<button class="btnm" data-plus>Afficher plus (' + (L.length - F.lim) + " restants)</button>" : "") + "</div></div>";
@@ -356,7 +356,7 @@ footer.wf a{text-decoration:underline}
     var h = '<section class="fhero"><div class="bg" style="background-image:url(\'' + esc(img || "/crows-x-worst/img/crows-banner.jpg") + '\')"></div><div class="wrap">' +
       '<div class="por">' + (img ? '<img src="' + esc(img) + '" alt="" referrerpolicy="no-referrer">' : face(p)) + "</div><div>" +
       '<div class="crumb"><a href="#/">Univers</a> › <a href="#/personnages">Personnages</a>' + (p.a[0] ? ' › <a href="#/personnages" data-af="' + esc(p.a[0]) + '">' + esc(p.a[0]) + "</a>" : "") + "</div>" +
-      '<h1 class="fname">' + esc(p.n) + "</h1>" + (R && R.jp ? '<p class="fjp jp">' + R.jp + ' <small style="font-size:14px;color:var(--paper-3);font-weight:500">' + R.lecture + "</small></p>" : '<p class="fjp" style="font-size:14px;color:var(--paper-3)">Nom japonais à compléter</p>') +
+      '<h1 class="fname">' + esc(p.n) + "</h1>" + ((R && R.jp) || p.jp ? '<p class="fjp jp">' + esc((R && R.jp) || p.jp) + ' <small style="font-size:14px;color:var(--paper-3);font-weight:500">' + esc((R && R.lecture) || p.kana || "") + "</small></p>" : '<p class="fjp" style="font-size:14px;color:var(--paper-3)">Nom japonais à compléter</p>') +
       ((R ? R.surnom : p.su) ? '<p class="fnick">« ' + esc(R ? R.surnom : p.su) + " »</p>" : "") +
       '<div class="badges">' + p.a.slice(0, 3).map(function (a) { return '<span class="pill r">' + esc(a) + "</span>"; }).join("") + (p.g ? '<span class="pill">' + esc(p.g) + "</span>" : "") + (p.c ? '<span class="pill">' + p.c + " combats</span>" : "") + (p.d ? '<span class="pill">Décédé</span>' : "") + "</div></div></div></section>";
     var tabs = [["profil", "Profil"], ["parcours", "Parcours", "premium"], ["combats", "Combats" + (p.c ? " · " + p.c : "")], ["rivaux", "Rivaux", "premium"], ["apparitions", "Apparitions"]];
@@ -393,10 +393,11 @@ footer.wf a{text-decoration:underline}
   window.addEventListener("hashchange", function () { TAB = "profil"; route(); scrollTo(0, 0); });
   document.addEventListener("change", function (e) { var f = e.target.dataset.f; if (f) { F[f] = e.target.value; F.lim = 120; route(); } });
   document.addEventListener("click", function (e) {
-    var t = e.target.closest("[data-v],[data-m],[data-plus],[data-go],[data-grp],[data-gen],[data-af],[data-tab],[data-as]"); if (!t) return;
+    var t = e.target.closest("[data-v],[data-m],[data-j],[data-plus],[data-go],[data-grp],[data-gen],[data-af],[data-tab],[data-as]"); if (!t) return;
     if (t.dataset.as) { AS = t.dataset.as; document.querySelectorAll("#as button").forEach(function (b) { b.classList.toggle("on", b === t); }); route(); return; }
     if (t.dataset.v) { F.v = t.dataset.v; route(); }
     else if ("m" in t.dataset) { F.m = !F.m; route(); }
+    else if ("j" in t.dataset) { F.j = !F.j; route(); }
     else if ("plus" in t.dataset) { F.lim += 240; route(); }
     else if (t.dataset.tab) { TAB = t.dataset.tab; route(); }
     else if (t.dataset.go) location.hash = "#/perso/" + t.dataset.go;
@@ -408,7 +409,7 @@ footer.wf a{text-decoration:underline}
   var norm = function (s) { return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ou/g, "o").replace(/uu/g, "u"); };
   q.addEventListener("input", function () {
     var v = norm(q.value.trim()); if (!v) { sg.classList.remove("on"); return; }
-    var r = P.filter(function (p) { return norm(p.n + " " + p.su).indexOf(v) >= 0; }).sort(function (a, b) { return a.m - b.m || b.c - a.c; }).slice(0, 8); sel = 0;
+    var r = P.filter(function (p) { return norm(p.n + " " + p.su + " " + (p.jp || "") + " " + (p.kana || "")).indexOf(v) >= 0; }).sort(function (a, b) { return a.m - b.m || b.c - a.c; }).slice(0, 8); sel = 0;
     sg.innerHTML = r.length ? r.map(function (p, i) { return '<a href="#/perso/' + p.s + '" class="' + (i ? "" : "sel") + '">' + face(p) + "<span>" + esc(p.n) + "<small>" + esc(p.a[0] || p.o[0] || "") + "</small></span></a>"; }).join("") : '<div class="empty" style="padding:14px">Personne.</div>';
     sg.classList.add("on");
   });
