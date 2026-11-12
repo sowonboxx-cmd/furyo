@@ -43,6 +43,7 @@
     admin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
     fc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="15" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v12"/><path d="M7 11h5M7 15h3"/></svg>',
     read: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5c3-1.3 6.5-1.3 10 1 3.5-2.3 7-2.3 10-1v14c-3-1.3-6.5-1.3-10 1-3.5-2.3-7-2.3-10-1z"/><path d="M12 6v14"/></svg>',
+    wiki: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M2.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5M14 14.2c.8-.5 1.6-.7 2.5-.7 2.6 0 5 1.9 5 5"/></svg>',
     hq: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V8l8-4 8 4v12"/><path d="M3 20h18M9.5 20v-4h5v4M8.5 11h2M13.5 11h2"/></svg>'
   };
 
@@ -69,6 +70,8 @@
         qt("sort", "Sorties", sjSub, "/admin/#sorties", SJ && SJ.n ? SJ.n : "") +
         qt("cal", "Calendrier", "la semaine", "/hq/#calendrier", "") +
         qt("db", "Mangas Database", "toutes les séries", "/admin/#mangas", "") +
+        // Wiki des personnages Crows × Worst (brouillon, Will 12/11/2026).
+        qt("wiki", "Wiki Crows × Worst", "personnages, lycées, combats", "/hq/wiki-crows/", "") +
         // Couvertures manquantes, nombre en direct, juste sous Mangas Database (Will, 21/10/2026).
         qt("couv", "Couvertures manquantes", CV ? CV + " à remplir" : "tout est rempli", "/admin/#couvertures", CV || "", true) +
         qt("admin", "Admin", "le back-office", "/admin/", "") +
