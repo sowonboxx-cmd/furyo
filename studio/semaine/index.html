@@ -129,7 +129,7 @@ button:disabled{opacity:.5;cursor:default}
   var court = function (j) { return Number(j.slice(8, 10)) + " " + MC[Number(j.slice(5, 7)) - 1]; };
   var semaineISO = function (j) { var d = new Date(j + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + 3 - (d.getUTCDay() + 6) % 7); var y = new Date(Date.UTC(d.getUTCFullYear(), 0, 4)); return 1 + Math.round(((d - y) / 864e5 - 3 + (y.getUTCDay() + 6) % 7) / 7); };
   var nn = function (n) { return n == null ? "" : "T." + String(n).padStart(2, "0"); };
-  var get = function (u) { return fetch(u, { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
+  var get = function (u) { var ac = window.AbortController ? new AbortController() : null; if (ac) setTimeout(function () { ac.abort(); }, 25000); return fetch(u, { credentials: "same-origin", signal: ac ? ac.signal : undefined }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }); };
 
   // Semaine par défaut : celle en cours à partir du jeudi, sinon la précédente (le récap se poste en fin de semaine).
   var auj = new Date().toLocaleDateString("sv", { timeZone: "Europe/Paris" });
@@ -449,10 +449,12 @@ button:disabled{opacity:.5;cursor:default}
     if (!reduit[k]) reduit[k] = dataUrl(src).then(function (u) { return new Promise(function (ok, ko) {
       var im = new Image(); im.onload = function () {
         var r = Math.min(1, l / (im.naturalWidth || l)), w = Math.max(1, Math.round(im.naturalWidth * r)), h = Math.max(1, Math.round(im.naturalHeight * r));
-        if (r === 1 && u.length < 400000) return ok(u);
+        // PNG / SVG (logo) : on garde la transparence.
+        var transp = /^data:image\/(png|svg|gif)/.test(u);
+        if ((r === 1 && u.length < 400000) || /^data:image\/svg/.test(u)) return ok(u);
         var c = document.createElement("canvas"); c.width = w; c.height = h;
-        var x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0, w, h);
-        var out = c.toDataURL("image/jpeg", .88); c.width = c.height = 0; delete cache[src]; ok(out); };
+        var x = c.getContext("2d"); if (!transp) { x.fillStyle = "#fff"; x.fillRect(0, 0, w, h); } x.drawImage(im, 0, 0, w, h);
+        var out = transp ? c.toDataURL("image/png") : c.toDataURL("image/jpeg", .88); c.width = c.height = 0; delete cache[src]; ok(out); };
       im.onerror = ko; im.src = u; }); });
     return reduit[k];
   }
