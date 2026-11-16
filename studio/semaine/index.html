@@ -441,18 +441,38 @@ button:disabled{opacity:.5;cursor:default}
     return polices;
   }
   fontCSS();
+  // Réduit une image à la taille où elle est affichée (x2), en JPEG. Sur iPhone, Safari abandonne
+  // en silence les grosses images au-delà de 2-3 visuels : les couvertures sortaient vides (Will, 16/11/2026).
+  var reduit = {};
+  function petite(src, l) {
+    var k = src + "|" + l;
+    if (!reduit[k]) reduit[k] = dataUrl(src).then(function (u) { return new Promise(function (ok, ko) {
+      var im = new Image(); im.onload = function () {
+        var r = Math.min(1, l / (im.naturalWidth || l)), w = Math.max(1, Math.round(im.naturalWidth * r)), h = Math.max(1, Math.round(im.naturalHeight * r));
+        if (r === 1 && u.length < 400000) return ok(u);
+        var c = document.createElement("canvas"); c.width = w; c.height = h;
+        var x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0, w, h);
+        var out = c.toDataURL("image/jpeg", .88); c.width = c.height = 0; delete cache[src]; ok(out); };
+      im.onerror = ko; im.src = u; }); });
+    return reduit[k];
+  }
   function jpeg(node, fcss, w, h) {
-    // Les images passent en data URL avant le dessin (Safari), puis on redessine jusqu'à ce que le résultat soit stable.
+    // Les images passent en data URL réduites avant le dessin (Safari), puis on dessine plusieurs fois et on garde
+    // le rendu le plus complet (sur iPhone, les premiers rendus sortent parfois sans les images).
     return Promise.all([].map.call(node.querySelectorAll("img"), function (im) {
       if (/^data:/.test(im.src)) return null;
-      return dataUrl(im.getAttribute("src")).then(function (u) { im.src = u; return new Promise(function (ok) { if (im.complete) ok(); else im.onload = im.onerror = ok; }); }).catch(function () { im.src = VIDE; im.style.visibility = "hidden"; });
+      var l = Math.min(1080, Math.max(200, Math.round((im.getBoundingClientRect().width / ((node.getBoundingClientRect().width || 1080) / (w || 1080)) || 540) * 2)));
+      return petite(im.getAttribute("src"), l).then(function (u) { im.src = u; return (im.decode ? im.decode() : Promise.resolve()).catch(function () {}); })
+        .catch(function () { im.src = VIDE; im.style.visibility = "hidden"; });
     })).then(function () {
       var opts = { width: w || 1080, height: h || 1440, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, backgroundColor: "#0c0c0e", imagePlaceholder: VIDE,
         filter: function () { return true; } };
-      var essai = function (k, prev) { return htmlToImage.toJpeg(node, opts).then(function (u) {
-        if (k >= 4 || (prev && Math.abs(u.length - prev.length) < 300 && k >= 2)) return u;
-        return new Promise(function (ok) { setTimeout(ok, 150); }).then(function () { return essai(k + 1, u); }); }); };
-      return essai(1, null);
+      var best = "";
+      var essai = function (k) { return htmlToImage.toJpeg(node, opts).then(function (u) {
+        if (u.length > best.length) best = u;
+        if (k >= 4) return best;
+        return new Promise(function (ok) { setTimeout(ok, 200); }).then(function () { return essai(k + 1); }); }); };
+      return essai(1);
     });
   }
   $("#dl").onclick = function () {
