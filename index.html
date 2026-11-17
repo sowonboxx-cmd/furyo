@@ -834,7 +834,7 @@ a.dmore{text-decoration:none}.dmore{display:flex;align-items:center;justify-cont
 <script src="/site/fit2.js?v=4" defer></script>
 <script src="/site/don.js?v=2"></script>
 <script src="/site/gang.js?v=25"></script>
-<script src="/site/home-m.js?v=72" defer></script>
+<script src="/site/home-m.js?v=73" defer></script>
 <div class="page">
 
 
@@ -925,7 +925,7 @@ const ICN = {
   book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>',
   chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'
 };
-const catsN = it => (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(c => DT.TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : DT.TL.news));
+const catsN = it => (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(c => (c.sous && DT.TL[c.k] ? [c.k, DT.TL[c.k][1] + " · " + c.sous, DT.TL[c.k][2]] : DT.TL[c.k]) || (c.nom ? [c.k, c.nom, c.c] : DT.TL.news));
 const metaN = it => '<div class="dm">' + catsN(it).map(t => `<span style="color:${t[2]}">${escN(t[1])}</span>`).join("<span>·</span>") + `<span>·</span><span>${escN(relN(it.date))}</span></div>`;
 function actsN(it) {
   // Will, 05/10/2026 : vues, likes et signet à gauche ; commentaires tout à droite pour y accéder plus facilement.

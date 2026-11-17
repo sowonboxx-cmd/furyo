@@ -45,7 +45,7 @@
   function link(it) { return "/actus/" + slug(it.fr || it.titre) + "-" + String(it.id).slice(-8); }
   function meta(it) {
     // Plusieurs catégories possibles (Notion) : toutes affichées, la principale d'abord.
-    var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
+    var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return (c.sous && TL[c.k] ? [c.k, TL[c.k][1] + " · " + c.sous, TL[c.k][2]] : TL[c.k]) || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
     return '<div class="mh-meta">' + cs.map(function (t) { return '<span style="color:' + t[2] + '">' + esc(t[1]) + "</span>"; }).join('<span>·</span>') + "· " + esc(dd(it.date)) + "</div>";
   }
   // Carte « O » : texte à gauche, image à droite
@@ -59,7 +59,7 @@
   }
   // Catégorie affichée : une seule, « News » seulement s'il n'y a rien d'autre (Will, 17/10/2026).
   function prim(it) {
-    var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
+    var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return (c.sous && TL[c.k] ? [c.k, TL[c.k][1] + " · " + c.sous, TL[c.k][2]] : TL[c.k]) || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
     return cs.filter(function (t) { return t[0] !== "news" && t[0] !== "annonce"; })[0] || cs[0] || TL.news;
   }
   // Carte de liste (toutes les actus / catégorie), maquette 3a·1 validée le 17/10/2026 : carte noire séparée, image 5:4 à gauche,
@@ -71,7 +71,7 @@
   }
   // La plus récente en grand
   function hero(it) {
-    var t = TL[it.cat] || TL.news;
+    var t = TL[it.cat] || TL.news, s0 = it.cats && it.cats[0] && it.cats[0].sous; if (s0 && TL[it.cat]) t = [t[0], t[1] + " · " + s0, t[2]];
     return '<article class="mh-hero"><a class="mh-hit" href="' + esc(link(it)) + '">' + (it.cover ? '<img src="' + esc(couv(it.carte ? it.vignette : it.cover, 720)) + '" alt="">' : "") +
       '<span class="mh-hv"><span class="mh-pill" style="background:' + t[2] + '">' + esc(t[1]) + "</span><em>" + esc(dd(it.date)) + "</em></span>" +
       "<h2>" + esc(it.fr || it.titre) + (it.chiffre ? ' <em style="font-style:normal;color:#F2B33D;white-space:nowrap">' + esc(it.chiffre) + "</em>" : "") + "</h2><p>" + esc(it.texte) + "</p></a>" + acts(it) + "</article>";
@@ -80,7 +80,7 @@
   // Grande image en tête de l'accueil, comme en haut d'une news (Will, 05/10/2026) : catégories, titre, date,
   // et les actions (vues, j'aime, signet, commentaires) dans l'image.
   function heroH(it) {
-    var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return TL[c.k] || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
+    var cs = (it.cats && it.cats.length ? it.cats : [{ k: it.cat }]).map(function (c) { return (c.sous && TL[c.k] ? [c.k, TL[c.k][1] + " · " + c.sous, TL[c.k][2]] : TL[c.k]) || (c.nom ? [c.k, c.nom, c.c] : TL.news); });
     return '<article class="mh-hx' + (it.carte ? " kc" : "") + '">' + (it.cover ? '<img src="' + esc(couv(it.coverM || it.cover, 1000)) + '" alt="" fetchpriority="high"' + (it.pos == null ? "" : ' style="object-position:center ' + it.pos + '%"') + '>' + (it.credit ? '<span class="cr">' + esc(it.credit) + "</span>" : "") : "") +
       '<a class="mh-hxa" href="' + esc(link(it)) + '" aria-label="' + esc(it.fr || it.titre) + '"></a>' +
       '<div class="mh-hxt"><span class="mh-hxp">' + cs.map(function (t) { return '<span style="background:' + t[2] + '">' + esc(t[1]) + "</span>"; }).join("") + "</span>" +
