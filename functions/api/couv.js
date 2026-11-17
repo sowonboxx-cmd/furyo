@@ -7,6 +7,7 @@
 const OFFICIELS = ["dlpdomain.com","media.hachette.fr","editions-delcourt.fr","kazemanga.fr","crunchyroll-editions.fr","mangetsu-manga.fr","anime-store.fr","meian-editions.fr","akitashoten.co.jp","bookwalker.jp","kodansha.co.jp","shogakukan.co.jp","shueisha.co.jp","hakusensha.co.jp","kadokawa.co.jp","nihonbungeisha.co.jp","shonengahosha.co.jp","ebookjapan.yahoo.co.jp","cmoa.jp","bigcomicbros.net","championcross.jp","shonenjumpplus.com","comicvine.gamespot.com","yanmaga.jp","kana.fr","pika.fr","ki-oon.com","glenat.com","meian.fr","akata.fr","kurokawa.fr","panini.fr","mangetsu.fr","nabanco.com","vega-dupuis.com","delcourt.fr","doki-doki.fr","soleil.fr","notion.so","notion-static.com","amazonaws.com","furyo.pages.dev","furyogang.com",
   // Sites et CDN officiels d'éditeurs repérés lors du référencement de la bibliothèque (07/10/2026)
   "leed.co.jp","kdkw.jp","shinchosha.co.jp","square-enix.com","coamix.co.jp","casterman.com","lisez.com","noeve-grafx.com","humano.com","lezardnoir.com","shogakukan-comic.jp","twovirgins.jp",
+  "hachette-livre.fr", "bedetheque.com", "mechacomic.jp" /* ajoutés le 17/11/2026 : couvertures pas encore copiées */,
   "dosbg3xlm0x1t.cloudfront.net" /* Shūeisha */, "d2l33iqw5tfm1m.cloudfront.net" /* Futabasha */];
 // CDN partagés : seulement le dossier de l'éditeur.
 const DOSSIERS = ["cdn.shopify.com/s/files/1/0770/8049/4404/", "cdn.shopify.com/s/files/1/0810/4011/3877/", "cdn.prod.website-files.com/6a60c0369879c07f7143335d/"];
