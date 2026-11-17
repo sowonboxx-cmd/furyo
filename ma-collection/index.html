@@ -528,7 +528,8 @@ function drawSerie(s, d){
     const etat = LT === "c" ? (own ? "Possédé" : "Manquant") : on ? VERBE[LT] : own ? "Possédé" : "";
     return `<button class="t${LT === "c" && !own ? " miss" : ""}" data-t="${t.id}" aria-pressed="${on}" aria-label="Tome ${esc(t.n)} : ${on ? "retirer de" : "ajouter à"} ${esc(LISTS.find(x => x[0] === LT)[1])}"><span class="cv">${img(t, "")}${on ? `<span class="bk-ck ${LT}">${I.ck}</span>` : `<span class="plus">+</span>`}</span><small>T.${esc(t.n)}<em>${etat}</em></small></button>`;
   };
-  const leg = LT === "c" ? `<div class="leg"><span><i style="background:var(--ok)"></i>Possédé</span><span><i style="background:#555"></i>Manquant</span><span><i style="border:1.5px dashed #555"></i>À paraître</span><span>Touche un tome pour le cocher</span></div>`
+  // « À paraître » n'apparaît que si l'édition a vraiment un tome à venir (inutile pour une série terminée, Will 17/11/2026).
+  const leg = LT === "c" ? `<div class="leg"><span><i style="background:var(--ok)"></i>Possédé</span><span><i style="background:#555"></i>Manquant</span>${(e.tomes || []).some(t => !t.paru) ? `<span><i style="border:1.5px dashed #555"></i>À paraître</span>` : ""}<span>Touche un tome pour le cocher</span></div>`
     : `<div class="leg"><span>${inL} tome${inL > 1 ? "s" : ""} dans « ${esc(LISTS.find(x => x[0] === LT)[1])} » · touche un tome pour l'ajouter ou le retirer</span></div>`;
   folCharger(d.serie.slug || s.slug);
   morph(app(), `<a class="back" href="/ma-collection/">${I.back}Ma collection</a>
