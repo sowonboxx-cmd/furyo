@@ -664,6 +664,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
     </div>
   </section>
 </div>
+<script src="/site/admin-session.js?v=1"></script>
 <script src="/site/badges.js?v=2"></script>
 <script src="/site/sortie-post.js?v=16"></script>
 <script src="/site/quickaccess.js?v=17"></script>
@@ -1424,7 +1425,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     j("/api/admin/veille").then(function (ve) { calAppliquer({ ve: ve }); garder("ve", { items: (ve.items || []).filter(function (x) { return x && x.enLigne; }), apub: APUB, cols: ve.cols, cats: ve.cats }); if (vu) calRedessiner(); }).catch(function () {});
   }
   function calPost(body, cb) {
-    fetch("/api/admin/calendrier", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); calLoad(); if (cb) cb(); }).catch(function (e) { var m = $("#calmsg"); if (m) m.textContent = "Erreur : " + (e.message || "réessaie"); });
+    fetch("/api/admin/calendrier", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || ""); calLoad(); if (cb) cb(); }).catch(function (e) { document.querySelectorAll(".chk.busy").forEach(function (x) { x.classList.remove("busy"); }); var m = $("#calmsg"); if (m) m.textContent = "Erreur : " + (e.message || "réessaie"); });
   }
   // ---- Events ----
   document.querySelectorAll(".dtabs button").forEach && null;
