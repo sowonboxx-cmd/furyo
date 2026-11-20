@@ -44,16 +44,22 @@ async function catalogue(env, waitUntil) {
 }
 
 async function detail(env, id, waitUntil) {
-  const r = await fetch(`https://api.notion.com/v1/pages/${id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } });
-  if (!r.ok) return { error: "introuvable" };
+  // Notion peut refuser passagèrement (limite de débit, panne) : on réessaie une fois avant de conclure (Will, 20/11/2026).
+  const lire = () => fetch(`https://api.notion.com/v1/pages/${id}`, { headers: { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28" } });
+  let r = await lire();
+  if (!r.ok && r.status !== 404 && r.status !== 400) { await new Promise(ok => setTimeout(ok, 1200)); r = await lire(); }
+  if (r.status === 404 || r.status === 400) return { error: "introuvable", raison: "série absente de Notion", status: 404 };
+  if (!r.ok) return { error: "Notion indisponible, réessayez", status: 503 };
   const p = (await r.json()).properties || {};
   const serie = { id, t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]), slug: slugSerie(p), fiche: estVisible(p) ? 1 : 0, statut: text(p["Statut"]) || "À valider",
     auteurs: [...new Set([text(p["Scénariste"]), text(p["Dessinateur"])].filter(Boolean))].join(" & "), cover1: text(p["Couverture T1"]) };
   // Éditions et tomes lus dans l'index (KV) : une seule lecture Notion au lieu d'une par édition (Will, 07/10/2026).
   const idx = await editionsParSerie(env, waitUntil).catch(() => null);
   if (idx && idx[id] && idx[id].length) return { serie, editions: idx[id] };
-  const eRows = (await queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } })).filter(ok);
-  if (!eRows.length) return { error: "introuvable" };
+  const lireEds = () => queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } });
+  let eRows;
+  try { eRows = (await lireEds()).filter(ok); } catch (e) { await new Promise(ok => setTimeout(ok, 1200)); try { eRows = (await lireEds()).filter(ok); } catch (e2) { return { error: "Notion indisponible, réessayez", status: 503 }; } }
+  if (!eRows.length) return { error: "introuvable", raison: "aucune édition liée", status: 404 };
   const editions = await Promise.all(eRows.map(async e => {
     const q = e.properties, tRows = await queryAll(env.NOTION_TOKEN, { ...TOMES, body: { filter: { property: "Édition", relation: { contains: nid(e.id) } }, sorts: [{ property: "N°", direction: "ascending" }] } });
     const today = new Date().toISOString().slice(0, 10);
