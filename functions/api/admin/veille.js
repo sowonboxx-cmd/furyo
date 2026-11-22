@@ -50,7 +50,22 @@ async function listerPrepub(env) {
 }
 
 async function construire(request, env) {
-  const [all, pRows] = await Promise.all([lister(env), listerPrepub(env)]);
+  const [all, pRows0] = await Promise.all([lister(env), listerPrepub(env)]);
+  // Prépublications « de routine » (Will, 22/11/2026) : un chapitre paru ou une absence, sans rien de spécial
+  // (ni couverture, ni couleur, ni annonce, ni pause annoncée : « Mise en avant » vide). Elles sont validées
+  // automatiquement et partent en brèves sur les fiches séries et dans les récaps ; Will ne voit dans « News et
+  // veille » et dans le calendrier que les numéros où il se passe quelque chose (et les lignes « À vérifier »).
+  const today = new Date().toISOString().slice(0, 10);
+  const routine = r => { const p = r.properties || {}, st = text(p["Statut"]), d = date(p["Date de sortie"]);
+    return !list(p["Mise en avant"]).length && (st === "Paru" || st === "Pause") && (!d || d <= today); };
+  const auto = pRows0.filter(routine);
+  if (auto.length) {
+    const H = { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" };
+    for (let i = 0; i < auto.length; i += 3) await Promise.allSettled(auto.slice(i, i + 3).map(r =>
+      fetch(`https://api.notion.com/v1/pages/${r.id}`, { method: "PATCH", headers: H, body: JSON.stringify({ properties: { "Validé": { checkbox: true } } }) })));
+    await caches.default.delete(new Request(new URL("/api/prepub", request.url).toString())).catch(() => {});
+  }
+  const pRows = pRows0.filter(r => !routine(r));
   // Propositions « Couverture dévoilée » désactivées (Will, 19/10/2026) : on ne met plus les couvertures seules dans
   // « News et veille ». Les couvertures sont gérées le jour de la sortie, via « Sorties du jour » (visuel + infos).
   // (Mettre COUV_PROPOSALS à true pour réactiver.)
