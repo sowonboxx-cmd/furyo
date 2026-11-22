@@ -1,6 +1,6 @@
 // GET /api/prepub : les sorties en magazine validées par Will (base « FuryoGang — Prépublication », case Validé).
 import { isAdmin } from "../../lib/admin.js";
-import { text, num, date, rel, list, queryAll, cached } from "../../lib/notion.js";
+import { text, num, date, rel, list, queryAll, cached , akitaLien } from "../../lib/notion.js";
 
 const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
 
@@ -36,7 +36,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
       return {
         entry: text(p["Entrée"]), jp: text(p["Titre au sommaire"]), mag: text(p["Magazine"]), issue: text(p["Numéro"]),
         date: date(p["Date de sortie"]), status: text(p["Statut"]), ch: num(p["Chapitre"]),
-        link: text(p["Lien du numéro"]), page: text(p["Page de la série"]), cover: text(p["Couverture du numéro"]),
+        link: akitaLien(text(p["Lien du numéro"])), page: text(p["Page de la série"]), cover: text(p["Couverture du numéro"]),
         read: text(p["Lecture en ligne"]), series: rel(p["Série"]),
         hl: list(p["Mise en avant"]), note: text(p["Annonce du magazine"]),
       };

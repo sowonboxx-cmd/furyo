@@ -8,7 +8,7 @@ const pastilleCxw = p => /^crows\s*x\s*worst$/i.test(text(p["Univers"]).trim())
   && !/^qp\b/i.test(text(p["SERIES"]).trim())
   && !/hommage/i.test(text(p["Relation"]))
   && !CXW_SANS.has(slugify(text(p["SERIES"])));
-import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
+import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie , akitaLien } from "../../lib/notion.js";
 import { estVisible, estValidee } from "../../lib/site.js";
 import { isAdmin } from "../../lib/admin.js";
 import { sourceName } from "../../lib/source.js";
@@ -148,7 +148,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     serie.credit = credits(serie, auRows.map(a => ({ name: text(a.properties["Auteur"]), jp: text(a.properties["Nom japonais"]) })));
     serie.breves = bRows.slice(0, 12).map(r => { const q = r.properties || {};
       return { date: date(q["Date de sortie"]), mag: text(q["Magazine"]), num: text(q["Numéro"]), ch: num(q["Chapitre"]), statut: text(q["Statut"]),
-        fin: list(q["Mise en avant"]).includes("Dernier chapitre"), read: noLib(text(q["Lecture en ligne"])), lien: noLib(text(q["Page de la série"]) || text(q["Lien du numéro"])) };
+        fin: list(q["Mise en avant"]).includes("Dernier chapitre"), read: noLib(text(q["Lecture en ligne"])), lien: noLib(text(q["Page de la série"]) || akitaLien(text(q["Lien du numéro"]))) };
     }).filter(b => b.date);
     return { serie, editions };
   };

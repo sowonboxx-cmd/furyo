@@ -3,7 +3,7 @@
 // - le dernier chapitre sorti au Japon (base Prépublication) pour la série ou une autre partie du même univers ;
 // - le ou les mangakas (base Auteurs) avec leur compte X et leurs séries.
 // Seules les news publiées sont acceptées. Résultat gardé en cache 10 minutes.
-import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
+import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie , akitaLien } from "../../lib/notion.js";
 import { estVisible } from "../../lib/site.js";
 import { credits } from "../../lib/credit.js";
 
@@ -63,7 +63,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     if (pr) {
       const q = pr.properties;
       dernier = { entry: text(q["Entrée"]).split(" · ")[0], mag: text(q["Magazine"]), issue: text(q["Numéro"]), date: date(q["Date de sortie"]), ch: num(q["Chapitre"]), status: text(q["Statut"]),
-        cover: text(q["Couverture du numéro"]), link: text(q["Lien du numéro"]), page: text(q["Page de la série"]), read: text(q["Lecture en ligne"]), fin: list(q["Mise en avant"]).includes("Dernier chapitre") };
+        cover: text(q["Couverture du numéro"]), link: akitaLien(text(q["Lien du numéro"])), page: text(q["Page de la série"]), read: text(q["Lecture en ligne"]), fin: list(q["Mise en avant"]).includes("Dernier chapitre") };
     }
     // Séries des mangakas (titres) : relation « Séries » de la base Auteurs.
     const sIds = [...new Set(auteursRows.flatMap(a => rel(a.properties["Séries"])))].slice(0, 24);
