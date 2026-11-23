@@ -4,6 +4,7 @@
 //   GET  /api/admin/igq?id=<id>    → { item | null }
 //   POST /api/admin/igq { id, quand, legende, post: [url], story: url, titre, type: "sortie" } → programme
 //   POST /api/admin/igq { id, del: true } → annule (si pas encore parti)
+//   POST /api/admin/igq { id, ignore: true, titre, type } → « Ne pas publier » (Will, 23/11/2026) : rien ne part, la ligne est marquée ignorée
 import { json, isAdmin } from "../../../lib/admin.js";
 
 const cle = id => "igq:" + String(id).replace(/[^0-9a-zA-Z_-]/g, "").slice(0, 64);
@@ -24,6 +25,11 @@ export async function onRequestPost({ request, env }) {
   const k = cle(b.id), cur = await env.STATS.get(k, "json");
   if (b.del) { if (cur && cur.fait) return json({ error: "déjà parti sur Instagram" }, 400); await env.STATS.delete(k); return json({ ok: true }); }
   if (cur && cur.fait) return json({ error: "déjà parti sur Instagram" }, 400);
+  if (b.ignore) {
+    const item = { id: String(b.id), type: String(b.type || "").slice(0, 20), titre: String(b.titre || "").slice(0, 160), ignore: true, quand: new Date().toISOString(), cree: new Date().toISOString() };
+    await env.STATS.put(k, JSON.stringify(item), { expirationTtl: 60 * 864e2 });
+    return json({ ok: true, item });
+  }
   const quand = new Date(b.quand); if (isNaN(quand)) return json({ error: "date invalide" }, 400);
   const u = x => (/^https:\/\/\S+$/.test(String(x || "")) ? String(x) : "");
   const post = (Array.isArray(b.post) ? b.post : []).map(u).filter(Boolean).slice(0, 20), story = u(b.story);

@@ -49,7 +49,7 @@ export async function onRequestGet({ request, env }) {
       chapitre: num(p["Chapitre"]), date: date(p["Date de sortie"]), statut: text(p["Statut"]), avant: list(p["Mise en avant"]), cover: s.cover || "", tome: s.tome,
       // Will, 23/11/2026 : page couleur / couverture du prochain tome à la place du dernier tome, et une ligne d'info sous le titre.
       visuel: (p["Visuel story"] && p["Visuel story"].url) || "", sousTitre: text(p["Sous-titre story"]),
-      story: story ? { quand: story.quand, fait: story.fait || "", err: story.err || "" } : null };
+      story: story ? { quand: story.quand, fait: story.fait || "", err: story.err || "", ignore: !!story.ignore } : null };
   }));
   return json({ items });
 }
