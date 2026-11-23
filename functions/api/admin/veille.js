@@ -328,7 +328,8 @@ async function traiter(request, env) {
   if (b.cadrage !== undefined) props["Cadrage"] = { number: b.cadrage === null || b.cadrage === "" ? null : Math.max(0, Math.min(100, Math.round(Number(b.cadrage)))) };
   if (typeof b.video === "string") {
     const v = b.video.trim();
-    if (v && !/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(v)) return json({ error: "La vidéo doit être un lien YouTube." }, 400);
+    // YouTube, ou une vidéo MP4 hébergée sur le site (PV envoyé par Will, 23/11/2026).
+    if (v && !/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(v) && !/^(https:\/\/furyogang\.com)?\/img\/\S+\.mp4$/i.test(v)) return json({ error: "La vidéo doit être un lien YouTube ou une vidéo MP4 du site." }, 400);
     props["Vidéo"] = { url: v || null };
   }
   // Catégorie : choix multiple dans Notion (la première est la principale). Accepte un nom ou une liste de noms.

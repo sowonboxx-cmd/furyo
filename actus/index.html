@@ -415,7 +415,7 @@ body{background:#000}
   }
   function vid(u) {
     // Vidéo hébergée sur le site (.mp4, souvent verticale) : lecteur natif (Will, 12/10/2026).
-    if (/\.mp4(\?|$)/i.test(String(u || ""))) return '<div class="na-vid mp4"><video src="' + esc(u) + '" controls playsinline preload="metadata"></video></div>';
+    if (/\.mp4(\?|$)/i.test(String(u || ""))) return '<div class="na-vid mp4"><video src="' + esc(u) + '" controls playsinline preload="metadata" onloadedmetadata="if(this.videoWidth>this.videoHeight)this.parentNode.style.maxWidth=\'100%\'"></video></div>';
     var m = String(u || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
     return m ? '<div class="na-vid"><iframe src="https://www.youtube-nocookie.com/embed/' + m[1] + '" title="Vidéo de la news" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>' : "";
   }
