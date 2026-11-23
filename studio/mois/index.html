@@ -352,7 +352,14 @@ button:disabled{opacity:.5;cursor:default}
     }).then(function () {
       if (navigator.canShare && navigator.canShare({ files: files }) && /iPhone|iPad|Android/i.test(navigator.userAgent)) {
         $("#msg").innerHTML = ""; var go = document.createElement("button"); go.className = "main"; go.textContent = "Enregistrer les " + files.length + " images";
-        go.onclick = function () { navigator.share({ files: files }).catch(function () {}); }; $("#msg").appendChild(go); return;
+        go.onclick = function () { navigator.share({ files: files }).catch(function () {}); }; $("#msg").appendChild(go);
+        // X n'apparaît pas dans le menu de partage au-delà de 4 images (sa limite par post) : boutons par lots de 4 (Will, 23/11/2026).
+        if (files.length > 4) for (var k = 0; k < files.length; k += 4) (function (lot, de) {
+          var x = document.createElement("button"); x.className = "main"; x.style.cssText = "margin-left:8px;background:#000;border:1px solid #444";
+          x.textContent = "Pour X : " + (de + 1) + (lot.length > 1 ? " à " + (de + lot.length) : "");
+          x.onclick = function () { navigator.share({ files: lot }).catch(function () {}); }; $("#msg").appendChild(x);
+        })(files.slice(k, k + 4), k);
+        return;
       }
       files.forEach(function (f, i) { setTimeout(function () { var a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); }, i * 400); });
       $("#msg").textContent = files.length + " images téléchargées.";
