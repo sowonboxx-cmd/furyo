@@ -648,3 +648,12 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
 })();
 // Bouton « recharger l'application » (rond vert coché), visible quand le site est ouvert depuis l'écran d'accueil (Will, 23/11/2026).
 (function () { var s = document.createElement("script"); s.src = "/site/refresh.js?v=3"; s.defer = true; document.head.appendChild(s); })();
+// Relais de la publication planifiée (Will, 23/11/2026) : GitHub Actions ne passe pas toujours toutes les 10 minutes,
+// alors chaque visite du site (au plus une fois toutes les 4 minutes par visiteur, toutes les 2 minutes au QG ouvert)
+// demande au serveur d'envoyer ce qui est programmé et dont l'heure est passée. Le serveur ne fait rien s'il vient de passer.
+(function () {
+  function tour() { try { fetch("/api/cron/reseaux?doux=1", { keepalive: true, credentials: "omit" }).catch(function () {}); } catch (e) {} }
+  var k = "fg-cron", n = Date.now(), d = 0; try { d = +localStorage.getItem(k) || 0; } catch (e) {}
+  if (n - d > 4 * 6e4) { try { localStorage.setItem(k, String(n)); } catch (e) {} setTimeout(tour, 3000); }
+  if (/^\/hq\//.test(location.pathname)) setInterval(function () { if (!document.hidden) tour(); }, 2 * 6e4);
+})();
