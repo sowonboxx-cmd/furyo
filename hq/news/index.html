@@ -414,7 +414,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     return haut() + '<div class="row">' + phone("site", scrSM(), "Site · mobile", IC.site, true).replace('<span class="ed">Modifier</span>', '<span class="ed">Modifier</span><span class="sw" data-v="site" role="button">' + IC.web + 'Site ordinateur</span>') + phone("x", scrX(), "X", IC.x, true) + phone("ig", scrIG(), "Instagram", IC.ig, true) + phone("ig", scrStory(), "Story", IC.ig, false) + '<button class="ph lph" data-v="lien"><span class="phl">' + SV('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>', { w: 15 }) + 'Aperçu du lien<span class="ok">✓</span></span><span class="lpf"><span class="fit" data-w="390" style="display:block">' + scrLien() + '</span></span><span class="ed2"><span class="ed">Modifier</span>' + (N.enLigne ? '<span class="sw" data-copy-url="1" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier le lien</span>' : '') + '</span></button></div>' + plan();
   }
   function navBar() { return '<div class="nav">' + [["all", "Vue d’ensemble", IC.all], ["site", "Site", IC.web], ["x", "X", IC.x], ["ig", "Instagram", IC.ig], ["lien", "Lien", SV('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>', { w: 16 })]].map(function (t) { return '<button data-v="' + t[0] + '" class="' + (V === t[0] ? "on" : "") + '">' + t[2] + t[1] + (t[0] === "all" ? "" : "<small>✓</small>") + '</button>'; }).join("") + '</div>'; }
-  function compteur(k) { if (k === "x") { var n = poidsX(D.x); return '<em class="' + (n > 280 ? "ko" : "") + '">' + n + ' / 280</em>'; } var m = (D[k] || "").length; return '<em>' + m + (k === "site" ? " car." : " / 2 200") + '</em>'; }
+  function compteur(k) { if (k === "x") { var lx = lienNews(), n = poidsX(String(D.x || "").indexOf(lx) < 0 ? String(D.x || "").replace(/\s+$/, "") + "\n\n" + lx : D.x); /* lien de la news compris (copié avec le texte) */ return '<em class="' + (n > 280 ? "ko" : "") + '">' + n + ' / 280</em>'; } var m = (D[k] || "").length; return '<em>' + m + (k === "site" ? " car." : " / 2 200") + '</em>'; }
   function imgPick() { return '<div class="imgs">' + IMGS.map(function (u) { return '<button data-img="' + esc(u) + '" class="' + (u === img() ? "on" : "") + '"><img src="' + esc(couv(u, 160)) + '"></button>'; }).join("") + '<label class="up" title="Envoyer une image">＋<input type="file" accept="image/*" data-up="image"></label></div>'; }
   // Carte « Extrait » : couverture, planches, étiquette, éditeur, tome (Will, 26/10/2026). Vide = automatique.
   var estExtrait = function () { return N.cat === "extrait" || N.cat2 === "extrait"; };
@@ -527,7 +527,10 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     var cpu = e.target.closest("[data-copy-url]");
     if (cpu) { e.preventDefault(); copier(lienNews(), cpu); return; }
     var cpb = e.target.closest("[data-copy]");
-    if (cpb) { e.preventDefault(); e.stopPropagation(); copier(D[cpb.getAttribute("data-copy")] || "", cpb); return; }
+    // X (Will, 24/11/2026) : « Copier » donne le texte ET le lien de la news, prêt à coller dans le tweet (le lien est connu
+    // à l'avance, même pour une news planifiée). Pas de doublon si le lien est déjà dans le texte.
+    if (cpb) { e.preventDefault(); e.stopPropagation(); var ck = cpb.getAttribute("data-copy"), ct = String(D[ck] || ""), lu = lienNews();
+      if (ck === "x" && ct.indexOf(lu) < 0) ct = ct.replace(/\s+$/, "") + "\n\n" + lu; copier(ct, cpb); return; }
     var v = e.target.closest("[data-v]"); if (v) { V = v.dataset.v; draw(); scrollTo(0, 0); return; }
     var im = e.target.closest("[data-img]"); if (im) { D.image = im.dataset.img; draw(); return; }
     if (e.target.closest("[data-extdl]")) { if (!D.extPng) return; var a = document.createElement("a"); a.href = D.extPng; a.download = String((N.serie && N.serie.slug) || "extrait") + "-extrait.png"; document.body.appendChild(a); a.click(); a.remove(); toast("Visuel téléchargé ✓"); return; }
