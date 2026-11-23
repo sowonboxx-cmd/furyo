@@ -1,4 +1,4 @@
-// Prépublication en story (Will, 23/11/2026) : les chapitres sortis ou à paraître (2 jours avant → 7 jours après),
+// Prépublication en story (Will, 23/11/2026) : les chapitres sortis ou à paraître (7 jours avant → 7 jours après : on peut publier en retard, Will 23/11/2026),
 // pour la ligne « Prépublication » du calendrier éditorial. Chaque ligne : la série, le magazine, le numéro, le chapitre,
 // la couverture du DERNIER tome paru de la série (jamais la couverture du magazine) et l'état de la story (file igq).
 //   GET /api/admin/prepubstory → { items: [{ id, serie, slug, magazine, numero, chapitre, date, avant, cover, story }] }
@@ -13,7 +13,7 @@ const jour = d => d.toLocaleDateString("sv", { timeZone: "Europe/Paris" });
 
 export async function onRequestGet({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "connexion requise" }, 401);
-  const debut = jour(new Date(Date.now() - 2 * 864e5)), fin = jour(new Date(Date.now() + 7 * 864e5));
+  const debut = jour(new Date(Date.now() - 7 * 864e5)), fin = jour(new Date(Date.now() + 7 * 864e5));
   const rows = await queryAll(env.NOTION_TOKEN, { ...PREPUB, body: { filter: { and: [
     { property: "Date de sortie", date: { on_or_after: debut } }, { property: "Date de sortie", date: { on_or_before: fin } },
     { or: [{ property: "Statut", select: { equals: "Paru" } }, { property: "Statut", select: { equals: "À paraître" } }] },
