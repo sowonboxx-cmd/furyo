@@ -1,5 +1,5 @@
 /* Stories Instagram automatiques (Will, 23/11/2026).
-   Un style tiré au hasard (fonds validés : trait droit, logo rond blanc 不良ギャング rouge, pas de fond crème)
+   Un style tiré au hasard (fonds validés : trait droit, bas noir + logo d'origine au rond rouge, pas de fond crème)
    + deux persos de Studio Niceguy tirés au hasard en bas, à gauche et à droite.
    Le tirage dépend d'une « graine » (l'identifiant de la news ou du tome) : l'aperçu et l'image envoyée sont identiques.
    Le visuel du post est posé dans le cadre clair (même emplacement sur tous les styles).
@@ -22,12 +22,12 @@
   }
   function html(t, src) {
     var boite = function (n, cote) { return '<img src="' + B + 'persos/' + n + '.png" style="position:absolute;bottom:0;' + cote + ':' + PB.m + 'px;width:' + PB.w + 'px;height:' + PB.h + 'px;object-fit:contain;object-position:' + cote + ' bottom">'; };
-    return '<div style="position:relative;width:1080px;height:1920px;overflow:hidden"><img src="' + B + 'styles/' + t.style + '.jpg" style="position:absolute;inset:0;width:100%;height:100%">' +
+    return '<div style="position:relative;width:1080px;height:1920px;overflow:hidden"><img src="' + B + 'styles/' + t.style + '.jpg?v=3" style="position:absolute;inset:0;width:100%;height:100%">' +
       (src ? '<img src="' + src + '" style="position:absolute;left:' + ZONE.x + 'px;top:' + ZONE.y + 'px;width:' + ZONE.w + 'px;height:' + ZONE.h + 'px;object-fit:contain">' : "") + boite(t.g, "left") + boite(t.d, "right") + '</div>';
   }
   function charger(u) { return new Promise(function (ok, ko) { var i = new Image(); i.crossOrigin = "anonymous"; i.onload = function () { ok(i); }; i.onerror = function () { ko(new Error("image introuvable : " + u)); }; i.src = u; }); }
   function canvas(t, post) {
-    return Promise.all([charger(B + "styles/" + t.style + ".jpg"), charger(B + "persos/" + t.g + ".png"), charger(B + "persos/" + t.d + ".png")]).then(function (L) {
+    return Promise.all([charger(B + "styles/" + t.style + ".jpg?v=3"), charger(B + "persos/" + t.g + ".png"), charger(B + "persos/" + t.d + ".png")]).then(function (L) {
       var c = document.createElement("canvas"); c.width = 1080; c.height = 1920; var x = c.getContext("2d");
       x.drawImage(L[0], 0, 0, 1080, 1920);
       if (post) { var pw = post.width, ph = post.height, k = Math.min(ZONE.w / pw, ZONE.h / ph), w = pw * k, h = ph * k, px = ZONE.x + (ZONE.w - w) / 2, py = ZONE.y + (ZONE.h - h) / 2;
