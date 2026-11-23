@@ -295,6 +295,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .chk.off{background:#34343b;color:#747480}
 .chk.on{background:var(--ok);color:#1b1b1f}
 .chk.busy{opacity:.5;pointer-events:none}
+.chk.pl{width:auto;height:22px;padding:0 9px 0 6px;border-radius:11px;background:#F08A24;color:#1b1b1f;display:flex;gap:4px;align-items:center}.chk.pl b{font:800 11px "FGInter";white-space:nowrap}
 [data-drag]{cursor:grab}
 .dragging{opacity:.4}
 .wcol.drop-ok,.cell.drop-ok{outline:2px dashed var(--blue);outline-offset:-3px;background:rgba(42,111,208,.14)}
@@ -433,13 +434,25 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .ppb-h .kj{font:900 15px "FGJP",sans-serif;color:#BC002D}.ppt{flex:1;min-width:0}.ppt b{display:block;font:700 16px "FGAntonio";text-transform:uppercase}.ppt small{display:block;font:500 11.5px "FGInter";color:var(--mut)}.ppb-h i{font-style:normal;color:var(--mut)}
 .ppl{display:flex;flex-direction:column;gap:2px;padding:0 8px 10px}.ppr{display:flex;align-items:center;gap:10px;padding:6px 6px;border-radius:10px;cursor:pointer}.ppr:hover{background:#1c1c20}
 .ppc{width:30px;height:42px;border-radius:4px;background:#26262c center/cover;flex:none}.ppi{flex:1;min-width:0}.ppi b{display:block;font:600 13px "FGInter";white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ppi b em{font-style:normal;font-size:10.5px;color:#F2B33D;margin-left:4px}.ppi small{display:block;font:500 11.5px "FGInter";color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ppk{width:26px;height:26px;border-radius:8px;border:1.5px solid #4a4a52;background:none;color:#fff;font:800 13px "FGInter";cursor:pointer;flex:none}.ppk.pl{background:#2A6FD0;border-color:#2A6FD0}.ppk.ok{background:#2E7D4F;border-color:#2E7D4F}.ppk.err{border-color:#FF8A80}.ppk.busy{opacity:.4}
+.ppk{width:26px;height:26px;border-radius:8px;border:1.5px solid #4a4a52;background:none;color:#fff;font:800 13px "FGInter";cursor:pointer;flex:none}.ppk.pl{background:#F08A24;border-color:#F08A24;color:#1b1b1f}.ppk.ok{background:#2E7D4F;border-color:#2E7D4F}.ppk.err{border-color:#FF8A80}.ppk.busy{opacity:.4}
 .pptout{margin:8px 6px 0;padding:9px;border-radius:10px;border:0;background:#26262c;color:#fff;font:700 12.5px "FGInter";cursor:pointer}
 .igbox{margin-top:4px}.igtb{display:flex;gap:6px;margin-bottom:10px}.igtb button,.igch button{border:0;border-radius:12px;padding:9px 14px;background:#1f1f24;color:#cfcfd4;font:700 13px "FGInter";cursor:pointer}.igtb button[aria-pressed=true],.igch button[aria-pressed=true]{background:#F4ECDD;color:#111}
 .igcar{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -4px;padding:0 4px}.igcar::-webkit-scrollbar{display:none}.igsl{flex:0 0 100%;scroll-snap-align:start;text-align:center}.igsl img{display:block;margin:0 auto;max-width:100%;max-height:62vh;border-radius:14px;background:#111;cursor:zoom-in;box-shadow:0 14px 40px rgba(0,0,0,.5)}.igsl span{display:block;font:700 11px "FGInter";letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-top:8px}
 @media (min-width:720px){.igtb{display:none}.igcar{display:grid;grid-template-columns:1fr 1fr;overflow:visible}.igcar.un{grid-template-columns:1fr}.igsl img{max-height:52vh}}
 .iglab{font:700 11px "FGInter";letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:16px 0 8px}.igch{display:flex;gap:7px;flex-wrap:wrap}.igch button em{font-style:normal;font-size:10px;color:#BC002D;margin-right:6px;text-transform:uppercase;letter-spacing:.06em}
-.igautre{position:relative;border-radius:12px;padding:9px 14px;background:#1f1f24;color:#cfcfd4;font:700 13px "FGInter";cursor:pointer;overflow:hidden}.igautre input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.igch button.igau{display:inline-flex;align-items:center;gap:7px;border:1px dashed #3a3a42;background:transparent}.igch button.igau svg{width:14px;height:14px}.igch button.igau[aria-expanded=true]{border-style:solid;border-color:#F4ECDD;color:#F4ECDD}
+.igpop{margin-top:10px;background:#16161a;border:1px solid #2a2a30;border-radius:16px;padding:14px}
+.igcal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.igcal-h b{font:400 20px "FGAntonio",Antonio,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#F4ECDD}
+.igcal-h button{width:40px;height:40px;border:0;border-radius:12px;background:#1f1f24;color:#F4ECDD;cursor:pointer;display:grid;place-items:center}.igcal-h button:disabled{opacity:.25;cursor:default}.igcal-h svg{width:16px;height:16px}
+.igcal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.igcal i{font:700 10px "FGInter";color:#6b6b74;text-align:center;text-transform:uppercase;letter-spacing:.06em;padding:4px 0}
+.igcal button{position:relative;aspect-ratio:1;min-height:40px;border:0;border-radius:12px;background:#1f1f24;color:#e8e8ec;font:700 14px "FGInter";cursor:pointer;padding:0}.igcal button:disabled{background:transparent;color:#3c3c44;cursor:default}
+.igcal button.auj{box-shadow:inset 0 0 0 1px #4a4a52}.igcal button.jj::after{content:"";position:absolute;left:50%;bottom:5px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#BC002D}
+.igcal button[aria-pressed=true]{background:#BC002D;color:#fff}.igcal button[aria-pressed=true].jj::after{background:#fff}
+.igpop .iglab{margin:2px 0 8px}.igpop .iglab+.ighr{margin-bottom:14px}
+.ighr{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}.igmn{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.ighr button,.igmn button{min-height:44px;border:0;border-radius:12px;background:#1f1f24;color:#e8e8ec;font:700 14px "FGInter";cursor:pointer}.igmn button{font-size:16px}
+.ighr button[aria-pressed=true],.igmn button[aria-pressed=true]{background:#BC002D;color:#fff}
+.igpop .igok2{display:block;width:100%;margin-top:12px;min-height:44px;border:0;border-radius:12px;background:#F4ECDD;color:#111;font:700 14px "FGInter";cursor:pointer}
 .igbig{display:block;width:100%;margin-top:18px;padding:16px;border:0;border-radius:16px;background:#BC002D;color:#fff;font:700 22px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.02em;cursor:pointer;box-shadow:0 6px 0 #6e0019}.igbig:active{transform:translateY(3px);box-shadow:0 3px 0 #6e0019}.igbig:disabled{opacity:.6}.igbig.gh{background:#26262c;box-shadow:none;font-size:18px}
 .igpl{margin-top:16px;padding:14px;border-radius:14px;background:#0f1a2a;color:#9CC3FF}.igpl span{display:block;font:700 11px "FGInter";letter-spacing:.1em;text-transform:uppercase}.igpl b{display:block;font:700 24px "FGAntonio";text-transform:uppercase;color:#fff;margin-top:4px}.igpl i{display:block;font:500 12px "FGInter";color:#FF8A80;font-style:normal;margin-top:6px}
 .igok{margin-top:16px;padding:14px;border-radius:14px;background:#1f3b2a;color:#7BC67E;font:700 15px "FGInter"}.igok a{color:inherit}.igerr{margin-top:8px;font:500 12px "FGInter";color:#FF8A80}
@@ -1026,7 +1039,14 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function flag(pays) { return pays === "France" ? "🇫🇷" : "🇯🇵"; }
   // Pastille « publié » (vert) / « pas publié » (gris), cochable en direct, synchronisée avec la Validation.
   var CHK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
-  function chkBadge(kind, id, on) { return '<span class="chk ' + (on ? "on" : "off") + '" data-chk="' + kind + '" data-chkid="' + esc(id) + '" role="button" aria-label="' + (on ? "Publié" : "Pas encore publié") + '" title="' + (on ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span>'; }
+  // Programmé sur Instagram, pas encore parti (Will, 23/11/2026) : pastille orange avec l'heure, pour ne pas reprogrammer ni caler deux posts à la même heure.
+  var IGQ = {};
+  function igqPlan(id) { var q = IGQ[id]; return q && !q.fait ? q : null; }
+  function heureCourte(d) { var x = new Date(d); return x.getHours() + " h" + (x.getMinutes() ? " " + ("0" + x.getMinutes()).slice(-2) : ""); }
+  function chkBadge(kind, id, on) {
+    var q = !on && igqPlan(id);
+    if (q) return '<span class="chk pl" data-chk="' + kind + '" data-chkid="' + esc(id) + '" data-chkpl="1" title="Programmé sur Instagram">' + CHK_SVG + '<b>' + esc(heureCourte(q.quand)) + '</b></span>';
+    return '<span class="chk ' + (on ? "on" : "off") + '" data-chk="' + kind + '" data-chkid="' + esc(id) + '" role="button" aria-label="' + (on ? "Publié" : "Pas encore publié") + '" title="' + (on ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span>'; }
   // Une sortie est « postée » si la base Tomes (via /api/admin/sorties → « Sortie postée ») le dit. Même champ que la Validation.
   function postedSortie(id) { var x = SORTX[id]; return !!(x && x.poste); }
   // Glisser-déposer (Will, 19/10/2026) : on peut faire glisser un événement d'un jour à l'autre.
@@ -1155,7 +1175,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       h += '<div class="ppl">' + PREP.map(function (x) {
         var e = ppEtat(x), cov = x.cover ? "/api/couv?u=" + encodeURIComponent(x.cover) + "&w=120" : "";
         var info = [x.chapitre ? "Ch. " + x.chapitre : "", x.magazine, x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : ""].filter(Boolean).join(" · ");
-        return '<div class="ppr" data-ppid="' + esc(x.id) + '"><span class="ppc"' + (cov ? ' style="background-image:url(\'' + esc(cov) + '\')"' : "") + '></span><span class="ppi"><b>' + esc(x.serie) + (x.avant && x.avant.length ? ' <em>' + esc(x.avant[0]) + '</em>' : "") + '</b><small>' + esc(info) + (e === "pl" ? ' · <span style="color:#9CC3FF">story ' + esc(ppAff(x.story.quand)) + '</span>' : e === "ok" ? ' · <span style="color:#7BC67E">story partie</span>' : e === "err" ? ' · <span style="color:#FF8A80">échec</span>' : "") + '</small></span>' +
+        return '<div class="ppr" data-ppid="' + esc(x.id) + '"><span class="ppc"' + (cov ? ' style="background-image:url(\'' + esc(cov) + '\')"' : "") + '></span><span class="ppi"><b>' + esc(x.serie) + (x.avant && x.avant.length ? ' <em>' + esc(x.avant[0]) + '</em>' : "") + '</b><small>' + esc(info) + (e === "pl" ? ' · <span style="color:#F5A04A">programmée ' + esc(ppAff(x.story.quand)) + '</span>' : e === "ok" ? ' · <span style="color:#7BC67E">story partie</span>' : e === "err" ? ' · <span style="color:#FF8A80">échec</span>' : "") + '</small></span>' +
           '<button class="ppk ' + e + '" data-ppck="' + esc(x.id) + '" title="' + (e ? "Story programmée" : "Programmer la story (19 h le jour du chapitre)") + '">' + (e === "ok" || e === "pl" ? "✓" : "") + '</button></div>';
       }).join("") + (reste > 1 ? '<button class="pptout" data-pptout>Tout programmer (' + reste + ')</button>' : "") + '</div>';
     }
@@ -1445,6 +1465,26 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   var JC = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
   function igJourLib(v) { var d = new Date(v + "T12:00:00"), t = iso(new Date()), dm = iso(new Date(Date.now() + 864e5)); return (v === t ? "Aujourd'hui" : v === dm ? "Demain" : JC[d.getDay()] + " " + d.getDate() + " " + ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."][d.getMonth()]); }
   var HEURES = ["09:00", "12:00", "18:00", "19:00", "21:00"];
+  // « Autre date » / « Autre heure » (Will, 23/11/2026) : calendrier et grille d'heures maison, plus de sélecteurs du navigateur.
+  var IC_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  var IC_HOR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>';
+  var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  function igCal(st, o) {
+    var t = iso(new Date()), m = st.mois || st.jour.slice(0, 7), y = +m.slice(0, 4), mo = +m.slice(5, 7) - 1;
+    var d0 = new Date(y, mo, 1), dec = (d0.getDay() + 6) % 7, nb = new Date(y, mo + 1, 0).getDate(), pad = function (n) { return (n < 10 ? "0" : "") + n; };
+    var h = '<div class="igpop"><div class="igcal-h"><button data-igm="-1" aria-label="Mois précédent"' + (m <= t.slice(0, 7) ? " disabled" : "") + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><b>' + MOIS[mo] + " " + y + '</b><button data-igm="1" aria-label="Mois suivant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div><div class="igcal">';
+    ["lu", "ma", "me", "je", "ve", "sa", "di"].forEach(function (x) { h += "<i>" + x + "</i>"; });
+    for (var i = 0; i < dec; i++) h += "<span></span>";
+    for (var dd = 1; dd <= nb; dd++) { var v = y + "-" + pad(mo + 1) + "-" + pad(dd);
+      h += '<button data-igcj="' + v + '" class="' + (v === t ? "auj " : "") + (v === o.jourJ ? "jj" : "") + '" aria-pressed="' + (v === st.jour) + '"' + (v < t ? " disabled" : "") + '>' + dd + '</button>'; }
+    return h + '</div></div>';
+  }
+  function igHor(st) {
+    var hh = st.heure.slice(0, 2), mm = st.heure.slice(3, 5), h = '<div class="igpop"><div class="iglab">Heure</div><div class="ighr">';
+    for (var i = 7; i <= 23; i++) { var v = (i < 10 ? "0" : "") + i; h += '<button data-igch="' + v + '" aria-pressed="' + (v === hh) + '">' + i + ' h</button>'; }
+    h += '</div><div class="iglab">Minutes</div><div class="igmn">' + ["00", "15", "30", "45"].map(function (v) { return '<button data-igcm="' + v + '" aria-pressed="' + (v === mm) + '">' + v + '</button>'; }).join("") + '</div><button class="igok2" data-igpop="">OK</button></div>';
+    return h;
+  }
   function igUI(box, o) {
     // o : { jourJ, heure, aPost, imgs: Promise<{post?, story}>, item, programmer(quand, post, story) → Promise<item>, annuler() → Promise }
     var st = box._st = box._st || { jour: o.jourJ && o.jourJ >= iso(new Date()) ? o.jourJ : iso(new Date()), heure: o.heure || "19:00", post: !!o.aPost, story: true, tab: o.aPost ? "post" : "story" };
@@ -1458,8 +1498,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       // Will, 23/11/2026 : on publie le jour de la sortie (les textes disent « sortie aujourd'hui ») → seulement Jour J si elle est à venir.
       var jours = (o.jourJ && o.jourJ >= iso(new Date()) ? [o.jourJ] : [iso(new Date()), iso(new Date(Date.now() + 864e5))]).filter(function (v, i, a) { return v && v >= iso(new Date()) && a.indexOf(v) === i; });
       if (jours.indexOf(st.jour) < 0) jours.push(st.jour);
-      h += '<div class="iglab">Jour</div><div class="igch">' + jours.map(function (v) { return '<button data-igj="' + v + '" aria-pressed="' + (v === st.jour) + '">' + (v === o.jourJ ? '<em>Jour J</em>' : "") + esc(igJourLib(v)) + '</button>'; }).join("") + '<label class="igautre">Autre<input type="date" data-igjo min="' + iso(new Date()) + '"></label></div>' +
-        '<div class="iglab">Heure</div><div class="igch">' + HEURES.concat(HEURES.indexOf(st.heure) < 0 ? [st.heure] : []).map(function (v) { return '<button data-igh="' + v + '" aria-pressed="' + (v === st.heure) + '">' + v.replace(/^0/, "").replace(":00", " h").replace(":", " h ") + '</button>'; }).join("") + '<label class="igautre">Autre<input type="time" data-igho step="300"></label></div>' +
+      h += '<div class="iglab">Jour</div><div class="igch">' + jours.map(function (v) { return '<button data-igj="' + v + '" aria-pressed="' + (v === st.jour) + '">' + (v === o.jourJ ? '<em>Jour J</em>' : "") + esc(igJourLib(v)) + '</button>'; }).join("") + '<button class="igau" data-igpop="jour" aria-expanded="' + (st.pop === "jour") + '">' + IC_CAL + 'Autre date</button></div>' + (st.pop === "jour" ? igCal(st, o) : "") +
+        '<div class="iglab">Heure</div><div class="igch">' + HEURES.concat(HEURES.indexOf(st.heure) < 0 ? [st.heure] : []).map(function (v) { return '<button data-igh="' + v + '" aria-pressed="' + (v === st.heure) + '">' + v.replace(/^0/, "").replace(":00", " h").replace(":", " h ") + '</button>'; }).join("") + '<button class="igau" data-igpop="heure" aria-expanded="' + (st.pop === "heure") + '">' + IC_HOR + 'Autre heure</button></div>' + (st.pop === "heure" ? igHor(st) : "") +
         (o.aPost ? '<div class="iglab">Envoyer</div><div class="igch"><button data-igq="post" aria-pressed="' + st.post + '">Post</button><button data-igq="story" aria-pressed="' + st.story + '">Story</button></div>' : "") +
         '<button class="igbig" data-iggo>Programmer · ' + esc(igJourLib(st.jour)) + ' · ' + st.heure.replace(/^0/, "").replace(":00", " h").replace(":", " h ") + '</button>';
     }
@@ -1470,8 +1510,13 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var box = ev.target.closest && ev.target.closest(".igbox"); if (!box || !box._o) return; var o = box._o, st = box._st;
     var z = ev.target.closest("[data-igz]"); if (z && z.src) { openLightbox(z.src); return; }
     var tb = ev.target.closest("[data-igtab]"); if (tb) { st.tab = tb.dataset.igtab; var sl = box.querySelector('[data-sl="' + st.tab + '"]'); if (sl) sl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" }); box.querySelectorAll("[data-igtab]").forEach(function (x) { x.setAttribute("aria-pressed", x === tb); }); return; }
-    var j = ev.target.closest("[data-igj]"); if (j) { st.jour = j.dataset.igj; igUI(box, o); return; }
-    var hh = ev.target.closest("[data-igh]"); if (hh) { st.heure = hh.dataset.igh; igUI(box, o); return; }
+    var pp = ev.target.closest("[data-igpop]"); if (pp) { var k = pp.dataset.igpop; st.pop = st.pop === k ? "" : k; st.mois = ""; igUI(box, o); return; }
+    var gm = ev.target.closest("[data-igm]"); if (gm) { var m = st.mois || st.jour.slice(0, 7), dt = new Date(+m.slice(0, 4), +m.slice(5, 7) - 1 + (+gm.dataset.igm), 1); st.mois = dt.getFullYear() + "-" + ("0" + (dt.getMonth() + 1)).slice(-2); igUI(box, o); return; }
+    var cj = ev.target.closest("[data-igcj]"); if (cj) { st.jour = cj.dataset.igcj; st.pop = ""; igUI(box, o); return; }
+    var ch = ev.target.closest("[data-igch]"); if (ch) { st.heure = ch.dataset.igch + st.heure.slice(2); igUI(box, o); return; }
+    var cm = ev.target.closest("[data-igcm]"); if (cm) { st.heure = st.heure.slice(0, 3) + cm.dataset.igcm; igUI(box, o); return; }
+    var j = ev.target.closest("[data-igj]"); if (j) { st.jour = j.dataset.igj; st.pop = ""; igUI(box, o); return; }
+    var hh = ev.target.closest("[data-igh]"); if (hh) { st.heure = hh.dataset.igh; st.pop = ""; igUI(box, o); return; }
     var q = ev.target.closest("[data-igq]"); if (q) { st[q.dataset.igq] = !st[q.dataset.igq]; igUI(box, o); return; }
     if (ev.target.closest("[data-igannul]")) { o.annuler().then(function () { o.item = null; igUI(box, o); }).catch(function (e) { alert(e.message || "Échec"); }); return; }
     var go = ev.target.closest("[data-iggo]"); if (!go) return;
@@ -1491,7 +1536,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var k = c.scrollLeft > c.clientWidth / 2 ? "story" : "post"; if (box._st.tab === k) return; box._st.tab = k;
     box.querySelectorAll("[data-igtab]").forEach(function (x) { x.setAttribute("aria-pressed", x.dataset.igtab === k); });
   }, true);
-  function igq(body) { return fetch("/api/admin/igq", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); return j.item; }); }
+  function igq(body) { return fetch("/api/admin/igq", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); if (body.del) delete IGQ[body.id]; else if (j.item) IGQ[j.item.id] = j.item; try { calRedessiner(); } catch (e) {} return j.item; }); }
   function igProg(s) {
     var box = $("#igprog"); if (!box) return;
     var o = { jourJ: s.date, heure: "09:00", aPost: true, imgs: igVisuels(s), item: null,
@@ -1583,6 +1628,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     }).catch(function () { if (!vu) $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
     // Sorties enrichies (légendes identiques à la Validation, coches « postée ») et news publiées : en arrière-plan.
     j("/api/admin/sorties?passe=1").then(function (sx) { calAppliquer({ sx: sx }); garder("sx", sx); if (vu) calRedessiner(); }).catch(function () {});
+    j("/api/admin/igq").then(function (q) { IGQ = {}; (q.items || []).forEach(function (x) { if (x && x.id) IGQ[x.id] = x; }); if (vu) calRedessiner(); }).catch(function () {});
     j("/api/admin/prepubstory").then(function (pp) { PREP = pp.items || []; if (vu) calRedessiner(); }).catch(function () {});
     j("/api/admin/veille").then(function (ve) { calAppliquer({ ve: ve }); garder("ve", { items: (ve.items || []).filter(function (x) { return x && x.enLigne; }), apub: APUB, cols: ve.cols, cats: ve.cats }); if (vu) calRedessiner(); }).catch(function () {});
   }
@@ -1598,7 +1644,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   $("#caladd").addEventListener("click", function () { formEv(null); });
   $("#calview").addEventListener("click", function (ev) {
     // Pastille « publié » : on coche en direct sans ouvrir la carte. Synchronisé avec la Validation (même champ Notion).
-    var ck = ev.target.closest("[data-chk]"); if (ck) { ev.preventDefault(); ev.stopPropagation(); togglePublie(ck); return; }
+    var ck = ev.target.closest("[data-chk]"); if (ck && ck.dataset.chkpl) ck = null; if (ck) { ev.preventDefault(); ev.stopPropagation(); togglePublie(ck); return; }
     var it = ev.target.closest("[data-k]"); if (it) { openItem(it.dataset.k, it.dataset.id); return; }
     var jt = ev.target.closest("[data-jtab]"); if (jt) { jTab = jt.dataset.jtab; renderView(); return; }
     var js = ev.target.closest("[data-jsel]"); if (js) { jSel = js.dataset.jsel; renderView(); var p = $("#calview .jp.on"); if (p) p.scrollIntoView({ inline: "center", block: "nearest" }); return; }
