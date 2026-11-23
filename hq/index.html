@@ -704,7 +704,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 <script src="/site/admin-session.js?v=1"></script>
 <script src="/site/badges.js?v=2"></script>
 <script src="/site/sortie-post.js?v=16"></script>
-<script src="/site/story.js?v=3"></script>
+<script src="/site/story.js?v=4"></script>
 <script src="/site/quickaccess.js?v=20"></script>
 <script>
 if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
@@ -1182,7 +1182,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     }
     return h + '</div>';
   }
-  function ppDonnees(x) { return { cover: x.cover ? "/api/couv?u=" + encodeURIComponent(x.cover) + "&w=700" : "", magazine: x.magazine, numero: ppNum(x.numero), titre: x.serie, chapitre: x.chapitre }; }
+  function ppDonnees(x) { var cv = x.visuel || x.cover; return { cover: cv ? "/api/couv?u=" + encodeURIComponent(cv) + "&w=700" : "", sousTitre: x.sousTitre, magazine: x.magazine, numero: ppNum(x.numero), titre: x.serie, chapitre: x.chapitre }; }
   var PPIMG = {};
   function ppImage(x) { if (!PPIMG[x.id]) PPIMG[x.id] = FG_STORY.canvasPrepub(FG_STORY.tirage(x.id, true), ppDonnees(x)); return PPIMG[x.id]; }
   function ppProgrammer(x, quand) {
@@ -1193,7 +1193,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function ppAnnuler(x) { return fetch("/api/admin/igq", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: x.id, del: true }) }).then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); x.story = null; }); }
   function ppModal(x) {
     var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button><div class="chips"><span class="chip"><i style="background:#BC002D"></i>Prépublication</span><span class="chip">' + esc(x.magazine || "") + '</span></div>' +
-      '<div class="mh"><div><h2>' + esc(x.serie) + (x.chapitre ? " · chapitre " + esc(x.chapitre) : "") + '</h2><div class="sub">' + esc([ppNum(x.numero), x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "", x.tome ? "couverture du tome " + x.tome : ""].filter(Boolean).join(" · ")) + '</div></div></div>' +
+      '<div class="mh"><div><h2>' + esc(x.serie) + (x.chapitre ? " · chapitre " + esc(x.chapitre) : "") + '</h2><div class="sub">' + esc([ppNum(x.numero), x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "", x.visuel ? "visuel spécial" : x.tome ? "couverture du tome " + x.tome : "", x.sousTitre || ""].filter(Boolean).join(" · ")) + '</div></div></div>' +
       '<div class="igbox" id="ppbox"></div></div></div>';
     host.innerHTML = h; host.dataset.k = "prepub"; host.dataset.id = x.id;
     var it = x.story ? { quand: x.story.quand, fait: x.story.fait, err: x.story.err } : null;

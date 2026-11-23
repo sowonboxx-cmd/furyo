@@ -59,7 +59,12 @@
       x.fillStyle = "#111"; var fs = 96, tt = String(d.titre || "").toUpperCase(); x.font = "700 " + fs + "px FGStA";
       while (x.measureText(tt).width > 790 && fs > 50) { fs -= 4; x.font = "700 " + fs + "px FGStA"; }
       x.fillText(tt, 435, 820 + 22 + fs * .82);
-      var ch = d.chapitre ? "CHAPITRE " + d.chapitre : "NOUVEAU CHAPITRE"; x.font = "700 54px FGStA"; var cw = x.measureText(ch).width + 60, cy = 820 + 22 + fs * .82 + 34;
+      var bas = 820 + 22 + fs * .82;
+      // Sous-titre (ex. « En route vers l'arc final ») : une ligne rouge sous le titre.
+      if (d.sousTitre) { var st = String(d.sousTitre).toUpperCase(), sf = 32; x.font = "800 " + sf + "px FGStI"; if ("letterSpacing" in x) x.letterSpacing = "2px";
+        while (x.measureText(st).width > 790 && sf > 20) { sf -= 2; x.font = "800 " + sf + "px FGStI"; }
+        x.fillStyle = "#BC002D"; x.fillText(st, 435, bas + 50); if ("letterSpacing" in x) x.letterSpacing = "0px"; bas += 56; }
+      var ch = d.chapitre ? "CHAPITRE " + d.chapitre : "NOUVEAU CHAPITRE"; x.font = "700 54px FGStA"; var cw = x.measureText(ch).width + 60, cy = bas + 34;
       x.fillStyle = "#BC002D"; x.beginPath(); if (x.roundRect) x.roundRect(435 - cw / 2, cy, cw, 74, 14); else x.rect(435 - cw / 2, cy, cw, 74); x.fill();
       x.fillStyle = "#fff"; x.fillText(ch, 435, cy + 58);
       return canvas(t, c);

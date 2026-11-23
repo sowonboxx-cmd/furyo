@@ -47,6 +47,8 @@ export async function onRequestGet({ request, env }) {
     const id = nid(r.id), story = env.STATS ? await env.STATS.get("igq:" + id, "json") : null;
     return { id, serie: s.t || text(p["Titre au sommaire"]) || text(p["Entrée"]).split(" · ")[0], slug: s.slug || "", magazine: text(p["Magazine"]), numero: text(p["Numéro"]),
       chapitre: num(p["Chapitre"]), date: date(p["Date de sortie"]), statut: text(p["Statut"]), avant: list(p["Mise en avant"]), cover: s.cover || "", tome: s.tome,
+      // Will, 23/11/2026 : page couleur / couverture du prochain tome à la place du dernier tome, et une ligne d'info sous le titre.
+      visuel: (p["Visuel story"] && p["Visuel story"].url) || "", sousTitre: text(p["Sous-titre story"]),
       story: story ? { quand: story.quand, fait: story.fait || "", err: story.err || "" } : null };
   }));
   return json({ items });
