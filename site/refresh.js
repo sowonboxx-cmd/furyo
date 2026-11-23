@@ -5,7 +5,6 @@
   if (window.__fgRefresh) return; window.__fgRefresh = true;
   var admin = /^\/(admin|hq|studio)(\/|$)/.test(location.pathname);
   var appli = (window.navigator && navigator.standalone) || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
-  if (!admin && !appli) return;
   var CACHES = ["fg-news", "av-data", "hq-cal-v1"];
   function vider() {
     try { CACHES.forEach(function (k) { localStorage.removeItem(k); }); Object.keys(localStorage).forEach(function (k) { if (/^qdn:/.test(k)) localStorage.removeItem(k); }); } catch (e) {}
@@ -22,6 +21,9 @@
       location.replace(u.toString());
     });
   }
+  // Utilisé aussi par le panneau admin (avatar) : window.fgRecharger(bouton).
+  window.fgRecharger = function (b) { recharger(b || document.createElement("i")); };
+  if (!admin && !appli) return;
   var css = document.createElement("style");
   css.textContent =
     ".fg-rl{width:30px;height:30px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;background:#2FB56A;color:#fff;cursor:pointer;flex:none;-webkit-tap-highlight-color:transparent;box-shadow:0 2px 8px rgba(0,0,0,.35)}" +
@@ -40,6 +42,8 @@
   function placer() {
     if (document.querySelector(".fg-rl")) return;
     var me = document.getElementById("sh-me");
+    // Sur téléphone, pas de rond vert dans l'en-tête du site (trop de place) : il est dans le panneau admin (Will, 23/11/2026).
+    if (me && !admin && matchMedia("(max-width: 820px)").matches) return;
     if (me && me.parentNode) { var b = bouton(); b.style.order = getComputedStyle(me).order; me.parentNode.insertBefore(b, me); return; }
     var f = bouton(); f.classList.add("fx"); document.body.appendChild(f);
   }

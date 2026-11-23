@@ -17,6 +17,7 @@
       ".fgq-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block;line-height:0}.fgq-logo img{height:30px;width:auto;display:block}" +
       ".fgq-h .x{width:42px;height:42px;border-radius:50%;background:#2a2a2e;color:#98989D;display:grid;place-items:center;font-size:26px;border:0;cursor:pointer;line-height:1}" +
       ".fgq-srch{display:flex;align-items:center;gap:12px;width:100%;height:54px;margin:0 0 12px;padding:0 18px;border:0;border-radius:16px;background:#1e1e22;color:#9a9aa0;font:500 16px Inter,system-ui,sans-serif;text-align:left;cursor:pointer;box-sizing:border-box}.fgq-srch svg{width:20px;height:20px;flex:none;color:#F5F5F7}.fgq-srch span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}@media (min-width:601px){.fgq-srch{display:none!important}}@media (max-width:600px){.fgq-srch{height:46px;margin-bottom:9px;padding:0 14px;border-radius:13px;font-size:15px}}" +
+      ".fgq-rl{display:flex;align-items:center;gap:12px;width:100%;height:46px;margin:0 0 9px;padding:0 14px;border:0;border-radius:13px;background:#1e1e22;color:#F5F5F7;font:600 15px Inter,system-ui,sans-serif;text-align:left;cursor:pointer;box-sizing:border-box;-webkit-tap-highlight-color:transparent}.fgq-rl .ok{width:26px;height:26px;border-radius:50%;background:#2FB56A;color:#fff;display:grid;place-items:center;flex:none}.fgq-rl .ok svg{width:15px;height:15px}.fgq-rl.on .ok svg{animation:fgqrl .8s linear infinite}@keyframes fgqrl{to{transform:rotate(360deg)}}@media (min-width:821px){.fgq-rl{display:none!important}}" +
       ".fgq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}" +
       ".fgq-qt{position:relative;display:flex;align-items:center;gap:16px;background:#1e1e22;border:0;border-radius:18px;padding:18px 20px;text-decoration:none;color:inherit}.fgq-qt.wide{grid-column:1/3}" +
       ".fgq-qt .ic{width:54px;height:54px;border-radius:16px;background:#305887;display:grid;place-items:center;flex:none}.fgq-qt .ic svg{width:28px;height:28px;color:#fff}" +
@@ -61,6 +62,8 @@
       '<div class="fgq-h"><a class="fgq-logo" href="/" aria-label="Retour au site"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a><button class="x" type="button" aria-label="Fermer">×</button></div>' +
       // Recherche au-dessus d'Actualités (Will, 21/10/2026) : ouvre la recherche du site.
       '<button type="button" class="fgq-srch">' + I.srch + '<span>Rechercher sur le site</span></button>' +
+      // Recharger l'application (rond vert), ici plutôt que dans l'en-tête sur téléphone (Will, 23/11/2026).
+      '<button type="button" class="fgq-rl"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Recharger l\'application</span></button>' +
       '<div class="fgq-grid">' +
         // Flashcards et Lecture tout en haut : Will s'en sert tout le temps (02/11/2026). Pages privées, admin seulement.
         qt("fc", "Flashcards", "mon carnet de japonais", "/flashcard/", "") +
@@ -82,6 +85,10 @@
       '</div>' +
       '<button class="fgq-out" type="button">Se déconnecter</button></div>';
     pop.querySelector(".x").onclick = function () { pop.hidden = true; };
+    pop.querySelector(".fgq-rl").onclick = function () {
+      var b = this; b.querySelector(".ok").innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg>'; b.classList.add("on");
+      if (window.fgRecharger) window.fgRecharger(b); else location.reload();
+    };
     pop.querySelector(".fgq-srch").onclick = function () { pop.hidden = true; if (window.FG_SEARCH) window.FG_SEARCH(); else location.href = "/#recherche"; };
     pop.querySelector(".fgq-out").onclick = function () {
       fetch("/api/auth/me", { method: "DELETE" }).catch(function () {}).then(function () { fetch("/api/admin/login", { method: "DELETE" }).catch(function () {}).then(function () { location.reload(); }); });
