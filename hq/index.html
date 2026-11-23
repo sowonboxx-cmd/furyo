@@ -1208,7 +1208,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       '<div class="igbox" id="ppbox"></div></div></div>';
     host.innerHTML = h; host.dataset.k = "prepub"; host.dataset.id = x.id;
     var it = x.story ? { quand: x.story.quand, fait: x.story.fait, err: x.story.err } : null;
-    igUI($("#ppbox"), { jourJ: x.date, heure: "19:00", aPost: false, imgs: ppImage(x).then(function (c) { return { story: c }; }), item: it,
+    igUI($("#ppbox"), { jourJ: x.date, jp: true, heure: "19:00", aPost: false, imgs: ppImage(x).then(function (c) { return { story: c }; }), item: it,
       programmer: function (quand) { return ppProgrammer(x, quand).then(function () { calRedessiner(); return { quand: quand.toISOString() }; }); },
       annuler: function () { return ppAnnuler(x).then(function () { calRedessiner(); }); } });
   }
@@ -1508,7 +1508,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     else if (it) h += '<div class="igpl"><span>Programmé</span><b>' + esc(new Date(it.quand).toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })) + '</b>' + (it.err ? '<i>Échec : ' + esc(it.err) + '</i>' : "") + '</div><button class="igbig gh" data-igannul>Annuler la programmation</button>';
     else {
       // Will, 23/11/2026 : on publie le jour de la sortie (les textes disent « sortie aujourd'hui ») → seulement Jour J si elle est à venir.
-      var jours = (o.jourJ && o.jourJ >= iso(new Date()) ? [o.jourJ] : [iso(new Date()), iso(new Date(Date.now() + 864e5))]).filter(function (v, i, a) { return v && v >= iso(new Date()) && a.indexOf(v) === i; });
+      // Prépublication : le Japon a 8 h d'avance, le numéro du lendemain est déjà sorti le soir en France → « Aujourd'hui » proposé aussi.
+      var jours = (o.jourJ && o.jourJ >= iso(new Date()) ? (o.jp && o.jourJ === iso(new Date(Date.now() + 864e5)) ? [iso(new Date()), o.jourJ] : [o.jourJ]) : [iso(new Date()), iso(new Date(Date.now() + 864e5))]).filter(function (v, i, a) { return v && v >= iso(new Date()) && a.indexOf(v) === i; });
       if (jours.indexOf(st.jour) < 0) jours.push(st.jour);
       h += '<div class="iglab">Jour</div><div class="igch">' + jours.map(function (v) { return '<button data-igj="' + v + '" aria-pressed="' + (v === st.jour) + '">' + (v === o.jourJ ? '<em>Jour J</em>' : "") + esc(igJourLib(v)) + '</button>'; }).join("") + '<button class="igau" data-igpop="jour" aria-expanded="' + (st.pop === "jour") + '">' + IC_CAL + 'Autre date</button></div>' + (st.pop === "jour" ? igCal(st, o) : "") +
         '<div class="iglab">Heure</div><div class="igch">' + HEURES.concat(HEURES.indexOf(st.heure) < 0 ? [st.heure] : []).map(function (v) { return '<button data-igh="' + v + '" aria-pressed="' + (v === st.heure) + '">' + v.replace(/^0/, "").replace(":00", " h").replace(":", " h ") + '</button>'; }).join("") + '<button class="igau" data-igpop="heure" aria-expanded="' + (st.pop === "heure") + '">' + IC_HOR + 'Autre heure</button></div>' + (st.pop === "heure" ? igHor(st) : "") +
