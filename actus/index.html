@@ -36,6 +36,8 @@ a{color:inherit}
 .twitter-tweet{margin:1.2em 0!important;max-width:100%}.na-text .twitter-tweet-rendered{margin-left:0!important;margin-right:0!important}
 .na-text a{color:#4DA3FF;text-decoration:underline;text-underline-offset:2px;font-weight:600}.na-text a:hover{color:#7CC0FF}
 .na-fig{margin:1.2em 0;white-space:normal}.na-fig>div{display:grid;gap:8px;grid-template-columns:minmax(0,300px)}.na-gal>div{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}@media(min-width:700px){.na-gal>div{grid-template-columns:repeat(var(--c,4),minmax(0,1fr))}}.na-fig a{display:block;line-height:0;cursor:zoom-in}.na-fig img{width:100%;height:auto;aspect-ratio:3/4.2;object-fit:cover;object-position:top;border-radius:8px;background:#1C1C1E;transition:opacity .15s}.na-fig a:hover img{opacity:.85}
+/* Image seule en paysage (double page couleur, bannière…) : en entier, sur toute la largeur du texte (Will, 24/11/2026). */
+.na-wide>div{grid-template-columns:minmax(0,1fr)}.na-wide img{aspect-ratio:auto;object-fit:contain}
 .na-lb{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:16px}.na-lb img{max-width:100%;max-height:100%;border-radius:6px}.na-lb button{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:26px;cursor:pointer}.na-lb .p{left:12px}.na-lb .n{right:12px}.na-lb .x{top:28px;right:12px;transform:none;font-size:20px}.na-fig figcaption{margin-top:8px;font-size:13.5px;line-height:1.45;color:#9A9AA0;font-weight:500}
 .na-vid{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000}.na-vid.mp4{aspect-ratio:auto;max-width:420px;margin:16px auto 0}.na-vid.mp4 video{display:block;width:100%;max-height:80vh;background:#000}.na-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .na-links{display:flex;flex-wrap:wrap;gap:8px}
@@ -351,7 +353,7 @@ body{background:#000}
         var cap = ls.filter(function (x) { return !isImg(x); }).join(" ");
         var nc = ims.length <= 4 ? ims.length : ims.length % 4 === 0 ? 4 : ims.length % 3 === 0 ? 3 : 4; // colonnes pleines sur ordinateur (Will, 29/10/2026)
         return '<figure class="na-fig' + (ims.length > 1 ? " na-gal" : "") + '"><div' + (ims.length > 1 ? ' style="--c:' + nc + '"' : "") + '>' + ims.map(function (u) {
-          return '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img src="' + esc(u) + '" alt="' + esc(cap || "") + '" loading="lazy" decoding="async"></a>';
+          return '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img src="' + esc(u) + '" alt="' + esc(cap || "") + '" loading="lazy" decoding="async"' + (ims.length === 1 ? ' onload="if(this.naturalWidth>this.naturalHeight*1.05)this.closest(\'.na-fig\').classList.add(\'na-wide\')"' : '') + '></a>';
         }).join("") + "</div>" + (cap ? "<figcaption>" + inl(cap) + "</figcaption>" : "") + "</figure>";
       }
       var m = b.match(/^▸\s*(.+)(?:\n([\s\S]*))?$/);
