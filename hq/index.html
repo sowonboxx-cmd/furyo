@@ -453,10 +453,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .igcal button{position:relative;aspect-ratio:1;min-height:40px;border:0;border-radius:12px;background:#1f1f24;color:#e8e8ec;font:700 14px "FGInter";cursor:pointer;padding:0}.igcal button:disabled{background:transparent;color:#3c3c44;cursor:default}
 .igcal button.auj{box-shadow:inset 0 0 0 1px #4a4a52}.igcal button.jj::after{content:"";position:absolute;left:50%;bottom:5px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#BC002D}
 .igcal button[aria-pressed=true]{background:#BC002D;color:#fff}.igcal button[aria-pressed=true].jj::after{background:#fff}
-.igpop .iglab{margin:2px 0 8px}.igpop .iglab+.ighr{margin-bottom:14px}
+.igpop .iglab{margin:2px 0 8px}.igpop .iglab+.ighr{margin-bottom:14px}.ighr+.iglab{margin-top:12px}
 .ighr{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}.igmn{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.ighr button,.igmn button{min-height:44px;border:0;border-radius:12px;background:#1f1f24;color:#e8e8ec;font:700 14px "FGInter";cursor:pointer}.igmn button{font-size:16px}
-.ighr button[aria-pressed=true],.igmn button[aria-pressed=true]{background:#BC002D;color:#fff}
+.ighr button,.igmn button{min-height:44px;border:1px solid #34343c;border-radius:12px;background:#2a2a31;color:#e8e8ec;font:700 14px "FGInter";cursor:pointer}.igmn button{font-size:16px}
+.ighr button:disabled{opacity:.3;background:transparent;border-color:#26262c;cursor:default}.ighr button[aria-pressed=true],.igmn button[aria-pressed=true]{background:#BC002D;color:#fff}
 .igpop .igok2{display:block;width:100%;margin-top:12px;min-height:44px;border:0;border-radius:12px;background:#F4ECDD;color:#111;font:700 14px "FGInter";cursor:pointer}
 .igbig{display:block;width:100%;margin-top:18px;padding:16px;border:0;border-radius:16px;background:#BC002D;color:#fff;font:700 22px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.02em;cursor:pointer;box-shadow:0 6px 0 #6e0019}.igbig:active{transform:translateY(3px);box-shadow:0 3px 0 #6e0019}.igbig:disabled{opacity:.6}.igbig.gh{background:#26262c;box-shadow:none;font-size:18px}
 .igpl{margin-top:16px;padding:14px;border-radius:14px;background:#0f1a2a;color:#9CC3FF}.igpl span{display:block;font:700 11px "FGInter";letter-spacing:.1em;text-transform:uppercase}.igpl b{display:block;font:700 24px "FGAntonio";text-transform:uppercase;color:#fff;margin-top:4px}.igpl i{display:block;font:500 12px "FGInter";color:#FF8A80;font-style:normal;margin-top:6px}
@@ -1091,21 +1091,25 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     TODO.forEach(function (t) { if (t.dt === is && !t.done) out.push({ kind: "todo", id: t.id, date: is, t: t }); });
     SORT.forEach(function (s) { if (s.date === is) out.push({ kind: "sortie", id: s.id, date: is, s: s }); });
     NEWS.forEach(function (n) { if (n.date === is) out.push({ kind: "news", id: n.id, date: is, n: n }); });
+    // Stories de prépublication programmées (Will, 23/11/2026) : elles quittent la liste et vont au jour prévu.
+    PREP.forEach(function (x) { if (x.story && !x.story.ignore && x.story.quand && jourParis(x.story.quand) === is) out.push({ kind: "prepub", id: x.id, date: is, x: x }); });
     // Ordre chronologique de publication (Will, 23/11/2026) : news publiées ou planifiées à leur heure,
     // sorties programmées sur Instagram à l'heure prévue ; le reste (sans heure) après, dans l'ordre d'avant.
     return out.map(function (it, i) { return [heureTri(it), i, it]; }).sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] - b[1]; }).map(function (x) { return x[2]; });
   }
+  function jourParis(t) { return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(t)); }
   var HM = new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit", hour12: false });
   function heureTri(it) {
     var t = "";
     if (it.kind === "news") t = /T\d/.test(it.n.t || "") ? it.n.t : "";
     else if (it.kind === "sortie") { var q = IGQ[it.id]; t = q && q.quand ? q.quand : ""; }
+    else if (it.kind === "prepub") t = it.x.story.quand;
     else if (it.kind === "ev" && it.e.heure) return String(it.e.heure);
     if (!t) return "~";
     var d = new Date(t); return isNaN(d) ? "~" : HM.format(d);
   }
-  function itemColor(it) { return it.kind === "sortie" ? PSORTIE.couleur : it.kind === "news" ? (NEWSCOL[it.n.cat] || "#4C9BFF") : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
-  function itemTitle(it) { return it.kind === "sortie" ? sortieLabel(it.s) : it.kind === "news" ? it.n.titre : (it.kind === "todo" ? it.t.t : it.e.titre); }
+  function itemColor(it) { if (it.kind === "prepub") return "#BC002D"; return it.kind === "sortie" ? PSORTIE.couleur : it.kind === "news" ? (NEWSCOL[it.n.cat] || "#4C9BFF") : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
+  function itemTitle(it) { if (it.kind === "prepub") return it.x.serie + (it.x.chapitre ? " · ch. " + it.x.chapitre : ""); return it.kind === "sortie" ? sortieLabel(it.s) : it.kind === "news" ? it.n.titre : (it.kind === "todo" ? it.t.t : it.e.titre); }
   function itemImp(it) { return it.kind === "ev" ? it.e.imp : (it.kind === "todo" ? it.t.prio === "haut" : false); }
   function itemDone(it) { return it.kind === "ev" ? it.e.fait : false; }
 
@@ -1151,6 +1155,10 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
   function carteCal(it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
+        if (it.kind === "prepub") { var px = it.x, pcv = px.visuel || px.cover, pim = pcv ? "/api/couv?u=" + encodeURIComponent(pcv) + "&w=120" : "", pe = ppEtat(px);
+          return '<button class="rcard" data-k="prepub" data-id="' + esc(it.id) + '">' + (pim ? '<span class="cov" style="background-image:url(\'' + esc(pim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">連載</span></span>') +
+            '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Story prépublication · ' + esc(px.magazine || "") + '</span></span>' +
+            (pe === "ok" ? '<span class="chk on" title="Story partie">' + CHK_SVG + '</span>' : '<span class="chk pl" title="Story programmée">' + CHK_SVG + '<b>' + esc(heureCourte(px.story.quand)) + '</b></span>') + '</button>'; }
         if (it.kind === "news") { var ni = it.n, nim = ni.image ? (/^https?:/.test(ni.image) ? "/api/couv?u=" + encodeURIComponent(ni.image) + "&w=120" : ni.image) : ""; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '">' + (nim ? '<span class="cov" style="background-image:url(\'' + esc(nim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span>') + '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (ni.plan ? '<b class="planh">Planifiée' + (ni.heure ? " · " + esc(ni.heure) : "") + "</b> · " : "Publiée" + (heureTri(it) !== "~" ? " · " + heureTri(it).replace(":", " h ").replace(/ h 00$/, " h").replace(/^0/, "") : "") + " · ") + esc(ni.label || "News") + '</span></span>' + (ni.plan ? "" : '<span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span>") + "</button>"; }
         var evc = it.kind === "ev" ? evCover(it.e, it.date) : "";
         if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + evc + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
@@ -1181,7 +1189,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   var PREP = [], PPO = false;
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   function ppNum(n) { n = String(n || ""); var m = n.match(/No\.?\s*(\d+(?:\+\d+)?)/i); if (m) return "n°" + m[1]; m = n.match(/(\d{4})年\s*(\d+)月号/); if (m) return MOIS[+m[2] - 1] + " " + m[1]; m = n.match(/n°\s*\d+/i); return m ? m[0] : n; }
-  function ppQuand(x) { var d = new Date((x.date || iso(new Date())) + "T19:00:00"); if (d < new Date(Date.now() + 5 * 6e4)) { d = new Date(Date.now() + 15 * 6e4); d.setMinutes(Math.ceil(d.getMinutes() / 5) * 5, 0, 0); } return d; }
+  function ppQuand(x) { var j = x.date && x.date > iso(new Date(Date.now() + 864e5)) ? x.date : iso(new Date()), d = new Date(j + "T19:00:00"); if (d < new Date(Date.now() + 5 * 6e4)) { d = new Date(Date.now() + 15 * 6e4); d.setMinutes(Math.ceil(d.getMinutes() / 5) * 5, 0, 0); } return d; }
   function ppEtat(x) { var st = x.story; if (!st) return ""; if (st.ignore) return "ig"; if (st.fait && st.fait !== "échec") return "ok"; if (st.err) return "err"; return "pl"; }
   function ppAff(d) { return new Date(d).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
   function blocPrepub() {
@@ -1189,7 +1197,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var reste = PREP.filter(function (x) { return !x.story; }).length;
     var h = '<div class="ppb' + (PPO ? " open" : "") + '"><button class="ppb-h" data-pptog><span class="kj" lang="ja">連載</span><span class="ppt"><b>Prépublication</b><small>Stories en direct du Japon</small></span><span class="apl-n">' + (reste ? reste + " à programmer" : "tout est prêt") + '</span><i>' + (PPO ? "▾" : "▸") + '</i></button>';
     if (PPO) {
-      h += '<div class="ppl">' + PREP.map(function (x) {
+      h += '<div class="ppl">' + PREP.filter(function (x) { return !x.story || x.story.ignore || x.story.err; }).map(function (x) {
         var e = ppEtat(x), cov = x.cover ? "/api/couv?u=" + encodeURIComponent(x.cover) + "&w=120" : "";
         var info = [x.chapitre ? "Ch. " + x.chapitre : "", x.magazine, x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : ""].filter(Boolean).join(" · ");
         return '<div class="ppr' + (e === "ig" ? " ign" : "") + '" data-ppid="' + esc(x.id) + '"><span class="ppc"' + (cov ? ' style="background-image:url(\'' + esc(cov) + '\')"' : "") + '></span><span class="ppi"><b>' + esc(x.serie) + (x.avant && x.avant.length ? ' <em>' + esc(x.avant[0]) + '</em>' : "") + '</b><small>' + esc(info) + (e === "ig" ? ' · pas publiée' : e === "pl" ? ' · <span style="color:#F5A04A">programmée ' + esc(ppAff(x.story.quand)) + '</span>' : e === "ok" ? ' · <span style="color:#7BC67E">story partie</span>' : e === "err" ? ' · <span style="color:#FF8A80">échec</span>' : "") + '</small></span>' +
@@ -1398,6 +1406,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function openItem(kind, id) {
     modalTab = "tw";
     if (kind === "sortie") return openSortie(SORT.find(function (s) { return s.id === id; }));
+    if (kind === "prepub") { var px = PREP.find(function (x) { return x.id === id; }); if (px) ppModal(px); return; }
     // News publiée : on rouvre son studio (les 4 téléphones) pour la modifier et l'enregistrer (Will, 27/10/2026).
     if (kind === "news") { location.href = "/hq/news/#" + encodeURIComponent(id); return; }
     if (kind === "todo") return openTodo(TODO.find(function (t) { return t.id === id; }));
@@ -1498,14 +1507,16 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     return h + '</div></div>';
   }
   function igHor(st) {
-    var hh = st.heure.slice(0, 2), mm = st.heure.slice(3, 5), h = '<div class="igpop"><div class="iglab">Heure</div><div class="ighr">';
-    for (var i = 7; i <= 23; i++) { var v = (i < 10 ? "0" : "") + i; h += '<button data-igch="' + v + '" aria-pressed="' + (v === hh) + '">' + i + ' h</button>'; }
-    h += '</div><div class="iglab">Minutes</div><div class="igmn">' + ["00", "15", "30", "45"].map(function (v) { return '<button data-igcm="' + v + '" aria-pressed="' + (v === mm) + '">' + v + '</button>'; }).join("") + '</div><button class="igok2" data-igpop="">OK</button></div>';
+    // Heures toujours dépliées (Will, 23/11/2026) : un clic sur l'heure, un clic sur les minutes.
+    var hh = st.heure.slice(0, 2), mm = st.heure.slice(3, 5), h = '<div class="iglab">Heure</div><div class="ighr">';
+    for (var i = 7; i <= 23; i++) { var v = (i < 10 ? "0" : "") + i; var passe = st.jour === iso(new Date()) && i < new Date().getHours(); h += '<button data-igch="' + v + '" aria-pressed="' + (v === hh) + '"' + (passe ? " disabled" : "") + '>' + i + ' h</button>'; }
+    h += '</div><div class="iglab">Minutes</div><div class="igmn">' + ["00", "15", "30", "45"].map(function (v) { return '<button data-igcm="' + v + '" aria-pressed="' + (v === mm) + '">' + v + '</button>'; }).join("") + '</div>';
     return h;
   }
   function igUI(box, o) {
     // o : { jourJ, heure, aPost, imgs: Promise<{post?, story}>, item, programmer(quand, post, story) → Promise<item>, annuler() → Promise }
-    var st = box._st = box._st || { jour: o.jourJ && o.jourJ >= iso(new Date()) ? o.jourJ : iso(new Date()), heure: o.heure || "19:00", post: !!o.aPost, story: true, tab: o.aPost ? "post" : "story" };
+    var st = box._st = box._st || { jour: o.jourJ && o.jourJ >= iso(new Date()) && !(o.jp && o.jourJ === iso(new Date(Date.now() + 864e5))) ? o.jourJ : iso(new Date()), heure: o.heure || "19:00", post: !!o.aPost, story: true, tab: o.aPost ? "post" : "story" };
+    if (st.jour === iso(new Date()) && +st.heure.slice(0, 2) < new Date().getHours() + 1 && new Date().getHours() < 23) st.heure = ("0" + (new Date().getHours() + 1)).slice(-2) + ":00";
     var it = o.item, fait = it && it.fait && it.fait !== "échec";
     var tabs = o.aPost ? '<div class="igtb"><button data-igtab="post" aria-pressed="' + (st.tab === "post") + '">Post</button><button data-igtab="story" aria-pressed="' + (st.tab === "story") + '">Story</button></div>' : "";
     var car = '<div class="igcar' + (o.aPost ? "" : " un") + '">' + (o.aPost ? '<div class="igsl" data-sl="post"><img data-igz="post" alt=""><span>Post</span></div>' : "") + '<div class="igsl" data-sl="story"><img data-igz="story" alt=""><span>Story</span></div></div>';
@@ -1519,7 +1530,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       var jours = (o.jourJ && o.jourJ >= iso(new Date()) ? (o.jp && o.jourJ === iso(new Date(Date.now() + 864e5)) ? [iso(new Date()), o.jourJ] : [o.jourJ]) : [iso(new Date()), iso(new Date(Date.now() + 864e5))]).filter(function (v, i, a) { return v && v >= iso(new Date()) && a.indexOf(v) === i; });
       if (jours.indexOf(st.jour) < 0) jours.push(st.jour);
       h += '<div class="iglab">Jour</div><div class="igch">' + jours.map(function (v) { return '<button data-igj="' + v + '" aria-pressed="' + (v === st.jour) + '">' + (v === o.jourJ ? '<em>Jour J</em>' : "") + esc(igJourLib(v)) + '</button>'; }).join("") + '<button class="igau" data-igpop="jour" aria-expanded="' + (st.pop === "jour") + '">' + IC_CAL + 'Autre date</button></div>' + (st.pop === "jour" ? igCal(st, o) : "") +
-        '<div class="iglab">Heure</div><div class="igch">' + HEURES.concat(HEURES.indexOf(st.heure) < 0 ? [st.heure] : []).map(function (v) { return '<button data-igh="' + v + '" aria-pressed="' + (v === st.heure) + '">' + v.replace(/^0/, "").replace(":00", " h").replace(":", " h ") + '</button>'; }).join("") + '<button class="igau" data-igpop="heure" aria-expanded="' + (st.pop === "heure") + '">' + IC_HOR + 'Autre heure</button></div>' + (st.pop === "heure" ? igHor(st) : "") +
+        igHor(st) +
         (o.aPost ? '<div class="iglab">Envoyer</div><div class="igch"><button data-igq="post" aria-pressed="' + st.post + '">Post</button><button data-igq="story" aria-pressed="' + st.story + '">Story</button></div>' : "") +
         '<button class="igbig" data-iggo>Programmer · ' + esc(igJourLib(st.jour)) + ' · ' + st.heure.replace(/^0/, "").replace(":00", " h").replace(":", " h ") + '</button>' +
         (o.ignorer ? '<button class="igskip" data-igskip>Ne pas publier</button>' : "");
