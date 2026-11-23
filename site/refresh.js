@@ -23,7 +23,10 @@
   }
   // Utilisé aussi par le panneau admin (avatar) : window.fgRecharger(bouton).
   window.fgRecharger = function (b) { recharger(b || document.createElement("i")); };
-  if (!admin && !appli) return;
+  // Un seul endroit pour recharger : le rond vert à droite de la pastille Admin, dans le menu admin (Will, 23/11/2026).
+  // Plus aucun bouton dans l'en-tête ni en haut à droite des pages.
+  if (/[?&]_r=/.test(location.search)) { try { var u0 = new URL(location.href); u0.searchParams.delete("_r"); history.replaceState(history.state, "", u0.pathname + u0.search + u0.hash); } catch (e) {} }
+  return;
   var css = document.createElement("style");
   css.textContent =
     ".fg-rl{width:30px;height:30px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;background:#2FB56A;color:#fff;cursor:pointer;flex:none;-webkit-tap-highlight-color:transparent;box-shadow:0 2px 8px rgba(0,0,0,.35)}" +

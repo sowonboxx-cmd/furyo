@@ -62,8 +62,6 @@
       '<div class="fgq-h"><a class="fgq-logo" href="/" aria-label="Retour au site"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a><button class="x" type="button" aria-label="Fermer">×</button></div>' +
       // Recherche au-dessus d'Actualités (Will, 21/10/2026) : ouvre la recherche du site.
       '<button type="button" class="fgq-srch">' + I.srch + '<span>Rechercher sur le site</span></button>' +
-      // Recharger l'application (rond vert), ici plutôt que dans l'en-tête sur téléphone (Will, 23/11/2026).
-      '<button type="button" class="fgq-rl"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span>Recharger l\'application</span></button>' +
       '<div class="fgq-grid">' +
         // Flashcards et Lecture tout en haut : Will s'en sert tout le temps (02/11/2026). Pages privées, admin seulement.
         qt("fc", "Flashcards", "mon carnet de japonais", "/flashcard/", "") +
@@ -85,10 +83,6 @@
       '</div>' +
       '<button class="fgq-out" type="button">Se déconnecter</button></div>';
     pop.querySelector(".x").onclick = function () { pop.hidden = true; };
-    pop.querySelector(".fgq-rl").onclick = function () {
-      var b = this; b.querySelector(".ok").innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg>'; b.classList.add("on");
-      if (window.fgRecharger) window.fgRecharger(b); else location.reload();
-    };
     pop.querySelector(".fgq-srch").onclick = function () { pop.hidden = true; if (window.FG_SEARCH) window.FG_SEARCH(); else location.href = "/#recherche"; };
     pop.querySelector(".fgq-out").onclick = function () {
       fetch("/api/auth/me", { method: "DELETE" }).catch(function () {}).then(function () { fetch("/api/admin/login", { method: "DELETE" }).catch(function () {}).then(function () { location.reload(); }); });

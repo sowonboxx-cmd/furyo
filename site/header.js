@@ -647,4 +647,4 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
   };
 })();
 // Bouton « recharger l'application » (rond vert coché), visible quand le site est ouvert depuis l'écran d'accueil (Will, 23/11/2026).
-(function () { var s = document.createElement("script"); s.src = "/site/refresh.js?v=2"; s.defer = true; document.head.appendChild(s); })();
+(function () { var s = document.createElement("script"); s.src = "/site/refresh.js?v=3"; s.defer = true; document.head.appendChild(s); })();
