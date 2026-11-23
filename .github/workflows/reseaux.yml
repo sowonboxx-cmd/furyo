@@ -1,0 +1,13 @@
+# Publication automatique sur les réseaux (Will, 23/11/2026) : toutes les 10 minutes, le site envoie sur Instagram
+# les news planifiées dont l'heure est passée (case « Instagram » cochée dans le studio). Rien d'autre.
+name: Réseaux (publication planifiée)
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+jobs:
+  tournee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: curl -fsS --max-time 240 https://furyogang.com/api/cron/reseaux

@@ -8,6 +8,7 @@ import { handle } from "../../../lib/mentions.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 import { CATEGORIES, categorie, categoriesDe, pays } from "../../../lib/categories.js";
 import { proposerCouvertures } from "../../../lib/couvprops.js";
+import { publierNewsIG } from "../../../lib/meta.js";
 
 const AUTEURS = { dataSource: "22b1c097-0ff0-496c-9540-26953780c522", database: "bbefc8a1431247788b2445de4265d36b" };
 const PREPUB = { dataSource: "e4e66558-3cf0-41f1-afc2-5147566cbf3e", database: "f0b7c0f91f4d442597cbbb169b7abbda" };
@@ -117,6 +118,8 @@ async function construire(request, env) {
       // Studio de la news (Will, 26/10/2026) : légendes modifiées à la main (vide = automatique) et jour/heure prévus.
       legX: text(p["Légende X"]), legIG: text(p["Légende Instagram"]), legTT: text(p["Légende TikTok"]),
       breve: !!(p["Brève"] && p["Brève"].checkbox),
+      // Instagram automatique (Will, 23/11/2026) : case cochée = post + story à la mise en ligne.
+      ig: !!(p["Instagram"] && p["Instagram"].checkbox), igPoste: date(p["Instagram posté"]), igLien: (p["Instagram lien"] && p["Instagram lien"].url) || "", igErr: text(p["Instagram erreur"]),
       // Calendrier éditorial (Will, 27/10/2026) : « À traiter » tant que la case est vide, « À publier » (vert) une fois relue.
       prete: !!(p["Prête à publier"] && p["Prête à publier"].checkbox),
       planif: (p["Planifiée le"] && p["Planifiée le"].date && p["Planifiée le"].date.start) || "",
@@ -288,6 +291,7 @@ async function traiter(request, env) {
     if (typeof b[k] === "string") props[nom] = rt(b[k].trim().slice(0, 2000));
   if (typeof b.breve === "boolean") props["Brève"] = { checkbox: b.breve };
   if (typeof b.prete === "boolean") props["Prête à publier"] = { checkbox: b.prete };
+  if (typeof b.ig === "boolean") props["Instagram"] = { checkbox: b.ig };
   if (b.carte !== undefined) {
     const c = b.carte && typeof b.carte === "object" ? b.carte : null, u = x => /^(https:\/\/|\/)\S+$/.test(String(x || "")) ? String(x).slice(0, 500) : "";
     const o = c ? { couv: u(c.couv), planches: (Array.isArray(c.planches) ? c.planches : []).map(u).filter(Boolean).slice(0, 12), cta: String(c.cta || "").slice(0, 60), editeur: String(c.editeur || "").slice(0, 40), quand: String(c.quand || "").slice(0, 60), lire: /^https:\/\/\S+$/.test(String(c.lire || "")) ? String(c.lire).slice(0, 600) : "", pays: c.pays === "Japon" ? "Japon" : "France" } : null;
@@ -298,6 +302,9 @@ async function traiter(request, env) {
     if (o && u(c.og)) o.og = u(c.og);
     if (o && Array.isArray(c.tomes)) o.tomes = c.tomes.map(u).filter(Boolean).slice(0, 6);
     if (o && !c.banniere) for (const k of ["mobile", "ig", "tt"]) if (u(c[k])) o[k] = u(c[k]);
+    // Images Instagram préparées par le studio (JPEG hébergés chez nous) : post (1 à 20) et story.
+    if (o && c.igPub) o.igPub = (Array.isArray(c.igPub) ? c.igPub : [c.igPub]).map(u).filter(Boolean).slice(0, 20);
+    if (o && u(c.igStory)) o.igStory = u(c.igStory);
     if (o && c.fondPos) o.fondPos = String(c.fondPos).slice(0, 20);
     if (o && c.collection) o.collection = String(c.collection).slice(0, 40);
     if (o && c.auteurs) o.auteurs = String(c.auteurs).slice(0, 120);
@@ -345,7 +352,10 @@ async function traiter(request, env) {
   // Une news validée apparaît tout de suite sur le site.
   const c = caches.default;
   await Promise.all(["/api/news?v=9", "/api/news?v=20", "/api/news?v=21", "/api/crows", "/api/series?v=5", "/api/series?v=5&admin=1", "/api/calendrier", ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString()))));
-  return json({ ok: true, fiche });
+  // Instagram : part tout de suite si la news est en ligne et la case cochée (rien sinon ; les planifiées partent à l'heure).
+  let ig = null;
+  if (b.ig === true || b.statut === "Publié sur le site") { await etape("Instagram"); ig = await publierNewsIG(env, b.id).catch(e => ({ ok: false, err: String(e && e.message || e) })); }
+  return json({ ok: true, fiche, ig });
 }
 
 // Applique à la fiche série les propositions « Mise à jour fiche » encore en attente (À valider / À appliquer à la fiche)
