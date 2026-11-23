@@ -154,6 +154,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 <script src="/site/sortie-post.js?v=16"></script>
 <script src="/site/og-actu.js?v=7"></script>
 <script src="/site/hero-d.js?v=3"></script>
+<script src="/site/story.js?v=1"></script>
 <script>
 (function () {
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -294,13 +295,11 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function scrTT() { return '<div class="scr tts"><div class="ttbg">' + visuelTT() + '</div>' + SB + '<div class="tttop"><span>Suivis</span><b>Pour toi</b></div><div class="ttrail"><img src="' + AV + '"><span>' + SV(P.coeur, { fill: "#fff", w: 34 }) + '<small>J\'aime</small></span><span>' + SV(P.bulle.replace('<path', '<path fill="#fff" stroke="none"'), { w: 32 }) + '<small>0</small></span><span>' + SV(P.signet, { fill: "#fff", w: 30 }) + '<small>0</small></span><span>' + SV('<path d="M14 4l8 7.5-8 7.5v-4.5C8 14.5 4.5 16.5 2 20c.8-6 4-10.5 12-11.5z"/>', { fill: "#fff", w: 32 }) + '<small>Partager</small></span></div><div class="ttcap"><b>furyogang</b><p>' + hl(D.tt).replace(/<span class="lk">(#[^<]+)<\/span>/g, "<b>$1</b>") + '</p><span class="ttm">♫ son original - furyogang</span></div><div class="ttnav"><span>Accueil</span><span>Amis</span><b>＋</b><span>Boîte</span><span>Profil</span></div></div>'; }
   // Story Instagram (Will, 23/11/2026) : gabarit rouge et crème du matin, un fond tiré au hasard (fixe pour une news),
   // le visuel du post posé dans le cadre crème. L'aperçu et l'image envoyée sont construits de la même façon.
-  var FONDS = ["jinnai", "murota", "buso", "haru"];
-  function fondStory() { var h = 0; for (var i = 0; i < ID.length; i++) h = (h * 31 + ID.charCodeAt(i)) >>> 0; return "/img/story/fond-" + FONDS[h % FONDS.length] + ".jpg"; }
-  var ZS = { x: 140, y: 405, w: 814, h: 1104 }; // cadre crème (112,377 → 982,1537) moins une marge de 28 px
+  // Story : style + persos tirés au hasard par /site/story.js, tirage fixe pour une news (aperçu = image envoyée).
+  function tirStory() { return window.FG_STORY ? FG_STORY.tirage(ID, false) : null; }
   function scrStory() {
-    var k = 390 / 1080, u = imgSoc(), src = u ? (/^data:/.test(u) ? u : couv(u, 800)) : "";
-    return '<div class="scr" style="background:#000"><div style="position:absolute;left:0;top:75px;width:390px;height:693px;overflow:hidden;border-radius:10px"><img src="' + fondStory() + '" style="width:100%;height:100%;display:block">' +
-      (src ? '<img src="' + esc(src) + '" style="position:absolute;left:' + ZS.x * k + 'px;top:' + ZS.y * k + 'px;width:' + ZS.w * k + 'px;height:' + ZS.h * k + 'px;object-fit:contain">' : '') +
+    var t = tirStory(), u = imgSoc(), src = u ? (/^data:/.test(u) ? u : couv(u, 800)) : "";
+    return '<div class="scr" style="background:#000"><div style="position:absolute;left:0;top:75px;width:390px;height:693px;overflow:hidden;border-radius:10px"><div style="transform:scale(' + (390 / 1080) + ');transform-origin:0 0">' + (t ? FG_STORY.html(t, esc(src)) : "") + '</div>' +
       '<div style="position:absolute;left:8px;right:8px;top:8px;height:2px;border-radius:2px;background:rgba(255,255,255,.9)"></div><div style="position:absolute;left:10px;top:18px;display:flex;align-items:center;gap:8px;font:600 13px I;color:#fff"><img src="' + AV + '" style="width:28px;height:28px;border-radius:50%">furyogang<span style="opacity:.7;font-weight:500">' + esc(heure()) + '</span></div></div>' + SB + '</div>';
   }
   function sk() { return '<span class="sk" style="color:' + col() + '"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>'; }
@@ -391,10 +390,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       var W = 1080, h = Math.round(bm.height * W / bm.width), H = Math.min(h, 1350), c = document.createElement("canvas"); c.width = W; c.height = H;
       var x = c.getContext("2d"); x.fillStyle = "#0c0c0e"; x.fillRect(0, 0, W, H);
       if (h > H) { var w2 = Math.round(bm.width * H / bm.height); x.drawImage(bm, (W - w2) / 2, 0, w2, H); } else x.drawImage(bm, 0, 0, W, h);
-      return charger(fondStory()).then(function (fd) {
-        var s2 = document.createElement("canvas"); s2.width = 1080; s2.height = 1920; var y = s2.getContext("2d"); y.drawImage(fd, 0, 0, 1080, 1920);
-        var k = Math.min(ZS.w / W, ZS.h / H), w = W * k, hh = H * k, px = ZS.x + (ZS.w - w) / 2, py = ZS.y + (ZS.h - hh) / 2;
-        y.save(); y.beginPath(); if (y.roundRect) y.roundRect(px, py, w, hh, 14); else y.rect(px, py, w, hh); y.clip(); y.drawImage(c, px, py, w, hh); y.restore();
+      return FG_STORY.canvas(tirStory(), c).then(function (s2) {
         return Promise.all([envoyerJpeg(c), envoyerJpeg(s2)]);
       });
     });
