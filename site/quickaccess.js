@@ -1,7 +1,7 @@
 /* Accès rapide admin (Will, 20/10/2026) : le même pop-up centré « grille 2 par 2 » que sur le site,
    réutilisable partout où Will est admin (back-office, HQ, calendrier éditorial…), déclenché par son avatar.
    Autonome : récupère lui-même l'utilisateur (/api/auth/me) et les compteurs, injecte son propre CSS (.fgq-*).
-   Usage : <script src="/site/quickaccess.js?v=21"></script> puis FGQuick.mount(elAvatar). */
+   Usage : <script src="/site/quickaccess.js?v=22"></script> puis FGQuick.mount(elAvatar). */
 (function () {
   if (window.FGQuick) return;
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
@@ -107,7 +107,7 @@
     if (!ME) { fetch("/api/auth/me", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { ME = j || { admin: false }; openPop(); }).catch(function () { loadData(render); }); return; }
     if (ME && ME.admin) {
       if (window.FG_ADMPOP) return window.FG_ADMPOP(ME, null);
-      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=10";
+      var sc = document.createElement("script"); sc.src = "/site/admin-pop.js?v=11";
       sc.onload = function () { window.FG_ADMPOP(ME, null); }; sc.onerror = function () { loadData(render); };
       document.head.appendChild(sc); return;
     }
