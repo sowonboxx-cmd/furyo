@@ -292,6 +292,17 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   // Antonio dessine le tiret tout en bas, collé au I (« SHISEI-DŌ » se lisait « SHISEL-DŌ ») : tiret pris dans Inter (Will, 27/10/2026).
   function tiret(h) { return String(h).replace(/-/g, '<span style="font-family:I,sans-serif;font-weight:800;padding:0 .04em">-</span>'); }
   function scrTT() { return '<div class="scr tts"><div class="ttbg">' + visuelTT() + '</div>' + SB + '<div class="tttop"><span>Suivis</span><b>Pour toi</b></div><div class="ttrail"><img src="' + AV + '"><span>' + SV(P.coeur, { fill: "#fff", w: 34 }) + '<small>J\'aime</small></span><span>' + SV(P.bulle.replace('<path', '<path fill="#fff" stroke="none"'), { w: 32 }) + '<small>0</small></span><span>' + SV(P.signet, { fill: "#fff", w: 30 }) + '<small>0</small></span><span>' + SV('<path d="M14 4l8 7.5-8 7.5v-4.5C8 14.5 4.5 16.5 2 20c.8-6 4-10.5 12-11.5z"/>', { fill: "#fff", w: 32 }) + '<small>Partager</small></span></div><div class="ttcap"><b>furyogang</b><p>' + hl(D.tt).replace(/<span class="lk">(#[^<]+)<\/span>/g, "<b>$1</b>") + '</p><span class="ttm">♫ son original - furyogang</span></div><div class="ttnav"><span>Accueil</span><span>Amis</span><b>＋</b><span>Boîte</span><span>Profil</span></div></div>'; }
+  // Story Instagram (Will, 23/11/2026) : gabarit rouge et crème du matin, un fond tiré au hasard (fixe pour une news),
+  // le visuel du post posé dans le cadre crème. L'aperçu et l'image envoyée sont construits de la même façon.
+  var FONDS = ["jinnai", "murota", "buso", "haru"];
+  function fondStory() { var h = 0; for (var i = 0; i < ID.length; i++) h = (h * 31 + ID.charCodeAt(i)) >>> 0; return "/img/story/fond-" + FONDS[h % FONDS.length] + ".jpg"; }
+  var ZS = { x: 140, y: 405, w: 814, h: 1104 }; // cadre crème (112,377 → 982,1537) moins une marge de 28 px
+  function scrStory() {
+    var k = 390 / 1080, u = imgSoc(), src = u ? (/^data:/.test(u) ? u : couv(u, 800)) : "";
+    return '<div class="scr" style="background:#000"><div style="position:absolute;left:0;top:75px;width:390px;height:693px;overflow:hidden;border-radius:10px"><img src="' + fondStory() + '" style="width:100%;height:100%;display:block">' +
+      (src ? '<img src="' + esc(src) + '" style="position:absolute;left:' + ZS.x * k + 'px;top:' + ZS.y * k + 'px;width:' + ZS.w * k + 'px;height:' + ZS.h * k + 'px;object-fit:contain">' : '') +
+      '<div style="position:absolute;left:8px;right:8px;top:8px;height:2px;border-radius:2px;background:rgba(255,255,255,.9)"></div><div style="position:absolute;left:10px;top:18px;display:flex;align-items:center;gap:8px;font:600 13px I;color:#fff"><img src="' + AV + '" style="width:28px;height:28px;border-radius:50%">furyogang<span style="opacity:.7;font-weight:500">' + esc(heure()) + '</span></div></div>' + SB + '</div>';
+  }
   function sk() { return '<span class="sk" style="color:' + col() + '"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>'; }
   function estExtrait2() { return N && (N.cat === "extrait" || N.cat2 === "extrait"); }
   function chapN() { var m = String([titre(), accroche(), D.site].join(" ")).match(/chapitre\s+(\d+)/i); return m ? m[1] : "1"; }
@@ -361,29 +372,38 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       '<span class="pr4">' + (N.enLigne ? "Sur le site" : "Site, X, Instagram prêts") + '</span></div>' + liens() + '<h1 class="tt"><span class="kj" lang="ja">' + (CATK[N.cat] || "速報") + '</span><span>' + esc(titre()) + '</span></h1>';
   }
   // Instagram automatique (Will, 23/11/2026) : case à cocher ; déjà posté = lien vers le post ; erreur en rouge.
-  function igChip() {
-    if (N.igPoste) return '<a class="nt" href="' + esc(N.igLien || "https://www.instagram.com/furyogang/") + '" target="_blank" rel="noopener" style="text-decoration:none;box-shadow:inset 0 0 0 1.5px #2E7D4F">' + IC.ig + 'Instagram<small style="color:#7BC67E">posté ↗</small></a>';
-    var on = !!D.envIG;
-    return '<button type="button" class="nt igt' + (on ? " on" : "") + '" data-igtog title="' + (N.igErr ? esc("Dernier essai : " + N.igErr) : "Cocher pour publier aussi sur Instagram (post + story)") + '">' + '<span class="cb">' + (on ? "✓" : "") + '</span>' + IC.ig + 'Instagram<small' + (N.igErr ? ' style="color:#FF8A80"' : "") + '>' + (N.igErr ? "échec, réessayer" : on ? (N.enLigne ? "à l’enregistrement" : esc(heure())) : "non") + '</small></button>';
+  function igChip(q) {
+    var st = q === "story", nom = st ? "Story" : "Post Insta";
+    if (N.igPoste && (st ? N.igStory : N.ig)) return '<a class="nt" href="' + esc((!st && N.igLien) || "https://www.instagram.com/furyogang/") + '" target="_blank" rel="noopener" style="text-decoration:none;box-shadow:inset 0 0 0 1.5px #2E7D4F">' + IC.ig + nom + '<small style="color:#7BC67E">' + (st ? "partie ✓" : "posté ↗") + '</small></a>';
+    if (N.igPoste) return '';
+    var on = st ? !!D.envST : !!D.envIG;
+    return '<button type="button" class="nt igt' + (on ? " on" : "") + '" data-igtog="' + q + '" title="' + (N.igErr ? esc("Dernier essai : " + N.igErr) : "Cocher pour publier aussi " + (st ? "la story" : "le post") + " Instagram") + '"><span class="cb">' + (on ? "✓" : "") + '</span>' + IC.ig + nom + '<small' + (N.igErr ? ' style="color:#FF8A80"' : "") + '>' + (N.igErr ? "échec, réessayer" : on ? (N.enLigne ? "à l’enregistrement" : esc(heure())) : "non") + '</small></button>';
   }
-  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest("[data-igtog]"); if (!t || !N) return; D.envIG = !D.envIG; draw(); });
+  document.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest("[data-igtog]"); if (!t || !N) return; if (t.dataset.igtog === "story") D.envST = !D.envST; else D.envIG = !D.envIG; draw(); });
   // Image Instagram : JPEG hébergé chez nous (Instagram n'accepte que le JPEG à une adresse publique), ramené au 4:5 au plus haut.
+  function charger(src) { return fetch(src).then(function (r) { if (!r.ok) throw new Error("Image introuvable"); return r.blob(); }).then(createImageBitmap); }
+  function envoyerJpeg(c) { return new Promise(function (ok) { c.toBlob(ok, "image/jpeg", .9); }).then(function (blob) { return fetch("/api/admin/image", { method: "POST", credentials: "same-origin", headers: { "content-type": "image/jpeg" }, body: blob }); })
+    .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Envoi de l'image impossible"); return j.url; }); }); }
+  // Images Instagram : post en JPEG (1080 de large, 4:5 au plus haut) et story 1080 × 1920 (gabarit + post dans le cadre crème).
   function igJpeg() {
     var u = imgSoc(); if (!u) return Promise.reject(new Error("Pas d'image pour Instagram"));
-    var src = /^data:|^\//.test(u) ? u : couv(u);
-    return fetch(src).then(function (r) { if (!r.ok) throw new Error("Image Instagram introuvable"); return r.blob(); }).then(createImageBitmap).then(function (bm) {
+    return charger(/^data:|^\//.test(u) ? u : couv(u)).then(function (bm) {
       var W = 1080, h = Math.round(bm.height * W / bm.width), H = Math.min(h, 1350), c = document.createElement("canvas"); c.width = W; c.height = H;
       var x = c.getContext("2d"); x.fillStyle = "#0c0c0e"; x.fillRect(0, 0, W, H);
       if (h > H) { var w2 = Math.round(bm.width * H / bm.height); x.drawImage(bm, (W - w2) / 2, 0, w2, H); } else x.drawImage(bm, 0, 0, W, h);
-      return new Promise(function (ok) { c.toBlob(ok, "image/jpeg", .9); });
-    }).then(function (blob) { return fetch("/api/admin/image", { method: "POST", credentials: "same-origin", headers: { "content-type": "image/jpeg" }, body: blob }); })
-      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Envoi de l'image impossible"); return j.url; }); });
+      return charger(fondStory()).then(function (fd) {
+        var s2 = document.createElement("canvas"); s2.width = 1080; s2.height = 1920; var y = s2.getContext("2d"); y.drawImage(fd, 0, 0, 1080, 1920);
+        var k = Math.min(ZS.w / W, ZS.h / H), w = W * k, hh = H * k, px = ZS.x + (ZS.w - w) / 2, py = ZS.y + (ZS.h - hh) / 2;
+        y.save(); y.beginPath(); if (y.roundRect) y.roundRect(px, py, w, hh, 14); else y.rect(px, py, w, hh); y.clip(); y.drawImage(c, px, py, w, hh); y.restore();
+        return Promise.all([envoyerJpeg(c), envoyerJpeg(s2)]);
+      });
+    });
   }
   function bt(act, cls, t, sub) { return '<button class="btn bt2 ' + cls + '" data-act="' + act + '"><b>' + t + '</b><small>' + sub + '</small></button>'; }
   function plan() {
     var resume = N.enLigne ? "En ligne · enregistrer, brève, retirer" : N.base === "prepub" ? "Magazines · mettre à jour, écarter" : "Publier · " + jourTxt() + " · " + heure();
     return '<div class="plan' + (PLO ? " open" : "") + '"><button type="button" class="plt" data-pltog><span>' + esc(resume) + '</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button><div class="pl1"><span class="lb">Publier le</span><input class="pin" type="date" id="pj" value="' + esc(D.jour || demain()) + '"><input class="pin" type="time" id="ph" value="' + esc(heure()) + '" step="300"></div>' +
-      (N.base === "prepub" ? '<div></div>' : '<div class="pl2">' + '<span class="nt">' + IC.site + 'Site<small>' + esc(N.enLigne ? "en ligne" : heure()) + '</small></span>' + '<span class="nt" style="box-shadow:inset 0 0 0 1.5px #3a3a42">' + IC.x + 'X<small style="color:#8c8c93">à la main</small></span>' + igChip() + '</div>') +
+      (N.base === "prepub" ? '<div></div>' : '<div class="pl2">' + '<span class="nt">' + IC.site + 'Site<small>' + esc(N.enLigne ? "en ligne" : heure()) + '</small></span>' + '<span class="nt" style="box-shadow:inset 0 0 0 1.5px #3a3a42">' + IC.x + 'X<small style="color:#8c8c93">à la main</small></span>' + igChip("post") + igChip("story") + '</div>') +
       // Mettre de côté / Brève / À la une (Will, 27/10/2026) : un sous-titre sous chaque bouton pour ne jamais se tromper.
       // Prépublication (magazines japonais) : mêmes boutons que la Validation du back-office (Will, 27/10/2026).
       '<div class="pl3">' + (N.base === "prepub" ? bt("pp-vu", "gh", "Mettre de côté", "rien ne change") + bt("pp-rej", "gh", "Écarter", "ne plus la proposer") + bt("pp-news", "", "Mettre à jour + créer une news", "news à relire dans le calendrier") + bt("pp-maj", "pri", "Mettre à jour les magazines", "pages Magazines et Japon, sans news")
@@ -393,7 +413,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   }
   function vue() {
     // Vue d'ensemble : les 4 téléphones au centre ; le site ordinateur s'ouvre en grand d'un clic (Will, 27/10/2026).
-    return haut() + '<div class="row">' + phone("site", scrSM(), "Site · mobile", IC.site, true).replace('<span class="ed">Modifier</span>', '<span class="ed">Modifier</span><span class="sw" data-v="site" role="button">' + IC.web + 'Site ordinateur</span>') + phone("x", scrX(), "X", IC.x, true) + phone("ig", scrIG(), "Instagram", IC.ig, true) + '<button class="ph lph" data-v="lien"><span class="phl">' + SV('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>', { w: 15 }) + 'Aperçu du lien<span class="ok">✓</span></span><span class="lpf"><span class="fit" data-w="390" style="display:block">' + scrLien() + '</span></span><span class="ed2"><span class="ed">Modifier</span>' + (N.enLigne ? '<span class="sw" data-copy-url="1" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier le lien</span>' : '') + '</span></button></div>' + plan();
+    return haut() + '<div class="row">' + phone("site", scrSM(), "Site · mobile", IC.site, true).replace('<span class="ed">Modifier</span>', '<span class="ed">Modifier</span><span class="sw" data-v="site" role="button">' + IC.web + 'Site ordinateur</span>') + phone("x", scrX(), "X", IC.x, true) + phone("ig", scrIG(), "Instagram", IC.ig, true) + phone("ig", scrStory(), "Story", IC.ig, false) + '<button class="ph lph" data-v="lien"><span class="phl">' + SV('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>', { w: 15 }) + 'Aperçu du lien<span class="ok">✓</span></span><span class="lpf"><span class="fit" data-w="390" style="display:block">' + scrLien() + '</span></span><span class="ed2"><span class="ed">Modifier</span>' + (N.enLigne ? '<span class="sw" data-copy-url="1" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier le lien</span>' : '') + '</span></button></div>' + plan();
   }
   function navBar() { return '<div class="nav">' + [["all", "Vue d’ensemble", IC.all], ["site", "Site", IC.web], ["x", "X", IC.x], ["ig", "Instagram", IC.ig], ["lien", "Lien", SV('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>', { w: 16 })]].map(function (t) { return '<button data-v="' + t[0] + '" class="' + (V === t[0] ? "on" : "") + '">' + t[2] + t[1] + (t[0] === "all" ? "" : "<small>✓</small>") + '</button>'; }).join("") + '</div>'; }
   function compteur(k) { if (k === "x") { var n = poidsX(D.x); return '<em class="' + (n > 280 ? "ko" : "") + '">' + n + ' / 280</em>'; } var m = (D[k] || "").length; return '<em>' + m + (k === "site" ? " car." : " / 2 200") + '</em>'; }
@@ -443,16 +463,17 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     if (V === "lien") return haut() + '<div class="fg">' + edLien().replace("</h2>", '<span class="live"><i></i>Aperçu en direct →</span></h2>') + '<div class="ph lfo"><span class="lpf2" id="lienp">' + scrLien() + '</span></div></div>' + navBar() + plan();
     var web = V === "site";
     var prev = web ? '<div>' + browser("site").replace('class="ph web"', 'class="ph web" style="cursor:default"').replace('<span class="ed">Modifier</span>', '') + '</div>'
-      : '<div class="ph"><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block" id="live">' + ({ x: scrX, ig: scrIG, tt: scrTT })[V]() + '</span></span></div>';
+      : '<div style="display:flex;gap:18px;align-items:flex-start"><div class="ph"><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block" id="live">' + ({ x: scrX, ig: scrIG, tt: scrTT })[V]() + '</span></span></div>' +
+        (V === "ig" ? '<div class="ph"><span class="phl" style="position:absolute;margin-top:-26px">' + IC.ig + 'Story</span><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block" id="lives">' + scrStory() + '</span></span></div>' : '') + '</div>';
     var ed = web ? editeur(V) : editeur(V).replace("</h2>", '<span class="live"><i></i>Aperçu en direct →</span></h2>');
     return haut() + '<div class="fg' + (web ? " w" : "") + '">' + ed + prev + '</div>' + navBar() + plan();
   }
   function mobile() {
     var k = V === "all" ? "site" : V;
-    var tabs = '<div class="mt">' + [["site", "Article", IC.site], ["x", "X", IC.x], ["ig", "Insta", IC.ig], ["lien", "Lien", SV('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>', { w: 16 })]].map(function (t) { return '<button data-v="' + t[0] + '" class="' + (k === t[0] ? "on" : "") + '">' + t[2] + t[1] + '</button>'; }).join("") + '</div>';
+    var tabs = '<div class="mt">' + [["site", "Article", IC.site], ["x", "X", IC.x], ["ig", "Insta", IC.ig], ["st", "Story", IC.ig], ["lien", "Lien", SV('<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>', { w: 16 })]].map(function (t) { return '<button data-v="' + t[0] + '" class="' + (k === t[0] ? "on" : "") + '">' + t[2] + t[1] + '</button>'; }).join("") + '</div>';
     if (k === "lien") return haut() + tabs + '<div class="mprev" id="lienp" style="padding:0">' + scrLien() + '</div>' + edLien() + plan();
-    var scr = { site: scrSM, x: scrX, ig: scrIG, tt: scrTT }[k]();
-    return haut() + tabs + '<div class="mprev"><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block" id="live">' + scr + '</span></span></div>' + editeur(k) + plan();
+    var scr = { site: scrSM, x: scrX, ig: scrIG, tt: scrTT, st: scrStory }[k]();
+    return haut() + tabs + '<div class="mprev"><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block" id="live">' + scr + '</span></span></div>' + editeur(k === "st" ? "ig" : k) + plan();
   }
   function draw() {
     var y = scrollY, f = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.f : null;
@@ -464,7 +485,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   // Aperçu en direct sans tout redessiner (le curseur reste en place).
   function live() {
     var k = mob() ? (V === "all" ? "site" : V) : V;
-    var l = $("#live"); if (l) l.innerHTML = { site: scrSM, x: scrX, ig: scrIG, tt: scrTT }[k]();
+    var l = $("#live"); if (l) l.innerHTML = { site: scrSM, x: scrX, ig: scrIG, tt: scrTT, st: scrStory }[k]();
+    var ls = $("#lives"); if (ls) ls.innerHTML = scrStory();
     var w = $(".webs"); if (w && k === "site") w.outerHTML = scrWeb();
     var c = $('[data-f="' + k + '"]'); if (c) { var lb = c.previousElementSibling; if (lb && lb.classList.contains("lbl")) { var em = lb.querySelector("em"); if (em) em.outerHTML = compteur(k); } }
     var a = $('[data-f="accroche"]'); if (a) { var la = a.previousElementSibling.querySelector("em"); if (la) la.textContent = accroche().length + " / 120"; }
@@ -475,13 +497,13 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     document.querySelectorAll("textarea.ta").forEach(function (t) { t.style.height = "auto"; t.style.height = (t.scrollHeight + 3) + "px"; });
     // Focus : le téléphone prend toute la hauteur dispo, le cadre de modification fait la même hauteur.
     var g = $(".fg:not(.w)");
-    if (g && !mob()) { var e = g.querySelector(".edp"), pf = g.querySelector(".ph .pf");
+    if (g && !mob()) { var e = g.querySelector(".edp"), pfs = g.querySelectorAll(".ph .pf"), pf = pfs[0];
       if (e && pf) { var bas = ($(".nav") ? $(".nav").offsetHeight : 0) + ($(".plan") ? $(".plan").offsetHeight : 0) + 40;
         var dispo = Math.max(480, innerHeight - (g.getBoundingClientRect().top + scrollY) - bas);
         e.style.minHeight = "0"; var H = Math.max(dispo, e.offsetHeight); if (H > dispo + 40) H = Math.max(dispo, Math.min(H, innerHeight - 40));
-        e.style.minHeight = H + "px"; pf.style.height = H + "px"; pf.style.width = (H * 390 / 844) + "px"; } }
+        e.style.minHeight = H + "px"; pfs.forEach(function (q) { q.style.height = H + "px"; q.style.width = (H * 390 / 844) + "px"; }); } }
     var r = $(".row");
-    if (r) { var cs = getComputedStyle(r), pd = parseFloat(cs.paddingTop), rh = r.clientHeight - pd * 2 - 60, aw = r.clientWidth - pd * 2 - 90, pw = Math.max(150, Math.min(rh * 390 / 844, aw * .86 / (r.querySelector(".lph") ? 4 : 3)));
+    if (r) { var cs = getComputedStyle(r), pd = parseFloat(cs.paddingTop), rh = r.clientHeight - pd * 2 - 60, aw = r.clientWidth - pd * 2 - 90, pw = Math.max(150, Math.min(rh * 390 / 844, aw * .86 / (r.querySelector(".lph") ? 5 : 4)));
       r.querySelectorAll(".ph:not(.web) .pf").forEach(function (p) { p.style.width = pw + "px"; p.style.height = (pw * 844 / 390) + "px"; });
       // Aperçu du lien réduit pour ne jamais dépasser la hauteur des téléphones (pas de défilement, Will 23/11/2026).
       r.querySelectorAll(".lph .lpf").forEach(function (p) { var f = p.querySelector(".fit"); f.style.width = "390px"; var h = f.scrollHeight || 1, k = Math.min(pw * 1.08 / 390, (pw * 844 / 390) / h); p.style.width = (390 * k) + "px"; }); }
@@ -558,10 +580,10 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     return b;
   }
   function act(k, btn) {
-    var igVa = D.envIG && !N.igPoste && /^(publier|breve|planifier|enreg|une)$/.test(k);
+    var igVa = (D.envIG || D.envST) && !N.igPoste && /^(publier|breve|planifier|enreg|une)$/.test(k);
     if (igVa && !btn.dataset.igPret) {
       btn.disabled = true; toast("Préparation de l’image Instagram…");
-      igJpeg().then(function (u) { D.carte.igPub = [u]; D.carte.igStory = u; btn.dataset.igPret = 1; btn.disabled = false; act(k, btn); delete btn.dataset.igPret; })
+      igJpeg().then(function (u) { D.carte.igPub = [u[0]]; D.carte.igStory = u[1]; btn.dataset.igPret = 1; btn.disabled = false; act(k, btn); delete btn.dataset.igPret; })
         .catch(function (e) { btn.disabled = false; toast(e.message || "Image Instagram impossible"); });
       return;
     }
@@ -569,7 +591,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     var extra = k === "planifier" ? { planif: jour + "T" + h + ":00" } : k === "publier" ? { statut: "Publié sur le site", breve: false } : k === "breve" ? (N.enLigne ? { breve: true } : { statut: "Publié sur le site", breve: true }) : k === "une" ? { breve: false } : k === "planifier" ? { planif: jour + "T" + h + ":00", breve: false } : k === "vu" ? { statut: "Vu" } : k === "retirer" ? { statut: "Vu" } : {};
     if (/^pp-/.test(k)) extra = { base: "prepub", statut: { "pp-vu": "Vu", "pp-rej": "Rejeté", "pp-news": "Validé", "pp-maj": "Validé" }[k], news: k === "pp-news" };
     // Rien de modifié sur une news en ligne : on refait quand même l'image (carte, aperçu du lien) — Will, 27/10/2026.
-    if (igVa) { extra.ig = true; extra.legIG = D.ig || ""; } else if (typeof D.envIG === "boolean" && D.envIG !== !!N.ig && !N.igPoste) extra.ig = D.envIG;
+    if (igVa) { extra.ig = !!D.envIG; extra.igStory = !!D.envST; extra.legIG = D.ig || ""; }
+    else if (!N.igPoste) { if (D.envIG !== !!N.ig) extra.ig = !!D.envIG; if (D.envST !== !!N.igStory) extra.igStory = !!D.envST; }
     var b = corps(extra); if (Object.keys(b).length < 2) { if (N.enLigne) { toast("Image en cours de mise à jour…"); ogEnvoyer(); } else toast("Rien à enregistrer"); return; }
     btn.disabled = true; if (igVa && (k !== "planifier")) toast("Envoi sur Instagram en cours (jusqu’à 1 minute)…");
     fetch("/api/admin/veille", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(b) })
@@ -578,8 +601,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
         btn.disabled = false;
         if (r.ok && /^pp-/.test(k)) { toast({ "pp-vu": "Mise de côté ✓", "pp-rej": "Écartée ✓", "pp-news": "Magazines à jour ✓ · news créée, à relire", "pp-maj": "Magazines à jour ✓" }[k]); setTimeout(retour, 1100); return; }
         if (!r.ok) { toast(r.st === 401 ? "Session expirée : reconnecte-toi puis réessaie" : (r.j.error || "Échec, réessaie")); return; }
-        if ("ig" in b) N.ig = b.ig;
-        var ig = r.j && r.j.ig; if (ig) { if (ig.ok && !ig.deja) { N.igPoste = new Date().toISOString(); N.igLien = ig.lien || ""; N.igErr = ""; setTimeout(function () { toast(ig.story ? "Posté sur Instagram, post + story ✓" : "Posté sur Instagram ✓ (story refusée : " + (ig.storyErr || "") + ")"); }, 1500); } else if (!ig.ok && ig.err) { N.igErr = ig.err; setTimeout(function () { toast("Instagram a refusé : " + ig.err); }, 1500); } }
+        if ("ig" in b) N.ig = b.ig; if ("igStory" in b) N.igStory = b.igStory;
+        var ig = r.j && r.j.ig; if (ig) { if (ig.ok && !ig.deja) { N.igPoste = new Date().toISOString(); N.igLien = ig.lien || ""; N.igErr = ""; setTimeout(function () { toast(ig.storyErr ? "Post Instagram ✓ (story refusée : " + ig.storyErr + ")" : ig.post && ig.story ? "Sur Instagram : post + story ✓" : ig.story ? "Story Instagram partie ✓" : "Post Instagram ✓"); }, 1500); } else if (!ig.ok && ig.err) { N.igErr = ig.err; setTimeout(function () { toast("Instagram a refusé : " + ig.err); }, 1500); } }
         N.texte = D.site; N.accroche = accroche(); if (b.carte) N.carte = JSON.parse(JSON.stringify(b.carte)); if (b.image) N.imageChoisie = b.image; ["legX", "legIG", "legTT"].forEach(function (p) { if (p in b) N[p] = b[p]; });
         if (k === "planifier") { N.planif = extra.planif; toast("Planifiée le " + new Date(jour + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) + " à " + h + " ✓"); }
         else if (k === "publier") { N.enLigne = true; N.breve = false; toast("En ligne, à la une ✓"); ogEnvoyer(); }
@@ -652,7 +675,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     if (!N) { $("#app").innerHTML = '<p class="vide">Cette news n’est plus dans la veille.<br><a href="/hq/#calendrier">Retour au calendrier</a></p>'; return; }
     D.site = N.texte || ""; D.carte = JSON.parse(JSON.stringify(N.carte || {}));
     var g = gen(); D.x = N.legX || g.x; D.ig = N.legIG || g.ig; D.tt = N.legTT || g.tt;
-    D.envIG = N.igPoste ? false : (N.ig || !N.enLigne); // nouvelle news : Instagram coché par défaut
+    // Nouvelle news : post et story Instagram cochés par défaut, brèves comprises (Will, 23/11/2026 : « je bombarde les gens »).
+    D.envIG = N.igPoste ? false : (N.ig || !N.enLigne); D.envST = N.igPoste ? false : (N.igStory || !N.enLigne);
     if (N.planif) { var p = N.planif.match(/^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}))?/); if (p) { D.jour = p[1]; if (p[2]) D.heure = p[2]; } }
     IMGS = [N.imageChoisie, N.image, N.serie && N.serie.cover].concat((N.tomes || []).map(function (t) { return t.cover; })).filter(function (u, i, a) { return u && a.indexOf(u) === i; }).slice(0, 6);
     document.title = titre() + " · Studio · FuryoGang";
