@@ -1,7 +1,7 @@
 /* Accès rapide admin (Will, 20/10/2026) : le même pop-up centré « grille 2 par 2 » que sur le site,
    réutilisable partout où Will est admin (back-office, HQ, calendrier éditorial…), déclenché par son avatar.
    Autonome : récupère lui-même l'utilisateur (/api/auth/me) et les compteurs, injecte son propre CSS (.fgq-*).
-   Usage : <script src="/site/quickaccess.js?v=1"></script> puis FGQuick.mount(elAvatar). */
+   Usage : <script src="/site/quickaccess.js?v=21"></script> puis FGQuick.mount(elAvatar). */
 (function () {
   if (window.FGQuick) return;
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
@@ -45,6 +45,7 @@
     fc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="15" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v12"/><path d="M7 11h5M7 15h3"/></svg>',
     read: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5c3-1.3 6.5-1.3 10 1 3.5-2.3 7-2.3 10-1v14c-3-1.3-6.5-1.3-10 1-3.5-2.3-7-2.3-10-1z"/><path d="M12 6v14"/></svg>',
     wiki: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M2.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5M14 14.2c.8-.5 1.6-.7 2.5-.7 2.6 0 5 1.9 5 5"/></svg>',
+    charte: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5C21 6.6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10" cy="7.2" r="1.2" fill="currentColor"/><circle cx="14.5" cy="7.2" r="1.2" fill="currentColor"/></svg>',
     hq: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V8l8-4 8 4v12"/><path d="M3 20h18M9.5 20v-4h5v4M8.5 11h2M13.5 11h2"/></svg>'
   };
 
@@ -73,6 +74,8 @@
         qt("db", "Mangas Database", "toutes les séries", "/admin/#mangas", "") +
         // Wiki des personnages Crows × Worst (brouillon, Will 12/11/2026).
         qt("wiki", "Wiki Crows × Worst", "personnages, lycées, combats", "/hq/wiki-crows/", "") +
+        // Charte graphique : tous les gabarits, couleurs, polices, logos (Will, 24/11/2026).
+        qt("charte", "Charte graphique", "modèles, couleurs", "/hq/charte/", "") +
         // Couvertures manquantes, nombre en direct, juste sous Mangas Database (Will, 21/10/2026).
         qt("couv", "Couvertures manquantes", CV ? CV + " à remplir" : "tout est rempli", "/admin/#couvertures", CV || "", true) +
         qt("admin", "Admin", "le back-office", "/admin/", "") +
