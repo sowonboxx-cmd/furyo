@@ -17,15 +17,15 @@
 body{background:var(--bg);color:var(--cr);font-family:"FGInter",system-ui,sans-serif;font-weight:500;-webkit-font-smoothing:antialiased}
 a{color:inherit}
 .wrap{max-width:1100px;margin:0 auto;padding:22px 16px 80px}
-header{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:26px}
-header .fgq-av{position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:40px}
-header .home{display:flex;align-items:center;gap:12px}
-header .home a{display:flex;align-items:center;text-decoration:none;color:inherit}
-header img{height:38px}
-header b{font:700 30px/1 "FGAntonio";letter-spacing:.06em;text-transform:uppercase;transform:translateY(-3px)}
-header b em{font-style:normal;color:var(--red)}
+.hqh[hidden]{display:none!important}.hqh{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:26px}
+.hqh .fgq-av{position:absolute;right:0;top:50%;transform:translateY(-50%);width:40px;height:40px}
+.hqh .home{display:flex;align-items:center;gap:12px}
+.hqh .home a{display:flex;align-items:center;text-decoration:none;color:inherit}
+.hqh img{height:38px}
+.hqh b{font:700 30px/1 "FGAntonio";letter-spacing:.06em;text-transform:uppercase;transform:translateY(-3px)}
+.hqh b em{font-style:normal;color:var(--red)}
 /* Téléphone : même en-tête que le back-office (Actualités, Sorties…) : bande noire fine, logo seul (Will, 21/10/2026) */
-@media (max-width:600px){header{position:sticky;top:0;z-index:50;margin:-22px -16px 20px;min-height:54px;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;background:#141416;border-bottom:1px solid #2C2C2F}header img{height:30px}header b{display:none}header .home{gap:0}header .fgq-av{right:16px;width:34px;height:34px}}
+@media (max-width:600px){.hqh{position:sticky;top:0;z-index:50;margin:-22px -16px 20px;min-height:54px;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;background:#141416;border-bottom:1px solid #2C2C2F}.hqh img{height:30px}.hqh b{display:none}.hqh .home{gap:0}.hqh .fgq-av{right:16px;width:34px;height:34px}}
 .back{display:none;font:600 14px "FGInter";color:var(--mut);text-decoration:none}
 body.sub .back{display:inline}
 .dlsheet{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
@@ -428,6 +428,16 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .apl-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.apl-h h2{margin:0;font:700 24px "FGAntonio";text-transform:uppercase}
 .apl-n{font:700 11px "FGInter";background:#26262c;color:var(--mut);border-radius:999px;padding:3px 9px}
 .apl{display:flex;flex-direction:column;gap:9px}
+/* Prépublication en story : bloc discret, replié par défaut (Will, 23/11/2026) */
+.ppb{margin-bottom:16px;border-radius:14px;background:#141416;border:1px solid #26262c}.ppb-h{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;background:none;color:inherit;cursor:pointer;text-align:left}
+.ppb-h .kj{font:900 15px "FGJP",sans-serif;color:#BC002D}.ppt{flex:1;min-width:0}.ppt b{display:block;font:700 16px "FGAntonio";text-transform:uppercase}.ppt small{display:block;font:500 11.5px "FGInter";color:var(--mut)}.ppb-h i{font-style:normal;color:var(--mut)}
+.ppl{display:flex;flex-direction:column;gap:2px;padding:0 8px 10px}.ppr{display:flex;align-items:center;gap:10px;padding:6px 6px;border-radius:10px;cursor:pointer}.ppr:hover{background:#1c1c20}
+.ppc{width:30px;height:42px;border-radius:4px;background:#26262c center/cover;flex:none}.ppi{flex:1;min-width:0}.ppi b{display:block;font:600 13px "FGInter";white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ppi b em{font-style:normal;font-size:10.5px;color:#F2B33D;margin-left:4px}.ppi small{display:block;font:500 11.5px "FGInter";color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ppk{width:26px;height:26px;border-radius:8px;border:1.5px solid #4a4a52;background:none;color:#fff;font:800 13px "FGInter";cursor:pointer;flex:none}.ppk.pl{background:#2A6FD0;border-color:#2A6FD0}.ppk.ok{background:#2E7D4F;border-color:#2E7D4F}.ppk.err{border-color:#FF8A80}.ppk.busy{opacity:.4}
+.pptout{margin:8px 6px 0;padding:9px;border-radius:10px;border:0;background:#26262c;color:#fff;font:700 12.5px "FGInter";cursor:pointer}
+.ppm{display:flex;gap:16px;align-items:flex-start;margin-top:12px}.ppm img{width:220px;border-radius:10px;background:#111;flex:none}.ppm-r{display:flex;flex-direction:column;gap:8px;flex:1}.ppm-r input{font:600 14px "FGInter";padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#17171b;color:inherit;color-scheme:dark}
+.ppm .st{font:600 13px "FGInter"}.ppm .st.ok{color:#7BC67E}.ppm .st.pl{color:#9CC3FF}.ppm .st.err{color:#FF8A80}
+@media (max-width:600px){.ppm{flex-direction:column}.ppm img{width:100%}}
 .apl .rcard{padding-right:12px}.apl .rcard .t,.jcol .rcard .t,.jcol .wcard .t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .aps{display:inline-block;margin-top:6px;font:700 9.5px "FGInter";text-transform:uppercase;letter-spacing:.04em;padding:4px 7px;border-radius:7px;color:#F2B33D;background:rgba(242,179,61,.14);cursor:pointer}.aps.ok{color:#7BC67E;background:rgba(123,198,126,.14)}
 .jdays{display:grid;grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr));gap:10px;min-height:560px}
@@ -495,8 +505,9 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 </style>
 </head>
 <body>
+<script src="/site/header.js?v=91"></script>
 <div class="wrap">
-  <header><span class="home"><a href="/" aria-label="Aller sur le site FuryoGang"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a></span><button id="hq-av" type="button"></button></header>
+  <header class="hqh" hidden><span class="home"><a href="/" aria-label="Aller sur le site FuryoGang"><img src="/img/logo-furyogang.png" alt="FuryoGang"></a></span><button id="hq-av" type="button"></button></header>
 
   <section class="sec on" id="home">
     <h1>Le QG</h1>
@@ -671,7 +682,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 <script src="/site/admin-session.js?v=1"></script>
 <script src="/site/badges.js?v=2"></script>
 <script src="/site/sortie-post.js?v=16"></script>
-<script src="/site/story.js?v=1"></script>
+<script src="/site/story.js?v=2"></script>
 <script src="/site/quickaccess.js?v=20"></script>
 <script>
 if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
@@ -1118,8 +1129,64 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       .then(function (r) { if (!r.ok) throw 0; }).catch(function () { x.prete = !nx; p.classList.toggle("ok", !nx); p.textContent = !nx ? "À publier" : "À traiter"; alert("Échec, réessaie"); })
       .then(function () { delete p.dataset.busy; });
   }, true);
+  // ---- Prépublication en story (Will, 23/11/2026) : une ligne discrète au-dessus de « À publier », qui s'ouvre sur la liste ;
+  // une coche = la story part à l'heure par défaut (19 h le jour du chapitre) ; un clic sur la ligne = aperçu + heure au choix.
+  var PREP = [], PPO = false;
+  var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  function ppNum(n) { n = String(n || ""); var m = n.match(/No\.?\s*(\d+(?:\+\d+)?)/i); if (m) return "n°" + m[1]; m = n.match(/(\d{4})年\s*(\d+)月号/); if (m) return MOIS[+m[2] - 1] + " " + m[1]; m = n.match(/n°\s*\d+/i); return m ? m[0] : n; }
+  function ppQuand(x) { var d = new Date((x.date || iso(new Date())) + "T19:00:00"); if (d < new Date(Date.now() + 5 * 6e4)) { d = new Date(Date.now() + 15 * 6e4); d.setMinutes(Math.ceil(d.getMinutes() / 5) * 5, 0, 0); } return d; }
+  function ppEtat(x) { var st = x.story; if (!st) return ""; if (st.fait && st.fait !== "échec") return "ok"; if (st.err) return "err"; return "pl"; }
+  function ppAff(d) { return new Date(d).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
+  function blocPrepub() {
+    if (!PREP.length) return "";
+    var reste = PREP.filter(function (x) { return !x.story; }).length;
+    var h = '<div class="ppb' + (PPO ? " open" : "") + '"><button class="ppb-h" data-pptog><span class="kj" lang="ja">連載</span><span class="ppt"><b>Prépublication</b><small>Stories en direct du Japon</small></span><span class="apl-n">' + (reste ? reste + " à programmer" : "tout est prêt") + '</span><i>' + (PPO ? "▾" : "▸") + '</i></button>';
+    if (PPO) {
+      h += '<div class="ppl">' + PREP.map(function (x) {
+        var e = ppEtat(x), cov = x.cover ? "/api/couv?u=" + encodeURIComponent(x.cover) + "&w=120" : "";
+        var info = [x.chapitre ? "Ch. " + x.chapitre : "", x.magazine, x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : ""].filter(Boolean).join(" · ");
+        return '<div class="ppr" data-ppid="' + esc(x.id) + '"><span class="ppc"' + (cov ? ' style="background-image:url(\'' + esc(cov) + '\')"' : "") + '></span><span class="ppi"><b>' + esc(x.serie) + (x.avant && x.avant.length ? ' <em>' + esc(x.avant[0]) + '</em>' : "") + '</b><small>' + esc(info) + (e === "pl" ? ' · <span style="color:#9CC3FF">story ' + esc(ppAff(x.story.quand)) + '</span>' : e === "ok" ? ' · <span style="color:#7BC67E">story partie</span>' : e === "err" ? ' · <span style="color:#FF8A80">échec</span>' : "") + '</small></span>' +
+          '<button class="ppk ' + e + '" data-ppck="' + esc(x.id) + '" title="' + (e ? "Story programmée" : "Programmer la story (19 h le jour du chapitre)") + '">' + (e === "ok" || e === "pl" ? "✓" : "") + '</button></div>';
+      }).join("") + (reste > 1 ? '<button class="pptout" data-pptout>Tout programmer (' + reste + ')</button>' : "") + '</div>';
+    }
+    return h + '</div>';
+  }
+  function ppDonnees(x) { return { cover: x.cover ? "/api/couv?u=" + encodeURIComponent(x.cover) + "&w=700" : "", magazine: x.magazine, numero: ppNum(x.numero), titre: x.serie, chapitre: x.chapitre }; }
+  var PPIMG = {};
+  function ppImage(x) { if (!PPIMG[x.id]) PPIMG[x.id] = FG_STORY.canvasPrepub(FG_STORY.tirage(x.id, true), ppDonnees(x)); return PPIMG[x.id]; }
+  function ppProgrammer(x, quand) {
+    return ppImage(x).then(envoyerJpg).then(function (u) {
+      return fetch("/api/admin/igq", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: x.id, type: "prepub", titre: x.serie + (x.chapitre ? " · ch. " + x.chapitre : ""), quand: quand.toISOString(), legende: "", post: [], story: u }) });
+    }).then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); x.story = { quand: j.item.quand }; });
+  }
+  function ppAnnuler(x) { return fetch("/api/admin/igq", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: x.id, del: true }) }).then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); x.story = null; }); }
+  function ppModal(x) {
+    var e = ppEtat(x), q = x.story ? new Date(x.story.quand) : ppQuand(x);
+    var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button><div class="chips"><span class="chip"><i style="background:#BC002D"></i>Prépublication</span><span class="chip">' + esc(x.magazine || "") + '</span></div>' +
+      '<div class="mh"><div><h2>' + esc(x.serie) + (x.chapitre ? " · chapitre " + esc(x.chapitre) : "") + '</h2><div class="sub">' + esc([ppNum(x.numero), x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) : "", x.tome ? "couverture du tome " + x.tome : ""].filter(Boolean).join(" · ")) + '</div></div></div>' +
+      '<div class="ppm"><img id="ppimg" alt=""><div class="ppm-r">' +
+      (e === "ok" ? '<div class="st ok">Story partie sur Instagram ✓</div>' : e === "pl" ? '<div class="st pl">Programmée ' + esc(ppAff(x.story.quand)) + '</div><button class="btn2" data-ppdel="' + esc(x.id) + '">Annuler</button>'
+        : '<label class="mslab">Jour</label><input type="date" id="ppd" value="' + iso(q) + '"><label class="mslab">Heure</label><input type="time" id="pph" value="' + String(q.getHours()).padStart(2, "0") + ":" + String(q.getMinutes()).padStart(2, "0") + '" step="300"><button class="btn2 p" data-ppgo="' + esc(x.id) + '">Programmer la story</button>') +
+      (e === "err" ? '<div class="st err">' + esc(x.story.err) + '</div>' : "") + '</div></div></div></div>';
+    host.innerHTML = h; host.dataset.k = "prepub"; host.dataset.id = x.id;
+    ppImage(x).then(function (c) { var i = $("#ppimg"); if (i) i.src = c.toDataURL("image/jpeg", .75); }).catch(function () { var i = $("#ppimg"); if (i) i.alt = "Aperçu impossible"; });
+  }
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest && ev.target.closest("[data-pptog],[data-ppck],[data-pptout],[data-ppid],[data-ppgo],[data-ppdel]"); if (!t) return;
+    var trouve = function (id) { return PREP.find(function (x) { return x.id === id; }); };
+    if (t.dataset.pptog !== undefined) { PPO = !PPO; calRedessiner(); return; }
+    if (t.dataset.ppck) { ev.stopPropagation(); var x = trouve(t.dataset.ppck); if (!x || t.classList.contains("busy")) return;
+      t.classList.add("busy"); (x.story && !x.story.fait ? ppAnnuler(x) : x.story ? Promise.resolve() : ppProgrammer(x, ppQuand(x))).then(function () { calRedessiner(); }).catch(function (e) { t.classList.remove("busy"); alert(e.message || "Échec"); }); return; }
+    if (t.dataset.pptout !== undefined) { t.disabled = true; t.textContent = "Programmation…"; var l = PREP.filter(function (x) { return !x.story; });
+      l.reduce(function (p, x) { return p.then(function () { return ppProgrammer(x, ppQuand(x)); }); }, Promise.resolve()).then(function () { calRedessiner(); }).catch(function (e) { alert(e.message || "Échec"); calRedessiner(); }); return; }
+    if (t.dataset.ppgo) { var y = trouve(t.dataset.ppgo); if (!y) return; var d = ($("#ppd") || {}).value, hm = ($("#pph") || {}).value || "19:00", q = new Date(d + "T" + hm + ":00");
+      if (q < new Date(Date.now() - 6e4)) { alert("Cette heure est déjà passée"); return; } t.disabled = true; t.textContent = "Préparation…";
+      ppProgrammer(y, q).then(function () { closeModal(); calRedessiner(); }).catch(function (e) { t.disabled = false; t.textContent = "Programmer la story"; alert(e.message || "Échec"); }); return; }
+    if (t.dataset.ppdel) { var z = trouve(t.dataset.ppdel); if (z) ppAnnuler(z).then(function () { closeModal(); calRedessiner(); }).catch(function (e) { alert(e.message || "Échec"); }); return; }
+    if (t.dataset.ppid) { var w = trouve(t.dataset.ppid); if (w) ppModal(w); }
+  });
   function listeAPub() {
-    return '<div class="apl-h"><h2>À publier</h2><span class="apl-n">' + APUB.length + '</span></div>' +
+    return blocPrepub() + '<div class="apl-h"><h2>À publier</h2><span class="apl-n">' + APUB.length + '</span></div>' +
       (APUB.length ? '<div class="apl">' + APUB.map(carteAPub).join("") + "</div>" : '<p class="wempty">Rien en attente : la veille est à jour.</p>');
   }
   function colJour(d, to) {
@@ -1476,6 +1543,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     }).catch(function () { if (!vu) $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
     // Sorties enrichies (légendes identiques à la Validation, coches « postée ») et news publiées : en arrière-plan.
     j("/api/admin/sorties?passe=1").then(function (sx) { calAppliquer({ sx: sx }); garder("sx", sx); if (vu) calRedessiner(); }).catch(function () {});
+    j("/api/admin/prepubstory").then(function (pp) { PREP = pp.items || []; if (vu) calRedessiner(); }).catch(function () {});
     j("/api/admin/veille").then(function (ve) { calAppliquer({ ve: ve }); garder("ve", { items: (ve.items || []).filter(function (x) { return x && x.enLigne; }), apub: APUB, cols: ve.cols, cats: ve.cats }); if (vu) calRedessiner(); }).catch(function () {});
   }
   function calPost(body, cb) {

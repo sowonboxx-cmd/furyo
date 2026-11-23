@@ -37,5 +37,33 @@
       return c;
     });
   }
-  window.FG_STORY = { tirage: tirage, html: html, canvas: canvas, ZONE: ZONE };
+  // Prépublication : couverture du dernier tome, magazine et numéro, titre de la série, chapitre (Will, 23/11/2026).
+  var POLICES = null;
+  function polices() {
+    if (POLICES) return POLICES;
+    var f = [new FontFace("FGStA", "url(/fonts/Antonio.ttf)", { weight: "700" }), new FontFace("FGStI", "url(/fonts/Inter.ttf)", { weight: "800" })];
+    POLICES = Promise.all(f.map(function (x) { return x.load().then(function (y) { document.fonts.add(y); }); })).catch(function () {});
+    return POLICES;
+  }
+  function canvasPrepub(t, d) {
+    return Promise.all([polices(), d.cover ? charger(d.cover).catch(function () { return null; }) : null]).then(function (L) {
+      var cv = L[1], c = document.createElement("canvas"); c.width = 870; c.height = 1160; var x = c.getContext("2d");
+      x.fillStyle = "#F4ECDD"; x.fillRect(0, 0, 870, 1160);
+      if (cv) { var w = 470, h = 672, k = Math.max(w / cv.width, h / cv.height), sw = w / k, sh = h / k;
+        x.save(); x.translate(435, 70 + h / 2); x.rotate(-3 * Math.PI / 180); x.shadowColor = "rgba(0,0,0,.35)"; x.shadowBlur = 50; x.shadowOffsetY = 24;
+        x.fillStyle = "#fff"; x.fillRect(-w / 2 - 8, -h / 2 - 8, w + 16, h + 16); x.shadowColor = "transparent";
+        x.drawImage(cv, (cv.width - sw) / 2, (cv.height - sh) / 2, sw, sh, -w / 2, -h / 2, w, h); x.restore(); }
+      x.textAlign = "center"; x.fillStyle = "#6b665e"; x.font = "800 26px FGStI"; if ("letterSpacing" in x) x.letterSpacing = "4px";
+      x.fillText(String([d.magazine, d.numero].filter(Boolean).join(" · ")).toUpperCase(), 435, 816);
+      if ("letterSpacing" in x) x.letterSpacing = "0px";
+      x.fillStyle = "#111"; var fs = 96, tt = String(d.titre || "").toUpperCase(); x.font = "700 " + fs + "px FGStA";
+      while (x.measureText(tt).width > 790 && fs > 50) { fs -= 4; x.font = "700 " + fs + "px FGStA"; }
+      x.fillText(tt, 435, 820 + 22 + fs * .82);
+      var ch = d.chapitre ? "CHAPITRE " + d.chapitre : "NOUVEAU CHAPITRE"; x.font = "700 54px FGStA"; var cw = x.measureText(ch).width + 60, cy = 820 + 22 + fs * .82 + 34;
+      x.fillStyle = "#BC002D"; x.beginPath(); if (x.roundRect) x.roundRect(435 - cw / 2, cy, cw, 74, 14); else x.rect(435 - cw / 2, cy, cw, 74); x.fill();
+      x.fillStyle = "#fff"; x.fillText(ch, 435, cy + 58);
+      return canvas(t, c);
+    });
+  }
+  window.FG_STORY = { tirage: tirage, html: html, canvas: canvas, canvasPrepub: canvasPrepub, ZONE: ZONE };
 })();
