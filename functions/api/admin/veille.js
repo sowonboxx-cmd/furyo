@@ -57,7 +57,8 @@ async function construire(request, env) {
   // veille » et dans le calendrier que les numéros où il se passe quelque chose (et les lignes « À vérifier »).
   const today = new Date().toISOString().slice(0, 10);
   const routine = r => { const p = r.properties || {}, st = text(p["Statut"]), d = date(p["Date de sortie"]);
-    return !list(p["Mise en avant"]).length && (st === "Paru" || st === "Pause") && (!d || d <= today); };
+    // « À paraître » sans rien de spécial aussi, sans attendre la sortie (Will, 23/11/2026).
+    return !list(p["Mise en avant"]).length && (st === "Paru" || st === "Pause" || st === "À paraître"); };
   const auto = pRows0.filter(routine);
   if (auto.length) {
     const H = { Authorization: `Bearer ${env.NOTION_TOKEN}`, "Notion-Version": "2022-06-28", "Content-Type": "application/json" };
