@@ -1086,7 +1086,18 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     TODO.forEach(function (t) { if (t.dt === is && !t.done) out.push({ kind: "todo", id: t.id, date: is, t: t }); });
     SORT.forEach(function (s) { if (s.date === is) out.push({ kind: "sortie", id: s.id, date: is, s: s }); });
     NEWS.forEach(function (n) { if (n.date === is) out.push({ kind: "news", id: n.id, date: is, n: n }); });
-    return out;
+    // Ordre chronologique de publication (Will, 23/11/2026) : news publiées ou planifiées à leur heure,
+    // sorties programmées sur Instagram à l'heure prévue ; le reste (sans heure) après, dans l'ordre d'avant.
+    return out.map(function (it, i) { return [heureTri(it), i, it]; }).sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] - b[1]; }).map(function (x) { return x[2]; });
+  }
+  var HM = new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit", hour12: false });
+  function heureTri(it) {
+    var t = "";
+    if (it.kind === "news") t = /T\d/.test(it.n.t || "") ? it.n.t : "";
+    else if (it.kind === "sortie") { var q = IGQ[it.id]; t = q && q.quand ? q.quand : ""; }
+    else if (it.kind === "ev" && it.e.heure) return String(it.e.heure);
+    if (!t) return "~";
+    var d = new Date(t); return isNaN(d) ? "~" : HM.format(d);
   }
   function itemColor(it) { return it.kind === "sortie" ? PSORTIE.couleur : it.kind === "news" ? (NEWSCOL[it.n.cat] || "#4C9BFF") : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
   function itemTitle(it) { return it.kind === "sortie" ? sortieLabel(it.s) : it.kind === "news" ? it.n.titre : (it.kind === "todo" ? it.t.t : it.e.titre); }
@@ -1135,7 +1146,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
   function carteCal(it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
-        if (it.kind === "news") { var ni = it.n, nim = ni.image ? (/^https?:/.test(ni.image) ? "/api/couv?u=" + encodeURIComponent(ni.image) + "&w=120" : ni.image) : ""; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '">' + (nim ? '<span class="cov" style="background-image:url(\'' + esc(nim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span>') + '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (ni.plan ? '<b class="planh">Planifiée' + (ni.heure ? " · " + esc(ni.heure) : "") + "</b> · " : "Publiée · ") + esc(ni.label || "News") + '</span></span>' + (ni.plan ? "" : '<span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span>") + "</button>"; }
+        if (it.kind === "news") { var ni = it.n, nim = ni.image ? (/^https?:/.test(ni.image) ? "/api/couv?u=" + encodeURIComponent(ni.image) + "&w=120" : ni.image) : ""; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '">' + (nim ? '<span class="cov" style="background-image:url(\'' + esc(nim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span>') + '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (ni.plan ? '<b class="planh">Planifiée' + (ni.heure ? " · " + esc(ni.heure) : "") + "</b> · " : "Publiée" + (heureTri(it) !== "~" ? " · " + heureTri(it).replace(":", " h ").replace(/ h 00$/, " h").replace(/^0/, "") : "") + " · ") + esc(ni.label || "News") + '</span></span>' + (ni.plan ? "" : '<span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span>") + "</button>"; }
         var evc = it.kind === "ev" ? evCover(it.e, it.date) : "";
         if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + evc + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
         var c = itemColor(it);
