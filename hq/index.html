@@ -393,6 +393,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 @media (max-width:899px){.modal .cbox p{max-height:22vh}.modal .dlb{padding:9px 12px}.modal .mh .cov{width:46px;height:64px}.modal h2{font-size:24px}.modal .fichelink{padding:6px 6px 6px 12px}.modal .chkbig{width:40px;height:40px}}
 @media (min-width:900px){
   .modal.two{width:min(1060px,96vw);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 30px;overflow:hidden}
+  .modal.two>.mcol-l,.modal.two>.mcol-r{max-height:calc(100vh - 64px);max-height:calc(100dvh - 64px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
   .modal.two .mcol-r{display:flex;flex-direction:column;min-height:0}
   .modal.two .mcol-r .cbox{flex:1;min-height:0;display:flex}
   .modal.two .mcol-r .cbox p{max-height:calc(100vh - 170px);max-height:calc(100dvh - 170px);overflow:auto}
