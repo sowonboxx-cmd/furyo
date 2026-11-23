@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=7">
+<title>Charte graphique · FuryoGang</title>
+<!-- Charte graphique (Will, 23/11/2026) : tous les gabarits de publication, quand les utiliser, où les fabriquer,
+     plus les couleurs, polices, logos, illustrations et règles. À tenir à jour à chaque nouveau gabarit validé. -->
+<style>
+@font-face{font-family:"Antonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700;font-display:swap}
+@font-face{font-family:"Inter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900;font-display:swap}
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900;font-display:swap}
+@font-face{font-family:Z;src:url(/fonts/zen-antique-furyogang.woff2) format("woff2")}
+:root{color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#0c0c0e;color:#f3f3f5;font:500 15px/1.55 I,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.w{max-width:1240px;margin:0 auto;padding:24px 16px 80px}
+h1{font:700 52px/1 A;text-transform:uppercase;margin:8px 0 6px}
+.lead{color:#a8a8b2;margin:0 0 18px;max-width:760px}
+.nav{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;padding:10px 0;background:#0c0c0e;border-bottom:1px solid #222;margin-bottom:8px;scrollbar-width:none}
+.nav a{flex:none;text-decoration:none;font:700 13px I;padding:9px 14px;border-radius:999px;background:#1f1f24;color:#cfcfd4}
+.nav a:hover{background:#2a2a31;color:#fff}
+.q{width:100%;max-width:420px;height:44px;border-radius:12px;border:1.5px solid #2c2c2f;background:#16161a;color:#fff;padding:0 14px;font:500 15px I;margin-bottom:6px}
+h2{font:700 30px/1 A;text-transform:uppercase;margin:42px 0 6px;scroll-margin-top:70px}
+h2+p{color:#a8a8b2;margin:0 0 16px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.t{background:#16161a;border:1px solid #232328;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.t h3{margin:0;font:700 22px/1.1 A;text-transform:uppercase;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{font:800 11px I;text-transform:uppercase;letter-spacing:.04em;padding:5px 9px;border-radius:7px;color:#111}
+.ok{background:#3ecf8e}.no{background:#ff6b6b}.info{background:#F2C14E}
+.im{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin}
+.im a{flex:none;display:block}
+.im img{height:210px;width:auto;border-radius:8px;display:block;background:#0c0c0e;border:1px solid #2a2a30}
+.im img.l{height:140px}
+dl{margin:0;display:grid;grid-template-columns:110px 1fr;gap:4px 10px;font-size:14px}
+dt{color:#8a8a94;font-weight:700}dd{margin:0;color:#e2e2e6}
+code{font:500 12.5px ui-monospace,Menlo,monospace;background:#0c0c0e;border:1px solid #26262c;border-radius:6px;padding:1px 6px}
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font:700 13px I;padding:9px 13px;border-radius:10px;background:#BC002D;color:#fff;align-self:flex-start}
+.btn.gh{background:#24242a}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.sw div{border-radius:14px;overflow:hidden;border:1px solid #26262c;background:#16161a}
+.sw i{display:block;height:64px}
+.sw p{margin:0;padding:8px 10px;font-size:13px}.sw b{display:block}.sw code{font-size:11.5px}
+.fo{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.fo div{background:#16161a;border:1px solid #232328;border-radius:16px;padding:16px}
+.fo .s{font-size:44px;line-height:1.05;margin-bottom:6px}
+.lo{display:flex;gap:12px;flex-wrap:wrap}
+.lo a{display:flex;align-items:center;justify-content:center;width:200px;height:120px;border-radius:14px;border:1px solid #26262c;background:#16161a;padding:14px}
+.lo a.cl{background:#F4ECDD}
+.lo img{max-width:100%;max-height:100%}
+ul.r{margin:0;padding-left:18px}ul.r li{margin:4px 0}
+.hide{display:none!important}
+@media(max-width:600px){h1{font-size:40px}.g{grid-template-columns:1fr}.im img{height:180px}}
+</style>
+</head>
+<body>
+<script src="/site/header.js?v=92"></script>
+<div class="w">
+  <h1>Charte graphique</h1>
+  <p class="lead">Tous les gabarits FuryoGang : à quoi sert chacun, ses formats, et où le fabriquer. Puis les couleurs, polices, logos, illustrations et règles. Un nouveau gabarit validé s'ajoute ici.</p>
+  <input class="q" id="q" type="search" placeholder="Chercher un gabarit (fin de série, story, lien…)">
+  <nav class="nav">
+    <a href="#gabarits">Gabarits de publication</a><a href="#stories">Stories</a><a href="#site">Site et liens</a><a href="#promo">Promo</a><a href="#couleurs">Couleurs</a><a href="#polices">Polices</a><a href="#logos">Logos</a><a href="#illus">Illustrations</a><a href="#regles">Règles</a>
+  </nav>
+
+  <h2 id="gabarits">Gabarits de publication</h2>
+  <p>Un type de news = un gabarit. Post Instagram et X en 3:4 ou 4:5, image de lien en 1200 × 630.</p>
+  <div class="g">
+
+    <div class="t" data-k="nouvelle série japon annonce 新連載 shisei boryoku">
+      <h3>Nouvelle série au Japon <span class="pill ok">Standard</span></h3>
+      <div class="im"><a href="/img/news/boryoku-banzai/reseaux.jpg" target="_blank"><img src="/img/news/boryoku-banzai/reseaux.jpg" alt=""></a><a href="/img/news/shiseido/reseaux.jpg" target="_blank"><img src="/img/news/shiseido/reseaux.jpg" alt=""></a><a href="/img/news/boryoku-banzai/banniere-lien.jpg" target="_blank"><img class="l" src="/img/news/boryoku-banzai/banniere-lien.jpg" alt=""></a><a href="/img/news/shiseido/banniere-lien.jpg" target="_blank"><img class="l" src="/img/news/shiseido/banniere-lien.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Une série qui démarre au Japon, ou qui entre au catalogue du gang (même si elle a déjà commencé).</dd>
+      <dt>Formats</dt><dd>Réseaux 5b 1080 × 1440 (« 新連載 » saumon, visuel officiel encadré, pastille, titre, titre japonais). Lien N6 1200 × 630 (planche N&B, titre, sous-titre jaune, visuel incliné).</dd>
+      <dt>Fabrication</dt><dd>Modèle <code>/modeles/nouvelle-serie/</code> (Claude le remplit et l'exporte).</dd>
+      <dt>Exemples</dt><dd>Shisei-dō (28/10/2026), Bōryoku Banzai (24/11/2026).</dd></dl>
+      <a class="btn gh" href="/modeles/nouvelle-serie/?titre=Bōryoku%20Banzai&jp=暴力万歳&sous=Homura%20Kawamoto%20×%20Nadai%20Nishi&visuel=/img/news/boryoku-banzai/couleur.jpg&fond=/img/news/boryoku-banzai/ch1-3.jpg&fondLien=/img/news/boryoku-banzai/ch1-1.jpg" target="_blank">Ouvrir le modèle</a>
+    </div>
+
+    <div class="t" data-k="fin de série 完結 terminé gregor jin sakamoto">
+      <h3>Fin de série <span class="pill ok">Standard</span></h3>
+      <div class="im"><a href="/img/news/gregor/reseaux.jpg" target="_blank"><img src="/img/news/gregor/reseaux.jpg" alt=""></a><a href="/img/news/jin/reseaux.jpg" target="_blank"><img src="/img/news/jin/reseaux.jpg" alt=""></a><a href="/img/news/gregor/banniere-lien.jpg" target="_blank"><img class="l" src="/img/news/gregor/banniere-lien.jpg" alt=""></a><a href="/img/news/jin/banniere-lien.jpg" target="_blank"><img class="l" src="/img/news/jin/banniere-lien.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Une série se termine (dernier chapitre ou dernier tome).</dd>
+      <dt>Formats</dt><dd>Réseaux 1080 × 1440 : « 完結 » rouge, pile des derniers tomes, bandeau rouge « FIN DE SÉRIE », titre, titre japonais, années et nombre de tomes (jaune). Lien 1200 × 630 : pastille, titre, « N TOMES » jaune, tomes en éventail.</dd>
+      <dt>Fabrication</dt><dd>Claude, à partir des couvertures officielles. Modèle en attente pour Sakamoto Days : <code>/modeles/fin-de-serie/sakamoto-days/</code>.</dd></dl>
+    </div>
+
+    <div class="t" data-k="sortie tome couverture soleil crème sombre noir calendrier">
+      <h3>Sortie d'un tome <span class="pill ok">Standard</span></h3>
+      <div class="im"><a href="/img/charte/sortie-sombre-post.jpg" target="_blank"><img src="/img/charte/sortie-sombre-post.jpg" alt=""></a><a href="/img/charte/sortie-creme-post.jpg" target="_blank"><img src="/img/charte/sortie-creme-post.jpg" alt=""></a><a href="/img/charte/sortie-sombre-story.jpg" target="_blank"><img src="/img/charte/sortie-sombre-story.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Le jour de sortie d'un tome (France ou Japon). Les textes disent « sortie aujourd'hui ».</dd>
+      <dt>Formats</dt><dd>Design « Soleil » : post 3:4 (1080 × 1440) et story 9:16, thème sombre ou crème. Envoyé sur Instagram en 4:5 (bandes #0c0c0e).</dd>
+      <dt>Fabrication</dt><dd>Automatique : calendrier éditorial (fiche sortie, panneau Instagram) et Validation du back-office. Code <code>/site/tome-card.js</code>.</dd>
+      <dt>Attention</dt><dd>Une couverture japonaise seule ne se poste pas sur Instagram.</dd></dl>
+      <a class="btn gh" href="/hq/#calendrier">Calendrier éditorial</a>
+    </div>
+
+    <div class="t" data-k="extrait chapitre 1 lecture en ligne kana hell dogs">
+      <h3>Extrait <span class="pill ok">Standard</span></h3>
+      <div class="im"><a href="/img/charte/extrait.jpg" target="_blank"><img src="/img/charte/extrait.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Un premier chapitre ou un extrait officiel en lecture gratuite.</dd>
+      <dt>Formats</dt><dd>1080 × 1440 (variante E1) : planches en filigrane, couverture + planche en éventail, titre géant, étiquette rouge « Lis le chapitre 1 ». Bannière site 21:8 (couverture droite à droite).</dd>
+      <dt>Fabrication</dt><dd>Studio Extrait et studio de news. Code <code>/site/extrait-card.js</code>, <code>/site/hero-d.js</code>.</dd></dl>
+      <a class="btn gh" href="/studio/extrait/">Studio Extrait</a>
+    </div>
+
+    <div class="t" data-k="tomes en circulation tirage chiffre millions">
+      <h3>Tomes en circulation <span class="pill ok">Standard</span></h3>
+      <div class="im"><a href="/img/charte/tomes-en-circulation.jpg" target="_blank"><img src="/img/charte/tomes-en-circulation.jpg" alt=""></a><a href="/img/news/circ/fable/banniere.jpg" target="_blank"><img class="l" src="/img/news/circ/fable/banniere.jpg" alt=""></a><a href="/img/news/circ/out/banniere-ordinateur.jpg" target="_blank"><img class="l" src="/img/news/circ/out/banniere-ordinateur.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Un nouveau chiffre de tirage officiel.</dd>
+      <dt>Formats</dt><dd>Post 4:5 (1080 × 1350, format F3) : éventail des tomes, nom en rouge, chiffre en jaune. Bannière site 1600 × 860 et image de lien.</dd>
+      <dt>Fabrication</dt><dd>Back-office (news « Tomes en circulation »). Code <code>/site/circ-card.js</code>, <code>/site/circ-banner.js</code>. L'exemple ci-contre a un chiffre fictif.</dd></dl>
+    </div>
+
+    <div class="t" data-k="hommage décès mangaka chiba">
+      <h3>Hommage <span class="pill ok">Standard</span></h3>
+      <div class="im"><a href="/img/news/chiba/instagram.jpg" target="_blank"><img src="/img/news/chiba/instagram.jpg" alt=""></a><a href="/img/news/chiba/banniere-ordinateur.jpg" target="_blank"><img class="l" src="/img/news/chiba/banniere-ordinateur.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Décès d'un mangaka.</dd>
+      <dt>Formats</dt><dd>1080 × 1440 en noir et blanc : photo, pastille « HOMMAGE », nom en grand, années, une ligne sur l'œuvre, une couverture.</dd>
+      <dt>Fabrication</dt><dd>Claude (exemple : Tetsuya Chiba).</dd></dl>
+    </div>
+
+    <div class="t" data-k="news générique événement 1000 chapitres mogura">
+      <h3>News (événement) <span class="pill ok">Standard</span></h3>
+      <div class="im"><a href="/img/news/mogura-1000/instagram.jpg" target="_blank"><img src="/img/news/mogura-1000/instagram.jpg" alt=""></a><a href="/img/news/mogura-1000/partage.jpg" target="_blank"><img class="l" src="/img/news/mogura-1000/partage.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Un événement marquant qui n'entre dans aucun autre gabarit (cap de chapitres, couverture de magazine…).</dd>
+      <dt>Formats</dt><dd>4:5 : fond de la série en N&B, visuel officiel encadré et incliné, pastille rouge « NEWS », titre, ligne d'info jaune.</dd>
+      <dt>Fabrication</dt><dd>Claude (exemple : Mogura no Uta, 1000 chapitres).</dd></dl>
+    </div>
+
+    <div class="t" data-k="fin d'arc arc golden drop">
+      <h3>Fin d'arc <span class="pill ok">Standard</span></h3>
+      <div class="im"><a href="/img/news/golden-drop-arc/banniere-lien.jpg" target="_blank"><img class="l" src="/img/news/golden-drop-arc/banniere-lien.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>La fin d'un arc important.</dd>
+      <dt>Formats</dt><dd>Lien 1200 × 630 : pastille « FIN D'ARC », titre, titre japonais, une ligne de résumé, page couleur inclinée.</dd>
+      <dt>Fabrication</dt><dd>Claude (exemple : Golden Drop).</dd></dl>
+    </div>
+  </div>
+
+  <h2 id="stories">Stories Instagram</h2>
+  <p>Publiées automatiquement après le post. Pas de lien cliquable (l'API ne le permet pas).</p>
+  <div class="g">
+    <div class="t" data-k="story news post fond rouge persos niceguy">
+      <h3>Story d'une news ou d'une sortie <span class="pill ok">Auto</span></h3>
+      <div class="im"><a href="/img/charte/story-news.jpg" target="_blank"><img src="/img/charte/story-news.jpg" alt=""></a><a href="/img/story/styles/rouge.jpg" target="_blank"><img src="/img/story/styles/rouge.jpg" alt=""></a><a href="/img/story/styles/jaune.jpg" target="_blank"><img src="/img/story/styles/jaune.jpg" alt=""></a><a href="/img/story/styles/bleu.jpg" target="_blank"><img src="/img/story/styles/bleu.jpg" alt=""></a><a href="/img/story/styles/noir-kanji.jpg" target="_blank"><img src="/img/story/styles/noir-kanji.jpg" alt=""></a><a href="/img/story/styles/diagonale.jpg" target="_blank"><img src="/img/story/styles/diagonale.jpg" alt=""></a><a href="/img/story/styles/rouge-couv.jpg" target="_blank"><img src="/img/story/styles/rouge-couv.jpg" alt=""></a><a href="/img/story/styles/noir-couv.jpg" target="_blank"><img src="/img/story/styles/noir-couv.jpg" alt=""></a></div>
+      <dl><dt>Règle</dt><dd>1080 × 1920. Un des 7 fonds tiré au hasard (bandes droites, bas noir, logo d'origine au rond rouge, pas de crème), le post dans le cadre, deux persos Niceguy tirés au hasard en bas. Le tirage est fixe pour une news (aperçu = image envoyée).</dd>
+      <dt>Code</dt><dd><code>/site/story.js</code>, fonds <code>/img/story/styles/</code>, persos <code>/img/story/persos/</code>.</dd></dl>
+    </div>
+    <div class="t" data-k="story prépublication chapitre magazine japon">
+      <h3>Story de prépublication <span class="pill ok">Auto</span></h3>
+      <div class="im"><a href="/img/charte/story-prepub.jpg" target="_blank"><img src="/img/charte/story-prepub.jpg" alt=""></a><a href="/img/story/styles/prepub-rouge.jpg" target="_blank"><img src="/img/story/styles/prepub-rouge.jpg" alt=""></a><a href="/img/story/styles/prepub-noir.jpg" target="_blank"><img src="/img/story/styles/prepub-noir.jpg" alt=""></a><a href="/img/story/styles/prepub-jaune.jpg" target="_blank"><img src="/img/story/styles/prepub-jaune.jpg" alt=""></a></div>
+      <dl><dt>Règle</dt><dd>Fond en planches de manga (3 couleurs), carte crème : couverture du dernier tome (jamais la couverture du magazine), magazine et numéro, titre, sous-titre rouge facultatif, pastille « CHAPITRE N ». URL furyogang.com/japon.</dd>
+      <dt>Réglages</dt><dd>Notion, base Prépublication : « Visuel story » (image officielle à la place du tome) et « Sous-titre story ».</dd></dl>
+      <a class="btn gh" href="/hq/#calendrier">Calendrier · Prépublication</a>
+    </div>
+  </div>
+
+  <h2 id="site">Site et images de lien</h2>
+  <p>L'aperçu d'un lien (X, Discord, WhatsApp) en 1200 × 630. Jamais un simple fond noir : une image en fond (noir et blanc à faible opacité ou légère couleur).</p>
+  <div class="g">
+    <div class="t" data-k="image de lien og dossier par défaut">
+      <h3>Image de lien par défaut <span class="pill ok">Auto</span></h3>
+      <div class="im"><a href="/img/og/accueil.jpg" target="_blank"><img class="l" src="/img/og/accueil.jpg" alt=""></a><a href="/img/og/series.jpg" target="_blank"><img class="l" src="/img/og/series.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Toute news sans image de lien dédiée : design « dossier » (logo, pastille de catégorie, nom de la série, couverture à droite).</dd>
+      <dt>Code</dt><dd><code>/site/og-actu.js</code> ; pages du site : <code>/img/og/</code>.</dd></dl>
+    </div>
+    <div class="t" data-k="bannière news ordinateur téléphone hero 21:8">
+      <h3>Bannière de news <span class="pill info">Site</span></h3>
+      <div class="im"><a href="/img/news/mogura-1000/banniere-ordinateur.jpg" target="_blank"><img class="l" src="/img/news/mogura-1000/banniere-ordinateur.jpg" alt=""></a><a href="/img/news/chiba/banniere-mobile.jpg" target="_blank"><img src="/img/news/chiba/banniere-mobile.jpg" alt=""></a></div>
+      <dl><dt>Règle</dt><dd>Ordinateur en 21:8, sans texte sur l'image (le titre passe dessus). Téléphone en 16:9.</dd></dl>
+    </div>
+    <div class="t" data-k="récap semaine mois quoi de neuf gang">
+      <h3>Récaps (semaine, mois) <span class="pill info">Studio</span></h3>
+      <dl><dt>Quand</dt><dd>« Quoi de neuf dans le gang » chaque semaine, bilan du mois, vidéo du mois.</dd></dl>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn gh" href="/studio/semaine/">Semaine</a><a class="btn gh" href="/studio/mois/">Mois</a><a class="btn gh" href="/studio/mois-video/">Vidéo du mois</a></div>
+    </div>
+  </div>
+
+  <h2 id="promo">Promotion du site</h2>
+  <p>Visuels qui font connaître la base FuryoGang. Ils ne servent pas pour les news.</p>
+  <div class="g">
+    <div class="t" data-k="nouvelle fiche promo dossier base furyogang">
+      <h3>Nouvelle fiche <span class="pill no">Pas pour les news</span></h3>
+      <div class="im"><a href="/img/charte/fiche-promo.jpg" target="_blank"><img src="/img/charte/fiche-promo.jpg" alt=""></a></div>
+      <dl><dt>Quand</dt><dd>Les fiches séries mises en ligne (3 par semaine à partir de décembre : mardi, jeudi, samedi). Numéro de fiche et barre d'avancement de la base.</dd>
+      <dt>Formats</dt><dd>Design « Dossier », crème ou sombre, post 3:4 et story 9:16.</dd></dl>
+      <a class="btn gh" href="/studio/fiche/">Studio Nouvelle fiche</a>
+    </div>
+  </div>
+
+  <h2 id="couleurs">Couleurs</h2>
+  <p>Cliquer sur un code le copie.</p>
+  <div class="sw" id="sw"></div>
+  <p style="color:#a8a8b2;margin-top:16px">Pastilles de catégorie (news) :</p>
+  <div class="sw" id="cats"></div>
+
+  <h2 id="polices">Polices</h2>
+  <div class="fo">
+    <div><div class="s" style="font-family:A;font-weight:700;text-transform:uppercase">Antonio</div>Titres, pastilles, chiffres. Toujours en capitales. Le tiret se prend dans Inter (sinon « SHISEI-DŌ » se lit mal).</div>
+    <div><div class="s" style="font-family:I;font-weight:800">Inter</div>Textes, légendes, boutons, étiquettes (800 pour les pastilles).</div>
+    <div><div class="s" style="font-family:J;font-weight:900">新連載 完結</div>Noto Sans JP 900 : titres japonais et grands kanji (新連載, 完結).</div>
+    <div><div class="s" style="font-family:Z">不良ギャング</div>Zen Antique (logo et accents japonais du site).</div>
+  </div>
+
+  <h2 id="logos">Logos</h2>
+  <div class="lo">
+    <a href="/img/social/logo-blanc.png" target="_blank"><img src="/img/social/logo-blanc.png" alt="Logo blanc"></a>
+    <a class="cl" href="/img/social/logo-noir.png" target="_blank"><img src="/img/social/logo-noir.png" alt="Logo noir"></a>
+    <a href="/img/logo-furyogang.png" target="_blank"><img src="/img/logo-furyogang.png" alt="Logo rond rouge"></a>
+    <a href="/img/logo-rond.png" target="_blank"><img src="/img/logo-rond.png" alt="Logo rond"></a>
+  </div>
+  <p style="color:#a8a8b2">Logo d'origine au rond rouge partout (bas noir des stories). Ne jamais toucher au favicon.</p>
+
+  <h2 id="illus">Illustrations</h2>
+  <p>Studio Niceguy, avec son autorisation. Jamais d'images Amazon, jamais de scantrad.</p>
+  <div class="g">
+    <div class="t" data-k="premium dons niceguy illustrations">
+      <h3>Premium et dons</h3>
+      <div class="im"><img src="/img/don/duo.webp" alt=""><img src="/img/don/jinnai.webp" alt=""><img src="/img/don/buso.webp" alt=""><img src="/img/don/haru.webp" alt=""><img src="/img/don/murota.webp" alt=""><img src="/img/qp/qp.webp" alt=""></div>
+      <dl><dt>Dossier</dt><dd><code>/img/don/</code>, <code>/img/qp/</code> ; page <a href="/premium/">Premium</a>.</dd></dl>
+    </div>
+    <div class="t" data-k="persos stories niceguy détourés">
+      <h3>Persos des stories</h3>
+      <div class="im" id="persos"></div>
+      <dl><dt>Dossier</dt><dd><code>/img/story/persos/</code> (19 persos détourés, sans nom).</dd></dl>
+    </div>
+  </div>
+
+  <h2 id="regles">Règles</h2>
+  <div class="t">
+    <ul class="r">
+      <li>Interface et visuels : icônes plates dessinées (SVG), jamais d'emoji. Les emojis sont réservés aux légendes Instagram.</li>
+      <li>Pas de hashtag sur X. Mentions de story à copier : le nom du compte sans @.</li>
+      <li>Noms japonais avec macrons (Kōdansha, Bōryoku, Shisei-dō).</li>
+      <li>Images de news et de lien : jamais sur simple fond noir par défaut.</li>
+      <li>Sources d'images : officielles uniquement (éditeur, magazine, compte officiel). Amazon et Manga News pour les infos, jamais pour les images.</li>
+      <li>Prépublication : couverture du dernier tome, jamais la couverture du magazine.</li>
+      <li>Tout contenu est validé par Will avant d'aller sur le site.</li>
+    </ul>
+  </div>
+</div>
+<script>
+(function () {
+  var C = [["Rouge FuryoGang", "#BC002D"], ["Crème", "#F4ECDD"], ["Fond sombre", "#0c0c0e"], ["Gris carte", "#16161a"], ["Saumon nouvelle série", "#FF7369"], ["Rouge titre japonais", "#E5483A"], ["Jaune chiffres", "#F2C14E"], ["Orange programmé", "#F08A24"], ["Bleu action", "#2A6FD0"]];
+  var K = [["Nouvelle licence FR", "#529CCA"], ["Nouvelle série au Japon", "#FF7369"], ["Couverture française", "#9A6DD7"], ["Couverture japonaise", "#4DAB9A"], ["Sortie française", "#E255A1"], ["Sortie japonaise", "#FFA344"], ["Fin de série", "#BA856F"], ["Pause", "#9B9A97"], ["Anime", "#FFDC49"], ["Tomes en circulation", "#529CCA"], ["Extrait", "#E5483A"], ["Hommage", "#E5E5EA"], ["Dédicace", "#F2B33D"], ["Remake", "#F2B33E"], ["News", "#E5483B"]];
+  var cell = function (x) { return '<div><i style="background:' + x[1] + '"></i><p><b>' + x[0] + '</b><code data-c="' + x[1] + '">' + x[1] + '</code></p></div>'; };
+  document.getElementById("sw").innerHTML = C.map(cell).join("");
+  document.getElementById("cats").innerHTML = K.map(cell).join("");
+  document.addEventListener("click", function (e) { var c = e.target.closest("[data-c]"); if (!c) return; try { navigator.clipboard.writeText(c.dataset.c); c.textContent = "copié"; setTimeout(function () { c.textContent = c.dataset.c; }, 1200); } catch (er) {} });
+  var P = ["01", "02", "03", "04", "05", "06", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
+  document.getElementById("persos").innerHTML = P.map(function (n) { return '<img src="/img/story/persos/' + n + '.png" alt="" style="height:120px;background:#2a2a31">'; }).join("");
+  document.getElementById("q").addEventListener("input", function () {
+    var v = this.value.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    document.querySelectorAll(".t[data-k]").forEach(function (t) { var h = (t.dataset.k + " " + t.textContent).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); t.classList.toggle("hide", !!v && h.indexOf(v) < 0); });
+  });
+})();
+</script>
+</body>
+</html>
