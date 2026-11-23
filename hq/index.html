@@ -318,6 +318,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .dlgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .dlb{border:0;border-radius:12px;padding:12px 14px;font:600 13.5px "FGInter";cursor:pointer;background:var(--s2);color:var(--cr);text-align:left}
 .dlb:hover{background:#26262c}
+/* Programmer une sortie sur Instagram (Will, 23/11/2026) */
+.igp{background:var(--s2);border-radius:14px;padding:12px}.igp .pv{display:flex;gap:10px;align-items:flex-end;margin-bottom:10px}.igp .pv img{height:170px;border-radius:8px;display:block;background:#111}.igp .pv span{font:600 11px "FGInter";color:#8c8c93;display:block;margin-top:4px;text-align:center}
+.igp .rw{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.igp input[type=date],.igp input[type=time]{font:600 14px "FGInter";padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#17171b;color:inherit;color-scheme:dark}
+.igp label.ck{display:inline-flex;align-items:center;gap:6px;font:600 13px "FGInter"}.igp .st{font:600 13px "FGInter";margin:2px 0 8px}.igp .st.ok{color:#7BC67E}.igp .st.err{color:#FF8A80}.igp .st.pl{color:#9CC3FF}
 .dlb.busy{opacity:.6;pointer-events:none}
 .macts .btn2{text-decoration:none}
 .lightbox{position:fixed;inset:0;background:rgba(6,6,8,.9);display:grid;place-items:center;z-index:60;padding:28px;cursor:zoom-out}
@@ -667,6 +671,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 <script src="/site/admin-session.js?v=1"></script>
 <script src="/site/badges.js?v=2"></script>
 <script src="/site/sortie-post.js?v=16"></script>
+<script src="/site/story.js?v=1"></script>
 <script src="/site/quickaccess.js?v=20"></script>
 <script>
 if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
@@ -1336,10 +1341,59 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
        + '<button class="dlb" data-tome="story" data-theme="creme">Story · Crème</button></div>';
     var fslug = (s.fiche && s.seriesId) ? ficheSlug(s) : "", furl = fslug ? (location.origin + "/series/" + fslug) : "";
     if (furl) h += '<div class="mslab">Lien de la fiche</div><div class="fichelink"><span class="ic">' + IC_BOOK + '</span><span class="u" title="' + esc(furl) + '">' + esc(location.host + "/series/" + fslug) + '</span><button class="cp" id="fichecp" data-url="' + esc(furl) + '" aria-label="Copier le lien de la fiche" title="Copier le lien de la fiche">' + IC_COPY + '</button></div>';
+    h += '<div class="mslab">Instagram</div><div class="igp" id="igprog"><div class="st">Chargement…</div></div>';
     var po = postedSortie(s.id);
     h += '<div class="macts">' + (furl ? '<a class="btn2" href="/series/' + esc(fslug) + '" target="_blank" rel="noopener">' + IC_BOOK + 'Voir la fiche</a>' : "") + (s.seriesId ? '<a class="btn2 dbb" href="/admin/#mangas/' + esc(s.seriesId) + '" target="_blank" rel="noopener" title="Modifier la fiche dans Mangas Database" aria-label="Modifier la fiche dans Mangas Database">' + IC_DB + '</a>' : "") + '<span id="calmsg"></span><div class="pubtoggle"><span class="publbl">' + (po ? "Publié" : "À publier") + '</span><span class="chkbig ' + (po ? "on" : "off") + '" data-act="poste" role="button" aria-label="' + (po ? "Publié" : "À publier") + '" title="' + (po ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span></div></div>';
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "sortie"; host.dataset.id = s.id;
+    igProg(s);
   }
+  // ---- Programmer une sortie sur Instagram (Will, 23/11/2026) : post (visuel de sortie noir) + story (gabarit tiré au hasard). ----
+  var IGV = {};
+  function igVisuels(s) {
+    if (IGV[s.id]) return IGV[s.id];
+    IGV[s.id] = ensureTomeLib().then(function () { return FG_TOME.png(sortieToTomeData(s), { theme: "sombre", fmt: "post" }); }).then(function (u) {
+      return new Promise(function (ok, ko) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = ko; i.src = u; });
+    }).then(function (im) {
+      // Post : 1080 de large, ramené au 4:5 au plus haut (fond noir sur les côtés si besoin), comme les news.
+      var W = 1080, h = Math.round(im.height * W / im.width), H = Math.min(h, 1350), c = document.createElement("canvas"); c.width = W; c.height = H;
+      var x = c.getContext("2d"); x.fillStyle = "#0c0c0e"; x.fillRect(0, 0, W, H);
+      if (h > H) { var w2 = Math.round(im.width * H / im.height); x.drawImage(im, (W - w2) / 2, 0, w2, H); } else x.drawImage(im, 0, 0, W, h);
+      return FG_STORY.canvas(FG_STORY.tirage(s.id, false), c).then(function (st) { return { post: c, story: st }; });
+    });
+    return IGV[s.id];
+  }
+  function envoyerJpg(c) { return new Promise(function (ok) { c.toBlob(ok, "image/jpeg", .9); }).then(function (b) { return fetch("/api/admin/image", { method: "POST", credentials: "same-origin", headers: { "content-type": "image/jpeg" }, body: b }); }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Envoi de l'image impossible"); return j.url; }); }); }
+  function igProg(s) {
+    var box = $("#igprog"); if (!box) return;
+    var dessine = function (it) {
+      var b = $("#igprog"); if (!b || host.dataset.id !== s.id) return;
+      var pv = '<div class="pv"><div><img id="igpvp" alt=""><span>Post</span></div><div><img id="igpvs" alt=""><span>Story</span></div></div>';
+      var hh = it && new Date(it.quand), q = hh ? hh.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }) + " à " + hh.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "";
+      if (it && it.fait && it.fait !== "échec") b.innerHTML = '<div class="st ok">Parti sur Instagram ✓ ' + (it.post && it.post.length ? "post" : "") + (it.story ? (it.post && it.post.length ? " + story" : "story") : "") + (it.lien ? ' · <a href="' + esc(it.lien) + '" target="_blank" rel="noopener" style="color:inherit">voir le post ↗</a>' : "") + '</div>' + (it.err ? '<div class="st err">' + esc(it.err) + '</div>' : "");
+      else if (it) b.innerHTML = '<div class="st ' + (it.err ? "err" : "pl") + '">' + (it.err ? "Échec (" + esc(it.err) + "), nouvel essai à la prochaine tournée" : "Programmé le " + esc(q) + " · " + [it.post && it.post.length ? "post" : "", it.story ? "story" : ""].filter(Boolean).join(" + ")) + '</div>' + pv + '<div class="rw"><button class="btn2" data-igdel>Annuler la programmation</button></div>';
+      else b.innerHTML = pv + '<div class="rw"><input type="date" id="igd" value="' + esc(s.date || "") + '"><input type="time" id="igh" value="09:00" step="300"><label class="ck"><input type="checkbox" id="igcp" checked> Post</label><label class="ck"><input type="checkbox" id="igcs" checked> Story</label><button class="btn2 p" data-igprog>Programmer</button></div>';
+      igVisuels(s).then(function (v) { var a = $("#igpvp"), c = $("#igpvs"); if (a) a.src = v.post.toDataURL("image/jpeg", .7); if (c) c.src = v.story.toDataURL("image/jpeg", .7); }).catch(function () {});
+    };
+    fetch("/api/admin/igq?id=" + encodeURIComponent(s.id), { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (j) { dessine(j.item); }).catch(function () { dessine(null); });
+    box._s = s; box._dessine = dessine;
+  }
+  host.addEventListener("click", function (ev) {
+    var b = $("#igprog"); if (!b || !b._s) return; var s = b._s;
+    if (ev.target.closest("[data-igdel]")) {
+      fetch("/api/admin/igq", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: s.id, del: true }) }).then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); b._dessine(null); }).catch(function (e) { alert(e.message || "Échec"); });
+      return;
+    }
+    var go = ev.target.closest("[data-igprog]"); if (!go) return;
+    var d = ($("#igd") || {}).value, hm = ($("#igh") || {}).value || "09:00", cp = ($("#igcp") || {}).checked, cs = ($("#igcs") || {}).checked;
+    if (!d) { alert("Choisis une date"); return; } if (!cp && !cs) { alert("Coche au moins le post ou la story"); return; }
+    var quand = new Date(d + "T" + hm + ":00");
+    if (quand < new Date(Date.now() - 6e4)) { alert("Cette heure est déjà passée"); return; }
+    go.disabled = true; go.textContent = "Préparation des images…";
+    igVisuels(s).then(function (v) { return Promise.all([cp ? envoyerJpg(v.post) : "", cs ? envoyerJpg(v.story) : ""]); }).then(function (u) {
+      return fetch("/api/admin/igq", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ id: s.id, type: "sortie", titre: sortieLabel(s), quand: quand.toISOString(), legende: (modalCap && modalCap.ig) || sortieLabel(s), post: u[0] ? [u[0]] : [], story: u[1] || "" }) });
+    }).then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); b._dessine(j.item); })
+      .catch(function (e) { go.disabled = false; go.textContent = "Programmer"; alert(e.message || "Échec, réessaie"); });
+  });
   // Changer la date d'une tâche depuis le calendrier (Will, 30/10/2026).
   document.addEventListener("change", function (ev) {
     if (!ev.target || ev.target.id !== "tddt") return; var id = host.dataset.id, v = ev.target.value || "";
