@@ -86,11 +86,11 @@ ul.r{margin:0;padding-left:18px}ul.r li{margin:4px 0}
       <h3>Annonce <span class="pill ok">Standard</span></h3>
       <div class="im"><a href="/img/news/kabukicho-bengoshi/reseaux.jpg" target="_blank"><img src="/img/news/kabukicho-bengoshi/reseaux.jpg" alt=""></a><a href="/img/news/kabukicho-bengoshi/lien.jpg" target="_blank"><img class="l" src="/img/news/kabukicho-bengoshi/lien.jpg" alt=""></a></div>
       <dl><dt>Quand</dt><dd>Une série annoncée qui n'a pas encore commencé (page d'annonce dans un magazine, tweet des auteurs). Catégories « Annonce » + « News ». La news « Nouvelle série au Japon » viendra le jour J, avec la page couleur.</dd>
-      <dt>Formats</dt><dd>Réseaux 1080 × 1440 : soleil rouge, visuel encadré au centre, « DÉBUT 08.12 » à gauche et 新連載決定 (« nouvelle série confirmée ») à droite, centrés sur le soleil ; pastille orange foncé « ANNONCE · MAGAZINE », titre, titre japonais en rouge, auteurs. Lien 1200 × 630 : même texte à gauche sur fond N&B, soleil et visuel à droite.</dd>
+      <dt>Formats</dt><dd>Réseaux 1080 × 1440 : soleil rouge, visuel encadré au centre, « DÉBUT 8 DÉC. » à gauche (date à la française, mois à droite du jour) et 新連載決定 (« nouvelle série confirmée ») à droite, centrés sur le soleil ; pastille orange foncé « ANNONCE · MAGAZINE », titre, titre japonais en rouge, auteurs. Lien 1200 × 630 : même texte à gauche sur fond N&B, soleil et visuel à droite.</dd>
       <dt>Textes</dt><dd>X : « Annonce » en première ligne, le titre et les @ des auteurs à la ligne, puis la date de début (« avec une page couleur », jamais « couleur d'ouverture »).</dd>
       <dt>Fabrication</dt><dd>Modèle <code>/modeles/annonce/</code> (Claude le remplit et l'exporte). Les 8 pistes de départ : <code>/modeles/annonce/maquettes.html</code> (« Soleil » retenue).</dd>
       <dt>Exemples</dt><dd>Kabukichō Bengoshi (24/11/2026).</dd></dl>
-      <a class="btn gh" href="/modeles/annonce/?visuel=/img/news/kabukicho-bengoshi/annonce-perso.jpg&fond=/img/news/kabukicho-bengoshi/annonce-yc24.jpg&titre=Kabukichō%20Bengoshi&jp=歌舞伎町弁護士&auteurs=Shō%20Wakabayashi%20×%20Dai%20Suzuki&mag=Young%20Champion&jour=08.12&quand=8%20décembre" target="_blank">Ouvrir le modèle</a>
+      <a class="btn gh" href="/modeles/annonce/?visuel=/img/news/kabukicho-bengoshi/annonce-perso.jpg&fond=/img/news/kabukicho-bengoshi/annonce-yc24.jpg&titre=Kabukichō%20Bengoshi&jp=歌舞伎町弁護士&auteurs=Shō%20Wakabayashi%20×%20Dai%20Suzuki&mag=Young%20Champion&jour=8%20déc.&quand=8%20décembre" target="_blank">Ouvrir le modèle</a>
     </div>
 
     <div class="t" data-k="nouvel arc 新章開幕 prépublication page couleur hangure">
@@ -164,19 +164,22 @@ ul.r{margin:0;padding-left:18px}ul.r li{margin:4px 0}
   </div>
 
   <h2 id="stories">Stories Instagram</h2>
-  <p>Publiées automatiquement après le post. Pas de lien cliquable (l'API ne le permet pas).</p>
+  <p>Publiées automatiquement après le post. Pas de lien cliquable (l'API ne le permet pas). Version 2 validée le 24/11/2026.</p>
   <div class="g">
-    <div class="t" data-k="story news post fond rouge persos niceguy">
+    <div class="t" data-k="story news post nouvel arc annonce nouvelle série sortie plein cadre noir v2">
       <h3>Story d'une news ou d'une sortie <span class="pill ok">Auto</span></h3>
-      <div class="im"><a href="/img/charte/story-news.jpg" target="_blank"><img src="/img/charte/story-news.jpg" alt=""></a><a href="/img/story/styles/rouge.jpg" target="_blank"><img src="/img/story/styles/rouge.jpg" alt=""></a><a href="/img/story/styles/jaune.jpg" target="_blank"><img src="/img/story/styles/jaune.jpg" alt=""></a><a href="/img/story/styles/bleu.jpg" target="_blank"><img src="/img/story/styles/bleu.jpg" alt=""></a><a href="/img/story/styles/noir-kanji.jpg" target="_blank"><img src="/img/story/styles/noir-kanji.jpg" alt=""></a><a href="/img/story/styles/diagonale.jpg" target="_blank"><img src="/img/story/styles/diagonale.jpg" alt=""></a><a href="/img/story/styles/rouge-couv.jpg" target="_blank"><img src="/img/story/styles/rouge-couv.jpg" alt=""></a><a href="/img/story/styles/noir-couv.jpg" target="_blank"><img src="/img/story/styles/noir-couv.jpg" alt=""></a></div>
-      <dl><dt>Règle</dt><dd>1080 × 1920. Un des 7 fonds tiré au hasard (bandes droites, bas noir, logo d'origine au rond rouge, pas de crème), le post dans le cadre, deux persos Niceguy tirés au hasard en bas. Le tirage est fixe pour une news (aperçu = image envoyée).</dd>
-      <dt>Code</dt><dd><code>/site/story.js</code>, fonds <code>/img/story/styles/</code>, persos <code>/img/story/persos/</code>.</dd></dl>
+      <div class="im"><a href="/img/charte/story-v2-nouvel-arc.jpg" target="_blank"><img src="/img/charte/story-v2-nouvel-arc.jpg" alt=""></a><a href="/img/charte/story-v2-annonce.jpg" target="_blank"><img src="/img/charte/story-v2-annonce.jpg" alt=""></a><a href="/img/charte/story-v2-nouvelle-serie.jpg" target="_blank"><img src="/img/charte/story-v2-nouvelle-serie.jpg" alt=""></a></div>
+      <dl><dt>Règle</dt><dd>1080 × 1920, fond noir (<code>v2-noir.jpg</code>). Le visuel du post en plein cadre, 1080 de large, à 80 px du haut, jusqu'au trait jaune. Aucun fondu au-dessus, aucune étiquette (« Nouveau post », furyogang.com…), aucun appel à l'action. Plus de persos ni de cadre crème. Le bas (logo + furyogang.com) ne bouge jamais.</dd>
+      <dt>Sans logo en haut</dt><dd>Le logo est déjà en grand en bas : les modèles Nouvel arc, Annonce et Nouvelle série sortent aussi <code>story.jpg</code> (même visuel sans le logo du haut), rangé à côté de <code>reseaux.jpg</code>. Le studio News la prend automatiquement si elle existe.</dd>
+      <dt>Réglages story des modèles</dt><dd>Nouvel arc : <code>h=1520&amp;marge=115</code> (image plus grande, bloc titre plus bas sur fond noir, fondu doux). Annonce : <code>h=1520&amp;couv=600</code> (fond N&amp;B jusqu'au trait jaune, page agrandie). Nouvelle série : <code>couv=860&amp;haut=222&amp;ktop=30</code> (couverture agrandie, 新連載 remonté).</dd>
+      <dt>Code</dt><dd><code>/site/story.js</code> (v2), fonds <code>/img/story/styles/v2-*.jpg</code>. Maquettes : <code>/modeles/story-v2/</code>.</dd></dl>
     </div>
-    <div class="t" data-k="story prépublication chapitre magazine japon">
+    <div class="t" data-k="story prépublication chapitre 連載 arc pages couleurs mosaïque rouge v2">
       <h3>Story de prépublication <span class="pill ok">Auto</span></h3>
-      <div class="im"><a href="/img/charte/story-prepub.jpg" target="_blank"><img src="/img/charte/story-prepub.jpg" alt=""></a><a href="/img/story/styles/prepub-rouge.jpg" target="_blank"><img src="/img/story/styles/prepub-rouge.jpg" alt=""></a><a href="/img/story/styles/prepub-noir.jpg" target="_blank"><img src="/img/story/styles/prepub-noir.jpg" alt=""></a><a href="/img/story/styles/prepub-jaune.jpg" target="_blank"><img src="/img/story/styles/prepub-jaune.jpg" alt=""></a></div>
-      <dl><dt>Règle</dt><dd>Fond en planches de manga (3 couleurs), carte crème : couverture du dernier tome (jamais la couverture du magazine), magazine et numéro, titre, sous-titre rouge facultatif, pastille « CHAPITRE N ». URL furyogang.com/japon.</dd>
-      <dt>Réglages</dt><dd>Notion, base Prépublication : « Visuel story » (image officielle à la place du tome) et « Sous-titre story ».</dd></dl>
+      <div class="im"><a href="/img/charte/story-v2-prepub-saigo.jpg" target="_blank"><img src="/img/charte/story-v2-prepub-saigo.jpg" alt=""></a><a href="/img/charte/story-v2-prepub-fable.jpg" target="_blank"><img src="/img/charte/story-v2-prepub-fable.jpg" alt=""></a><a href="/img/charte/story-v2-prepub-nezumi.jpg" target="_blank"><img src="/img/charte/story-v2-prepub-nezumi.jpg" alt=""></a></div>
+      <dl><dt>Règle</dt><dd>Toujours en rouge (le rouge est réservé à la prépub). Fond : mosaïque noir et blanc des tomes de la série affichée. En haut : « PRÉPUBLICATION 連載 » entre deux filets (連載 en jaune), puis le titre en grand (titre français s'il existe ; réduit, puis sur deux lignes s'il est trop long). Au centre : couverture du dernier tome, bordure noire sans ombre. En bas, contre le trait jaune : seulement « CHAPITRE N » (pastille jaune), plus « PAGES COULEURS » s'il y en a.</dd>
+      <dt>Textes</dt><dd>Pas de magazine ni de numéro. Sous-titre de série (« The third secret », « ~ Sankyōdai no Kizuna ~ ») en crème sous le titre. Annonce d'arc (« En route vers l'arc final ») en jaune italique, pour ne pas la confondre avec le titre. « Pages couleurs » : les deux mots au pluriel.</dd>
+      <dt>Réglages</dt><dd>Notion, base Prépublication : « Visuel story » (image officielle à la place du tome), « Sous-titre story » (annonce d'arc), « Mise en avant » contenant « couleur » (pastille Pages couleurs).</dd></dl>
       <a class="btn gh" href="/hq/#calendrier">Calendrier · Prépublication</a>
     </div>
   </div>
@@ -248,7 +251,7 @@ ul.r{margin:0;padding-left:18px}ul.r li{margin:4px 0}
     <div class="t" data-k="persos stories niceguy détourés">
       <h3>Persos des stories</h3>
       <div class="im" id="persos"></div>
-      <dl><dt>Dossier</dt><dd><code>/img/story/persos/</code> (19 persos détourés, sans nom).</dd></dl>
+      <dl><dt>Dossier</dt><dd><code>/img/story/persos/</code> (19 persos détourés, sans nom). Plus utilisés dans les stories depuis la v2 (24/11/2026).</dd></dl>
     </div>
   </div>
 

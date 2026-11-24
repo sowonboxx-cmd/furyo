@@ -711,7 +711,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 <script src="/site/admin-session.js?v=1"></script>
 <script src="/site/badges.js?v=2"></script>
 <script src="/site/sortie-post.js?v=16"></script>
-<script src="/site/story.js?v=4"></script>
+<script src="/site/story.js?v=5"></script>
 <script src="/site/quickaccess.js?v=22"></script>
 <script>
 if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
@@ -1209,7 +1209,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     }
     return h + '</div>';
   }
-  function ppDonnees(x) { var cv = x.visuel || x.cover; return { cover: cv ? "/api/couv?u=" + encodeURIComponent(cv) + "&w=700" : "", sousTitre: x.sousTitre, magazine: x.magazine, numero: ppNum(x.numero), titre: x.serie, chapitre: x.chapitre }; }
+  function ppDonnees(x) { var cv = x.visuel || x.cover; return { cover: cv ? "/api/couv?u=" + encodeURIComponent(cv) + "&w=900" : "", sousTitre: x.sousTitre, magazine: x.magazine, numero: ppNum(x.numero), titre: x.serie, chapitre: x.chapitre, slug: x.slug, couleur: (x.avant || []).some(function (a) { return /couleur/i.test(a); }) }; }
   var PPIMG = {};
   function ppImage(x) { if (!PPIMG[x.id]) PPIMG[x.id] = FG_STORY.canvasPrepub(FG_STORY.tirage(x.id, true), ppDonnees(x)); return PPIMG[x.id]; }
   function ppProgrammer(x, quand) {

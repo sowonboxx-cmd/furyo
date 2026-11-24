@@ -168,7 +168,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 <script src="/site/sortie-post.js?v=16"></script>
 <script src="/site/og-actu.js?v=8"></script>
 <script src="/site/hero-d.js?v=3"></script>
-<script src="/site/story.js?v=4"></script>
+<script src="/site/story.js?v=5"></script>
 <script>
 (function () {
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -309,13 +309,14 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   // Antonio dessine le tiret tout en bas, collé au I (« SHISEI-DŌ » se lisait « SHISEL-DŌ ») : tiret pris dans Inter (Will, 27/10/2026).
   function tiret(h) { return String(h).replace(/-/g, '<span style="font-family:I,sans-serif;font-weight:800;padding:0 .04em">-</span>'); }
   function scrTT() { return '<div class="scr tts"><div class="ttbg">' + visuelTT() + '</div>' + SB + '<div class="tttop"><span>Suivis</span><b>Pour toi</b></div><div class="ttrail"><img src="' + AV + '"><span>' + SV(P.coeur, { fill: "#fff", w: 34 }) + '<small>J\'aime</small></span><span>' + SV(P.bulle.replace('<path', '<path fill="#fff" stroke="none"'), { w: 32 }) + '<small>0</small></span><span>' + SV(P.signet, { fill: "#fff", w: 30 }) + '<small>0</small></span><span>' + SV('<path d="M14 4l8 7.5-8 7.5v-4.5C8 14.5 4.5 16.5 2 20c.8-6 4-10.5 12-11.5z"/>', { fill: "#fff", w: 32 }) + '<small>Partager</small></span></div><div class="ttcap"><b>furyogang</b><p>' + hl(D.tt).replace(/<span class="lk">(#[^<]+)<\/span>/g, "<b>$1</b>") + '</p><span class="ttm">♫ son original - furyogang</span></div><div class="ttnav"><span>Accueil</span><span>Amis</span><b>＋</b><span>Boîte</span><span>Profil</span></div></div>'; }
-  // Story Instagram (Will, 23/11/2026) : gabarit rouge et crème du matin, un fond tiré au hasard (fixe pour une news),
-  // le visuel du post posé dans le cadre crème. L'aperçu et l'image envoyée sont construits de la même façon.
-  // Story : style + persos tirés au hasard par /site/story.js, tirage fixe pour une news (aperçu = image envoyée).
+  // Story Instagram v2 (Will, 24/11/2026) : fond noir, visuel du post en plein cadre, sans fondu ni étiquette (/site/story.js).
+  // L'aperçu et l'image envoyée sont construits de la même façon.
+  // Visuel story sans le logo du haut (Will, 24/11/2026) : …/story.jpg à côté de …/reseaux*.jpg, rendu par les modèles.
+  function storyU() { var u = imgSoc(); if (!u || /^data:/.test(u)) return ""; var m = String(u).match(/^(.*\/img\/news\/[^?#]+\/)reseaux[^\/?#]*\.jpg/); return m ? m[1].replace(/^https?:\/\/[^\/]+/, "") + "story.jpg" : ""; }
   function tirStory() { return window.FG_STORY ? FG_STORY.tirage(ID, false) : null; }
   function scrStory() {
-    var t = tirStory(), u = imgSoc(), src = u ? (/^data:/.test(u) ? u : couv(u, 800)) : "";
-    return '<div class="scr" style="background:#000"><div style="position:absolute;left:0;top:75px;width:390px;height:693px;overflow:hidden;border-radius:10px"><div style="transform:scale(' + (390 / 1080) + ');transform-origin:0 0">' + (t ? FG_STORY.html(t, esc(src)) : "") + '</div>' +
+    var t = tirStory(), u = imgSoc(), src = u ? (/^data:/.test(u) ? u : couv(u, 800)) : "", su = storyU();
+    return '<div class="scr" style="background:#000"><div style="position:absolute;left:0;top:75px;width:390px;height:693px;overflow:hidden;border-radius:10px"><div style="transform:scale(' + (390 / 1080) + ');transform-origin:0 0">' + (t ? FG_STORY.html(t, esc(su || src), su ? esc(src) : "") : "") + '</div>' +
       '<div style="position:absolute;left:8px;right:8px;top:8px;height:2px;border-radius:2px;background:rgba(255,255,255,.9)"></div><div style="position:absolute;left:10px;top:18px;display:flex;align-items:center;gap:8px;font:600 13px I;color:#fff"><img src="' + AV + '" style="width:28px;height:28px;border-radius:50%">furyogang<span style="opacity:.7;font-weight:500">' + esc(heure()) + '</span></div></div>' + SB + '</div>';
   }
   function sk() { return '<span class="sk" style="color:' + col() + '"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>'; }
@@ -406,7 +407,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
       var W = 1080, h = Math.round(bm.height * W / bm.width), H = Math.min(h, 1350), c = document.createElement("canvas"); c.width = W; c.height = H;
       var x = c.getContext("2d"); x.fillStyle = "#0c0c0e"; x.fillRect(0, 0, W, H);
       if (h > H) { var w2 = Math.round(bm.width * H / bm.height); x.drawImage(bm, (W - w2) / 2, 0, w2, H); } else x.drawImage(bm, 0, 0, W, h);
-      return FG_STORY.canvas(tirStory(), c).then(function (s2) {
+      var su = storyU();
+      return (su ? charger(su).catch(function () { return c; }) : Promise.resolve(c)).then(function (sv) { return FG_STORY.canvas(tirStory(), sv); }).then(function (s2) {
         return Promise.all([envoyerJpeg(c), envoyerJpeg(s2)]);
       });
     });
