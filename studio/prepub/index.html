@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Studio · Prépublication de la semaine · FuryoGang</title>
+<!-- Studio « Prépublication de la semaine » (Will, 24/11/2026) : le carrousel X / Instagram du dimanche, fabriqué tout seul
+     avec les mêmes données que la page /prepub/ (base Prépublication validée + images des fiches).
+     Image 1 : couverture (semaine, chiffres, mosaïque). Ensuite 6 séries par image (couverture, chapitre, magazine, jour).
+     Dernière image : les absentes, s'il y en a. Format 1080 × 1350 (4:5, plein écran sur X et Instagram).
+     Réglages par série (mettre en avant, retirer) : gardés sur l'appareil, semaine par semaine.
+     ?du=AAAA-MM-JJ : une autre semaine (celle qui contient ce jour). Le dimanche, c'est la semaine qui vient. -->
+<style>
+@font-face{font-family:FA;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:FI;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:FJ;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+:root{--bg:#0c0c0e;--bg2:#17171a;--line:#262630;--cr:#F2EFE9;--mut:#9a968f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--cr);font:500 14px FI,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.w{max-width:1100px;margin:0 auto;padding:20px 14px 80px}
+h1{font:700 30px/1 FA;text-transform:uppercase}
+.lead{color:var(--mut);margin-top:8px;line-height:1.45}
+.bar{position:sticky;top:0;z-index:5;background:rgba(12,12,14,.94);backdrop-filter:blur(8px);padding:12px 0;margin:14px 0 10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--line)}
+button,.b{appearance:none;border:0;border-radius:11px;padding:11px 15px;font:700 13.5px FI;cursor:pointer;background:#26262c;color:#fff}
+button.main{background:#2A6FD0}
+button:disabled{opacity:.5}
+#msg{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--mut);font-size:13px}
+.g{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.sl{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:8px}
+.sl canvas{width:100%;height:auto;display:block;border-radius:6px}
+.sl .ft{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font:600 12px FI;color:var(--mut)}
+.sl .ft a{color:var(--cr);background:#26262c;padding:6px 10px;border-radius:8px}
+h2{font:700 18px FA;text-transform:uppercase;margin:28px 0 10px}
+.ls{display:grid;gap:6px}
+.it{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.it b{font:700 15px FA;text-transform:uppercase}.it small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.it label{display:flex;gap:5px;align-items:center;font:600 12px FI;color:var(--mut);white-space:nowrap}
+.it.off{opacity:.45}
+textarea{width:100%;min-height:120px;background:var(--bg2);color:var(--cr);border:1px solid var(--line);border-radius:10px;padding:10px;font:500 14px FI}
+</style>
+</head>
+<body>
+<div class="w">
+  <h1>Prépublication de la semaine</h1>
+  <p class="lead" id="lead">Chargement…</p>
+  <div class="bar"><button class="main" id="dl">Télécharger toutes les images</button><span id="msg"></span></div>
+  <div class="g" id="g"></div>
+  <h2>Texte pour X</h2>
+  <textarea id="tx"></textarea>
+  <div style="margin-top:8px"><button id="cp">Copier</button></div>
+  <h2>Les séries de la semaine</h2>
+  <p class="lead">« À la une » place la série sur la première image avec une étiquette ; « Retirer » la sort du carrousel. Gardé sur cet appareil.</p>
+  <div class="ls" id="ls" style="margin-top:10px"></div>
+</div>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var W = 1080, H = 1350, PAR = 6;
+  var JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  var iso = function (d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); };
+  var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
+  var cv = function (u, w) { return u ? (/^https?:/.test(u) ? "/api/couv?u=" + encodeURIComponent(u) + "&w=" + w : u) : ""; };
+  // Semaine : lundi → dimanche ; le dimanche, la semaine qui vient (comme /prepub/).
+  var q = new URLSearchParams(location.search), base = /^\d{4}-\d{2}-\d{2}$/.test(q.get("du") || "") ? new Date(q.get("du") + "T12:00:00") : new Date();
+  if (!q.get("du") && base.getDay() === 0) base.setDate(base.getDate() + 1);
+  var lun = new Date(base); lun.setHours(12, 0, 0, 0); lun.setDate(lun.getDate() - ((lun.getDay() + 6) % 7));
+  var dim = new Date(lun); dim.setDate(dim.getDate() + 6);
+  var D1 = iso(lun), D7 = iso(dim), CLE = "fg:prepub-studio:" + D1;
+  var magNom = function (x) {
+    var m = (x.entry.split(" · ")[1] || x.mag || "").replace(/\s*\(en ligne\)/, " en ligne");
+    m = m.replace(/(\d{4})年\s*(\d{1,2})月号/, function (_, a, b) { return MOIS[+b - 1] + " " + a; });
+    m = m.replace(/\s*\d{4}\s*年?\s*(?:No\.|第)?\s*([\d\/・]+)\s*号?/, function (_, n) { return " n°" + n.replace(/・/g, "-"); });
+    return m.replace(/第(\d+)号/, "n°$1").trim();
+  };
+  var nom = function (x) { return x.entry.split(" · ")[0]; };
+  var cle = function (x) { return nom(x) + "|" + x.date; };
+  var tagDe = function (x) { var h = (x.hl || []).filter(function (t) { return t !== "Annonce" && t !== "Pause annoncée"; }); return h[0] === "Couleur d'ouverture" || h[0] === "Pages couleur" ? "Couleur" : h[0] || ""; };
+  var REG = {}; try { REG = JSON.parse(localStorage.getItem(CLE) || "{}") || {}; } catch (e) {}
+  var sauver = function () { try { localStorage.setItem(CLE, JSON.stringify(REG)); } catch (e) {} };
+  var fontes = Promise.all([new FontFace("FA", "url(/fonts/Antonio.ttf)", { weight: "100 700" }), new FontFace("FI", "url(/fonts/Inter.ttf)", { weight: "100 900" }), new FontFace("FJ", "url(/fonts/NotoSansJP.ttf)", { weight: "100 900" })].map(function (f) { return f.load().then(function (x) { document.fonts.add(x); }); })).catch(function () {});
+  var IMG = {}; var charger = function (u) { if (!u) return Promise.resolve(null); if (IMG[u]) return IMG[u]; return (IMG[u] = new Promise(function (ok) { var i = new Image(); i.crossOrigin = "anonymous"; i.onload = function () { ok(i); }; i.onerror = function () { ok(null); }; i.src = u; })); };
+  var LOGO = charger("/img/social/logo-blanc.png");
+  var DATA = null, BY = {};
+
+  // ---------- Dessin ----------
+  function couvrir(c, im, x, y, w, h, haut) { var k = Math.max(w / im.width, h / im.height), sw = w / k, sh = h / k; c.drawImage(im, (im.width - sw) / 2, haut ? 0 : (im.height - sh) / 2, sw, sh, x, y, w, h); }
+  function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+  function ajuste(c, t, max, taille, police) { var s = taille; c.font = police.replace("#", s); while (c.measureText(t).width > max && s > 12) { s -= 2; c.font = police.replace("#", s); } return s; }
+  function lignes(c, t, max, n) { var m = t.split(/\s+/), l = [], cur = ""; m.forEach(function (w) { var e = cur ? cur + " " + w : w; if (c.measureText(e).width > max && cur) { l.push(cur); cur = w; } else cur = e; }); if (cur) l.push(cur); if (l.length > n) { l = l.slice(0, n); var d = l[n - 1]; while (c.measureText(d + "…").width > max && d.length > 1) d = d.slice(0, -1); l[n - 1] = d + "…"; } return l; }
+  function fond(c, im) {
+    c.fillStyle = "#0c0c0e"; c.fillRect(0, 0, W, H);
+    if (im) { c.save(); c.filter = "grayscale(1) blur(3px)"; c.globalAlpha = .22; couvrir(c, im, -20, -20, W + 40, H + 40, true); c.restore(); }
+    var g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "rgba(12,12,14,.35)"); g.addColorStop(.3, "rgba(12,12,14,.75)"); g.addColorStop(1, "rgba(12,12,14,.88)"); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  }
+  function logo(c, lg) { if (lg) { var h = 56, w = lg.width * h / lg.height; c.drawImage(lg, (W - w) / 2, 34, w, h); } }
+  function pastille(c, t, x, y, coul, taille) { c.font = "800 " + (taille || 26) + "px FI"; var w = c.measureText(t).width + 36, h = (taille || 26) + 24; c.fillStyle = coul; rr(c, x, y, w, h, 12); c.fill(); c.fillStyle = "#fff"; c.textBaseline = "middle"; c.fillText(t, x + 18, y + h / 2 + 1); c.textBaseline = "alphabetic"; return w; }
+  function fleche(c, x, y, w) { c.save(); c.strokeStyle = "#F2EFE9"; c.lineWidth = 8; c.lineCap = "round"; c.lineJoin = "round"; c.beginPath(); c.moveTo(x, y); c.lineTo(x + w, y); c.moveTo(x + w - 20, y - 18); c.lineTo(x + w, y); c.lineTo(x + w - 20, y + 18); c.stroke(); c.restore(); }
+  function pied(c, t, n, tot) {
+    c.font = "700 32px FA"; c.textAlign = "center"; c.fillStyle = "#F2EFE9"; var a = t, b = "furyogang.com/prepub";
+    var wa = c.measureText(a.toUpperCase() + "  ").width, wb = c.measureText(b.toUpperCase()).width, x0 = (W - wa - wb) / 2;
+    c.textAlign = "left"; c.fillText(a.toUpperCase() + "  ", x0, H - 46); c.fillStyle = "#F2C14E"; c.fillText(b.toUpperCase(), x0 + wa, H - 46);
+    if (tot > 1) { c.font = "700 26px FA"; c.fillStyle = "#9a968f"; c.textAlign = "right"; c.fillText(n + " / " + tot, W - 48, 76); c.textAlign = "left"; }
+  }
+  function titreSemaine(c, y, taille) {
+    var a = String(lun.getDate()), b = String(dim.getDate()), m = (lun.getMonth() === dim.getMonth() ? "" : " " + MOIS[lun.getMonth()]);
+    c.font = "700 " + taille + "px FA"; c.fillStyle = "#F2EFE9"; var x = 60;
+    c.fillText((a + m).toUpperCase(), x, y); x += c.measureText((a + m).toUpperCase()).width + 26;
+    fleche(c, x, y - taille * .36, taille * .62); x += taille * .62 + 30;
+    c.fillText(b, x, y); x += c.measureText(b + " ").width;
+    c.fillStyle = "#F2C14E"; c.fillText(MOIS[dim.getMonth()].toUpperCase(), x, y);
+  }
+  function carte(c, x, y, w, h, s, im) {
+    c.save(); rr(c, x, y, w, h, 12); c.clip();
+    if (im) couvrir(c, im, x, y, w, h, true); else { var gg = c.createLinearGradient(x, y, x + w, y + h); gg.addColorStop(0, "#2a2a31"); gg.addColorStop(1, "#17171a"); c.fillStyle = gg; c.fillRect(x, y, w, h); c.fillStyle = "#6c6c74"; c.font = "700 " + Math.round(w / 4) + "px FA"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(nom(s).split(/[\s-]+/).filter(Boolean).slice(0, 2).map(function (m) { return m[0]; }).join("").toUpperCase(), x + w / 2, y + h / 2); c.textAlign = "left"; c.textBaseline = "alphabetic"; }
+    if (s.off) { c.fillStyle = "rgba(12,12,14,.62)"; c.fillRect(x, y, w, h); }
+    var g = c.createLinearGradient(0, y + h * .62, 0, y + h); g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.92)"); c.fillStyle = g; c.fillRect(x, y + h * .6, w, h * .4);
+    c.restore();
+    var tg = s.tag; if (tg) { c.font = "800 " + Math.round(w / 19) + "px FI"; var tw = c.measureText(tg.toUpperCase()).width + 18, th = Math.round(w / 19) + 14; c.fillStyle = /Retour|Nouvel/.test(tg) ? "#4DAB9A" : "#E5483A"; rr(c, x + 10, y + 10, tw, th, 7); c.fill(); c.fillStyle = "#fff"; c.textBaseline = "middle"; c.fillText(tg.toUpperCase(), x + 19, y + 10 + th / 2 + 1); c.textBaseline = "alphabetic"; }
+    c.textAlign = "center"; c.fillStyle = s.off ? "#9a968f" : tg ? "#F2C14E" : "#F2EFE9"; c.font = "700 " + Math.round(w / 8.5) + "px FA";
+    c.fillText(s.off ? "Absente" : s.ch != null ? "Ch. " + Math.floor(s.ch) : "Nouveau ch.", x + w / 2, y + h - 16); c.textAlign = "left";
+  }
+  function dessinerCouv(c, l, ims, lg, n, tot, nMag, fondIm) {
+    fond(c, fondIm); logo(c, lg);
+    c.save(); c.font = "900 58px FJ"; c.fillStyle = "#BC002D"; "今週の連載".split("").forEach(function (k, i) { c.fillText(k, W - 100, 170 + i * 62); }); c.restore();
+    pastille(c, "PRÉPUBLICATION DE LA SEMAINE", 60, 124, "#BC002D", 26);
+    titreSemaine(c, 300, 108);
+    c.font = "600 28px FI"; c.fillStyle = "#b9b5ae"; c.fillText(l.length + " chapitre" + (l.length > 1 ? "s" : "") + " dans " + nMag + " magazine" + (nMag > 1 ? "s" : "") + " japonais", 60, 352);
+    // Mosaïque : jusqu'à 10 couvertures, la une d'abord.
+    var m = l.slice(0, 10), cols = m.length <= 3 ? 3 : m.length === 4 ? 4 : 5, gap = 14, cw = (W - 120 - gap * (cols - 1)) / cols, ch = cw * 4 / 3, rows = Math.ceil(m.length / cols), y0 = Math.round(400 + (860 - rows * (ch + 64)) / 2);
+    m.forEach(function (s, i) { carte(c, 60 + (i % cols) * (cw + gap), y0 + Math.floor(i / cols) * (ch + 64), cw, ch, s, ims[i]); c.font = "700 19px FA"; c.fillStyle = "#F2EFE9"; var t = lignes(c, nom(s).toUpperCase(), cw, 1)[0]; c.fillText(t, 60 + (i % cols) * (cw + gap), y0 + Math.floor(i / cols) * (ch + 64) + ch + 28); });
+    pied(c, tot > 1 ? "Glisse pour tout voir ·" : "Le détail :", n, tot);
+  }
+  function dessinerSeries(c, l, ims, lg, n, tot, fondIm) {
+    fond(c, fondIm); logo(c, lg);
+    titreSemaine(c, 186, 66);
+    c.font = "800 20px FI"; c.fillStyle = "#E5483A"; c.textAlign = "right"; c.fillText("PRÉPUBLICATION DE LA SEMAINE", W - 60, 180); c.textAlign = "left";
+    var cols = 3, gap = 24, cw = (W - 120 - gap * 2) / cols, ch = 400, y0 = 220;
+    l.forEach(function (s, i) {
+      var x = 60 + (i % cols) * (cw + gap), y = y0 + Math.floor(i / cols) * (ch + 122);
+      carte(c, x, y, cw, ch, s, ims[i]);
+      c.font = "700 29px FA"; c.fillStyle = "#F2EFE9"; var t = lignes(c, nom(s).toUpperCase(), cw, 2); t.forEach(function (li, k) { c.fillText(li, x, y + ch + 36 + k * 31); });
+      c.font = "600 19px FI"; c.fillStyle = "#9a968f"; var j = new Date(s.date + "T12:00:00"); var info = JOURS[j.getDay()] + " " + j.getDate() + " · " + magNom(s);
+      c.fillText(lignes(c, info, cw, 1)[0], x, y + ch + 36 + t.length * 31 + 2);
+    });
+    pied(c, "Le détail :", n, tot);
+  }
+  function dessinerAbs(c, l, lg, n, tot, fondIm) {
+    fond(c, fondIm); logo(c, lg);
+    pastille(c, "ABSENTES CETTE SEMAINE", 60, 124, "#3a3a42", 24);
+    titreSemaine(c, 252, 64);
+    c.font = "600 30px FI"; var y = 340;
+    l.forEach(function (s) { c.fillStyle = "#F2EFE9"; c.font = "700 40px FA"; c.fillText(nom(s).toUpperCase(), 60, y); c.font = "600 22px FI"; c.fillStyle = "#9a968f"; c.fillText(magNom(s), 60, y + 32); y += 92; });
+    pied(c, "Le détail :", n, tot);
+  }
+
+  // ---------- Construction ----------
+  function construire() {
+    var all = DATA.filter(function (x) { return x.date >= D1 && x.date <= D7; });
+    var ser = function (x) { return BY[String((x.series || [])[0] || "").replace(/-/g, "")] || {}; };
+    var CH = all.filter(function (x) { return x.status !== "Pause"; }).map(function (x) { var r = REG[cle(x)] || {}; return Object.assign({}, x, { tag: r.une ? (tagDe(x) || "À la une") : tagDe(x), une: !!(r.une || tagDe(x)), cache: !!r.cache, img: cv(ser(x).cover, 500) }); });
+    var PZ = all.filter(function (x) { return x.status === "Pause"; }).filter(function (x) { return !(REG[cle(x)] || {}).cache; });
+    CH.sort(function (a, b) { return (b.une - a.une) || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0); });
+    var vis = CH.filter(function (x) { return !x.cache; });
+    var nMag = {}; vis.forEach(function (x) { nMag[magNom(x)] = 1; }); nMag = Object.keys(nMag).length;
+    $("#lead").textContent = "Semaine du " + lun.getDate() + " " + MOIS[lun.getMonth()] + " au " + dim.getDate() + " " + MOIS[dim.getMonth()] + " : " + vis.length + " chapitre" + (vis.length > 1 ? "s" : "") + ", " + PZ.length + " absente" + (PZ.length > 1 ? "s" : "") + ". Même contenu que la page /prepub/.";
+    // Liste des réglages
+    $("#ls").innerHTML = CH.map(function (x) { var k = cle(x), r = REG[k] || {}; return '<div class="it' + (r.cache ? " off" : "") + '"><div><b>' + nom(x) + "</b><small>" + magNom(x) + " · " + (x.ch != null ? "ch. " + Math.floor(x.ch) : "nouveau chapitre") + (tagDe(x) ? " · " + tagDe(x) : "") + '</small></div><label><input type="checkbox" data-k="' + k + '" data-r="une"' + (r.une || tagDe(x) ? " checked" : "") + (tagDe(x) ? " disabled" : "") + '>À la une</label><label><input type="checkbox" data-k="' + k + '" data-r="cache"' + (r.cache ? " checked" : "") + ">Retirer</label></div>"; }).join("") || '<p class="lead">Aucun chapitre validé pour cette semaine dans la base Prépublication.</p>';
+    // Texte X
+    var une = vis.filter(function (x) { return x.une; }).slice(0, 3).map(function (x) { return nom(x) + (x.tag && x.tag !== "À la une" ? " (" + x.tag.toLowerCase() + ")" : ""); });
+    $("#tx").value = "Prépublication de la semaine\nDu " + lun.getDate() + (lun.getMonth() === dim.getMonth() ? "" : " " + MOIS[lun.getMonth()]) + " au " + dim.getDate() + " " + MOIS[dim.getMonth()] + "\n\n" + vis.length + " chapitres dans " + nMag + " magazines japonais" + (une.length ? ", avec " + une.join(", ") : "") + ".\n\nLe détail jour par jour : furyogang.com/prepub";
+    // Images
+    var pages = [];
+    if (vis.length) pages.push({ k: "couv", l: vis });
+    for (var i = 0; i < vis.length; i += PAR) pages.push({ k: "ser", l: vis.slice(i, i + PAR) });
+    if (PZ.length) pages.push({ k: "abs", l: PZ.slice(0, 10) });
+    var fondU = vis[0] ? vis[0].img || cv(vis[0].cover, 900) : "";
+    $("#g").innerHTML = ""; SLIDES = [];
+    return Promise.all([fontes, LOGO, charger(fondU)]).then(function (r) {
+      var lg = r[1], fi = r[2];
+      return Promise.all(pages.map(function (p, n) {
+        return Promise.all(p.l.map(function (s) { return charger(s.img); })).then(function (ims) {
+          var cvs = document.createElement("canvas"); cvs.width = W; cvs.height = H; var c = cvs.getContext("2d");
+          if (p.k === "couv") dessinerCouv(c, p.l, ims, lg, n + 1, pages.length, nMag, fi);
+          else if (p.k === "ser") dessinerSeries(c, p.l, ims, lg, n + 1, pages.length, fi);
+          else dessinerAbs(c, p.l, lg, n + 1, pages.length, fi);
+          return cvs;
+        });
+      })).then(function (cs) {
+        cs.forEach(function (cvs, n) {
+          var d = document.createElement("div"); d.className = "sl"; d.appendChild(cvs);
+          var f = document.createElement("div"); f.className = "ft"; f.innerHTML = "<span>Image " + (n + 1) + " / " + cs.length + "</span>";
+          var a = document.createElement("a"); a.href = "#"; a.textContent = "Télécharger"; a.onclick = function (e) { e.preventDefault(); fichier(cvs, n).then(function (fl) { var u = URL.createObjectURL(fl), x = document.createElement("a"); x.href = u; x.download = fl.name; document.body.appendChild(x); x.click(); x.remove(); }); };
+          f.appendChild(a); d.appendChild(f); $("#g").appendChild(d); SLIDES.push(cvs);
+        });
+        if (!cs.length) $("#g").innerHTML = '<p class="lead">Rien à montrer pour cette semaine.</p>';
+      });
+    });
+  }
+  var SLIDES = [];
+  function fichier(cvs, n) { return new Promise(function (ok) { cvs.toBlob(function (b) { ok(new File([b], "prepub-" + D1 + "-" + String(n + 1).padStart(2, "0") + ".jpg", { type: "image/jpeg" })); }, "image/jpeg", .92); }); }
+
+  $("#ls").addEventListener("change", function (e) { var i = e.target; if (!i.dataset.k) return; var r = REG[i.dataset.k] = REG[i.dataset.k] || {}; r[i.dataset.r] = i.checked; sauver(); construire(); });
+  $("#cp").onclick = function () { navigator.clipboard.writeText($("#tx").value).then(function () { $("#cp").textContent = "Copié"; setTimeout(function () { $("#cp").textContent = "Copier"; }, 1500); }); };
+  // Téléchargement : sur téléphone, le menu de partage (Enregistrer les images, ou X directement) ; sinon un fichier par image.
+  $("#dl").onclick = function () {
+    if (!SLIDES.length) return; var b = $("#dl"); b.disabled = true; $("#msg").textContent = "Préparation…";
+    Promise.all(SLIDES.map(fichier)).then(function (files) {
+      var tel = /iPhone|iPad|Android/i.test(navigator.userAgent);
+      if (tel && navigator.canShare && navigator.canShare({ files: files })) {
+        $("#msg").innerHTML = "";
+        var go = document.createElement("button"); go.className = "main"; go.textContent = "Enregistrer les " + files.length + " images"; go.onclick = function () { navigator.share({ files: files }).catch(function () {}); }; $("#msg").appendChild(go);
+        // Le menu de partage ne propose pas toujours X au-delà de 4 images : lots de 4 en secours.
+        if (files.length > 4) for (var k = 0; k < files.length; k += 4) (function (lot, de) { var x = document.createElement("button"); x.style.cssText = "background:#000;border:1px solid #444"; x.textContent = "Pour X : " + (de + 1) + (lot.length > 1 ? " à " + (de + lot.length) : ""); x.onclick = function () { navigator.share({ files: lot }).catch(function () {}); }; $("#msg").appendChild(x); })(files.slice(k, k + 4), k);
+        return;
+      }
+      files.forEach(function (f, i) { setTimeout(function () { var a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); }, i * 400); });
+      $("#msg").textContent = files.length + " images téléchargées.";
+    }).finally(function () { b.disabled = false; });
+  };
+
+  Promise.all([get("/api/prepub"), get("/api/biblio")]).then(function (r) {
+    DATA = (r[0] && r[0].items) || []; ((r[1] && r[1].items) || []).forEach(function (s) { BY[s.id] = s; });
+    construire();
+  });
+})();
+</script>
+</body>
+</html>
