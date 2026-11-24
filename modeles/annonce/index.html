@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Modèle · Annonce · FuryoGang</title>
+<!-- Modèle « Annonce » (Will, 24/11/2026) : piste « Soleil » retenue parmi les 8 maquettes (maquettes.html).
+     Pour une série annoncée, avant la news « Nouvelle série au Japon » du jour J. Premier usage : Kabukichō Bengoshi.
+     Visuel réseaux 1080 × 1440 (#r) et image de lien 1200 × 630 (#l). Tout passe par l'adresse :
+       visuel  : image officielle (page d'annonce, visuel couleur…), encadrée au centre du soleil
+       pos     : cadrage vertical du visuel en % (défaut 0 = haut)
+       titre   : nom de la série (romaji, capitales) · jp : titre japonais (rouge, sous le titre)
+       auteurs : « Shō Wakabayashi × Dai Suzuki » · mag : magazine (« Young Champion »)
+       jour    : date courte à gauche du soleil (« 08.12 ») · quand : date en clair pour le lien (« 8 décembre »)
+       kanji   : texte vertical à droite (défaut 新連載決定, « nouvelle série confirmée »)
+     Rendu : node render.js (Playwright) → reseaux.jpg et lien.jpg. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#333}
+.c{position:relative;overflow:hidden;color:#F2EFE9;margin:20px;font-family:I;background:linear-gradient(180deg,#141416,#1d1a1f 40%,#0c0c0e)}
+.bg{position:absolute;inset:-20px;background:center 30%/cover;filter:grayscale(1) blur(2px);opacity:.1}
+.sun{position:absolute;border-radius:50%;background:#BC002D}
+.pg{position:absolute;border:6px solid #fff;border-radius:6px;box-shadow:0 30px 70px rgba(0,0,0,.7);background:#111 center 0/cover}
+.vt{position:absolute;writing-mode:vertical-rl;font:900 70px/1 J;color:#fff;letter-spacing:.04em;transform:translateY(-50%)}
+.dl{position:absolute;transform:translateY(-50%);font:700 30px/1 A;color:#d9d6cf;text-transform:uppercase;letter-spacing:.06em}
+.dl b{display:block;font-size:98px;color:#F2EFE9;margin-top:6px;-webkit-text-stroke:2px #F2EFE9;letter-spacing:.01em}
+.date{display:inline-block;background:#D9480F;color:#fff;font:700 38px/1 A;padding:13px 24px;border-radius:8px;text-transform:uppercase;letter-spacing:.05em}
+.t{font:700 124px/1 A;text-transform:uppercase;letter-spacing:.005em}
+.jp{font:900 50px/1.1 J;color:#E5483A}
+.au{font:700 40px/1 A;text-transform:uppercase;color:#d9d6cf;letter-spacing:.02em}
+.logo{position:absolute;z-index:5}
+/* Réseaux */
+#r{width:1080px;height:1440px}
+#r .logo{top:34px;left:50%;transform:translateX(-50%);height:62px}
+#r .sun{width:820px;height:820px;left:130px;top:170px}
+#r .pg{width:500px;height:723px;left:290px;top:219px}
+#r .vt{right:46px;top:580px}
+#r .dl{left:34px;top:580px}
+#r .mid{position:absolute;left:0;right:0;top:990px;text-align:center}
+/* Lien */
+#l{width:1200px;height:630px}
+#l .bg{opacity:.16}
+#l .sun{width:560px;height:560px;right:60px;top:35px}
+#l .pg{width:300px;height:434px;right:190px;top:98px}
+#l .vt{right:16px;top:315px;font-size:44px}
+#l .logo{top:34px;left:64px;height:44px}
+#l .txt{position:absolute;left:64px;top:0;bottom:0;width:560px;display:flex;flex-direction:column;justify-content:center;padding-top:20px}
+#l .date{font-size:26px;align-self:flex-start;padding:10px 16px}
+#l .t{font-size:84px;margin-top:18px}
+#l .jp{font-size:34px;margin-top:8px}
+#l .au{font-size:28px;margin-top:12px}
+#l .q{font:700 34px/1 A;text-transform:uppercase;margin-top:22px}
+#l .q b{color:#F2C14E;font-weight:700}
+</style>
+</head>
+<body>
+<div class="c" id="r"><div class="bg" id="rbg"></div><div class="sun"></div><img class="logo" src="/img/social/logo-blanc.png" alt=""><div class="pg" id="rpg"></div>
+ <div class="dl">Début<b id="rj"></b></div><div class="vt" id="rk"></div>
+ <div class="mid"><span class="date" id="rd"></span><div class="t" id="rt" style="margin-top:22px"></div><div class="jp" id="rjp" style="margin-top:10px"></div><div class="au" id="ra" style="margin-top:14px"></div></div></div>
+<div class="c" id="l"><div class="bg" id="lbg"></div><div class="sun"></div><img class="logo" src="/img/social/logo-blanc.png" alt=""><div class="pg" id="lpg"></div><div class="vt" id="lk"></div>
+ <div class="txt"><span class="date" id="ld"></span><div class="t" id="lt"></div><div class="jp" id="ljp"></div><div class="au" id="la"></div><div class="q" id="lq"></div></div></div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), g = function (k, d) { return q.has(k) ? q.get(k) : (d || ""); };
+  var set = function (ids, v, html) { ids.forEach(function (id) { var e = document.getElementById(id); if (html) e.innerHTML = v; else e.textContent = v; }); };
+  var v = g("visuel"), pos = g("pos", "0"), mag = g("mag", "Young Champion");
+  ["rpg", "lpg"].forEach(function (id) { var e = document.getElementById(id); e.style.backgroundImage = "url('" + v + "')"; e.style.backgroundPosition = "center " + pos + "%"; });
+  ["rbg", "lbg"].forEach(function (id) { document.getElementById(id).style.backgroundImage = "url('" + (g("fond") || v) + "')"; });
+  set(["rt", "lt"], g("titre")); set(["rjp", "ljp"], g("jp")); set(["ra", "la"], g("auteurs")); set(["rj"], g("jour"));
+  set(["rk", "lk"], g("kanji", "新連載決定")); set(["rd", "ld"], "Annonce · " + mag);
+  document.getElementById("lq").innerHTML = "Début le <b>" + g("quand").replace(/[&<>]/g, "") + "</b>";
+  // Titre long : réduit pour tenir sur une ligne.
+  [["rt", 1000], ["lt", 560]].forEach(function (a) { var e = document.getElementById(a[0]), fs = parseFloat(getComputedStyle(e).fontSize); e.style.whiteSpace = "nowrap"; e.style.display = "inline-block"; e.style.alignSelf = "flex-start"; while (e.offsetWidth > a[1] && fs > 40) { fs -= 2; e.style.fontSize = fs + "px"; } e.style.display = "block"; e.style.alignSelf = ""; });
+  var im = new Image(); im.onload = function () { document.body.dataset.ok = 1; }; im.src = v;
+})();
+</script>
+</body>
+</html>
