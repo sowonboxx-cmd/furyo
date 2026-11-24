@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes 5 · Stories v2 · FuryoGang</title>
+<!-- Stories v2, 5e tour (Will, 24/11/2026) : prépub retenue = « Prépublication 連載 » + titre en haut, couverture,
+     chapitre (+ pages couleur) en bas. Plus de magazine (« trop, tout le monde s'en fout »). -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#333}
+.s{position:relative;overflow:hidden;width:1080px;height:1920px;margin:20px;display:inline-block;vertical-align:top;background:url(fonds/rouge.jpg) center/cover;font-family:I;color:#fff}
+.lab{display:none;position:absolute;top:0;left:20px;background:#fff;color:#000;font:800 26px I;padding:8px 14px;z-index:30;border-radius:0 0 10px 10px}
+.mz{position:absolute;left:0;top:0;width:1080px;height:1599px;overflow:hidden;background:#CB002F;z-index:1}
+.mz .g{position:absolute;left:-260px;top:-300px;width:1600px;display:grid;grid-template-columns:repeat(7,1fr);gap:18px;transform:rotate(-8deg);opacity:.34;mix-blend-mode:multiply}
+.mz .g i{display:block;aspect-ratio:7/10;background:center/cover;filter:grayscale(1) contrast(1.25) brightness(1.05)}
+.mz::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 45%,rgba(150,0,30,.55),transparent 75%),linear-gradient(180deg,transparent 60%,rgba(120,0,25,.65))}
+.cv{position:absolute;left:50%;transform:translateX(-50%);background:#111 center top/cover;z-index:3;border:8px solid #121214}
+.tx{position:absolute;left:50px;right:50px;text-align:center;z-index:4}
+.k{font:700 30px/1 I;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.tt{font:700 112px/1 A;text-transform:uppercase}
+.st{font:700 40px/1 A;text-transform:uppercase;letter-spacing:.04em;color:#F2EFE9;opacity:.9}
+.arc{font:italic 700 40px/1 A;letter-spacing:.04em;text-transform:uppercase;color:#fff}
+.row{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap}
+.ch{display:inline-flex;align-items:center;height:72px;padding:0 24px;background:#F2C14E;color:#121214;font:700 46px/1 A;text-transform:uppercase;letter-spacing:.03em;border-radius:10px}
+.ch span,.cb span{position:relative;top:-3px}
+.cb{display:inline-flex;align-items:center;height:72px;padding:0 22px;border:3px solid #fff;color:#fff;font:700 40px/1 A;text-transform:uppercase;letter-spacing:.03em;border-radius:10px;box-sizing:border-box}
+.eA{display:flex;align-items:center;justify-content:center;gap:24px;font:700 34px/1 A;letter-spacing:.32em;text-transform:uppercase}
+.eA::before,.eA::after{content:"";width:110px;height:2px;background:rgba(255,255,255,.85)}
+.eA b{font:900 30px/1 J;letter-spacing:.1em;color:#F2C14E;margin-left:-8px}
+.hautA{position:absolute;top:62px;left:0;right:0;z-index:4}
+/* B : titre en haut, sur une bande sombre légère pour qu'il ressorte au milieu des tomes */
+.hautB{position:absolute;top:60px;left:40px;right:40px;z-index:4;text-align:center}
+.hautB .tt{font-size:120px;margin-top:22px;text-shadow:0 6px 30px rgba(60,0,10,.6)}
+.hautB .st,.hautB .arc{margin-top:12px}
+/* Magazine sur le côté, à la verticale, centré sur la couverture */
+.mag{position:absolute;z-index:4;writing-mode:vertical-rl;font:700 30px/1 I;letter-spacing:.2em;text-transform:uppercase;color:#fff;white-space:nowrap;display:flex;align-items:center;gap:20px}
+.mag::before{content:"";width:2px;height:70px;background:#F2C14E}
+.mag.g{transform:rotate(180deg)}
+/* News plein cadre, sans fondu */
+.nf{position:absolute;left:0;top:80px;width:1080px;height:1440px;background:center top/cover;z-index:3}
+</style>
+</head>
+<body>
+<script>
+// Données des 5 séries du jour (couverture = dernier tome ; mosaïque = les autres tomes).
+var S = [
+  { f: "saigo-no-furyou", n: 11, c: 10, t: "Saigo no Furyō", m: "Tonari no Young Jump · En ligne", ch: "Chapitre 124" },
+  { f: "shiseido", n: 2, c: 0, t: "Shisei-dō", st: "~ Sankyōdai no Kizuna ~", m: "Young Champion · N°24", ch: "Chapitre 4", r: 1.449 },
+  { f: "amateur-vigilante", n: 9, c: 8, t: "Amateur Vigilante", m: "Young Magazine · N°52", ch: "Chapitre 92" },
+  { f: "the-fable-the-third-secret", n: 6, c: 0, t: "The Fable", st: "The third secret", m: "Young Magazine · N°52", ch: "Chapitre 64", cb: "Pages couleur" },
+  { f: "le-premier-amour-de-nezumi", n: 16, c: 10, t: "Nezumi no Hatsukoi", arc: "« En route vers l'arc final »", m: "Young Magazine · N°52", ch: "Chapitre 126" }
+];
+function img(f, i) { return "m/" + f + "-" + String(i).padStart(2, "0") + ".jpg"; }
+function mosaique(x) { var l = []; for (var i = 0; i < x.n; i++) if (i !== x.c || x.n === 1) l.push(i); if (x.f === "shiseido") l = [0, 1];
+  var h = '<div class="mz"><div class="g">'; for (var j = 0; j < 63; j++) h += '<i style="background-image:url(' + img(x.f, l[(j * 5 + (j / 7 | 0)) % l.length]) + ')"></i>'; return h + "</div></div>"; }
+function chap(x) { return '<div class="row"><span class="ch"><span>' + x.ch + "</span></span>" + (x.cb ? '<span class="cb"><span>' + x.cb + "</span></span>" : "") + "</div>"; }
+var H = "";
+["g"].forEach(function (cote) {
+S.forEach(function (x, i) {
+  // Titre en haut ; magazine sur le côté (g = gauche, d = droite) ; en bas seulement le chapitre (+ pages couleur).
+  H += '<div class="s B" data-r="' + (x.r || 1.42) + '" data-cote="' + cote + '"><span class="lab">' + (cote === "g" ? "G" : "D") + (i + 1) + ' · magazine à ' + (cote === "g" ? "gauche" : "droite") + '</span>' + mosaique(x) +
+    '<div class="hautB"><div class="eA">Prépublication <b>連載</b></div><div class="tt">' + x.t + "</div>" +
+    (x.st ? '<div class="st">' + x.st + "</div>" : "") + (x.arc ? '<div class="arc">' + x.arc + "</div>" : "") + "</div>" +
+    '<div class="cv" style="background-image:url(' + img(x.f, x.c) + ')"></div>' +
+    '<div class="tx bas">' + chap(x) + "</div></div>";
+});
+});
+document.write(H);
+</script>
+<script>
+document.fonts.ready.then(function () {
+// Titres longs : réduits jusqu'à 80 px, au-delà ils passent sur deux lignes.
+document.querySelectorAll(".tt").forEach(function (e) { var fs = parseFloat(getComputedStyle(e).fontSize); e.style.display = "inline-block"; e.style.whiteSpace = "nowrap"; while (e.offsetWidth > 980 && fs > 80) { fs -= 2; e.style.fontSize = fs + "px"; } e.style.display = "block"; if (e.scrollWidth > 980) e.style.whiteSpace = "normal"; });
+// Placement : bloc du bas posé à 44 px de la ligne jaune (y = 1600), couverture centrée dans l'espace restant.
+document.querySelectorAll(".s.A, .s.B").forEach(function (s) {
+  var bas = s.querySelector(".bas"), cv = s.querySelector(".cv"), r = +s.dataset.r;
+  bas.style.top = (1556 - bas.offsetHeight) + "px";
+  var haut = s.classList.contains("B") ? s.querySelector(".hautB") : s.querySelector(".hautA"), y0 = haut.offsetTop + haut.offsetHeight + 46, y1 = 1556 - bas.offsetHeight - 46;
+  var h = Math.min(y1 - y0, 1080 * r), w = Math.round(h / r);
+  if (w > 840) { w = 840; h = Math.round(w * r); }
+  cv.style.width = w + "px"; cv.style.height = h + "px"; cv.style.top = Math.round(y0 + (y1 - y0 - h) / 2) + "px";
+  var mg = s.querySelector(".mag"); if (mg) { var top = Math.round(y0 + (y1 - y0 - h) / 2), bord = Math.round((1080 - w - 16) / 2); mg.style.top = Math.round(top + (h + 16 - mg.offsetHeight) / 2) + "px"; if (mg.classList.contains("g")) mg.style.left = Math.round(bord / 2 - mg.offsetWidth / 2) + "px"; else mg.style.right = Math.round(bord / 2 - mg.offsetWidth / 2) + "px"; }
+});
+document.body.dataset.ok = 1;
+});
+</script>
+</body>
+</html>
