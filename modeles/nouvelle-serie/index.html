@@ -14,6 +14,7 @@
        visuel    : image officielle encadrée (page d'ouverture, planche couleur, couverture)
        fond      : image de fond du visuel réseaux (passée en noir et blanc, faible opacité)
        fondLien  : image de fond de l'image de lien (une planche en noir et blanc), sinon « fond »
+     couv / haut : hauteur max et position du visuel encadré (défauts 760 et 300)
      pastille  : couleur de la pastille « Nouvelle série au Japon » (défaut #FF7369) · kcouleur : couleur du grand kanji
      Rendu : node render.js (Playwright) → reseaux.jpg et lien.jpg dans le dossier courant. -->
 <style>
@@ -63,7 +64,9 @@ html,body{margin:0;background:#333}
   document.getElementById("rbg").style.backgroundImage = "url('" + g("fond") + "')";
   document.getElementById("lbg").style.backgroundImage = "url('" + (g("fondLien") || g("fond")) + "')";
   // Titre long : on réduit pour tenir sur une ligne.
-  [["rt", 1000, 150], ["lt", 560, 112]].forEach(function (a) { var e = document.getElementById(a[0]), fs = a[2]; e.style.whiteSpace = "nowrap"; e.style.display = "inline-block"; while (e.offsetWidth > a[1] && fs > 60) { fs -= 4; e.style.fontSize = fs + "px"; } e.style.display = "block"; });
+  // Grande couverture : bloc titre un peu plus compact et plus bas.
+  if (+g("couv") > 760) { document.querySelector("#r .bas").style.bottom = "34px"; document.getElementById("rt").style.fontSize = "128px"; document.getElementById("rt").style.marginTop = "16px"; }
+  [["rt", 1000, +g("couv") > 760 ? 128 : 150], ["lt", 560, 112]].forEach(function (a) { var e = document.getElementById(a[0]), fs = a[2]; e.style.whiteSpace = "nowrap"; e.style.display = "inline-block"; while (e.offsetWidth > a[1] && fs > 60) { fs -= 4; e.style.fontSize = fs + "px"; } e.style.display = "block"; });
   // Visuel encadré : on garde ses proportions (portrait ou paysage) dans la place disponible.
   function poser(id, maxW, maxH, top) {
     var im = document.getElementById(id); im.onload = function () {
@@ -74,7 +77,8 @@ html,body{margin:0;background:#333}
       document.body.dataset.ok = (+document.body.dataset.ok || 0) + 1;
     }; im.src = g("visuel");
   }
-  poser("rvis", 960, 760, 300); poser("lvis", 450, 470, null);
+  // couv : hauteur max du visuel encadré (défaut 760, plus grand = la couverture flashe plus) ; haut : position du cadre (défaut 300).
+  poser("rvis", 960, +g("couv") || 760, +g("haut") || 300); poser("lvis", 450, 470, null);
 })();
 </script>
 </body>
