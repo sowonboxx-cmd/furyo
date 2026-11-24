@@ -9,6 +9,9 @@
   var CSS = [
     '.oga{width:1200px;height:630px;position:relative;overflow:hidden;background:#000;font-family:"FGInter",sans-serif;line-height:normal;letter-spacing:normal;text-align:left;color:#fff}',
     '.oga *{box-sizing:border-box}',
+    // Fond habillé (Will, 24/11/2026) : l'image de la news en noir et blanc, en fondu, au lieu d'un noir plein.
+    '.oga .oga-bg{position:absolute;inset:-30px;background-size:cover;background-position:center 30%;filter:grayscale(1) blur(1.5px);opacity:.38}',
+    '.oga .oga-sh{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.78) 45%,rgba(0,0,0,.35) 100%)}',
     '.oga .oga-glow{position:absolute;right:-120px;top:50%;transform:translateY(-50%);width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.10),rgba(255,255,255,0) 62%)}',
     '.oga .oga-cover{position:absolute;right:74px;top:50%;height:548px;transform:translateY(-50%) rotate(2.4deg);border:9px solid #fff;border-radius:6px;box-shadow:0 30px 72px rgba(0,0,0,.65);object-fit:cover;background:#222;z-index:2}',
     '.oga .oga-left{position:absolute;left:64px;top:50%;transform:translateY(-50%);width:600px;z-index:3}',
@@ -63,6 +66,7 @@
     // Carte épurée (Will, 27/10/2026) : la catégorie et le nom de la série seulement — ni date, ni accroche (déjà dans l'article).
     var badge = String(d.cat || "News").toUpperCase();
     return '<div class="oga">' +
+      (cover ? '<div class="oga-bg" style="background-image:url(\'' + cover + '\')"></div><div class="oga-sh"></div>' : '') +
       '<div class="oga-glow"></div>' +
       (cover ? '<img class="oga-cover" src="' + cover + '" alt="">' : '') +
       '<div class="oga-left">' +
