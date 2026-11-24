@@ -1,0 +1,62 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rejoins le gang · FuryoGang</title>
+<meta name="description" content="Inscription gratuite en un clic avec Google : actus, fiches séries, calendrier des sorties, ta bibliothèque de mangas et la communauté FuryoGang.">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=7">
+<!-- Page « Rejoins le gang » (Will, 24/11/2026, maquette A) : lien à mettre en story, en bio, dans les posts.
+     Le bouton mène droit à l'écran Google ; dans le navigateur d'une appli (Instagram…), functions/rejoindre.js affiche l'aide. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700;font-display:swap}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900;font-display:swap}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#0c0c0e;color:#f3f3f5;font:500 15px/1.45 I,system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:18px 22px;z-index:5}.top img{height:30px;display:block}.top a{font:700 13px I;color:#cfcfd4}
+.A{position:relative;min-height:100vh;overflow:hidden}
+.im{position:absolute;inset:0 0 auto 0;height:46vh;background:url(/img/qp/qp.webp) 60% 18%/cover no-repeat;filter:grayscale(1)}
+.im:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.15),rgba(12,12,14,.55) 60%,#0c0c0e)}
+.c{position:relative;z-index:2;padding:31vh 20px 0;display:flex;flex-direction:column;gap:14px;max-width:520px}
+.kick{font:800 12px I;letter-spacing:.16em;text-transform:uppercase;color:#ff5a7a}
+h1{font:700 58px/.9 A;text-transform:uppercase;margin:0 0 10px}h1 em{font-style:normal;color:#ff2a55}
+.ls{list-style:none;margin:0;padding:0;display:grid;gap:10px}.ls li{display:flex;gap:11px;align-items:center;font-size:14.5px;color:#e6e6ea}
+.ls svg{width:18px;height:18px;flex:none;color:#3ecf8e}
+.fond{font:600 13.5px I;color:#c9c9cf;display:flex;align-items:center;gap:9px;white-space:nowrap}.fond svg{width:30px;height:30px;flex:none}.fond b{color:#F2C14E}
+.go{display:flex;align-items:center;justify-content:center;gap:10px;height:56px;border-radius:14px;background:#fff;color:#111;font:800 16px I;width:100%}
+.go svg{width:20px;height:20px}
+.tease{display:flex;gap:10px}.tease a{flex:1;border-radius:14px;padding:11px 13px;background:#16161a}
+.tease b{display:block;font:700 18px/1 A;text-transform:uppercase;margin-bottom:4px}.tease small{display:block;color:#9a9aa2;font-size:12px;line-height:1.35}
+.tease .p b{color:#ff5a7a}.tease .pp b{color:#F2B33D}
+.app{margin:-4px 0 0;font-size:13px;color:#F2C14E;line-height:1.4}.app b{color:#fff}
+.duo{position:relative;z-index:1;display:block;height:300px;margin:8px auto 0}
+@media(min-width:900px){.im{inset:0 0 0 auto;width:58%;height:100%}.im:after{background:linear-gradient(90deg,#0c0c0e,rgba(12,12,14,.3) 40%,rgba(12,12,14,.1))}
+.c{padding:120px 0 40px 80px;max-width:560px}h1{font-size:96px}.duo{position:absolute;left:600px;bottom:0;height:300px;margin:0}}
+</style></head><body>
+<div class="top"><a href="/" aria-label="FuryoGang"><img src="/img/social/logo-blanc.png" alt="FuryoGang"></a><a href="/">Le site →</a></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="g" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6c1.9-5.6 7.1-9.8 13.5-9.8z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.3-4.6 7l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.4 0-11.6-4.2-13.5-9.8l-7.8 6C6.6 42.6 14.6 48 24 48z"/></symbol>
+<symbol id="ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="cr" viewBox="0 0 64 64"><path d="M8 26l12 9 12-19 12 19 12-9-4 25H12z" fill="#FFC928"/><path d="M32 16l12 19 12-9-4 25H32z" fill="#F5B21C"/><circle cx="8" cy="25" r="3.6" fill="#FFC928"/><circle cx="56" cy="25" r="3.6" fill="#F5B21C"/><circle cx="32" cy="14" r="3.8" fill="#FFC928"/><path d="M32 30l5 7-5 7-5-7z" fill="#7B3FA0"/><rect x="11" y="48" width="42" height="9" rx="2" fill="#F08A24"/></symbol>
+</defs></svg>
+<main class="A"><div class="im"></div><div class="c">
+<span class="kick">Gratuit · en un clic</span><h1>Rejoins<br>le <em>gang</em></h1>
+<ul class="ls"><li><svg><use href="#ok"/></svg>Actus, fiches séries, calendrier des sorties, Au Japon</li><li><svg><use href="#ok"/></svg>Ta bibliothèque de mangas, sans limite</li><li><svg><use href="#ok"/></svg>Ton profil, tes badges, la communauté</li></ul>
+<div class="fond" id="fond" hidden><svg><use href="#cr"/></svg><span>Plus que <b id="np">11 places</b> : badge Fondateur</span></div>
+<a class="go" id="go" href="/api/auth/google?r=%2Fprofil%2F"><svg><use href="#g"/></svg>S'inscrire avec Google</a>
+<p class="app" id="app" hidden>Google bloque la connexion dans l'appli. Touche <b>···</b> en haut à droite, puis <b>« Ouvrir dans le navigateur »</b>.</p>
+<div class="tease"><a class="p" href="/premium/"><b>Premium</b><small>Stats de lecture, listes, classements complets</small></a><a class="pp" href="/premium/#dons"><b>Premium +</b><small>Interviews en avant-première, concours figurines</small></a></div>
+</div><img class="duo" src="/img/don/duo.webp" alt=""></main>
+<script>
+// Navigateur intégré d'une appli (Instagram, TikTok, X…) : Google y refuse la connexion.
+// Android : le bouton ouvre la page dans Chrome. iPhone : on explique « ··· > Ouvrir dans le navigateur ».
+(function () {
+  var ua = navigator.userAgent || "";
+  if (!/Instagram|FBAN|FBAV|FB_IAB|Messenger|TikTok|musical_ly|Bytedance|Twitter|Snapchat|Line\/|Pinterest|LinkedInApp/i.test(ua)) return;
+  var go = document.getElementById("go");
+  if (/Android/i.test(ua)) { go.href = "intent://" + location.host + "/rejoindre/#Intent;scheme=https;package=com.android.chrome;end"; go.lastChild.textContent = "Ouvrir dans Chrome pour s'inscrire"; }
+  else { document.getElementById("app").hidden = false; go.addEventListener("click", function (e) { e.preventDefault(); document.getElementById("app").style.color = "#fff"; }); }
+})();
+// Places restantes parmi les 100 premiers (compteur public des membres).
+fetch("/api/membres").then(function (r) { return r.json(); }).then(function (j) {
+  var n = 100 - (+j.total || 0); if (n > 0) { document.getElementById("np").textContent = n + (n > 1 ? " places" : " place"); document.getElementById("fond").hidden = false; }
+}).catch(function () {});
+</script>
+</body></html>
