@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=7">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prépublication de la semaine · FuryoGang</title>
+<meta name="description" content="Tous les chapitres de nos séries furyō, yakuza et crime qui sortent cette semaine dans les magazines japonais : jour par jour ou magazine par magazine, avec les pages couleur, les retours et les absences.">
+<meta name="theme-color" content="#0c0c0e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@700;900&display=swap">
+<!-- « Prépublication de la semaine » (Will, 24/11/2026) : toujours la même adresse, /prepub/. Le contenu change chaque semaine :
+     du lundi au dimanche, et dès le dimanche la page passe à la semaine qui vient (post réseaux du dimanche).
+     Données : /api/prepub (base Prépublication, lignes validées) et /api/biblio (images et fiches des séries).
+     ?du=AAAA-MM-JJ affiche la semaine qui contient ce jour (pour revoir une semaine passée). -->
+<style>
+:root{--bg:#0c0c0e;--bg2:#17171a;--bg3:#1f1f24;--line:#262630;--cr:#F2EFE9;--mut:#9a968f;--red:#BC002D;--y:#F2C14E;--g:#4DAB9A;
+ --fd:"Antonio","Arial Narrow",Impact,sans-serif;--fb:"Inter","Noto Sans JP",system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden}
+body{background:var(--bg);color:var(--cr);font-family:var(--fb);font-weight:500;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{padding:24px 16px 60px;max-width:1120px;margin:0 auto}
+@media(min-width:900px){.wrap{padding:44px 40px 80px}}
+.kick{font:700 14px/1 var(--fd);letter-spacing:.12em;text-transform:uppercase;color:#E5483A}
+.h1{font:700 44px/1 var(--fd);text-transform:uppercase;margin-top:8px}
+.h1 em{font-style:normal;color:var(--y)}
+.sub{color:var(--mut);font-size:15px;margin-top:10px;line-height:1.45;max-width:640px}
+@media(min-width:900px){.h1{font-size:72px}.sub{font-size:17px}}
+.stats{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.stats span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:600 13px var(--fb)}
+.stats b{font:700 16px var(--fd);margin-right:4px}
+.h2{font:700 22px/1 var(--fd);text-transform:uppercase;letter-spacing:.02em;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+.h2::after{content:"";flex:1;height:1px;background:var(--line)}
+/* À retenir */
+.hl{display:grid;gap:12px}
+@media(min-width:900px){.hl{grid-template-columns:repeat(3,1fr)}}
+.hc{position:relative;border-radius:14px;overflow:hidden;background:var(--bg2);min-height:190px;display:flex;align-items:flex-end}
+.hc .bg{position:absolute;inset:0;background:center 12%/cover}
+.hc .hsh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.05),rgba(12,12,14,.55) 45%,rgba(12,12,14,.95))}
+.hc .tx{position:relative;z-index:2;padding:16px}
+.hc h3{font:700 26px/1.02 var(--fd);text-transform:uppercase;margin-top:9px}
+.hc p{font-size:13.5px;line-height:1.4;color:#d7d4ce;margin-top:6px}
+.tag{display:inline-block;font:800 11px/1 var(--fb);text-transform:uppercase;letter-spacing:.04em;padding:6px 9px;border-radius:7px;color:#fff;background:var(--g);margin:0 4px 4px 0}
+.tag.r{background:#E5483A}.tag.y{background:var(--y);color:#121214}.tag.gr{background:#3a3a42;color:#cfcfd4}
+/* Bascule */
+.sw{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px;margin:-2px 0 8px}
+.sw button{appearance:none;border:0;background:transparent;color:var(--mut);font:700 13.5px var(--fb);padding:9px 14px;border-radius:9px;cursor:pointer}
+.sw button.on{background:var(--cr);color:#121214}
+/* Jour par jour */
+.day{margin-top:22px}
+.day h4{font:700 15px/1 var(--fd);text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px}
+.day h4 b{color:var(--cr);font-size:20px;margin-right:6px}
+.rows{display:grid;gap:8px}
+@media(min-width:900px){.rows{grid-template-columns:1fr 1fr}}
+.row{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:8px 12px 8px 8px;transition:border-color .15s}
+a.row:hover{border-color:#4a4a52}
+.row img,.row .ph{width:54px;height:72px;object-fit:cover;object-position:top;border-radius:7px;background:var(--bg3)}
+.row>div{min-width:0}
+.row .t{font:700 19px/1.05 var(--fd);text-transform:uppercase;overflow-wrap:anywhere}
+.row .mg{font-size:12.5px;color:var(--mut);margin-top:4px;line-height:1.3}
+.row .mini{margin-top:6px}
+.row .ch{font:700 22px/1 var(--fd);text-align:right;white-space:nowrap}
+.row .ch small{display:block;font:600 10px var(--fb);color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.ph{display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#2a2a31,#17171a);color:#6c6c74;font:700 22px var(--fd);text-transform:uppercase}
+/* Magazine par magazine */
+.mags{display:grid;gap:14px}
+@media(min-width:900px){.mags{grid-template-columns:1fr 1fr}}
+.mag{background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.mag .top{display:grid;grid-template-columns:84px 1fr;gap:14px;padding:14px;align-items:center;border-bottom:1px solid var(--line)}
+.mag .top img,.mag .top .ph{width:84px;height:112px;object-fit:cover;border-radius:6px;background:var(--bg3)}
+.mag .top .ph{font:900 34px "Noto Sans JP",sans-serif}
+.mag .dt{font:700 13px/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;color:#E5483A}
+.mag .nm{font:700 26px/1.02 var(--fd);text-transform:uppercase;margin-top:6px}
+.mag .lk{font-size:12.5px;color:var(--mut);margin-top:7px}
+.mag .lk a{color:var(--cr);border-bottom:1px solid #4a4a52}
+.ser{display:flex;gap:10px;padding:12px 14px 14px;overflow-x:auto;scrollbar-width:thin}
+.sc{flex:none;width:92px}
+.sc .im{position:relative;width:92px;height:122px;border-radius:8px;overflow:hidden;background:var(--bg3)}
+.sc .im img,.sc .im .ph{width:100%;height:100%;object-fit:cover;object-position:top}
+.sc .im .ph{font-size:30px}
+.sc .im .n{position:absolute;left:0;right:0;bottom:0;padding:16px 6px 5px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9));font:700 16px/1 var(--fd);text-align:center}
+.sc .im .tg{position:absolute;top:5px;left:5px}
+.sc .im .tg .tag{font-size:9px;padding:4px 6px}
+.sc .nm2{font:700 13.5px/1.08 var(--fd);text-transform:uppercase;margin-top:6px}
+.sc.off .im img{filter:grayscale(1);opacity:.35}
+.sc.off .im .n{color:var(--mut);font-size:13px}
+/* Absentes */
+.pz{display:flex;flex-wrap:wrap;gap:6px}
+.pz span,.pz a{border:1px dashed #3a3a42;color:var(--mut);border-radius:999px;padding:6px 11px;font:600 12.5px var(--fb)}
+.vide{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:22px;color:var(--mut);margin-top:24px;line-height:1.5}
+.foot{margin-top:34px;padding:16px;border:1px solid var(--line);border-radius:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.foot p{font-size:13.5px;color:var(--mut);line-height:1.4}
+.btn{display:inline-block;background:var(--cr);color:#121214;font:800 13px var(--fb);padding:10px 14px;border-radius:10px}
+.btn.o{background:transparent;color:var(--cr);border:1px solid #4a4a52}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<script src="/site/header.js?v=94"></script>
+<main class="wrap" id="root"><div class="kick">Prépublication de la semaine</div><h1 class="h1">Chargement</h1></main>
+<script>
+(function () {
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var cv = function (u, w) { return u ? (/^https?:/.test(u) ? "/api/couv?u=" + encodeURIComponent(u) + "&w=" + w : u) : ""; };
+  var JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  var iso = function (d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); };
+  var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
+  // Semaine affichée : lundi → dimanche. Le dimanche, on montre déjà la semaine qui vient.
+  var q = new URLSearchParams(location.search), base = /^\d{4}-\d{2}-\d{2}$/.test(q.get("du") || "") ? new Date(q.get("du") + "T12:00:00") : new Date();
+  if (!q.get("du") && base.getDay() === 0) base.setDate(base.getDate() + 1);
+  var lun = new Date(base); lun.setHours(12, 0, 0, 0); lun.setDate(lun.getDate() - ((lun.getDay() + 6) % 7));
+  var dim = new Date(lun); dim.setDate(dim.getDate() + 6);
+  var D1 = iso(lun), D7 = iso(dim);
+  var titre = lun.getMonth() === dim.getMonth() ? "Du " + lun.getDate() + " au " + dim.getDate() + " <em>" + MOIS[dim.getMonth()] + "</em>" : "Du " + lun.getDate() + " " + MOIS[lun.getMonth()] + " au " + dim.getDate() + " <em>" + MOIS[dim.getMonth()] + "</em>";
+  var jour = function (d) { var x = new Date(d + "T12:00:00"); return [JOURS[x.getDay()], x.getDate(), MOIS[x.getMonth()]]; };
+  // « Young King 2026年24号 » → « Young King n°24 » ; « Champion RED 2027年1月号 » → « Champion RED janvier 2027 ».
+  var magNom = function (x) {
+    var m = (x.entry.split(" · ")[1] || x.mag || "").replace(/\s*\(en ligne\)/, " en ligne");
+    m = m.replace(/(\d{4})年\s*(\d{1,2})月号/, function (_, a, b) { return MOIS[+b - 1] + " " + a; });
+    m = m.replace(/\s*\d{4}\s*年?\s*(?:No\.|第)?\s*([\d\/・]+)\s*号?/, function (_, n) { return " n°" + n.replace(/・/g, "-"); });
+    return m.replace(/第(\d+)号/, "n°$1").trim();
+  };
+  var nom = function (x) { return x.entry.split(" · ")[0]; };
+  var COUL = { "Couleur d'ouverture": "r", "Pages couleur": "r", "En couverture": "r", "Nouvel arc": "", "Nouvelle série": "", "Dernier chapitre": "y", "Chapitre spécial": "y", "Pause annoncée": "gr" };
+  var tagsDe = function (x) { var h = (x.hl || []).filter(function (t) { return t !== "Annonce"; }); if (!h.length && (x.hl || []).length) h = ["Annonce"]; return h; };
+  var tags = function (l, n) { return l.slice(0, n || 9).map(function (t) { return '<span class="tag ' + (COUL[t] == null ? "y" : COUL[t]) + '">' + esc(t) + "</span>"; }).join(""); };
+  // Première phrase de l'annonce, sans les notes de veille (traduction, sources).
+  var phrase = function (s) { s = String(s || "").split(/\s*(?:Traduction|À noter|Source)\s*:/)[0]; var m = s.match(/^.*?[.!?](?:\s|$)/); s = (m ? m[0] : s).trim(); return s.length > 170 ? s.slice(0, 167).replace(/\s+\S*$/, "") + "…" : s; };
+
+  Promise.all([get("/api/prepub"), get("/api/biblio")]).then(function (r) {
+    var BY = {}; ((r[1] && r[1].items) || []).forEach(function (s) { BY[s.id] = s; });
+    var ser = function (x) { return BY[String((x.series || [])[0] || "").replace(/-/g, "")] || {}; };
+    var href = function (x) { var s = ser(x); return s.slug ? (s.fiche ? "/series/" : "/ma-collection/") + s.slug : ""; };
+    var img = function (x, w, cls) { var s = ser(x), u = s.cover; var ini = nom(x).split(/[\s-]+/).filter(Boolean).slice(0, 2).map(function (m) { return m[0]; }).join(""); return u ? '<img src="' + esc(cv(u, w)) + '" alt="" loading="lazy">' : '<span class="ph' + (cls ? " " + cls : "") + '">' + esc(ini) + "</span>"; };
+    var all = ((r[0] && r[0].items) || []).filter(function (x) { return x.date >= D1 && x.date <= D7; });
+    var CH = all.filter(function (x) { return x.status !== "Pause"; }).sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : magNom(a) < magNom(b) ? -1 : 1; });
+    var PZ = all.filter(function (x) { return x.status === "Pause"; });
+    var HL = CH.filter(function (x) { return tagsDe(x).length; });
+    var nMag = {}; all.forEach(function (x) { nMag[magNom(x)] = 1; });
+    var root = document.getElementById("root");
+    var h = '<div class="kick">Prépublication de la semaine</div><h1 class="h1">' + titre + "</h1>" +
+      '<p class="sub">Tous les chapitres de nos séries qui sortent cette semaine dans les magazines japonais. Mis à jour chaque dimanche.</p>';
+    if (!all.length) { root.innerHTML = h + '<div class="vide">Le programme de la semaine arrive bientôt : les sommaires des magazines ne sont pas encore tous sortis.</div>' + foot(); return; }
+    h += '<div class="stats"><span><b>' + CH.length + "</b>chapitre" + (CH.length > 1 ? "s" : "") + "</span><span><b>" + Object.keys(nMag).length + "</b>magazines</span>" + (PZ.length ? "<span><b>" + PZ.length + "</b>absente" + (PZ.length > 1 ? "s" : "") + "</span>" : "") + "</div>";
+    if (HL.length) h += '<h2 class="h2">À retenir</h2><div class="hl">' + HL.slice(0, 6).map(function (x) {
+      var s = ser(x), u = s.cover || x.cover, lk = href(x);
+      return "<" + (lk ? 'a href="' + esc(lk) + '"' : "div") + ' class="hc"><div class="bg" style="background-image:url(\'' + esc(cv(u, 700)) + '\')"></div><div class="hsh"></div><div class="tx">' + tags(tagsDe(x), 2) + "<h3>" + esc(nom(x)) + "</h3>" + (x.note ? "<p>" + esc(phrase(x.note)) + "</p>" : "") + "</div></" + (lk ? "a" : "div") + ">";
+    }).join("") + "</div>";
+    h += '<h2 class="h2">Les chapitres</h2><div class="sw" role="tablist"><button type="button" data-v="j" class="on">Par jour de sortie</button><button type="button" data-v="m">Par magazine</button></div>';
+    // Jour par jour
+    var jours = {}; CH.forEach(function (x) { (jours[x.date] = jours[x.date] || []).push(x); });
+    h += '<div id="vj">' + Object.keys(jours).sort().map(function (d) {
+      var j = jour(d);
+      return '<div class="day"><h4><b>' + j[0] + " " + j[1] + "</b>" + j[2] + '</h4><div class="rows">' + jours[d].map(function (x) {
+        var lk = href(x), t = tagsDe(x);
+        return "<" + (lk ? 'a href="' + esc(lk) + '"' : "div") + ' class="row">' + img(x, 160) + '<div><div class="t">' + esc(nom(x)) + '</div><div class="mg">' + esc(magNom(x)) + "</div>" + (t.length ? '<div class="mini">' + tags(t, 3) + "</div>" : "") + '</div><div class="ch"><small>Chapitre</small>' + (x.ch != null ? Math.floor(x.ch) : "—") + "</div></" + (lk ? "a" : "div") + ">";
+      }).join("") + "</div></div>";
+    }).join("") + "</div>";
+    // Magazine par magazine
+    var mags = {}, ordre = []; all.slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; }).forEach(function (x) { var k = magNom(x); if (!mags[k]) { mags[k] = []; ordre.push(k); } mags[k].push(x); });
+    h += '<div id="vm" hidden><div class="mags">' + ordre.map(function (k) {
+      var l = mags[k], c = l.filter(function (x) { return x.status !== "Pause"; }), p = l.filter(function (x) { return x.status === "Pause"; }), x0 = l[0], j = jour(x0.date);
+      return '<div class="mag"><div class="top">' + (x0.cover ? '<img src="' + esc(cv(x0.cover, 220)) + '" alt="" loading="lazy">' : '<span class="ph">誌</span>') + '<div><div class="dt">' + j[0] + " " + j[1] + " " + j[2] + '</div><div class="nm">' + esc(k) + '</div><div class="lk"><a href="/japon/#numeros">Voir le magazine</a> · ' + c.length + " chapitre" + (c.length > 1 ? "s" : "") + (p.length ? " · " + p.length + " absente" + (p.length > 1 ? "s" : "") : "") + "</div></div></div>" +
+        '<div class="ser">' + c.map(function (x) { var lk = href(x), t = tagsDe(x); return "<" + (lk ? 'a href="' + esc(lk) + '"' : "div") + ' class="sc"><div class="im">' + img(x, 200) + (t.length ? '<div class="tg">' + tags(t, 1) + "</div>" : "") + '<div class="n">' + (x.ch != null ? "Ch. " + Math.floor(x.ch) : "Nouveau ch.") + '</div></div><div class="nm2">' + esc(nom(x)) + "</div></" + (lk ? "a" : "div") + ">"; }).join("") +
+        p.map(function (x) { var lk = href(x); return "<" + (lk ? 'a href="' + esc(lk) + '"' : "div") + ' class="sc off"><div class="im">' + img(x, 200) + '<div class="n">Absente</div></div><div class="nm2">' + esc(nom(x)) + "</div></" + (lk ? "a" : "div") + ">"; }).join("") + "</div></div>";
+    }).join("") + "</div></div>";
+    if (PZ.length) h += '<div id="pzb"><h2 class="h2">Absentes cette semaine</h2><div class="pz">' + PZ.map(function (x) { var lk = href(x); return "<" + (lk ? 'a href="' + esc(lk) + '"' : "span") + ">" + esc(nom(x)) + "</" + (lk ? "a" : "span") + ">"; }).join("") + "</div></div>";
+    root.innerHTML = h + foot();
+    // Bascule « Par jour de sortie » (par défaut) / « Par magazine », retenue sur l'appareil.
+    var vue = "j"; try { vue = localStorage.getItem("fg:prepub-vue") || "j"; } catch (e) {}
+    var poser = function (v) {
+      vue = v; [].forEach.call(root.querySelectorAll(".sw button"), function (b) { b.classList.toggle("on", b.dataset.v === v); b.setAttribute("aria-selected", b.dataset.v === v); });
+      document.getElementById("vj").hidden = v !== "j"; document.getElementById("vm").hidden = v !== "m";
+      var pz = document.getElementById("pzb"); if (pz) pz.hidden = v === "m";
+      try { localStorage.setItem("fg:prepub-vue", v); } catch (e) {}
+    };
+    root.querySelector(".sw").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) poser(b.dataset.v); });
+    poser(vue === "m" ? "m" : "j");
+  });
+  function foot() { return '<div class="foot"><p>Le programme de la semaine suivante arrive chaque dimanche.<br>Tous les magazines et nos séries, numéro après numéro, sont sur la page Au Japon.</p><span><a class="btn o" href="/japon/">Au Japon</a> <a class="btn" href="/calendrier/#japon">Sorties au Japon</a></span></div>'; }
+})();
+</script>
+</body>
+</html>
