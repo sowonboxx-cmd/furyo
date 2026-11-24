@@ -108,6 +108,18 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
 /* barre de planification */
 .plan{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;margin-top:14px;background:#141416;border:1px solid #2C2C2F;border-radius:18px;padding:12px 16px}
 .pl1{display:flex;align-items:center;gap:10px}.lb{font:700 11px I;letter-spacing:.1em;text-transform:uppercase;color:#8c8c93}
+.pkw{position:relative;display:flex;gap:8px;flex:1;min-width:0}
+.pk{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border:0;border-radius:12px;background:#26262c;color:#fff;font:700 18px A;letter-spacing:.02em;cursor:pointer;white-space:nowrap}
+.pk svg{flex:none;opacity:.8}.pk[aria-expanded="true"]{box-shadow:inset 0 0 0 2px #F2EFE9}
+.pkp{position:absolute;left:0;right:0;bottom:52px;z-index:50;background:#17171a;border:1px solid #2c2c33;border-radius:16px;padding:12px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.pkp button{appearance:none;border:0;background:#26262c;color:#fff;font:700 15px I;border-radius:10px;cursor:pointer;height:38px}
+.pkp button.on{background:#F2EFE9;color:#121214}.pkp button:disabled{opacity:.25;cursor:default}
+.pkq{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.pkm{display:flex;align-items:center;justify-content:space-between;margin:2px 0 8px}.pkm b{font:700 17px A;text-transform:uppercase;letter-spacing:.04em;color:#fff}.pkm button{width:38px;background:transparent;color:#fff;display:grid;place-items:center}
+.pkg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.pkg i{font:600 11px I;color:#8c8c93;text-align:center;font-style:normal;padding:2px 0}
+.pkg button{height:36px;font-size:14px;background:transparent}.pkg button.auj{box-shadow:inset 0 0 0 1.5px #E5483A}.pkg button.on{background:#F2EFE9}
+.pkl{font:700 11px I;letter-spacing:.08em;text-transform:uppercase;color:#8c8c93;margin:2px 0 6px}
+.pkh{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:10px}.pkn{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .pin{background:#26262c;border:0;border-radius:11px;padding:8px 12px;color:#fff;font:700 18px A;color-scheme:dark}.pin[type=time]{font-size:22px}
 .pl2{display:flex;gap:7px;flex-wrap:wrap}.nt{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:11px;background:#1f1f25;font:700 12.5px I;box-shadow:inset 0 0 0 1.5px #2A6FD0}.nt svg{width:15px;height:15px}.nt small{font:700 11px I;color:#9CC3FF}
 .pl3{display:flex;gap:8px}.bt2{height:auto!important;padding:8px 14px!important;display:flex!important;flex-direction:column;align-items:center;gap:2px;line-height:1.15}.bt2 b{font:700 13.5px I}.bt2 small{font:500 10.5px I;opacity:.75;white-space:nowrap}.btn{height:44px;padding:0 16px;border-radius:22px;border:0;display:grid;place-items:center;font:700 13.5px I;white-space:nowrap;color:#fff;background:#26262c}.btn.gh{background:none;color:#8c8c93}.btn.pri{background:#2A6FD0}.btn.vert{background:#2E7D4F}/* « Planifier à la une » en vert, « À la une » en bleu (Will, 24/11/2026) */.btn:disabled{opacity:.5}
@@ -200,6 +212,8 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   var imgSite = function () { var m = [D.image, N.imageChoisie].filter(Boolean)[0]; if (N && (N.cat === "extrait" || N.cat2 === "extrait")) return m || carteNews(); return m || N.image || couvSoc(); };
   var accroche = function () { return D.accroche != null ? D.accroche : (N.accroche || ""); };
   var heure = function () { return D.heure || "13:00"; };
+  // Date par défaut : aujourd'hui (Will, 24/11/2026 : il programme le plus souvent pour le jour même).
+  var auj = function () { return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date()); };
   var demain = function () { var d = new Date(Date.now() + 864e5); return new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(d); };
 
   // Icônes dessinées (pas d'emoji), pour que les aperçus ressemblent aux vraies applis (Will, 27/10/2026).
@@ -307,7 +321,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   function sk() { return '<span class="sk" style="color:' + col() + '"><i style="background:' + col() + '"></i>' + esc(N.label || "News") + '</span>'; }
   function estExtrait2() { return N && (N.cat === "extrait" || N.cat2 === "extrait"); }
   function chapN() { var m = String([titre(), accroche(), D.site].join(" ")).match(/chapitre\s+(\d+)/i); return m ? m[1] : "1"; }
-  function dateLongue() { var d = N.enLigne && (N.publie || N.cree) ? new Date(N.publie || N.cree) : new Date((D.jour || demain()) + "T12:00:00"); var x = d; return isNaN(x) ? "" : x.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" }); }
+  function dateLongue() { var d = N.enLigne && (N.publie || N.cree) ? new Date(N.publie || N.cree) : new Date((D.jour || auj()) + "T12:00:00"); var x = d; return isNaN(x) ? "" : x.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" }); }
   // En-tête du vrai site sur téléphone : logo rond, menu, recherche, avatar.
   var MOI = { pic: "", n: 0 };
   function smHead() { return '<div class="smh2"><img src="' + AV + '"><nav><b>Actualités</b><span>Calendrier</span><span>Collection</span>' + SV(P.plus, { w: 17, sw: 2.6 }) + '</nav>' + (MOI.n ? '<em class="smn">' + (MOI.n > 99 ? "99+" : MOI.n) + '</em>' : '') + SV(P.loupe, { w: 21, sw: 2.4 }) + (MOI.pic ? '<img class="smav" src="' + esc(MOI.pic) + '" referrerpolicy="no-referrer">' : '<i></i>') + '</div>'; }
@@ -342,7 +356,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
   }
   function phone(k, scr, lab, ic, editable) { return '<button class="ph" data-v="' + k + '"><span class="phl">' + ic + lab + '<span class="ok">✓</span></span><span class="pf"><span class="pnotch"></span><span class="fit" data-w="390" style="display:block">' + scr + '</span></span>' + (editable ? '<span class="ed2"><span class="ed">Modifier</span>' + (k !== "site" ? '<span class="sw" data-copy="' + k + '" role="button">' + SV(P.copier, { w: 14, sw: 2.2 }) + 'Copier</span><span class="sw" data-dl="' + k + '" role="button">' + SV(P.dl, { w: 14, sw: 2.2 }) + 'Image</span>' : '') + '</span>' : '') + '</button>'; }
   function browser(k) { return '<button class="ph web" data-v="' + k + '"><span class="phl">' + IC.web + 'Site · ordinateur<span class="ok">✓</span></span><span class="bw"><span class="bwb"><i></i><i></i><i></i><span>furyogang.com/actus/…</span></span><span class="bwin" style="display:block"><span class="fit" data-w="1280" style="display:block">' + scrWeb() + '</span></span></span><span class="ed">Modifier</span></button>'; }
-  function jourTxt() { var d = D.jour || demain(); var x = new Date(d + "T12:00:00"); return x.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }); }
+  function jourTxt() { var d = D.jour || auj(); var x = new Date(d + "T12:00:00"); return x.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }); }
 
   /* ---------- écrans ---------- */
   // Liens utiles en haut du studio (Will, 27/10/2026) : la news en ligne (ouvrir / copier le lien), sources, lecture d'essai, Notion.
@@ -398,9 +412,33 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     });
   }
   function bt(act, cls, t, sub) { return '<button class="btn bt2 ' + cls + '" data-act="' + act + '"><b>' + t + '</b><small>' + sub + '</small></button>'; }
+  // Sélecteur jour et heure maison (Will, 24/11/2026) : à la place du calendrier et de l'horloge du navigateur, jugés « old school ».
+  // Jour : Aujourd'hui / Demain + calendrier du mois ; heure : 7 h à 23 h puis 00, 15, 30, 45. Les champs cachés #pj et #ph gardent la valeur.
+  var PK = "", PKM = "";
+  var MOISL = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  function jourLib(v) { if (v === auj()) return "Aujourd'hui"; if (v === demain()) return "Demain"; var x = new Date(v + "T12:00:00"); return x.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" }); }
+  function choixDate() {
+    var J = D.jour || auj(), H = heure();
+    var h = '<input type="hidden" id="pj" value="' + esc(J) + '"><input type="hidden" id="ph" value="' + esc(H) + '"><div class="pkw">' +
+      '<button type="button" class="pk" data-pk="jour" aria-expanded="' + (PK === "jour") + '"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>' + esc(jourLib(J)) + '</button>' +
+      '<button type="button" class="pk" data-pk="heure" aria-expanded="' + (PK === "heure") + '"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>' + esc(H.replace(":", " h ").replace(/ h 00$/, " h")) + '</button>';
+    if (PK === "jour") {
+      var m = PKM || J.slice(0, 7), y = +m.slice(0, 4), mo = +m.slice(5, 7) - 1, d1 = new Date(y, mo, 1), dec = (d1.getDay() + 6) % 7, nb = new Date(y, mo + 1, 0).getDate(), a = auj();
+      var cases = ""; for (var i = 0; i < dec; i++) cases += "<span></span>";
+      for (var k = 1; k <= nb; k++) { var v = y + "-" + ("0" + (mo + 1)).slice(-2) + "-" + ("0" + k).slice(-2); cases += '<button type="button" data-pkj="' + v + '"' + (v < a ? " disabled" : "") + ' class="' + (v === J ? "on" : "") + (v === a ? " auj" : "") + '">' + k + "</button>"; }
+      h += '<div class="pkp"><div class="pkq"><button type="button" data-pkj="' + a + '" class="' + (J === a ? "on" : "") + '">Aujourd\'hui</button><button type="button" data-pkj="' + demain() + '" class="' + (J === demain() ? "on" : "") + '">Demain</button></div>' +
+        '<div class="pkm"><button type="button" data-pkm="-1" aria-label="Mois précédent"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button><b>' + MOISL[mo] + " " + y + '</b><button type="button" data-pkm="1" aria-label="Mois suivant"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button></div>' +
+        '<div class="pkg"><i>L</i><i>M</i><i>M</i><i>J</i><i>V</i><i>S</i><i>D</i>' + cases + "</div></div>";
+    }
+    if (PK === "heure") {
+      var hs = ""; for (var t = 7; t <= 23; t++) { var hh = ("0" + t).slice(-2); hs += '<button type="button" data-pkh="' + hh + '" class="' + (H.slice(0, 2) === hh ? "on" : "") + '">' + t + " h</button>"; }
+      h += '<div class="pkp"><div class="pkl">Heure</div><div class="pkh">' + hs + '</div><div class="pkl">Minutes</div><div class="pkn">' + ["00", "15", "30", "45"].map(function (n) { return '<button type="button" data-pkn="' + n + '" class="' + (H.slice(3) === n ? "on" : "") + '">' + n + "</button>"; }).join("") + "</div></div>";
+    }
+    return h + "</div>";
+  }
   function plan() {
     var resume = N.enLigne ? "En ligne · enregistrer, brève, retirer" : N.base === "prepub" ? "Magazines · mettre à jour, écarter" : "Publier · " + jourTxt() + " · " + heure();
-    return '<div class="plan' + (PLO ? " open" : "") + '"><button type="button" class="plt" data-pltog><span>' + esc(resume) + '</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button><div class="pl1"><span class="lb">Publier le</span><input class="pin" type="date" id="pj" value="' + esc(D.jour || demain()) + '"><input class="pin" type="time" id="ph" value="' + esc(heure()) + '" step="300"></div>' +
+    return '<div class="plan' + (PLO ? " open" : "") + '"><button type="button" class="plt" data-pltog><span>' + esc(resume) + '</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button><div class="pl1"><span class="lb">Publier le</span>' + choixDate() + '</div>' +
       (N.base === "prepub" ? '<div></div>' : '<div class="pl2">' + '<span class="nt">' + IC.site + 'Site<small>' + esc(N.enLigne ? "en ligne" : heure()) + '</small></span>' + '<span class="nt" style="box-shadow:inset 0 0 0 1.5px #3a3a42">' + IC.x + 'X<small style="color:#8c8c93">à la main</small></span>' + igChip("post") + igChip("story") + '</div>') +
       // Mettre de côté / Brève / À la une (Will, 27/10/2026) : un sous-titre sous chaque bouton pour ne jamais se tromper.
       // Prépublication (magazines japonais) : mêmes boutons que la Validation du back-office (Will, 27/10/2026).
@@ -564,6 +602,16 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
     if (e.target.id === "ph") D.heure = e.target.value;
     live();
   });
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest && e.target.closest("[data-pk],[data-pkj],[data-pkm],[data-pkh],[data-pkn]");
+    if (!t) { if (PK && !(e.target.closest && e.target.closest(".pkw"))) { PK = ""; PKM = ""; draw(); } return; }
+    if (t.dataset.pk) { PK = PK === t.dataset.pk ? "" : t.dataset.pk; PKM = ""; }
+    else if (t.dataset.pkj) { D.jour = t.dataset.pkj; PK = ""; PKM = ""; }
+    else if (t.dataset.pkm) { var m = PKM || (D.jour || auj()).slice(0, 7), dt = new Date(+m.slice(0, 4), +m.slice(5, 7) - 1 + (+t.dataset.pkm), 1); PKM = dt.getFullYear() + "-" + ("0" + (dt.getMonth() + 1)).slice(-2); }
+    else if (t.dataset.pkh) { D.heure = t.dataset.pkh + ":" + heure().slice(3); }
+    else if (t.dataset.pkn) { D.heure = heure().slice(0, 3) + t.dataset.pkn; PK = ""; }
+    draw();
+  });
   document.addEventListener("change", function (e) { if (e.target.id === "pj") { D.jour = e.target.value; } if (e.target.id === "ph") { D.heure = e.target.value; draw(); } });
   function gen() {
     try { FGPost.setCats(CATS, NEWS_CATS); var i = Object.assign({}, N, { texte: D.site }); var c = FGPost.captions(i, ""); c.x = FGPost.ajouteMagX(c.x, i); return c; }
@@ -588,7 +636,7 @@ img{display:block}a{color:inherit}button{font-family:inherit;cursor:pointer}
         .catch(function (e) { btn.disabled = false; toast(e.message || "Image Instagram impossible"); });
       return;
     }
-    var jour = ($("#pj") || {}).value || demain(), h = ($("#ph") || {}).value || "13:00";
+    var jour = ($("#pj") || {}).value || auj(), h = ($("#ph") || {}).value || "13:00";
     var extra = k === "planifier" ? { planif: jour + "T" + h + ":00" } : k === "publier" ? { statut: "Publié sur le site", breve: false } : k === "breve" ? (N.enLigne ? { breve: true } : { statut: "Publié sur le site", breve: true }) : k === "une" ? { breve: false } : k === "planifier" ? { planif: jour + "T" + h + ":00", breve: false } : k === "vu" ? { statut: "Vu" } : k === "retirer" ? { statut: "Vu" } : {};
     if (/^pp-/.test(k)) extra = { base: "prepub", statut: { "pp-vu": "Vu", "pp-rej": "Rejeté", "pp-news": "Validé", "pp-maj": "Validé" }[k], news: k === "pp-news" };
     // Rien de modifié sur une news en ligne : on refait quand même l'image (carte, aperçu du lien) — Will, 27/10/2026.
