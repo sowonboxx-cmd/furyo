@@ -39,6 +39,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
         link: akitaLien(text(p["Lien du numéro"])), page: text(p["Page de la série"]), cover: text(p["Couverture du numéro"]),
         read: text(p["Lecture en ligne"]), series: rel(p["Série"]),
         hl: list(p["Mise en avant"]), note: text(p["Annonce du magazine"]),
+        vis: text(p["Visuel story"]),
       };
     });
     // Seulement des liens d'éditeurs : les librairies numériques (BookWalker, Cmoa, eBookJapan) servent à la veille, pas au site (Will, 05/10/2026).
@@ -47,8 +48,9 @@ export async function onRequestGet({ env, request, waitUntil }) {
     // Lien de lecture et page officielle d'une série : repris d'un numéro précédent s'il manque sur le nouveau (la base garde l'historique).
     const k = it => (it.entry || "").split(" · ")[0].toLowerCase();
     const keep = {};
-    for (const it of items) { const c = keep[k(it)] = keep[k(it)] || {}; if (it.read && !c.read) c.read = it.read; if (it.page && !c.page) c.page = it.page; }
-    for (const it of items) { const c = keep[k(it)] || {}; if (!it.read) it.read = c.read || ""; if (!it.page) it.page = c.page || ""; }
+    for (const it of items) { const c = keep[k(it)] = keep[k(it)] || {}; if (it.read && !c.read) c.read = it.read; if (it.page && !c.page) c.page = it.page; if (it.vis && !c.vis) c.vis = it.vis; }
+    // Visuel officiel (page couleur…) repris d'un numéro précédent : image de secours des séries sans tome, ex. Shisei-dō (Will, 24/11/2026).
+    for (const it of items) { const c = keep[k(it)] || {}; if (!it.read) it.read = c.read || ""; if (!it.page) it.page = c.page || ""; if (!it.vis) it.vis = c.vis || ""; }
     // Page officielle du magazine quand le numéro n'a pas de lien (Will, 05/10/2026).
     for (const it of items) if (!it.link) { const m = Object.keys(MAG_LINK).find(n => (it.mag || "").toLowerCase().startsWith(n.toLowerCase())); if (m) it.link = MAG_LINK[m]; }
     return { items };

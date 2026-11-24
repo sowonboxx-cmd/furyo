@@ -81,7 +81,7 @@ textarea{width:100%;min-height:120px;background:var(--bg2);color:var(--cr);borde
   var fontes = Promise.all([new FontFace("FA", "url(/fonts/Antonio.ttf)", { weight: "100 700" }), new FontFace("FI", "url(/fonts/Inter.ttf)", { weight: "100 900" }), new FontFace("FJ", "url(/fonts/NotoSansJP.ttf)", { weight: "100 900" })].map(function (f) { return f.load().then(function (x) { document.fonts.add(x); }); })).catch(function () {});
   var IMG = {}; var charger = function (u) { if (!u) return Promise.resolve(null); if (IMG[u]) return IMG[u]; return (IMG[u] = new Promise(function (ok) { var i = new Image(); i.crossOrigin = "anonymous"; i.onload = function () { ok(i); }; i.onerror = function () { ok(null); }; i.src = u; })); };
   var LOGO = charger("/img/social/logo-blanc.png");
-  var DATA = null, BY = {};
+  var DATA = null, BY = {}, DER = {};
 
   // ---------- Dessin ----------
   function couvrir(c, im, x, y, w, h, haut) { var k = Math.max(w / im.width, h / im.height), sw = w / k, sh = h / k; c.drawImage(im, (im.width - sw) / 2, haut ? 0 : (im.height - sh) / 2, sw, sh, x, y, w, h); }
@@ -158,7 +158,9 @@ textarea{width:100%;min-height:120px;background:var(--bg2);color:var(--cr);borde
   function construire() {
     var all = DATA.filter(function (x) { return x.date >= D1 && x.date <= D7; });
     var ser = function (x) { return BY[String((x.series || [])[0] || "").replace(/-/g, "")] || {}; };
-    var CH = all.filter(function (x) { return x.status !== "Pause"; }).map(function (x) { var r = REG[cle(x)] || {}; return Object.assign({}, x, { tag: r.une ? (tagDe(x) || "À la une") : tagDe(x), une: !!(r.une || tagDe(x)), cache: !!r.cache, img: cv(ser(x).cover, 500) }); });
+    // Image : le dernier tome paru, sinon la couverture de la fiche, sinon le visuel officiel du numéro (page couleur) pour une série sans tome (Will, 24/11/2026).
+    var imgU = function (x) { var sid = String((x.series || [])[0] || "").replace(/-/g, ""); return (DER[sid] && DER[sid].cover) || ser(x).cover || x.vis || ""; };
+    var CH = all.filter(function (x) { return x.status !== "Pause"; }).map(function (x) { var r = REG[cle(x)] || {}; return Object.assign({}, x, { tag: r.une ? (tagDe(x) || "À la une") : tagDe(x), une: !!(r.une || tagDe(x)), cache: !!r.cache, img: cv(imgU(x), 500) }); });
     var PZ = all.filter(function (x) { return x.status === "Pause"; }).filter(function (x) { return !(REG[cle(x)] || {}).cache; });
     CH.sort(function (a, b) { return (b.une - a.une) || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0); });
     var vis = CH.filter(function (x) { return !x.cache; });
@@ -221,7 +223,8 @@ textarea{width:100%;min-height:120px;background:var(--bg2);color:var(--cr);borde
 
   Promise.all([get("/api/prepub"), get("/api/biblio")]).then(function (r) {
     DATA = (r[0] && r[0].items) || []; ((r[1] && r[1].items) || []).forEach(function (s) { BY[s.id] = s; });
-    construire();
+    var sids = []; DATA.forEach(function (x) { var id = String((x.series || [])[0] || "").replace(/-/g, ""); if (x.date >= D1 && x.date <= D7 && id && sids.indexOf(id) < 0) sids.push(id); });
+    return (sids.length ? get("/api/recap-semaine?du=" + D1 + "&sids=" + sids.slice(0, 20).join(",")) : Promise.resolve(null)).then(function (d) { DER = (d && d.derniers) || {}; construire(); });
   });
 })();
 </script>
