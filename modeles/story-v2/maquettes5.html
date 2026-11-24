@@ -50,8 +50,8 @@ var S = [
   { f: "saigo-no-furyou", n: 11, c: 10, t: "Saigo no Furyō", m: "Tonari no Young Jump · En ligne", ch: "Chapitre 124" },
   { f: "shiseido", n: 2, c: 0, t: "Shisei-dō", st: "~ Sankyōdai no Kizuna ~", m: "Young Champion · N°24", ch: "Chapitre 4", r: 1.449 },
   { f: "amateur-vigilante", n: 9, c: 8, t: "Amateur Vigilante", m: "Young Magazine · N°52", ch: "Chapitre 92" },
-  { f: "the-fable-the-third-secret", n: 6, c: 0, t: "The Fable", st: "The third secret", m: "Young Magazine · N°52", ch: "Chapitre 64", cb: "Pages couleur" },
-  { f: "le-premier-amour-de-nezumi", n: 16, c: 10, t: "Nezumi no Hatsukoi", arc: "« En route vers l'arc final »", m: "Young Magazine · N°52", ch: "Chapitre 126" }
+  { f: "the-fable-the-third-secret", n: 6, c: 0, t: "The Fable", st: "The third secret", m: "Young Magazine · N°52", ch: "Chapitre 64", cb: "Pages couleurs" },
+  { f: "le-premier-amour-de-nezumi", n: 16, c: 10, t: "Le Premier Amour de Nezumi", arc: "« En route vers l'arc final »", m: "Young Magazine · N°52", ch: "Chapitre 126" }
 ];
 function img(f, i) { return "m/" + f + "-" + String(i).padStart(2, "0") + ".jpg"; }
 function mosaique(x) { var l = []; for (var i = 0; i < x.n; i++) if (i !== x.c || x.n === 1) l.push(i); if (x.f === "shiseido") l = [0, 1];
