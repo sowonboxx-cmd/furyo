@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes · Prépub de la semaine · FuryoGang</title>
+<!-- Maquettes de la page « Prépub de la semaine » (Will, 24/11/2026) : adresse unique /prepub/, contenu renouvelé chaque dimanche.
+     Exemple : semaine du 16 au 22 novembre 2026 (données de la base Prépublication). Images du dossier m/ : maquette seulement. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+:root{--bg:#0c0c0e;--bg2:#17171a;--bg3:#1f1f24;--line:#262630;--cr:#F2EFE9;--mut:#9a968f;--red:#BC002D;--y:#F2C14E;--g:#4DAB9A}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#333;font-family:I;color:var(--cr);-webkit-font-smoothing:antialiased}
+.frame{background:var(--bg);margin:20px;container-type:inline-size;overflow:hidden;position:relative}
+.frame.m{width:390px}.frame.d{width:1280px}
+.lab{position:absolute;top:0;left:0;background:#fff;color:#000;font:800 13px I;padding:4px 9px;z-index:9;border-radius:0 0 8px 0}
+/* Barre du site (simplifiée) */
+.hd{height:56px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.hd img{height:30px}
+.wrap{padding:22px 16px 40px;max-width:1120px;margin:0 auto}
+@container (min-width:900px){.wrap{padding:40px 40px 60px}}
+/* En-tête de page */
+.kick{font:700 14px/1 A;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.h1{font:700 44px/1 A;text-transform:uppercase;margin-top:8px}
+.h1 em{font-style:normal;color:var(--y)}
+.sub{color:var(--mut);font-size:15px;margin-top:10px;line-height:1.45}
+@container (min-width:900px){.h1{font-size:72px}.sub{font-size:17px}}
+.stats{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.stats span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:600 13px I;color:var(--cr)}
+.stats b{font:700 16px A;margin-right:4px}
+/* À retenir */
+.h2{font:700 22px/1 A;text-transform:uppercase;letter-spacing:.02em;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+.h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.hl{display:grid;gap:12px}
+@container (min-width:900px){.hl{grid-template-columns:repeat(3,1fr)}}
+.hc{position:relative;border-radius:14px;overflow:hidden;background:var(--bg2);min-height:190px;display:flex;align-items:flex-end}
+.hc .bg{position:absolute;inset:0;background:center 15%/cover}
+.hc .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.05),rgba(12,12,14,.55) 45%,rgba(12,12,14,.95))}
+.hc .tx{position:relative;padding:16px}
+.tag{display:inline-block;font:800 11px/1 I;text-transform:uppercase;letter-spacing:.04em;padding:6px 9px;border-radius:7px;color:#fff;background:var(--g)}
+.tag.r{background:#E5483A}.tag.y{background:var(--y);color:#121214}.tag.gr{background:#3a3a42;color:#cfcfd4}
+.hc h3{font:700 26px/1.02 A;text-transform:uppercase;margin-top:9px}
+.hc p{font-size:13.5px;line-height:1.4;color:#d7d4ce;margin-top:6px}
+/* Liste par jour (A) */
+.day{margin-top:26px}
+.day h4{font:700 15px/1 A;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px}
+.day h4 b{color:var(--cr);font-size:20px;margin-right:6px}
+.rows{display:grid;gap:8px}
+@container (min-width:900px){.rows{grid-template-columns:1fr 1fr}}
+.row{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:8px 12px 8px 8px}
+.row img{width:54px;height:72px;object-fit:cover;object-position:top;border-radius:7px;background:var(--bg3)}
+.row .t{font:700 19px/1.05 A;text-transform:uppercase}
+.row .mg{font-size:12.5px;color:var(--mut);margin-top:4px;line-height:1.3}
+.row .mini{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+.row .ch{font:700 22px/1 A;text-align:right;white-space:nowrap}
+.row .ch small{display:block;font:600 10px I;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.ar{color:var(--mut);font-size:12px}
+.ph{display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#2a2a31,#17171a);color:#6c6c74;font:700 22px A;text-transform:uppercase;border-radius:7px;width:54px;height:72px}
+.sc .im .ph{width:100%;height:100%;font-size:30px}
+.mag .top .ph{width:84px;height:112px;font:900 34px J}
+/* Pauses */
+.pz{display:flex;flex-wrap:wrap;gap:6px}
+.pz span{border:1px dashed #3a3a42;color:var(--mut);border-radius:999px;padding:6px 11px;font:600 12.5px I}
+/* Par magazine (B) */
+.mags{display:grid;gap:14px;margin-top:6px}
+@container (min-width:900px){.mags{grid-template-columns:1fr 1fr}}
+.mag{background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.mag .top{display:grid;grid-template-columns:84px 1fr;gap:14px;padding:14px;align-items:center;border-bottom:1px solid var(--line);position:relative}
+.mag .top img{width:84px;height:112px;object-fit:cover;border-radius:6px;background:var(--bg3)}
+.mag .dt{font:700 13px/1 A;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.mag .nm{font:700 26px/1.02 A;text-transform:uppercase;margin-top:6px}
+.mag .lk{font-size:12.5px;color:var(--mut);margin-top:7px}
+.mag .lk u{text-decoration:none;color:var(--cr);border-bottom:1px solid #4a4a52}
+.ser{display:flex;gap:10px;padding:12px 14px 14px;overflow-x:auto}
+.sc{flex:none;width:92px}
+.sc .im{position:relative;width:92px;height:122px;border-radius:8px;overflow:hidden;background:var(--bg3)}
+.sc .im img{width:100%;height:100%;object-fit:cover;object-position:top}
+.sc .im .n{position:absolute;left:0;right:0;bottom:0;padding:16px 6px 5px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.9));font:700 16px/1 A;text-align:center}
+.sc .im .tg{position:absolute;top:5px;left:5px}
+.sc .im .tg .tag{font-size:9px;padding:4px 6px}
+.sc .nm2{font:700 13.5px/1.08 A;text-transform:uppercase;margin-top:6px}
+.sc.off .im img{filter:grayscale(1);opacity:.35}
+.sc.off .im .n{color:var(--mut);font-size:13px}
+/* Pied de page */
+.foot{margin-top:34px;padding:16px;border:1px solid var(--line);border-radius:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.foot p{font-size:13.5px;color:var(--mut);line-height:1.4}
+.btn{display:inline-block;background:var(--cr);color:#121214;font:800 13px I;padding:10px 14px;border-radius:10px}
+.btn.o{background:transparent;color:var(--cr);border:1px solid #4a4a52}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+var M = "/modeles/prepub-semaine/m/";
+// Semaine du 16 au 22 novembre 2026 (base Prépublication, statut « Paru » ou « Pause »).
+var MAGS = [
+  { k: "ym", nom: "Weekly Young Magazine", num: "n°51", d: "2026-11-16", img: "40fd26a94c.jpg" },
+  { k: "ykb", nom: "Young King BULL", num: "n°24", d: "2026-11-16", img: "0a21f6f121.jpg" },
+  { k: "cc", nom: "Champion Cross", num: "en ligne", d: "2026-11-18", img: "" },
+  { k: "red", nom: "Champion RED", num: "janvier 2027", d: "2026-11-19", img: "112a230225.jpg" },
+  { k: "wsc", nom: "Weekly Shōnen Champion", num: "n°51", d: "2026-11-19", img: "7c2e2996cd.jpg" },
+  { k: "yk", nom: "Young King", num: "n°24", d: "2026-11-20", img: "fa5c566c6c.jpg" },
+  { k: "gor", nom: "Goraku", num: "n°12/4-11", d: "2026-11-20", img: "2a159008aa.jpg" },
+  { k: "spi", nom: "Big Comic Spirits", num: "n°52", d: "2026-11-20", img: "9527fe11e8.jpg" }
+];
+var S = [
+  { t: "Golden Drop", m: "ym", ch: 151, img: "16a204dc86.jpg" },
+  { t: "Batsu", m: "ykb", ch: 35, img: "12ef30e05a.jpg" },
+  { t: "Donketsu Chapter 2", m: "ykb", ch: 135, img: "b0270d0560.jpg" },
+  { t: "Gorilla", m: "ykb", ch: null, img: "f9e6e72aee.jpg" },
+  { t: "Saikyō Bonno Kyōdai", m: "ykb", ch: null, img: "", sous: "Smoking Savage Gaiden" },
+  { t: "Nine Peaks", m: "cc", ch: 205, img: "b35ea0d87c.jpg", tags: [["Fin d'affrontement ?", "y"]] },
+  { t: "Baki Gaiden - Doppo", m: "red", ch: null, img: "112a230225.jpg", tags: [["Couleur d'ouverture", "r"], ["35 ans de Baki", "y"]] },
+  { t: "WORST Gaiden Guriko", m: "wsc", ch: 379, img: "65d3cded0a.jpg" },
+  { t: "Yuuenchi Baki Gaiden", m: "wsc", ch: null, img: "c18c702e00.jpg", tags: [["Retour", ""], ["36 pages", "y"]] },
+  { t: "BADBOYS", m: "yk", ch: 17, img: "da9e588061.jpg" },
+  { t: "Boxster", m: "yk", ch: 89, img: "", tags: [["Retour", ""]] },
+  { t: "Barefaced", m: "yk", ch: 64, img: "0c58698217.jpg" },
+  { t: "WORST Gaiden Santa", m: "cc", ch: 59, d: "2026-11-20", img: "190fe3021f.jpg", sous: "2e moitié" },
+  { t: "Golden Guy", m: "gor", ch: 154, img: "46d27c8513.jpg" }
+];
+var P = [
+  { t: "Kujō l'implacable", m: "spi", img: "f2a97260cd.jpg", why: "retour au n°53" },
+  { t: "Mogura no Uta", m: "spi", img: "f5ea4874be.jpg", why: "reprise en préparation" },
+  { t: "Donketsu Gaiden", m: "yk", img: "" },
+  { t: "Smoking Savage", m: "yk", img: "" },
+  { t: "Kimongai Karma", m: "yk", img: "" },
+  { t: "Sangaku Chōjin Matsuoka", m: "gor", img: "ace797d7dd.jpg" },
+  { t: "Baki Gaiden - Shin Chiharu", m: "red", img: "112a230225.jpg" }
+];
+var HL = [
+  { t: "Baki Gaiden - Doppo", img: "112a230225.jpg", tags: [["Couleur d'ouverture", "r"]], p: "Pour fêter les 35 ans de la saga Baki, Doppo ouvre le Champion RED en couleur." },
+  { t: "Yuuenchi Baki Gaiden", img: "c18c702e00.jpg", tags: [["Retour", ""]], p: "Retour comme annoncé avec un chapitre géant de 36 pages, puis nouvelle pause jusqu'au numéro double de janvier." },
+  { t: "Nine Peaks", img: "b35ea0d87c.jpg", tags: [["Chapitre 205", "gr"]], p: "L'en-tête « 3 lycées contre Hizakura » disparaît : l'affrontement semble terminé." }
+];
+var JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"], MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+function im(s, cls) { return s.img ? '<img src="' + M + s.img + '"' + (cls ? ' class="' + cls + '"' : "") + ">" : '<span class="ph' + (cls ? " " + cls : "") + '">' + s.t.split(/[\s-]+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join("") + "</span>"; }
+function mg(k) { return MAGS.filter(function (m) { return m.k === k; })[0]; }
+function dOf(s) { return s.d || mg(s.m).d; }
+function jour(d) { var x = new Date(d + "T12:00:00"); return [JOURS[x.getDay()], x.getDate(), MOIS[x.getMonth()]]; }
+function tags(t) { return (t || []).map(function (a) { return '<span class="tag ' + a[1] + '">' + a[0] + "</span>"; }).join(""); }
+function head() {
+  var n = S.length, nm = MAGS.length - 1, np = P.length;
+  return '<div class="kick">Prépub de la semaine</div><h1 class="h1">Du 16 au 22 <em>novembre</em></h1>' +
+    '<p class="sub">Tous les chapitres de nos séries parus cette semaine dans les magazines japonais. Mis à jour chaque dimanche.</p>' +
+    '<div class="stats"><span><b>' + n + "</b>chapitres</span><span><b>" + nm + "</b>magazines</span><span><b>" + np + "</b>absentes</span></div>";
+}
+function hl() { return '<h2 class="h2">À retenir</h2><div class="hl">' + HL.map(function (h) { return '<a class="hc"><div class="bg" style="background-image:url(' + M + h.img + ')"></div><div class="sh"></div><div class="tx">' + tags(h.tags) + "<h3>" + h.t + "</h3><p>" + h.p + "</p></div></a>"; }).join("") + "</div>"; }
+function pauses() { return '<h2 class="h2">Absentes cette semaine</h2><div class="pz">' + P.map(function (p) { return "<span>" + p.t + (p.why ? " · " + p.why : "") + "</span>"; }).join("") + "</div>"; }
+function foot() { return '<div class="foot"><p>La semaine prochaine : le programme arrive dimanche.<br>Toutes les sorties en magazine, série par série, sont sur la page Au Japon.</p><span><a class="btn o">Au Japon</a> <a class="btn">Calendrier</a></span></div>'; }
+// A — Par jour
+function A() {
+  var days = {}; S.forEach(function (s) { (days[dOf(s)] = days[dOf(s)] || []).push(s); });
+  return head() + hl() + '<h2 class="h2">Jour par jour</h2>' + Object.keys(days).sort().map(function (d) {
+    var j = jour(d);
+    return '<div class="day"><h4><b>' + j[0] + " " + j[1] + "</b>" + j[2] + '</h4><div class="rows">' + days[d].map(function (s) {
+      var m = mg(s.m);
+      return '<a class="row">' + im(s) + '<div><div class="t">' + s.t + '</div><div class="mg">' + m.nom + " " + m.num + (s.sous ? " · " + s.sous : "") + "</div>" + (s.tags ? '<div class="mini">' + tags(s.tags) + "</div>" : "") + '</div><div class="ch"><small>Chapitre</small>' + (s.ch || "—") + "</div></a>";
+    }).join("") + "</div></div>";
+  }).join("") + pauses() + foot();
+}
+// B — Par magazine
+function B() {
+  return head() + hl() + '<h2 class="h2">Magazine par magazine</h2><div class="mags">' + MAGS.map(function (m) {
+    var j = jour(m.d), ss = S.filter(function (s) { return s.m === m.k; }), pp = P.filter(function (p) { return p.m === m.k; });
+    return '<div class="mag"><div class="top">' + (m.img ? '<img src="' + M + m.img + '">' : '<span class="ph mg">誌</span>') + '<div><div class="dt">' + j[0] + " " + j[1] + " " + j[2] + '</div><div class="nm">' + m.nom + " " + m.num + '</div><div class="lk"><u>Voir le magazine</u> · ' + ss.length + " chapitre" + (ss.length > 1 ? "s" : "") + (pp.length ? " · " + pp.length + " absente" + (pp.length > 1 ? "s" : "") : "") + "</div></div></div>" +
+      '<div class="ser">' + ss.map(function (s) { return '<a class="sc"><div class="im">' + im(s) + (s.tags ? '<div class="tg">' + tags(s.tags.slice(0, 1)) + "</div>" : "") + '<div class="n">' + (s.ch ? "Ch. " + s.ch : "Nouveau ch.") + '</div></div><div class="nm2">' + s.t + "</div></a>"; }).join("") +
+      pp.map(function (p) { return '<a class="sc off"><div class="im">' + im(p) + '<div class="n">Absente</div></div><div class="nm2">' + p.t + "</div></a>"; }).join("") + "</div></div>";
+  }).join("") + "</div>" + foot();
+}
+var html = "";
+[["A · Jour par jour", A], ["B · Magazine par magazine", B]].forEach(function (v, i) {
+  ["m", "d"].forEach(function (w) { html += '<div class="frame ' + w + '" id="v' + (i + 1) + w + '"><span class="lab">' + v[0] + (w === "m" ? " · téléphone" : " · ordinateur") + '</span><div class="hd"><img src="/img/social/logo-blanc.png"></div><div class="wrap">' + v[1]() + "</div></div>"; });
+});
+document.getElementById("out").innerHTML = html;
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquette · Post Prépub de la semaine · FuryoGang</title>
+<!-- Maquette du post réseaux « Prépub de la semaine » (Will, 24/11/2026) : un seul post qui résume la semaine, publié le dimanche. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#333}
+.c{position:relative;overflow:hidden;width:1080px;height:1440px;background:#0c0c0e;color:#F2EFE9;margin:20px;font-family:I}
+.bg{position:absolute;inset:-20px;background:url(/modeles/prepub-semaine/m/112a230225.jpg) center 20%/cover;filter:grayscale(1) blur(3px);opacity:.22}
+.sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.35),rgba(12,12,14,.75) 30%,rgba(12,12,14,.85))}
+.logo{position:absolute;top:34px;left:50%;transform:translateX(-50%);height:60px}
+.k{position:absolute;top:100px;right:40px;writing-mode:vertical-rl;font:900 64px/1 J;color:#BC002D;letter-spacing:.06em}
+.hd{position:absolute;left:60px;top:120px}
+.hd .p{display:inline-block;background:#BC002D;color:#fff;font:800 26px/1 I;padding:12px 18px;border-radius:12px;text-transform:uppercase}
+.hd .t{font:700 104px/1 A;text-transform:uppercase;margin-top:16px}
+.hd .t em{font-style:normal;color:#F2C14E}
+.hd .s{font:600 26px/1.3 I;color:#b9b5ae;margin-top:12px}
+.g{position:absolute;left:60px;right:60px;top:430px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px 14px}
+.it{position:relative}
+.it .im{position:relative;width:100%;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#1f1f24;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.it img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.it .ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font:700 44px A;color:#6c6c74;background:linear-gradient(160deg,#2a2a31,#17171a)}
+.it .n{position:absolute;left:0;right:0;bottom:0;padding:22px 6px 7px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.92));font:700 26px/1 A;text-align:center}
+.it .n.y{color:#F2C14E}
+.it .tg{position:absolute;top:7px;left:7px;background:#E5483A;color:#fff;font:800 13px/1 I;padding:5px 7px;border-radius:6px;text-transform:uppercase}
+.it .tg.g{background:#4DAB9A}
+.it .nm{font:700 19px/1.05 A;text-transform:uppercase;margin-top:7px;height:40px;overflow:hidden}
+.ft{position:absolute;left:0;right:0;bottom:44px;text-align:center;font:700 34px/1 A;text-transform:uppercase;letter-spacing:.04em}
+.ft b{color:#F2C14E;font-weight:700}
+</style>
+</head>
+<body>
+<div class="c" id="p"><div class="bg"></div><div class="sh"></div><img class="logo" src="/img/social/logo-blanc.png" alt=""><div class="k">今週の連載</div>
+ <div class="hd"><span class="p">Prépub de la semaine</span><div class="t">16 → 22 <em>novembre</em></div><div class="s">14 chapitres dans 7 magazines japonais</div></div>
+ <div class="g" id="g"></div>
+ <div class="ft">Le détail jour par jour : <b>furyogang.com/prepub</b></div></div>
+<script>
+var M = "/modeles/prepub-semaine/m/";
+var L = [
+  ["Baki Gaiden - Doppo", "112a230225.jpg", "Nouveau ch.", "Couleur"],
+  ["Yuuenchi Baki Gaiden", "c18c702e00.jpg", "Nouveau ch.", "Retour", "g"],
+  ["Nine Peaks", "b35ea0d87c.jpg", "Ch. 205"],
+  ["Golden Drop", "16a204dc86.jpg", "Ch. 151"],
+  ["Batsu", "12ef30e05a.jpg", "Ch. 35"],
+  ["Donketsu Chapter 2", "b0270d0560.jpg", "Ch. 135"],
+  ["Gorilla", "f9e6e72aee.jpg", "Nouveau ch."],
+  ["Saikyō Bonno Kyōdai", "", "Nouveau ch."],
+  ["WORST Gaiden Guriko", "65d3cded0a.jpg", "Ch. 379"],
+  ["BADBOYS", "da9e588061.jpg", "Ch. 17"],
+  ["Boxster", "", "Ch. 89", "Retour", "g"],
+  ["Barefaced", "0c58698217.jpg", "Ch. 64"],
+  ["WORST Gaiden Santa", "190fe3021f.jpg", "Ch. 59"],
+  ["Golden Guy", "46d27c8513.jpg", "Ch. 154"]
+];
+document.getElementById("g").innerHTML = L.map(function (x) {
+  var ini = x[0].split(/[\s-]+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join("");
+  return '<div class="it"><div class="im">' + (x[1] ? '<img src="' + M + x[1] + '">' : '<div class="ph">' + ini + "</div>") + (x[3] ? '<span class="tg ' + (x[4] || "") + '">' + x[3] + "</span>" : "") + '<div class="n' + (x[3] ? " y" : "") + '">' + x[2] + '</div></div><div class="nm">' + x[0] + "</div></div>";
+}).join("");
+</script>
+</body>
+</html>
