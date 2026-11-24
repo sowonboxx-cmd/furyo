@@ -281,7 +281,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .wcard .m{font:700 10.5px "FGAntonio";letter-spacing:.05em;text-transform:uppercase;color:var(--mut);margin-top:7px}
 .rcard .cov.kjc{background:#0c0c0e;display:flex;align-items:center;justify-content:center;gap:4px}
 .kjc .kj{font:900 19px/1 "FGJP",sans-serif;color:#BC002D;writing-mode:vertical-rl;letter-spacing:.06em}
-.kjc .wm{writing-mode:vertical-rl;transform:rotate(180deg);font:600 5.5px "FGAntonio";letter-spacing:.3em;color:#fff}
+.kjc .wm{writing-mode:vertical-rl;transform:rotate(180deg);font:600 5.5px "FGAntonio";letter-spacing:.3em;color:#fff}.kjc .wm.wm2{font-size:4.7px;letter-spacing:.08em}/* Prépublication de la semaine (Will, 24/11/2026) */
 .rcard .im{display:inline-block;margin-top:6px;font:700 9.5px "FGInter";text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:4px 7px;border-radius:6px;align-self:flex-start}
 .wcard .im{display:inline-block;margin-top:7px;font:700 9.5px "FGInter";text-transform:uppercase;color:var(--imp);background:rgba(255,69,58,.14);padding:4px 7px;border-radius:7px}
 .rcard{position:relative;background:#1f1f25;border-radius:11px;padding:9px 30px 9px 9px;display:flex;gap:10px;align-items:center;cursor:pointer;border:0;text-align:left;width:100%}
@@ -1152,7 +1152,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Récap hebdo / récap du mois : vignette 毎週 (chaque semaine) / 毎月 (chaque mois) + FURYOGANG vertical (Will, 21/10/2026, maquette 2C).
   // + Fiches mises à jour : 更新 (kōshin, « mise à jour ») ; Concours : 抽選 (chūsen, « tirage au sort ») — Will, 21/10/2026.
   // Tous les types (Will, 21/10/2026) : couverture 表紙, fiches du mois 新作, mangaka 作家, membre 仲間, article 記事, vidéo 動画, autre 予定.
-  var EV_KJ = { "qn-sem": "毎週", "qn-mois": "毎月", maj: "更新", concours: "抽選", couv: "表紙", fiche: "新作", mangaka: "作家", membre: "仲間", article: "記事", video: "動画", autre: "予定" };
+  var EV_KJ = { "prepub-sem": "連載", "qn-sem": "毎週", "qn-mois": "毎月", maj: "更新", concours: "抽選", couv: "表紙", fiche: "新作", mangaka: "作家", membre: "仲間", article: "記事", video: "動画", autre: "予定" };
   // News publiées (Will, 22/10/2026) : même vignette kanji, selon la catégorie principale.
   var NEWS_KJ = { "licence-fr": "仏版", "licence-jp": "連載", "couv-fr": "表紙", "couv-jp": "表紙", "sortie-fr": "発売", "sortie-jp": "発売", fin: "完結", pause: "休載", anime: "放送", adaptation: "実写", "bande-annonce": "予告", tirage: "部数", extrait: "試読", hommage: "追悼", dedicace: "サイン会", news: "速報", serie: "連載" };
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
@@ -1164,7 +1164,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
             (pe === "ok" ? '<span class="chk on" title="Story partie">' + CHK_SVG + '</span>' : '<span class="chk pl" title="Story programmée">' + CHK_SVG + '<b>' + esc(heureCourte(px.story.quand)) + '</b></span>') + '</button>'; }
         if (it.kind === "news") { var ni = it.n, nim = ni.image ? (/^https?:/.test(ni.image) ? "/api/couv?u=" + encodeURIComponent(ni.image) + "&w=120" : ni.image) : ""; return '<button class="rcard" data-k="news" data-id="' + esc(it.id) + '">' + (nim ? '<span class="cov" style="background-image:url(\'' + esc(nim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + (NEWS_KJ[ni.cat] || "速報") + '</span></span>') + '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (ni.plan ? '<b class="planh">Planifiée' + (ni.heure ? " · " + esc(ni.heure) : "") + "</b> · " : "Publiée" + (heureTri(it) !== "~" ? " · " + heureTri(it).replace(":", " h ").replace(/ h 00$/, " h").replace(/^0/, "") : "") + " · ") + esc(ni.label || "News") + '</span></span>' + (ni.plan ? "" : '<span class="chk on" aria-label="Publiée" title="Publiée">' + CHK_SVG + "</span>") + "</button>"; }
         var evc = it.kind === "ev" ? evCover(it.e, it.date) : "";
-        if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">' + evc + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
+        if (evc) return '<button class="rcard" data-k="ev" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="cov kjc"><span class="wm' + (it.e.type === "prepub-sem" ? ' wm2">PRÉPUBLICATION' : '">FURYOGANG') + '</span><span class="kj" lang="ja">' + evc + '</span></span><span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + esc(proj(it.e.type).nom) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + "</span>" + chkBadge("ev", it.id, itemDone(it)) + "</button>";
         var c = itemColor(it);
         return '<button class="wcard" data-k="' + it.kind + '" data-id="' + esc(it.id) + '"' + dragAttr(it) + '><span class="bar" style="background:' + c + '"></span><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">' + (it.kind === "todo" ? "To-do · " + esc(it.t.cat || "") : it.kind === "news" ? (it.n.plan ? '<b class="planh">Planifiée' + (it.n.heure ? " · " + esc(it.n.heure) : "") + "</b> · " : "Publiée · ") + esc(it.n.label || "News") : esc(proj(it.e.type).nom)) + "</span>" + (itemImp(it) ? '<span class="im">Important</span>' : "") + (it.kind === "ev" ? chkBadge("ev", it.id, itemDone(it)) : "") + "</button>";
       }
@@ -1957,7 +1957,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       if (c.gagnants.some(function (x) { return String(x.qui).trim().toLowerCase() === q.toLowerCase(); }) && !confirm(q + " a déjà gagné. L’ajouter quand même ?")) return;
       c.gagnants.push({ d: $("#cr-gd").value || auj(), qui: q, lot: ($("#cr-gl").value || "").trim(), prem: $("#cr-gp").checked }); sauver(c, "Gagnant ajouté ✓"); draw(); return; }
     if (e.target.closest("[data-plan]")) { var d = $("#cr-pdate").value || auj();
-      var ty = { cadeau: "concours", interview: "article", "fiche-mangaka": "mangaka", "video-manga": "video" }[c.id] || (c.cat === "membres" ? "membre" : c.id === "qdn" ? "qn-sem" : c.id === "recap-mois" ? "qn-mois" : "autre");
+      var ty = { cadeau: "concours", interview: "article", "fiche-mangaka": "mangaka", "video-manga": "video" }[c.id] || (c.cat === "membres" ? "membre" : c.id === "qdn" ? "qn-sem" : c.id === "prepub-sem" ? "prepub-sem" : c.id === "recap-mois" ? "qn-mois" : "autre");
       fetch("/api/admin/calendrier", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ ev: { titre: c.nm, type: ty, date: d, lien: "/hq/#vivre/" + c.id, note: c.ds || "" } }) })
         .then(function (r) { if (!r.ok) throw 0; c.next = dFr(d); sauver(c); toast("Planifié le " + dFr(d) + " ✓ (calendrier éditorial)"); draw(); }).catch(function () { toast("Échec, réessaie"); }); return; }
   });

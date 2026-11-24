@@ -10,7 +10,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 7; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 8; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -26,6 +26,7 @@ const DEPART = {
   types: [
     { id: "qn-sem", nom: "News Hebdo", couleur: "#4C9BFF" },
     { id: "qn-mois", nom: "Sorties du mois", couleur: "#B38CFF" },
+    { id: "prepub-sem", nom: "Prépublication de la semaine", couleur: "#E5483A" },
     { id: "couv", nom: "Couvertures", couleur: "#BC002D" },
     { id: "fiche", nom: "Fiches du mois", couleur: "#F2B33D" },
     { id: "maj", nom: "Fiches mises à jour", couleur: "#7BC67E" },
@@ -38,6 +39,7 @@ const DEPART = {
   ],
   events: [
     { id: "ev-qn-sem", titre: "Récap hebdo", type: "qn-sem", repeat: "lun", lien: "/studio/semaine/", note: "Carrousel réseaux : tout ce qui s'est passé dans le gang la semaine d'avant. Images générées dans le studio « Quoi de neuf dans le gang »." },
+    { id: "ev-prepub-sem", titre: "Prépublication de la semaine", type: "prepub-sem", repeat: "dim", lien: "/studio/prepub/", note: "Chaque dimanche : le carrousel X / Instagram avec tous les chapitres de la semaine qui vient dans les magazines japonais (dernier tome de chaque série). Images à télécharger dans le studio, page publique /prepub/. Publication à la main (Will, 24/11/2026)." },
     { id: "ev-qn-mois", titre: "Récap du mois", type: "qn-mois", repeat: "mois", jour: 10, lien: "/studio/mois/", note: "Le 10 de chaque mois : récap des sorties du mois précédent (France + Japon). Choisis la cover en avant et exporte le carrousel directement dans le studio (lien ci-dessous). Visuel noir ou crème." },
     { id: "ev-maj", titre: "Fiches mises à jour — récap", type: "maj", repeat: "jeu", note: "Les séries à aller compléter sur le site." },
     { id: "ev-cxw", titre: "Vidéo Crows×Worst", type: "video", date: "2026-10-20", imp: true, note: "Finir la version 25-30 s (téléphone, bordures) et la publier." },
