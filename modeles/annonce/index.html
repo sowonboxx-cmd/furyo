@@ -11,7 +11,8 @@
        pos     : cadrage vertical du visuel en % (défaut 0 = haut)
        titre   : nom de la série (romaji, capitales) · jp : titre japonais (rouge, sous le titre)
        auteurs : « Shō Wakabayashi × Dai Suzuki » · mag : magazine (« Young Champion »)
-       jour    : date courte à gauche du soleil (« 08.12 ») · quand : date en clair pour le lien (« 8 décembre »)
+       jour    : date courte à gauche du soleil (« 8 déc. » : chiffre en gros, mois dessous ; « 08.12 » accepté)
+       couv    : largeur de la page encadrée (défaut 500 ; plus grand pour la story) · quand : date en clair pour le lien (« 8 décembre »)
        kanji   : texte vertical à droite (défaut 新連載決定, « nouvelle série confirmée »)
        h       : hauteur totale pour la story (défaut 1440 ; 1520 = le fond descend jusqu'au trait jaune)
      Rendu : node render.js (Playwright) → reseaux.jpg et lien.jpg. -->
@@ -26,6 +27,7 @@ html,body{margin:0;background:#333}
 .pg{position:absolute;border:6px solid #fff;border-radius:6px;box-shadow:0 30px 70px rgba(0,0,0,.7);background:#111 center 0/cover}
 .vt{position:absolute;writing-mode:vertical-rl;font:900 70px/1 J;color:#fff;letter-spacing:.04em;transform:translateY(-50%)}
 .dl{position:absolute;transform:translateY(-50%);font:700 30px/1 A;color:#d9d6cf;text-transform:uppercase;letter-spacing:.06em}
+.dl i{display:block;font-style:normal;font-size:52px;margin-top:4px;-webkit-text-stroke:1px #F2EFE9;letter-spacing:.04em}
 .dl b{display:block;font-size:98px;color:#F2EFE9;margin-top:6px;-webkit-text-stroke:2px #F2EFE9;letter-spacing:.01em}
 .date{display:inline-block;background:#D9480F;color:#fff;font:700 38px/1 A;padding:13px 24px;border-radius:8px;text-transform:uppercase;letter-spacing:.05em}
 .t{font:700 124px/1 A;text-transform:uppercase;letter-spacing:.005em}
@@ -69,14 +71,20 @@ html,body{margin:0;background:#333}
   var v = g("visuel"), pos = g("pos", "0"), mag = g("mag", "Young Champion");
   ["rpg", "lpg"].forEach(function (id) { var e = document.getElementById(id); e.style.backgroundImage = "url('" + v + "')"; e.style.backgroundPosition = "center " + pos + "%"; });
   ["rbg", "lbg"].forEach(function (id) { document.getElementById(id).style.backgroundImage = "url('" + (g("fond") || v) + "')"; });
-  set(["rt", "lt"], g("titre")); set(["rjp", "ljp"], g("jp")); set(["ra", "la"], g("auteurs")); set(["rj"], g("jour"));
+  set(["rt", "lt"], g("titre")); set(["rjp", "ljp"], g("jp")); set(["ra", "la"], g("auteurs")); var j = g("jour"), jm = j.match(/^(\d{1,2})\s+(.+)$/);
+  // Date à la française : « 8 déc. » → gros chiffre, mois en dessous (l'ancien format « 08.12 » reste accepté).
+  if (jm) document.getElementById("rj").innerHTML = jm[1] + "<i>" + jm[2].replace(/[&<>]/g, "") + "</i>"; else set(["rj"], j);
   set(["rk", "lk"], g("kanji", "新連載決定")); set(["rd", "ld"], "Annonce · " + mag);
   document.getElementById("lq").innerHTML = "Début le <b>" + g("quand").replace(/[&<>]/g, "") + "</b>";
   // Titre long : réduit pour tenir sur une ligne.
   [["rt", 1000], ["lt", 560]].forEach(function (a) { var e = document.getElementById(a[0]), fs = parseFloat(getComputedStyle(e).fontSize); e.style.whiteSpace = "nowrap"; e.style.display = "inline-block"; e.style.alignSelf = "flex-start"; while (e.offsetWidth > a[1] && fs > 40) { fs -= 2; e.style.fontSize = fs + "px"; } e.style.display = "block"; e.style.alignSelf = ""; });
   // Version story : hauteur totale « h » (> 1440) ; le fond noir et blanc descend jusqu'en bas, le contenu descend de la moitié de l'écart.
+  // couv : largeur de la page encadrée (défaut 500), centrée sur le soleil.
+  var cw = +g("couv"); if (cw > 500) { var pg = document.getElementById("rpg"), ch = Math.round(cw * 1.446); pg.style.width = cw + "px"; pg.style.height = ch + "px"; pg.style.left = (540 - cw / 2) + "px"; pg.style.top = (580 - ch / 2) + "px"; }
   var H = +g("h"); if (H > 1440) { var r = document.getElementById("r"), d = (H - 1440) / 2; r.style.height = H + "px";
     r.querySelectorAll(".sun,.pg,.vt,.dl,.mid").forEach(function (el) { el.style.top = (parseFloat(getComputedStyle(el).top) + d) + "px"; }); }
+  // Grande page : le bloc titre descend sous le cadre si besoin.
+  if (cw > 500) { var rp = document.getElementById("rpg"), md = document.querySelector("#r .mid"), bas = rp.offsetTop + rp.offsetHeight + 34; if (md.offsetTop < bas) md.style.top = bas + "px"; }
   var im = new Image(); im.onload = function () { document.body.dataset.ok = 1; }; im.src = v;
 })();
 </script>
