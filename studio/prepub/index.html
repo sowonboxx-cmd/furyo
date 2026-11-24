@@ -126,8 +126,8 @@ textarea{width:100%;min-height:120px;background:var(--bg2);color:var(--cr);borde
     pastille(c, "PRÉPUBLICATION DE LA SEMAINE", 60, 124, "#BC002D", 26);
     titreSemaine(c, 300, 108);
     c.font = "600 28px FI"; c.fillStyle = "#b9b5ae"; c.fillText(l.length + " chapitre" + (l.length > 1 ? "s" : "") + " dans " + nMag + " magazine" + (nMag > 1 ? "s" : "") + " japonais", 60, 352);
-    // Mosaïque : jusqu'à 10 couvertures, la une d'abord.
-    var m = l.slice(0, 10), cols = m.length <= 3 ? 3 : m.length === 4 ? 4 : 5, gap = 14, cw = (W - 120 - gap * (cols - 1)) / cols, ch = cw * 4 / 3, rows = Math.ceil(m.length / cols), y0 = Math.round(400 + (860 - rows * (ch + 64)) / 2);
+    // Mosaïque : jusqu'à 8 couvertures (4 par ligne, Will 24/11/2026), la une d'abord.
+    var m = l.slice(0, 8), cols = m.length <= 3 ? 3 : 4, gap = 14, cw = (W - 120 - gap * (cols - 1)) / cols, ch = cw * 4 / 3, rows = Math.ceil(m.length / cols), y0 = Math.round(400 + (860 - rows * (ch + 64)) / 2);
     m.forEach(function (s, i) { carte(c, 60 + (i % cols) * (cw + gap), y0 + Math.floor(i / cols) * (ch + 64), cw, ch, s, ims[i]); c.font = "700 19px FA"; c.fillStyle = "#F2EFE9"; var t = lignes(c, nom(s).toUpperCase(), cw, 1)[0]; c.fillText(t, 60 + (i % cols) * (cw + gap), y0 + Math.floor(i / cols) * (ch + 64) + ch + 28); });
     pied(c, tot > 1 ? "Glisse pour tout voir ·" : "Le détail :", n, tot);
   }
