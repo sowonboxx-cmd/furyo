@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes · Nouvelle édition · FuryoGang</title>
+<!-- 6 pistes pour le visuel réseaux « Nouvelle édition » (Will, 24/11/2026), exceptionnel : GANGKING shinsōban, tome 2.
+     Ensuite, les tomes suivants passent par le modèle de sortie habituel. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#333}
+.c{position:relative;overflow:hidden;width:1080px;height:1440px;background:#0c0c0e;color:#F2EFE9;margin:20px;font-family:I;display:inline-block;vertical-align:top}
+.lab{position:absolute;top:0;left:20px;background:#fff;color:#000;font:800 22px I;padding:6px 12px;z-index:30;border-radius:0 0 8px 8px}
+.logo{position:absolute;top:34px;left:50%;transform:translateX(-50%);height:62px;z-index:20}
+.bg{position:absolute;inset:-20px;background:url(/img/news/gangking-shinsoban/t1.jpg) center 20%/cover;filter:grayscale(1) blur(3px);opacity:.2}
+.cv{position:absolute;border-radius:6px;box-shadow:0 30px 70px rgba(0,0,0,.7);background:#111 center/cover}
+.t2{background-image:url(/img/news/gangking-shinsoban/t2.jpg)}.t1{background-image:url(/img/news/gangking-shinsoban/t1.jpg)}
+.pill{display:inline-block;background:#BC002D;color:#fff;font:800 34px/1 I;padding:14px 26px;border-radius:14px;text-transform:uppercase}
+.t{font:700 132px/1 A;text-transform:uppercase;letter-spacing:.005em}
+.jp{font:900 46px/1.1 J;color:#E5483A}
+.meta{font:700 40px/1 A;text-transform:uppercase}
+.meta b{color:#F2C14E;font-weight:700}
+.sub{font:700 34px/1 A;text-transform:uppercase;color:#bdb9b1;letter-spacing:.03em}
+.mid{position:absolute;left:0;right:0;text-align:center;z-index:5}
+.vt{position:absolute;writing-mode:vertical-rl;font:900 100px/1 J;letter-spacing:.04em}
+.sh{position:absolute;inset:0}
+/* 1 · Soleil */
+#v1{background:linear-gradient(180deg,#141416,#1d1a1f 40%,#0c0c0e)}
+#v1 .bg{opacity:.1}
+#v1 .sun{position:absolute;width:820px;height:820px;border-radius:50%;background:#BC002D;left:130px;top:170px}
+#v1 .cv{width:500px;height:703px;left:290px;top:228px}
+#v1 .vt{right:46px;top:580px;transform:translateY(-50%);font-size:76px}
+#v1 .dl{position:absolute;left:36px;top:580px;transform:translateY(-50%);font:700 30px/1 A;color:#d9d6cf;text-transform:uppercase;letter-spacing:.06em}
+#v1 .dl b{display:block;font-size:150px;color:#F2EFE9;margin-top:4px}
+#v1 .mid{top:990px}
+/* 2 · Éventail T1 + T2 */
+#v2 .sh{background:linear-gradient(180deg,rgba(12,12,14,.1),rgba(12,12,14,.3) 50%,rgba(12,12,14,.9) 68%,#0c0c0e 80%)}
+#v2 .k{position:absolute;top:110px;left:0;right:0;text-align:center;font:900 200px/1 J;color:#E5483A;opacity:.9}
+#v2 .a{width:420px;height:590px;left:150px;top:300px;transform:rotate(-8deg);filter:brightness(.75)}
+#v2 .b{width:460px;height:647px;left:470px;top:270px;transform:rotate(5deg)}
+#v2 .bd{position:absolute;left:0;right:0;top:930px;height:110px;background:#BC002D;display:flex;align-items:center;justify-content:center;font:700 80px/1 A;text-transform:uppercase;z-index:4}
+#v2 .mid{top:1080px}
+/* 3 · Kanji géant 新装版 */
+#v3 .sh{background:linear-gradient(180deg,rgba(12,12,14,.2),rgba(12,12,14,.1) 45%,rgba(12,12,14,.9) 76%,#0c0c0e)}
+#v3 .k{position:absolute;top:96px;left:0;right:0;text-align:center;font:900 300px/1 J;color:#E5483A}
+#v3 .cv{width:520px;height:731px;left:280px;top:300px;border:6px solid #fff}
+#v3 .mid{top:1080px}
+/* 4 · Pleine couverture */
+#v4 .full{position:absolute;left:0;right:0;top:0;height:1080px;background:url(/img/news/gangking-shinsoban/t2.jpg) center 78%/cover}
+#v4 .sh{background:linear-gradient(180deg,rgba(12,12,14,.55) 0,transparent 14%,transparent 52%,rgba(12,12,14,.9) 70%,#0c0c0e 76%)}
+#v4 .vt{left:40px;top:150px;background:#BC002D;color:#fff;padding:24px 14px}
+#v4 .mid{top:1000px}
+/* 5 · Crème */
+#v5{background:#F3EBDD;color:#121214}
+#v5 .cv{width:540px;height:760px;left:120px;top:170px;box-shadow:24px 24px 0 #BC002D}
+#v5 .vt{right:120px;top:170px;color:#E5483A;font-size:150px}
+#v5 .mid{top:1010px}
+#v5 .t{color:#121214}#v5 .sub{color:#5a5a60}#v5 .meta b{color:#BC002D}
+/* 6 · Collection 10 tomes */
+#v6 .sh{background:linear-gradient(180deg,rgba(12,12,14,.2),rgba(12,12,14,.5) 40%,#0c0c0e 70%)}
+#v6 .cv{width:470px;height:661px;left:305px;top:150px;border:6px solid #fff}
+#v6 .row{position:absolute;left:60px;right:60px;top:860px;display:grid;grid-template-columns:repeat(10,1fr);gap:10px;z-index:5}
+#v6 .row span{aspect-ratio:3/4.2;border-radius:6px;background:#1f1f24 center/cover;border:2px dashed #3a3a42;display:flex;align-items:center;justify-content:center;font:700 30px A;color:#55555c}
+#v6 .row span.on{border:2px solid #fff;color:transparent}#v6 .row span.t1{background-image:url(/img/news/gangking-shinsoban/t1.jpg)}#v6 .row span.t2{background-image:url(/img/news/gangking-shinsoban/t2.jpg)}
+#v6 .row span.now{box-shadow:0 0 0 4px #F2C14E}
+#v6 .mid{top:1030px}
+</style>
+</head>
+<body>
+<div class="c" id="v1"><span class="lab">1 · Soleil</span><div class="bg"></div><div class="sun"></div><img class="logo" src="/img/social/logo-blanc.png"><div class="cv t2"></div><div class="dl">Tome<b>02</b></div><div class="vt">新装版</div>
+ <div class="mid"><span class="pill">Nouvelle édition</span><div class="t" style="margin-top:22px">GANGKING</div><div class="jp" style="margin-top:8px">ギャングキング 新装版</div><div class="meta" style="margin-top:20px">Tome 2 <b>aujourd'hui</b> au Japon · 10 tomes de 700 pages</div></div></div>
+
+<div class="c" id="v2"><span class="lab">2 · Éventail</span><div class="bg"></div><div class="sh"></div><div class="k">新装版</div><img class="logo" src="/img/social/logo-blanc.png"><div class="cv t1 a"></div><div class="cv t2 b"></div><div class="bd">Nouvelle édition</div>
+ <div class="mid"><div class="t">GANGKING</div><div class="meta" style="margin-top:22px">Tome 2 <b>aujourd'hui</b> au Japon · 10 tomes de 700 pages</div></div></div>
+
+<div class="c" id="v3"><span class="lab">3 · Kanji</span><div class="bg"></div><div class="sh"></div><div class="k">新装版</div><img class="logo" src="/img/social/logo-blanc.png"><div class="cv t2"></div>
+ <div class="mid"><span class="pill">Nouvelle édition</span><div class="t" style="margin-top:20px">GANGKING</div><div class="meta" style="margin-top:20px">Tome 2 <b>aujourd'hui</b> au Japon · 10 tomes de 700 pages</div></div></div>
+
+<div class="c" id="v4"><span class="lab">4 · Pleine couverture</span><div class="full"></div><div class="sh"></div><img class="logo" src="/img/social/logo-blanc.png"><div class="vt">新装版</div>
+ <div class="mid"><span class="pill">Nouvelle édition</span><div class="t" style="margin-top:20px">GANGKING</div><div class="jp" style="margin-top:8px">ギャングキング 新装版</div><div class="meta" style="margin-top:20px">Tome 2 <b>aujourd'hui</b> au Japon · 10 tomes de 700 pages</div></div></div>
+
+<div class="c" id="v5"><span class="lab">5 · Crème</span><img class="logo" src="/img/social/logo-noir.png"><div class="cv t2"></div><div class="vt">新装版</div>
+ <div class="mid"><span class="pill">Nouvelle édition</span><div class="t" style="margin-top:20px">GANGKING</div><div class="meta" style="margin-top:20px">Tome 2 <b>aujourd'hui</b> au Japon · 10 tomes de 700 pages</div></div></div>
+
+<div class="c" id="v6"><span class="lab">6 · Collection</span><div class="bg"></div><div class="sh"></div><img class="logo" src="/img/social/logo-blanc.png"><div class="cv t2"></div>
+ <div class="row"><span class="on t1"></span><span class="on now t2"></span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+ <div class="mid"><span class="pill">Nouvelle édition</span><div class="t" style="margin-top:20px">GANGKING</div><div class="meta" style="margin-top:20px">Tome 2 <b>aujourd'hui</b> au Japon · 10 tomes de 700 pages</div></div></div>
+</body>
+</html>
