@@ -58,7 +58,7 @@
 .mdb-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0 10px}
 .mdb-q{flex:1 1 260px;min-width:0;background:var(--card);border:0;border-radius:14px;padding:12px 16px;outline:none;color:var(--paper);font:16px var(--f-body)}
 .mdb-q::placeholder{color:var(--paper-3)}
-.mdb-tri{background:var(--card);border:0;border-radius:14px;padding:12px 14px;color:var(--paper);font:600 14px var(--f-body)}
+.mdb-tri{-webkit-appearance:none;appearance:none;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23F5F5F7%27 stroke-width=%272.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 14px center/14px 14px;border:0;border-radius:14px;padding:12px 40px 12px 16px;color:var(--paper);font:600 14px var(--f-body);cursor:pointer}/* flèche dessinée, calée à droite du texte (Will, 24/11/2026) */
 .mdb-fs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .mdb-fs button{border:0;background:var(--card);border-radius:999px;padding:7px 13px;cursor:pointer;font:600 13px var(--f-body);color:var(--paper-2);display:inline-flex;gap:6px;align-items:center}
 .mdb-fs button small{color:var(--paper-3);font-weight:500}
