@@ -14,6 +14,7 @@
        chap   : numéro de chapitre · mag : magazine et numéro (ex. Young Champion n°24)
        extra  : mot en jaune entre les deux (défaut « Page couleur », vide = rien)
        kanji  : cartouche vertical (défaut 新章開幕)
+       h      : hauteur totale pour la story (défaut 1440 ; plus haut = image plus grande, bloc titre posé en bas)
      Rendu : node render.js (Playwright) → reseaux.jpg et lien.jpg. -->
 <style>
 @font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
@@ -67,6 +68,10 @@ html,body{margin:0;background:#333}
   document.getElementById("rk").textContent = document.getElementById("lk").textContent = k;
   // Textes longs : on réduit pour tenir sur une ligne.
   [["rt", 1000], ["rs", 1000], ["rm", 1000], ["lt", 620], ["ls", 620], ["lm", 620]].forEach(function (a) { var el = document.getElementById(a[0]), fs = parseFloat(getComputedStyle(el).fontSize); el.style.whiteSpace = "nowrap"; el.style.display = "inline-block"; el.style.alignSelf = "flex-start"; while (el.offsetWidth > a[1] && fs > 20) { fs -= 2; el.style.fontSize = fs + "px"; } el.style.display = "block"; el.style.alignSelf = ""; });
+  // Version story : hauteur totale « h » (> 1440) ; l'image s'allonge et le bloc titre descend d'autant, toujours sur fond noir.
+  var H = +g("h"); if (H > 1440) { var r = document.getElementById("r"), mid = r.querySelector(".mid");
+    r.style.height = H + "px"; var mt = H - 44 - mid.offsetHeight; mid.style.top = mt + "px"; document.getElementById("rf").style.height = (mt + 60) + "px";
+    r.querySelector(".sh").style.background = "linear-gradient(180deg,rgba(12,12,14,.55) 0,transparent 200px,transparent " + (mt - 250) + "px,rgba(12,12,14,.9) " + (mt + 8) + "px,#0c0c0e " + (mt + 94) + "px)"; }
   var im = new Image(); im.onload = function () { document.body.dataset.ok = 1; }; im.src = v;
 })();
 </script>
