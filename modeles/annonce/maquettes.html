@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes · Annonce · FuryoGang</title>
+<!-- 8 pistes pour le visuel réseaux « Annonce » (série à venir), Will 24/11/2026.
+     Inspirées de la charte : Nouvelle série (kanji géant), Fin de série (bandeau), Nouvel arc (pleine page), Sortie de tome (soleil, crème).
+     Exemple : Kabukichō Bengoshi (Dai Suzuki × Shō Wakabayashi), début le 8 décembre dans le Young Champion. Seule image : la page d'annonce en noir et blanc. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#333}
+.c{position:relative;overflow:hidden;width:1080px;height:1440px;background:#0c0c0e;color:#F2EFE9;margin:20px;font-family:I;display:inline-block;vertical-align:top}
+.lab{position:absolute;top:0;left:20px;background:#fff;color:#000;font:800 22px I;padding:6px 12px;z-index:30;border-radius:0 0 8px 8px}
+.logo{position:absolute;top:34px;left:50%;transform:translateX(-50%);height:62px;z-index:20}
+.bg{position:absolute;inset:-20px;background:url(/img/news/kabukicho-bengoshi/annonce-yc24.jpg) 40% 40%/cover;filter:grayscale(1) blur(2px);opacity:.25}
+.pg{position:absolute;border:6px solid #fff;border-radius:6px;box-shadow:0 30px 70px rgba(0,0,0,.7);background:url(/img/news/kabukicho-bengoshi/annonce-perso.jpg) center top/cover}
+.pill{display:inline-block;background:#F08A24;color:#fff;font:800 34px/1 I;padding:14px 26px;border-radius:14px;text-transform:uppercase}
+.t{font:700 124px/1 A;text-transform:uppercase;letter-spacing:.005em}
+.st{font:700 44px/1.05 A;text-transform:uppercase;color:#E5483A}
+.au{font:700 40px/1 A;text-transform:uppercase;color:#d9d6cf;letter-spacing:.02em}
+.meta{font:700 40px/1 A;text-transform:uppercase}
+.meta b{color:#F2C14E;font-weight:700}
+.mid{position:absolute;left:0;right:0;text-align:center;z-index:5}
+.vt{position:absolute;writing-mode:vertical-rl;font:900 104px/1 J;letter-spacing:.04em}
+.full{position:absolute;background:url(/img/news/kabukicho-bengoshi/annonce-perso.jpg) 55% 18%/cover;filter:grayscale(1) contrast(1.05)}
+
+/* 1 · Kanji géant (Nouvelle série) */
+#v1 .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.2),rgba(12,12,14,.1) 45%,rgba(12,12,14,.9) 76%,#0c0c0e)}
+#v1 .k{position:absolute;top:110px;left:0;right:0;text-align:center;font:900 188px/1 J;color:#F08A24;letter-spacing:-.02em}
+#v1 .pg{width:520px;height:752px;left:280px;top:300px}
+#v1 .mid{top:1110px}
+/* 2 · Bandeau (Fin de série) */
+#v2 .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.1),rgba(12,12,14,.25) 50%,rgba(12,12,14,.85) 66%,#0c0c0e 80%)}
+#v2 .k{position:absolute;top:116px;left:0;right:0;text-align:center;font:900 170px/1 J;color:#E5483A;opacity:.92}
+#v2 .pg{width:470px;height:680px;left:305px;top:300px;transform:rotate(-2deg)}
+#v2 .bd{position:absolute;left:0;right:0;top:900px;height:110px;background:#F08A24;display:flex;align-items:center;justify-content:center;font:700 82px/1 A;text-transform:uppercase;z-index:4}
+#v2 .mid{top:1060px}
+/* 3 · Pleine page (Nouvel arc) */
+#v3 .full{left:0;right:0;top:0;height:1060px}
+#v3 .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.55) 0,transparent 14%,transparent 50%,rgba(12,12,14,.9) 68%,#0c0c0e 74%)}
+#v3 .vt{left:40px;top:150px;background:#F08A24;color:#fff;padding:24px 14px;font-size:96px}
+#v3 .mid{top:960px}
+/* 4 · Compte à rebours (date en grand) */
+#v4 .full{right:0;top:0;bottom:0;width:700px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 30%);mask-image:linear-gradient(90deg,transparent,#000 30%)}
+#v4 .tx{position:absolute;left:60px;top:150px;width:620px;z-index:5}
+#v4 .d{font:700 300px/.85 A;color:#F2C14E;margin-top:26px}
+#v4 .m{font:700 110px/1 A;text-transform:uppercase;margin-top:6px}
+#v4 .y{font:700 40px/1 A;text-transform:uppercase;color:#d9d6cf;margin-top:12px}
+#v4 .bot{position:absolute;left:0;right:0;bottom:0;padding:120px 60px 70px;z-index:5;background:linear-gradient(180deg,transparent,rgba(12,12,14,.92) 40%,#0c0c0e)}
+/* 5 · Soleil (Sortie de tome) */
+#v5{background:linear-gradient(180deg,#141416,#1d1a1f 40%,#0c0c0e)}
+#v5 .sun{position:absolute;width:820px;height:820px;border-radius:50%;background:#BC002D;left:130px;top:170px}
+#v5 .pg{width:500px;height:723px;left:290px;top:170px}
+#v5 .vt{right:46px;top:300px;font-size:70px;color:#fff}
+#v5 .dl{position:absolute;left:34px;top:470px;font:700 30px/1 A;color:#d9d6cf;text-transform:uppercase;letter-spacing:.06em}
+#v5 .dl b{display:block;font-size:96px;color:#F2EFE9;margin-top:6px}
+#v5 .mid{top:960px}
+#v5 .date{display:inline-block;background:#F08A24;font:700 38px/1 A;padding:12px 22px;border-radius:8px;text-transform:uppercase;letter-spacing:.04em}
+/* 6 · Crème (magazine) */
+#v6{background:#F3EBDD;color:#121214}
+#v6 .pg{width:560px;height:810px;left:110px;top:160px;border-color:#121214;box-shadow:24px 24px 0 #F08A24}
+#v6 .vt{right:110px;top:160px;color:#E5483A;font-size:132px}
+#v6 .mid{top:1030px}
+#v6 .t{color:#121214}
+#v6 .au{color:#5a5a60}
+#v6 .meta b{color:#E5483A}
+/* 7 · Duo d'auteurs */
+#v7 .full{left:0;right:0;top:0;height:900px;opacity:.9}
+#v7 .sh{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.5) 0,transparent 15%,transparent 45%,rgba(12,12,14,.95) 62%,#0c0c0e 66%)}
+#v7 .pill{position:absolute;left:60px;top:150px}
+#v7 .duo{position:absolute;left:60px;right:60px;top:880px;display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:end}
+#v7 .duo div small{display:block;font:700 24px I;color:#9a968f;text-transform:uppercase;letter-spacing:.08em}
+#v7 .duo div b{display:block;font:700 66px/1 A;text-transform:uppercase;margin-top:8px}
+#v7 .duo .x{font:700 80px/1 A;color:#F08A24}
+#v7 .duo .r{text-align:right}
+#v7 .t2{position:absolute;left:60px;right:60px;top:1080px;font:700 104px/1 A;text-transform:uppercase}
+#v7 .meta{position:absolute;left:60px;bottom:80px}
+/* 8 · Partage (image à gauche, colonne à droite) */
+#v8 .full{left:0;top:0;bottom:0;width:560px}
+#v8 .sh{position:absolute;left:400px;top:0;bottom:0;width:160px;background:linear-gradient(90deg,transparent,#0c0c0e)}
+#v8 .col{position:absolute;left:600px;right:60px;top:180px;bottom:80px;display:flex;flex-direction:column;z-index:5}
+#v8 .col .k{font:900 150px/1 J;color:#E5483A;writing-mode:vertical-rl;position:absolute;right:0;top:0}
+#v8 .col .pill{align-self:flex-start;font-size:28px}
+#v8 .col .t{font-size:96px;margin-top:auto}
+#v8 .col .au{font-size:34px;margin-top:16px;line-height:1.15}
+#v8 .col .meta{font-size:34px;margin-top:30px;line-height:1.2}
+#v8 .logo{left:820px}
+</style>
+</head>
+<body>
+<div class="c" id="v1"><span class="lab">1 · Kanji</span><div class="bg"></div><div class="sh"></div><div class="k">新連載決定</div><img class="logo" src="/img/social/logo-blanc.png"><div class="pg"></div>
+ <div class="mid"><span class="pill">Annonce</span><div class="t" style="margin-top:20px">Kabukichō Bengoshi</div><div class="au" style="margin-top:12px">Shō Wakabayashi × Dai Suzuki</div><div class="meta" style="margin-top:22px">Début le <b>8 décembre</b> · Young Champion</div></div></div>
+
+<div class="c" id="v2"><span class="lab">2 · Bandeau</span><div class="bg"></div><div class="sh"></div><div class="k">新連載決定</div><img class="logo" src="/img/social/logo-blanc.png"><div class="pg"></div><div class="bd">Annonce</div>
+ <div class="mid"><div class="t">Kabukichō Bengoshi</div><div class="au" style="margin-top:12px">Shō Wakabayashi × Dai Suzuki</div><div class="meta" style="margin-top:28px">Début le <b>8 décembre</b> · Young Champion</div></div></div>
+
+<div class="c" id="v3"><span class="lab">3 · Pleine page</span><div class="full"></div><div class="sh"></div><img class="logo" src="/img/social/logo-blanc.png"><div class="vt">新連載決定</div>
+ <div class="mid"><span class="pill">Annonce</span><div class="t" style="margin-top:20px">Kabukichō Bengoshi</div><div class="au" style="margin-top:12px">Shō Wakabayashi × Dai Suzuki</div><div class="meta" style="margin-top:22px">Début le <b>8 décembre</b> · Young Champion</div></div></div>
+
+<div class="c" id="v4"><span class="lab">4 · Date en grand</span><div class="full"></div><img class="logo" src="/img/social/logo-blanc.png" style="left:60px;transform:none">
+ <div class="tx"><span class="pill">Annonce</span><div class="d">08</div><div class="m">décembre</div><div class="y">Young Champion 2027 n°1</div></div>
+ <div class="bot"><div class="t" style="font-size:112px">Kabukichō Bengoshi</div><div class="au" style="margin-top:12px">Shō Wakabayashi × Dai Suzuki</div></div></div>
+
+<div class="c" id="v5"><span class="lab">5 · Soleil</span><div class="bg" style="opacity:.1"></div><div class="sun"></div><img class="logo" src="/img/social/logo-blanc.png"><div class="pg"></div><div class="dl">Début<b>08.12</b></div><div class="vt">新連載決定</div>
+ <div class="mid"><span class="date">Annonce · Young Champion</span><div class="t" style="margin-top:22px">Kabukichō Bengoshi</div><div class="au" style="margin-top:12px">Shō Wakabayashi × Dai Suzuki</div></div></div>
+
+<div class="c" id="v6"><span class="lab">6 · Crème</span><img class="logo" src="/img/social/logo-noir.png"><div class="pg"></div><div class="vt">新連載決定</div>
+ <div class="mid"><span class="pill">Annonce</span><div class="t" style="margin-top:20px">Kabukichō Bengoshi</div><div class="au" style="margin-top:12px">Shō Wakabayashi × Dai Suzuki</div><div class="meta" style="margin-top:22px">Début le <b>8 décembre</b> · Young Champion</div></div></div>
+
+<div class="c" id="v7"><span class="lab">7 · Duo d'auteurs</span><div class="full"></div><div class="sh"></div><img class="logo" src="/img/social/logo-blanc.png"><span class="pill">Annonce</span>
+ <div class="duo"><div><small>Histoire</small><b>Shō Wakabayashi</b></div><span class="x">×</span><div class="r"><small>Dessin</small><b>Dai Suzuki</b></div></div>
+ <div class="t2">Kabukichō Bengoshi</div><div class="meta">Début le <b>8 décembre</b> · Young Champion</div></div>
+
+<div class="c" id="v8"><span class="lab">8 · Partage</span><div class="full"></div><div class="sh"></div><img class="logo" src="/img/social/logo-blanc.png">
+ <div class="col"><div class="k">予告</div><span class="pill">Annonce</span><div class="t">Kabukichō<br>Bengoshi</div><div class="au">Shō Wakabayashi<br>× Dai Suzuki</div><div class="meta">Début le<br><b>8 décembre</b><br>Young Champion</div></div></div>
+</body>
+</html>
