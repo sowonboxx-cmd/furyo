@@ -13,6 +13,7 @@
        auteurs : « Shō Wakabayashi × Dai Suzuki » · mag : magazine (« Young Champion »)
        jour    : date courte à gauche du soleil (« 08.12 ») · quand : date en clair pour le lien (« 8 décembre »)
        kanji   : texte vertical à droite (défaut 新連載決定, « nouvelle série confirmée »)
+       h       : hauteur totale pour la story (défaut 1440 ; 1520 = le fond descend jusqu'au trait jaune)
      Rendu : node render.js (Playwright) → reseaux.jpg et lien.jpg. -->
 <style>
 @font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
@@ -73,6 +74,9 @@ html,body{margin:0;background:#333}
   document.getElementById("lq").innerHTML = "Début le <b>" + g("quand").replace(/[&<>]/g, "") + "</b>";
   // Titre long : réduit pour tenir sur une ligne.
   [["rt", 1000], ["lt", 560]].forEach(function (a) { var e = document.getElementById(a[0]), fs = parseFloat(getComputedStyle(e).fontSize); e.style.whiteSpace = "nowrap"; e.style.display = "inline-block"; e.style.alignSelf = "flex-start"; while (e.offsetWidth > a[1] && fs > 40) { fs -= 2; e.style.fontSize = fs + "px"; } e.style.display = "block"; e.style.alignSelf = ""; });
+  // Version story : hauteur totale « h » (> 1440) ; le fond noir et blanc descend jusqu'en bas, le contenu descend de la moitié de l'écart.
+  var H = +g("h"); if (H > 1440) { var r = document.getElementById("r"), d = (H - 1440) / 2; r.style.height = H + "px";
+    r.querySelectorAll(".sun,.pg,.vt,.dl,.mid").forEach(function (el) { el.style.top = (parseFloat(getComputedStyle(el).top) + d) + "px"; }); }
   var im = new Image(); im.onload = function () { document.body.dataset.ok = 1; }; im.src = v;
 })();
 </script>
