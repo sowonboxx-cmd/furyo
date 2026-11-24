@@ -12,6 +12,6 @@ export async function onRequest({ request, env }) {
     if (env.STATS) await env.STATS.put("cron:dernier", "1", { expirationTtl: 120 });
     const r = await tourneeReseaux(env);
     if (r.length) { const c = caches.default; await Promise.all(["/api/news?v=21", "/api/calendrier"].map(k => c.delete(new Request("https://furyogang.com" + k)))); }
-    return new Response(JSON.stringify({ ok: true, traitees: r }), { headers: { "content-type": "application/json", "cache-control": "no-store" } });
+    return new Response(JSON.stringify({ ok: true, traitees: r, vus: tourneeReseaux.vus, err: tourneeReseaux.err || "" }), { headers: { "content-type": "application/json", "cache-control": "no-store" } });
   } finally { if (env.STATS) await env.STATS.delete("cron:reseaux").catch(() => {}); }
 }
