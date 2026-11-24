@@ -10,5 +10,8 @@ const { chromium } = require("playwright");
   await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(600);
   await (await p.$("#r")).screenshot({ path: out + "/reseaux.jpg", type: "jpeg", quality: 90 });
   await (await p.$("#l")).screenshot({ path: out + "/lien.jpg", type: "jpeg", quality: 90 });
+  // Version story : même visuel sans le logo du haut (il est déjà en grand dans le bas de la story).
+  await p.evaluate(() => { const l = document.querySelector("#r .logo"); if (l) l.style.visibility = "hidden"; });
+  await (await p.$("#r")).screenshot({ path: out + "/story.jpg", type: "jpeg", quality: 90 });
   await b.close();
 })();
