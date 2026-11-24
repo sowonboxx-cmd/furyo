@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes · Stories v2 · FuryoGang</title>
+<!-- Stories Instagram v2 (Will, 24/11/2026) : plus de persos, mêmes fonds, visuels bien plus grands,
+     « Nouveau post » / « Prépublication » en petit, simple contour à la place du cadre. Le bas (logo + furyogang.com) ne bouge pas.
+     Fonds : copies des styles actuels sans la pastille ni le cadre (fonds/). -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#333}
+.s{position:relative;overflow:hidden;width:1080px;height:1920px;margin:20px;display:inline-block;vertical-align:top;background:center/cover;font-family:I;color:#fff}
+.lab{position:absolute;top:0;left:20px;background:#fff;color:#000;font:800 26px I;padding:8px 14px;z-index:30;border-radius:0 0 10px 10px}
+.tag{position:absolute;left:50%;transform:translateX(-50%);font:700 30px/1 A;letter-spacing:.12em;text-transform:uppercase;padding:10px 18px;border-radius:999px;white-space:nowrap;z-index:5}
+.im{position:absolute;background:#111 center/cover;z-index:3}
+.k{font:700 28px/1 I;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.tt{font:700 110px/1 A;text-transform:uppercase}
+.ch{display:inline-block;background:#F2C14E;color:#121214;font:700 44px/1 A;text-transform:uppercase;padding:12px 22px;border-radius:10px;letter-spacing:.03em}
+/* N1 · Bōryoku, rouge, contour blanc fin, étiquette en haut */
+#n1{background-image:url(fonds/rouge.jpg)}
+#n1 .tag{top:58px;background:#121214;color:#F2EFE9}
+#n1 .im{left:40px;top:140px;width:1000px;height:1333px;border:4px solid #fff;border-radius:14px;box-shadow:0 30px 60px rgba(0,0,0,.45);background-image:url(/img/news/boryoku-banzai/reseaux-t1.jpg)}
+/* N2 · Hangure, noir, plein cadre bord à bord, étiquette en bas */
+#n2{background-image:url(fonds/noir-kanji.jpg)}
+#n2 .im{left:0;top:90px;width:1080px;height:1440px;background-image:url(/img/news/hangure-arc/reseaux.jpg)}
+#n2 .tag{top:1545px;background:transparent;color:#F2C14E;font-size:28px}
+/* N3 · Kabukichō, rouge, bordure blanche */
+#n3{background-image:url(fonds/rouge-couv.jpg)}
+#n3 .tag{top:64px;background:#fff;color:#BC002D}
+#n3 .im{left:54px;top:150px;width:972px;height:1296px;border:10px solid #fff;box-shadow:0 30px 70px rgba(0,0,0,.5);background-image:url(/img/news/kabukicho-bengoshi/reseaux.jpg)}
+/* N4 · Bōryoku, bleu, coins arrondis + contour très léger, étiquette discrète en haut à gauche */
+#n4{background-image:url(fonds/bleu.jpg)}
+#n4 .tag{top:60px;left:70px;transform:none;background:transparent;color:#fff;padding:0;font-size:30px}
+#n4 .tag::before{content:"";display:inline-block;width:14px;height:14px;border-radius:50%;background:#F2C14E;margin-right:12px;vertical-align:4px}
+#n4 .im{left:30px;top:120px;width:1020px;height:1360px;border-radius:26px;outline:2px solid rgba(255,255,255,.7);outline-offset:6px;background-image:url(/img/news/boryoku-banzai/reseaux-t1.jpg)}
+/* P1 · Dustland, prépub rouge : grande couverture, texte sur le fond (plus de carte crème) */
+#p1{background-image:url(fonds/prepub-rouge.jpg)}
+#p1 .tag{top:56px;background:#121214;color:#F2EFE9;font-size:28px}
+#p1 .im{left:150px;top:140px;width:780px;height:1110px;border:6px solid #fff;box-shadow:0 30px 70px rgba(0,0,0,.5);background-image:url(/couvertures/9784253020312-hd.jpg)}
+#p1 .tx{position:absolute;left:0;right:0;top:1290px;text-align:center;z-index:4}
+/* P2 · Dustland, prépub noir : carte crème gardée mais agrandie */
+#p2{background-image:url(fonds/prepub-noir.jpg)}
+#p2 .tag{top:56px;background:#F2EFE9;color:#121214;font-size:28px}
+#p2 .card{position:absolute;left:40px;top:130px;width:1000px;height:1440px;background:#F4ECDD;border-radius:18px;z-index:2;color:#121214;text-align:center}
+#p2 .im{left:160px;top:180px;width:760px;height:1082px;transform:rotate(-2deg);border:8px solid #fff;box-shadow:0 26px 50px rgba(0,0,0,.35)}
+#p2 .card .k{color:#6b665e;position:absolute;left:0;right:0;top:1180px}
+#p2 .card .tt{position:absolute;left:0;right:0;top:1225px;color:#121214;font-size:104px}
+#p2 .card .ch{position:absolute;left:50%;transform:translateX(-50%);top:1352px}
+/* P3 · Dustland, prépub jaune : couverture pleine largeur, texte en dégradé dessus */
+#p3{background-image:url(fonds/prepub-jaune.jpg)}
+#p3 .tag{top:58px;background:#121214;color:#F2C14E;font-size:28px}
+#p3 .im{left:60px;top:140px;width:960px;height:1400px;border-radius:16px;outline:3px solid #121214;outline-offset:6px;background-position:center top}
+#p3 .gr{position:absolute;left:60px;top:1000px;width:960px;height:540px;border-radius:0 0 16px 16px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.92) 55%);z-index:4}
+#p3 .tx{position:absolute;left:100px;right:100px;top:1250px;z-index:5}
+/* P4 · Dustland, prépub noir : couverture énorme, étiquette et infos en bas */
+#p4{background-image:url(fonds/prepub-noir.jpg)}
+#p4 .im{left:90px;top:80px;width:900px;height:1281px;border:3px solid rgba(255,255,255,.85);border-radius:8px;box-shadow:0 30px 70px rgba(0,0,0,.6)}
+#p4 .tx{position:absolute;left:0;right:0;top:1395px;text-align:center;z-index:4}
+#p4 .tx .row{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:14px}
+#p4 .tx .tt{font-size:92px}
+.cv{background-image:url(/couvertures/9784253020312-hd.jpg)}
+</style>
+</head>
+<body>
+<div class="s" id="n1"><span class="lab">N1 · Nouveau post, contour fin</span><span class="tag">Nouveau post</span><div class="im"></div></div>
+<div class="s" id="n2"><span class="lab">N2 · Plein cadre, étiquette en bas</span><div class="im"></div><span class="tag">Nouveau post · furyogang.com</span></div>
+<div class="s" id="n3"><span class="lab">N3 · Fond rouge, bordure blanche</span><span class="tag">Nouveau post</span><div class="im"></div></div>
+<div class="s" id="n4"><span class="lab">N4 · Contour léger, étiquette discrète</span><span class="tag">Nouveau post</span><div class="im"></div></div>
+
+<div class="s" id="p1"><span class="lab">P1 · Prépub, couverture géante</span><span class="tag">Prépublication</span><div class="im"></div>
+ <div class="tx"><div class="k">Young Champion · N°24</div><div class="tt" style="margin-top:14px">Dustland</div><div style="margin-top:18px"><span class="ch">Chapitre 22</span></div></div></div>
+<div class="s" id="p2"><span class="lab">P2 · Prépub, carte crème agrandie</span><span class="tag">Prépublication</span><div class="card"><div class="k">Young Champion · N°24</div><div class="tt">Dustland</div><span class="ch">Chapitre 22</span></div><div class="im cv"></div></div>
+<div class="s" id="p3"><span class="lab">P3 · Prépub, pleine largeur</span><span class="tag">Prépublication</span><div class="im cv"></div><div class="gr"></div>
+ <div class="tx"><div class="k">Young Champion · N°24</div><div class="tt" style="margin-top:12px">Dustland</div><div style="margin-top:16px"><span class="ch">Chapitre 22</span></div></div></div>
+<div class="s" id="p4"><span class="lab">P4 · Prépub, infos en bas</span><div class="im cv"></div>
+ <div class="tx"><div class="k" style="color:#F2C14E">Prépublication · Young Champion N°24</div><div class="row"><span class="tt">Dustland</span><span class="ch">Ch. 22</span></div></div></div>
+</body>
+</html>
