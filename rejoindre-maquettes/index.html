@@ -1,0 +1,81 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Rejoins le gang · maquettes</title>
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf);font-weight:100 700}@font-face{font-family:I;src:url(/fonts/Inter.ttf);font-weight:100 900}@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf);font-weight:100 900}
+*{box-sizing:border-box}html,body{margin:0;height:100%}body{background:#0c0c0e;color:#f3f3f5;font:500 15px/1.45 I,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:18px 22px;z-index:5}.top img{height:30px}.top a{font:700 13px I;color:#cfcfd4}
+h1{font:700 64px/.9 A;text-transform:uppercase;margin:0}h1 em{font-style:normal;color:#ff2a55}
+.kick{font:800 12px I;letter-spacing:.16em;text-transform:uppercase;color:#ff5a7a}
+.go{display:flex;align-items:center;justify-content:center;gap:10px;height:56px;border-radius:14px;background:#fff;color:#111;font:800 16px I;border:0;width:100%}
+.go svg{width:20px;height:20px}
+.ls{list-style:none;margin:0;padding:0;display:grid;gap:9px}.ls li{display:flex;gap:11px;align-items:center;font-size:14.5px;color:#e6e6ea}
+.ls svg{width:18px;height:18px;flex:none;color:#ff5a7a}
+.tease{display:flex;gap:10px}.tease a{flex:1;border-radius:14px;padding:11px 13px;background:#16161a}
+.tease b{display:block;font:700 18px/1 A;text-transform:uppercase}.tease small{color:#9a9aa2;font-size:12px}
+.tease .p b{color:#ff5a7a}.tease .pp b{color:#F2B33D}
+.fond{font:600 13px I;color:#c9c9cf;display:flex;align-items:center;gap:9px}.fond svg{width:30px;height:30px;flex:none}
+.mut{color:#9a9aa2;font-size:13px}
+/* A — affiche */
+.A{position:relative;min-height:100vh;overflow:hidden}
+.A .im{position:absolute;inset:0 0 auto 0;height:46vh;background:url(/img/qp/qp.webp) 60% 18%/cover no-repeat;filter:grayscale(1)}
+.A .im:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.15),rgba(12,12,14,.55) 60%,#0c0c0e)}
+.A .c{position:relative;padding:31vh 20px 20px;display:flex;flex-direction:column;gap:13px;max-width:520px}.A h1{font-size:58px}.A .ls li{font-size:14px}
+@media(max-width:899px){.A .pj{display:none}}@media(min-width:900px){.A .pj{height:200px;right:auto;left:540px}.A .im{inset:0 0 0 auto;width:58%;height:100%}.A .im:after{background:linear-gradient(90deg,#0c0c0e,rgba(12,12,14,.3) 40%,rgba(12,12,14,.1))}.A .c{padding:120px 0 40px 80px;max-width:560px}.A h1{font-size:96px}}
+/* B — carte famille */
+.B{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:70px 14px 18px}
+.B .card{position:relative;overflow:hidden;width:100%;max-width:1100px;background:#000;border-radius:26px;padding:24px 20px;display:grid;gap:16px}
+.B .wm{position:absolute;right:-30px;top:-40px;font:900 300px/1 J;color:#2a0008;writing-mode:vertical-rl;pointer-events:none}
+.B .hd{position:relative;display:flex;gap:14px;align-items:flex-end}.B .n{font:700 92px/.8 A}.B .hd span{font:700 24px/1 A;text-transform:uppercase}
+.B .qp{position:relative;border-radius:18px;height:150px;background:url(/img/qp/qp.webp) 60% 20%/cover;filter:grayscale(1)}
+.B .ti{position:relative;display:grid;gap:8px;grid-template-columns:1fr 1fr}.B .t.g{grid-column:span 2}.B .t{padding:12px}.B .hd .n{font-size:76px}.B .card{gap:12px}
+.B .t{background:#16161a;border-radius:16px;padding:14px}.B .t.g{background:#1d1d22}.B .t h3{margin:0 0 8px;font:700 22px/1 A;text-transform:uppercase}
+.B .t.p h3{color:#ff5a7a}.B .t.pp h3{color:#F2B33D}.B .t p{margin:0;font-size:13px;color:#b8b8c0}
+.B .chars{position:absolute;right:10px;bottom:0;height:150px;z-index:2}
+@media(min-width:900px){.B .card{grid-template-columns:1.05fr 1fr;padding:42px;gap:28px}.B .qp{height:auto;grid-row:span 2;min-height:420px}.B .n{font-size:120px}.B .ti{grid-template-columns:1.4fr 1fr 1fr}.B .t.g{grid-column:auto}.B .hd .n{font-size:120px}}
+/* C — split */
+.C{min-height:100vh;display:grid}
+.C .im{position:relative;height:40vh}.C .im:before{content:"";position:absolute;inset:0;background:url(/img/qp/qp.webp) 60% 15%/cover;filter:grayscale(1)}
+
+.C .im:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1),rgba(12,12,14,.95))}.C .im .tt{position:absolute;left:22px;right:22px;bottom:16px;z-index:2}
+.C .c{padding:18px 22px 24px;display:flex;flex-direction:column;gap:14px}
+.C .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.C .row div{background:#16161a;border-radius:12px;padding:10px 12px;font-size:13px}.C .row svg{width:20px;height:20px;color:#ff5a7a;display:block;margin-bottom:4px}
+.C .jin{position:absolute;right:16px;bottom:-6px;height:130px;z-index:3;filter:none}
+@media(min-width:900px){.C{grid-template-columns:1fr 1fr}.C .im{height:100vh}.C .c{justify-content:center;padding:60px 70px}.C h1{font-size:88px}}
+.v{display:none}.A.on{display:block}.B.on{display:flex}.C.on{display:grid}
+</style></head><body>
+<script>var V=(new URLSearchParams(location.search).get("v")||"a");</script>
+<div class="top"><img src="/img/social/logo-blanc.png" alt=""><a href="/">Le site →</a></div>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="g" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6c1.9-5.6 7.1-9.8 13.5-9.8z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.3-4.6 7l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.4 0-11.6-4.2-13.5-9.8l-7.8 6C6.6 42.6 14.6 48 24 48z"/></symbol>
+<symbol id="ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="cr" viewBox="0 0 64 64"><path d="M8 26l12 9 12-19 12 19 12-9-4 25H12z" fill="#FFC928"/><path d="M32 16l12 19 12-9-4 25H32z" fill="#F5B21C"/><circle cx="8" cy="25" r="3.6" fill="#FFC928"/><circle cx="56" cy="25" r="3.6" fill="#F5B21C"/><circle cx="32" cy="14" r="3.8" fill="#FFC928"/><path d="M32 30l5 7-5 7-5-7z" fill="#7B3FA0"/><rect x="11" y="48" width="42" height="9" rx="2" fill="#F08A24"/></symbol>
+<symbol id="bk" viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+<symbol id="ca" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="us" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.6c2 .7 3.2 2.5 3.6 5.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</defs></svg>
+<!-- A -->
+<section class="v A" id="va"><div class="im"></div><div class="c">
+<span class="kick">Gratuit · en un clic</span><h1>Rejoins<br>le <em>gang</em></h1>
+<ul class="ls"><li><svg><use href="#ok"/></svg>Actus, fiches séries, calendrier des sorties, Au Japon</li><li><svg><use href="#ok"/></svg>Ta bibliothèque de mangas, sans limite</li><li><svg><use href="#ok"/></svg>Ton profil, tes badges, la communauté</li></ul>
+<div class="fond"><svg><use href="#cr"/></svg><span>Plus que <b style="color:#F2C14E">11 places</b> pour le badge Fondateur des 100 premiers</span></div>
+<a class="go" href="#"><svg><use href="#g"/></svg>S'inscrire avec Google</a>
+<div class="tease"><a class="p" href="/premium/"><b>Premium</b><small>stats, listes, classements · 2 €/mois</small></a><a class="pp" href="/premium/#dons"><b>Premium +</b><small>avant-premières · dès 25 €</small></a></div>
+</div><img src="/img/don/jinnai.webp" alt="" style="position:absolute;right:14px;bottom:0;height:120px" class="pj"></section>
+<!-- B -->
+<section class="v B" id="vb"><div class="card"><div class="wm">仲間</div>
+<div class="hd"><div class="n">89</div><span>membres<br>dans le gang</span></div>
+<div class="qp"></div>
+<div class="ti"><div class="t g"><h3>Gratuit</h3><ul class="ls"><li><svg><use href="#ok"/></svg>Actus, fiches, calendrier</li><li><svg><use href="#ok"/></svg>Bibliothèque sans limite</li><li><svg><use href="#ok"/></svg>Profil et badges</li></ul></div>
+<a class="t p" href="/premium/"><h3>Premium</h3><p>Stats de lecture, listes, classements complets. 2 € par mois.</p></a>
+<a class="t pp" href="/premium/#dons"><h3>Premium +</h3><p>Interviews en avant-première, concours figurines. Dès 25 €.</p></a></div>
+<div style="position:relative;display:grid;gap:10px"><div class="fond"><svg><use href="#cr"/></svg><span>Plus que <b style="color:#F2C14E">11 places</b> pour le badge Fondateur</span><img src="/img/don/jinnai.webp" alt="" style="height:70px;margin-left:auto"></div><a class="go" href="#"><svg><use href="#g"/></svg>Rejoindre le gang avec Google</a></div>
+</div></section>
+<!-- C -->
+<section class="v C" id="vc"><div class="im"><div class="tt"><span class="kick">L'expérience communautaire</span><h1>Rejoins<br>le <em>gang</em></h1></div></div><div class="c" style="position:relative">
+<p style="margin:0;color:#c9c9cf">Gratuit, en un clic avec Google. Tout le site, plus ta collection et ta place dans la communauté.</p>
+<div class="row"><div><svg><use href="#ca"/></svg>Sorties et actus</div><div><svg><use href="#bk"/></svg>Ta bibliothèque</div><div><svg><use href="#us"/></svg>Profil et badges</div><div><svg><use href="#cr"/></svg>Badge Fondateur : 11 places</div></div>
+<a class="go" href="#"><svg><use href="#g"/></svg>S'inscrire avec Google</a>
+<img src="/img/don/murota.webp" alt="" style="position:absolute;right:18px;bottom:0;height:96px"><p class="mut" style="margin:0;padding-right:90px">Envie d'aller plus loin ? <a href="/premium/" style="color:#ff5a7a;font-weight:700">Premium</a> (2 €/mois) ou <a href="/premium/#dons" style="color:#F2B33D;font-weight:700">Premium +</a> (dès 25 €).</p>
+</div></section>
+<script>document.getElementById("v"+V).classList.add("on");</script>
+</body></html>
