@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes 2 · Stories v2 · FuryoGang</title>
+<!-- Stories v2, 2e tour (Will, 24/11/2026).
+     Prépub : toujours le rouge P1, fond = mosaïque N&B des tomes de la série affichée, étiquette plus sobre (pas de pastille),
+     bordure blanche ou noire sans ombre, chapitre bien centré. Séries parues aujourd'hui.
+     News : style N2 (plein cadre) pour toutes les news post + story, haut en fondu, aucune étiquette. Bōryoku : essais de fonds.
+     Images des séries dans m/ (non versionné). -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#333}
+.s{position:relative;overflow:hidden;width:1080px;height:1920px;margin:20px;display:inline-block;vertical-align:top;background:url(fonds/rouge.jpg) center/cover;font-family:I;color:#fff}
+.lab{position:absolute;top:0;left:20px;background:#fff;color:#000;font:800 26px I;padding:8px 14px;z-index:30;border-radius:0 0 10px 10px}
+/* Zone utile : 0 → 1600 (le bandeau logo + furyogang.com du fond reste tel quel) */
+.mz{position:absolute;left:0;top:0;width:1080px;height:1599px;overflow:hidden;background:#CB002F;z-index:1}
+.mz .g{position:absolute;left:-260px;top:-300px;width:1600px;display:grid;grid-template-columns:repeat(7,1fr);gap:18px;transform:rotate(-8deg);opacity:.34;mix-blend-mode:multiply}
+.mz .g i{display:block;aspect-ratio:7/10;background:center/cover;filter:grayscale(1) contrast(1.25) brightness(1.05)}
+.mz::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 42%,rgba(150,0,30,.55),transparent 75%),linear-gradient(180deg,transparent 60%,rgba(120,0,25,.65))}
+.cv{position:absolute;left:50%;transform:translateX(-50%);background:#111 center top/cover;z-index:3}
+.bw{border:6px solid #fff;box-shadow:0 30px 70px rgba(0,0,0,.45)}
+.bn{border:8px solid #121214}
+.tx{position:absolute;left:60px;right:60px;text-align:center;z-index:4}
+.k{font:700 28px/1 I;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.88)}
+.tt{font:700 112px/1 A;text-transform:uppercase;white-space:nowrap}
+.st{font:700 40px/1 A;text-transform:uppercase;letter-spacing:.04em;color:#F2EFE9;opacity:.9}
+.row{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap}
+/* Chapitre : hauteur fixe + centrage optique (les capitales d'Antonio tombent bas avec line-height:1) */
+.ch{display:inline-flex;align-items:center;height:72px;padding:0 24px;background:#F2C14E;color:#121214;font:700 46px/1 A;text-transform:uppercase;letter-spacing:.03em;border-radius:10px}
+.ch span{position:relative;top:-3px}
+.cb{display:inline-flex;align-items:center;height:72px;padding:0 22px;border:3px solid #fff;color:#fff;font:700 40px/1 A;text-transform:uppercase;letter-spacing:.03em;border-radius:10px;box-sizing:border-box}
+.cb span{position:relative;top:-2px}
+.arc{display:inline-block;font:italic 700 40px/1 A;letter-spacing:.04em;text-transform:uppercase;color:#F2C14E}
+/* Étiquette A · Filets en haut */
+.eA{position:absolute;top:62px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:24px;z-index:4;font:700 34px/1 A;letter-spacing:.32em;text-transform:uppercase}
+.eA::before,.eA::after{content:"";width:110px;height:2px;background:rgba(255,255,255,.85)}
+.eA b{font:900 30px/1 J;letter-spacing:.1em;color:#F2C14E;margin-left:-8px}
+/* Étiquette B · Tranche verticale à gauche */
+.eB{position:absolute;left:54px;top:150px;height:1000px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);z-index:4;font:700 36px/1 A;letter-spacing:.36em;text-transform:uppercase}
+.eB::before{content:"";width:2px;height:180px;background:rgba(255,255,255,.85);margin-left:0;margin-top:30px}
+.eBj{position:absolute;right:50px;top:150px;writing-mode:vertical-rl;font:900 48px/1 J;color:#F2C14E;letter-spacing:.12em;z-index:4}
+/* Étiquette C · Sous la couverture, façon article */
+.eC{font:700 30px/1 I;letter-spacing:.16em;text-transform:uppercase;color:#F2C14E}
+/* Étiquette D · En-tête de journal */
+.eD{position:absolute;left:60px;right:60px;top:54px;display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:16px;border-bottom:3px solid #fff;z-index:4;font:700 40px/1 A;text-transform:uppercase;letter-spacing:.14em}
+.eD small{font:700 30px/1 A;letter-spacing:.1em;color:#F2C14E}
+/* News plein cadre, haut en fondu */
+.nf{position:absolute;left:0;width:1080px;height:1440px;background:center top/cover;z-index:3;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 14%);mask-image:linear-gradient(180deg,transparent 0,#000 14%)}
+.ct{position:absolute;left:50%;transform:translateX(-50%);background:center top/cover;z-index:3}
+.mg{position:absolute;inset:0 0 auto 0;height:1599px;background:center/cover;filter:grayscale(1);opacity:.35;z-index:1}
+</style>
+</head>
+<body>
+
+<!-- ===== PRÉPUB ===== -->
+<div class="s" id="p1" data-fond="saigo-no-furyou" data-sauf="10"><span class="lab">P1 · Filets en haut · bordure blanche</span><div class="mz"></div>
+ <div class="eA">Prépublication <b>連載</b></div>
+ <div class="cv bw" style="top:150px;width:700px;height:1000px;background-image:url(m/saigo-no-furyou-10.jpg)"></div>
+ <div class="tx" style="top:1205px"><div class="k">Tonari no Young Jump · En ligne</div><div class="tt" style="margin-top:18px">Saigo no Furyō</div><div class="row" style="margin-top:26px"><span class="ch"><span>Chapitre 124</span></span></div></div></div>
+
+<div class="s" id="p2" data-fond="saigo-no-furyou" data-sauf="10"><span class="lab">P2 · Filets en haut · bordure noire</span><div class="mz"></div>
+ <div class="eA">Prépublication <b>連載</b></div>
+ <div class="cv bn" style="top:150px;width:700px;height:1000px;background-image:url(m/saigo-no-furyou-10.jpg)"></div>
+ <div class="tx" style="top:1205px"><div class="k">Tonari no Young Jump · En ligne</div><div class="tt" style="margin-top:18px">Saigo no Furyō</div><div class="row" style="margin-top:26px"><span class="ch"><span>Chapitre 124</span></span></div></div></div>
+
+<div class="s" id="p3" data-fond="shiseido" data-sauf="-1"><span class="lab">P3 · Tranche verticale · bordure noire</span><div class="mz"></div>
+ <div class="eB">Prépublication</div><div class="eBj">連載</div>
+ <div class="cv bn" style="top:150px;width:700px;height:1014px;background-image:url(m/shiseido-00.jpg)"></div>
+ <div class="tx" style="top:1215px"><div class="k">Young Champion · N°24</div><div class="tt" style="margin-top:18px">Shisei-dō</div><div class="st" style="margin-top:12px">~ Sankyōdai no Kizuna ~</div><div class="row" style="margin-top:24px"><span class="ch"><span>Chapitre 4</span></span></div></div></div>
+
+<div class="s" id="p4" data-fond="amateur-vigilante" data-sauf="8"><span class="lab">P4 · Façon article (sous la couverture)</span><div class="mz"></div>
+ <div class="cv bw" style="top:90px;width:740px;height:1052px;background-image:url(m/amateur-vigilante-08.jpg)"></div>
+ <div class="tx" style="top:1196px"><div class="eC">Prépublication · Young Magazine N°52</div><div class="tt" style="margin-top:20px">Amateur Vigilante</div><div class="row" style="margin-top:26px"><span class="ch"><span>Chapitre 92</span></span></div></div></div>
+
+<div class="s" id="p5" data-fond="the-fable-the-third-secret" data-sauf="0"><span class="lab">P5 · En-tête de journal · bordure noire</span><div class="mz"></div>
+ <div class="eD"><span>Prépublication</span><small>Mardi 24.11</small></div>
+ <div class="cv bn" style="top:170px;width:690px;height:981px;background-image:url(m/the-fable-the-third-secret-00.jpg)"></div>
+ <div class="tx" style="top:1200px"><div class="k">Young Magazine · N°52</div><div class="tt" style="margin-top:18px">The Fable</div><div class="st" style="margin-top:12px">The third secret</div><div class="row" style="margin-top:24px"><span class="ch"><span>Chapitre 64</span></span><span class="cb"><span>Pages couleur</span></span></div></div></div>
+
+<div class="s" id="p6" data-fond="le-premier-amour-de-nezumi" data-sauf="10"><span class="lab">P6 · Filets · bordure noire · annonce</span><div class="mz"></div>
+ <div class="eA">Prépublication <b>連載</b></div>
+ <div class="cv bn" style="top:150px;width:680px;height:972px;background-image:url(m/le-premier-amour-de-nezumi-10.jpg)"></div>
+ <div class="tx" style="top:1170px"><div class="k">Young Magazine · N°52</div><div class="tt" style="margin-top:18px">Nezumi no Hatsukoi</div><div class="arc" style="margin-top:16px">En route vers l'arc final</div><div class="row" style="margin-top:24px"><span class="ch"><span>Chapitre 126</span></span></div></div></div>
+
+<div class="s" id="p7" data-fond="le-premier-amour-de-nezumi" data-sauf="10"><span class="lab">P7 · Façon article · annonce</span><div class="mz"></div>
+ <div class="cv bw" style="top:90px;width:720px;height:1029px;background-image:url(m/le-premier-amour-de-nezumi-10.jpg)"></div>
+ <div class="tx" style="top:1170px"><div class="eC">Prépublication · Young Magazine N°52</div><div class="tt" style="margin-top:20px">Nezumi no Hatsukoi</div><div class="arc" style="margin-top:16px;color:#fff">« En route vers l'arc final »</div><div class="row" style="margin-top:24px"><span class="ch"><span>Chapitre 126</span></span></div></div></div>
+
+<div class="s" id="p8" data-fond="amateur-vigilante" data-sauf="8"><span class="lab">P8 · En-tête de journal · bordure blanche</span><div class="mz"></div>
+ <div class="eD"><span>Prépublication</span><small>Mardi 24.11</small></div>
+ <div class="cv bw" style="top:170px;width:690px;height:981px;background-image:url(m/amateur-vigilante-08.jpg)"></div>
+ <div class="tx" style="top:1200px"><div class="k">Young Magazine · N°52</div><div class="tt" style="margin-top:18px">Amateur Vigilante</div><div class="row" style="margin-top:26px"><span class="ch"><span>Chapitre 92</span></span></div></div></div>
+
+<!-- ===== NEWS ===== -->
+<div class="s" id="n1" style="background-image:url(fonds/noir-kanji.jpg)"><span class="lab">N1 · Hangure · plein cadre, haut en fondu</span>
+ <div class="nf" style="top:160px;background-image:url(/img/news/hangure-arc/reseaux.jpg)"></div></div>
+
+<div class="s" id="n2" style="background-image:url(fonds/noir-kanji.jpg)"><span class="lab">N2 · Kabukichō · plein cadre, haut en fondu</span>
+ <div class="nf" style="top:160px;background-image:url(/img/news/kabukicho-bengoshi/reseaux.jpg)"></div></div>
+
+<div class="s" id="b1" style="background-image:url(fonds/noir-kanji.jpg)"><span class="lab">B1 · Bōryoku · noir (comme Hangure)</span>
+ <div class="nf" style="top:160px;background-image:url(m/bo-a/reseaux.jpg)"></div></div>
+
+<div class="s" id="b2" style="background-image:url(fonds/noir-kanji.jpg)"><span class="lab">B2 · Bōryoku · fond manga gris, fondu</span><div class="mg" style="background-image:url(/img/news/boryoku-banzai/ch1-2.jpg)"></div>
+ <div class="nf" style="top:160px;background-image:url(m/bo-a/reseaux.jpg)"></div></div>
+
+<div class="s" id="b3" style="background-image:url(fonds/noir-kanji.jpg)"><span class="lab">B3 · Bōryoku · fond manga gris, contour</span><div class="mg" style="background-image:url(/img/news/boryoku-banzai/ch1-2.jpg);opacity:.5"></div>
+ <div class="ct" style="top:120px;width:1020px;height:1360px;outline:3px solid #fff;outline-offset:8px;background-image:url(m/bo-a/reseaux.jpg)"></div></div>
+
+<div class="s" id="b4" style="background-image:url(fonds/jaune.jpg)"><span class="lab">B4 · Bōryoku · jaune, contour noir</span>
+ <div class="ct" style="top:110px;width:1000px;height:1333px;border:6px solid #121214;background-image:url(m/bo-a/reseaux.jpg)"></div></div>
+
+<div class="s" id="b5" style="background-image:url(fonds/noir-kanji.jpg)"><span class="lab">B5 · Bōryoku · orange, contour noir</span><div class="mg" style="background:#FF6A13;opacity:1;filter:none"></div>
+ <div class="ct" style="top:110px;width:1000px;height:1333px;border:6px solid #121214;background-image:url(m/bo-a/reseaux.jpg)"></div></div>
+
+<div class="s" id="b6" style="background-image:url(fonds/noir-kanji.jpg)"><span class="lab">B6 · Bōryoku · crème, contour noir</span><div class="mg" style="background:#F2EFE9;opacity:1;filter:none"></div>
+ <div class="ct" style="top:110px;width:1000px;height:1333px;border:6px solid #121214;background-image:url(m/bo-a/reseaux.jpg)"></div></div>
+
+<script>
+// Mosaïque de fond : les autres tomes de la série, répétés.
+var N = { "saigo-no-furyou": 11, "amateur-vigilante": 9, "the-fable-the-third-secret": 6, "le-premier-amour-de-nezumi": 16, "shiseido": 1 };
+document.querySelectorAll(".s[data-fond]").forEach(function (s) {
+  var f = s.dataset.fond, sauf = +s.dataset.sauf, n = N[f], l = [];
+  for (var i = 0; i < n; i++) if (i !== sauf || n === 1) l.push(i);
+  if (f === "shiseido") l = [0, 1];
+  var g = document.createElement("div"); g.className = "g";
+  for (var j = 0; j < 63; j++) { var e = document.createElement("i"); e.style.backgroundImage = "url(m/" + f + "-" + String(l[(j * 5 + (j / 7 | 0)) % l.length]).padStart(2, "0") + ".jpg)"; g.appendChild(e); }
+  s.querySelector(".mz").appendChild(g);
+});
+// Titres trop longs : réduits pour tenir sur une ligne.
+document.querySelectorAll(".tt").forEach(function (e) { var fs = 112; e.style.display = "inline-block"; while (e.offsetWidth > 960 && fs > 60) { fs -= 2; e.style.fontSize = fs + "px"; } e.style.display = "block"; });
+</script>
+</body>
+</html>

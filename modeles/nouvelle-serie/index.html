@@ -14,6 +14,7 @@
        visuel    : image officielle encadrée (page d'ouverture, planche couleur, couverture)
        fond      : image de fond du visuel réseaux (passée en noir et blanc, faible opacité)
        fondLien  : image de fond de l'image de lien (une planche en noir et blanc), sinon « fond »
+     pastille  : couleur de la pastille « Nouvelle série au Japon » (défaut #FF7369) · kcouleur : couleur du grand kanji
      Rendu : node render.js (Playwright) → reseaux.jpg et lien.jpg dans le dossier courant. -->
 <style>
 @font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
@@ -57,6 +58,8 @@ html,body{margin:0;background:#333}
   document.getElementById("rau").textContent = g("auteurs");
   document.getElementById("ls").innerHTML = tiret(g("sous"));
   if (g("kanji")) document.getElementById("kanji").textContent = g("kanji");
+  if (g("pastille")) document.querySelectorAll(".pill").forEach(function (e) { e.style.background = g("pastille"); });
+  if (g("kcouleur")) document.getElementById("kanji").style.color = g("kcouleur");
   document.getElementById("rbg").style.backgroundImage = "url('" + g("fond") + "')";
   document.getElementById("lbg").style.backgroundImage = "url('" + (g("fondLien") || g("fond")) + "')";
   // Titre long : on réduit pour tenir sur une ligne.
