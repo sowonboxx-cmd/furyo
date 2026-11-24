@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes · Nouvel arc · FuryoGang</title>
+<!-- 6 pistes pour le visuel réseaux « Nouvel arc » (Will, 24/11/2026), inspirées des modèles Nouvelle série, Fin de série et Sortie de tome.
+     Exemple : Hangure, chapitre 146, Young Champion n°24, page couleur d'ouverture au centre. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#333}
+.c{position:relative;overflow:hidden;width:1080px;height:1440px;background:#0c0c0e;color:#f3f3f5;margin:20px;font-family:I}
+.bg{position:absolute;inset:-20px;background:url(/img/news/hangure-arc/couleur.jpg) center 20%/cover;filter:grayscale(1) blur(2px);opacity:.28}
+.sh{position:absolute;inset:0}
+.logo{position:absolute;top:34px;left:50%;transform:translateX(-50%);height:66px;z-index:5}
+.pg{position:absolute;border:6px solid #fff;border-radius:6px;box-shadow:0 30px 70px rgba(0,0,0,.7);background:#111;display:block}
+.t{font:700 132px/1 A;text-transform:uppercase;letter-spacing:.005em}
+.st{font:700 50px/1.05 A;text-transform:uppercase;color:#d9d9de}
+.jp{font:900 44px/1.15 J;color:#E5483A}
+.meta{font:700 40px/1 A;text-transform:uppercase;color:#f3f3f5}
+.meta b{color:#F2C14E;font-weight:700}
+.pill{display:inline-block;background:#4DAB9A;color:#fff;font:800 34px/1 I;padding:14px 26px;border-radius:14px;text-transform:uppercase}
+.mid{position:absolute;left:0;right:0;text-align:center}
+.lab{position:absolute;top:-2px;left:20px;background:#fff;color:#000;font:800 22px I;padding:6px 12px;z-index:20;border-radius:0 0 8px 8px}
+
+/* 1 — Kanji géant (comme Nouvelle série) */
+#v1 .sh{background:linear-gradient(180deg,rgba(12,12,14,.2),rgba(12,12,14,.1) 45%,rgba(12,12,14,.88) 78%,#0c0c0e)}
+#v1 .k{position:absolute;top:84px;left:0;right:0;text-align:center;font:900 330px/1 J;color:#4DAB9A;opacity:.95}
+#v1 .pg{width:500px;height:717px;left:290px;top:290px}
+#v1 .mid{bottom:60px}
+
+/* 2 — Bandeau plein (comme Fin de série) */
+#v2 .sh{background:linear-gradient(180deg,rgba(12,12,14,.1),rgba(12,12,14,.2) 60%,#0c0c0e 78%)}
+#v2 .k{position:absolute;top:110px;left:0;right:0;text-align:center;font:900 230px/1 J;color:#E5483A;opacity:.9;letter-spacing:.04em}
+#v2 .pg{width:560px;height:803px;left:260px;top:230px;transform:rotate(-2deg)}
+#v2 .bd{position:absolute;left:0;right:0;top:1000px;height:110px;background:#4DAB9A;display:flex;align-items:center;justify-content:center;font:700 82px/1 A;text-transform:uppercase;letter-spacing:.02em;z-index:3}
+#v2 .mid{top:1140px}
+
+/* 3 — Soleil + numéro de chapitre (comme Sortie de tome) */
+#v3{background:linear-gradient(180deg,#141416,#1d1a1f 40%,#0c0c0e)}
+#v3 .bg{opacity:.12}
+#v3 .sun{position:absolute;width:800px;height:800px;border-radius:50%;background:#4DAB9A;left:140px;top:210px;opacity:.9}
+#v3 .pg{width:560px;height:803px;left:260px;top:150px}
+#v3 .num{position:absolute;left:30px;top:520px;font:700 120px/1 A;transform-origin:left}
+#v3 .num small{display:block;font:700 30px/1 A;color:#d9d9de;letter-spacing:.06em}
+#v3 .vt{position:absolute;right:42px;top:420px;writing-mode:vertical-rl;font:900 76px/1 J;letter-spacing:.08em}
+#v3 .mid{top:1000px}
+#v3 .date{display:inline-block;background:#4DAB9A;font:700 38px/1 A;padding:12px 22px;border-radius:8px;text-transform:uppercase;letter-spacing:.04em}
+
+/* 4 — Pleine page (la page couleur en grand, texte dessous) */
+#v4 .full{position:absolute;left:0;right:0;top:0;height:1060px;background:url(/img/news/hangure-arc/couleur.jpg) center 8%/cover}
+#v4 .sh{background:linear-gradient(180deg,rgba(12,12,14,.55) 0,transparent 14%,transparent 52%,rgba(12,12,14,.9) 70%,#0c0c0e 76%)}
+#v4 .vt{position:absolute;left:40px;top:150px;writing-mode:vertical-rl;font:900 110px/1 J;color:#fff;text-shadow:0 6px 30px rgba(0,0,0,.8);background:#E5483A;padding:24px 14px}
+#v4 .mid{top:1000px}
+
+/* 5 — Arc précédent / nouvel arc (tome 16 derrière, page couleur devant) */
+#v5 .sh{background:linear-gradient(180deg,rgba(12,12,14,.3),rgba(12,12,14,.1) 40%,rgba(12,12,14,.9) 75%,#0c0c0e)}
+#v5 .k{position:absolute;top:96px;left:0;right:0;text-align:center;font:900 250px/1 J;color:#4DAB9A;opacity:.9}
+#v5 .t16{width:380px;height:540px;left:120px;top:400px;transform:rotate(-9deg);filter:grayscale(1) brightness(.75);object-fit:cover}
+#v5 .pg.f{width:520px;height:746px;left:440px;top:290px;transform:rotate(4deg)}
+#v5 .tag{position:absolute;font:700 30px/1 A;text-transform:uppercase;padding:8px 14px;border-radius:6px}
+#v5 .tag.a{left:140px;top:960px;background:#2c2c2e;color:#bbb;transform:rotate(-9deg)}
+#v5 .tag.b{left:700px;top:1050px;background:#4DAB9A;color:#fff;transform:rotate(4deg)}
+#v5 .mid{bottom:56px}
+
+/* 6 — Magazine : page sur fond crème, « 新章開幕 » vertical */
+#v6{background:#F3EBDD;color:#121214}
+#v6 .bg{display:none}
+#v6 .logo{filter:invert(1)}
+#v6 .pg{width:540px;height:775px;left:130px;top:150px;border-color:#121214;box-shadow:24px 24px 0 #4DAB9A}
+#v6 .vt{position:absolute;right:130px;top:160px;writing-mode:vertical-rl;font:900 150px/1 J;color:#E5483A;letter-spacing:.02em}
+#v6 .mid{top:985px}
+#v6 .t{color:#121214}
+#v6 .st{color:#5a5a60}
+#v6 .meta{color:#121214}
+#v6 .meta b{color:#4DAB9A}
+</style>
+</head>
+<body>
+<!-- 1 -->
+<div class="c" id="v1"><span class="lab">1 · Kanji</span><div class="bg"></div><div class="sh"></div><div class="k">新章</div><img class="logo" src="/img/social/logo-blanc.png"><img class="pg" src="/img/news/hangure-arc/couleur.jpg">
+ <div class="mid"><span class="pill">Nouvel arc</span><div class="t" style="margin-top:20px">Hangure</div><div class="st" style="margin-top:6px">Roppongi Matenrō no Requiem</div><div class="meta" style="margin-top:22px">Chapitre 146 · <b>Young Champion n°24</b></div></div></div>
+<!-- 2 -->
+<div class="c" id="v2"><span class="lab">2 · Bandeau</span><div class="bg"></div><div class="sh"></div><div class="k">新章開幕</div><img class="logo" src="/img/social/logo-blanc.png"><img class="pg" src="/img/news/hangure-arc/couleur.jpg"><div class="bd">Nouvel arc</div>
+ <div class="mid"><div class="t">Hangure</div><div class="jp" style="margin-top:8px">半グレ ― 六本木 摩天楼のレクイエム ―</div><div class="meta" style="margin-top:28px">Chapitre 146 · <b>Page couleur</b></div></div></div>
+<!-- 3 -->
+<div class="c" id="v3"><span class="lab">3 · Soleil</span><div class="bg"></div><div class="sun"></div><img class="logo" src="/img/social/logo-blanc.png"><img class="pg" src="/img/news/hangure-arc/couleur.jpg"><div class="num"><small>Chapitre</small>146</div><div class="vt">新章開幕</div>
+ <div class="mid"><span class="date">Nouvel arc · 24 novembre 2026</span><div class="t" style="margin-top:22px">Hangure</div><div class="st" style="margin-top:6px;color:#9a9aa0">Shinya Kusaka · Ryūichirō Yamamoto</div></div></div>
+<!-- 4 -->
+<div class="c" id="v4"><span class="lab">4 · Pleine page</span><div class="full"></div><div class="sh"></div><img class="logo" src="/img/social/logo-blanc.png"><div class="vt">新章開幕</div>
+ <div class="mid"><span class="pill">Nouvel arc</span><div class="t" style="margin-top:20px">Hangure</div><div class="st" style="margin-top:6px">Roppongi Matenrō no Requiem</div><div class="meta" style="margin-top:22px">Chapitre 146 · <b>Young Champion n°24</b></div></div></div>
+<!-- 5 -->
+<div class="c" id="v5"><span class="lab">5 · Avant / après</span><div class="bg"></div><div class="sh"></div><div class="k">新章</div><img class="logo" src="/img/social/logo-blanc.png"><img class="pg t16" src="/couvertures/9784253020893-hd.jpg"><img class="pg f" src="/img/news/hangure-arc/couleur.jpg"><span class="tag a">Tome 16</span><span class="tag b">Nouvel arc</span>
+ <div class="mid"><div class="t">Hangure</div><div class="meta" style="margin-top:18px">Chapitre 146 · <b>Page couleur</b></div></div></div>
+<!-- 6 -->
+<div class="c" id="v6"><span class="lab">6 · Crème</span><img class="logo" src="/img/social/logo-noir.png" style="filter:none"><img class="pg" src="/img/news/hangure-arc/couleur.jpg"><div class="vt">新章開幕</div>
+ <div class="mid"><span class="pill">Nouvel arc</span><div class="t" style="margin-top:20px">Hangure</div><div class="st" style="margin-top:6px">Roppongi Matenrō no Requiem</div><div class="meta" style="margin-top:22px">Chapitre 146 · <b>Young Champion n°24</b></div></div></div>
+</body>
+</html>
