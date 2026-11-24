@@ -1640,7 +1640,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       var heureP = function (t) { return /T\d/.test(t) ? new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" }).format(new Date(t)) : ""; };
       vn.forEach(function (x) { if (x && !x.enLigne && !x.vu && x.planif) NEWS.push({ id: x.id, date: /T\d/.test(x.planif) ? jourP(x.planif) : x.planif.slice(0, 10), t: x.planif, plan: true, heure: heureP(x.planif), titre: x.titre, cat: x.cat, label: x.label, image: visuel(x), i: x }); });
       if (part.ve.apub) APUB = part.ve.apub;
-      else APUB = vn.filter(function (x) { return x && !x.enLigne && !x.vu && !x.planif && x.cat !== "fiche" && !/^(couv|sortie)/.test(x.cat || ""); })
+      // Une news de sortie ou de couverture relue (« À publier ») y va aussi (Will, 24/11/2026 : GANGKING tome 2).
+      else APUB = vn.filter(function (x) { return x && !x.enLigne && !x.vu && !x.planif && x.cat !== "fiche" && (x.prete || !/^(couv|sortie)/.test(x.cat || "")); })
         .sort(function (a, b) { return String(b.creeT || b.cree || "").localeCompare(String(a.creeT || a.cree || "")); }).slice(0, 60)
         .map(function (x) { var h = ""; try { h = new URL(x.src).hostname.replace(/^www\./, ""); } catch (e) {} return { id: x.id, titre: x.titre, cat: x.cat, label: x.label, image: visuel(x), src: h, prete: !!x.prete }; });
       NEWSCOL = part.ve.cols || {};
@@ -1652,6 +1653,9 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var j = function (u) { return fetch(u, { credentials: "same-origin", cache: "no-store" }).then(function (r) { return r.json(); }); };
     var store = {}; try { store = JSON.parse(localStorage.getItem(CALK) || "{}") || {}; } catch (e) { store = {}; }
     var vu = false;
+    // Stories et file Instagram gardées sur l'appareil : affichées tout de suite, puis rafraîchies (Will, 24/11/2026 : elles arrivaient en retard).
+    if (store.pp) PREP = store.pp;
+    if (store.igq) { IGQ = {}; store.igq.forEach(function (x) { if (x && x.id) IGQ[x.id] = x; }); }
     if (store.d && store.d.ok) { calAppliquer(store); renderView(); vu = true; }
     var garder = function (k, v) { store[k] = v; try { localStorage.setItem(CALK, JSON.stringify(store)); } catch (e) { try { delete store.ve; localStorage.setItem(CALK, JSON.stringify(store)); } catch (e2) {} } };
     Promise.all([
@@ -1665,8 +1669,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     }).catch(function () { if (!vu) $("#calview").innerHTML = "<p class='lead'>Indisponible.</p>"; });
     // Sorties enrichies (légendes identiques à la Validation, coches « postée ») et news publiées : en arrière-plan.
     j("/api/admin/sorties?passe=1").then(function (sx) { calAppliquer({ sx: sx }); garder("sx", sx); if (vu) calRedessiner(); }).catch(function () {});
-    j("/api/admin/igq").then(function (q) { IGQ = {}; (q.items || []).forEach(function (x) { if (x && x.id) IGQ[x.id] = x; }); if (vu) calRedessiner(); }).catch(function () {});
-    j("/api/admin/prepubstory").then(function (pp) { PREP = pp.items || []; if (vu) calRedessiner(); }).catch(function () {});
+    j("/api/admin/igq").then(function (q) { IGQ = {}; (q.items || []).forEach(function (x) { if (x && x.id) IGQ[x.id] = x; }); garder("igq", q.items || []); if (vu) calRedessiner(); }).catch(function () {});
+    j("/api/admin/prepubstory").then(function (pp) { PREP = pp.items || []; garder("pp", PREP); if (vu) calRedessiner(); }).catch(function () {});
     j("/api/admin/veille").then(function (ve) { calAppliquer({ ve: ve }); garder("ve", { items: (ve.items || []).filter(function (x) { return x && x.enLigne; }), apub: APUB, cols: ve.cols, cats: ve.cats }); if (vu) calRedessiner(); }).catch(function () {});
   }
   function calPost(body, cb) {
