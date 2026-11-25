@@ -10,7 +10,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 8; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 9; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -24,7 +24,7 @@ const CONCOURS_TEXTES = {
 const DEPART = {
   sv: SEED_V,
   types: [
-    { id: "qn-sem", nom: "News Hebdo", couleur: "#4C9BFF" },
+    { id: "qn-sem", nom: "News de la semaine", couleur: "#4C9BFF" },
     { id: "qn-mois", nom: "Sorties du mois", couleur: "#B38CFF" },
     { id: "prepub-sem", nom: "Prépublication de la semaine", couleur: "#E5483A" },
     { id: "couv", nom: "Couvertures", couleur: "#BC002D" },
@@ -38,8 +38,8 @@ const DEPART = {
     { id: "autre", nom: "Autre", couleur: "#98989D" },
   ],
   events: [
-    { id: "ev-qn-sem", titre: "Récap hebdo", type: "qn-sem", repeat: "lun", lien: "/studio/semaine/", note: "Carrousel réseaux : tout ce qui s'est passé dans le gang la semaine d'avant. Images générées dans le studio « Quoi de neuf dans le gang »." },
-    { id: "ev-prepub-sem", titre: "Prépublication de la semaine", type: "prepub-sem", repeat: "dim", lien: "/studio/prepub/", note: "Chaque dimanche : le carrousel X / Instagram avec tous les chapitres de la semaine qui vient dans les magazines japonais (dernier tome de chaque série). Images à télécharger dans le studio, page publique /prepub/. Publication à la main (Will, 24/11/2026)." },
+    { id: "ev-qn-sem", titre: "News de la semaine", type: "qn-sem", repeat: "lun", note: "Chaque lundi : le carrousel des news de la semaine d'avant (Instagram + X) et sa story. Tout est prêt dans l'aperçu : relire, corriger si besoin, programmer." },
+    { id: "ev-prepub-sem", titre: "Prépublication de la semaine", type: "prepub-sem", repeat: "dim", note: "Chaque dimanche matin : le carrousel des chapitres de la semaine dans les magazines japonais (Instagram + X) et sa story. Tout est prêt dans l'aperçu : relire, programmer." },
     { id: "ev-qn-mois", titre: "Récap du mois", type: "qn-mois", repeat: "mois", jour: 10, lien: "/studio/mois/", note: "Le 10 de chaque mois : récap des sorties du mois précédent (France + Japon). Choisis la cover en avant et exporte le carrousel directement dans le studio (lien ci-dessous). Visuel noir ou crème." },
     { id: "ev-maj", titre: "Fiches mises à jour — récap", type: "maj", repeat: "jeu", note: "Les séries à aller compléter sur le site." },
     { id: "ev-cxw", titre: "Vidéo Crows×Worst", type: "video", date: "2026-10-20", imp: true, note: "Finir la version 25-30 s (téléphone, bordures) et la publier." },
@@ -98,6 +98,8 @@ function migrer(d) {
   // « Quoi de neuf dans le gang » devient « Récap hebdo » (Will, 21/10/2026), sauf si Will l'a déjà renommé autrement.
   const rh = parId.get("ev-qn-sem"), seedRh = DEPART.events.find(e => e.id === "ev-qn-sem");
   if (rh && seedRh && /quoi de neuf/i.test(rh.titre || "")) { rh.titre = seedRh.titre; rh.note = seedRh.note; if (!rh.lien) rh.lien = seedRh.lien; }
+  // Carrousels hebdo générés dans le calendrier (Will, 25/11/2026) : plus de studio, nouveau titre et nouvelle note.
+  for (const id of ["ev-qn-sem", "ev-prepub-sem"]) { const ex = parId.get(id), sd = DEPART.events.find(e => e.id === id); if (ex && sd) { ex.titre = sd.titre; ex.note = sd.note; ex.lien = null; } }
   // Types : ajoute les manquants + met à jour les noms (cosmétique, aucune donnée de Will).
   const typById = new Map(d.types.map(t => [t.id, t]));
   for (const t of DEPART.types) { const ex = typById.get(t.id); if (ex) ex.nom = t.nom; else d.types.push(JSON.parse(JSON.stringify(t))); }
