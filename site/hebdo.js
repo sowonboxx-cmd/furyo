@@ -40,6 +40,7 @@
     '.hb .mz.o{background:#D9480F}.hb .mz.b{background:#1F4FD1}.hb .mz.bc{background:#2F8FE8}.hb .mz.bc2{background:#46A8F2}.hb .mz.bc .g,.hb .mz.bc2 .g{opacity:.3;mix-blend-mode:multiply}.hb .mz.bc .v,.hb .mz.bc2 .v{position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 45%,rgba(0,20,60,.15),transparent 75%),linear-gradient(180deg,transparent 55%,rgba(0,30,80,.45))}.hb .mz.vi{background:#6B2FC0}.hb .mz.y{background:#F2C14E}.hb .mz.o .g,.hb .mz.b .g,.hb .mz.vi .g,.hb .mz.y .g{opacity:.3;mix-blend-mode:multiply}' +
     '.hb .mz.o .v,.hb .mz.b .v,.hb .mz.vi .v{position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 45%,rgba(0,0,0,.18),transparent 75%),linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45))}.hb .mz.y .v{position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(120,80,0,.35))}' +
     '.hb .pdate{display:inline-block;background:#F2C14E;color:#121214;font:700 44px/1 FGAntonio;letter-spacing:.12em;padding:12px 24px 14px;border-radius:12px;text-transform:uppercase}.hb .pdate.k{background:#121214;color:#F2C14E}' +
+    '.hb .mz.pile .g2{position:absolute;inset:0;opacity:.34;mix-blend-mode:multiply}.hb .mz.pile .g2 img{position:absolute;object-fit:cover;filter:grayscale(1) contrast(1.25);border:6px solid #fff;box-shadow:0 18px 40px rgba(0,0,0,.6)}' +
     '.hb .mz.n{background:#0c0c0e}.hb .mz.n .g{opacity:.2}' +
     '.hb .mz.n .v{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(12,12,14,.35),rgba(12,12,14,.85) 80%),linear-gradient(180deg,rgba(12,12,14,.7),transparent 25%,transparent 70%,rgba(12,12,14,.9))}' +
     '.hb.st .mz .g{left:-300px;width:1700px}.hb.st .mz.n .g{opacity:.22}' +
@@ -66,6 +67,14 @@
 
   var MOS = [];
   var mos = function (k, d, l, nb) { l = l && l.length ? l : MOS; var h = '<div class="mz ' + k + '"><div class="g">'; for (var j = 0; j < (nb || 63); j++) h += '<img src="' + esc(C(l[(j + d) % l.length], 260)) + '">'; return h + '</div><div class="v"></div></div>'; };
+  // Fond de la prépublication (Will, 25/11/2026) : des pages de manga empilées, en vrac, plutôt que la mosaïque de couvertures.
+  var PAGES = ["/img/extraits/hell-dogs/planche-07.jpg", "/img/news/boryoku-banzai/ch1-1.jpg", "/img/extraits/hell-dogs/planche-11.jpg", "/img/news/golden-drop-arc/page-recap.jpg", "/img/extraits/hell-dogs/planche-08.jpg", "/img/news/boryoku-banzai/ch1-2.jpg",
+    "/img/extraits/hell-dogs/planche-12.jpg", "/img/news/mogura-1000/07-derniere-page-final-countdown.jpg", "/img/extraits/hell-dogs/planche-09.jpg", "/img/news/boryoku-banzai/ch1-3.jpg", "/img/extraits/hell-dogs/planche-14.jpg", "/img/extraits/hell-dogs/planche-18.jpg"];
+  var pile = function (d, haut) { haut = haut || 1440; var h = '<div class="mz r pile"><div class="g2">', s = 7 + d * 13;
+    var rnd = function () { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+    for (var j = 0; j < 14; j++) { var w = 380 + Math.round(rnd() * 120), x = Math.round((j % 4) * 300 - 120 + rnd() * 120), y = Math.round(Math.floor(j / 4) * (haut / 3.4) - 160 + rnd() * 140), a = Math.round((rnd() - .5) * 26);
+      h += '<img src="' + PAGES[(j + d) % PAGES.length] + '" style="left:' + x + "px;top:" + y + "px;width:" + w + "px;height:" + Math.round(w * 1.42) + "px;transform:rotate(" + a + 'deg)">'; }
+    return h + '</div><div class="v"></div></div>'; };
   var HD = '<div class="hd"><img src="/img/social/logo-blanc.png"></div>';
   var cvH = function (u, w, h, st) { return '<div class="cv" style="width:' + w + "px;height:" + h + "px;" + (st || "") + '"><img src="' + esc(C(u)) + '"></div>'; };
   var pill = function (n) { return '<span class="pill" style="background:' + esc(n.col) + '">' + esc(n.cat) + "</span>"; };
@@ -316,8 +325,10 @@
     var S = [], P = [], per = periode(D.du, D.au), m = melange(MOS, hash(D.du) + 7);
     for (var i = 0; i < D.mags.length; i += 3) P.push(D.mags.slice(i, i + 3));
     P.forEach(function (gs, i) {
-      S.push('<div class="hb">' + mos("r", i * 21, m) + HD + '<div style="position:absolute;left:60px;right:60px;top:186px;z-index:3"><div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div>' +
-        '<div class="t" style="margin-top:22px;font-size:100px;text-align:center;text-shadow:0 6px 30px rgba(60,0,10,.6)">' + (i ? "La suite" : per) + '</div><div style="display:flex;flex-direction:column;gap:22px;margin-top:40px">' +
+      // Même tête que Sorties et News (Will, 25/11/2026) : date en pastille jaune, « Prépublication de la semaine ».
+      var tt = i ? '<div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:22px;font-size:100px;text-align:center;text-shadow:0 6px 30px rgba(60,0,10,.6)">La suite</div>'
+        : '<div style="text-align:center"><span class="pdate">' + per + '</span></div><div class="t" style="margin-top:24px;font-size:88px;text-align:center;white-space:nowrap;text-shadow:0 6px 30px rgba(60,0,10,.6)">Prépublication de la semaine</div>';
+      S.push('<div class="hb">' + pile(i) + HD + '<div style="position:absolute;left:60px;right:60px;top:' + (i ? 186 : 186) + 'px;z-index:3">' + tt + '<div style="display:flex;flex-direction:column;gap:22px;margin-top:' + (i ? 40 : 46) + 'px">' +
         gs.map(function (g) { return '<div class="mag"><div class="cv" style="width:150px;height:208px;border-width:5px;box-shadow:none;border-radius:6px"><img src="' + esc(C(g.cv, 400)) + '"></div><div style="flex:1"><h5>' + esc(g.m) + "<small>" + esc(g.sous) + '</small></h5><div class="chips">' + g.all.map(chip).join("") + "</div></div></div>"; }).join("") + "</div></div>" +
         (i === P.length - 1 ? '<div style="position:absolute;left:0;right:0;bottom:60px;z-index:3;display:flex;justify-content:center;gap:28px;font:600 22px FGInter"><span style="display:inline-flex;align-items:center;gap:10px"><i style="display:inline-block;width:26px;height:18px;border-radius:4px;background:#F2C14E"></i>Pages couleurs</span><span style="display:inline-flex;align-items:center;gap:10px"><i style="display:inline-block;width:26px;height:18px;border-radius:4px;border:2px dashed rgba(242,239,233,.7)"></i>En pause</span><span>le chiffre = n° du chapitre</span></div>' : "") + "</div>");
     });
@@ -325,7 +336,7 @@
   }
   function storyPrepub(D) {
     var L = D.mags.slice(0, 7), rows = L.length, top = Math.round(250 + Math.max(0, (7 - rows) * 60));
-    return '<div class="hb st">' + mos("r", 45, melange(MOS, hash(D.du) + 3), 70) + '<div style="position:absolute;left:0;right:0;top:' + top + 'px;z-index:3"><div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:22px;font-size:120px;text-align:center">' + periode(D.du, D.au) + "</div></div>" +
+    return '<div class="hb st">' + pile(3, 1920) + '<div style="position:absolute;left:0;right:0;top:' + top + 'px;z-index:3"><div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:22px;font-size:120px;text-align:center">' + periode(D.du, D.au) + "</div></div>" +
       '<div style="position:absolute;left:56px;right:56px;top:' + (top + 210) + 'px;z-index:3;display:flex;flex-direction:column;gap:10px">' + L.map(function (g) {
         return '<div style="display:flex;gap:20px;align-items:center;background:rgba(18,18,22,.8);border-radius:14px;padding:8px 14px"><div class="cv" style="width:80px;height:110px;border-width:4px;box-shadow:none;border-radius:5px"><img src="' + esc(C(g.cv, 200)) + '"></div><div style="flex:1;min-width:0"><div style="font:700 34px/1 FGAntonio;text-transform:uppercase;color:#F2C14E">' + esc(g.m) + '</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">' +
           g.ch.slice(0, 5).map(function (c) { return '<span class="chip" style="height:44px;font-size:27px;padding:0 12px 3px' + (c[2] ? ";background:#F2C14E" : "") + '">' + esc(c[0]) + (c[1] ? " <i>" + esc(c[1]) + "</i>" : "") + "</span>"; }).join("") + "</div></div></div>"; }).join("") + "</div>" +
