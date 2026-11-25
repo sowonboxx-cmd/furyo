@@ -98,9 +98,9 @@
   }
 
   // ——— Données communes ———
-  var BASE = null;
+  var BASE = null, SLUG = {};
   function base() { if (!BASE) BASE = Promise.all([get("/api/series").catch(function () { return { items: [] }; }), get("/api/calendrier").catch(function () { return { items: [] }; })]).then(function (r) {
-    var se = r[0].items || r[0] || []; MOS = se.map(function (s) { return s.cover; }).filter(Boolean); return { series: se, cal: r[1].items || [] }; }); return BASE; }
+    var se = r[0].items || r[0] || []; se.forEach(function (x) { if (x.slug) SLUG[x.id] = x; }); MOS = se.map(function (s) { return s.cover; }).filter(Boolean); return { series: se, cal: r[1].items || [] }; }); return BASE; }
   function melange(l, graine) { l = l.slice(); var s = graine; for (var i = l.length - 1; i > 0; i--) { s = (s * 9301 + 49297) % 233280; var j = Math.floor(s / 233280 * (i + 1)); var t = l[i]; l[i] = l[j]; l[j] = t; } return l; }
 
   // ——— News de la semaine ———
@@ -198,7 +198,13 @@
   function legendeNews(D) {
     var per = periode(D.du, D.au);
     return { ig: "📰 NEWS DE LA SEMAINE · " + per.toUpperCase() + "\n\n" + D.news.map(function (n) { return "▪️ " + n._t + " : " + n._txt.replace(/\s+$/, ""); }).join("\n") + "\n\n📚 Sorties, prépublication et fiches : tout est sur furyogang.com\n\n#manga #furyo #yakuza #FuryoGang",
-      x: "News de la semaine · " + per + "\n\n" + D.news.slice(0, 5).map(function (n) { return "▪️ " + n._t; }).join("\n") };
+      x: "News de la semaine · " + per + "\n\n" + D.news.slice(0, 5).map(function (n) { return "▪️ " + n._t; }).join("\n"),
+      // Post X avec les liens des fiches, à poster à la main (gratuit) en fin de semaine (Will, 25/11/2026). 280 caractères, un lien compte 23.
+      liens: (function () { var t = "Les fiches des séries de la semaine, pour ceux qui veulent tout savoir 👇\n", vus = {};
+        D.news.concat(D.jp, D.fr).forEach(function (x) { var se = SLUG[x.sid || x.seriesId]; if (!se || vus[se.slug]) return; vus[se.slug] = 1;
+          var l = "\n▪️ " + String(x._t || (x.pays === "France" ? x.fr || x.series : x.series) || se.t).replace(/ - .*$/, "") + " : furyogang.com/series/" + se.slug;
+          if ((t + l).replace(/furyogang\.com\/\S*/g, "x".repeat(23)).length <= 280) t += l; });
+        return t; })() };
   }
 
   // ——— Prépublication de la semaine ———
