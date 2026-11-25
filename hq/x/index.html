@@ -58,10 +58,10 @@ button{border:0;border-radius:12px;padding:13px 20px;font:700 15px I;cursor:poin
     var b = $("#go"), m = $("#msg"), ims = [].slice.call(document.querySelectorAll("#ims input:checked")).map(function (x) { return x.value; });
     b.disabled = true; m.textContent = "Envoi en cours…";
     fetch("/api/admin/x", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ texte: $("#tx").value, images: ims }) })
-      .then(function (r) { return r.json(); }).then(function (j) {
+      .then(function (r) { return r.text().then(function (t) { try { return JSON.parse(t); } catch (e) { return { error: "réponse inattendue du site (" + r.status + ") : " + t.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").slice(0, 160) }; } }); }).then(function (j) {
         if (j.ok) m.innerHTML = 'Publié' + (j.fil > 1 ? " en fil de " + j.fil + " posts" : "") + ' · <a href="' + j.lien + '" target="_blank" rel="noopener">voir sur X</a>';
-        else m.textContent = "Refusé par X : " + (j.error || "erreur");
-      }).catch(function () { m.textContent = "Échec de l'envoi"; }).then(function () { b.disabled = !pret; });
+        else m.textContent = "Refusé : " + (j.error || "erreur");
+      }).catch(function (e) { m.textContent = "Échec de l'envoi : " + (e && e.message || e); }).then(function () { b.disabled = !pret; });
   });
 })();
 </script>
