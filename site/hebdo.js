@@ -37,6 +37,9 @@
     '.hb .mz .g img{display:block;width:100%;aspect-ratio:7/10;object-fit:cover;filter:grayscale(1) contrast(1.2)}' +
     '.hb .mz.r{background:#CB002F}.hb .mz.r .g{opacity:.3;mix-blend-mode:multiply}' +
     '.hb .mz.r .v{position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 45%,rgba(150,0,30,.5),transparent 75%),linear-gradient(180deg,transparent 55%,rgba(110,0,22,.75))}' +
+    '.hb .mz.o{background:#D9480F}.hb .mz.b{background:#1F4FD1}.hb .mz.vi{background:#6B2FC0}.hb .mz.y{background:#F2C14E}.hb .mz.o .g,.hb .mz.b .g,.hb .mz.vi .g,.hb .mz.y .g{opacity:.3;mix-blend-mode:multiply}' +
+    '.hb .mz.o .v,.hb .mz.b .v,.hb .mz.vi .v{position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 45%,rgba(0,0,0,.18),transparent 75%),linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45))}.hb .mz.y .v{position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(120,80,0,.35))}' +
+    '.hb .pdate{display:inline-block;background:#F2C14E;color:#121214;font:700 44px/1 FGAntonio;letter-spacing:.12em;padding:12px 24px 14px;border-radius:12px;text-transform:uppercase}.hb .pdate.k{background:#121214;color:#F2C14E}' +
     '.hb .mz.n{background:#0c0c0e}.hb .mz.n .g{opacity:.2}' +
     '.hb .mz.n .v{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(12,12,14,.35),rgba(12,12,14,.85) 80%),linear-gradient(180deg,rgba(12,12,14,.7),transparent 25%,transparent 70%,rgba(12,12,14,.9))}' +
     '.hb.st .mz .g{left:-300px;width:1700px}.hb.st .mz.n .g{opacity:.22}' +
@@ -139,7 +142,7 @@
           n._txt = (reg.txt && reg.txt[n.id]) || coupe(n.accroche || n.texte || "", 210);
           n._hl = (reg.hl && reg.hl[n.id]) || "";
         });
-        return { du: du, au: au, news: news, centre: reg.centre };
+        return { du: du, au: au, news: news, centre: reg.centre, pastille: reg.pastille };
       });
     });
   }
@@ -152,8 +155,7 @@
       var autres = N.filter(function (_, i) { return i !== ci; }).slice(0, 4), rang = [autres[0], autres[1], N[ci], autres[2], autres[3]];
       var fan = rang.map(function (n, i) { if (!n) return ""; var d = i - 2, f = !d, w = f ? 280 : 186, h = f ? 398 : 264;
         return '<div style="position:absolute;left:' + (540 - w / 2 + d * 196 + (d > 0 ? 40 : d < 0 ? -40 : 0)) + "px;top:" + (f ? 0 : 70) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)">' + cvH(n._cv, w, h, f ? "" : "filter:brightness(.82)") + "</div>"; }).join("");
-      S.push('<div class="hb">' + mos("r", 0, nm) + HD + '<div style="position:absolute;left:0;right:0;top:196px;text-align:center;z-index:3"><div class="lab"><i></i><span>' + per + '</span><i></i></div>' +
-        '<div class="t" style="font-size:112px;margin-top:26px;white-space:nowrap;text-shadow:0 6px 30px rgba(60,0,10,.6)">Les news de la semaine</div></div>' +
+      S.push('<div class="hb">' + mos("r", 0, nm) + HD + teteCouv(per, "Les news de la semaine", 112, D.pastille) +
         '<div style="position:absolute;left:0;right:0;top:400px;height:420px;z-index:3">' + fan + '</div>' +
         '<div style="position:absolute;left:70px;right:70px;top:860px;z-index:3;display:flex;flex-direction:column;gap:14px">' + N.slice(0, 5).map(function (n) { return '<div style="display:flex;align-items:center;gap:20px;background:rgba(18,18,20,.78);border-radius:14px;padding:15px 20px">' + pill({ col: n._col, cat: n._cat }) + '<b style="font:700 46px/1 FGAntonio;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(n._t) + "</b></div>"; }).join("") + "</div></div>");
     }
@@ -212,6 +214,11 @@
   }
   // France et Japon alternés (couverture, story) : les deux pays visibles même quand l'un a beaucoup de sorties.
   var melePays = function (D) { var r = [], i = 0; while (i < Math.max(D.fr.length, D.jp.length)) { if (D.fr[i]) r.push(D.fr[i]); if (D.jp[i]) r.push(D.jp[i]); i++; } return r; };
+  // Tête de couverture : date entre deux filets, ou en pastille jaune (essai du 25/11/2026).
+  var teteCouv = function (per, titre, taille, pastille, fond) {
+    var ombre = fond === "y" ? "none" : "0 6px 30px rgba(60,0,10,.6)", col = fond === "y" ? "#121214" : "#F2EFE9";
+    return '<div style="position:absolute;left:0;right:0;top:' + (pastille ? 186 : 196) + 'px;text-align:center;z-index:3">' + (pastille ? '<span class="pdate' + (fond === "y" ? " k" : "") + '">' + per + "</span>" : '<div class="lab"><i></i><span>' + per + "</span><i></i></div>") +
+      '<div class="t" style="font-size:' + taille + 'px;margin-top:' + (pastille ? 24 : 30) + 'px;white-space:nowrap;color:' + col + ';text-shadow:' + ombre + '">' + titre + "</div></div>"; };
   var drap = function (pays, w) { w = w || 46; return '<i class="flag ' + (pays === "France" ? "ffr" : "fjp") + '" style="width:' + w + "px;height:" + Math.round(w * 2 / 3) + 'px;border-radius:3px"></i>'; };
   function slidesSorties(D) {
     var S = [], per = periode(D.du, D.au), nm = melange(MOS, hash(D.du) + 11), tout = melePays(D);
@@ -220,12 +227,11 @@
       var c0 = tout[0], autres = tout.slice(1, 5), rang = [autres[0], autres[1], c0, autres[2], autres[3]];
       var fan = rang.map(function (x, i) { if (!x) return ""; var d = i - 2, f = !d, w = f ? 280 : 186, h = f ? 398 : 264;
         return '<div style="position:absolute;left:' + (540 - w / 2 + d * 196 + (d > 0 ? 40 : d < 0 ? -40 : 0)) + "px;top:" + (f ? 0 : 70) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)">' + cvH(x.cover, w, h, f ? "" : "filter:brightness(.82)") + "</div>"; }).join("");
-      var lst = tout.slice(0, tout.length > 5 ? 4 : 5);
-      S.push('<div class="hb">' + mos(D.noir ? "n" : "r", 0, nm) + HD + '<div style="position:absolute;left:0;right:0;top:196px;text-align:center;z-index:3"><div class="lab"><i></i><span>' + per + '</span><i></i></div>' +
-        '<div class="t" style="font-size:100px;margin-top:30px;white-space:nowrap;text-shadow:0 6px 30px rgba(60,0,10,.6)">Les sorties de la semaine</div></div>' +
+      var lst = tout.slice(0, 5); // 5 lignes au sommaire, puis « + N autres sorties » (Will, 25/11/2026)
+      S.push('<div class="hb">' + mos(D.fond || "r", 0, nm) + HD + teteCouv(per, "Les sorties de la semaine", 100, D.pastille, D.fond) +
         '<div style="position:absolute;left:0;right:0;top:400px;height:420px;z-index:3">' + fan + '</div>' +
-        '<div style="position:absolute;left:70px;right:70px;top:860px;z-index:3;display:flex;flex-direction:column;gap:14px">' + lst.map(function (x) { return '<div style="display:flex;align-items:center;gap:20px;background:rgba(18,18,20,.78);border-radius:14px;padding:13px 20px">' + drap(x.pays) + '<b style="flex:1;min-width:0;font:700 46px/1 FGAntonio;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(titreS(x)) + '</b><span style="background:#C8102E;color:#fff;font:700 32px/1 FGAntonio;padding:7px 10px 9px;border-radius:7px">' + nn(x.n) + "</span></div>"; }).join("") +
-        (tout.length > 5 ? '<div style="text-align:center;font:700 38px FGAntonio;text-transform:uppercase;letter-spacing:.06em;color:#F2C14E;padding-top:4px">+ ' + (tout.length - 4) + " autres sorties</div>" : "") + "</div></div>");
+        '<div style="position:absolute;left:70px;right:70px;top:850px;z-index:3;display:flex;flex-direction:column;gap:12px">' + lst.map(function (x) { return '<div style="display:flex;align-items:center;gap:20px;background:rgba(18,18,20,.78);border-radius:14px;padding:13px 20px">' + drap(x.pays) + '<b style="flex:1;min-width:0;font:700 46px/1 FGAntonio;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(titreS(x)) + '</b><span style="background:#C8102E;color:#fff;font:700 32px/1 FGAntonio;padding:7px 10px 9px;border-radius:7px">' + nn(x.n) + "</span></div>"; }).join("") +
+        (tout.length > 5 ? '<div style="text-align:center;font:700 38px FGAntonio;text-transform:uppercase;letter-spacing:.06em;color:' + (D.fond === "y" ? "#121214" : "#F2C14E") + ';padding-top:2px">+ ' + (tout.length - 5) + " autres sorties</div>" : "") + "</div></div>");
     }
     // Japon puis France, ancien style validé (1 en grand, 2, 3, jusqu'à 6 par image).
     var tete = function (fl, nom, col, suite) { return '<div style="position:absolute;left:60px;right:60px;top:176px;z-index:3;display:flex;align-items:center;gap:26px"><i class="flag ' + fl + '"></i><div class="t" style="font-size:108px">' + nom + (suite ? '<span style="font-size:60px;color:#bdb9b1"> · suite</span>' : "") + '</div><div style="margin-left:auto;font:700 40px FGAntonio;letter-spacing:.06em;color:#bdb9b1;text-transform:uppercase">' + per + '</div></div><div style="position:absolute;left:60px;right:60px;top:320px;height:4px;background:' + col + ';z-index:3"></div>'; };
@@ -347,7 +353,8 @@
     news: function (du, reg, avance) { return newsDonnees(du, reg).then(function (D) { var h = slidesNews(D); return tout(h, storyNews(D), avance).then(function (r) { r.infos = D; r.legende = legendeNews(D); return r; }); }); },
     prepub: function (du, avance) { return prepubDonnees(du).then(function (D) { var h = slidesPrepub(D); return tout(h, storyPrepub(D), avance).then(function (r) { r.infos = D; r.legende = legendePrepub(D); return r; }); }); },
     sorties: function (du, avance) { return sortiesDonnees(du).then(function (D) { var h = slidesSorties(D); return tout(h, storySorties(D), avance).then(function (r) { r.infos = D; r.legende = legendeSorties(D); return r; }); }); },
-    rendreSorties: function (D, avance) { var h = slidesSorties(D); return tout(h, storySorties(D), avance).then(function (r) { r.infos = D; r.legende = legendeSorties(D); return r; }); },
+    couvNews: function (D, avance) { var h = slidesNews(D); return tout(h.slice(0, 1), storyNews(D), avance).then(function (r) { r.infos = D; return r; }); },
+    rendreSorties: function (D, avance) { var h = slidesSorties(D); if (D.seulCouv) h = h.slice(0, 1); return tout(h, storySorties(D), avance).then(function (r) { r.infos = D; r.legende = legendeSorties(D); return r; }); },
     donneesNews: newsDonnees, donneesPrepub: prepubDonnees, donneesSorties: sortiesDonnees
   };
 })();

@@ -1216,7 +1216,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Récap hebdo / récap du mois : vignette 毎週 (chaque semaine) / 毎月 (chaque mois) + FURYOGANG vertical (Will, 21/10/2026, maquette 2C).
   // + Fiches mises à jour : 更新 (kōshin, « mise à jour ») ; Concours : 抽選 (chūsen, « tirage au sort ») — Will, 21/10/2026.
   // Tous les types (Will, 21/10/2026) : couverture 表紙, fiches du mois 新作, mangaka 作家, membre 仲間, article 記事, vidéo 動画, autre 予定.
-  var EV_KJ = { "prepub-sem": "連載", "qn-sem": "毎週", "qn-mois": "毎月", maj: "更新", concours: "抽選", couv: "表紙", fiche: "新作", mangaka: "作家", membre: "仲間", article: "記事", video: "動画", autre: "予定" };
+  var EV_KJ = { "prepub-sem": "連載", "sorties-sem": "新刊", "qn-sem": "毎週", "qn-mois": "毎月", maj: "更新", concours: "抽選", couv: "表紙", fiche: "新作", mangaka: "作家", membre: "仲間", article: "記事", video: "動画", autre: "予定" };
   // News publiées (Will, 22/10/2026) : même vignette kanji, selon la catégorie principale.
   var NEWS_KJ = { "licence-fr": "仏版", "licence-jp": "連載", "couv-fr": "表紙", "couv-jp": "表紙", "sortie-fr": "発売", "sortie-jp": "発売", fin: "完結", pause: "休載", anime: "放送", adaptation: "実写", "bande-annonce": "予告", tirage: "部数", extrait: "試読", hommage: "追悼", dedicace: "サイン会", news: "速報", serie: "連載" };
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
@@ -1504,7 +1504,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   }
   function quand(e) { return e.date ? (function () { var d = parseIso(e.date); return JJ[(d.getDay() + 6) % 7] + ". " + d.getDate() + " " + MA[d.getMonth()]; })() : ("Chaque " + (e.repeat === "mois" ? (((e.jour || 1) === 1 ? "1er" : (e.jour || 1)) + " du mois") : ({ lun: "lundi", mar: "mardi", mer: "mercredi", jeu: "jeudi", ven: "vendredi", sam: "samedi", dim: "dimanche" }[e.repeat] || "—"))); }
   function openEv(e, jour) {
-    if (!e) return; var t = proj(e.type), hb = e.type === "qn-sem" || e.type === "prepub-sem";
+    if (!e) return; var t = proj(e.type), hb = e.type === "qn-sem" || e.type === "prepub-sem" || e.type === "sorties-sem";
     modalCap = e.textes || null;
     var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
     h += '<div class="chips"><span class="chip">' + esc(quand(e)) + '</span><span class="chip"><i style="background:' + t.couleur + '"></i>' + esc(t.nom) + "</span>" + (e.imp ? '<span class="chip imp">● Important</span>' : "") + (e.fait ? '<span class="chip">✓ Publié</span>' : "") + "</div>";
@@ -1523,21 +1523,23 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Générés ici à partir des vraies données (/site/hebdo.js, modèles validés de la charte) : aperçu, corrections, programmation
   // Instagram (carrousel + story) et X (le carrousel en un post) dans la même file que les sorties (/api/admin/igq).
   var HEBDO = {};
-  function hebdoLib() { return window.FG_HEBDO ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/hebdo.js?v=3"; sc.onload = ok; sc.onerror = function () { ko(new Error("Le générateur ne se charge pas")); }; document.head.appendChild(sc); }); }
+  function hebdoLib() { return window.FG_HEBDO ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/hebdo.js?v=4"; sc.onload = ok; sc.onerror = function () { ko(new Error("Le générateur ne se charge pas")); }; document.head.appendChild(sc); }); }
   function hebdoDu(e, jour) {
-    var news = e.type === "qn-sem", d = jour ? parseIso(jour) : new Date(); d.setHours(12, 0, 0, 0);
-    if (!jour) while (d.getDay() !== (news ? 1 : 0)) d.setDate(d.getDate() + 1);
+    // News : le lundi, semaine d'avant. Sorties : le samedi, semaine en cours. Prépublication : le dimanche, semaine en cours.
+    var news = e.type === "qn-sem", cible = news ? 1 : e.type === "sorties-sem" ? 6 : 0, d = jour ? parseIso(jour) : new Date(); d.setHours(12, 0, 0, 0);
+    if (!jour) while (d.getDay() !== cible) d.setDate(d.getDate() + 1);
     var l = new Date(d); l.setDate(l.getDate() - ((l.getDay() + 6) % 7) - (news ? 7 : 0));
     return { jour: iso(d), du: iso(l) };
   }
   function envoyerData(u) { return fetch(u).then(function (r) { return r.blob(); }).then(function (b) { return fetch("/api/admin/image", { method: "POST", credentials: "same-origin", headers: { "content-type": "image/jpeg" }, body: b }); }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Envoi de l'image impossible"); return j.url; }); }); }
   function hebdoOuvrir(e, jour) {
     var box = $("#hebdo"); if (!box) return;
-    var k = e.type === "qn-sem" ? "news" : "prepub", w = hebdoDu(e, jour), id = "hebdo-" + k + "-" + w.du, evId = e.id;
+    var k = e.type === "qn-sem" ? "news" : e.type === "sorties-sem" ? "sorties" : "prepub", w = hebdoDu(e, jour), id = "hebdo-" + k + "-" + w.du, evId = e.id;
     var prog = function (i, n) { var p = box.querySelector(".hbprog"); if (p) p.textContent = "Préparation des images… " + i + " / " + n; };
     var charger = function (force) {
       if (HEBDO[id] && !force) return HEBDO[id];
       var c = HEBDO[id] = hebdoLib().then(function () {
+        if (k === "sorties") return FG_HEBDO.sorties(w.du, prog).then(function (r) { r.reg = {}; return r; });
         if (k !== "news") return FG_HEBDO.prepub(w.du, prog).then(function (r) { r.reg = {}; return r; });
         return fetch("/api/admin/hebdo?k=news&du=" + w.du, { credentials: "same-origin" }).then(function (r) { return r.json(); }).catch(function () { return {}; })
           .then(function (j) { var reg = j.reglages || {}; return FG_HEBDO.news(w.du, reg, prog).then(function (r) { r.reg = reg; return r; }); });
@@ -1548,10 +1550,10 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var dessiner = function (r) {
       if (host.dataset.id !== evId || !box.isConnected) return;
       var per = r.infos.du.slice(8) * 1 + " – " + r.infos.au.slice(8) * 1 + " " + MA[+r.infos.au.slice(5, 7) - 1];
-      var vide = k === "news" ? !r.infos.news.length : !r.infos.mags.length;
+      var vide = k === "news" ? !r.infos.news.length : k === "sorties" ? !r.infos.jp.length && !r.infos.fr.length : !r.infos.mags.length;
       modalCap = { tw: r.legende.x, ig: r.legende.ig, tk: "" };
       var h = '<div class="mslab">Aperçu · ' + esc(per) + ' · ' + r.slides.length + ' image' + (r.slides.length > 1 ? "s" : "") + ' + story</div>';
-      if (vide) h += '<div class="note">Rien pour cette semaine pour l\'instant' + (k === "prepub" ? " (les chapitres arrivent au fil de la semaine)" : "") + '.</div>';
+      if (vide) h += '<div class="note">Rien pour cette semaine pour l\'instant' + (k === "prepub" ? " (les chapitres arrivent au fil de la semaine)" : k === "sorties" ? " : pas de sortie, rien à programmer" : "") + '.</div>';
       h += '<div class="hbstrip">' + r.slides.map(function (u, i) { return '<img src="' + u + '" data-hbz="' + i + '" alt="Image ' + (i + 1) + '">'; }).join("") + '</div>';
       if (k === "news" && r.infos.news.length) {
         var reg = r.reg || {};
@@ -1563,9 +1565,9 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       h += '<div class="mslab">Légendes</div>' + tabsHTML(modalCap) + (r.legende.liens && /series\//.test(r.legende.liens) ? '<div class="mslab">Post X avec les liens · à poster à la main (gratuit)</div><div class="cbox"><button class="cp" data-hbcp aria-label="Copier" title="Copier">' + IC_COPY + '</button><p>' + esc(r.legende.liens) + '</p></div>' : "") + '<div class="mslab">Programmer · Instagram (carrousel + story) et X (post)</div><div class="igbox" id="hbig"></div>';
       box.innerHTML = h;
       if (vide) return;
-      var titre = (k === "news" ? "News de la semaine · " : "Prépublication · ") + per;
+      var titre = (k === "news" ? "News de la semaine · " : k === "sorties" ? "Sorties de la semaine · " : "Prépublication · ") + per;
       var ig = box.querySelector("#hbig");
-      var o = { id: id, jourJ: w.jour, heure: k === "news" ? "12:00" : "10:00", aPost: true, aX: true, item: null,
+      var o = { id: id, jourJ: w.jour, heure: k === "news" ? "12:00" : k === "sorties" ? "11:00" : "10:00", aPost: true, aX: true, item: null,
         imgs: Promise.resolve({ post: { _url: r.slides[0] }, story: { _url: r.story } }),
         programmer: function (quand, p, st, x) {
           var urls = [], su = "";
