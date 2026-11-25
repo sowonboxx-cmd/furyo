@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Story des carrousels · FuryoGang</title>
+<!-- Will, 25/11/2026 : story publiée en même temps que le carrousel (Quoi de neuf, Prépublication) = 1re image du post dans un cadre.
+     Simulation avec l'interface Instagram (pointillés = zones couvertes). -->
+<style>html,body{margin:0;background:#2a2a2e;font-family:system-ui}.w{display:inline-block;margin:16px;vertical-align:top}.w b{display:block;color:#fff;font:800 22px system-ui;margin-bottom:8px}canvas{width:405px;height:720px;border-radius:20px;display:block}</style>
+</head><body><div id="out"></div>
+<script src="/site/story.js?v=6"></script>
+<script>
+function rr(x, X, Y, W, H, r) { x.beginPath(); x.roundRect(X, Y, W, H, r); }
+  function insta(c) {
+    var x = c.getContext("2d");
+    var g = x.createLinearGradient(0, 0, 0, 200); g.addColorStop(0, "rgba(0,0,0,.28)"); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(0, 0, 1080, 200);
+    for (var i = 0; i < 10; i++) { x.fillStyle = i < 9 ? "rgba(255,255,255,.95)" : "rgba(255,255,255,.4)"; rr(x, 20 + i * 104.6, 17, 98, 4, 2); x.fill(); }
+    x.fillStyle = "#fff"; x.beginPath(); x.arc(68, 87, 33, 0, 7); x.fill();
+    x.fillStyle = "#c41a2b"; x.font = "900 22px FGStJ"; x.textAlign = "center"; x.fillText("不良", 68, 95);
+    x.fillStyle = "#222"; x.beginPath(); x.arc(97, 113, 15, 0, 7); x.fill(); x.fillStyle = "#fff"; x.fillRect(90, 112, 14, 3); x.fillRect(96, 106, 3, 14);
+    x.textAlign = "left"; x.font = "600 28px FGStI"; x.fillStyle = "#fff"; x.shadowColor = "rgba(0,0,0,.35)"; x.shadowBlur = 6; x.fillText("Your story", 142, 98);
+    x.fillStyle = "rgba(255,255,255,.75)"; x.fillText("9m", 315, 98);
+    x.strokeStyle = "#fff"; x.lineWidth = 4; x.lineCap = "round"; x.beginPath(); x.moveTo(1006, 62); x.lineTo(1052, 108); x.moveTo(1052, 62); x.lineTo(1006, 108); x.stroke();
+    x.shadowBlur = 0;
+    x.font = "600 24px FGStI"; x.fillStyle = "rgba(255,255,255,.55)"; x.fillText("Say something...", 31, 1868);
+    // Zone gênée, en pointillés.
+    x.setLineDash([10, 8]); x.strokeStyle = "rgba(0,229,255,.9)"; x.lineWidth = 3; x.strokeRect(4, 4, 1072, 128); x.strokeRect(4, 1836, 1072, 48); x.setLineDash([]);
+    return c;
+  }
+function charger(u) { return new Promise(function (ok, ko) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = ko; i.src = u; }); }
+// Cadre : fond plein (mosaïque manga rouge ou sombre), image du post centrée, marges fines.
+function cadre(post, fond, w, top) {
+  var c = document.createElement("canvas"); c.width = 1080; c.height = 1920; var x = c.getContext("2d");
+  x.drawImage(fond, 0, 0, 1080, 1920);
+  var h = Math.round(w * post.height / post.width), l = (1080 - w) / 2;
+  x.fillStyle = "rgba(0,0,0,.45)"; x.filter = "blur(30px)"; x.fillRect(l + 10, top + 30, w, h); x.filter = "none";
+  x.drawImage(post, l, top, w, h);
+  return c;
+}
+// Fonds de cadre : mosaïque de couvertures en N&B, teinte rouge ou noire.
+function fondMosaique(imgs, rouge) {
+  var c = document.createElement("canvas"); c.width = 1080; c.height = 1920; var x = c.getContext("2d");
+  x.fillStyle = rouge ? "#CB002F" : "#0c0c0e"; x.fillRect(0, 0, 1080, 1920);
+  x.save(); x.translate(540, 960); x.rotate(-8 * Math.PI / 180); x.globalAlpha = rouge ? .3 : .22; x.globalCompositeOperation = rouge ? "multiply" : "source-over"; x.filter = "grayscale(1) contrast(1.2)";
+  var cw = 220, ch = 314;
+  for (var j = 0; j < 80; j++) { var im = imgs[j % imgs.length], gx = -900 + (j % 8) * (cw + 16), gy = -1300 + (j / 8 | 0) * (ch + 16), k = Math.max(cw / im.width, ch / im.height), sw = cw / k, sh = ch / k; x.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, gx, gy, cw, ch); }
+  x.restore(); return c;
+}
+var C = function (u) { return /^\//.test(u) ? u : "/api/couv?w=300&u=" + encodeURIComponent(u); };
+fetch("mos.json").then(function (r) { return r.json(); }).then(function (l) {
+  return Promise.all([charger("m/qdn-p1.jpg"), charger("m/pp-p1.jpg"), Promise.all(l.slice(0, 24).map(function (u) { return charger("https://furyogang.com" + C(u)).catch(function () { return null; }); }))]);
+}).then(function (r) {
+  var mos = r[2].filter(Boolean), fr = fondMosaique(mos, true), fn = fondMosaique(mos, false), out = document.getElementById("out"), jobs = [];
+  [["Quoi de neuf", r[0]], ["Prépublication", r[1]]].forEach(function (p) {
+    jobs.push(["A · " + p[0] + " · story actuelle (posé sur le trait jaune)", null, p[1]]);
+    jobs.push(["B · " + p[0] + " · cadre rouge manga", cadre(p[1], fr, 960, 280)]);
+    jobs.push(["C · " + p[0] + " · cadre sombre manga", cadre(p[1], fn, 960, 280)]);
+  });
+  return Promise.all(jobs.map(function (j) { return j[1] ? Promise.resolve([j[0], j[1]]) : FG_STORY.canvas({}, j[2]).then(function (c) { return [j[0], c]; }); })).then(function (L) {
+    L.forEach(function (x, i) { var c = insta(x[1]); c.id = "c" + i; var d = document.createElement("div"); d.className = "w"; d.innerHTML = "<b>" + x[0] + "</b>"; d.appendChild(c); out.appendChild(d); });
+    document.body.dataset.ok = 1;
+  });
+});
+</script></body></html>
