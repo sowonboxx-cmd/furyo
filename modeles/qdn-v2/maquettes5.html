@@ -38,7 +38,7 @@ html,body{margin:0;background:#2a2a2e}
 .lab i{width:100px;height:2px;background:#fff}
 .h4{font:700 70px/.98 A;text-transform:uppercase;margin:18px 0 0}
 .p{font:600 38px/1.32 I;color:#F2EFE9;margin:22px 0 0}
-.p mark{background:linear-gradient(180deg,transparent 12%,#F2C14E 12%,#F2C14E 92%,transparent 92%);color:#121214;padding:0 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;border-radius:3px}
+.p mark{background:#F2C14E;color:#121214;padding:1px 8px 3px;line-height:1.5;-webkit-box-decoration-break:clone;box-decoration-break:clone;border-radius:3px}
 .jp{font:900 30px J;color:#E5483A;margin-top:10px}
 .vt{position:absolute;writing-mode:vertical-rl;font:900 96px/1 J;letter-spacing:.04em}
 .so{position:relative}.so .tn{position:absolute;top:-10px;right:-12px;background:#C8102E;color:#fff;font:700 40px/1 A;padding:8px 12px 10px;border-radius:8px;z-index:2}
@@ -54,11 +54,11 @@ html,body{margin:0;background:#2a2a2e}
 var C = function (u) { return /^\//.test(u) ? u : "https://furyogang.com/api/couv?w=700&u=" + encodeURIComponent(u); };
 var HD = '<div class="hd"><img src="/img/social/logo-blanc.png" alt=""></div>';
 var N = {
-  bo: { cat: "Nouvelle série · Japon", col: "#E5483A", t: "Bōryoku Banzai", jp: "暴力万歳", p: "Le dessinateur de <mark>Satsudou</mark> est de retour au Japon, et cette fois c'est de la <mark>baston pure</mark>, du premier au dernier chapitre.", cv: "/img/news/boryoku-banzai/tome1.jpg" },
-  ka: { cat: "Annonce", col: "#F2C14E", t: "Kabukichō Bengoshi", jp: "歌舞伎町弁護士", p: "Le dessinateur de <mark>Gokusatsudō Gregor</mark> revient le <mark>8 décembre</mark> dans le Young Champion, avec l'histoire d'un <mark>avocat du quartier de la nuit</mark>.", cv: "/img/news/kabukicho-bengoshi/annonce-perso.jpg" },
-  ha: { cat: "Nouvel arc", col: "#4CC38A", t: "Hangure", jp: "半グレ", p: "Un <mark>nouvel arc</mark> démarre dans le Young Champion n°24 avec une <mark>page couleur</mark>, et le <mark>tome 16</mark> vient de sortir au Japon.", cv: "/img/news/hangure-arc/couleur.jpg" },
+  bo: { cat: "Nouvelle série · Japon", col: "#E5483A", t: "Bōryoku Banzai", jp: "暴力万歳", p: "Le dessinateur de Satsudou est de retour au Japon, et cette fois c'est de la <mark>baston pure</mark>, du premier au dernier chapitre.", cv: "/img/news/boryoku-banzai/tome1.jpg" },
+  ka: { cat: "Annonce", col: "#F2C14E", t: "Kabukichō Bengoshi", jp: "歌舞伎町弁護士", p: "Le dessinateur de Gokusatsudō Gregor revient le 8 décembre dans le Young Champion, avec l'histoire d'un <mark>avocat du quartier de la nuit</mark>.", cv: "/img/news/kabukicho-bengoshi/annonce-perso.jpg" },
+  ha: { cat: "Nouvel arc", col: "#4CC38A", t: "Hangure", jp: "半グレ", p: "Un nouvel arc démarre dans le Young Champion n°24 avec une <mark>page couleur</mark>, et le tome 16 vient de sortir au Japon.", cv: "/img/news/hangure-arc/couleur.jpg" },
   ga: { cat: "Nouvelle édition", col: "#E5483A", t: "GANGKING", jp: "ギャングキング 新装版", p: "La série culte de Daiju Yanauchi revient en nouvelle édition : <mark>10 gros tomes de 700 pages</mark>. Le tome 2 est sorti le 24 novembre au Japon.", cv: "/img/news/gangking-shinsoban/t2.jpg" },
-  sa: { cat: "Fin de série", col: "#bdb9b1", t: "Sakamoto Days", jp: "サカモトデイズ", p: "C'est fini après <mark>six ans</mark> dans le Weekly Shōnen Jump : le <mark>chapitre 284</mark> clôt la série au Japon.", cv: "https://furyo.pages.dev/couvertures/9784088852355-hd.jpg" }
+  sa: { cat: "Fin de série", col: "#bdb9b1", t: "Sakamoto Days", jp: "サカモトデイズ", p: "C'est <mark>fini après six ans</mark> dans le Weekly Shōnen Jump : le chapitre 284 clôt la série au Japon.", cv: "https://furyo.pages.dev/couvertures/9784088852355-hd.jpg" }
 };
 var MOS = ["bo", "ka", "ha", "ga", "sa"].map(function (k) { return C(N[k].cv); }).concat(["/modeles/story-v2/m/saigo-no-furyou-03.jpg", "/modeles/story-v2/m/the-fable-the-third-secret-02.jpg", "/modeles/story-v2/m/le-premier-amour-de-nezumi-04.jpg", "/modeles/story-v2/m/np/Ja-05.jpg"]);
 var mos = function (k, l) { l = l || MOS; var h = '<div class="mz ' + k + '"><div class="g">'; for (var j = 0; j < 63; j++) h += '<i style="background-image:url(' + l[(j * 5 + (j / 7 | 0)) % l.length] + ')"></i>'; return h + "</div></div>"; };
