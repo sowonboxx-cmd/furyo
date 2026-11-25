@@ -26,6 +26,7 @@ textarea{width:100%;min-height:120px;background:#17171b;color:#fff;border:1px so
 .row{display:flex;gap:10px;align-items:center;margin-top:22px;flex-wrap:wrap}
 button{border:0;border-radius:12px;padding:13px 20px;font:700 15px I;cursor:pointer;background:#fff;color:#121214}button[disabled]{opacity:.45;cursor:default}
 #msg{font:600 14px I;color:#9a9aa2}#msg a{color:#3d8bff}
+.drop{display:block;margin-top:12px;border:1.5px dashed #3a3a42;border-radius:12px;padding:18px;text-align:center;font:600 13px I;color:#9a9aa2;text-transform:none;letter-spacing:0;cursor:pointer}.drop.on{border-color:#3d8bff;color:#fff}
 .prix{font-size:12px;color:#77777e;margin-top:10px}
 </style>
 </head>
@@ -39,6 +40,7 @@ button{border:0;border-radius:12px;padding:13px 20px;font:700 15px I;cursor:poin
   <textarea id="tx">Test de publication automatique FuryoGang</textarea>
   <label>Images (cochez celles à joindre, 20 au plus)</label>
   <div class="ims" id="ims"></div>
+  <label class="drop" id="drop"><input type="file" id="fi" accept="image/*" multiple hidden>Ajouter vos images (glisser-déposer ou cliquer) : par exemple les PNG d'un carrousel téléchargés depuis un studio</label>
   <div class="row"><button id="go" disabled>Publier sur X</button><span id="msg"></span></div>
   <div class="prix">Sans lien dans le texte : 0,015 $ le post. Un lien dans le texte le fait passer à 0,20 $.</div>
 </main>
@@ -46,7 +48,24 @@ button{border:0;border-radius:12px;padding:13px 20px;font:700 15px I;cursor:poin
 (function () {
   var $ = function (s) { return document.querySelector(s); }, pret = false;
   var IMGS = [["/img/news/boryoku-banzai/reseaux.jpg", "Bōryoku Banzai"], ["/img/news/hangure-arc/reseaux.jpg", "Hangure"], ["/img/news/kabukicho-bengoshi/reseaux.jpg", "Kabukichō"], ["/img/news/gangking-shinsoban/reseaux.jpg", "GANGKING"], ["/couvertures/9791070250303.jpg", "Nezumi T.6"]];
-  $("#ims").innerHTML = IMGS.map(function (x, i) { return '<label><input type="checkbox" value="' + x[0] + '"' + (i === 0 ? " checked" : "") + '><img src="' + x[0] + '" alt=""><span>' + x[1] + "</span></label>"; }).join("");
+  $("#ims").innerHTML = IMGS.map(function (x, i) { return '<label><input type="checkbox" value="' + x[0] + '"' + "" + '><img src="' + x[0] + '" alt=""><span>' + x[1] + "</span></label>"; }).join("");
+  // Images ajoutées à la main (Will, 25/11/2026) : converties en JPEG, mises en ligne sur le site, puis cochées dans l'ordre.
+  function ajouter(files) {
+    var m = $("#msg"), l = [].slice.call(files).filter(function (f) { return /^image\//.test(f.type); });
+    if (!l.length) return; m.textContent = "Mise en ligne de " + l.length + " image(s)…";
+    l.reduce(function (p, f) { return p.then(function () {
+      return createImageBitmap(f).then(function (b) { var c = document.createElement("canvas"); c.width = b.width; c.height = b.height; c.getContext("2d").drawImage(b, 0, 0);
+        return new Promise(function (ok) { c.toBlob(ok, "image/jpeg", .92); }); })
+        .then(function (blob) { return fetch("/api/admin/image", { method: "POST", credentials: "same-origin", headers: { "content-type": "image/jpeg" }, body: blob }); })
+        .then(function (r) { return r.json(); }).then(function (j) { if (!j.url) throw new Error(j.error || "envoi impossible");
+          var lb = document.createElement("label"); lb.innerHTML = '<input type="checkbox" checked value="' + j.url + '"><img src="' + j.url + '" alt=""><span>' + f.name.replace(/[<>"]/g, "") + "</span>"; $("#ims").appendChild(lb); }); }); }, Promise.resolve())
+      .then(function () { m.textContent = l.length + " image(s) ajoutée(s), cochées dans l'ordre."; }).catch(function (e) { m.textContent = "Échec : " + (e.message || e); });
+  }
+  $("#fi").addEventListener("change", function () { ajouter(this.files); this.value = ""; });
+  var dz = $("#drop");
+  ["dragenter", "dragover"].forEach(function (t) { dz.addEventListener(t, function (e) { e.preventDefault(); dz.classList.add("on"); }); });
+  ["dragleave", "drop"].forEach(function (t) { dz.addEventListener(t, function (e) { e.preventDefault(); dz.classList.remove("on"); }); });
+  dz.addEventListener("drop", function (e) { ajouter(e.dataTransfer.files); });
   fetch("/api/admin/x", { credentials: "same-origin" }).then(function (r) { return r.json().then(function (j) { return [r.status, j]; }); }).then(function (a) {
     var e = $("#etat");
     if (a[0] === 401) { e.className = "etat ko"; e.querySelector("span").textContent = "Connectez-vous au back-office d'abord"; return; }
