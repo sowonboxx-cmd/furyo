@@ -585,7 +585,7 @@ async function imageFiche(s, fmt, li, btn){
     const j = await fetch("/api/serie?s=" + encodeURIComponent(s.slug)).then(r => r.json()).catch(() => ({}));
     const d = { t: shownT(s), jp: s.jp, cover: s.cover, type: s.type, genres: s.genres || [], y1: s.y1, slug: s.slug,
       pubs: FG_FICHE.parts((s.pubFR || "").replace(/\s*\([^)]*\)/g, "")), scen: s.scen, dess: s.dess, ...FG_FICHE.depuisSerie(j),
-      resume: li.querySelector('[data-f="resumeImg"]').value.trim() || li.querySelector('[data-f="resume"]').value.trim(), n: rang ? rang.rang : (AV.enLigne || 0) + 1, tot: AV.total || ITEMS.length };
+      resume: li.querySelector('[data-f="resumeImg"]').value.trim() || li.querySelector('[data-f="resume"]').value.trim(), n: s.num || (rang ? rang.rang : (AV.enLigne || 0) + 1), tot: Math.max(AV.total || ITEMS.length, 100) };
     const url = await FG_FICHE.png(d, { theme: "creme", fmt });
     const nom = `nouvelle-fiche-${s.slug}-${fmt}.png`;
     const blob = await (await fetch(url)).blob(), file = new File([blob], nom, { type: "image/png" });
@@ -1446,7 +1446,7 @@ function captions(i, rs){ FGPost.setCats(VCATS, NEWS_CATS); return FGPost.captio
 function resumeAuto(i){ FGPost.setCats(VCATS, NEWS_CATS); return FGPost.resumeAuto(i); }
 function ajouteMagX(x, i){ return FGPost.ajouteMagX(x, i); }
 </script>
-<script src="/admin/base.js?v=2"></script>
+<script src="/admin/base.js?v=3"></script>
 <script src="/site/refresh.js?v=3" defer></script>
 </body>
 </html>

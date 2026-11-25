@@ -1132,6 +1132,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     NEWS.forEach(function (n) { if (n.date === is) out.push({ kind: "news", id: n.id, date: is, n: n }); });
     // Stories de prépublication programmées (Will, 23/11/2026) : elles quittent la liste et vont au jour prévu.
     PREP.forEach(function (x) { if (x.story && !x.story.ignore && x.story.quand && jourParis(x.story.quand) === is) out.push({ kind: "prepub", id: x.id, date: is, x: x }); });
+    (FPLAN[is] || []).forEach(function (f) { out.push({ kind: "fiche", id: f.id, date: is, f: f }); });
     // Ordre chronologique de publication (Will, 23/11/2026) : news publiées ou planifiées à leur heure,
     // sorties programmées sur Instagram à l'heure prévue ; le reste (sans heure) après, dans l'ordre d'avant.
     return out.map(function (it, i) { return [heureTri(it), i, it]; }).sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] - b[1]; }).map(function (x) { return x[2]; });
@@ -1143,12 +1144,13 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     if (it.kind === "news") t = /T\d/.test(it.n.t || "") ? it.n.t : "";
     else if (it.kind === "sortie") { var q = IGQ[it.id]; t = q && q.quand ? q.quand : ""; }
     else if (it.kind === "prepub") t = it.x.story.quand;
+    else if (it.kind === "fiche") { var fq = IGQ["fiche-" + it.id]; if (fq && fq.quand) t = fq.quand; else return ("0" + parseInt(FCAL.heure, 10)).slice(-2) + ":00"; }
     else if (it.kind === "ev" && it.e.heure) return String(it.e.heure);
     if (!t) return "~";
     var d = new Date(t); return isNaN(d) ? "~" : HM.format(d);
   }
-  function itemColor(it) { if (it.kind === "prepub") return "#BC002D"; return it.kind === "sortie" ? PSORTIE.couleur : it.kind === "news" ? (NEWSCOL[it.n.cat] || "#4C9BFF") : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
-  function itemTitle(it) { if (it.kind === "prepub") return it.x.serie + (it.x.chapitre ? " · ch. " + it.x.chapitre : ""); return it.kind === "sortie" ? sortieLabel(it.s) : it.kind === "news" ? it.n.titre : (it.kind === "todo" ? it.t.t : it.e.titre); }
+  function itemColor(it) { if (it.kind === "prepub") return "#BC002D"; if (it.kind === "fiche") return proj("fiche").couleur || "#F2B33D"; return it.kind === "sortie" ? PSORTIE.couleur : it.kind === "news" ? (NEWSCOL[it.n.cat] || "#4C9BFF") : (it.kind === "todo" ? "#5a5a5e" : proj(it.e.type).couleur); }
+  function itemTitle(it) { if (it.kind === "fiche") return "Fiche " + ficheNo(it.f) + " · " + it.f.t; if (it.kind === "prepub") return it.x.serie + (it.x.chapitre ? " · ch. " + it.x.chapitre : ""); return it.kind === "sortie" ? sortieLabel(it.s) : it.kind === "news" ? it.n.titre : (it.kind === "todo" ? it.t.t : it.e.titre); }
   function itemImp(it) { return it.kind === "ev" ? it.e.imp : (it.kind === "todo" ? it.t.prio === "haut" : false); }
   function itemDone(it) { return it.kind === "ev" ? it.e.fait : false; }
 
@@ -1222,6 +1224,10 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function evCover(e) { return e ? (EV_KJ[e.type] || "予定") : ""; }
   function carteCal(it) {
         if (it.kind === "sortie") { var s = it.s, cov = s.cover ? ';background-image:url(' + esc(s.cover) + ')' : ''; return '<button class="rcard" data-k="sortie" data-id="' + esc(it.id) + '"><span class="cov" style="' + cov + '">' + (s.cover ? '' : '<b>' + esc(String(s.n || "")) + "</b>") + '</span><span class="ri"><span class="t">' + esc(sortieLabel(s)) + '</span><span class="m">' + esc(s.pub || "") + (s.fiche === false ? ' <i class="nofi">· fiche pas en ligne</i>' : "") + "</span></span>" + chkBadge("sortie", it.id, postedSortie(it.id)) + "</button>"; }
+        if (it.kind === "fiche") { var ff = it.f, fq = IGQ["fiche-" + ff.id], fim = ff.cover ? "/api/couv?u=" + encodeURIComponent(ff.cover) + "&w=120" : "";
+          return '<button class="rcard" data-k="fiche" data-id="' + esc(ff.id) + '">' + (fim ? '<span class="cov" style="background-image:url(\'' + esc(fim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">新作</span></span>') +
+            '<span class="ri"><span class="t">' + esc(ff.t) + '</span><span class="m">Fiche ' + ficheNo(ff) + ' · post + story</span></span>' +
+            (fq && fq.fait && fq.fait !== "échec" ? '<span class="chk on" title="Publiée">' + CHK_SVG + '</span>' : fq && !fq.ignore ? '<span class="chk pl" title="Programmée">' + CHK_SVG + '<b>' + esc(heureCourte(fq.quand)) + '</b></span>' : "") + '</button>'; }
         if (it.kind === "prepub") { var px = it.x, pcv = px.visuel || px.cover, pim = pcv ? "/api/couv?u=" + encodeURIComponent(pcv) + "&w=120" : "", pe = ppEtat(px);
           return '<button class="rcard" data-k="prepub" data-id="' + esc(it.id) + '">' + (pim ? '<span class="cov" style="background-image:url(\'' + esc(pim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">連載</span></span>') +
             '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Story prépublication · ' + esc(px.magazine || "") + '</span></span>' +
@@ -1254,6 +1260,22 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // ---- Prépublication en story (Will, 23/11/2026) : une ligne discrète au-dessus de « À publier », qui s'ouvre sur la liste ;
   // une coche = la story part à l'heure par défaut (19 h le jour du chapitre) ; un clic sur la ligne = aperçu + heure au choix.
   var PREP = [], PPO = false;
+  // Fiches séries planifiées (Will, 25/11/2026) : même planning que Mangas Database (N° fiche, jours de publication, date de départ).
+  var FICH = [], FCAL = { jours: [2, 5], depart: "2026-12-01", heure: "18 h" }, FPLAN = {};
+  function fichePlan() {
+    FPLAN = {}; if (!FCAL.jours.length) return;
+    // Déjà postée mais programmée d'ici : reste affichée au jour de sa publication.
+    FICH.forEach(function (f) { var q = IGQ["fiche-" + f.id]; if (f.promo && q && q.quand && !q.ignore) { var k = jourParis(q.quand); (FPLAN[k] = FPLAN[k] || []).push(f); } });
+    var file = FICH.filter(function (f) { return f.num && !f.promo; }).sort(function (a, b) { return a.num - b.num; });
+    var auj = iso(new Date()), d = new Date((FCAL.depart > auj ? FCAL.depart : auj) + "T12:00:00");
+    file.forEach(function (f) {
+      while (FCAL.jours.indexOf(d.getDay()) < 0) d.setDate(d.getDate() + 1);
+      var k = iso(d), q = IGQ["fiche-" + f.id]; d.setDate(d.getDate() + 1);
+      if (q && q.quand && !q.ignore) k = jourParis(q.quand);
+      (FPLAN[k] = FPLAN[k] || []).push(f);
+    });
+  }
+  function ficheNo(f) { return "n°" + String(f.num).padStart(3, "0"); }
   var MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   function ppNum(n) { n = String(n || ""); var m = n.match(/No\.?\s*(\d+(?:\+\d+)?)/i); if (m) return "n°" + m[1]; m = n.match(/(\d{4})年\s*(\d+)月号/); if (m) return MOIS[+m[2] - 1] + " " + m[1]; m = n.match(/n°\s*\d+/i); return m ? m[0] : n; }
   function ppQuand(x) { var j = x.date && x.date > iso(new Date(Date.now() + 864e5)) ? x.date : iso(new Date()), d = new Date(j + "T19:00:00"); if (d < new Date(Date.now() + 5 * 6e4)) { d = new Date(Date.now() + 15 * 6e4); d.setMinutes(Math.ceil(d.getMinutes() / 5) * 5, 0, 0); } return d; }
@@ -1397,6 +1419,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     return h + "</div></div>";
   }
   function renderView() {
+    fichePlan();
     // Mobile : uniquement la vue semaine (un jour à la fois, défilement horizontal).
     var mob = matchMedia("(max-width:719px)").matches;
     if (mob && calView !== "semaine" && calView !== "jours") calView = "jours";
@@ -1483,6 +1506,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     modalTab = "tw";
     if (kind === "sortie") return openSortie(SORT.find(function (s) { return s.id === id; }));
     if (kind === "prepub") { var px = PREP.find(function (x) { return x.id === id; }); if (px) ppModal(px); return; }
+    if (kind === "fiche") return openFiche(FICH.find(function (f) { return f.id === id; }), jour);
     // News publiée : on rouvre son studio (les 4 téléphones) pour la modifier et l'enregistrer (Will, 27/10/2026).
     if (kind === "news") { location.href = "/hq/news/#" + encodeURIComponent(id); return; }
     if (kind === "todo") return openTodo(TODO.find(function (t) { return t.id === id; }));
@@ -1757,6 +1781,51 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     box.innerHTML = '<div class="iglab">Chargement…</div>';
     fetch("/api/admin/igq?id=" + encodeURIComponent(s.id), { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (j) { o.item = j.item; }).catch(function () {}).then(function () { if (host.dataset.id === s.id) igUI(box, o); });
   }
+
+  // ---- Fiche série planifiée (Will, 25/11/2026) : aperçu du post et de la story (gabarit validé, crème), légendes, programmation
+  // Instagram (post + story) et X (post), comme les carrousels hebdo. Les images sont faites ici, au moment d'ouvrir.
+  var FIMG = {};
+  function ficheLib() { return window.FG_FICHE ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/fiche-card.js?v=8"; sc.onload = ok; sc.onerror = function () { ko(new Error("Le gabarit de fiche ne se charge pas")); }; document.head.appendChild(sc); }); }
+  function ficheImages(f) {
+    if (FIMG[f.id]) return FIMG[f.id];
+    var p = FIMG[f.id] = ficheLib().then(function () { return fetch("/api/serie?s=" + encodeURIComponent(f.slug)).then(function (r) { return r.json(); }); }).then(function (j) {
+      var s = j.serie || {}, tl = [];
+      (j.editions || []).forEach(function (e) { (e.tomes || []).forEach(function (t) { if (t.cover && t.n === 1) tl.push({ c: t.cover, fr: e.pays === "France" }); }); });
+      tl.sort(function (a, b) { return b.fr - a.fr; });
+      var t = (s.t && s.fr && s.t === s.t.toUpperCase() && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t || f.t);
+      var d = { t: t, jp: s.jp, cover: tl.length ? tl[0].c : (s.cover1 || f.cover), type: s.type, genres: s.genres || [], y1: s.y1, slug: f.slug,
+        pubs: FG_FICHE.parts(String(s.pubFR || "").replace(/\s*\([^)]*\)/g, "")), resume: f.resume || s.resumeImg || s.resume || "", n: f.num, tot: 600 };
+      var x = FG_FICHE.depuisSerie(j); for (var k in x) d[k] = x[k];
+      return FG_FICHE.png(d, { theme: "creme", fmt: "post" }).then(function (post) { return FG_FICHE.png(d, { theme: "creme", fmt: "story" }).then(function (story) { return { post: post, story: story }; }); });
+    });
+    p.catch(function () { delete FIMG[f.id]; }); return p;
+  }
+  function openFiche(f, jour) {
+    if (!f) return;
+    var id = "fiche-" + f.id, q = IGQ[id], jj = q && q.quand ? jourParis(q.quand) : (jour || "");
+    modalCap = { tw: (f.leg && f.leg.x) || "", ig: (f.leg && f.leg.ig) || "", tk: (f.leg && f.leg.tt) || "" };
+    var cov = f.cover ? "/api/couv?u=" + encodeURIComponent(f.cover) + "&w=200" : "";
+    var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
+    h += '<div class="chips">' + (jj ? '<span class="chip">' + esc(igJourLib(jj)) + '</span>' : "") + '<span class="chip"><i style="background:' + (proj("fiche").couleur || "#F2B33D") + '"></i>Fiche série</span><span class="chip">' + ficheNo(f) + '</span></div>';
+    h += '<div class="mh"><span class="cov' + (cov ? " has" : "") + '" style="' + (cov ? "background-image:url(" + esc(cov) + ")" : "") + '"></span><div><h2>' + esc(f.t) + '</h2><div class="sub">' + esc([f.jp, "Fiche " + ficheNo(f)].filter(Boolean).join(" · ")) + '</div></div></div>';
+    h += '<div class="mslab">Légendes</div>' + tabsHTML(modalCap);
+    h += '<div class="mslab">Aperçu et programmation · Instagram (post + story) et X (post)</div><div class="igbox" id="fiig"></div>';
+    h += '<div class="macts"><a class="btn2" href="/series/' + esc(f.slug) + '" target="_blank" rel="noopener">' + IC_BOOK + 'Voir la fiche</a><a class="btn2 dbb" href="/admin/#mangas/' + esc(f.id) + '" target="_blank" rel="noopener" title="Modifier dans Mangas Database" aria-label="Modifier dans Mangas Database">' + IC_DB + '</a><span id="calmsg"></span></div>';
+    h += "</div></div>"; host.innerHTML = h; host.dataset.k = "fiche"; host.dataset.id = f.id;
+    var imgs = ficheImages(f);
+    imgs.catch(function (er) { var m = $("#calmsg"); if (m) m.textContent = er.message || "Images impossibles à préparer"; });
+    var titre = "Fiche " + ficheNo(f) + " · " + f.t, hr = ("0" + parseInt(FCAL.heure, 10)).slice(-2) + ":00";
+    var o = { id: id, jourJ: jour || "", heure: hr, aPost: true, aX: true, item: null,
+      imgs: imgs.then(function (v) { return { post: { _url: v.post }, story: { _url: v.story } }; }),
+      programmer: function (quand, p, st, x) {
+        return imgs.then(function (v) { return Promise.all([p || x ? envoyerData(v.post) : "", st ? envoyerData(v.story) : ""]); }).then(function (u) {
+          return igq({ id: id, type: "fiche", titre: titre, quand: quand.toISOString(), legende: modalCap.ig || titre, post: p && u[0] ? [u[0]] : [], story: u[1] || "",
+            x: x && u[0] ? { texte: modalCap.tw || titre, images: [u[0]] } : null }); }); },
+      ignorer: function () { return igq({ id: id, ignore: true, type: "fiche", titre: titre }); },
+      annuler: function () { return igq({ id: id, del: true }); } };
+    var box = $("#fiig"); box.innerHTML = '<div class="iglab">Chargement…</div>';
+    fetch("/api/admin/igq?id=" + encodeURIComponent(id), { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (j) { o.item = j.item; }).catch(function () {}).then(function () { if (box.isConnected) igUI(box, o); });
+  }
   document.addEventListener("click", function (ev) {
     var b = ev.target.closest && ev.target.closest("[data-igth]"); if (!b || !host._sortie) return;
     SORT_THEME = b.dataset.igth; try { localStorage.setItem("fg:sortie-theme", SORT_THEME); } catch (e) {}
@@ -1835,6 +1904,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var vu = false;
     // Stories et file Instagram gardées sur l'appareil : affichées tout de suite, puis rafraîchies (Will, 24/11/2026 : elles arrivaient en retard).
     if (store.pp) PREP = store.pp;
+    if (store.fi) { FICH = store.fi.items || []; if (store.fi.cal) FCAL = store.fi.cal; }
     if (store.igq) { IGQ = {}; store.igq.forEach(function (x) { if (x && x.id) IGQ[x.id] = x; }); }
     // Vue Mois : à l'ouverture, on arrive directement sur la semaine en cours (Will, 25/11/2026).
     var premier = function () { var sec = $("#calendrier"); if (sec && sec.classList.contains("on")) ancrer(); };
@@ -1852,6 +1922,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     // Sorties enrichies (légendes identiques à la Validation, coches « postée ») et news publiées : en arrière-plan.
     j("/api/admin/sorties?passe=1").then(function (sx) { calAppliquer({ sx: sx }); garder("sx", sx); if (vu) calRedessiner(); }).catch(function () {});
     j("/api/admin/igq").then(function (q) { IGQ = {}; (q.items || []).forEach(function (x) { if (x && x.id) IGQ[x.id] = x; }); garder("igq", q.items || []); if (vu) calRedessiner(); }).catch(function () {});
+    j("/api/admin/fiches").then(function (fi) { if (!fi.ok) return; FICH = fi.items || []; FCAL = fi.cal || FCAL; garder("fi", fi); if (vu) calRedessiner(); }).catch(function () {});
     j("/api/admin/prepubstory").then(function (pp) { PREP = pp.items || []; garder("pp", PREP); if (vu) calRedessiner(); }).catch(function () {});
     j("/api/admin/veille").then(function (ve) { calAppliquer({ ve: ve }); garder("ve", { items: (ve.items || []).filter(function (x) { return x && x.enLigne; }), apub: APUB, cols: ve.cols, cats: ve.cats }); if (vu) calRedessiner(); }).catch(function () {});
   }

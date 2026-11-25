@@ -10,6 +10,8 @@
   // Publication des fiches : jours de la semaine (0 = dimanche) et date de départ. Réglables dans la vue Calendrier.
   const CAL = { jours: [2, 5], depart: "2026-12-01", heure: "18 h" };
   try { const c = JSON.parse(localStorage.getItem("mdb-cal") || "null"); if (c && Array.isArray(c.jours)) Object.assign(CAL, c); } catch (e) {}
+  // Réglages partagés avec le calendrier du QG (Will, 25/11/2026) : la version enregistrée sur le serveur fait foi.
+  fetch("/api/admin/fiches", { credentials: "same-origin" }).then(r => r.json()).then(j => { if (j && j.cal) { Object.assign(CAL, j.cal); try { localStorage.setItem("mdb-cal", JSON.stringify(CAL)); } catch (e) {} if (window.draw && document.getElementById("mdb-main")) draw(); } }).catch(() => {});
 
   const I = {
     grid: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
@@ -538,7 +540,8 @@
     if (d.mmois) { const b = M.mois || CAL.depart.slice(0, 7); let [y, m] = b.split("-").map(Number); m += Number(d.mmois); if (m < 1) { m = 12; y--; } if (m > 12) { m = 1; y++; } M.mois = `${y}-${String(m).padStart(2, "0")}`; draw(); return; }
     if (d.mjour) { const v = +d.mjour; CAL.jours = CAL.jours.includes(v) ? CAL.jours.filter(x => x !== v) : CAL.jours.concat(v); sauverCal(); draw(); return; }
   });
-  function sauverCal() { try { localStorage.setItem("mdb-cal", JSON.stringify(CAL)); } catch (e) {} }
+  function sauverCal() { try { localStorage.setItem("mdb-cal", JSON.stringify(CAL)); } catch (e) {}
+    fetch("/api/admin/fiches", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ cal: CAL }) }).catch(() => {}); }
   async function echanger(a, b) {
     const na = a.num, nb = b.num;
     // Passage par un numéro temporaire impossible (Notion accepte deux fiches au même numéro un court instant) : on écrit les deux.
