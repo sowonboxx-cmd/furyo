@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes fiche v2 · FuryoGang</title>
+<!-- Will, 25/11/2026 : fiche « Dossier » crème, retours :
+     - accent du titre coupé (Bakuon Rettô) ;
+     - « La base FuryoGang 86 / 607 » : le total bouge tout le temps → remplacé par des chiffres qui ne vieillissent pas ;
+     - « Nouvelle fiche » vieillit aussi → « Fiche n°086 » à la place ;
+     - « Résumé » plus grand ; place vide en bas ; alternative au bloc Histoire / Type / Genres en police condensée, test à plusieurs auteurs. -->
+<style>
+html,body{margin:0;background:#2a2a2e;font-family:system-ui}
+.w{display:inline-block;vertical-align:top;margin:20px}.w>b{display:block;font:800 22px system-ui;color:#fff;margin-bottom:10px}
+.cadre{position:relative}
+/* Proposition B */
+.fgc.vB .fgc-top .fgc-A.site{font-size:40px;color:rgba(255,255,255,.55);letter-spacing:.08em}
+.fgc.vB .fgc-kick{background:var(--red)}
+.fgc.vB dl{grid-template-columns:auto minmax(0,1fr);gap:10px 22px}
+.fgc.vB dt{font-size:24px;letter-spacing:.12em;color:var(--muted);padding-top:6px}
+.fgc.vB dd{font-family:"FGAntonio",sans-serif;font-weight:500;font-size:38px;line-height:1.1;letter-spacing:.01em}
+.fgc.vB .fgc-res{margin-top:50px}.fgc.vB.post .fgc-res p{font-size:34px}
+.fgc.vB.story .fgc-res p{font-size:37px}.fgc.vB.story .fgc-chiffres{margin-top:36px}.fgc.vB.story .fgc-chiffres div{padding:24px 22px 22px}.fgc.vB.story .fgc-chiffres b{font-size:74px}.fgc.vB.story .fgc-pied{margin-top:26px}
+.fgc.vB .fgc-res h3{margin:0 0 14px;display:flex;align-items:center;gap:18px;font:700 50px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.06em;color:var(--red)}
+.fgc.vB .fgc-res h3::after{content:"";flex:1;height:3px;background:var(--red);opacity:.85}
+.fgc.vB .fgc-res p b{display:none}
+.fgc.vB .fgc-chiffres{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+.fgc.vB .fgc-chiffres div{background:var(--track);border-radius:10px;padding:18px 20px 16px}
+.fgc.vB .fgc-chiffres span{display:block;font:700 22px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.fgc.vB .fgc-chiffres b{display:block;margin-top:10px;font:700 64px/1 "FGAntonio";text-transform:uppercase}
+.fgc.vB .fgc-chiffres i{display:block;margin-top:8px;font:600 24px/1.2 "FGInter";font-style:normal;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fgc.vB .fgc-pied{flex:none;margin-top:18px;display:flex;justify-content:space-between;align-items:center;font:700 30px "FGInter";color:var(--muted)}
+.fgc.vB .fgc-pied b{font:700 34px "FGAntonio";text-transform:uppercase;letter-spacing:.04em;color:var(--fg)}
+/* accent du titre (Ô) qui ne doit plus être coupé : place en haut de la ligne */
+
+/* Interface Instagram simulée (story) */
+.ig{position:absolute;inset:0;z-index:50;pointer-events:none;transform-origin:0 0}
+.ig .bars{position:absolute;left:20px;right:20px;top:17px;display:flex;gap:6px}.ig .bars i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.9)}
+.ig .av{position:absolute;left:35px;top:54px;width:66px;height:66px;border-radius:50%;background:#fff;display:grid;place-items:center;font:900 22px sans-serif;color:#c41a2b}
+.ig .nm{position:absolute;left:142px;top:72px;font:600 28px sans-serif;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}.ig .nm span{opacity:.75;margin-left:22px}
+.ig .x{position:absolute;right:28px;top:58px;font:300 64px/1 sans-serif;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.ig .say{position:absolute;left:24px;right:150px;top:1828px;height:84px;border:2px solid rgba(255,255,255,.7);border-radius:42px;font:500 28px sans-serif;color:rgba(255,255,255,.85);display:flex;align-items:center;padding-left:34px;background:rgba(0,0,0,.15)}
+.ig .hz{position:absolute;right:40px;top:1846px;font:400 48px sans-serif;color:#fff}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script src="/site/fiche-card.js?v=5"></script>
+<script>
+var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+var couv = function (u) { return u ? "/api/couv?u=" + encodeURIComponent(u) : ""; };
+var IG = '<div class="ig"><div class="bars"><i></i><i></i><i></i></div><div class="av">不良</div><div class="nm">furyogang<span>2 h</span></div><div class="x">×</div><div class="say">Envoyer un message…</div><div class="hz">♡</div></div>';
+// Auteurs : « Nom (supervision : A, B) » → lignes Scénario / Supervision / Dessin.
+function auteurs(d) {
+  var rows = [], sc = String(d.scen || ""), sup = (sc.match(/\(supervision\s*:\s*([^)]+)\)/i) || [])[1];
+  sc = sc.replace(/\s*\(supervision[^)]*\)/i, "").trim();
+  var orig = (sc.match(/([^,]+)\s*\(original\)/i) || [])[1]; if (orig) sc = sc.replace(/[^,]+\(original\),?\s*/i, "").replace(/\s*\(scénario\)/i, "").trim();
+  var meme = sc && d.dess && sc === d.dess;
+  if (orig) rows.push(["Œuvre originale", [orig.trim()]]);
+  if (sc) rows.push([meme ? "Auteur" : "Scénario", sc.split(/\s*,\s*/)]);
+  if (sup) rows.push(["Supervision", sup.split(/\s*,\s*/)]);
+  if (d.dess && !meme) rows.push(["Dessin", d.dess.split(/\s*,\s*/)]);
+  return rows;
+}
+function cardB(d, theme, fmt) {
+  // Moins de lignes : type et année ensemble ; l'édition française passe dans les chiffres du bas.
+  var rows = auteurs(d).concat([["Genres", (d.genres || []).slice(0, 3)], ["Type", [d.type + " · " + d.y1]]]).filter(function (r) { return r[1] && r[1][0]; });
+  var fini = /termin/i.test(d.stJP);
+  return '<div class="fgc vB ' + theme + " " + fmt + '">' +
+    '<div class="fgc-top"><img src="/img/social/logo-blanc.png" alt=""><span class="fgc-A site">furyogang.com</span></div>' +
+    '<div class="fgc-main"><div class="fgc-hero"><div class="fgc-cv"><img class="fgc-cover" src="' + couv(d.cover) + '" alt=""></div>' +
+      '<div class="fgc-info"><span class="fgc-kick"><span>Fiche n°' + String(d.n).padStart(3, "0") + '</span></span><p class="fgc-t fgc-A">' + esc(d.t) + '</p><div class="fgc-jp" lang="ja">' + esc(d.jp) + '</div>' +
+      '<dl>' + rows.map(function (r) { return "<dt>" + r[0] + '</dt><dd data-items="' + esc(JSON.stringify(r[1])) + '">' + esc(r[1].join(", ")) + "</dd>"; }).join("") + "</dl></div></div>" +
+      '<div class="fgc-res"><h3>Résumé</h3><p><b></b>' + esc(d.resume) + "</p></div>" +
+      '<div class="fgc-chiffres"><div><span>Au Japon</span><b>' + d.tomesJP + (d.tomesJP > 1 ? " tomes" : " tome") + '</b><i>' + esc(d.pubJP || "") + '</i></div>' +
+        '<div><span>En France</span><b>' + (d.tomesFR ? d.tomesFR + " tomes" : "Inédit") + '</b><i>' + esc(d.pubFR || "Pas encore licencié") + '</i></div>' +
+        '<div><span>Statut</span><b>' + (fini ? "Terminé" : "En cours") + '</b><i>' + (fini && d.y2 ? d.y1 + " – " + d.y2 : "depuis " + d.y1) + '</i></div></div>' +
+      '<div class="fgc-pied"><span>La fiche complète, les tomes et l\'extrait</span><b>furyogang.com</b></div>' +
+    "</div></div>";
+}
+var BK = { t: "Bakuon Rettô", jp: "爆音列島", cover: "https://dvs-cover.kodansha.co.jp/0000029807/aW5eLW011eZptEdwIkp4ddYSl37ju7n8xQIE90MW.jpg", type: "Seinen", genres: ["Bōsōzoku", "Furyō", "Drame"], y1: 2002, y2: 2013, scen: "Tsutomu Takahashi", dess: "Tsutomu Takahashi",
+  resume: "Tokyo, 1980 : un adolescent timide, Takashi, se lie à des camarades passionnés de rodéos à moto et bascule dans l'univers des gangs de bōsōzoku. Un portrait réaliste et sombre de la jeunesse motarde et de sa hiérarchie.", stJP: "Terminé", tomesJP: 18, tomesFR: 18, pubFR: "Kana", pubJP: "Kōdansha", n: 86, tot: 607, pubs: ["Kana"] };
+var GD = { t: "Golden Drop", jp: "ゴールデンドロップ", cover: "https://c.bookwalker.jp/1760786/t_700x780.jpg", type: "Seinen", genres: ["Contrebande", "Drogue", "Gang", "Mafia", "Underground"], y1: 2023, scen: "Keiichi Tsuha (supervision : Shinya Kusaka, Junpei Kamisato)", dess: "Ryō Kōzuki",
+  resume: "Dans les bas-fonds d'Okinawa, un jeune trafiquant se retrouve au cœur d'une guerre pour une drogue d'un nouveau genre, la Golden Drop, convoitée par les gangs, la mafia et la police.", stJP: "En cours", tomesJP: 15, tomesFR: 0, pubFR: "", pubJP: "Kōdansha", n: 87, tot: 607, pubs: [] };
+var S = [
+  ["Bakuon Rettô · story · actuelle (accent corrigé)", FG_FICHE.card(BK, "creme", "story"), BK, 1],
+  ["Bakuon Rettô · story · proposition B", cardB(BK, "creme", "story"), BK, 1],
+  ["Bakuon Rettô · post · proposition B", cardB(BK, "creme", "post"), BK, 0],
+  ["Golden Drop (3 auteurs) · post · actuelle", FG_FICHE.card(GD, "creme", "post"), GD, 0],
+  ["Golden Drop (3 auteurs) · post · proposition B", cardB(GD, "creme", "post"), GD, 0],
+  ["Golden Drop · story · proposition B", cardB(GD, "creme", "story"), GD, 1]
+];
+document.getElementById("out").innerHTML = S.map(function (x, i) { return '<div class="w"><b>' + x[0] + '</b><div class="cadre" id="s' + i + '">' + x[1] + (x[3] ? IG : "") + "</div></div>"; }).join("");
+Promise.all(S.map(function (x, i) { return FG_FICHE.preparer(document.getElementById("s" + i), x[2]); })).then(function () { setTimeout(function () { document.body.dataset.ok = 1; }, 1200); });
+</script>
+</body>
+</html>
