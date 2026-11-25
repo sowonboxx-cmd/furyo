@@ -251,6 +251,10 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .mwk.wk{overflow:visible}.mwk.wk .wcol{flex:1 1 0;min-width:0;min-height:190px}
 .mwk .rcard .ri .t,.mwk .wcard .t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* Semaine en cours encadrée + « Cette semaine », jour même avec un liseré fin (Will, 25/11/2026). */
+.igthl{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.igth{display:inline-flex;gap:3px;background:var(--s2,#17171b);border-radius:10px;padding:3px}
+.igth button{border:0;background:none;color:var(--mut);font:700 12px "FGInter";padding:6px 12px;border-radius:8px;cursor:pointer;text-transform:none;letter-spacing:0}
+.igth button[aria-pressed=true]{background:var(--cr);color:#121214}
 .mwk.cur{scroll-margin-top:calc(var(--shh,0px) + var(--csh,140px) + 34px);position:relative;background:#232a38;border-radius:18px;padding:10px;margin:22px -10px 0;box-shadow:inset 0 0 0 1px rgba(61,139,255,.45)}
 .mwk.cur::before{content:"Cette semaine";position:absolute;left:12px;top:-22px;font:700 11px "FGInter";letter-spacing:.12em;text-transform:uppercase;color:#3d8bff}
 .mwk .wcol.to{outline:1px solid #3d8bff;outline-offset:-1px}
@@ -1522,7 +1526,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
        + '<button class="dlb" data-tome="story" data-theme="creme">Story · Crème</button></div>';
     var fslug = (s.fiche && s.seriesId) ? ficheSlug(s) : "", furl = fslug ? (location.origin + "/series/" + fslug) : "";
     if (furl) h += '<div class="mslab">Lien de la fiche</div><div class="fichelink"><span class="ic">' + IC_BOOK + '</span><span class="u" title="' + esc(furl) + '">' + esc(location.host + "/series/" + fslug) + '</span><button class="cp" id="fichecp" data-url="' + esc(furl) + '" aria-label="Copier le lien de la fiche" title="Copier le lien de la fiche">' + IC_COPY + '</button></div>';
-    h += '<div class="mslab">Instagram</div><div class="igbox" id="igprog"></div>';
+    h += '<div class="mslab igthl">Instagram<span class="igth" role="group" aria-label="Thème du visuel"><button data-igth="sombre" aria-pressed="' + (SORT_THEME === "sombre") + '">Noir</button><button data-igth="creme" aria-pressed="' + (SORT_THEME === "creme") + '">Crème</button></span></div><div class="igbox" id="igprog"></div>';
     var po = postedSortie(s.id);
     h += '<div class="macts">' + (furl ? '<a class="btn2" href="/series/' + esc(fslug) + '" target="_blank" rel="noopener">' + IC_BOOK + 'Voir la fiche</a>' : "") + (s.seriesId ? '<a class="btn2 dbb" href="/admin/#mangas/' + esc(s.seriesId) + '" target="_blank" rel="noopener" title="Modifier la fiche dans Mangas Database" aria-label="Modifier la fiche dans Mangas Database">' + IC_DB + '</a>' : "") + '<span id="calmsg"></span><div class="pubtoggle"><span class="publbl">' + (po ? "Publié" : "À publier") + '</span><span class="chkbig ' + (po ? "on" : "off") + '" data-act="poste" role="button" aria-label="' + (po ? "Publié" : "À publier") + '" title="' + (po ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span></div></div>';
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "sortie"; host.dataset.id = s.id;
@@ -1530,18 +1534,21 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   }
   // ---- Programmer une sortie sur Instagram (Will, 23/11/2026) : post (visuel de sortie noir) + story (gabarit tiré au hasard). ----
   var IGV = {};
-  function igVisuels(s) {
-    if (IGV[s.id]) return IGV[s.id];
-    IGV[s.id] = ensureTomeLib().then(function () { return FG_TOME.png(sortieToTomeData(s), { theme: "sombre", fmt: "post" }); }).then(function (u) {
+  // Thème du visuel de sortie programmé : Noir ou Crème, au choix dans la fiche ; le dernier choix devient le thème par défaut (Will, 25/11/2026).
+  var SORT_THEME = (function () { try { return localStorage.getItem("fg:sortie-theme") === "creme" ? "creme" : "sombre"; } catch (e) { return "sombre"; } })();
+  function igVisuels(s, theme) {
+    theme = theme || SORT_THEME; var k = s.id + ":" + theme;
+    if (IGV[k]) return IGV[k];
+    IGV[k] = ensureTomeLib().then(function () { return FG_TOME.png(sortieToTomeData(s), { theme: theme, fmt: "post" }); }).then(function (u) {
       return new Promise(function (ok, ko) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = ko; i.src = u; });
     }).then(function (im) {
       // Post : 1080 de large, ramené au 4:5 au plus haut (fond noir sur les côtés si besoin), comme les news.
       var W = 1080, h = Math.round(im.height * W / im.width), H = Math.min(h, 1350), c = document.createElement("canvas"); c.width = W; c.height = H;
-      var x = c.getContext("2d"); x.fillStyle = "#0c0c0e"; x.fillRect(0, 0, W, H);
+      var x = c.getContext("2d"); x.fillStyle = theme === "creme" ? "#F3EBDD" : "#0c0c0e"; x.fillRect(0, 0, W, H);
       if (h > H) { var w2 = Math.round(im.width * H / im.height); x.drawImage(im, (W - w2) / 2, 0, w2, H); } else x.drawImage(im, 0, 0, W, h);
       return FG_STORY.canvas(FG_STORY.tirage(s.id, false), c).then(function (st) { return { post: c, story: st }; });
     });
-    return IGV[s.id];
+    return IGV[k];
   }
   function envoyerJpg(c) { return new Promise(function (ok) { c.toBlob(ok, "image/jpeg", .9); }).then(function (b) { return fetch("/api/admin/image", { method: "POST", credentials: "same-origin", headers: { "content-type": "image/jpeg" }, body: b }); }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Envoi de l'image impossible"); return j.url; }); }); }
   // ---- Panneau Instagram commun (sorties de tomes, prépublication) — Will, 23/11/2026 :
@@ -1629,14 +1636,21 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function igq(body) { return fetch("/api/admin/igq", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); if (body.del) delete IGQ[body.id]; else if (j.item) IGQ[j.item.id] = j.item; try { calRedessiner(); } catch (e) {} return j.item; }); }
   function igProg(s) {
     var box = $("#igprog"); if (!box) return;
-    var o = { jourJ: s.date, heure: "09:00", aPost: true, imgs: igVisuels(s), item: null,
-      programmer: function (quand, p, st) { return igVisuels(s).then(function (v) { return Promise.all([p ? envoyerJpg(v.post) : "", st ? envoyerJpg(v.story) : ""]); }).then(function (u) {
+    var th = SORT_THEME;
+    var o = { jourJ: s.date, heure: "09:00", aPost: true, imgs: igVisuels(s, th), item: null,
+      programmer: function (quand, p, st) { return igVisuels(s, th).then(function (v) { return Promise.all([p ? envoyerJpg(v.post) : "", st ? envoyerJpg(v.story) : ""]); }).then(function (u) {
         return igq({ id: s.id, type: "sortie", titre: sortieLabel(s), quand: quand.toISOString(), legende: (modalCap && modalCap.ig) || sortieLabel(s), post: u[0] ? [u[0]] : [], story: u[1] || "" }); }); },
       ignorer: function () { return igq({ id: s.id, ignore: true, type: "sortie", titre: sortieLabel(s) }); },
       annuler: function () { return igq({ id: s.id, del: true }); } };
     box.innerHTML = '<div class="iglab">Chargement…</div>';
     fetch("/api/admin/igq?id=" + encodeURIComponent(s.id), { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (j) { o.item = j.item; }).catch(function () {}).then(function () { if (host.dataset.id === s.id) igUI(box, o); });
   }
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest("[data-igth]"); if (!b || !host._sortie) return;
+    SORT_THEME = b.dataset.igth; try { localStorage.setItem("fg:sortie-theme", SORT_THEME); } catch (e) {}
+    document.querySelectorAll("[data-igth]").forEach(function (x) { x.setAttribute("aria-pressed", x.dataset.igth === SORT_THEME); });
+    igProg(host._sortie);
+  });
   // Changer la date d'une tâche depuis le calendrier (Will, 30/10/2026).
   document.addEventListener("change", function (ev) {
     if (!ev.target || ev.target.id !== "tddt") return; var id = host.dataset.id, v = ev.target.value || "";
