@@ -86,14 +86,16 @@ function fan(l) {
 }
 var mz = ""; for (var j = 0; j < 12; j++) mz += '<img src="' + P[j % N] + '">';
 var FIN1 = '<div class="s fin"><div class="mz">' + mz + '</div><div class="vl"></div>' + TOP() + '<div class="tt"><small>La suite dans le tome 1</small><h2>Crows</h2></div><div class="fan">' + fan(T.slice(0, 5)) + '</div><div class="url"><small>La fiche complète, les tomes et l\'extrait</small><b>furyogang.com<em>/series/crows</em></b></div>' + BAS + "</div>";
-var FIN2 = '<div class="s fin"><div class="mz">' + mz + '</div><div class="vl"></div>' + TOP() + '<div class="tt"><small>Chez Kana depuis 2025</small><h2>Crows</h2></div><div class="grille">' + T.slice(0, 1).map(function (u) { return '<img class="un" src="' + u + '">'; }).join("") + T.slice(1, 5).map(function (u) { return '<img src="' + u + '">'; }).join("") + '</div><div class="url" style="bottom:130px"><small>La fiche complète</small><b>furyogang.com<em>/series/crows</em></b></div>' + BAS + "</div>";
+var FIN2 = '<div class="s fin"><div class="mz">' + mz + '</div><div class="vl"></div>' + TOP() + '<div class="tt"><small>Chez Kana depuis 2025</small><h2>Crows</h2></div><div class="grille">' + T.slice(0, 1).map(function (u) { return '<img class="un" src="' + u + '">'; }).join("") + T.slice(1, 5).map(function (u) { return '<img src="' + u + '">'; }).join("") + '</div><div class="url" style="bottom:130px"><small>La fiche complète, les tomes et l\'extrait</small><b>furyogang.com<em>/series/crows</em></b></div>' + BAS + "</div>";
 var S = [];
+if (/complet/.test(location.search)) { for (var q = 0; q < N; q++) S.push(["Extrait " + (q + 1), page("F", q)]); S.push(["Fin · tome 1 en grand", FIN2.replace('class="s fin"', 'class="s fin sans"')]); S.push(["Fin · éventail", FIN1.replace('class="s fin"', 'class="s fin sans"')]); } else {
 S.push(["F validée · page 1, sans trait en bas", page("F", 0)]);
 S.push(["F validée · page 2", page("F", 1)]);
 S.push(["Fin 2 · avec le trait", FIN2]);
 S.push(["Fin 2 · sans le trait", FIN2.replace('class="s fin"', 'class="s fin sans"')]);
 S.push(["Fin 1 · avec le trait", FIN1]);
 S.push(["Fin 1 · sans le trait", FIN1.replace('class="s fin"', 'class="s fin sans"')]);
+}
 document.getElementById("out").innerHTML = S.map(function (x, i) { return '<div class="w"><b>' + x[0] + '</b><div id="s' + i + '">' + x[1] + "</div></div>"; }).join("");
 document.fonts.ready.then(function () { setTimeout(function () { document.body.dataset.ok = 1; }, 3000); });
 </script>
