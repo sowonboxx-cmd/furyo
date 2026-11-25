@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes 6 · Story prépub · FuryoGang</title>
+<!-- Will, 25/11/2026 : la story Nine Peaks postée montre que l'interface Instagram (barres, avatar, « Your story », croix)
+     mange « Prépublication » en haut. Maquettes avec l'interface Instagram par-dessus, aux vraies proportions de sa capture :
+     A actuel · B tout baissé · C tout baissé + bande FuryoGang baissée · D « Prépublication » à gauche · E D + bande baissée. -->
+<style>
+html,body{margin:0;background:#2a2a2e;font-family:Inter,system-ui,sans-serif;color:#fff}
+.w{display:inline-block;vertical-align:top;margin:20px;text-align:center}
+.w b{display:block;font:800 28px Inter,sans-serif;margin-bottom:10px}
+canvas{width:540px;height:960px;border-radius:24px;display:block}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+(function () {
+  var LIST = ["Ja-01","Ja-02","Ja-03","Ja-04","Ja-05","Ja-06","Ja-07","Ja-08","Ja-09","Ja-10","Ja-11","Ja-12"].map(function (n) { return "m/np/" + n + ".jpg"; });
+  var COUV = "m/np/Ja-21.jpg";
+  function charger(u) { return new Promise(function (ok, ko) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = ko; i.src = u; }); }
+  function esp(x, v) { if ("letterSpacing" in x) x.letterSpacing = v; }
+  function rr(x, X, Y, W, H, r) { x.beginPath(); x.roundRect(X, Y, W, H, r); }
+  var pol = Promise.all([new FontFace("FGStA", "url(/fonts/Antonio.ttf)", { weight: "700" }), new FontFace("FGStJ", "url(/fonts/NotoSansJP.ttf)", { weight: "900" }), new FontFace("FGStI", "url(/fonts/Inter.ttf)", { weight: "100 900" })].map(function (f) { return f.load().then(function (y) { document.fonts.add(y); }); }));
+
+  // o = { haut: y du bloc du haut, decal: bande FuryoGang descendue de N px, lab: "haut" | "gauche" }
+  function story(o, fond, cv, mos) {
+    var LIGNE = 1600 + (o.decal || 0);
+    var c = document.createElement("canvas"); c.width = 1080; c.height = 1920; var x = c.getContext("2d");
+    x.fillStyle = "#0c0c0e"; x.fillRect(0, 0, 1080, 1920);
+    // Bande du bas (trait jaune + logo + furyogang.com) recopiée du fond, descendue de decal.
+    x.drawImage(fond, 0, 1592, 1080, 328 - (o.decal || 0), 0, 1592 + (o.decal || 0), 1080, 328 - (o.decal || 0));
+    x.save(); x.beginPath(); x.rect(0, 0, 1080, LIGNE - 1); x.clip();
+    x.fillStyle = "#CB002F"; x.fillRect(0, 0, 1080, LIGNE);
+    x.save(); x.translate(540, 1140); x.rotate(-8 * Math.PI / 180); x.globalAlpha = .34; x.globalCompositeOperation = "multiply"; x.filter = "grayscale(1) contrast(1.25) brightness(1.05)";
+    var cw = (1600 - 6 * 18) / 7, ch = cw * 10 / 7;
+    for (var j = 0; j < 63; j++) { var im = mos[(j * 5 + (j / 7 | 0)) % mos.length], gx = -800 + (j % 7) * (cw + 18), gy = -1440 + (j / 7 | 0) * (ch + 18), k = Math.max(cw / im.width, ch / im.height), sw = cw / k, sh = ch / k;
+      x.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, gx, gy, cw, ch); }
+    x.restore();
+    x.save(); x.translate(540, 720); x.scale(648 / 720, 1); var g = x.createRadialGradient(0, 0, 0, 0, 0, 720); g.addColorStop(0, "rgba(150,0,30,.55)"); g.addColorStop(.75, "rgba(150,0,30,0)"); x.fillStyle = g; x.fillRect(-900, -900, 1800, 1800); x.restore();
+    g = x.createLinearGradient(0, 0, 0, LIGNE); g.addColorStop(.6, "rgba(120,0,25,0)"); g.addColorStop(1, "rgba(120,0,25,.65)"); x.fillStyle = g; x.fillRect(0, 0, 1080, LIGNE);
+    x.restore();
+    var y = o.haut, lab = "PRÉPUBLICATION";
+    x.textAlign = "left"; x.textBaseline = "alphabetic";
+    x.font = "700 34px FGStA"; esp(x, "11px"); var wl = x.measureText(lab).width; esp(x, "0px");
+    x.font = "900 30px FGStJ"; esp(x, "3px"); var wk = x.measureText("連載").width; esp(x, "0px");
+    if (o.lab === "gauche") {
+      // Même taille, à la verticale le long du bord gauche, lu de bas en haut, centré sur la couverture (calé après).
+    } else {
+      var tot = 110 + 24 + wl + 16 + wk + 24 + 110, X = (1080 - tot) / 2;
+      x.fillStyle = "rgba(255,255,255,.85)"; x.fillRect(X, y + 16, 110, 2); x.fillRect(X + tot - 110, y + 16, 110, 2);
+      x.fillStyle = "#fff"; x.font = "700 34px FGStA"; esp(x, "11px"); x.fillText(lab, X + 134, y + 30); esp(x, "0px");
+      x.fillStyle = "#F2C14E"; x.font = "900 30px FGStJ"; esp(x, "3px"); x.fillText("連載", X + 134 + wl + 16, y + 29); esp(x, "0px");
+      y += 34 + 22;
+    }
+    var tt = "NINE PEAKS", fs = 120; x.font = "700 " + fs + "px FGStA";
+    x.textAlign = "center"; x.fillStyle = "#fff"; x.shadowColor = "rgba(60,0,10,.6)"; x.shadowBlur = 30; x.shadowOffsetY = 6;
+    x.fillText(tt, 540, y + fs * .88); y += fs;
+    x.shadowColor = "transparent"; x.shadowBlur = 0; x.shadowOffsetY = 0;
+    var py = LIGNE - 44 - 72, t = "CHAPITRE 206"; x.font = "700 46px FGStA"; esp(x, "1.4px"); var pw = x.measureText(t).width + 48, px = (1080 - pw) / 2;
+    x.textBaseline = "middle"; x.fillStyle = "#F2C14E"; rr(x, px, py, pw, 72, 10); x.fill(); x.fillStyle = "#121214"; x.fillText(t, 540, py + 37); esp(x, "0px"); x.textBaseline = "alphabetic";
+    var y0 = y + 46, y1 = py - 46, r = cv.height / cv.width, h = Math.min(y1 - y0 - 16, 1080 * r), w = h / r;
+    if (w > 840) { w = 840; h = w * r; }
+    var top = y0 + (y1 - y0 - h - 16) / 2, left = (1080 - w - 16) / 2;
+    x.fillStyle = "#121214"; x.fillRect(left, top, w + 16, h + 16); x.drawImage(cv, left + 8, top + 8, w, h);
+    if (o.lab === "gauche") {
+      // Entre le bord et la couverture, centré sur la hauteur de la couverture.
+      var cx = Math.max(46, left / 2), cy = top + (h + 16) / 2, L = 110 + 24 + wl + 16 + wk + 24 + 110;
+      x.save(); x.translate(cx, cy); x.rotate(-Math.PI / 2); x.textAlign = "left";
+      var X2 = -L / 2;
+      x.fillStyle = "rgba(255,255,255,.85)"; x.fillRect(X2, -1, 110, 2); x.fillRect(X2 + L - 110, -1, 110, 2);
+      x.fillStyle = "#fff"; x.font = "700 34px FGStA"; esp(x, "11px"); x.fillText(lab, X2 + 134, 13); esp(x, "0px");
+      x.fillStyle = "#F2C14E"; x.font = "900 30px FGStJ"; esp(x, "3px"); x.fillText("連載", X2 + 134 + wl + 16, 12); esp(x, "0px");
+      x.restore();
+    }
+    return c;
+  }
+  // Interface Instagram par-dessus, mesurée sur la capture de Will (story 1080 → 1188 px d'écran, haut à 165 px).
+  function insta(c) {
+    var x = c.getContext("2d");
+    var g = x.createLinearGradient(0, 0, 0, 200); g.addColorStop(0, "rgba(0,0,0,.28)"); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(0, 0, 1080, 200);
+    for (var i = 0; i < 10; i++) { x.fillStyle = i < 9 ? "rgba(255,255,255,.95)" : "rgba(255,255,255,.4)"; rr(x, 20 + i * 104.6, 17, 98, 4, 2); x.fill(); }
+    x.fillStyle = "#fff"; x.beginPath(); x.arc(68, 87, 33, 0, 7); x.fill();
+    x.fillStyle = "#c41a2b"; x.font = "900 22px FGStJ"; x.textAlign = "center"; x.fillText("不良", 68, 95);
+    x.fillStyle = "#222"; x.beginPath(); x.arc(97, 113, 15, 0, 7); x.fill(); x.fillStyle = "#fff"; x.fillRect(90, 112, 14, 3); x.fillRect(96, 106, 3, 14);
+    x.textAlign = "left"; x.font = "600 28px FGStI"; x.fillStyle = "#fff"; x.shadowColor = "rgba(0,0,0,.35)"; x.shadowBlur = 6; x.fillText("Your story", 142, 98);
+    x.fillStyle = "rgba(255,255,255,.75)"; x.fillText("9m", 315, 98);
+    x.strokeStyle = "#fff"; x.lineWidth = 4; x.lineCap = "round"; x.beginPath(); x.moveTo(1006, 62); x.lineTo(1052, 108); x.moveTo(1052, 62); x.lineTo(1006, 108); x.stroke();
+    x.shadowBlur = 0;
+    x.font = "600 24px FGStI"; x.fillStyle = "rgba(255,255,255,.55)"; x.fillText("Say something...", 31, 1868);
+    // Zone gênée, en pointillés.
+    x.setLineDash([10, 8]); x.strokeStyle = "rgba(0,229,255,.9)"; x.lineWidth = 3; x.strokeRect(4, 4, 1072, 128); x.strokeRect(4, 1836, 1072, 48); x.setLineDash([]);
+    return c;
+  }
+  Promise.all([pol, charger("fonds/rouge.jpg"), charger(COUV), Promise.all(LIST.map(charger))]).then(function (L) {
+    var V = [["A · actuel", { haut: 60 }], ["B · tout baissé", { haut: 150 }], ["C · tout baissé + bande -40", { haut: 150, decal: 40 }], ["D · Prépublication à gauche", { haut: 140, lab: "gauche" }], ["E · à gauche + bande -40", { haut: 140, lab: "gauche", decal: 40 }]];
+    var out = document.getElementById("out");
+    V.forEach(function (v) { var c = insta(story(v[1], L[1], L[2], L[3])); c.id = "c" + v[0][0]; var d = document.createElement("div"); d.className = "w"; d.innerHTML = "<b>" + v[0] + "</b>"; d.appendChild(c); out.appendChild(d); });
+    document.body.dataset.ok = 1;
+  });
+})();
+</script>
+</body>
+</html>
