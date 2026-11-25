@@ -36,7 +36,7 @@
     // « chez @éditeur » : le compte de l'éditeur du tome (FR ou JP), sinon l'éditeur FR de la série pour un tome français.
     var edH = (c.xEd || [])[0] || (t.pays === "France" ? (c.xFR || [])[0] : "");
     var edAt = t.pub && edH ? "@" + edH : "";
-    var base = (/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)) + i.titre + "\n" + ligneSortie(i, edAt) + (rs ? "\n\n" + rs : "") + "\n\n↗ furyogang.com/series/" + s.slug;
+    var base = (/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)) + i.titre + "\n" + ligneSortie(i, edAt) + (rs ? "\n\n" + rs : ""); // plus de lien sur X pour les tomes (Will, 25/11/2026 : ~0,20 $ le post avec lien) → place pour un résumé plus long
     // Pas de double mention : un compte déjà cité dans « chez @Éditeur » ne revient pas dans la liste (Will, 21/10/2026).
     var sansEd = function (l) { return (l || []).filter(function (h) { return !edAt || h.toLowerCase() !== edAt.slice(1).toLowerCase(); }); };
     var hs = choixX(sansEd(c.x), sansEd(t.pays === "France" && edAt ? [] : c.xFR), function (h) { return poidsX(base + "\n" + h.map(function (x) { return "@" + x; }).join(" · ")) <= 280; }, c.xMag, sansEd(c.xJP));
@@ -106,7 +106,8 @@
     }
     var txt = (i.texte || "").trim();
     if (i.cat === "prepub" && i.tweet) return {
-      x: i.tweet + (s.slug ? "\n↗ " + url : "") + ((c.x || []).length || (c.xFR || []).length || (c.xMag || []).length ? "\n" + choixX(c.x, c.xFR, function () { return true; }, c.xMag, c.xJP).map(function (h) { return "@" + h; }).join(" · ") : ""),
+      x: i.tweet + ( // chapitres : plus de lien sur X (Will, 25/11/2026)
+        (c.x || []).length || (c.xFR || []).length || (c.xMag || []).length ? "\n" + choixX(c.x, c.xFR, function () { return true; }, c.xMag, c.xJP).map(function (h) { return "@" + h; }).join(" · ") : ""),
       ig: "📖 " + i.titre + (txt ? "\n\n" + txt : "") + "\n\n" + i.tweet + "\n\n📖 Toutes les infos sur furyogang.com (lien en bio).\n\n" + tags.join(" "),
       tt: "📖 " + i.titre + "\n\n" + i.tweet + "\n\n📖 Infos sur furyogang.com\n\n" + [...tags.slice(0, 4), "#mangatok"].join(" "),
     };
