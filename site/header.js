@@ -59,7 +59,7 @@
     ".adm-qt .bdg{position:absolute;top:20px;right:18px;min-width:28px;height:28px;padding:0 8px;box-sizing:border-box;border-radius:7px;background:#BC002D;color:#fff;font:700 15px FGAntonio,sans-serif;display:flex;align-items:center;justify-content:center;line-height:1}.adm-qt .bdg span{display:block;transform:translateY(-1px)}" +
     ".adm-out2{margin-top:16px;width:100%;height:58px;border:0;border-radius:16px;background:#2a2a2e;color:#98989D;font:600 16px Inter,sans-serif;cursor:pointer}" +
     "@media (max-width:600px){.adm-card{padding:16px;border-radius:22px;max-height:calc(100vh - 24px);overflow-y:auto}.adm-grid{grid-template-columns:1fr;gap:9px}.adm-qt{padding:10px 13px;gap:11px;border-radius:13px}.adm-qt.wide{grid-column:auto}.adm-qt .ic{width:32px;height:32px;border-radius:9px}.adm-qt .ic svg{width:18px;height:18px}.adm-qt h3{font-size:19px}.adm-qt small{display:none}.adm-qt .bdg{position:static;margin-left:auto;top:auto;right:auto}.adm-out2{height:50px;font-size:15px}}" +
-    ".sh-sj{display:inline-flex;align-items:center;gap:4px;color:#F2B33D;text-decoration:none;font:600 13px Inter,system-ui,sans-serif}.sh-sj svg{width:15px;height:15px}.sh-sj b{font-weight:700}.sh-sj[data-n='0']{display:none!important}" +
+    ".sh-sj{display:inline-flex;align-items:center;gap:4px;color:#F2B33D;text-decoration:none;font:600 13px Inter,system-ui,sans-serif}.sh-sj svg{width:15px;height:15px}.sh-sj b{font-weight:700}.sh-sj[data-n='0'] b{display:none}.sh-sj:hover{color:#fff}" +
     ".sh-adm{display:flex;align-items:center;gap:10px}" +
     ".adm-out{height:44px;border:0;border-radius:12px;background:transparent;color:#98989D;font:600 14px Inter,system-ui,sans-serif;cursor:pointer}" +
 "@media (max-width:719px){.sh-top{height:54px}.sh-logo img{height:34px}.sh-nav{justify-content:space-around;gap:0}.sh-nav a{padding:0 10px;font-size:14px;height:42px}.sh-nav a[aria-current=page]::after{left:10px;right:10px}}" +
@@ -396,8 +396,8 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
       var box = document.createElement("div"); box.className = "sh-adm";
       box.innerHTML = '<a class="sh-bo" href="/admin/" aria-label="Back-office"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Back-office</a>' +
         '<a class="sh-val" href="/admin/#validation" data-n="0" aria-label="Validation">Validation<b>0</b></a>' +
-        // Sorties du jour pas encore postées (Will, 06/10/2026) : icône calendrier + nombre en jaune, à côté du nombre de la veille.
-        '<a class="sh-sj" href="/admin/#sorties" data-n="0" aria-label="Sorties du jour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><b>0</b></a>';
+        // Icône calendrier jaune, toujours visible : ouvre le calendrier éditorial ; le nombre de sorties du jour à poster s'affiche seulement s'il y en a (Will, 25/11/2026).
+        '<a class="sh-sj" href="/hq/#calendrier" data-n="0" aria-label="Calendrier éditorial" title="Calendrier éditorial"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><b>0</b></a>';
       document.querySelector(".sh-top").appendChild(box);
       valCount();
     }
@@ -409,7 +409,7 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     var a = document.querySelector(".sh-sj"); if (!a) return;
     fetch("/api/admin/sorties?count=1", { credentials: "same-origin" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
       if (!j) return; SJ = j; a.setAttribute("data-n", j.n || 0); a.querySelector("b").textContent = j.n || 0;
-      a.setAttribute("aria-label", "Sorties du jour : " + (j.n || 0) + " à poster");
+      a.setAttribute("aria-label", "Calendrier éditorial" + (j.n ? " · " + j.n + " sortie" + (j.n > 1 ? "s" : "") + " du jour à poster" : ""));
     }).catch(function () {});
   }
   function valCount() {
