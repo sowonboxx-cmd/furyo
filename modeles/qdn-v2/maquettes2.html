@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes 2 · Quoi de neuf v2 · FuryoGang</title>
+<!-- Will, 25/11/2026, 2e tour : titre sur une ligne, plus de fonds noirs nus (mosaïque manga), grandes images de tomes
+     pour les news (pas les visuels déjà vus), 4 pistes de mise en page des news, sorties ensemble (par jour) ou séparées
+     Japon / France sur une semaine chargée (19–25 octobre), « Ça arrive » moins rouge avec du japonais. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#2a2a2e}
+.w{display:inline-block;vertical-align:top;margin:20px}.w>b{display:block;font:800 26px I;color:#fff;margin-bottom:10px}
+.s{position:relative;overflow:hidden;width:1080px;height:1440px;background:#0c0c0e;color:#F2EFE9;font-family:I}
+.logo{position:absolute;top:40px;left:50%;transform:translateX(-50%);height:64px;z-index:20}
+.t{font:700 120px/.95 A;text-transform:uppercase}
+.k{font:700 28px/1 A;letter-spacing:.28em;text-transform:uppercase;color:#F2C14E}
+.pill{display:inline-flex;align-items:center;height:46px;padding:0 16px;border-radius:9px;font:700 27px/1 A;text-transform:uppercase;letter-spacing:.04em;color:#121214}
+.cv{flex:none;background:#111 center/cover;border:7px solid #121214;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.mz{position:absolute;inset:0;overflow:hidden}
+.mz .g{position:absolute;left:-260px;top:-300px;width:1600px;display:grid;grid-template-columns:repeat(7,1fr);gap:18px;transform:rotate(-8deg)}
+.mz .g i{display:block;aspect-ratio:7/10;background:center/cover;filter:grayscale(1) contrast(1.2)}
+.mz.r{background:#CB002F}.mz.r .g{opacity:.32;mix-blend-mode:multiply}
+.mz.r::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 45%,rgba(150,0,30,.5),transparent 75%),linear-gradient(180deg,transparent 55%,rgba(110,0,22,.75))}
+.mz.n{background:#0c0c0e}.mz.n .g{opacity:.2}
+.mz.n::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 45%,rgba(12,12,14,.35),rgba(12,12,14,.85) 80%),linear-gradient(180deg,rgba(12,12,14,.6),transparent 25%,transparent 70%,rgba(12,12,14,.9))}
+.lab{display:flex;justify-content:center;align-items:center;gap:22px;font:700 32px A;letter-spacing:.3em;text-transform:uppercase}
+.lab i{width:90px;height:2px;background:#fff}.lab b{font:900 30px J;color:#F2C14E;letter-spacing:.1em}
+.h4{font:700 64px/1 A;text-transform:uppercase;margin:16px 0 0}
+.p{font:500 27px/1.35 I;color:#d8d4cc;margin:14px 0 0}
+.jp{font:900 30px J;color:#E5483A;margin-top:8px}
+.vt{position:absolute;writing-mode:vertical-rl;font:900 96px/1 J;letter-spacing:.04em}
+.dt{display:inline-block;font:700 22px/1 A;padding:7px 10px;border-radius:6px;text-transform:uppercase}
+.fl{display:block;height:34px;line-height:34px;text-align:center;font:700 20px/34px A;letter-spacing:.12em;text-transform:uppercase}
+.fl.j{background:#BC002D;color:#fff}.fl.f{background:#1f4fd1;color:#fff}
+.cell b{display:block;font:700 26px/1.05 A;text-transform:uppercase;margin-top:12px}.cell span{display:block;font:600 17px I;color:#bdb9b1;margin-top:5px}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+var C = function (u) { return /^\//.test(u) ? u : "https://furyogang.com/api/couv?w=700&u=" + encodeURIComponent(u); };
+var N = [
+  { cat: "Nouvelle série · Japon", col: "#E5483A", t: "Bōryoku Banzai", jp: "暴力万歳", p: "Le dessinateur de Satsudou est de retour, et cette fois c'est de la baston pure.", cv: "/img/news/boryoku-banzai/tome1.jpg" },
+  { cat: "Annonce", col: "#F2C14E", t: "Kabukichō Bengoshi", jp: "歌舞伎町弁護士", p: "Le dessinateur de Gokusatsudō Gregor revient le 8 décembre avec un avocat du quartier de la nuit.", cv: "/img/news/kabukicho-bengoshi/annonce-perso.jpg" },
+  { cat: "Nouvel arc", col: "#4CC38A", t: "Hangure", jp: "半グレ", p: "Nouvel arc, page couleur et un tome 16 tout juste sorti.", cv: "https://c.bookwalker.jp/5837496/t_700x780.jpg" },
+  { cat: "Nouvelle édition", col: "#E5483A", t: "GANGKING", jp: "ギャングキング 新装版", p: "La série culte revient en 10 gros tomes de 700 pages.", cv: "/img/news/gangking-shinsoban/t2.jpg" },
+  { cat: "Fin de série", col: "#bdb9b1", t: "Sakamoto Days", jp: "サカモトデイズ", p: "Terminé après six ans : le chapitre 284 clôt la série.", cv: "https://furyo.pages.dev/couvertures/9784088852355-hd.jpg" }
+];
+var MOS = N.map(function (n) { return C(n.cv); }).concat(["/modeles/story-v2/m/saigo-no-furyou-03.jpg", "/modeles/story-v2/m/the-fable-the-third-secret-02.jpg", "/modeles/story-v2/m/le-premier-amour-de-nezumi-04.jpg", "/modeles/story-v2/m/np/Ja-05.jpg"]);
+var mos = function (k, list) { list = list || MOS; var h = '<div class="mz ' + k + '"><div class="g">'; for (var j = 0; j < 63; j++) h += '<i style="background-image:url(' + list[(j * 5 + (j / 7 | 0)) % list.length] + ')"></i>'; return h + "</div></div>"; };
+var LOGO = '<img class="logo" src="/img/social/logo-blanc.png">';
+var cv = function (u, w, h, st) { return '<div class="cv" style="width:' + w + "px;height:" + h + "px;background-image:url(" + C(u) + ");" + (st || "") + '"></div>'; };
+var pill = function (n) { return '<span class="pill" style="background:' + n.col + '">' + n.cat + "</span>"; };
+var S = [];
+
+// C · Couverture : titre sur une ligne + sommaire
+S.push(["C · Couverture, titre sur une ligne", '<div class="s">' + mos("r") + LOGO +
+  '<div style="position:absolute;left:0;right:0;top:170px;text-align:center;z-index:3"><div class="lab"><i></i>23 – 29 novembre<i></i></div>' +
+  '<div class="t" style="font-size:112px;margin-top:24px;white-space:nowrap;text-shadow:0 6px 30px rgba(60,0,10,.6)">Les news de la semaine</div>' +
+  '<div style="display:flex;justify-content:center;gap:16px;margin-top:40px">' + N.map(function (n, i) { return cv(n.cv, 170, 240, "transform:rotate(" + (i - 2) * 3 + "deg)"); }).join("") + "</div></div>" +
+  '<div style="position:absolute;left:70px;right:70px;top:760px;z-index:3;display:flex;flex-direction:column;gap:14px">' + N.map(function (n) { return '<div style="display:flex;align-items:center;gap:18px;background:rgba(18,18,20,.75);border-radius:14px;padding:16px 20px">' + pill(n).replace("height:46px", "") + '<b style="font:700 44px/1 A;text-transform:uppercase">' + n.t + "</b></div>"; }).join("") + "</div></div>"]);
+
+// N1 · Une en grand + deux en dessous
+S.push(["N1 · Une en grand + deux", '<div class="s">' + mos("n") + LOGO +
+  '<div style="position:absolute;left:60px;top:150px;z-index:3">' + cv(N[0].cv, 470, 668) + "</div>" +
+  '<div style="position:absolute;left:580px;right:60px;top:190px;z-index:3">' + pill(N[0]) + '<div class="h4" style="font-size:84px">' + N[0].t + '</div><div class="jp">' + N[0].jp + '</div><div class="p">' + N[0].p + "</div></div>" +
+  '<div style="position:absolute;left:60px;right:60px;top:880px;display:grid;grid-template-columns:1fr 1fr;gap:40px;z-index:3">' + [N[1], N[2]].map(function (n) { return '<div style="display:flex;gap:22px">' + cv(n.cv, 230, 326) + '<div style="padding-top:6px">' + pill(n) + '<div class="h4" style="font-size:44px">' + n.t + '</div><div class="p" style="font-size:21px">' + n.p + "</div></div></div>"; }).join("") + "</div></div>"]);
+
+// N2 · Gauche / droite, deux news par image
+S.push(["N2 · Gauche / droite", '<div class="s">' + mos("n") + LOGO +
+  [N[0], N[1]].map(function (n, i) { var top = i ? 790 : 150, g = !i; return '<div style="position:absolute;left:60px;right:60px;top:' + top + 'px;display:flex;gap:44px;align-items:center;flex-direction:' + (g ? "row" : "row-reverse") + ';z-index:3">' + cv(n.cv, 420, 597) + '<div style="flex:1;text-align:' + (g ? "left" : "right") + '">' + pill(n) + '<div class="h4" style="font-size:72px">' + n.t + '</div><div class="jp">' + n.jp + '</div><div class="p">' + n.p + "</div></div></div>"; }).join("") + "</div>"]);
+
+// N3 · Une news = une image éditoriale
+S.push(["N3 · Une news, une image", '<div class="s">' + mos("n", [C(N[0].cv), "/img/news/boryoku-banzai/ch1-1.jpg", "/img/news/boryoku-banzai/ch1-2.jpg", "/img/news/boryoku-banzai/ch1-3.jpg"]) + LOGO +
+  '<div class="vt" style="left:56px;top:170px;color:#E5483A;font-size:118px;z-index:3">新連載</div>' +
+  '<div style="position:absolute;left:50%;top:150px;transform:translateX(-50%) rotate(-2deg);z-index:3">' + cv(N[0].cv, 600, 853) + "</div>" +
+  '<div style="position:absolute;left:60px;right:60px;top:1050px;text-align:center;z-index:3">' + pill(N[0]) + '<div class="h4" style="font-size:104px">' + N[0].t + '</div><div class="p" style="max-width:860px;margin:14px auto 0">' + N[0].p + "</div></div></div>"]);
+
+// N4 · Grille 2 × 2 de grandes couvertures
+S.push(["N4 · Grille de quatre", '<div class="s">' + mos("n") + LOGO +
+  '<div style="position:absolute;left:60px;right:60px;top:140px;display:grid;grid-template-columns:1fr 1fr;gap:34px 40px;z-index:3">' + [N[0], N[2], N[3], N[4]].map(function (n) { return '<div style="text-align:center"><div style="display:flex;justify-content:center">' + cv(n.cv, 330, 470) + '</div><div style="margin-top:16px">' + pill(n) + '</div><div class="h4" style="font-size:46px;margin-top:10px">' + n.t + "</div></div>"; }).join("") + "</div></div>"]);
+
+// Sorties d'une semaine chargée (19–25 octobre)
+var SO = [
+  ["2026-10-19", "j", "Gorilla", "T.01", "https://furyogang.com/img/couv/gorilla-t1.jpg"],
+  ["2026-10-20", "j", "Dustland", "T.02", "/couvertures/9784253020312-hd.jpg"],
+  ["2026-10-20", "j", "WORST Gaiden Guriko", "T.40", "https://furyo.pages.dev/couvertures/9784253020398-hd.jpg"],
+  ["2026-10-20", "j", "WORST Gaiden Dokuro", "T.23", "https://furyogang.com/couvertures/9784253020404-hd.jpg"],
+  ["2026-10-20", "j", "Demekin", "T.40", "https://furyo.pages.dev/couvertures/9784253020282-hd.jpg"],
+  ["2026-10-20", "j", "Zetton Sensei", "T.19", "https://furyogang.com/couvertures/9784253020411-hd.jpg"],
+  ["2026-10-21", "f", "Wind Breaker", "T.24", "https://www.images.hachette-livre.fr/media/imgArticle/PIKA/2026/9791043311154-001-X.jpeg"],
+  ["2026-10-21", "f", "Zange", "T.03", "https://www.akata.fr/sites/default/files/couvertures/9782385692636.jpg"],
+  ["2026-10-21", "f", "Jumbo Max", "T.14", "https://media.hachette.fr/fit-in/500x500/imgArticle/PIKA/2026/9791043311499-001-X.jpeg?source=web"]
+];
+var JS = { "2026-10-19": ["Lun.", "19 oct."], "2026-10-20": ["Mar.", "20 oct."], "2026-10-21": ["Mer.", "21 oct."] };
+var cell = function (x, w) { return '<div class="cell" style="width:' + w + 'px">' + cv(x[4], w, Math.round(w * 1.42), "border-width:5px") + '<span class="fl ' + x[1] + '">' + (x[1] === "j" ? "Japon" : "France") + '</span><b>' + x[2] + "</b><span>" + x[3] + "</span></div>"; };
+var mosS = SO.map(function (x) { return C(x[4]); });
+// S1 · Ensemble, par jour
+S.push(["S1 · Sorties ensemble, par jour", '<div class="s">' + mos("n", mosS) + LOGO + '<div class="vt" style="right:50px;top:150px;color:#E5483A;z-index:3">発売</div>' +
+  '<div style="position:absolute;left:60px;top:150px;z-index:3"><div class="k">19 – 25 octobre</div><div class="t" style="font-size:100px;margin-top:12px;white-space:nowrap">Les sorties</div></div>' +
+  '<div style="position:absolute;left:60px;right:60px;top:350px;z-index:3;display:flex;flex-direction:column;gap:26px">' + Object.keys(JS).map(function (d) { var l = SO.filter(function (x) { return x[0] === d; }); return '<div style="display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:start"><div style="font:700 48px/1 A;text-transform:uppercase">' + JS[d][0] + '<small style="display:block;font:700 20px I;color:#F2C14E;margin-top:6px">' + JS[d][1] + '</small></div><div style="display:flex;gap:16px;flex-wrap:wrap">' + l.map(function (x) { return cell(x, l.length > 4 ? 140 : 170); }).join("") + "</div></div>"; }).join("") + "</div></div>"]);
+
+// S2 · Séparé : Japon
+var jpL = SO.filter(function (x) { return x[1] === "j"; }), frL = SO.filter(function (x) { return x[1] === "f"; });
+var dateP = function (x, cls) { return '<span class="dt" style="background:' + cls + ';color:#fff;margin-bottom:10px">' + JS[x[0]][0] + " " + JS[x[0]][1].split(" ")[0] + "</span>"; };
+S.push(["S2a · Séparé, Japon", '<div class="s">' + mos("n", jpL.map(function (x) { return C(x[4]); })) + LOGO + '<div class="vt" style="right:50px;top:150px;color:#E5483A;z-index:3">日本</div>' +
+  '<div style="position:absolute;left:60px;top:150px;z-index:3"><div class="k">Sorties · 19 – 25 octobre</div><div class="t" style="font-size:110px;margin-top:12px">Au Japon</div><div style="width:120px;height:8px;background:#BC002D;margin-top:16px"></div></div>' +
+  '<div style="position:absolute;left:60px;right:60px;top:430px;display:grid;grid-template-columns:repeat(3,1fr);gap:30px 26px;z-index:3">' + jpL.map(function (x) { return '<div class="cell">' + dateP(x, "#BC002D") + cv(x[4], 296, 420, "border-width:5px") + "<b>" + x[2] + "</b><span>" + x[3] + "</span></div>"; }).join("") + "</div></div>"]);
+S.push(["S2b · Séparé, France", '<div class="s">' + mos("n", frL.map(function (x) { return C(x[4]); })) + LOGO + '<div class="vt" style="right:50px;top:150px;color:#4C7DFF;z-index:3">仏国</div>' +
+  '<div style="position:absolute;left:60px;top:150px;z-index:3"><div class="k">Sorties · 19 – 25 octobre</div><div class="t" style="font-size:110px;margin-top:12px">En France</div><div style="width:120px;height:8px;background:#1f4fd1;margin-top:16px"></div></div>' +
+  '<div style="position:absolute;left:60px;right:60px;top:500px;display:flex;justify-content:center;gap:30px;z-index:3">' + frL.map(function (x) { return '<div class="cell" style="text-align:center">' + dateP(x, "#1f4fd1") + cv(x[4], 300, 426, "border-width:5px") + "<b>" + x[2] + "</b><span>" + x[3] + "</span></div>"; }).join("") + "</div></div>"]);
+
+// A · Ça arrive : haut noir avec japonais, bas rouge, la France en grand
+var PR = [["mer. 2", "f", "Le Premier Amour de Nezumi", "T.06", "/couvertures/9791070250303.jpg"], ["mer. 2", "f", "Wind Breaker", "T.25", "https://www.images.hachette-livre.fr/media/imgArticle/PIKA/2026/9791043311802-001-X.jpeg"],
+  ["lun. 30", "j", "Ushijima Gaiden", "T.27", "https://www.shogakukan.co.jp/thumbnail/snsbooks/09864165"], ["ven. 4", "j", "Bōryoku Banzai", "T.08", "https://dvs-cover.kodansha.co.jp/0000434541/PRPbXkB2QrKqYy0XyUubw7Sd0u8Qc14KQB6OtOGM.jpg"], ["ven. 4", "j", "Nezumi no Hatsukoi", "T.12", "https://dvs-cover.kodansha.co.jp/0000434534/q8qnqizVonjOtCoN94Kk5IxwKsUjK92E1OiyKYtN.jpg"]];
+var big = function (x) { return '<div class="cell" style="text-align:center;width:330px"><span class="dt" style="background:#121214;color:#fff;margin-bottom:10px">' + x[0] + "</span>" + cv(x[4], 330, 469) + '<span class="fl f" style="margin-top:0">France</span><b>' + x[2] + "</b><span>" + x[3] + "</span></div>"; };
+var pt = function (x) { return '<div class="cell" style="text-align:center;width:190px"><span class="dt" style="background:#121214;color:#fff;margin-bottom:8px">' + x[0] + "</span>" + cv(x[4], 190, 270, "border-width:5px") + '<span class="fl j">Japon</span><b style="font-size:22px">' + x[2] + "</b><span>" + x[3] + "</span></div>"; };
+S.push(["A · Ça arrive, noir + rouge", '<div class="s" style="background:#BC002D">' + mos("r", PR.map(function (x) { return C(x[4]); })) +
+  '<div style="position:absolute;left:0;right:0;top:0;height:470px;background:#0c0c0e;z-index:2"><div style="position:absolute;inset:0;background:url(/modeles/story-v2/fonds/noir-kanji.jpg) center top/cover;opacity:.7"></div></div>' + LOGO +
+  '<div style="position:absolute;left:0;right:0;top:150px;text-align:center;z-index:3"><div style="font:900 44px J;color:#E5483A;letter-spacing:.3em">近日発売</div><div class="t" style="font-size:150px;margin-top:10px">Ça arrive</div><div class="k" style="margin-top:30px">Semaine du 30 novembre</div></div>' +
+  '<div style="position:absolute;left:0;right:0;top:470px;height:10px;background:#F2C14E;z-index:3"></div>' +
+  '<div style="position:absolute;left:60px;right:60px;top:520px;display:flex;justify-content:center;gap:40px;z-index:3">' + PR.filter(function (x) { return x[1] === "f"; }).map(big).join("") + "</div>" +
+  '<div style="position:absolute;left:60px;right:60px;top:1100px;display:none"></div></div>']);
+// A2 · même chose avec les tomes japonais en petit dessous
+S.push(["A2 · Ça arrive, France en grand + Japon", '<div class="s" style="background:#BC002D">' + mos("r", PR.map(function (x) { return C(x[4]); })) +
+  '<div style="position:absolute;left:0;right:0;top:0;height:380px;background:#0c0c0e;z-index:2"><div style="position:absolute;inset:0;background:url(/modeles/story-v2/fonds/noir-kanji.jpg) center top/cover;opacity:.7"></div></div>' + LOGO +
+  '<div class="vt" style="left:46px;top:140px;color:#E5483A;font-size:80px;z-index:3">近日発売</div>' +
+  '<div style="position:absolute;left:0;right:0;top:150px;text-align:center;z-index:3"><div class="t" style="font-size:140px">Ça arrive</div><div class="k" style="margin-top:30px">Semaine du 30 novembre</div></div>' +
+  '<div style="position:absolute;left:0;right:0;top:380px;height:10px;background:#F2C14E;z-index:3"></div>' +
+  '<div style="position:absolute;left:60px;right:60px;top:420px;display:flex;justify-content:center;gap:36px;z-index:3">' + PR.filter(function (x) { return x[1] === "f"; }).map(function (x) { return big(x).replace(/330/g, "290").replace("469", "412"); }).join("") + "</div>" +
+  '<div style="position:absolute;left:60px;right:60px;top:1030px;display:flex;justify-content:center;gap:26px;z-index:3">' + PR.filter(function (x) { return x[1] === "j"; }).map(function (x) { return pt(x).replace(/190/g, "150").replace("270", "213"); }).join("") + "</div></div>"]);
+
+document.getElementById("out").innerHTML = S.map(function (x, i) { return '<div class="w"><b>' + x[0] + '</b><div id="s' + i + '">' + x[1] + "</div></div>"; }).join("");
+document.fonts.ready.then(function () { setTimeout(function () { document.body.dataset.ok = 1; }, 1500); });
+</script>
+</body>
+</html>
