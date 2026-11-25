@@ -89,6 +89,25 @@ S.push(["SP2 · Prépublication, couvertures des magazines", function () { retur
   '<div style="position:absolute;left:60px;right:60px;top:640px;z-index:3;display:grid;grid-template-columns:repeat(3,1fr);gap:34px 30px;justify-items:center">' + MAGC.map(function (u, i) { return '<div style="transform:rotate(' + [-3, 2, -1, 3, -2, 1][i] + 'deg)"><div class="cv" style="width:244px;height:334px;background-image:url(' + C(u) + ')"></div></div>'; }).join("") + "</div>" +
   '<div style="position:absolute;left:0;right:0;top:1405px;text-align:center;z-index:3;font:700 46px A;text-transform:uppercase;letter-spacing:.04em"><span style="color:#F2C14E">13 chapitres</span> dans 8 magazines</div>' + bas("furyogang.com/japon") + IG + "</div>"; }]);
 
+// SN2 en noir, avec de la couleur dans le titre (Will, 25/11/2026)
+var tN = function (v) {
+  if (v === "a") return '<div class="lab"><i></i><span>23 – 29 novembre</span><i></i></div><div class="t" style="margin-top:26px">Les news<br><span style="color:#E5483A">de la semaine</span></div>';
+  if (v === "b") return '<div style="text-align:center"><span style="display:inline-block;background:#F2C14E;color:#121214;font:700 40px/1 A;letter-spacing:.12em;padding:12px 22px 14px;border-radius:10px;text-transform:uppercase">23 – 29 novembre</span></div><div class="t" style="margin-top:26px">Les news<br>de la semaine</div>';
+  return '<div class="lab"><i></i><span style="color:#F2C14E">23 – 29 novembre</span><i></i></div><div class="t" style="margin-top:26px"><span style="background:#C8102E;padding:0 18px;box-decoration-break:clone;-webkit-box-decoration-break:clone;line-height:1.08">Les news</span><br>de la semaine</div>';
+};
+["a", "b", "c"].forEach(function (v, i) {
+  S.push(["SN2 noir · " + ["titre en rouge", "date en pastille jaune", "« Les news » sur fond rouge"][i], function () { return '<div class="s">' + mos("n", 9 + i * 7) +
+    '<div style="position:absolute;left:0;right:0;top:190px;z-index:3">' + tN(v) + "</div>" + fan(640, 430) +
+    '<div style="position:absolute;left:0;right:0;top:1310px;text-align:center;z-index:3;font:700 46px A;text-transform:uppercase;letter-spacing:.04em">Bōryoku Banzai · Kabukichō · Hangure<br>GANGKING · Sakamoto Days</div>' + bas("furyogang.com/actus") + IG + "</div>"; }]);
+});
+// SP3 · liste par magazine, petites couvertures
+var LM = [["Young Magazine", MAGC[0], [["Golden Drop", "151"]]], ["Young King BULL", MAGC[1], [["Batsu", "35"], ["Donketsu Ch. 2", "135"], ["Gorilla"], ["Saikyō Bonno"]]], ["Shōnen Champion", MAGC[2], [["Guriko", "379"], ["Yuuenchi Baki"]]], ["Champion RED", MAGC[3], [["Baki Gaiden Doppo", "", 1]]],
+  ["Young King", MAGC[4], [["BADBOYS", "17"], ["Boxster", "89"], ["Barefaced", "64"]]], ["Goraku", MAGC[5], [["Golden Guy", "154"]]], ["En ligne", "/modeles/story-v2/m/np/Ja-21.jpg", [["Nine Peaks", "205"], ["Saburoku Santa", "59"]]]];
+var sp3 = function (k, d) { return '<div class="s">' + mos(k, d) + '<div style="position:absolute;left:0;right:0;top:190px;z-index:3"><div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:22px;font-size:120px">16 – 22 novembre</div></div>' +
+  '<div style="position:absolute;left:56px;right:56px;top:400px;z-index:3;display:flex;flex-direction:column;gap:10px">' + LM.map(function (m) { return '<div style="display:flex;gap:20px;align-items:center;background:rgba(18,18,22,.8);border-radius:14px;padding:8px 14px"><div style="flex:none;width:80px;height:110px;border-radius:5px;border:4px solid #F2EFE9;background:#111 center/cover;background-image:url(' + C(m[1]) + ')"></div><div style="flex:1;min-width:0"><div style="font:700 34px/1 A;text-transform:uppercase;color:#F2C14E">' + m[0] + '</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">' + m[2].map(function (c) { return '<span class="chip" style="height:44px;font-size:27px;padding:0 12px 3px' + (c[2] ? ";background:#F2C14E" : "") + '">' + c[0] + (c[1] ? " <i>" + c[1] + "</i>" : "") + "</span>"; }).join("") + "</div></div></div>"; }).join("") + "</div>" + bas("furyogang.com/japon") + IG + "</div>"; };
+S.push(["SP3 noir · liste par magazine", function () { return sp3("n", 40); }]);
+S.push(["SP3 rouge · liste par magazine", function () { return sp3("r", 45); }]);
+
 fetch("mos.json").then(function (r) { return r.json(); }).then(function (l) {
   MOS = l;
   document.getElementById("out").innerHTML = S.map(function (x, i) { return '<div class="w"><b>' + x[0] + '</b><div id="s' + i + '">' + x[1]() + "</div></div>"; }).join("");
