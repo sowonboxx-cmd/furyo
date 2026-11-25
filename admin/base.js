@@ -8,7 +8,7 @@
   const M = window.MDB = { vue: "liste", sel: null, open: null, tab: "infos", tx: "resumeImg", lim: 120, mois: null, drag: null };
   try { const v = localStorage.getItem("mdb-vue"); if (v && VUES.some(x => x[0] === v)) M.vue = v; } catch (e) {}
   // Publication des fiches : jours de la semaine (0 = dimanche) et date de départ. Réglables dans la vue Calendrier.
-  const CAL = { jours: [2, 5], depart: "2026-12-01", heure: "18 h" };
+  const CAL = { jours: [2, 4, 6], depart: "2026-12-01", heure: "18 h" };
   try { const c = JSON.parse(localStorage.getItem("mdb-cal") || "null"); if (c && Array.isArray(c.jours)) Object.assign(CAL, c); } catch (e) {}
   // Réglages partagés avec le calendrier du QG (Will, 25/11/2026) : la version enregistrée sur le serveur fait foi.
   fetch("/api/admin/fiches", { credentials: "same-origin" }).then(r => r.json()).then(j => { if (j && j.cal) { Object.assign(CAL, j.cal); try { localStorage.setItem("mdb-cal", JSON.stringify(CAL)); } catch (e) {} if (window.draw && document.getElementById("mdb-main")) draw(); } }).catch(() => {});
@@ -451,7 +451,8 @@
       const NJ = [["L", 1], ["M", 2], ["M", 3], ["J", 4], ["V", 5], ["S", 6], ["D", 0]];
       return `<div class="mdb-calh"><button class="mdb-sb" data-mmois="-1" aria-label="Mois précédent">${I.left}</button><h2>${mm}</h2><button class="mdb-sb" data-mmois="1" aria-label="Mois suivant">${I.right}</button><span class="sp"></span>
           <span class="hint">Jours de publication</span><span class="mdb-jours">${NJ.map(([l, v]) => `<button data-mjour="${v}" aria-pressed="${CAL.jours.includes(v)}">${l}</button>`).join("")}</span>
-          <span class="hint">à partir du</span><input class="mdb-date" type="date" id="mdb-depart" value="${CAL.depart}"></div>
+          <span class="hint">à partir du</span><input class="mdb-date" type="date" id="mdb-depart" value="${CAL.depart}">
+          <span class="hint">à</span><select class="mdb-date" id="mdb-heure">${Array.from({ length: 17 }, (_, i) => i + 7).flatMap(h => [h + " h", h + " h 30"]).map(v => `<option${v === CAL.heure ? " selected" : ""}>${v}</option>`).join("")}</select></div>
         <div class="mdb-cal">${["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map(x => `<div class="dn">${x}</div>`).join("")}${cells.join("")}</div>
         <div class="mdb-leg"><span><i style="background:#BC002D"></i>Jour de publication</span><span><i style="background:#0A84FF"></i>Fiche déjà postée (date de la promo réseaux)</span><span>Les fiches prévues suivent l'ordre des numéros choisis (vue Ordre des fiches).</span></div>`;
     }
@@ -571,6 +572,7 @@
   document.addEventListener("change", e => {
     if (e.target.id === "mdb-tri") { T = e.target.value; draw(); }
     if (e.target.id === "mdb-depart" && /^\d{4}-\d{2}-\d{2}$/.test(e.target.value)) { CAL.depart = e.target.value; M.mois = CAL.depart.slice(0, 7); sauverCal(); draw(); }
+    if (e.target.id === "mdb-heure" && e.target.value) { CAL.heure = e.target.value; sauverCal(); draw(); }
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && M.open && document.querySelector(".mdb")) { M.open = null; draw(); } });
 })();

@@ -5,8 +5,9 @@
 import { json, isAdmin } from "../../../lib/admin.js";
 import { text, num, date, check, queryAll, slugSerie } from "../../../lib/notion.js";
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
-const CLE = "hq:fiches-cal";
-const DEFAUT = { jours: [2, 5], depart: "2026-12-01", heure: "18 h" };
+const CLE = "hq:fiches-cal-v2"; // v2 : mardi, jeudi, samedi (Will, 25/11/2026)
+// Mardi, jeudi et samedi à 18 h (Will, 25/11/2026) ; jours et heure réglables dans Mangas Database (vue Calendrier).
+const DEFAUT = { jours: [2, 4, 6], depart: "2026-12-01", heure: "18 h" };
 
 function nettCal(c) {
   c = c || {};

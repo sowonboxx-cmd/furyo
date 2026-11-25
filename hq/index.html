@@ -1144,7 +1144,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     if (it.kind === "news") t = /T\d/.test(it.n.t || "") ? it.n.t : "";
     else if (it.kind === "sortie") { var q = IGQ[it.id]; t = q && q.quand ? q.quand : ""; }
     else if (it.kind === "prepub") t = it.x.story.quand;
-    else if (it.kind === "fiche") { var fq = IGQ["fiche-" + it.id]; if (fq && fq.quand) t = fq.quand; else return ("0" + parseInt(FCAL.heure, 10)).slice(-2) + ":00"; }
+    else if (it.kind === "fiche") { var fq = IGQ["fiche-" + it.id]; if (fq && fq.quand) t = fq.quand; else return ficheHeure(); }
     else if (it.kind === "ev" && it.e.heure) return String(it.e.heure);
     if (!t) return "~";
     var d = new Date(t); return isNaN(d) ? "~" : HM.format(d);
@@ -1261,7 +1261,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // une coche = la story part à l'heure par défaut (19 h le jour du chapitre) ; un clic sur la ligne = aperçu + heure au choix.
   var PREP = [], PPO = false;
   // Fiches séries planifiées (Will, 25/11/2026) : même planning que Mangas Database (N° fiche, jours de publication, date de départ).
-  var FICH = [], FCAL = { jours: [2, 5], depart: "2026-12-01", heure: "18 h" }, FPLAN = {};
+  var FICH = [], FCAL = { jours: [2, 4, 6], depart: "2026-12-01", heure: "18 h" }, FPLAN = {};
+  function ficheHeure() { var m = String(FCAL.heure || "18 h").match(/(\d{1,2}) h(?: (\d{2}))?/) || [0, 18, "00"]; return ("0" + m[1]).slice(-2) + ":" + (m[2] || "00"); }
   function fichePlan() {
     FPLAN = {}; if (!FCAL.jours.length) return;
     // Déjà postée mais programmée d'ici : reste affichée au jour de sa publication.
@@ -1814,7 +1815,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "fiche"; host.dataset.id = f.id;
     var imgs = ficheImages(f);
     imgs.catch(function (er) { var m = $("#calmsg"); if (m) m.textContent = er.message || "Images impossibles à préparer"; });
-    var titre = "Fiche " + ficheNo(f) + " · " + f.t, hr = ("0" + parseInt(FCAL.heure, 10)).slice(-2) + ":00";
+    var titre = "Fiche " + ficheNo(f) + " · " + f.t, hr = ficheHeure();
     var o = { id: id, jourJ: jour || "", heure: hr, aPost: true, aX: true, item: null,
       imgs: imgs.then(function (v) { return { post: { _url: v.post }, story: { _url: v.story } }; }),
       programmer: function (quand, p, st, x) {
