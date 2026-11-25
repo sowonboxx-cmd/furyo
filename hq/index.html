@@ -466,12 +466,15 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .ppk{width:26px;height:26px;border-radius:8px;border:1.5px solid #4a4a52;background:none;color:#fff;font:800 13px "FGInter";cursor:pointer;flex:none}.ppk.pl{background:#F08A24;border-color:#F08A24;color:#1b1b1f}.ppk.ok{background:#2E7D4F;border-color:#2E7D4F}.ppk.err{border-color:#FF8A80}.ppk.busy{opacity:.4}
 .pptout{margin:8px 6px 0;padding:9px;border-radius:10px;border:0;background:#26262c;color:#fff;font:700 12.5px "FGInter";cursor:pointer}
 /* Carrousels hebdo (Will, 25/11/2026) */
+.lbs .lbn{position:fixed;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:0;background:rgba(30,30,34,.85);color:#fff;display:grid;place-items:center;cursor:pointer}.lbs .lbn svg{width:24px;height:24px}.lbs .lbn.p{left:18px}.lbs .lbn.n{right:18px}.lbs .lbn:disabled{opacity:.25;cursor:default}
+.lbs .lbc{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);font:700 13px "FGInter";color:#fff;background:rgba(30,30,34,.85);padding:6px 12px;border-radius:20px}
+.ccount{display:block;margin-top:10px;font:600 12px "FGInter";color:#8e8e96}.ccount b{color:#cfcfd4}.ccount b.trop{color:#ff6b5e}
 .hbprog{font:600 14px "FGInter";color:#bdb9b1;padding:14px 0}
 .hbstrip{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scroll-snap-type:x mandatory}.hbstrip img{flex:none;height:240px;border-radius:8px;cursor:zoom-in;scroll-snap-align:start;background:#1f1f24}
 .hbed{margin-top:10px;border:1px solid var(--line,#2c2c32);border-radius:12px;padding:10px 12px}.hbed summary{cursor:pointer;font:700 14px "FGInter"}
 .hbaide{font:500 13px/1.4 "FGInter";color:#a5a5ad;margin:8px 0}
 .hbn{border-top:1px solid var(--line,#2c2c32);padding:10px 0}.hbt{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font:600 13px "FGInter";color:#cfcfd4}.hbt b{font:700 15px "FGInter";color:#fff;margin-right:auto}
-.hbn textarea,.hbn input[data-hl]{display:block;width:100%;box-sizing:border-box;margin-top:8px;font:500 14px/1.4 "FGInter";padding:9px 11px;border-radius:10px;border:1px solid var(--line,#2c2c32);background:#1a1a1e;color:inherit;resize:vertical}
+.hbn textarea,.hbn input[data-hl],.hbn input[data-cat]{display:block;width:100%;box-sizing:border-box;margin-top:8px;font:500 14px/1.4 "FGInter";padding:9px 11px;border-radius:10px;border:1px solid var(--line,#2c2c32);background:#1a1a1e;color:inherit;resize:vertical}
 .igbox{margin-top:4px}.igtb{display:flex;gap:6px;margin-bottom:10px}.igtb button,.igch button{border:0;border-radius:12px;padding:9px 14px;background:#1f1f24;color:#cfcfd4;font:700 13px "FGInter";cursor:pointer}.igtb button[aria-pressed=true],.igch button[aria-pressed=true]{background:#F4ECDD;color:#111}
 .igcar{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -4px;padding:0 4px}.igcar::-webkit-scrollbar{display:none}.igsl{flex:0 0 100%;scroll-snap-align:start;text-align:center}.igsl img{display:block;margin:0 auto;max-width:100%;max-height:62vh;border-radius:14px;background:#111;cursor:zoom-in;box-shadow:0 14px 40px rgba(0,0,0,.5)}.igsl span{display:block;font:700 11px "FGInter";letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-top:8px}
 @media (min-width:720px){.igtb{display:none}.igcar{display:grid;grid-template-columns:1fr 1fr;overflow:visible}.igcar.un{grid-template-columns:1fr}.igsl img{max-height:52vh}}
@@ -1467,10 +1470,13 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var lbl = a.parentNode && a.parentNode.querySelector(".publbl"); if (lbl) lbl.textContent = on ? "Publié" : "À publier";
   }
   function closeModal() { host.innerHTML = ""; modalCap = null; }
+  // Nombre de caractères (Will, 25/11/2026) : sur X, compté comme X (un lien = 23, un emoji = 2), sur 280.
+  function poidsX(t) { t = String(t || "").replace(/(https?:\/\/)?\b[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|fr|jp|net|org|io)(\/\S*)?/gi, "x".repeat(23)); var n = 0; for (var c of t) n += c.codePointAt(0) > 0x2FFF ? 2 : 1; return n; }
+  function compteX(t, k) { if (!t) return ""; if (k === "tw") { var n = poidsX(t); return '<b' + (n > 280 ? ' class="trop"' : "") + ">" + n + "</b> / 280"; } return "<b>" + [...String(t)].length + "</b> caractères"; }
   function tabsHTML(cap) {
     var n = { ig: "Instagram", tw: "Twitter / X", tk: "TikTok" };
     var h = '<div class="ctabs" id="ctabs">' + ["tw", "ig", "tk"].map(function (k) { return '<button data-tab="' + k + '" aria-pressed="' + (k === modalTab) + '">' + LOGO[k] + n[k] + "</button>"; }).join("") + "</div>";
-    h += '<div class="cbox"><button class="cp" id="cpbtn" aria-label="Copier" title="Copier">' + IC_COPY + '</button><p id="captxt">' + esc(cap[modalTab] || "") + "</p></div>";
+    h += '<div class="cbox"><button class="cp" id="cpbtn" aria-label="Copier" title="Copier">' + IC_COPY + '</button><p id="captxt">' + esc(cap[modalTab] || "") + '</p><span class="ccount" id="capn">' + compteX(cap[modalTab], modalTab) + "</span></div>";
     return h;
   }
   function openItem(kind, id, jour) {
@@ -1517,7 +1523,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // Générés ici à partir des vraies données (/site/hebdo.js, modèles validés de la charte) : aperçu, corrections, programmation
   // Instagram (carrousel + story) et X (le carrousel en un post) dans la même file que les sorties (/api/admin/igq).
   var HEBDO = {};
-  function hebdoLib() { return window.FG_HEBDO ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/hebdo.js?v=2"; sc.onload = ok; sc.onerror = function () { ko(new Error("Le générateur ne se charge pas")); }; document.head.appendChild(sc); }); }
+  function hebdoLib() { return window.FG_HEBDO ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/hebdo.js?v=3"; sc.onload = ok; sc.onerror = function () { ko(new Error("Le générateur ne se charge pas")); }; document.head.appendChild(sc); }); }
   function hebdoDu(e, jour) {
     var news = e.type === "qn-sem", d = jour ? parseIso(jour) : new Date(); d.setHours(12, 0, 0, 0);
     if (!jour) while (d.getDay() !== (news ? 1 : 0)) d.setDate(d.getDate() + 1);
@@ -1546,12 +1552,12 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       modalCap = { tw: r.legende.x, ig: r.legende.ig, tk: "" };
       var h = '<div class="mslab">Aperçu · ' + esc(per) + ' · ' + r.slides.length + ' image' + (r.slides.length > 1 ? "s" : "") + ' + story</div>';
       if (vide) h += '<div class="note">Rien pour cette semaine pour l\'instant' + (k === "prepub" ? " (les chapitres arrivent au fil de la semaine)" : "") + '.</div>';
-      h += '<div class="hbstrip">' + r.slides.map(function (u, i) { return '<img src="' + u + '" data-hbz alt="Image ' + (i + 1) + '">'; }).join("") + '<img class="st" src="' + r.story + '" data-hbz alt="Story"></div>';
+      h += '<div class="hbstrip">' + r.slides.map(function (u, i) { return '<img src="' + u + '" data-hbz="' + i + '" alt="Image ' + (i + 1) + '">'; }).join("") + '</div>';
       if (k === "news" && r.infos.news.length) {
         var reg = r.reg || {};
         h += '<details class="hbed"><summary>Corriger les textes</summary><p class="hbaide">Une news = un seul passage surligné en jaune (copiez quelques mots du texte). « Au centre » : la couverture en grand sur la 1re image.</p>' + r.infos.news.map(function (n) {
           return '<div class="hbn" data-id="' + esc(n.id) + '"><div class="hbt"><b>' + esc(n._t) + '</b><label><input type="radio" name="hbc" value="' + esc(n.id) + '"' + (reg.centre === n.id ? " checked" : "") + '> Au centre</label><label><input type="checkbox" data-sans> Retirer</label></div>' +
-            '<textarea data-txt rows="3">' + esc(n._txt) + '</textarea><input data-hl placeholder="Passage surligné en jaune" value="' + esc(n._hl) + '"></div>'; }).join("") +
+            '<input data-cat placeholder="Étiquette (pastille et post X)" value="' + esc(n._cat) + '"><textarea data-txt rows="3">' + esc(n._txt) + '</textarea><input data-hl placeholder="Passage surligné en jaune" value="' + esc(n._hl) + '"></div>'; }).join("") +
           '<div class="macts" style="margin-top:10px">' + ((reg.sans || []).length ? '<button class="btn2" data-hbrem>Remettre les news retirées</button>' : "") + '<button class="btn2 p" data-hbmaj>Mettre à jour l\'aperçu</button></div></details>';
       }
       h += '<div class="mslab">Légendes</div>' + tabsHTML(modalCap) + (r.legende.liens && /series\//.test(r.legende.liens) ? '<div class="mslab">Post X avec les liens · à poster à la main (gratuit)</div><div class="cbox"><button class="cp" data-hbcp aria-label="Copier" title="Copier">' + IC_COPY + '</button><p>' + esc(r.legende.liens) + '</p></div>' : "") + '<div class="mslab">Programmer · Instagram (carrousel + story) et X (post)</div><div class="igbox" id="hbig"></div>';
@@ -1572,15 +1578,15 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       fetch("/api/admin/igq?id=" + encodeURIComponent(id), { credentials: "same-origin" }).then(function (x) { return x.json(); }).then(function (j) { o.item = j.item; }).catch(function () {}).then(function () { if (ig.isConnected) igUI(ig, o); });
     };
     box.onclick = function (ev) {
-      var z = ev.target.closest("[data-hbz]"); if (z) { openLightbox(z.src); return; }
+      var z = ev.target.closest("[data-hbz]"); if (z) { HEBDO[id].then(function (r) { lightboxSuite(r.slides, +z.dataset.hbz); }); return; }
       var cp = ev.target.closest("[data-hbcp]"); if (cp) { var tx = cp.parentNode.querySelector("p").textContent; (navigator.clipboard ? navigator.clipboard.writeText(tx) : Promise.reject()).then(function () { cp.classList.add("ok"); setTimeout(function () { cp.classList.remove("ok"); }, 1200); }).catch(function () { alert("Copie impossible"); }); return; }
       var rem = ev.target.closest("[data-hbrem]"), maj = ev.target.closest("[data-hbmaj]"); if (!rem && !maj) return;
       HEBDO[id].then(function (r) {
-        var reg = { centre: "", txt: {}, hl: {}, sans: rem ? [] : (r.reg.sans || []).slice() };
+        var reg = { centre: "", txt: {}, hl: {}, cat: {}, sans: rem ? [] : (r.reg.sans || []).slice() };
         var c = box.querySelector('input[name="hbc"]:checked'); if (c) reg.centre = c.value;
         box.querySelectorAll(".hbn").forEach(function (d) { var nid = d.dataset.id, n = r.infos.news.find(function (x) { return x.id === nid; }) || {};
           var t = d.querySelector("[data-txt]").value.trim(), hl = d.querySelector("[data-hl]").value.trim();
-          if (t && t !== n._txt || (r.reg.txt || {})[nid]) reg.txt[nid] = t; if (hl) reg.hl[nid] = hl; if (!rem && d.querySelector("[data-sans]").checked) reg.sans.push(nid); });
+          if (t && t !== n._txt || (r.reg.txt || {})[nid]) reg.txt[nid] = t; if (hl) reg.hl[nid] = hl; var ct = d.querySelector("[data-cat]").value.trim(); if (ct && ct !== n._catDef) reg.cat[nid] = ct; if (!rem && d.querySelector("[data-sans]").checked) reg.sans.push(nid); });
         attente();
         return fetch("/api/admin/hebdo", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ k: "news", du: w.du, reglages: reg }) })
           .then(function () { return charger(true); }).then(dessiner);
@@ -1908,6 +1914,16 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     calPost({ addType: { nom: nom, couleur: coul } });
   });
   // Lightbox couverture.
+  // Plein écran avec flèches (clavier ← →, ou boutons), Échap pour fermer (Will, 25/11/2026).
+  function lightboxSuite(l, i) {
+    var o = document.createElement("div"); o.className = "lightbox lbs";
+    var aff = function () { o.innerHTML = '<img src="' + l[i] + '" alt=""><button class="lbn p" aria-label="Précédent"' + (i ? "" : " disabled") + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="lbn n" aria-label="Suivant"' + (i < l.length - 1 ? "" : " disabled") + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button><span class="lbc">' + (i + 1) + " / " + l.length + "</span>"; };
+    var va = function (d) { var j = i + d; if (j < 0 || j >= l.length) return; i = j; aff(); };
+    var cle = function (e) { if (e.key === "ArrowRight") { e.preventDefault(); va(1); } else if (e.key === "ArrowLeft") { e.preventDefault(); va(-1); } else if (e.key === "Escape") fin(); };
+    var fin = function () { o.remove(); removeEventListener("keydown", cle, true); };
+    o.addEventListener("click", function (e) { var b = e.target.closest(".lbn"); if (b) { va(b.classList.contains("n") ? 1 : -1); return; } fin(); });
+    addEventListener("keydown", cle, true); aff(); document.body.appendChild(o);
+  }
   function openLightbox(u) { var o = document.createElement("div"); o.className = "lightbox"; o.innerHTML = '<img src="' + esc(u) + '" alt="">'; o.addEventListener("click", function () { o.remove(); }); document.body.appendChild(o); }
   // Génération du visuel « Sortie d'un tome » (design Soleil) via tome-card.js, chargé à la demande.
   function ensureTomeLib() { return window.FG_TOME ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/tome-card.js?v=5"; sc.onload = ok; sc.onerror = ko; document.head.appendChild(sc); }); }
@@ -1949,7 +1965,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     if (ev.target.id === "mx" || ev.target.id === "mx2" || ev.target.id === "mx3" || ev.target.classList.contains("modal-ov")) { closeModal(); return; }
     var lb = ev.target.closest("[data-lightbox]"); if (lb) { openLightbox(lb.dataset.lightbox); return; }
     var dt = ev.target.closest("[data-tome]"); if (dt) { dlTome(dt); return; }
-    var tb = ev.target.closest("[data-tab]"); if (tb) { modalTab = tb.dataset.tab; $("#captxt").textContent = (modalCap && modalCap[modalTab]) || ""; document.querySelectorAll("#ctabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === tb); }); return; }
+    var tb = ev.target.closest("[data-tab]"); if (tb) { modalTab = tb.dataset.tab; $("#captxt").textContent = (modalCap && modalCap[modalTab]) || ""; if ($("#capn")) $("#capn").innerHTML = compteX(modalCap && modalCap[modalTab], modalTab); document.querySelectorAll("#ctabs button").forEach(function (x) { x.setAttribute("aria-pressed", x === tb); }); return; }
     if (ev.target.closest("#cpbtn")) { copyTexte((modalCap && modalCap[modalTab]) || "", ev.target.closest("#cpbtn")); return; }
     if (ev.target.closest("#fichecp")) { var fb = ev.target.closest("#fichecp"); copyTexte(fb.dataset.url || "", fb); return; }
     var a = ev.target.closest("[data-act]"); if (a) {
