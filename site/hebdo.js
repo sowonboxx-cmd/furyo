@@ -331,10 +331,14 @@
   }
   var chip = function (c) { return c[1] === "p" ? '<span class="chip pz">' + esc(c[0]) + " <i>pause</i></span>" : '<span class="chip' + (c[2] ? " c" : "") + '">' + esc(c[0]) + (c[1] ? " <i>" + esc(c[1]) + "</i>" : "") + "</span>"; };
   // Hauteur estimée d'un bloc magazine (pour ne jamais déborder en bas) : pastilles Antonio 31 px ≈ 14,5 px par lettre.
-  var largeurChip = function (c) { return Math.round(String(c[0]).length * 14.5 + 34 + (c[1] === "p" ? 66 : c[1] ? 12 + String(c[1]).length * 15 : 0)); };
-  var hautMag = function (g, larg) { var lg = 0, rangs = 1; g.all.forEach(function (c) { var w = largeurChip(c); if (lg && lg + 12 + w > larg) { rangs++; lg = w; } else lg += (lg ? 12 : 0) + w; });
-    return Math.max(208, 44 + 30 + 18 + rangs * 54 + (rangs - 1) * 12) + 48; };
-  var blocMag = function (g) { return '<div class="mag"><div class="cv" style="width:150px;height:208px;border-width:5px;box-shadow:none;border-radius:6px"><img src="' + esc(C(g.cv, 400)) + '"></div><div style="flex:1"><h5>' + esc(g.m) + "<small>" + esc(g.sous) + '</small></h5><div class="chips">' + g.all.map(chip).join("") + "</div></div></div>"; };
+  // k : échelle (1 dans le post ; un peu plus petit dans la story pour y mettre au moins 4 magazines, Will 25/11/2026).
+  var largeurChip = function (c, k) { k = k || 1; return Math.round((String(c[0]).length * 14.5 + 34 + (c[1] === "p" ? 66 : c[1] ? 12 + String(c[1]).length * 15 : 0)) * k); };
+  var hautMag = function (g, larg, k) { k = k || 1; var lg = 0, rangs = 1, gap = Math.round(12 * k); g.all.forEach(function (c) { var w = largeurChip(c, k); if (lg && lg + gap + w > larg) { rangs++; lg = w; } else lg += (lg ? gap : 0) + w; });
+    return Math.round(Math.max(208 * k, (44 + 30 + 18) * k + rangs * 54 * k + (rangs - 1) * gap) + 48 * k); };
+  var blocMag = function (g, k) { k = typeof k === "number" ? k : 1; var f = function (v) { return Math.round(v * k); };
+    var st = k === 1 ? "" : ' style="gap:' + f(26) + "px;padding:" + f(24) + "px;border-radius:" + f(20) + 'px"';
+    var cs = k === 1 ? "" : ' style="height:' + f(54) + "px;font-size:" + f(31) + "px;padding:0 " + f(16) + "px " + f(3) + 'px"';
+    return '<div class="mag"' + st + '><div class="cv" style="width:' + f(150) + "px;height:" + f(208) + 'px;border-width:5px;box-shadow:none;border-radius:6px"><img src="' + esc(C(g.cv, 400)) + '"></div><div style="flex:1"><h5' + (k === 1 ? "" : ' style="font-size:' + f(44) + 'px"') + ">" + esc(g.m) + "<small" + (k === 1 ? "" : ' style="font-size:' + f(22) + 'px"') + ">" + esc(g.sous) + '</small></h5><div class="chips"' + (k === 1 ? "" : ' style="gap:' + f(12) + "px;margin-top:" + f(18) + 'px"') + ">" + g.all.map(function (c) { return chip(c).replace('<span class="chip', "<span" + cs + ' class="chip'); }).join("") + "</div></div></div>"; };
   var tetePrepub = function (per, st) { return '<div style="text-align:center"><span class="pdate">' + per + '</span></div><div class="t" style="margin-top:24px;font-size:88px;text-align:center;white-space:nowrap;text-shadow:0 6px 30px rgba(60,0,10,.6)">Prépublication de la semaine</div>'; };
   var LEGENDE_PP = '<div style="display:flex;justify-content:center;gap:28px;font:600 22px FGInter"><span style="display:inline-flex;align-items:center;gap:10px"><i style="display:inline-block;width:26px;height:18px;border-radius:4px;background:#F2C14E"></i>Pages couleurs</span><span style="display:inline-flex;align-items:center;gap:10px"><i style="display:inline-block;width:26px;height:18px;border-radius:4px;border:2px dashed rgba(242,239,233,.7)"></i>En pause</span><span>le chiffre = n° du chapitre</span></div>';
   function slidesPrepub(D) {
@@ -347,18 +351,21 @@
     P.forEach(function (gs, i) {
       var tt = i ? '<div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:22px;font-size:100px;text-align:center;text-shadow:0 6px 30px rgba(60,0,10,.6)">La suite</div>' : tetePrepub(per);
       S.push('<div class="hb">' + pile(i) + HD + '<div style="position:absolute;left:60px;right:60px;top:186px;z-index:3">' + tt + '<div style="display:flex;flex-direction:column;gap:22px;margin-top:' + (i ? 40 : 46) + 'px">' +
-        gs.map(blocMag).join("") + "</div>" + (i === P.length - 1 ? '<div style="margin-top:30px">' + LEGENDE_PP + "</div>" : "") + "</div></div>");
+        gs.map(function (g) { return blocMag(g); }).join("") + "</div>" + (i === P.length - 1 ? '<div style="margin-top:30px">' + LEGENDE_PP + "</div>" : "") + "</div></div>");
     });
     return S;
   }
   // Story : le même design que le post (Will, 25/11/2026) : pastille + titre toujours en haut, mêmes blocs, même taille ; ce qui ne tient pas est annoncé.
   function storyPrepub(D) {
-    var per = periode(D.du, D.au), dispo = 1530 - 470, L = [], reste = 0;
-    D.mags.forEach(function (g) { var h = hautMag(g, 736); if (!reste && dispo - h >= 0) { L.push(g); dispo -= h + 22; } else reste++; });
+    // Au moins 4 magazines (s'il y en a 4) : échelle réduite jusqu'à ce que 4 tiennent ; bas de la story descendu.
+    var per = periode(D.du, D.au), haut = 1610 - 470, L = [], reste = 0, k = .86, min = Math.min(4, D.mags.length);
+    var essai = function (k) { var dispo = haut, l = []; D.mags.forEach(function (g) { var h = hautMag(g, Math.round(960 - 224 * k), k); if (l.length === D.mags.indexOf(g) && dispo - h >= 0) { l.push(g); dispo -= h + Math.round(22 * k); } }); return l; };
+    L = essai(k); while (L.length < min && k > .6) { k -= .04; L = essai(k); } if (L.length < min) L = D.mags.slice(0, min);
+    reste = D.mags.length - L.length;
     return '<div class="hb st">' + pile(3, 1920) + '<div style="position:absolute;left:60px;right:60px;top:190px;z-index:3">' + tetePrepub(per, 1) +
-      '<div style="display:flex;flex-direction:column;gap:22px;margin-top:46px">' + L.map(blocMag).join("") + "</div>" +
+      '<div style="display:flex;flex-direction:column;gap:' + Math.round(22 * k) + 'px;margin-top:40px">' + L.map(function (g) { return blocMag(g, k); }).join("") + "</div>" +
       (reste ? '<div style="margin-top:22px;text-align:center;font:700 38px FGAntonio;text-transform:uppercase;letter-spacing:.06em;color:#F2C14E">+ ' + reste + " magazine" + (reste > 1 ? "s" : "") + " dans le post</div>" : "") + "</div>" +
-      '<div class="bas"><img src="/img/social/logo-blanc.png"><div class="l1">Tout le détail dans notre dernier post et sur</div><div class="l2">furyogang.com/japon</div></div></div>';
+      '<div class="bas" style="top:1640px"><img src="/img/social/logo-blanc.png" style="height:64px"><div class="l1" style="margin-top:16px">Tout le détail dans notre dernier post et sur</div><div class="l2">furyogang.com/japon</div></div></div>';
   }
   function legendePrepub(D) {
     var per = periode(D.du, D.au);
