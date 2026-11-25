@@ -12,14 +12,15 @@
    FG_STORY.canvasPrepub(t, d)     → Promise<canvas 1080 × 1920> ; d = { cover, titre, sousTitre, chapitre, couleur, slug } */
 (function () {
   var B = "/img/story/styles/", FN = B + "v2-noir.jpg?v=1", FR = B + "v2-rouge.jpg?v=1";
-  var LIGNE = 1600;                                     // trait jaune : tout le contenu tient au-dessus
+  var LIGNE = 1600, HAUT = 150;                        // HAUT : début du bloc prépub, sous l'interface Instagram (barres, avatar, croix)                                     // trait jaune : tout le contenu tient au-dessus
   function tirage(graine, prepub) { return { style: prepub ? "v2-rouge" : "v2-noir" }; }
-  // Place du visuel d'une news : 1080 de large, collé à 80 px du haut quand il est grand, centré sinon.
-  function place(pw, ph) { var h = Math.round(ph * 1080 / pw), top = h >= 1440 ? Math.max(0, Math.min(80, LIGNE - h)) : Math.round((LIGNE - h) / 2); return { top: top, h: Math.min(h, LIGNE - top) }; }
+  // Place du visuel d'une news : 1080 de large ; un grand visuel est posé sur le trait jaune (un post 1440 commence à 160 px,
+  // son logo passe sous l'avatar Instagram sinon — Will, 25/11/2026), un petit est centré.
+  function place(pw, ph) { var h = Math.round(ph * 1080 / pw), top = h >= 1440 ? Math.max(0, LIGNE - h) : Math.round((LIGNE - h) / 2); return { top: top, h: Math.min(h, LIGNE - top) }; }
   function html(t, src, secours) {
     var err = secours ? ' onerror="this.onerror=null;this.src=\'' + secours + '\'"' : "";
     return '<div style="position:relative;width:1080px;height:1920px;overflow:hidden;background:#0c0c0e"><img src="' + FN + '" style="position:absolute;inset:0;width:100%;height:100%">' +
-      (src ? '<div style="position:absolute;left:0;top:0;width:1080px;height:' + LIGNE + 'px;display:flex;align-items:center;justify-content:center;overflow:hidden"><img src="' + src + '"' + err + ' style="width:1080px;height:auto;max-height:' + LIGNE + 'px;object-fit:cover;object-position:top"></div>' : "") + '</div>';
+      (src ? '<div style="position:absolute;left:0;top:0;width:1080px;height:' + LIGNE + 'px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden"><img src="' + src + '"' + err + ' style="width:1080px;height:auto;max-height:' + LIGNE + 'px;object-fit:cover;object-position:top"></div>' : "") + '</div>';
   }
   function charger(u) { return new Promise(function (ok, ko) { var i = new Image(); i.crossOrigin = "anonymous"; i.onload = function () { ok(i); }; i.onerror = function () { ko(new Error("image introuvable : " + u)); }; i.src = u; }); }
   function canvas(t, post) {
@@ -69,9 +70,11 @@
       x.save(); x.translate(540, 720); x.scale(648 / 720, 1); var g = x.createRadialGradient(0, 0, 0, 0, 0, 720); g.addColorStop(0, "rgba(150,0,30,.55)"); g.addColorStop(.75, "rgba(150,0,30,0)"); x.fillStyle = g; x.fillRect(-900, -900, 1800, 1800); x.restore();
       g = x.createLinearGradient(0, 0, 0, LIGNE); g.addColorStop(.6, "rgba(120,0,25,0)"); g.addColorStop(1, "rgba(120,0,25,.65)"); x.fillStyle = g; x.fillRect(0, 0, 1080, LIGNE);
       x.restore();
+      // Texte du haut dessiné sur un calque, posé après la couverture pour s'en rapprocher (Will, 25/11/2026).
+      var X0 = x, T = document.createElement("canvas"); T.width = 1080; T.height = 1920; x = T.getContext("2d");
       x.textAlign = "left"; x.textBaseline = "alphabetic";
-      // « PRÉPUBLICATION 連載 » entre deux filets.
-      var y = 60, lab = "PRÉPUBLICATION";
+      // « PRÉPUBLICATION 連載 » entre deux filets, à 150 px du haut : sous l'avatar et « Votre story » d'Instagram (Will, 25/11/2026).
+      var y = HAUT, lab = "PRÉPUBLICATION";
       x.font = "700 34px FGStA"; esp(x, "11px"); var wl = x.measureText(lab).width; esp(x, "0px");
       x.font = "900 30px FGStJ"; esp(x, "3px"); var wk = x.measureText("連載").width; esp(x, "0px");
       var tot = 110 + 24 + wl + 16 + wk + 24 + 110, X = (1080 - tot) / 2;
@@ -97,6 +100,7 @@
       if (d.sousTitre) { var st = "« " + String(d.sousTitre).replace(/^«\s*|\s*»$/g, "").toUpperCase() + " »", sf = 40; x.font = "italic 700 " + sf + "px FGStA"; esp(x, "1.6px");
         while (x.measureText(st).width > 980 && sf > 24) { sf -= 2; x.font = "italic 700 " + sf + "px FGStA"; }
         x.fillStyle = "#F2C14E"; x.fillText(st, 540, y + 12 + sf * .88); esp(x, "0px"); y += 12 + sf; }
+      x = X0; x.textAlign = "center"; var finTexte = y;
       // Bas : chapitre (+ « Pages couleurs »), posé à 44 px du trait jaune.
       var pills = [{ t: d.chapitre ? "CHAPITRE " + d.chapitre : "NOUVEAU CHAPITRE", f: "700 46px FGStA", plein: true }];
       if (d.couleur) pills.push({ t: "PAGES COULEURS", f: "700 40px FGStA", plein: false });
@@ -110,10 +114,14 @@
         x.fillText(p.t, px + p.w / 2, py + 37); px += p.w + 16; });
       esp(x, "0px"); x.textBaseline = "alphabetic";
       // Couverture : remplit l'espace entre le haut et le chapitre, bordure noire 8 px sans ombre.
+      var dy = 0;
       if (cv) { var y0 = y + 46, y1 = py - 46, r = cv.height / cv.width, h = Math.min(y1 - y0 - 16, 1080 * r), w = h / r;
         if (w > 840) { w = 840; h = w * r; }
         var top = y0 + (y1 - y0 - h - 16) / 2, left = (1080 - w - 16) / 2;
-        x.fillStyle = "#121214"; x.fillRect(left, top, w + 16, h + 16); x.drawImage(cv, left + 8, top + 8, w, h); }
+        x.fillStyle = "#121214"; x.fillRect(left, top, w + 16, h + 16); x.drawImage(cv, left + 8, top + 8, w, h);
+        // Le bloc du haut descend jusqu'à 34 px de la couverture (80 px au plus), pour ne pas laisser de vide (Will, 25/11/2026, maquettes 8).
+        dy = Math.max(0, Math.min(80, top - finTexte - 34)); }
+      x.drawImage(T, 0, dy);
       return c;
     });
   }
