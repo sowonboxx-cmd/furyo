@@ -4,61 +4,53 @@
 // d = { t, jp, cover, type, genres[], y1, pubs[], scen, dess, resume, n, tot }
 (function () {
   var FONT_JP = "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&text=";
+  // Design validé par Will le 25/11/2026 (maquettes /modeles/fiche-v2/v12.html) : fiche qui ne vieillit jamais,
+  // pastille « Fiche n° », infos en Inter, résumé dans une bulle (4 lignes en post, 5 en story, jamais coupé),
+  // cases Japon / France seulement avec ce qui ne bouge plus, bas noir à trait jaune avec l'adresse de la fiche.
+  // Story : pas de logo en haut (Instagram l'affiche déjà), logo blanc dans le bas noir. Post : logo centré en haut.
   var CSS = [
     '.fgc{width:1080px;height:1440px;position:relative;overflow:hidden;font-family:"FGInter",sans-serif;font-weight:500;display:flex;flex-direction:column;box-sizing:border-box;',
-    '  --bg:#F2EFE9;--fg:#0c0c0e;--muted:rgba(12,12,14,.58);--track:rgba(12,12,14,.12);--on:#0c0c0e;--res:#26262a;--bar:#0c0c0e;--red:#BC002D;',
-    '  --safe-top:0px;--safe-bot:0px;background:var(--bg);color:var(--fg);text-align:left;line-height:normal;letter-spacing:normal}',
+    '  --bg:#F2EFE9;--fg:#0c0c0e;--mut:rgba(12,12,14,.56);--track:rgba(12,12,14,.08);--bulle:#E4DED3;--res:#202024;--pil:#0c0c0e;--pilt:#fff;--bar:#0c0c0e;--bas:#121212;--red:#BC002D;',
+    '  background:var(--bg);color:var(--fg);text-align:left;line-height:normal;letter-spacing:normal}',
     '.fgc *{box-sizing:border-box}',
-    '.fgc.dark{--bg:#121214;--fg:#F5F5F7;--muted:rgba(245,245,247,.58);--track:rgba(245,245,247,.13);--on:#F5F5F7;--res:#D9D9DE;--bar:#000}',
-    '.fgc.story{height:1920px;--safe-top:200px;--safe-bot:250px}',
+    '.fgc.dark{--bg:#141416;--fg:#F5F5F7;--mut:rgba(245,245,247,.58);--track:rgba(245,245,247,.08);--bulle:#222226;--res:#E2E2E6;--pil:#F2EFE9;--pilt:#0c0c0e;--bar:#000;--bas:#000}',
+    '.fgc.story{height:1920px}',
     '.fgc .fgc-A{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase}',
-    '.fgc .fgc-top{flex:none;background:var(--bar);padding:calc(var(--safe-top) + 36px) 64px 36px;display:flex;align-items:center;justify-content:space-between}',
-    '.fgc.dark .fgc-top{border-bottom:1px solid rgba(255,255,255,.08)}',
-    '.fgc .fgc-top img{width:250px;display:block}',
-    '.fgc .fgc-top .fgc-A{color:#fff;font-size:52px;letter-spacing:.06em;line-height:1}',
-    '.fgc .fgc-top .fgc-A span{color:#E0123F}',
-    '.fgc .fgc-main{flex:1;min-height:0;display:flex;flex-direction:column;padding:56px 64px calc(var(--safe-bot) + 60px)}',
+    '.fgc .fgc-top{flex:none;background:var(--bar);padding:26px 64px;display:flex;align-items:center;justify-content:center}',
+    '.fgc .fgc-top img{width:200px;display:block}',
+    '.fgc.story .fgc-top{padding:0;height:150px}.fgc.story .fgc-top img{display:none}',
+    '.fgc .fgc-main{flex:1;min-height:0;display:flex;flex-direction:column;padding:46px 64px 210px}',
+    '.fgc.story .fgc-main{padding:48px 64px 420px}',
     '.fgc .fgc-hero{display:flex;gap:46px;align-items:flex-start;flex:none}',
-    '.fgc .fgc-cover{flex:none;width:400px;height:560px;object-fit:cover;border:10px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);background:#222;display:block}',
-    '.fgc.story .fgc-cover{width:410px;height:574px}',
-    '.fgc.post .fgc-cover{width:420px;height:588px}',
-    '.fgc.post dt,.fgc.post dd{font-size:31px}',
-    '.fgc.post dl{gap:14px 20px}',
-    '.fgc.post .fgc-res{margin-top:56px}',
-    '.fgc.post .fgc-res p{font-size:38px}',
-    '.fgc.story .fgc-main{padding-top:64px}',
-    '.fgc.story .fgc-t{font-size:108px}',
-    '.fgc.story .fgc-jp{font-size:32px}',
-    '.fgc.story dt,.fgc.story dd{font-size:32px}',
-    '.fgc.story dl{gap:16px 20px;margin-top:30px}',
-    '.fgc.story .fgc-res{margin-top:56px}',
-    '.fgc.story .fgc-res p{font-size:39px}',
-    '.fgc.story .fgc-row .fgc-A{font-size:50px}',
-    '.fgc.story .fgc-seg i{height:40px}',
-    '.fgc.story .fgc-cap{font-size:32px}',
-    '.fgc .fgc-info{flex:1;min-width:0;position:relative}',
-    '.fgc .fgc-kick{display:inline-flex;align-items:center;height:56px;padding:0 22px;border-radius:6px;background:var(--red);color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:34px;line-height:1}',
-    '.fgc .fgc-kick span{display:block;transform:translateY(-1px)}',
-    '.fgc .fgc-t{margin:20px 0 0;font-size:96px;line-height:1.02;overflow-wrap:anywhere}',
-    '.fgc .fgc-t.fgc-one{white-space:nowrap;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em;padding-top:.14em;margin-top:calc(20px - .14em)}',
-    '.fgc .fgc-t.fgc-clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}',
-    '.fgc .fgc-jp{margin-top:10px;line-height:1.4;padding-bottom:4px;font-family:"FGNotoJP","FGInter",sans-serif;font-weight:700;font-size:30px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
-    '.fgc dl{margin:26px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 20px;align-items:baseline}',
-    '.fgc dt{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-size:30px;line-height:1.15;white-space:nowrap}',
-    '.fgc dd{margin:0;font-weight:700;font-size:30px;line-height:1.15;white-space:nowrap;overflow:hidden}',
     '.fgc .fgc-cv{position:relative;flex:none}',
-    '.fgc .fgc-res{flex:1;min-height:0;margin:52px 0 0;overflow:hidden}',
-    '.fgc .fgc-res p{margin:0;font-size:36px;line-height:1.42;color:var(--res);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lines,5);overflow:hidden}',
-    '.fgc .fgc-res b{font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-right:12px}',
-    '.fgc .fgc-prog{flex:none;margin-top:24px}',
-    '.fgc .fgc-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}',
-    '.fgc .fgc-row .fgc-A{font-size:46px;letter-spacing:.03em;line-height:1}',
-    '.fgc .fgc-row .fgc-A span{color:var(--muted)}',
-    '.fgc .fgc-seg{display:grid;grid-template-columns:repeat(20,1fr);gap:6px}',
-    '.fgc .fgc-seg i{height:36px;border-radius:4px;background:var(--track)}',
-    '.fgc .fgc-seg i.fgc-on{background:var(--on)}',
-    '.fgc .fgc-seg i.fgc-part{background:linear-gradient(90deg,var(--red) var(--p),var(--track) var(--p))}',
-    '.fgc .fgc-cap{margin-top:16px;font-size:30px;color:var(--muted);font-weight:700}'
+    '.fgc .fgc-cover{flex:none;width:380px;height:532px;object-fit:cover;border:10px solid #fff;background:#ddd;display:block}',
+    '.fgc.story .fgc-cover{width:400px;height:560px}',
+    '.fgc .fgc-info{flex:1;min-width:0;position:relative}',
+    '.fgc .fgc-kick{display:inline-flex;align-items:center;height:56px;padding:0 22px 2px;border-radius:6px;background:var(--red);color:#fff;font-family:"FGAntonio",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:34px;line-height:1}',
+    '.fgc .fgc-t{margin:16px 0 0;font-size:96px;line-height:1.02;overflow-wrap:anywhere}',
+    '.fgc .fgc-t.fgc-one{white-space:nowrap;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em;padding-top:.14em;margin-top:calc(16px - .14em)}',
+    '.fgc .fgc-t.fgc-clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}',
+    '.fgc .fgc-jp{margin-top:8px;line-height:1.4;padding-bottom:4px;font-family:"FGNotoJP","FGInter",sans-serif;font-weight:700;font-size:30px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.fgc .fgc-rows{margin-top:26px;display:flex;flex-direction:column;gap:12px}',
+    '.fgc .fgc-row{font-size:30px;line-height:1.3}',
+    '.fgc .fgc-row span{color:var(--mut);font-weight:600}',
+    '.fgc .fgc-row b{font-weight:700}',
+    '.fgc .fgc-row.fgc-gen{white-space:nowrap;overflow:hidden}',
+    '.fgc .fgc-res{flex:none;margin-top:38px;background:var(--bulle);border-radius:22px;padding:22px 28px 26px}',
+    '.fgc .fgc-res h3{display:inline-block;margin:0 0 16px;background:var(--pil);color:var(--pilt);font:700 32px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.08em;padding:12px 20px 13px;border-radius:12px}',
+    '.fgc .fgc-res p{margin:0;font-size:37px;line-height:1.42;font-weight:500;color:var(--res);max-height:calc(37px * 1.42 * 4 + 2px);overflow:hidden}',
+    '.fgc.story .fgc-res{margin-top:48px}.fgc.story .fgc-res p{font-size:42px;max-height:calc(42px * 1.42 * 5 + 2px)}',
+    '.fgc .fgc-chif{flex:none;display:flex;gap:16px;margin-top:26px}',
+    '.fgc .fgc-chif>div{flex:1;display:flex;align-items:center;gap:18px;background:var(--track);border-radius:12px;padding:14px 20px}',
+    '.fgc .fgc-dr{flex:none;width:54px;height:36px;border-radius:5px;box-shadow:0 0 0 1px rgba(0,0,0,.08)}',
+    '.fgc .fgc-fr{background:linear-gradient(90deg,#1f4fd1 33.3%,#fff 33.3% 66.6%,#E1000F 66.6%)}.fgc .fgc-ja{background:#fff radial-gradient(circle at 50% 50%,#BC002D 28%,#fff 29%)}',
+    '.fgc .fgc-chif b{display:block;font:700 46px/1 "FGAntonio";text-transform:uppercase}.fgc.story .fgc-chif b{font-size:52px}',
+    '.fgc .fgc-chif i{display:block;margin-top:5px;font:600 23px/1.2 "FGInter";font-style:normal;color:var(--mut)}',
+    '.fgc .fgc-bas{position:absolute;left:0;right:0;bottom:0;height:178px;background:var(--bas);border-top:8px solid #F2C14E;text-align:center;padding-top:30px}',
+    '.fgc.story .fgc-bas{height:380px;padding-top:56px}',
+    '.fgc .fgc-bas img{display:none;width:420px;margin:0 auto 26px}.fgc.story .fgc-bas img{display:block}',
+    '.fgc .fgc-bas small{display:block;font:600 26px "FGInter";color:rgba(255,255,255,.6)}',
+    '.fgc .fgc-bas b{display:block;margin-top:10px;font:700 44px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.06em;color:#fff}.fgc .fgc-bas b em{font-style:normal;color:#F2C14E}'
   ].join("\n");
   var SIZE = { post: [1080, 1440], story: [1080, 1920] };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
@@ -96,29 +88,40 @@
     });
   }
 
+  // Auteurs : un rôle par ligne, les noms à la suite (un nom n'est jamais coupé, la suite repart à gauche).
+  function auteurs(d) {
+    var r = [], sc = String(d.scen || ""), sup = (sc.match(/\(supervision\s*:\s*([^)]+)\)/i) || [])[1];
+    sc = sc.replace(/\s*\(supervision[^)]*\)/i, "").replace(/\s*\((original|scénario)\)/gi, "").trim();
+    if (sc && d.dess && sc === d.dess) r.push(["Auteur", parts(sc)]);
+    else { if (sc) r.push(["Scénario", parts(sc)]); if (sup) r.push(["Supervision", parts(sup)]); if (d.dess) r.push(["Dessin", parts(d.dess)]); }
+    return r;
+  }
+  // Cases Japon / France : seulement ce qui ne changera plus (série terminée), sinon l'éditeur et l'année de lancement en France.
+  function chiffres(d) {
+    var c = [], jpFini = /termin/i.test(d.stJP || ""), frFini = /termin/i.test(d.stFR || ""), pub = (d.pubs || [])[0] || "";
+    if (jpFini && d.tomesJP) c.push(["ja", d.tomesJP + (d.tomesJP > 1 ? " tomes" : " tome"), "Terminé" + (d.y1 ? " · " + d.y1 + (d.y2 && d.y2 !== d.y1 ? "-" + d.y2 : "") : "")]);
+    if (frFini && d.tomesFR) c.push(["fr", d.tomesFR + (d.tomesFR > 1 ? " tomes" : " tome"), "Terminé" + (pub ? " · " + pub : "")]);
+    else if (pub) c.push(["fr", pub, d.frDebut ? "Lancement · " + d.frDebut : "Édition française"]);
+    return c.length ? '<div class="fgc-chif">' + c.map(function (x) { return '<div><i class="fgc-dr fgc-' + x[0] + '"></i><span><b>' + esc(x[1]) + "</b><i>" + esc(x[2]) + "</i></span></div>"; }).join("") + "</div>" : "";
+  }
   function card(d, theme, fmt) {
-    var p = d.n / d.tot * 20;
-    var rows = [
-      ["Histoire", d.scen ? parts(d.scen) : []],
-      ["Dessin", d.dess && d.dess !== d.scen ? parts(d.dess) : []],
-      ["Type", d.type ? [d.type] : []],
-      ["Genres", d.genres || []],
-      ["Début", d.y1 ? [String(d.y1)] : []],
-      ["En France", d.pubs || []]
-    ].filter(function (r) { return r[1].length; });
-    var seg = ""; for (var i = 0; i < 20; i++) seg += i + 1 <= Math.floor(p) ? '<i class="fgc-on"></i>' : i < p ? '<i class="fgc-part" style="--p:' + Math.round((p - i) * 100) + '%"></i>' : "<i></i>";
+    var nom = function (n) { return esc(n).replace(/ /g, "&nbsp;"); };
+    var fini = /termin/i.test(d.stJP || "");
+    var rows = auteurs(d).map(function (a) { return '<div class="fgc-row"><span>' + a[0] + ' :</span> <b>' + a[1].map(nom).join(", ") + "</b></div>"; }).join("") +
+      ((d.genres || []).length ? '<div class="fgc-row fgc-gen"><span>Genres :</span> <b data-items="' + esc(JSON.stringify(d.genres.slice(0, 3))) + '">' + esc(d.genres.slice(0, 3).join(", ")) + "</b></div>" : "") +
+      (d.type ? '<div class="fgc-row"><span>Type :</span> <b>' + esc(d.type + (!fini && d.y1 ? " · depuis " + d.y1 : "")) + "</b></div>" : "");
+    var jp = d.jp && String(d.jp).toLowerCase() !== String(d.t || "").toLowerCase() ? '<div class="fgc-jp" lang="ja">' + esc(d.jp) + "</div>" : "";
     return '<div class="fgc ' + theme + " " + fmt + '">' +
-      '<div class="fgc-top"><img src="/img/social/logo-blanc.png" alt=""><span class="fgc-A">Fiche <span>n°' + pad(d) + '</span></span></div>' +
+      '<div class="fgc-top"><img src="/img/social/logo-blanc.png" alt=""></div>' +
       '<div class="fgc-main"><div class="fgc-hero">' +
-        '<div class="fgc-cv">' + (d.cover ? '<img class="fgc-cover" src="' + couv(d.cover) + '" alt="">' : '<div class="fgc-cover"></div>') + '</div>' +
-        '<div class="fgc-info"><span class="fgc-kick"><span>Nouvelle fiche</span></span>' +
-          '<p class="fgc-t fgc-A">' + esc(d.t) + '</p>' + (d.jp ? '<div class="fgc-jp" lang="ja">' + esc(d.jp) + '</div>' : "") +
-          '<dl>' + rows.map(function (r) { return "<dt>" + r[0] + '</dt><dd data-items="' + esc(JSON.stringify(r[1])) + '">' + esc(r[1].join(", ")) + "</dd>"; }).join("") + '</dl>' +
-        '</div></div>' +
-        '<div class="fgc-res">' + (d.resume ? "<p><b>Résumé</b>" + esc(d.resume) + "</p>" : "") + '</div>' +
-        '<div class="fgc-prog"><div class="fgc-row"><span class="fgc-A">La base FuryoGang · ' + d.n + ' <span>/ ' + d.tot + '</span></span><span class="fgc-A">' + pct(d) + '</span></div>' +
-          '<div class="fgc-seg">' + seg + '</div><div class="fgc-cap">De nouvelles fiches chaque semaine</div></div>' +
-      '</div></div>';
+        '<div class="fgc-cv">' + (d.cover ? '<img class="fgc-cover" src="' + couv(d.cover) + '" alt="">' : '<div class="fgc-cover"></div>') + "</div>" +
+        '<div class="fgc-info"><span class="fgc-kick"><span>Fiche n°' + pad(d) + "</span></span>" +
+          '<p class="fgc-t fgc-A">' + esc(d.t) + "</p>" + jp + '<div class="fgc-rows">' + rows + "</div>" +
+        "</div></div>" +
+        (d.resume ? '<div class="fgc-res"><h3>Résumé</h3><p>' + esc(d.resume) + "</p></div>" : "") + chiffres(d) +
+      "</div>" +
+      '<div class="fgc-bas"><img src="/img/social/logo-blanc.png" alt=""><small>La fiche complète</small><b>furyogang.com<em>/series/' + esc(d.slug || "") + "</em></b></div>" +
+    "</div>";
   }
 
   // Titre : d'abord sur une ligne en réduisant un peu la police, sinon sur deux lignes,
@@ -141,16 +144,14 @@
       t.style.fontSize = min + "px"; var w = (t.dataset.full || (t.dataset.full = t.textContent)).split(" ");
       while (w.length > 1 && (t.offsetHeight > lh(min) * 2 + 4 || !tient())) { w.pop(); t.textContent = w.join(" ").replace(/[\s\-–:·,]+$/, "") + "…"; }
     }
-    [].forEach.call(c.querySelectorAll("dd[data-items]"), function (dd) {
-      var items = JSON.parse(dd.dataset.items);
-      for (var k = items.length; k >= 1; k--) {
-        dd.textContent = items.slice(0, k).join(", ");
-        if (dd.scrollWidth <= dd.clientWidth + 1) break;
-        if (k === 1) dd.style.textOverflow = "ellipsis";
-      }
+    // Genres : 3 au plus, toujours sur une seule ligne (le dernier saute s'il n'y a pas la place).
+    [].forEach.call(c.querySelectorAll(".fgc-gen"), function (row) {
+      var bb = row.querySelector("b"), items = JSON.parse(bb.dataset.items);
+      while (items.length > 1 && row.scrollWidth > row.clientWidth + 1) { items.pop(); bb.textContent = items.join(", "); }
     });
-    var res = c.querySelector(".fgc-res"), p = res.querySelector("p");
-    if (p) { var l = parseFloat(getComputedStyle(p).lineHeight); p.style.setProperty("--lines", Math.max(2, Math.floor(res.clientHeight / l))); }
+    // Résumé : jamais coupé en silence ; s'il dépasse (4 lignes en post, 5 en story), la carte est marquée « trop long ».
+    var p = c.querySelector(".fgc-res p");
+    if (p) { if (p.scrollHeight > p.clientHeight + 2) c.setAttribute("data-trop", "1"); else c.removeAttribute("data-trop"); }
   }
 
   function charger(src) {
@@ -191,13 +192,14 @@
     }).finally(function () { box.remove(); });
   }
   // Nombre de lignes du résumé sur l'image (post et story) et remplissage de la dernière ligne (0 à 1).
+  // Nombre de lignes du résumé dans la bulle (post : 4 au plus, story : 5 au plus) et remplissage de la dernière ligne.
   var mes = null;
   function lignes(txt) {
     if (!mes) {
       mes = document.createElement("div");
       mes.style.cssText = "position:fixed;left:-20000px;top:0;visibility:hidden;pointer-events:none";
-      mes.innerHTML = '<div class="fgc post" style="height:auto"><div class="fgc-res" style="margin:0;width:952px"><p style="display:block"><b>Résumé</b><span></span></p></div></div>' +
-        '<div class="fgc story" style="height:auto"><div class="fgc-res" style="margin:0;width:952px"><p style="display:block"><b>Résumé</b><span></span></p></div></div>';
+      mes.innerHTML = '<div class="fgc post" style="height:auto"><div class="fgc-res" style="margin:0;width:952px"><p style="max-height:none"><span></span></p></div></div>' +
+        '<div class="fgc story" style="height:auto"><div class="fgc-res" style="margin:0;width:952px"><p style="max-height:none"><span></span></p></div></div>';
       document.body.appendChild(mes);
     }
     var out = {};
@@ -207,9 +209,14 @@
       var r = sp.getClientRects(), last = r.length ? r[r.length - 1] : null, box = p.getBoundingClientRect();
       out[c.classList.contains("post") ? "post" : "story"] = { n: n, fill: last ? (last.right - box.left) / box.width : 0 };
     });
-    var pire = out.post.n >= out.story.n ? out.post : out.story;
-    return { n: Math.max(out.post.n, out.story.n), fill: pire.fill, post: out.post, story: out.story };
+    return { n: out.post.n, fill: out.post.fill, post: out.post, story: out.story, ok: out.post.n <= 4 && out.story.n <= 5 };
+  }
+  // Champs de la fiche tirés de /api/serie (statuts, tomes, années, éditeur japonais, lancement en France).
+  function depuisSerie(j) {
+    var s = (j && j.serie) || {}, deb = "";
+    (j && j.editions || []).forEach(function (e) { if (e.pays !== "France") return; (e.tomes || []).forEach(function (t) { if (t.date && (!deb || t.date < deb)) deb = t.date; }); });
+    return { scen: s.scen || "", dess: s.dess || "", stJP: s.stJP || "", stFR: s.stFR || "", tomesJP: s.tomesJP || 0, tomesFR: s.tomesFR || 0, y1: s.y1, y2: s.y2, pubJP: s.pubJP || "", frDebut: deb ? +deb.slice(0, 4) : null };
   }
   function pret() { return Promise.all(['700 40px "FGAntonio"', '500 40px "FGInter"'].map(function (f) { return document.fonts.load(f); })); }
-  window.FG_FICHE = { lignes: lignes, pret: pret, card: card, polish: polish, preparer: preparer, png: png, SIZE: SIZE, parts: parts };
+  window.FG_FICHE = { depuisSerie: depuisSerie, lignes: lignes, pret: pret, card: card, polish: polish, preparer: preparer, png: png, SIZE: SIZE, parts: parts };
 })();

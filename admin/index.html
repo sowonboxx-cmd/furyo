@@ -368,7 +368,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 <script src="/site/header.js?v=98"></script>
 <div id="root"></div>
 <div class="toast" id="toast"></div>
-<script src="/site/fiche-card.js?v=5"></script>
+<script src="/site/fiche-card.js?v=6"></script>
 <script src="/site/tome-card.js?v=5"></script>
 <script src="/site/sortie-post.js?v=17"></script>
 <script src="/site/quickaccess.js?v=22"></script>
@@ -565,9 +565,10 @@ function compter(li){ if (!li) return; const n = li.querySelector('[data-n="x"]'
   // Résumé de l'image : 5 lignes idéal, 6 si pas le choix (sans remplir la 6e jusqu'au bout), jamais plus.
   const ri = li.querySelector('[data-f="resumeImg"]'), lg = li.querySelector("[data-lg]");
   if (ri && lg && window.FG_FICHE) FG_FICHE.pret().then(() => { const txt = ri.value.trim() || li.querySelector('[data-f="resume"]').value.trim();
-    const m = FG_FICHE.lignes(txt), plein = m.n === 6 && m.fill > 0.9;
-    lg.textContent = `${m.n} ligne${m.n > 1 ? "s" : ""}${m.n > 6 ? " · trop long, le texte sera coupé" : plein ? " · 6e ligne pleine, à raccourcir" : m.n === 6 ? " · ok si pas le choix" : " ✓"}`;
-    lg.className = "lg " + (m.n <= 5 ? "ok" : m.n === 6 && !plein ? "mid" : "ko"); });
+    // Fiche du 25/11/2026 : 4 lignes au plus dans le post, 5 dans la story, jamais coupé.
+    const m = FG_FICHE.lignes(txt);
+    lg.textContent = `post ${m.post.n} ligne${m.post.n > 1 ? "s" : ""} / 4 · story ${m.story.n} / 5${m.ok ? " ✓" : " · trop long, à raccourcir"}`;
+    lg.className = "lg " + (m.ok ? "ok" : "ko"); });
   ["ig", "tt"].forEach(k => { const m = li.querySelector(`[data-n="${k}"]`), v = li.querySelector(`[data-f="${k}"]`); if (m && v) m.textContent = v.value.length + " car."; }); }
 document.addEventListener("input", e => {
   if (e.target.matches('[data-f="num"]')) { const li = e.target.closest(".it"), s = ITEMS.find(x => x.id === li.dataset.id), n = +e.target.value, w = li.querySelector("[data-numw]");
@@ -581,8 +582,9 @@ async function imageFiche(s, fmt, li, btn){
   try {
     if (!AV) AV = await fetch("/api/avancement").then(r => r.json()).catch(() => ({}));
     const rang = (AV.series || []).find(x => x.slug === s.slug);
-    const d = { t: shownT(s), jp: s.jp, cover: s.cover, type: s.type, genres: s.genres || [], y1: s.y1,
-      pubs: FG_FICHE.parts((s.pubFR || "").replace(/\s*\([^)]*\)/g, "")), scen: s.scen, dess: s.dess,
+    const j = await fetch("/api/serie?s=" + encodeURIComponent(s.slug)).then(r => r.json()).catch(() => ({}));
+    const d = { t: shownT(s), jp: s.jp, cover: s.cover, type: s.type, genres: s.genres || [], y1: s.y1, slug: s.slug,
+      pubs: FG_FICHE.parts((s.pubFR || "").replace(/\s*\([^)]*\)/g, "")), scen: s.scen, dess: s.dess, ...FG_FICHE.depuisSerie(j),
       resume: li.querySelector('[data-f="resumeImg"]').value.trim() || li.querySelector('[data-f="resume"]').value.trim(), n: rang ? rang.rang : (AV.enLigne || 0) + 1, tot: AV.total || ITEMS.length };
     const url = await FG_FICHE.png(d, { theme: "creme", fmt });
     const nom = `nouvelle-fiche-${s.slug}-${fmt}.png`;

@@ -47,7 +47,7 @@ button.main{background:var(--red)}
 <script src="/site/header.js?v=98"></script>
 <div class="page">
   <h1>Nouvelle fiche</h1>
-  <p class="sub">Design « Dossier », en crème et en sombre, pour le post Instagram (3:4) et la story (9:16).</p>
+  <p class="sub">Design « Dossier » (validé le 25/11/2026), en crème et en sombre, pour le post Instagram et X (3:4) et la story (9:16).</p>
   <div class="pick">
     <select id="sel" aria-label="Série"></select>
     <label>N° <input id="n" type="number" min="1"></label>
@@ -56,12 +56,13 @@ button.main{background:var(--red)}
     <label><input id="safe" type="checkbox" style="width:auto;height:auto"> Montrer les zones cachées (story)</label>
     <button class="main" id="dlAll">Télécharger les 4 PNG</button>
   </div>
+  <p id="trop" style="color:#F08A7E;font-weight:700;margin:0 0 12px"></p>
   <div class="pair" id="pair"></div>
   <div class="cap-act"><button class="main" id="saveCaps">Enregistrer les légendes dans Notion</button><small id="capMsg">Modifie les textes si besoin avant d'enregistrer (il faut être connecté au back-office).</small></div>
   <div class="caps" id="caps"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
-<script src="/site/fiche-card.js?v=5"></script>
+<script src="/site/fiche-card.js?v=6"></script>
 <script>
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const LOGO_B = "/img/social/logo-blanc.png";
@@ -81,7 +82,10 @@ function draw(){
   document.getElementById("pair").innerHTML = VARIANTS.map(([th, fm, nom]) => `<div class="slot"><h2>${nom} <button data-dl="${th}-${fm}">PNG</button></h2>
     <div class="frame ${fm}" id="f-${th}-${fm}">${card(cur, th, fm)}${fm === "story" ? `<div class="safe" style="top:0;height:${200 / 19.2}%"></div><div class="safe" style="bottom:0;height:${250 / 19.2}%"></div>` : ""}</div></div>`).join("");
   fit();
-  FG_FICHE.preparer(document.getElementById("pair"), cur).then(f => { FONTS = f; });
+  FG_FICHE.preparer(document.getElementById("pair"), cur).then(f => { FONTS = f;
+    // Résumé trop long pour la bulle (4 lignes en post, 5 en story) : jamais coupé en silence, on prévient.
+    const trop = [...document.querySelectorAll("#pair .fgc[data-trop]")].map(c => c.classList.contains("story") ? "story (5 lignes)" : "post (4 lignes)");
+    const w = document.getElementById("trop"); if (w) w.textContent = trop.length ? "Résumé trop long pour : " + [...new Set(trop)].join(", ") + ". Raccourcis le « Résumé image » dans le back-office." : ""; });
 }
 // ---------- Légendes « Nouvelle fiche » ----------
 // Tant que les comptes membres ne sont pas ouverts, on n'invite pas encore à s'inscrire.
@@ -182,9 +186,10 @@ async function pick(slug){
       tl.sort((a, b) => (a.fr - b.fr) || a.n - b.n);
       const cv = document.getElementById("cv");
       cv.innerHTML = '<option value="">Couverture : par défaut</option>' + tl.map(t => `<option value="${esc(t.c)}">Tome ${t.n}${t.fr ? " (FR)" : " (JP)"}</option>`).join("");
-      const fini = /termin/i.test(j.serie.stJP || "") && !(j.serie.tomesFR > 0);
-      const der = tl.filter(t => !t.fr).pop();
-      if (fini && der) { cv.value = der.c; cur.cover = der.c; }
+      // Couverture : toujours le tome 1 (Will, 25/11/2026), français s'il existe.
+      const t1 = tl.filter(t => t.n === 1).sort((a, b) => b.fr - a.fr)[0];
+      if (t1) { cv.value = t1.c; cur.cover = t1.c; }
+      Object.assign(cur, FG_FICHE.depuisSerie(j));
       draw(); drawCaps(); }
     // Comptes officiels pour les @mentions (seulement si connecté au back-office).
     if (cur.id) { const r = await fetch("/api/admin/handles?id=" + cur.id); const m = document.getElementById("capMsg");
