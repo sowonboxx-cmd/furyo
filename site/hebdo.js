@@ -111,7 +111,7 @@
   function rendre(html, h, polices) {
     if (!lib) lib = window.htmlToImage ? Promise.resolve() : charger("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js");
     return Promise.all([lib, polices]).then(function (r) {
-      var fcss = r[1], z = zone(), d = document.createElement("div"); d.innerHTML = pref(html); var node = d.firstChild; z.appendChild(node);
+      var fcss = r[1], z = zone(), d = document.createElement("div"); d.innerHTML = pref(html).replace(/(\d) – (\d)/g, '$1 <span style="position:relative;top:-.09em">–</span> $2'); var node = d.firstChild; z.appendChild(node);
       return Promise.all([].map.call(node.querySelectorAll("img"), function (im) { var w = Math.min(1080, Math.max(160, Math.round((im.getBoundingClientRect().width || 400) * 2)));
         return petite(im.getAttribute("src"), w).then(function (u) { if (u) im.src = u; else { im.src = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="; im.style.visibility = "hidden"; } return im.decode ? im.decode().catch(function () {}) : null; }); }))
         .then(function () { var best = "", o = { width: 1080, height: h, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, backgroundColor: "#0c0c0e", cacheBust: false };
