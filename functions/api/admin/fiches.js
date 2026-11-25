@@ -1,7 +1,9 @@
 // Planning des fiches séries (Will, 25/11/2026) : partagé entre Mangas Database (vue Ordre / Calendrier) et le calendrier du QG.
 // Les séries qui ont un « N° fiche » passent dans l'ordre des numéros, sur les jours de publication choisis.
 //   GET  /api/admin/fiches          → { ok, cal:{jours,depart,heure}, items:[{id,slug,t,jp,num,promo,promoLe,cover,leg:{ig,x,tt}}] }
-//   POST { cal:{jours,depart,heure} } → enregistre les réglages (KV STATS, clé hq:fiches-cal)
+//   POST { cal:{jours,depart,heure} } → enregistre les réglages (KV STATS, clé hq:fiches-cal-v2)
+//   POST { extrait:{ id, pages:[url], fin:"grille"|"eventail" } } → pages d'extrait choisies pour le carrousel de la fiche (KV fx:<id>)
+// Chaque item porte aussi son extrait : { pages, fin } ou null.
 import { json, isAdmin } from "../../../lib/admin.js";
 import { text, num, date, check, queryAll, slugSerie } from "../../../lib/notion.js";
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
@@ -29,6 +31,7 @@ export async function onRequestGet({ request, env }) {
       resume: text(p["Résumé image"]) || text(p["Résumé"]),
       leg: { ig: text(p["Légende Instagram"]), x: text(p["Légende X"]), tt: text(p["Légende TikTok"]) } };
   }).filter(s => s.num).sort((a, b) => a.num - b.num);
+  if (env.STATS) await Promise.all(items.map(async s => { s.extrait = await env.STATS.get("fx:" + s.id, "json").catch(() => null); }));
   return json({ ok: true, cal, items });
 }
 
@@ -36,6 +39,12 @@ export async function onRequestPost({ request, env }) {
   if (!(await isAdmin(request, env))) return json({ error: "réservé aux admins" }, 401);
   if (!env.STATS) return json({ error: "stockage indisponible" }, 503);
   const b = await request.json().catch(() => ({}));
+  if (b.extrait && /^[0-9a-f]{32}$/.test(b.extrait.id || "")) {
+    const pages = (Array.isArray(b.extrait.pages) ? b.extrait.pages : []).map(String).filter(u => /^(https:\/\/[^\s]+|\/[^\s]*)$/.test(u)).slice(0, 8);
+    const x = { pages, fin: b.extrait.fin === "eventail" ? "eventail" : "grille" };
+    if (pages.length) await env.STATS.put("fx:" + b.extrait.id, JSON.stringify(x)); else await env.STATS.delete("fx:" + b.extrait.id);
+    return json({ ok: true, extrait: pages.length ? x : null });
+  }
   if (!b.cal) return json({ error: "requête vide" }, 400);
   const cal = nettCal(b.cal);
   await env.STATS.put(CLE, JSON.stringify(cal));

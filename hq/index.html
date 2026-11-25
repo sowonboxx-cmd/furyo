@@ -471,6 +471,12 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .ccount{display:block;margin-top:10px;font:600 12px "FGInter";color:#8e8e96}.ccount b{color:#cfcfd4}.ccount b.trop{color:#ff6b5e}
 .hbprog{font:600 14px "FGInter";color:#bdb9b1;padding:14px 0}
 .hbstrip{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scroll-snap-type:x mandatory}.hbstrip img{flex:none;height:240px;border-radius:8px;cursor:zoom-in;scroll-snap-align:start;background:#1f1f24}
+/* Extrait d'une fiche : pages choisies (Will, 25/11/2026). */
+.fxp{display:flex;flex-wrap:wrap;gap:8px}.fxt{position:relative;width:74px;height:104px;border-radius:8px;background:#1f1f24 center/cover no-repeat}
+.fxt b{position:absolute;left:5px;top:5px;font:800 12px "FGInter";background:rgba(0,0,0,.7);color:#fff;border-radius:6px;padding:2px 6px}
+.fxt button{position:absolute;bottom:5px;width:26px;height:26px;border:0;border-radius:8px;background:rgba(0,0,0,.75);color:#fff;font:700 16px/1 "FGInter";cursor:pointer}.fxt [data-fxl]{left:5px}.fxt [data-fxx]{right:5px}.fxt button:disabled{opacity:.3}
+.fxadd{width:74px;height:104px;border-radius:8px;border:1.5px dashed #4a4a52;display:grid;place-items:center;font:700 13px "FGInter";color:#cfcfd4;cursor:pointer}
+.fxv{float:right;font:600 12px "FGInter";color:#8e8e96;letter-spacing:0;text-transform:none}
 .hbed{margin-top:10px;border:1px solid var(--line,#2c2c32);border-radius:12px;padding:10px 12px}.hbed summary{cursor:pointer;font:700 14px "FGInter"}
 .hbaide{font:500 13px/1.4 "FGInter";color:#a5a5ad;margin:8px 0}
 .hbn{border-top:1px solid var(--line,#2c2c32);padding:10px 0}.hbt{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font:600 13px "FGInter";color:#cfcfd4}.hbt b{font:700 15px "FGInter";color:#fff;margin-right:auto}
@@ -1783,23 +1789,68 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     fetch("/api/admin/igq?id=" + encodeURIComponent(s.id), { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (j) { o.item = j.item; }).catch(function () {}).then(function () { if (host.dataset.id === s.id) igUI(box, o); });
   }
 
-  // ---- Fiche série planifiée (Will, 25/11/2026) : aperçu du post et de la story (gabarit validé, crème), légendes, programmation
-  // Instagram (post + story) et X (post), comme les carrousels hebdo. Les images sont faites ici, au moment d'ouvrir.
-  var FIMG = {};
-  function ficheLib() { return window.FG_FICHE ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = "/site/fiche-card.js?v=8"; sc.onload = ok; sc.onerror = function () { ko(new Error("Le gabarit de fiche ne se charge pas")); }; document.head.appendChild(sc); }); }
-  function ficheImages(f) {
-    if (FIMG[f.id]) return FIMG[f.id];
-    var p = FIMG[f.id] = ficheLib().then(function () { return fetch("/api/serie?s=" + encodeURIComponent(f.slug)).then(function (r) { return r.json(); }); }).then(function (j) {
-      var s = j.serie || {}, tl = [];
-      (j.editions || []).forEach(function (e) { (e.tomes || []).forEach(function (t) { if (t.cover && t.n === 1) tl.push({ c: t.cover, fr: e.pays === "France" }); }); });
-      tl.sort(function (a, b) { return b.fr - a.fr; });
+  // ---- Fiche série planifiée (Will, 25/11/2026) : carrousel (fiche + pages d'extrait + image de fin) et story, légendes,
+  // tweet avec le lien de la fiche à reposter à la main, programmation Instagram (carrousel + story) et X (post). Images faites ici.
+  var FDAT = {}, FIMG = {};
+  function libJs(test, src) { return test() ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = function () { ko(new Error("Un gabarit ne se charge pas")); }; document.head.appendChild(sc); }); }
+  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=8").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=1"); }); }
+  function fParts(v) { return String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*[,/&]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
+  function ficheData(f) {
+    if (FDAT[f.id]) return FDAT[f.id];
+    var p = FDAT[f.id] = ficheLib().then(function () { return fetch("/api/serie?s=" + encodeURIComponent(f.slug)).then(function (r) { return r.json(); }); }).then(function (j) {
+      var s = j.serie || {}, t1 = [], fr = [], jp = [];
+      (j.editions || []).forEach(function (e) { (e.tomes || []).forEach(function (t) { if (!t.cover) return; if (t.n === 1) t1.push({ c: t.cover, fr: e.pays === "France" }); (e.pays === "France" ? fr : jp).push(t); }); });
+      t1.sort(function (a, b) { return b.fr - a.fr; });
       var t = (s.t && s.fr && s.t === s.t.toUpperCase() && s.t.toLowerCase() === s.fr.toLowerCase()) ? s.t : (s.fr || s.t || f.t);
-      var d = { t: t, jp: s.jp, cover: tl.length ? tl[0].c : (s.cover1 || f.cover), type: s.type, genres: s.genres || [], y1: s.y1, slug: f.slug,
+      var d = { t: t, jp: s.jp, cover: t1.length ? t1[0].c : (s.cover1 || f.cover), type: s.type, genres: s.genres || [], y1: s.y1, slug: f.slug,
         pubs: FG_FICHE.parts(String(s.pubFR || "").replace(/\s*\([^)]*\)/g, "")), resume: f.resume || s.resumeImg || s.resume || "", n: f.num, tot: 600 };
       var x = FG_FICHE.depuisSerie(j); for (var k in x) d[k] = x[k];
-      return FG_FICHE.png(d, { theme: "creme", fmt: "post" }).then(function (post) { return FG_FICHE.png(d, { theme: "creme", fmt: "story" }).then(function (story) { return { post: post, story: story }; }); });
+      // Crédits de l'extrait : « © Auteur / Éditeur japonais · Édition française Éditeur ».
+      var aut = []; fParts(s.scen).concat(fParts(s.dess)).forEach(function (a) { if (aut.indexOf(a) < 0) aut.push(a); });
+      var pFR = fParts(s.pubFR)[0] || "", pJP = fParts(s.pubJP)[0] || "";
+      var credit = "© " + aut.join(" / ") + (pJP ? " / " + pJP : "") + (pFR ? " · Édition française " + pFR : "");
+      var tri = function (l) { var vu = {}; return l.sort(function (a, b) { return (a.n || 999) - (b.n || 999); }).filter(function (t) { if (vu[t.n]) return false; vu[t.n] = 1; return true; }); };
+      var tomes = (fr.length ? tri(fr) : tri(jp)).slice(0, 5).map(function (t) { return "/api/couv?w=500&u=" + encodeURIComponent(t.cover); });
+      var sous = pFR && d.frDebut ? "Chez " + pFR + " depuis " + d.frDebut : (pJP && s.y1 ? "Chez " + pJP + " depuis " + s.y1 : "");
+      return { j: j, s: s, d: d, ex: { titre: t, credit: credit, tomes: tomes, sous: sous, slug: f.slug } };
     });
-    p.catch(function () { delete FIMG[f.id]; }); return p;
+    p.catch(function () { delete FDAT[f.id]; }); return p;
+  }
+  function ficheImages(f, prog) {
+    var x = f.extrait || null, cle = f.id + "|" + (x ? x.fin + "|" + x.pages.join(",") : "");
+    if (FIMG[cle]) return FIMG[cle];
+    var p = FIMG[cle] = ficheData(f).then(function (D) {
+      return FG_FICHE.png(D.d, { theme: "creme", fmt: "post" }).then(function (post) { return FG_FICHE.png(D.d, { theme: "creme", fmt: "story" }).then(function (story) {
+        if (!x || !x.pages.length) return { post: post, story: story, slides: [post] };
+        var ed = { pages: x.pages, fin: x.fin }; for (var k in D.ex) ed[k] = D.ex[k];
+        if (x.fin === "eventail") ed.sous = "La suite dans le tome 1";
+        return FG_EXTRAIT.slides(ed, prog).then(function (l) { return { post: post, story: story, slides: [post].concat(l) }; });
+      }); });
+    });
+    p.catch(function () { delete FIMG[cle]; }); return p;
+  }
+  // Tweet avec le lien de la fiche (X ne met pas de lien dans les posts programmés) : plusieurs versions,
+  // pour le jour de la fiche puis pour la relancer plus tard. Will copie, colle, publie à la main.
+  function ficheLiens(f, D) {
+    var s = D.s, d = D.d, t = D.ex.titre, url = "furyogang.com/series/" + f.slug, l = [];
+    var aut = []; fParts(s.scen).concat(fParts(s.dess)).forEach(function (a) { if (aut.indexOf(a) < 0) aut.push(a); });
+    var pFR = fParts(s.pubFR)[0] || "", pJP = fParts(s.pubJP)[0] || "";
+    var jpL = d.tomesJP ? d.tomesJP + " tome" + (d.tomesJP > 1 ? "s" : "") + (/termin/i.test(d.stJP) && d.y1 ? " · " + d.y1 + (d.y2 && d.y2 !== d.y1 ? "-" + d.y2 : "") : (d.y1 ? " · depuis " + d.y1 : "")) : "";
+    var frL = pFR ? pFR + (d.frDebut ? " · depuis " + d.frDebut : "") : "";
+    var adapt = ["film", "drama", "anime", "oav"].map(function (k) { return String(s[k] || "").split(/\s*[;\n]\s*/)[0].replace(/\s*[(<].*$/, "").trim(); }).filter(Boolean);
+    var ex = !!(s.extraitFR || s.extraitJP || (f.extrait && f.extrait.pages.length));
+    l.push("📖 " + t + (s.jp ? " (" + s.jp + ")" : "") + ", la fiche complète\n" + (aut.length ? "✍️ " + aut.join(", ") + "\n" : "") + (jpL ? "🇯🇵 " + jpL + "\n" : "") + (frL ? "🇫🇷 " + frL + "\n" : "") +
+      "\nRésumé, tomes" + (ex ? ", extrait" : "") + (adapt.length ? " et adaptations" : "") + " 👇\n" + url);
+    var pts = [];
+    if (d.tomesJP || d.tomesFR) pts.push("▪️ " + [d.tomesJP ? "les " + d.tomesJP + " tomes japonais" : "", d.tomesFR ? (d.tomesFR > 1 ? "les " + d.tomesFR + " tomes " : "le tome ") + (pFR || "français") : ""].filter(Boolean).join(" et ").replace(/^./, function (c) { return c.toUpperCase(); }));
+    if (ex) pts.push("▪️ L'extrait du tome 1");
+    if (adapt.length) pts.push("▪️ Les adaptations : " + adapt.slice(0, 2).join(", "));
+    if (s.univers) pts.push("▪️ Tout l'univers " + s.univers);
+    pts.push("▪️ Les prochaines sorties");
+    l.push("Tout " + t + " au même endroit 👇\n\n" + pts.join("\n") + "\n\n" + url);
+    if (d.resume) l.push(d.resume + "\n\n👉 La fiche " + t + " : " + url);
+    l.push(t + ", tu l'as dans ta collection ? 📚\nCoche tes tomes sur la fiche" + (pFR ? " et suis les prochaines sorties chez " + pFR : "") + ".\n\n" + url);
+    return l;
   }
   function openFiche(f, jour) {
     if (!f) return;
@@ -1809,22 +1860,69 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var h = '<div class="modal-ov"><div class="modal"><button class="x" id="mx">×</button>';
     h += '<div class="chips">' + (jj ? '<span class="chip">' + esc(igJourLib(jj)) + '</span>' : "") + '<span class="chip"><i style="background:' + (proj("fiche").couleur || "#F2B33D") + '"></i>Fiche série</span><span class="chip">' + ficheNo(f) + '</span></div>';
     h += '<div class="mh"><span class="cov' + (cov ? " has" : "") + '" style="' + (cov ? "background-image:url(" + esc(cov) + ")" : "") + '"></span><div><h2>' + esc(f.t) + '</h2><div class="sub">' + esc([f.jp, "Fiche " + ficheNo(f)].filter(Boolean).join(" · ")) + '</div></div></div>';
+    h += '<div class="mslab" id="fican">Carrousel</div><div class="hbstrip" id="fistrip"><div class="hbprog">Préparation des images…</div></div>';
+    h += '<div class="mslab">Extrait · pages du carrousel</div><div class="fxed" id="fxed"></div>';
     h += '<div class="mslab">Légendes</div>' + tabsHTML(modalCap);
-    h += '<div class="mslab">Aperçu et programmation · Instagram (post + story) et X (post)</div><div class="igbox" id="fiig"></div>';
+    h += '<div class="mslab">Tweet avec le lien · à poster à la main <span class="fxv" id="fxv"></span></div><div class="cbox"><button class="cp" data-ficp aria-label="Copier" title="Copier">' + IC_COPY + '</button><p id="filien">…</p><span class="ccount" id="filn"></span></div><div class="macts" style="margin-top:6px"><button class="btn2" data-fiaut>Autre version</button></div>';
+    h += '<div class="mslab">Programmer · Instagram (carrousel + story) et X (post)</div><div class="igbox" id="fiig"></div>';
     h += '<div class="macts"><a class="btn2" href="/series/' + esc(f.slug) + '" target="_blank" rel="noopener">' + IC_BOOK + 'Voir la fiche</a><a class="btn2 dbb" href="/admin/#mangas/' + esc(f.id) + '" target="_blank" rel="noopener" title="Modifier dans Mangas Database" aria-label="Modifier dans Mangas Database">' + IC_DB + '</a><span id="calmsg"></span></div>';
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "fiche"; host.dataset.id = f.id;
-    var imgs = ficheImages(f);
-    imgs.catch(function (er) { var m = $("#calmsg"); if (m) m.textContent = er.message || "Images impossibles à préparer"; });
-    var titre = "Fiche " + ficheNo(f) + " · " + f.t, hr = ficheHeure();
-    var o = { id: id, jourJ: jour || "", heure: hr, aPost: true, aX: true, item: null,
-      imgs: imgs.then(function (v) { return { post: { _url: v.post }, story: { _url: v.story } }; }),
+    var modal = host.querySelector(".modal"), liens = [], iv = 0, cur = null;
+    var lienAff = function () { var t = liens[iv] || ""; $("#filien").textContent = t; $("#filn").innerHTML = compteX(t, "tw"); $("#fxv").textContent = liens.length ? (iv + 1) + " / " + liens.length : ""; };
+    ficheData(f).then(function (D) { liens = ficheLiens(f, D); lienAff(); }).catch(function () {});
+    var edit = function () {
+      var x = f.extrait || { pages: [], fin: "grille" }, box = $("#fxed"); if (!box) return;
+      box.innerHTML = '<div class="fxp">' + x.pages.map(function (u, i) { return '<span class="fxt" style="background-image:url(\'' + esc(u) + '\')"><b>' + (i + 1) + '</b><button data-fxl="' + i + '" aria-label="Avancer" title="Avancer"' + (i ? "" : " disabled") + '>‹</button><button data-fxx="' + i + '" aria-label="Retirer" title="Retirer">×</button></span>'; }).join("") +
+        (x.pages.length < 8 ? '<label class="fxadd"><input type="file" accept="image/*" multiple data-fxadd hidden><span>+ Pages</span></label>' : "") + '</div>' +
+        (x.pages.length ? '<div class="iglab">Dernière image</div><div class="igch"><button data-fxfin="grille" aria-pressed="' + (x.fin !== "eventail") + '">Tome 1 en grand</button><button data-fxfin="eventail" aria-pressed="' + (x.fin === "eventail") + '">Tomes en éventail</button></div>' : '<p class="hbaide">Ajoutez 3 à 5 pages du chapitre 1 : elles passent après la fiche, avec une dernière image qui renvoie vers la fiche.</p>');
+    };
+    var sauverEx = function (x) {
+      var m = $("#calmsg"); if (m) m.textContent = "Enregistrement…";
+      return fetch("/api/admin/fiches", { method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" }, body: JSON.stringify({ extrait: { id: f.id, pages: x.pages, fin: x.fin } }) })
+        .then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error); f.extrait = j.extrait; if (m) m.textContent = ""; edit(); images(); })
+        .catch(function (e) { if (m) m.textContent = "Erreur : " + (e.message || "réessayez"); });
+    };
+    var o = { id: id, jourJ: jour || "", heure: ficheHeure(), aPost: true, aX: true, item: null, imgs: null,
       programmer: function (quand, p, st, x) {
-        return imgs.then(function (v) { return Promise.all([p || x ? envoyerData(v.post) : "", st ? envoyerData(v.story) : ""]); }).then(function (u) {
-          return igq({ id: id, type: "fiche", titre: titre, quand: quand.toISOString(), legende: modalCap.ig || titre, post: p && u[0] ? [u[0]] : [], story: u[1] || "",
-            x: x && u[0] ? { texte: modalCap.tw || titre, images: [u[0]] } : null }); }); },
-      ignorer: function () { return igq({ id: id, ignore: true, type: "fiche", titre: titre }); },
+        return cur.then(function (v) {
+          var urls = [], su = "", l = p ? v.slides : (x ? v.slides.slice(0, 4) : []);
+          return l.reduce(function (pr, u) { return pr.then(function () { return envoyerData(u).then(function (w) { urls.push(w); }); }); }, Promise.resolve())
+            .then(function () { return st ? envoyerData(v.story).then(function (w) { su = w; }) : null; })
+            .then(function () { var titre = "Fiche " + ficheNo(f) + " · " + f.t;
+              return igq({ id: id, type: "fiche", titre: titre, quand: quand.toISOString(), legende: modalCap.ig || titre, post: p ? urls : [], story: su,
+                x: x && urls.length ? { texte: modalCap.tw || titre, images: urls.slice(0, 4) } : null }); });
+        }); },
+      ignorer: function () { return igq({ id: id, ignore: true, type: "fiche", titre: "Fiche " + ficheNo(f) + " · " + f.t }); },
       annuler: function () { return igq({ id: id, del: true }); } };
-    var box = $("#fiig"); box.innerHTML = '<div class="iglab">Chargement…</div>';
+    var box = $("#fiig");
+    var images = function () {
+      var strip = $("#fistrip"); if (!strip) return; strip.innerHTML = '<div class="hbprog">Préparation des images…</div>';
+      cur = ficheImages(f, function (i, n) { var pp = strip.querySelector(".hbprog"); if (pp) pp.textContent = "Préparation de l'extrait… " + i + " / " + n; });
+      o.imgs = cur.then(function (v) { return { post: { _url: v.post }, story: { _url: v.story } }; });
+      cur.then(function (v) { if (!strip.isConnected) return; $("#fican").textContent = "Carrousel · " + v.slides.length + " image" + (v.slides.length > 1 ? "s" : "") + " + story";
+        strip.innerHTML = v.slides.concat([v.story]).map(function (u, i) { return '<img src="' + u + '" data-fiz="' + i + '" alt="Image ' + (i + 1) + '">'; }).join(""); })
+        .catch(function (er) { if (strip.isConnected) strip.innerHTML = '<div class="igerr">' + esc(er.message || "Images impossibles à préparer") + '</div>'; });
+      if (box._o) igUI(box, o);
+    };
+    edit(); images();
+    modal.addEventListener("click", function (ev) {
+      var z = ev.target.closest("[data-fiz]"); if (z) { cur.then(function (v) { lightboxSuite(v.slides.concat([v.story]), +z.dataset.fiz); }); return; }
+      if (ev.target.closest("[data-fiaut]")) { if (liens.length) { iv = (iv + 1) % liens.length; lienAff(); } return; }
+      var cp = ev.target.closest("[data-ficp]"); if (cp) { var tx = $("#filien").textContent; (navigator.clipboard ? navigator.clipboard.writeText(tx) : Promise.reject()).then(function () { cp.classList.add("ok"); setTimeout(function () { cp.classList.remove("ok"); }, 1200); }).catch(function () { alert("Copie impossible"); }); return; }
+      var x = f.extrait || { pages: [], fin: "grille" };
+      var rx = ev.target.closest("[data-fxx]"); if (rx) { var l = x.pages.slice(); l.splice(+rx.dataset.fxx, 1); sauverEx({ pages: l, fin: x.fin }); return; }
+      var lf = ev.target.closest("[data-fxl]"); if (lf) { var i = +lf.dataset.fxl, l2 = x.pages.slice(); if (i > 0) { var tmp = l2[i - 1]; l2[i - 1] = l2[i]; l2[i] = tmp; sauverEx({ pages: l2, fin: x.fin }); } return; }
+      var fn = ev.target.closest("[data-fxfin]"); if (fn) { if (fn.dataset.fxfin !== x.fin) sauverEx({ pages: x.pages, fin: fn.dataset.fxfin }); return; }
+    });
+    modal.addEventListener("change", function (ev) {
+      if (!ev.target.matches("[data-fxadd]")) return; var fl = [].slice.call(ev.target.files || []); if (!fl.length) return;
+      var x = f.extrait || { pages: [], fin: "grille" }, l = x.pages.slice(), m = $("#calmsg");
+      fl.sort(function (a, b) { return a.name.localeCompare(b.name, "fr", { numeric: true }); });
+      fl.slice(0, 8 - l.length).reduce(function (pr, file, k) { return pr.then(function () { if (m) m.textContent = "Envoi des pages… " + (k + 1) + " / " + fl.length;
+        return fetch("/api/admin/image", { method: "POST", credentials: "same-origin", headers: { "content-type": file.type || "image/jpeg" }, body: file }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "Envoi impossible"); l.push(j.url.replace(/^https?:\/\/[^/]+/, "")); }); }); }); }, Promise.resolve())
+        .then(function () { return sauverEx({ pages: l, fin: x.fin }); }).catch(function (e) { if (m) m.textContent = "Erreur : " + (e.message || "réessayez"); });
+    });
+    box.innerHTML = '<div class="iglab">Chargement…</div>';
     fetch("/api/admin/igq?id=" + encodeURIComponent(id), { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (j) { o.item = j.item; }).catch(function () {}).then(function () { if (box.isConnected) igUI(box, o); });
   }
   document.addEventListener("click", function (ev) {
