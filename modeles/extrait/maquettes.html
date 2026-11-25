@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes extrait · FuryoGang</title>
+<!-- Will, 25/11/2026 : carrousel « Extrait » après la fiche (post Instagram / X 1080 × 1440) : 3 à 5 pages du premier chapitre,
+     la page la plus grande possible, logo FuryoGang en haut au centre, « Extrait » + compteur, crédits toujours visibles dans un bandeau en bas,
+     puis une dernière image qui pousse vers la fiche (tomes en éventail). Pages de test : CROWS T.1 (Kana), à ne pas mettre en ligne. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#2a2a2e}
+.w{display:inline-block;vertical-align:top;margin:20px}.w>b{display:block;font:800 22px system-ui;color:#fff;margin-bottom:10px}
+.s{position:relative;overflow:hidden;width:1080px;height:1440px;background:#000;color:#fff;font-family:I}
+.s *{box-sizing:border-box}
+.top{position:absolute;left:0;right:0;top:0;height:110px;background:#000;display:flex;align-items:center;justify-content:center;z-index:5}
+.top img{width:200px}
+.top .g,.top .d{position:absolute;top:50%;transform:translateY(-50%);font:700 34px/1 A;text-transform:uppercase;letter-spacing:.12em}
+.top .g{left:56px;color:#F2C14E}.top .d{right:56px;color:#fff}.top .d span{color:rgba(255,255,255,.45)}
+.bas{position:absolute;left:0;right:0;bottom:0;height:90px;background:#000;border-top:6px solid #F2C14E;display:flex;align-items:center;justify-content:center;z-index:5;font:600 24px I;color:rgba(255,255,255,.75);letter-spacing:.01em}
+.bas b{color:#fff;font-weight:700;margin-right:10px}
+.pg{position:absolute;left:50%;transform:translateX(-50%);display:block;background:#fff}
+/* A : bandeaux, page centrée */
+.A .pg{top:110px;height:1234px;width:868px}
+/* B : texte vertical sur le côté */
+.B .pg{top:110px;height:1234px;width:868px;left:56px;transform:none}
+.B .vt{position:absolute;right:28px;top:140px;bottom:120px;writing-mode:vertical-rl;display:flex;align-items:center;justify-content:space-between;font:700 40px/1 A;text-transform:uppercase;letter-spacing:.3em;color:#F2C14E;z-index:5}
+.B .vt span{color:#fff;letter-spacing:.1em}
+/* C : pastilles sur la page */
+.C .pg{top:110px;height:1234px;width:868px}
+.C .pil{position:absolute;top:134px;z-index:6;font:700 32px/1 A;text-transform:uppercase;letter-spacing:.08em;padding:12px 18px 13px;border-radius:10px}
+.C .pil.g{left:130px;background:#BC002D;color:#fff}.C .pil.d{right:130px;background:#000;color:#fff}
+/* D : fond crème, page bordée de blanc */
+.D{background:#F2EFE9}.D .lab{position:absolute;left:0;right:0;top:132px;display:flex;justify-content:space-between;padding:0 70px;font:700 32px/1 A;text-transform:uppercase;letter-spacing:.1em;color:#0c0c0e;z-index:5}.D .lab i{font-style:normal;color:#BC002D}
+.D .pg{top:186px;height:1136px;width:800px;border:10px solid #fff;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+/* E : pleine largeur, bandeaux par-dessus */
+.E .pg{top:60px;width:1080px;height:1536px;left:0;transform:none;object-fit:cover}
+.E .top{background:linear-gradient(180deg,#000 55%,rgba(0,0,0,0))}.E .bas{background:#000}
+/* F : barre de progression sous le bandeau */
+.F .prog{position:absolute;left:56px;right:56px;top:126px;display:flex;gap:10px;z-index:5}.F .prog i{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.22)}.F .prog i.on{background:#F2C14E}
+.F .pg{top:150px;height:1180px;width:830px}
+/* Dernière image : vers la fiche */
+.fin{background:#000}
+.fin .mz{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;transform:rotate(-4deg) scale(1.15);opacity:.22}
+.fin .mz img{width:100%;height:480px;object-fit:cover;filter:grayscale(1) contrast(1.1)}
+.fin .vl{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 45%,rgba(0,0,0,.2),rgba(0,0,0,.85) 80%)}
+.fin .tt{position:absolute;left:0;right:0;top:170px;text-align:center;z-index:3}
+.fin .tt small{display:block;font:700 30px/1 A;text-transform:uppercase;letter-spacing:.3em;color:#F2C14E}
+.fin .tt h2{margin:18px 0 0;font:700 120px/.95 A;text-transform:uppercase}
+.fin .fan{position:absolute;left:0;right:0;top:470px;height:560px;z-index:3}
+.fin .fan img{position:absolute;border:8px solid #F2EFE9;object-fit:cover}
+.fin .url{position:absolute;left:0;right:0;bottom:150px;text-align:center;z-index:4}
+.fin .url small{display:block;font:600 30px I;color:rgba(255,255,255,.7)}
+.fin .url b{display:block;margin-top:14px;font:700 64px/1 A;text-transform:uppercase;letter-spacing:.04em}.fin .url b em{font-style:normal;color:#F2C14E}
+.fin .grille{position:absolute;left:150px;right:150px;top:430px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;z-index:3}
+.fin .grille img{width:100%;aspect-ratio:7/10;object-fit:cover;border:6px solid #F2EFE9}
+.fin .grille img.un{grid-column:span 2;grid-row:span 2}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+var P = [1, 2, 3, 4, 5].map(function (i) { return "m/crows-" + i + ".jpg"; }), N = P.length;
+var CR = '<b>CROWS</b>© Hiroshi Takahashi / Akita Shoten · Édition française Kana';
+var TOP = function (g, d) { return '<div class="top">' + (g || "") + '<img src="/img/social/logo-blanc.png" alt="">' + (d || "") + "</div>"; };
+var BAS = '<div class="bas">' + CR + "</div>";
+var T = ["9782505127529", "9782505127536", "9782505127543", "9782505127550", "9782505127567", "9782505127574", "9782505127581", "9782505127611"].map(function (i) { return "/api/couv?w=500&u=" + encodeURIComponent("https://bdi.dlpdomain.com/album/" + i + "-couv-M480x680.jpg"); });
+function page(v, i) {
+  var img = '<img class="pg" src="' + P[i] + '" alt="">', cpt = (i + 1) + "<span> / " + N + "</span>";
+  if (v === "A") return '<div class="s A">' + TOP('<span class="g">Extrait</span>', '<span class="d">' + cpt + "</span>") + img + BAS + "</div>";
+  if (v === "B") return '<div class="s B">' + TOP() + img + '<div class="vt">Extrait<span>' + (i + 1) + " / " + N + "</span></div>" + BAS + "</div>";
+  if (v === "C") return '<div class="s C">' + TOP() + img + '<span class="pil g">Extrait</span><span class="pil d">' + (i + 1) + " / " + N + "</span>" + BAS + "</div>";
+  if (v === "D") return '<div class="s D">' + TOP() + '<div class="lab"><span>Extrait · <i>CROWS</i></span><span>' + (i + 1) + " / " + N + "</span></div>" + img + BAS + "</div>";
+  if (v === "E") return '<div class="s E">' + img + TOP('<span class="g">Extrait</span>', '<span class="d">' + cpt + "</span>") + BAS + "</div>";
+  var pr = ""; for (var k = 0; k < N; k++) pr += '<i class="' + (k <= i ? "on" : "") + '"></i>';
+  return '<div class="s F">' + TOP('<span class="g">Extrait</span>', '<span class="d">' + cpt + "</span>") + '<div class="prog">' + pr + "</div>" + img + BAS + "</div>";
+}
+function fan(l) {
+  var n = l.length, pos = [], o = { gros: 340, petit: 230, pas: 230, ecart: 40, haut: 80 };
+  for (var i = 0; i < n; i++) pos.push(i - (n - 1) / 2);
+  var ordre = pos.slice().sort(function (a, b) { return Math.abs(a) - Math.abs(b) || a - b; });
+  return l.map(function (u, k) { var d = ordre[k], ad = Math.abs(d), c = ad < .6, w = c ? o.gros : o.petit, h = Math.round(w * 1.42);
+    return '<img src="' + u + '" style="left:' + Math.round(540 - w / 2 + d * o.pas + (ad >= 1 ? Math.sign(d) * o.ecart : 0)) + "px;top:" + (c ? 0 : o.haut) + "px;width:" + w + "px;height:" + h + "px;z-index:" + Math.round(10 - ad * 2) + ";transform:rotate(" + d * 4 + "deg)" + (c ? "" : ";filter:brightness(.8)") + '">'; }).join("");
+}
+var mz = ""; for (var j = 0; j < 12; j++) mz += '<img src="' + P[j % N] + '">';
+var FIN1 = '<div class="s fin"><div class="mz">' + mz + '</div><div class="vl"></div>' + TOP() + '<div class="tt"><small>La suite dans le tome 1</small><h2>Crows</h2></div><div class="fan">' + fan(T.slice(0, 5)) + '</div><div class="url"><small>La fiche complète, les tomes et l\'extrait</small><b>furyogang.com<em>/series/crows</em></b></div>' + BAS + "</div>";
+var FIN2 = '<div class="s fin"><div class="mz">' + mz + '</div><div class="vl"></div>' + TOP() + '<div class="tt"><small>Chez Kana depuis 2025</small><h2>Crows</h2></div><div class="grille">' + T.slice(0, 1).map(function (u) { return '<img class="un" src="' + u + '">'; }).join("") + T.slice(1, 5).map(function (u) { return '<img src="' + u + '">'; }).join("") + '</div><div class="url" style="bottom:130px"><small>La fiche complète</small><b>furyogang.com<em>/series/crows</em></b></div>' + BAS + "</div>";
+var S = [];
+var NV = { A: "bandeau : Extrait à gauche, compteur à droite", B: "Extrait et compteur à la verticale, sur le côté", C: "pastilles posées sur la page", D: "fond crème, page bordée de blanc", E: "pleine largeur (page un peu rognée)", F: "barre de progression" };
+["A", "B", "C", "D", "E", "F"].forEach(function (v, k) { S.push([v + " · " + NV[v] + " (page " + (k % N + 1) + ")", page(v, k % N)]); });
+S.push(["A · page 2 (pour voir le carrousel)", page("A", 1)]);
+S.push(["Fin 1 · tomes en éventail", FIN1]);
+S.push(["Fin 2 · le tome 1 en grand et tous les tomes", FIN2]);
+document.getElementById("out").innerHTML = S.map(function (x, i) { return '<div class="w"><b>' + x[0] + '</b><div id="s' + i + '">' + x[1] + "</div></div>"; }).join("");
+document.fonts.ready.then(function () { setTimeout(function () { document.body.dataset.ok = 1; }, 3000); });
+</script>
+</body>
+</html>
