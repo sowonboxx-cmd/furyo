@@ -59,9 +59,9 @@
     '.hb .fjp{background:#fff radial-gradient(circle at 50% 50%,#BC002D 28%,#fff 29%)}.hb .ffr{background:linear-gradient(90deg,#1f4fd1 33.3%,#fff 33.3% 66.6%,#E1000F 66.6%)}' +
     '.hb .mag{display:flex;gap:26px;align-items:flex-start;background:rgba(14,14,16,.72);border-radius:20px;padding:24px}' +
     '.hb .mag h5{margin:0;font:700 44px/1 FGAntonio;text-transform:uppercase;letter-spacing:.02em}.hb .mag h5 small{display:block;font:600 22px FGInter;color:#F2C14E;letter-spacing:.06em;margin-top:8px;text-transform:none}' +
-    '.hb .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}' +
+    '.hb .chips{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:18px}' +
     '.hb .chip{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 16px 3px;border-radius:10px;background:#F2EFE9;color:#121214;font:700 31px/1 FGAntonio;text-transform:uppercase;letter-spacing:.02em}' +
-    '.hb .chip i{font-style:normal;color:#CB002F}.hb .chip.c{background:#F2C14E}.hb .chip.p{background:transparent;border:2px dashed rgba(242,239,233,.55);color:rgba(242,239,233,.75)}.hb .chip.p i{color:rgba(242,239,233,.75);font:600 20px FGInter;text-transform:none}' +
+    '.hb .chip i{font-style:normal;color:#CB002F}.hb .chip.c{background:#F2C14E}.hb .chip.pz{background:transparent;border:2px dashed rgba(242,239,233,.55);color:rgba(242,239,233,.75)}.hb .chip.pz i{color:rgba(242,239,233,.75);font:600 20px/1 FGInter;text-transform:none}.hb .chip{line-height:1;vertical-align:middle}' +
     '.hb .bas{position:absolute;left:0;right:0;top:1560px;text-align:center;z-index:5}.hb .bas img{height:74px}' +
     '.hb .bas .l1{font:600 34px/1.25 FGInter;color:#F2EFE9;margin-top:22px}.hb .bas .l2{font:700 52px/1 FGAntonio;color:#F2C14E;letter-spacing:.04em;text-transform:uppercase;margin-top:10px}';
 
@@ -161,9 +161,8 @@
     // Couverture : la news au centre en plus grand (choix de Will, sinon le nouvel arc, sinon la 1re).
     if (N.length) {
       var ci = N.findIndex(function (n) { return n.id === D.centre; }); if (ci < 0) ci = N.findIndex(function (n) { return (n.cats || []).some(function (c) { return c.k === "arc"; }); }); if (ci < 0) ci = 0;
-      var autres = N.filter(function (_, i) { return i !== ci; }).slice(0, 4), rang = [autres[0], autres[1], N[ci], autres[2], autres[3]];
-      var fan = rang.map(function (n, i) { if (!n) return ""; var d = i - 2, f = !d, w = f ? 280 : 186, h = f ? 398 : 264;
-        return '<div style="position:absolute;left:' + (540 - w / 2 + d * 196 + (d > 0 ? 40 : d < 0 ? -40 : 0)) + "px;top:" + (f ? 0 : 70) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)">' + cvH(n._cv, w, h, f ? "" : "filter:brightness(.82)") + "</div>"; }).join("");
+      var autres = N.filter(function (_, i) { return i !== ci; }).slice(0, 4), rang = null;
+      var fan = eventail([N[ci]].concat(autres), function (y) { return y._cv; }, EV_POST);
       S.push('<div class="hb">' + mos("r", 0, nm) + HD + teteCouv(per, "Les news de la semaine", 112, D.pastille) +
         '<div style="position:absolute;left:0;right:0;top:400px;height:420px;z-index:3">' + fan + '</div>' +
         '<div style="position:absolute;left:70px;right:70px;top:860px;z-index:3;display:flex;flex-direction:column;gap:14px">' + N.slice(0, 5).map(function (n) { return '<div style="display:flex;align-items:center;gap:20px;background:rgba(18,18,20,.78);border-radius:14px;padding:15px 20px">' + pill({ col: n._col, cat: n._cat }) + '<b style="font:700 46px/1 FGAntonio;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(n._t) + "</b></div>"; }).join("") + "</div></div>");
@@ -184,9 +183,8 @@
   }
   function storyNews(D) {
     var N = D.news, ci = N.findIndex(function (n) { return n.id === D.centre; }); if (ci < 0) ci = N.findIndex(function (n) { return (n.cats || []).some(function (c) { return c.k === "arc"; }); }); if (ci < 0) ci = 0;
-    var autres = N.filter(function (_, i) { return i !== ci; }).slice(0, 4), rang = [autres[0], autres[1], N[ci], autres[2], autres[3]], gros = 430;
-    var fan = rang.map(function (n, i) { if (!n) return ""; var d = i - 2, f = !d, w = f ? gros : Math.round(gros * .66), h = Math.round(w * 1.42);
-      return '<div style="position:absolute;left:' + (540 - w / 2 + d * Math.round(gros * .66) + (d > 0 ? 50 : d < 0 ? -50 : 0)) + "px;top:" + (f ? 0 : Math.round(gros * .3)) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)">' + cvH(n._cv, w, h, f ? "" : "filter:brightness(.85)") + "</div>"; }).join("");
+    var autres = N.filter(function (_, i) { return i !== ci; }).slice(0, 4), rang = null;
+    var fan = eventail([N[ci]].concat(autres), function (y) { return y._cv; }, EV_STORY);
     var noms = N.slice(0, 5).map(function (n) { return esc(n._t); }), l1 = noms.slice(0, 3).join(" · "), l2 = noms.slice(3).join(" · ");
     return '<div class="hb st">' + mos("n", 9, melange(MOS, hash(D.du) + 1), 70) +
       '<div style="position:absolute;left:0;right:0;top:190px;z-index:3"><div style="text-align:center"><span style="display:inline-block;background:#F2C14E;color:#121214;font:700 40px/1 FGAntonio;letter-spacing:.12em;padding:12px 22px 14px;border-radius:10px;text-transform:uppercase">' + periode(D.du, D.au) + '</span></div>' +
@@ -228,14 +226,25 @@
     var ombre = fond === "y" ? "none" : "0 6px 30px rgba(60,0,10,.6)", col = fond === "y" ? "#121214" : "#F2EFE9";
     return '<div style="position:absolute;left:0;right:0;top:' + (pastille ? 186 : 196) + 'px;text-align:center;z-index:3">' + (pastille ? '<span class="pdate' + (fond === "y" ? " k" : "") + '">' + per + "</span>" : '<div class="lab"><i></i><span>' + per + "</span><i></i></div>") +
       '<div class="t" style="font-size:' + taille + 'px;margin-top:' + (pastille ? 24 : 30) + 'px;white-space:nowrap;color:' + col + ';text-shadow:' + ombre + '">' + titre + "</div></div>"; };
+  // Éventail de couvertures toujours centré (Will, 25/11/2026) : 5 → la grande au milieu ; 4, 3, 2 → resserrées au centre, sans vide à droite.
+  // l : liste (la 1re = celle mise en avant), u(x) : image ; o.gros / o.petit (largeur), o.pas (écart), o.haut (décalage des petites).
+  var eventail = function (l, u, o) {
+    l = l.filter(Boolean).slice(0, 5); var n = l.length; if (!n) return "";
+    var pos = []; for (var i = 0; i < n; i++) pos.push(i - (n - 1) / 2);
+    var ordre = pos.slice().sort(function (a, b) { return Math.abs(a) - Math.abs(b) || a - b; });
+    return l.map(function (x, k) { var d = ordre[k], ad = Math.abs(d), centre = ad < .6, impair = n % 2 === 1;
+      var w = centre ? (impair ? o.gros : Math.round((o.gros + o.petit) / 2) + 10) : o.petit, h = Math.round(w * 1.42), top = centre ? (impair ? 0 : Math.round(o.haut * .35)) : o.haut;
+      var x0 = 540 - w / 2 + d * o.pas + (ad >= 1 ? (d > 0 ? 1 : -1) * o.ecart : 0);
+      return '<div style="position:absolute;left:' + Math.round(x0) + "px;top:" + top + "px;z-index:" + Math.round(10 - ad * 2) + ";transform:rotate(" + (d * 3).toFixed(1) + 'deg)">' + cvH(u(x), w, h, centre && impair ? "" : "filter:brightness(" + (centre ? .92 : .84) + ")") + "</div>"; }).join("");
+  };
+  var EV_POST = { gros: 280, petit: 186, pas: 196, ecart: 40, haut: 70 }, EV_STORY = { gros: 430, petit: 284, pas: 284, ecart: 50, haut: 129 };
   var drap = function (pays, w) { w = w || 46; return '<i class="flag ' + (pays === "France" ? "ffr" : "fjp") + '" style="width:' + w + "px;height:" + Math.round(w * 2 / 3) + 'px;border-radius:3px"></i>'; };
   function slidesSorties(D) {
     var S = [], per = periode(D.du, D.au), nm = melange(MOS, hash(D.du) + 11), tout = melePays(D);
     // Couverture : éventail (une sortie France au centre si possible), sommaire drapeau + série + tome.
     if (tout.length) {
-      var c0 = tout[0], autres = tout.slice(1, 5), rang = [autres[0], autres[1], c0, autres[2], autres[3]];
-      var fan = rang.map(function (x, i) { if (!x) return ""; var d = i - 2, f = !d, w = f ? 280 : 186, h = f ? 398 : 264;
-        return '<div style="position:absolute;left:' + (540 - w / 2 + d * 196 + (d > 0 ? 40 : d < 0 ? -40 : 0)) + "px;top:" + (f ? 0 : 70) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)">' + cvH(x.cover, w, h, f ? "" : "filter:brightness(.82)") + "</div>"; }).join("");
+      var c0 = tout[0], autres = tout.slice(1, 5), rang = null;
+      var fan = eventail([c0].concat(autres), function (y) { return y.cover; }, EV_POST);
       var lst = tout.slice(0, 5); // 5 lignes au sommaire, puis « + N autres sorties » (Will, 25/11/2026)
       S.push('<div class="hb">' + mos(D.fond || "r", 0, nm) + HD + teteCouv(per, "Les sorties de la semaine", 100, D.pastille, D.fond) +
         '<div style="position:absolute;left:0;right:0;top:400px;height:420px;z-index:3">' + fan + '</div>' +
@@ -276,9 +285,8 @@
     return S;
   }
   function storySorties(D) {
-    var tout = melePays(D), autres = tout.slice(1, 5), rang = [autres[0], autres[1], tout[0], autres[2], autres[3]], gros = 430;
-    var fan = rang.map(function (x, i) { if (!x) return ""; var d = i - 2, f = !d, w = f ? gros : Math.round(gros * .66), h = Math.round(w * 1.42);
-      return '<div style="position:absolute;left:' + (540 - w / 2 + d * Math.round(gros * .66) + (d > 0 ? 50 : d < 0 ? -50 : 0)) + "px;top:" + (f ? 0 : Math.round(gros * .3)) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)">' + cvH(x.cover, w, h, f ? "" : "filter:brightness(.85)") + "</div>"; }).join("");
+    var tout = melePays(D), autres = tout.slice(1, 5), rang = null;
+    var fan = eventail([tout[0]].concat(autres), function (y) { return y.cover; }, EV_STORY);
     var noms = tout.slice(0, 5).map(function (x) { return esc(titreS(x)); }), l1 = noms.slice(0, 3).join(" · "), l2 = noms.slice(3).join(" · ");
     return '<div class="hb st">' + mos("n", 9, melange(MOS, hash(D.du) + 5), 70) +
       '<div style="position:absolute;left:0;right:0;top:190px;z-index:3"><div style="text-align:center"><span style="display:inline-block;background:#F2C14E;color:#121214;font:700 40px/1 FGAntonio;letter-spacing:.12em;padding:12px 22px 14px;border-radius:10px;text-transform:uppercase">' + periode(D.du, D.au) + '</span></div>' +
@@ -315,31 +323,41 @@
         if (!g.cv && x.cover && !enLigne) g.cv = x.cover;
         if (enLigne && !g.cv && se && se.cover) g.cv = se.cover; // en ligne : pas de couverture de magazine → le tome de la série
       });
-      var L = ordre.map(function (k) { var g = G[k]; g.sous = (g.m === "En ligne" ? g.plat.join(" · ") : (g.n ? g.n + " · " : "")) + (g.m === "En ligne" ? " · " : "") + g.jours.join(" et "); g.all = g.ch.concat(g.pz); return g; })
+      var L = ordre.map(function (k) { var g = G[k]; g.sous = (g.m === "En ligne" ? "" : (g.n ? g.n + " · " : "")) + g.jours.join(" et "); // en ligne : pas le nom des sites, trop long (Will, 25/11/2026)
+        var vus = {}; g.ch.forEach(function (c) { vus[c[0]] = 1; }); g.pz = g.pz.filter(function (c) { return !vus[c[0]]; }); g.all = g.ch.concat(g.pz); return g; })
         .filter(function (g) { return g.ch.length; });
       return { du: du, au: au, mags: L, nch: L.reduce(function (s, g) { return s + g.ch.length; }, 0) };
     });
   }
-  var chip = function (c) { return c[1] === "p" ? '<span class="chip p">' + esc(c[0]) + " <i>pause</i></span>" : '<span class="chip' + (c[2] ? " c" : "") + '">' + esc(c[0]) + (c[1] ? " <i>" + esc(c[1]) + "</i>" : "") + "</span>"; };
+  var chip = function (c) { return c[1] === "p" ? '<span class="chip pz">' + esc(c[0]) + " <i>pause</i></span>" : '<span class="chip' + (c[2] ? " c" : "") + '">' + esc(c[0]) + (c[1] ? " <i>" + esc(c[1]) + "</i>" : "") + "</span>"; };
+  // Hauteur estimée d'un bloc magazine (pour ne jamais déborder en bas) : pastilles Antonio 31 px ≈ 14,5 px par lettre.
+  var largeurChip = function (c) { return Math.round(String(c[0]).length * 14.5 + 34 + (c[1] === "p" ? 66 : c[1] ? 12 + String(c[1]).length * 15 : 0)); };
+  var hautMag = function (g, larg) { var lg = 0, rangs = 1; g.all.forEach(function (c) { var w = largeurChip(c); if (lg && lg + 12 + w > larg) { rangs++; lg = w; } else lg += (lg ? 12 : 0) + w; });
+    return Math.max(208, 44 + 30 + 18 + rangs * 54 + (rangs - 1) * 12) + 48; };
+  var blocMag = function (g) { return '<div class="mag"><div class="cv" style="width:150px;height:208px;border-width:5px;box-shadow:none;border-radius:6px"><img src="' + esc(C(g.cv, 400)) + '"></div><div style="flex:1"><h5>' + esc(g.m) + "<small>" + esc(g.sous) + '</small></h5><div class="chips">' + g.all.map(chip).join("") + "</div></div></div>"; };
+  var tetePrepub = function (per, st) { return '<div style="text-align:center"><span class="pdate">' + per + '</span></div><div class="t" style="margin-top:24px;font-size:88px;text-align:center;white-space:nowrap;text-shadow:0 6px 30px rgba(60,0,10,.6)">Prépublication de la semaine</div>'; };
+  var LEGENDE_PP = '<div style="display:flex;justify-content:center;gap:28px;font:600 22px FGInter"><span style="display:inline-flex;align-items:center;gap:10px"><i style="display:inline-block;width:26px;height:18px;border-radius:4px;background:#F2C14E"></i>Pages couleurs</span><span style="display:inline-flex;align-items:center;gap:10px"><i style="display:inline-block;width:26px;height:18px;border-radius:4px;border:2px dashed rgba(242,239,233,.7)"></i>En pause</span><span>le chiffre = n° du chapitre</span></div>';
   function slidesPrepub(D) {
-    var S = [], P = [], per = periode(D.du, D.au), m = melange(MOS, hash(D.du) + 7);
-    for (var i = 0; i < D.mags.length; i += 3) P.push(D.mags.slice(i, i + 3));
+    // Pages remplies selon la hauteur réelle des blocs (Will, 25/11/2026 : le 3e magazine sortait en bas de l'image).
+    var S = [], P = [], per = periode(D.du, D.au), cur = [], dispo = 0, LARG = 736;
+    var place = function (i) { return i === 0 ? 1440 - 410 - 40 : 1440 - 377 - 40; };
+    D.mags.forEach(function (g) { var h = hautMag(g, LARG); if (cur.length && (dispo - h - 22 < 0 || cur.length >= 4)) { P.push(cur); cur = []; } if (!cur.length) dispo = place(P.length); cur.push(g); dispo -= h + 22; });
+    if (cur.length) P.push(cur);
+    // La légende du bas : sur la dernière image s'il reste la place, sinon elle reste sous le dernier bloc.
     P.forEach(function (gs, i) {
-      // Même tête que Sorties et News (Will, 25/11/2026) : date en pastille jaune, « Prépublication de la semaine ».
-      var tt = i ? '<div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:22px;font-size:100px;text-align:center;text-shadow:0 6px 30px rgba(60,0,10,.6)">La suite</div>'
-        : '<div style="text-align:center"><span class="pdate">' + per + '</span></div><div class="t" style="margin-top:24px;font-size:88px;text-align:center;white-space:nowrap;text-shadow:0 6px 30px rgba(60,0,10,.6)">Prépublication de la semaine</div>';
-      S.push('<div class="hb">' + pile(i) + HD + '<div style="position:absolute;left:60px;right:60px;top:' + (i ? 186 : 186) + 'px;z-index:3">' + tt + '<div style="display:flex;flex-direction:column;gap:22px;margin-top:' + (i ? 40 : 46) + 'px">' +
-        gs.map(function (g) { return '<div class="mag"><div class="cv" style="width:150px;height:208px;border-width:5px;box-shadow:none;border-radius:6px"><img src="' + esc(C(g.cv, 400)) + '"></div><div style="flex:1"><h5>' + esc(g.m) + "<small>" + esc(g.sous) + '</small></h5><div class="chips">' + g.all.map(chip).join("") + "</div></div></div>"; }).join("") + "</div></div>" +
-        (i === P.length - 1 ? '<div style="position:absolute;left:0;right:0;bottom:60px;z-index:3;display:flex;justify-content:center;gap:28px;font:600 22px FGInter"><span style="display:inline-flex;align-items:center;gap:10px"><i style="display:inline-block;width:26px;height:18px;border-radius:4px;background:#F2C14E"></i>Pages couleurs</span><span style="display:inline-flex;align-items:center;gap:10px"><i style="display:inline-block;width:26px;height:18px;border-radius:4px;border:2px dashed rgba(242,239,233,.7)"></i>En pause</span><span>le chiffre = n° du chapitre</span></div>' : "") + "</div>");
+      var tt = i ? '<div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:22px;font-size:100px;text-align:center;text-shadow:0 6px 30px rgba(60,0,10,.6)">La suite</div>' : tetePrepub(per);
+      S.push('<div class="hb">' + pile(i) + HD + '<div style="position:absolute;left:60px;right:60px;top:186px;z-index:3">' + tt + '<div style="display:flex;flex-direction:column;gap:22px;margin-top:' + (i ? 40 : 46) + 'px">' +
+        gs.map(blocMag).join("") + "</div>" + (i === P.length - 1 ? '<div style="margin-top:30px">' + LEGENDE_PP + "</div>" : "") + "</div></div>");
     });
     return S;
   }
+  // Story : le même design que le post (Will, 25/11/2026) : pastille + titre toujours en haut, mêmes blocs, même taille ; ce qui ne tient pas est annoncé.
   function storyPrepub(D) {
-    var L = D.mags.slice(0, 7), rows = L.length, top = Math.round(250 + Math.max(0, (7 - rows) * 60));
-    return '<div class="hb st">' + pile(3, 1920) + '<div style="position:absolute;left:0;right:0;top:' + top + 'px;z-index:3"><div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:22px;font-size:120px;text-align:center">' + periode(D.du, D.au) + "</div></div>" +
-      '<div style="position:absolute;left:56px;right:56px;top:' + (top + 210) + 'px;z-index:3;display:flex;flex-direction:column;gap:10px">' + L.map(function (g) {
-        return '<div style="display:flex;gap:20px;align-items:center;background:rgba(18,18,22,.8);border-radius:14px;padding:8px 14px"><div class="cv" style="width:80px;height:110px;border-width:4px;box-shadow:none;border-radius:5px"><img src="' + esc(C(g.cv, 200)) + '"></div><div style="flex:1;min-width:0"><div style="font:700 34px/1 FGAntonio;text-transform:uppercase;color:#F2C14E">' + esc(g.m) + '</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">' +
-          g.ch.slice(0, 5).map(function (c) { return '<span class="chip" style="height:44px;font-size:27px;padding:0 12px 3px' + (c[2] ? ";background:#F2C14E" : "") + '">' + esc(c[0]) + (c[1] ? " <i>" + esc(c[1]) + "</i>" : "") + "</span>"; }).join("") + "</div></div></div>"; }).join("") + "</div>" +
+    var per = periode(D.du, D.au), dispo = 1530 - 470, L = [], reste = 0;
+    D.mags.forEach(function (g) { var h = hautMag(g, 736); if (!reste && dispo - h >= 0) { L.push(g); dispo -= h + 22; } else reste++; });
+    return '<div class="hb st">' + pile(3, 1920) + '<div style="position:absolute;left:60px;right:60px;top:190px;z-index:3">' + tetePrepub(per, 1) +
+      '<div style="display:flex;flex-direction:column;gap:22px;margin-top:46px">' + L.map(blocMag).join("") + "</div>" +
+      (reste ? '<div style="margin-top:22px;text-align:center;font:700 38px FGAntonio;text-transform:uppercase;letter-spacing:.06em;color:#F2C14E">+ ' + reste + " magazine" + (reste > 1 ? "s" : "") + " dans le post</div>" : "") + "</div>" +
       '<div class="bas"><img src="/img/social/logo-blanc.png"><div class="l1">Tout le détail dans notre dernier post et sur</div><div class="l2">furyogang.com/japon</div></div></div>';
   }
   function legendePrepub(D) {
@@ -366,6 +384,7 @@
     sorties: function (du, avance) { return sortiesDonnees(du).then(function (D) { var h = slidesSorties(D); return tout(h, storySorties(D), avance).then(function (r) { r.infos = D; r.legende = legendeSorties(D); return r; }); }); },
     couvNews: function (D, avance) { var h = slidesNews(D); return tout(h.slice(0, 1), storyNews(D), avance).then(function (r) { r.infos = D; return r; }); },
     rendreSorties: function (D, avance) { var h = slidesSorties(D); if (D.seulCouv) h = h.slice(0, 1); return tout(h, storySorties(D), avance).then(function (r) { r.infos = D; r.legende = legendeSorties(D); return r; }); },
+    _css: function () { return CSSX; }, _pref: function (h) { return pref(h); },
     donneesNews: newsDonnees, donneesPrepub: prepubDonnees, donneesSorties: sortiesDonnees
   };
 })();
