@@ -210,16 +210,18 @@
       return { du: du, au: au, jp: jp, fr: fr, proch: proch };
     });
   }
+  // France et Japon alternés (couverture, story) : les deux pays visibles même quand l'un a beaucoup de sorties.
+  var melePays = function (D) { var r = [], i = 0; while (i < Math.max(D.fr.length, D.jp.length)) { if (D.fr[i]) r.push(D.fr[i]); if (D.jp[i]) r.push(D.jp[i]); i++; } return r; };
   var drap = function (pays, w) { w = w || 46; return '<i class="flag ' + (pays === "France" ? "ffr" : "fjp") + '" style="width:' + w + "px;height:" + Math.round(w * 2 / 3) + 'px;border-radius:3px"></i>'; };
   function slidesSorties(D) {
-    var S = [], per = periode(D.du, D.au), nm = melange(MOS, hash(D.du) + 11), tout = D.fr.concat(D.jp);
+    var S = [], per = periode(D.du, D.au), nm = melange(MOS, hash(D.du) + 11), tout = melePays(D);
     // Couverture : éventail (une sortie France au centre si possible), sommaire drapeau + série + tome.
     if (tout.length) {
       var c0 = tout[0], autres = tout.slice(1, 5), rang = [autres[0], autres[1], c0, autres[2], autres[3]];
       var fan = rang.map(function (x, i) { if (!x) return ""; var d = i - 2, f = !d, w = f ? 280 : 186, h = f ? 398 : 264;
         return '<div style="position:absolute;left:' + (540 - w / 2 + d * 196 + (d > 0 ? 40 : d < 0 ? -40 : 0)) + "px;top:" + (f ? 0 : 70) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)">' + cvH(x.cover, w, h, f ? "" : "filter:brightness(.82)") + "</div>"; }).join("");
       var lst = tout.slice(0, tout.length > 5 ? 4 : 5);
-      S.push('<div class="hb">' + mos("r", 0, nm) + HD + '<div style="position:absolute;left:0;right:0;top:196px;text-align:center;z-index:3"><div class="lab"><i></i><span>' + per + '</span><i></i></div>' +
+      S.push('<div class="hb">' + mos(D.noir ? "n" : "r", 0, nm) + HD + '<div style="position:absolute;left:0;right:0;top:196px;text-align:center;z-index:3"><div class="lab"><i></i><span>' + per + '</span><i></i></div>' +
         '<div class="t" style="font-size:100px;margin-top:30px;white-space:nowrap;text-shadow:0 6px 30px rgba(60,0,10,.6)">Les sorties de la semaine</div></div>' +
         '<div style="position:absolute;left:0;right:0;top:400px;height:420px;z-index:3">' + fan + '</div>' +
         '<div style="position:absolute;left:70px;right:70px;top:860px;z-index:3;display:flex;flex-direction:column;gap:14px">' + lst.map(function (x) { return '<div style="display:flex;align-items:center;gap:20px;background:rgba(18,18,20,.78);border-radius:14px;padding:13px 20px">' + drap(x.pays) + '<b style="flex:1;min-width:0;font:700 46px/1 FGAntonio;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(titreS(x)) + '</b><span style="background:#C8102E;color:#fff;font:700 32px/1 FGAntonio;padding:7px 10px 9px;border-radius:7px">' + nn(x.n) + "</span></div>"; }).join("") +
@@ -230,9 +232,18 @@
     var item = function (x, w) { return '<div class="so" style="width:' + w + 'px"><span class="tn">' + nn(x.n) + "</span>" + cvH(x.cover, w, Math.round(w * 1.42), "border-width:7px") + "<b>" + esc(titreS(x)) + '</b><span class="d">' + jm(x.date) + "</span></div>"; };
     [["jp", "fjp", "Japon", "#BC002D"], ["fr", "ffr", "France", "#1f4fd1"]].forEach(function (P) {
       var Lt = D[P[0]], fr = P[0] === "fr";
-      for (var p0 = 0; p0 < Lt.length; p0 += 6) {
-        var L = Lt.slice(p0, p0 + 6);
-        var h = '<div class="hb">' + mos("n", 11 + p0, L.map(function (x) { return x.cover; }).concat(nm.slice(0, 6))) + HD + tete(P[1], P[2], P[3], p0 > 0);
+      // Deux images au plus par pays (Will, 25/11/2026) : 6 sur la 1re, 6 sur la « suite » (sans les dates, les couvertures remontent).
+      for (var p0 = 0; p0 < Math.min(Lt.length, 12); p0 += 6) {
+        var L = Lt.slice(p0, p0 + 6), reste = p0 ? Lt.length - 12 : 0;
+        var h = '<div class="hb">' + mos("n", 11 + p0, L.map(function (x) { return x.cover; }).concat(nm.slice(0, 6))) + HD;
+        if (p0) {
+          h += '<div style="position:absolute;left:60px;right:60px;top:172px;z-index:3;display:flex;align-items:center;gap:20px"><i class="flag ' + P[1] + '" style="width:60px;height:40px"></i><div class="t" style="font-size:64px">' + P[2] + '<span style="color:#bdb9b1"> · la suite</span></div></div><div style="position:absolute;left:60px;right:60px;top:262px;height:4px;background:' + P[3] + ';z-index:3"></div>';
+          h += '<div style="position:absolute;left:60px;right:60px;top:' + (L.length > 3 ? 318 : 360) + 'px;display:grid;grid-template-columns:repeat(3,' + (L.length > 3 ? "258px" : "294px") + ');justify-content:center;gap:' + (L.length > 3 ? "44px 56px" : "34px") + ';z-index:3">' + L.map(function (x) { return item(x, L.length > 3 ? 258 : 294); }).join("") + "</div>";
+          if (L.length <= 3) h += '<div style="position:absolute;left:0;right:0;top:1060px;text-align:center;font:900 150px/1 FGNotoJP;color:rgba(255,255,255,.07);letter-spacing:.15em;z-index:2">新刊発売</div>';
+          if (reste > 0) h += '<div style="position:absolute;left:0;right:0;bottom:50px;text-align:center;z-index:3;font:700 40px FGAntonio;text-transform:uppercase;letter-spacing:.06em;color:#F2C14E">+ ' + reste + " autres sur furyogang.com/calendrier</div>";
+          S.push(h + "</div>"); continue;
+        }
+        h += tete(P[1], P[2], P[3]);
         if (L.length === 1) h += '<div class="vt" style="left:60px;top:400px;color:' + (fr ? "#1f4fd1" : "#E5483A") + ';font-size:130px;z-index:3">新刊</div><div class="vt" style="right:60px;top:400px;color:rgba(255,255,255,.12);font-size:130px;z-index:3">発売中</div><div style="position:absolute;left:50%;top:400px;transform:translateX(-50%) rotate(-2deg);z-index:3">' + item(L[0], 520).replace("<b>", '<b style="font-size:58px;text-align:center">').replace('<span class="d">', '<span class="d" style="text-align:center;font-size:32px">') + "</div>";
         else if (L.length === 2) h += '<div style="position:absolute;left:0;right:0;top:1150px;text-align:center;font:900 150px/1 FGNotoJP;color:rgba(255,255,255,.07);letter-spacing:.15em;z-index:2">新刊発売</div><div style="position:absolute;left:60px;right:60px;top:420px;display:flex;justify-content:center;gap:60px;z-index:3">' + L.map(function (x, i) { return '<div style="transform:rotate(' + (i ? 2 : -2) + 'deg)">' + item(x, 400).replace("<b>", '<b style="font-size:50px">') + "</div>"; }).join("") + "</div>";
         else if (L.length === 3) h += '<div style="position:absolute;left:0;right:0;top:1060px;text-align:center;font:900 150px/1 FGNotoJP;color:rgba(255,255,255,.07);letter-spacing:.15em;z-index:2">新刊発売</div><div style="position:absolute;left:60px;right:60px;top:410px;display:grid;grid-template-columns:repeat(3,1fr);gap:34px;z-index:3">' + L.map(function (x) { return item(x, 294); }).join("") + "</div>";
@@ -250,7 +261,7 @@
     return S;
   }
   function storySorties(D) {
-    var tout = D.fr.concat(D.jp), autres = tout.slice(1, 5), rang = [autres[0], autres[1], tout[0], autres[2], autres[3]], gros = 430;
+    var tout = melePays(D), autres = tout.slice(1, 5), rang = [autres[0], autres[1], tout[0], autres[2], autres[3]], gros = 430;
     var fan = rang.map(function (x, i) { if (!x) return ""; var d = i - 2, f = !d, w = f ? gros : Math.round(gros * .66), h = Math.round(w * 1.42);
       return '<div style="position:absolute;left:' + (540 - w / 2 + d * Math.round(gros * .66) + (d > 0 ? 50 : d < 0 ? -50 : 0)) + "px;top:" + (f ? 0 : Math.round(gros * .3)) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)">' + cvH(x.cover, w, h, f ? "" : "filter:brightness(.85)") + "</div>"; }).join("");
     var noms = tout.slice(0, 5).map(function (x) { return esc(titreS(x)); }), l1 = noms.slice(0, 3).join(" · "), l2 = noms.slice(3).join(" · ");
@@ -336,6 +347,7 @@
     news: function (du, reg, avance) { return newsDonnees(du, reg).then(function (D) { var h = slidesNews(D); return tout(h, storyNews(D), avance).then(function (r) { r.infos = D; r.legende = legendeNews(D); return r; }); }); },
     prepub: function (du, avance) { return prepubDonnees(du).then(function (D) { var h = slidesPrepub(D); return tout(h, storyPrepub(D), avance).then(function (r) { r.infos = D; r.legende = legendePrepub(D); return r; }); }); },
     sorties: function (du, avance) { return sortiesDonnees(du).then(function (D) { var h = slidesSorties(D); return tout(h, storySorties(D), avance).then(function (r) { r.infos = D; r.legende = legendeSorties(D); return r; }); }); },
+    rendreSorties: function (D, avance) { var h = slidesSorties(D); return tout(h, storySorties(D), avance).then(function (r) { r.infos = D; r.legende = legendeSorties(D); return r; }); },
     donneesNews: newsDonnees, donneesPrepub: prepubDonnees, donneesSorties: sortiesDonnees
   };
 })();
