@@ -1885,12 +1885,12 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var o = { id: id, jourJ: jour || "", heure: ficheHeure(), aPost: true, aX: true, item: null, imgs: null,
       programmer: function (quand, p, st, x) {
         return cur.then(function (v) {
-          var urls = [], su = "", l = p ? v.slides : (x ? v.slides.slice(0, 4) : []);
+          var urls = [], su = "", l = p || x ? v.slides : [];
           return l.reduce(function (pr, u) { return pr.then(function () { return envoyerData(u).then(function (w) { urls.push(w); }); }); }, Promise.resolve())
             .then(function () { return st ? envoyerData(v.story).then(function (w) { su = w; }) : null; })
             .then(function () { var titre = "Fiche " + ficheNo(f) + " · " + f.t;
               return igq({ id: id, type: "fiche", titre: titre, quand: quand.toISOString(), legende: modalCap.ig || titre, post: p ? urls : [], story: su,
-                x: x && urls.length ? { texte: modalCap.tw || titre, images: urls.slice(0, 4) } : null }); });
+                x: x && urls.length ? { texte: modalCap.tw || titre, images: urls } : null }); });
         }); },
       ignorer: function () { return igq({ id: id, ignore: true, type: "fiche", titre: "Fiche " + ficheNo(f) + " · " + f.t }); },
       annuler: function () { return igq({ id: id, del: true }); } };
