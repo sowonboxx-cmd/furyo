@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Stories pleine page · FuryoGang</title>
+<!-- Will, 25/11/2026 : la story des carrousels n'est plus le post dans un cadre mais une image pleine page stylisée
+     (même DA que les posts), avec en bas le logo et « dans notre dernier post et sur furyogang.com/actus » (ou /japon).
+     Interface Instagram simulée par-dessus (pointillés = zones couvertes). -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#2a2a2e}
+.w{display:inline-block;vertical-align:top;margin:20px}.w>b{display:block;font:800 26px I;color:#fff;margin-bottom:10px}
+.s{position:relative;overflow:hidden;width:1080px;height:1920px;background:#0c0c0e;color:#F2EFE9;font-family:I}
+.mz{position:absolute;inset:0;overflow:hidden}
+.mz .g{position:absolute;left:-300px;top:-300px;width:1700px;display:grid;grid-template-columns:repeat(7,1fr);gap:18px;transform:rotate(-8deg)}
+.mz .g i{display:block;aspect-ratio:7/10;background:center/cover;filter:grayscale(1) contrast(1.2)}
+.mz.r{background:#CB002F}.mz.r .g{opacity:.3;mix-blend-mode:multiply}
+.mz.r::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 40%,rgba(150,0,30,.45),transparent 75%),linear-gradient(180deg,transparent 60%,rgba(90,0,18,.9))}
+.mz.n{background:#0c0c0e}.mz.n .g{opacity:.22}
+.mz.n::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 70% 45% at 50% 42%,rgba(12,12,14,.3),rgba(12,12,14,.85) 80%),linear-gradient(180deg,rgba(12,12,14,.6),transparent 20%,transparent 65%,rgba(12,12,14,.95))}
+.lab{display:flex;justify-content:center;align-items:center;gap:24px;font:700 36px/1 A;letter-spacing:.3em;text-transform:uppercase}
+.lab span{display:block;padding-top:2px;margin-right:-.3em}.lab i{width:100px;height:2px;background:#fff}.lab b{font:900 34px J;color:#F2C14E;letter-spacing:.1em}
+.t{font:700 150px/.92 A;text-transform:uppercase;text-align:center;text-shadow:0 6px 30px rgba(40,0,8,.6)}
+.cv{flex:none;background:#111 center/cover;border:8px solid #F2EFE9;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.pill{display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 18px 3px;box-sizing:border-box;border-radius:10px;font:700 29px/1 A;text-transform:uppercase;letter-spacing:.04em;color:#121214}
+.row{display:flex;align-items:center;gap:20px;background:rgba(14,14,16,.78);border-radius:16px;padding:12px 22px}
+.row b{font:700 50px/1 A;text-transform:uppercase}
+.bas{position:absolute;left:0;right:0;top:1560px;text-align:center;z-index:5}
+.bas img{height:74px}
+.bas .l1{font:600 34px/1.25 I;color:#F2EFE9;margin-top:22px}
+.bas .l2{font:700 52px/1 A;color:#F2C14E;letter-spacing:.04em;text-transform:uppercase;margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:10px;height:62px;padding:0 18px 3px;box-sizing:border-box;border-radius:10px;background:#F2EFE9;color:#121214;font:700 36px/1 A;text-transform:uppercase}
+.chip i{font-style:normal;color:#CB002F}.chip.c{background:#F2C14E}
+.big{font:700 230px/.85 A;color:#F2C14E}
+/* interface Instagram simulée */
+.ig{position:absolute;inset:0;z-index:50;pointer-events:none}
+.ig .bars{position:absolute;left:20px;right:20px;top:17px;display:flex;gap:6px}.ig .bars i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.9)}
+.ig .av{position:absolute;left:35px;top:54px;width:66px;height:66px;border-radius:50%;background:#fff;display:grid;place-items:center;font:900 22px J;color:#c41a2b}
+.ig .nm{position:absolute;left:142px;top:72px;font:600 28px I;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.4)}.ig .nm span{opacity:.75;margin-left:22px}
+.ig .x{position:absolute;right:28px;top:58px;font:300 64px/1 I;color:#fff}
+.ig .say{position:absolute;left:31px;top:1846px;font:600 24px I;color:rgba(255,255,255,.6)}
+.ig .z1,.ig .z2{position:absolute;left:4px;right:4px;border:3px dashed rgba(0,229,255,.9)}.ig .z1{top:4px;height:128px}.ig .z2{top:1836px;height:48px}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+var C = function (u) { return /^\//.test(u) ? u : "https://furyogang.com/api/couv?w=600&u=" + encodeURIComponent(u); };
+var IG = '<div class="ig"><div class="bars"><i></i><i></i><i></i><i></i></div><div class="av">不良</div><div class="nm">furyogang<span>9 min</span></div><div class="x">×</div><div class="say">Envoyer un message…</div><div class="z1"></div><div class="z2"></div></div>';
+var N = [
+  { cat: "Nouvelle série · Japon", col: "#E5483A", t: "Bōryoku Banzai", cv: "/img/news/boryoku-banzai/tome1.jpg" },
+  { cat: "Annonce", col: "#F2C14E", t: "Kabukichō Bengoshi", cv: "/img/news/kabukicho-bengoshi/annonce-perso.jpg" },
+  { cat: "Nouvel arc", col: "#4CC38A", t: "Hangure", cv: "/img/news/hangure-arc/couleur.jpg" },
+  { cat: "Nouvelle édition", col: "#E5483A", t: "GANGKING", cv: "/img/news/gangking-shinsoban/t2.jpg" },
+  { cat: "Fin de série", col: "#bdb9b1", t: "Sakamoto Days", cv: "https://furyo.pages.dev/couvertures/9784088852355-hd.jpg" }
+];
+var MOS = [];
+var mos = function (k, d) { var h = '<div class="mz ' + k + '"><div class="g">'; for (var j = 0; j < 70; j++) h += '<i style="background-image:url(' + C(MOS[(j + d) % MOS.length]) + ')"></i>'; return h + "</div></div>"; };
+var bas = function (l2) { return '<div class="bas"><img src="/img/social/logo-blanc.png" alt=""><div class="l1">Tout le détail dans notre dernier post et sur</div><div class="l2">' + l2 + "</div></div>"; };
+var fan = function (top, gros) { var rang = [1, 0, 2, 3, 4]; return '<div style="position:absolute;left:0;right:0;top:' + top + 'px;height:600px;z-index:3">' + rang.map(function (k, i) { var d = i - 2, f = !d, w = f ? gros : Math.round(gros * .66), h = Math.round(w * 1.42);
+  return '<div style="position:absolute;left:' + (540 - w / 2 + d * Math.round(gros * .66) + (d > 0 ? 50 : d < 0 ? -50 : 0)) + "px;top:" + (f ? 0 : Math.round(gros * .3)) + "px;z-index:" + (5 - Math.abs(d)) + ";transform:rotate(" + d * 3 + 'deg)"><div class="cv" style="width:' + w + "px;height:" + h + "px;background-image:url(" + C(N[k].cv) + ");" + (f ? "" : "filter:brightness(.85)") + '"></div></div>'; }).join("") + "</div>"; };
+var S = [];
+// SN1 · News : rouge, titre, éventail, sommaire
+S.push(["SN1 · News, rouge avec sommaire", function () { return '<div class="s">' + mos("r", 0) +
+  '<div style="position:absolute;left:0;right:0;top:190px;z-index:3"><div class="lab"><i></i><span>23 – 29 novembre</span><i></i></div><div class="t" style="margin-top:26px">Les news<br>de la semaine</div></div>' +
+  fan(540, 290) +
+  '<div style="position:absolute;left:70px;right:70px;top:1010px;z-index:3;display:flex;flex-direction:column;gap:12px">' + N.map(function (n) { return '<div class="row"><span class="pill" style="background:' + n.col + '">' + n.cat + "</span><b>" + n.t + "</b></div>"; }).join("") + "</div>" + bas("furyogang.com/actus") + IG + "</div>"; }]);
+// SN2 · News : rouge, grandes couvertures, sans liste
+S.push(["SN2 · News, rouge, grandes couvertures", function () { return '<div class="s">' + mos("r", 9) +
+  '<div style="position:absolute;left:0;right:0;top:190px;z-index:3"><div class="lab"><i></i><span>23 – 29 novembre</span><i></i></div><div class="t" style="margin-top:26px">Les news<br>de la semaine</div></div>' +
+  fan(640, 430) +
+  '<div style="position:absolute;left:0;right:0;top:1310px;text-align:center;z-index:3;font:700 46px A;text-transform:uppercase;letter-spacing:.04em">Bōryoku Banzai · Kabukichō · Hangure<br>GANGKING · Sakamoto Days</div>' + bas("furyogang.com/actus") + IG + "</div>"; }]);
+// SN3 · News : sombre manga, sommaire
+S.push(["SN3 · News, gris manga avec sommaire", function () { return '<div class="s">' + mos("n", 18) +
+  '<div style="position:absolute;left:0;right:0;top:190px;z-index:3"><div class="lab"><i></i><span>23 – 29 novembre</span><i></i></div><div class="t" style="margin-top:26px">Les news<br>de la semaine</div></div>' +
+  fan(540, 290) +
+  '<div style="position:absolute;left:70px;right:70px;top:1010px;z-index:3;display:flex;flex-direction:column;gap:12px">' + N.map(function (n) { return '<div class="row" style="background:rgba(40,40,46,.8)"><span class="pill" style="background:' + n.col + '">' + n.cat + "</span><b>" + n.t + "</b></div>"; }).join("") + "</div>" + bas("furyogang.com/actus") + IG + "</div>"; }]);
+// Prépublication
+var PS = [["Golden Drop", "151"], ["Batsu", "35"], ["Donketsu Ch. 2", "135"], ["Gorilla"], ["WORST Gaiden Guriko", "379"], ["Yuuenchi Baki"], ["Baki Gaiden Doppo", "", 1], ["BADBOYS", "17"], ["Boxster", "89"], ["Barefaced", "64"], ["Golden Guy", "154"], ["Nine Peaks", "205"], ["Saburoku Santa", "59"]];
+var MAGC = ["https://cdn-img.comic-days.com/public/magazine-thumbnail/2551460909530105755-c9eaa5b403621972a9ed2889626e9801?1794359841", "https://www.shonengahosha.co.jp/images/Book/Book_nTLrZaVqv8HtsBib4kFgJg3JHz5sYud0_1.png?dt=44160720261100", "https://images.microcms-assets.io/assets/f1294814109b472fa8746c569da83356/8ca707d6582b42f08f88a05091242582/magazine_cover_6537.jpg", "https://images.microcms-assets.io/assets/f1294814109b472fa8746c569da83356/344f1cbb7f3a4b95a71d58eaa0127c9d/magazine_cover_6539.jpg", "https://www.shonengahosha.co.jp/images/Book/Book_Vh07tAm7p1BrmQbsUfHSf5bnByhgmSgD_1.png?dt=31212620261117", "https://hondana-image.s3.amazonaws.com/book/image/10211442/normal_649988db-c3d6-4706-b97f-1648eb6377b3.jpg"];
+var tetePP = '<div style="position:absolute;left:0;right:0;top:190px;z-index:3"><div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div><div class="t" style="margin-top:26px;font-size:140px">16 – 22<br>novembre</div></div>';
+S.push(["SP1 · Prépublication, chiffres + séries", function () { return '<div class="s">' + mos("r", 27) + tetePP +
+  '<div style="position:absolute;left:70px;right:70px;top:620px;z-index:3;display:flex;justify-content:center;gap:70px;text-align:center"><div><div class="big">13</div><div style="font:700 34px A;text-transform:uppercase;letter-spacing:.1em;margin-top:8px">chapitres</div></div><div><div class="big" style="color:#F2EFE9">8</div><div style="font:700 34px A;text-transform:uppercase;letter-spacing:.1em;margin-top:8px">magazines</div></div></div>' +
+  '<div style="position:absolute;left:60px;right:60px;top:960px;z-index:3;display:flex;flex-wrap:wrap;justify-content:center;gap:14px">' + PS.map(function (c) { return '<span class="chip' + (c[2] ? " c" : "") + '">' + c[0] + (c[1] ? " <i>" + c[1] + "</i>" : "") + "</span>"; }).join("") + "</div>" + bas("furyogang.com/japon") + IG + "</div>"; }]);
+S.push(["SP2 · Prépublication, couvertures des magazines", function () { return '<div class="s">' + mos("r", 36) + tetePP +
+  '<div style="position:absolute;left:60px;right:60px;top:640px;z-index:3;display:grid;grid-template-columns:repeat(3,1fr);gap:34px 30px;justify-items:center">' + MAGC.map(function (u, i) { return '<div style="transform:rotate(' + [-3, 2, -1, 3, -2, 1][i] + 'deg)"><div class="cv" style="width:244px;height:334px;background-image:url(' + C(u) + ')"></div></div>'; }).join("") + "</div>" +
+  '<div style="position:absolute;left:0;right:0;top:1405px;text-align:center;z-index:3;font:700 46px A;text-transform:uppercase;letter-spacing:.04em"><span style="color:#F2C14E">13 chapitres</span> dans 8 magazines</div>' + bas("furyogang.com/japon") + IG + "</div>"; }]);
+
+fetch("mos.json").then(function (r) { return r.json(); }).then(function (l) {
+  MOS = l;
+  document.getElementById("out").innerHTML = S.map(function (x, i) { return '<div class="w"><b>' + x[0] + '</b><div id="s' + i + '">' + x[1]() + "</div></div>"; }).join("");
+  document.fonts.ready.then(function () { setTimeout(function () { document.body.dataset.ok = 1; }, 3000); });
+});
+</script>
+</body>
+</html>
