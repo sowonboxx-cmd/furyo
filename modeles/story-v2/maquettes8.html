@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes 8 · Story prépub · FuryoGang</title>
+<!-- Will, 25/11/2026, 3e tour : on garde la bande et la couverture « avant » (maquette B), mais le bloc du haut
+     (Prépublication + titre + sous-titre) descend pour se rapprocher de la couverture : 34 px d'écart au plus, sans la coller. -->
+<style>
+html,body{margin:0;background:#2a2a2e;font-family:Inter,system-ui,sans-serif;color:#fff}
+.w{display:inline-block;vertical-align:top;margin:20px;text-align:center}
+.w b{display:block;font:800 28px Inter,sans-serif;margin-bottom:10px}
+canvas{width:540px;height:960px;border-radius:24px;display:block}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+(function () {
+  var SER = {
+    np: { t: "Nine Peaks", ch: 206, cv: "m/np/Ja-21.jpg", mos: [1,2,3,4,5,6,7,8,9,10,11,12].map(function (n) { return "m/np/Ja-" + String(n).padStart(2, "0") + ".jpg"; }) },
+    nz: { t: "Le Premier Amour de Nezumi", ch: 126, st: "En route vers l'arc final", cv: "m/le-premier-amour-de-nezumi-10.jpg", mos: [0,1,2,3,4,5,6,7,8,9,11,12].map(function (n) { return "m/le-premier-amour-de-nezumi-" + String(n).padStart(2, "0") + ".jpg"; }) },
+    fb: { t: "The Fable - The third secret", ch: 64, coul: 1, cv: "m/the-fable-the-third-secret-00.jpg", mos: [1,2,3,4,5].map(function (n) { return "m/the-fable-the-third-secret-0" + n + ".jpg"; }) },
+    sg: { t: "Saigo no Furyō", ch: 124, cv: "m/saigo-no-furyou-10.jpg", mos: [0,1,2,3,4,5,6,7,8,9].map(function (n) { return "m/saigo-no-furyou-0" + n + ".jpg"; }) },
+    av: { t: "Amateur Vigilante", ch: 92, cv: "m/amateur-vigilante-08.jpg", mos: [0,1,2,3,4,5,6,7].map(function (n) { return "m/amateur-vigilante-0" + n + ".jpg"; }) },
+    sh: { t: "Shisei-dō ~Sankyōdai no Kizuna~", ch: 4, cv: "m/shiseido-00.jpg", mos: ["m/shiseido-01.jpg", "m/shiseido-00.jpg"] }
+  };
+  function charger(u) { return new Promise(function (ok, ko) { var i = new Image(); i.onload = function () { ok(i); }; i.onerror = ko; i.src = u; }); }
+  function esp(x, v) { if ("letterSpacing" in x) x.letterSpacing = v; }
+  function rr(x, X, Y, W, H, r) { x.beginPath(); x.roundRect(X, Y, W, H, r); }
+  var pol = Promise.all([new FontFace("FGStA", "url(/fonts/Antonio.ttf)", { weight: "700" }), new FontFace("FGStJ", "url(/fonts/NotoSansJP.ttf)", { weight: "900" }), new FontFace("FGStI", "url(/fonts/Inter.ttf)", { weight: "100 900" })].map(function (f) { return f.load().then(function (y) { document.fonts.add(y); }); }));
+
+  // o = { haut, band: "actuel" | "serre", reduit: 0..1 (couverture réduite), d: série }
+  var SERRE = 58; // le trait jaune descend de 58 px ; logo réduit ; furyogang.com ne bouge pas
+  function story(o, fond, cv, mos) {
+    var d = o.d, serre = o.band === "serre", LIGNE = 1600 + (serre ? SERRE : 0);
+    var c = document.createElement("canvas"); c.width = 1080; c.height = 1920; var x = c.getContext("2d");
+    x.fillStyle = "#111111"; x.fillRect(0, 0, 1080, 1920);
+    if (!serre) x.drawImage(fond, 0, 1592, 1080, 328, 0, 1592, 1080, 328);
+    else {
+      x.drawImage(fond, 0, 1596, 1080, 16, 0, LIGNE - 4, 1080, 16);                 // trait jaune
+      var k = .84, lw = 1080 * k, lh = 115 * k;                                        // logo FURYO 不良 GANG, un peu plus petit
+      x.drawImage(fond, 0, 1655, 1080, 115, (1080 - lw) / 2, 1789 - 8 - lh, lw, lh);
+      x.drawImage(fond, 0, 1789, 1080, 131, 0, 1789, 1080, 131);                      // furyogang.com, inchangé
+    }
+    x.save(); x.beginPath(); x.rect(0, 0, 1080, LIGNE - 1); x.clip();
+    x.fillStyle = "#CB002F"; x.fillRect(0, 0, 1080, LIGNE);
+    x.save(); x.translate(540, 1140); x.rotate(-8 * Math.PI / 180); x.globalAlpha = .34; x.globalCompositeOperation = "multiply"; x.filter = "grayscale(1) contrast(1.25) brightness(1.05)";
+    var cw = (1600 - 6 * 18) / 7, ch = cw * 10 / 7;
+    for (var j = 0; j < 63; j++) { var im = mos[(j * 5 + (j / 7 | 0)) % mos.length], gx = -800 + (j % 7) * (cw + 18), gy = -1440 + (j / 7 | 0) * (ch + 18), kk = Math.max(cw / im.width, ch / im.height), sw = cw / kk, sh = ch / kk;
+      x.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, gx, gy, cw, ch); }
+    x.restore();
+    x.save(); x.translate(540, 720); x.scale(648 / 720, 1); var g = x.createRadialGradient(0, 0, 0, 0, 0, 720); g.addColorStop(0, "rgba(150,0,30,.55)"); g.addColorStop(.75, "rgba(150,0,30,0)"); x.fillStyle = g; x.fillRect(-900, -900, 1800, 1800); x.restore();
+    g = x.createLinearGradient(0, 0, 0, LIGNE); g.addColorStop(.6, "rgba(120,0,25,0)"); g.addColorStop(1, "rgba(120,0,25,.65)"); x.fillStyle = g; x.fillRect(0, 0, 1080, LIGNE);
+    x.restore();
+    var X0 = x, T = document.createElement("canvas"); T.width = 1080; T.height = 1920; x = T.getContext("2d");
+    var y = o.haut, lab = "PRÉPUBLICATION";
+    x.textAlign = "left"; x.textBaseline = "alphabetic";
+    x.font = "700 34px FGStA"; esp(x, "11px"); var wl = x.measureText(lab).width; esp(x, "0px");
+    x.font = "900 30px FGStJ"; esp(x, "3px"); var wk = x.measureText("連載").width; esp(x, "0px");
+    var tot = 110 + 24 + wl + 16 + wk + 24 + 110, X = (1080 - tot) / 2;
+    x.fillStyle = "rgba(255,255,255,.85)"; x.fillRect(X, y + 16, 110, 2); x.fillRect(X + tot - 110, y + 16, 110, 2);
+    x.fillStyle = "#fff"; x.font = "700 34px FGStA"; esp(x, "11px"); x.fillText(lab, X + 134, y + 30); esp(x, "0px");
+    x.fillStyle = "#F2C14E"; x.font = "900 30px FGStJ"; esp(x, "3px"); x.fillText("連載", X + 134 + wl + 16, y + 29); esp(x, "0px");
+    y += 34 + 22;
+    var brut = d.t, mt = brut.match(/^(.+?)\s*~\s*(.+?)\s*~\s*$/) || brut.match(/^(.+?)\s+[-–:]\s+(.+)$/), sous2 = "";
+    if (mt) { brut = mt[1]; sous2 = mt[2]; if (/~/.test(d.t)) sous2 = "~ " + sous2 + " ~"; }
+    var tt = brut.toUpperCase(), fs = 120; x.font = "700 " + fs + "px FGStA";
+    while (x.measureText(tt).width > 980 && fs > 80) { fs -= 2; x.font = "700 " + fs + "px FGStA"; }
+    var lignes = [tt];
+    if (x.measureText(tt).width > 980) { var m = tt.split(" "), best = 1, ecart = 1e9; for (var i = 1; i < m.length; i++) { var a = x.measureText(m.slice(0, i).join(" ")).width, b = x.measureText(m.slice(i).join(" ")).width; if (Math.max(a, b) < ecart) { ecart = Math.max(a, b); best = i; } } lignes = [m.slice(0, best).join(" "), m.slice(best).join(" ")]; }
+    x.textAlign = "center"; x.fillStyle = "#fff"; x.shadowColor = "rgba(60,0,10,.6)"; x.shadowBlur = 30; x.shadowOffsetY = 6;
+    lignes.forEach(function (l) { x.fillText(l, 540, y + fs * .88); y += fs; });
+    x.shadowColor = "transparent"; x.shadowBlur = 0; x.shadowOffsetY = 0;
+    if (sous2) { var s2 = sous2.toUpperCase(), f2 = 40; x.font = "700 " + f2 + "px FGStA"; esp(x, "1.6px"); x.fillStyle = "rgba(242,239,233,.9)"; x.fillText(s2, 540, y + 12 + f2 * .88); esp(x, "0px"); y += 12 + f2; }
+    if (d.st) { var st = "« " + d.st.toUpperCase() + " »", sf = 40; x.font = "italic 700 " + sf + "px FGStA"; esp(x, "1.6px"); x.fillStyle = "#F2C14E"; x.fillText(st, 540, y + 12 + sf * .88); esp(x, "0px"); y += 12 + sf; }
+    x = X0; x.textAlign = "center"; var finTexte = y;
+    var pills = [{ t: "CHAPITRE " + d.ch, f: "700 46px FGStA", plein: true }]; if (d.coul) pills.push({ t: "PAGES COULEURS", f: "700 40px FGStA" });
+    var py = LIGNE - 44 - 72; esp(x, "1.4px");
+    pills.forEach(function (p) { x.font = p.f; p.w = x.measureText(p.t).width + (p.plein ? 48 : 44); });
+    var pw = pills.reduce(function (s, p) { return s + p.w; }, 0) + 16 * (pills.length - 1), px = (1080 - pw) / 2;
+    x.textBaseline = "middle";
+    pills.forEach(function (p) { x.font = p.f;
+      if (p.plein) { x.fillStyle = "#F2C14E"; rr(x, px, py, p.w, 72, 10); x.fill(); x.fillStyle = "#121214"; }
+      else { x.strokeStyle = "#fff"; x.lineWidth = 3; rr(x, px + 1.5, py + 1.5, p.w - 3, 69, 10); x.stroke(); x.fillStyle = "#fff"; }
+      x.fillText(p.t, px + p.w / 2, py + 37); px += p.w + 16; });
+    esp(x, "0px"); x.textBaseline = "alphabetic";
+    var y0 = y + 46, y1 = py - 46, r = cv.height / cv.width, h = Math.min(y1 - y0 - 16, 1080 * r) * (o.reduit || 1), w = h / r;
+    if (w > 840) { w = 840; h = w * r; }
+    var top = y0 + (y1 - y0 - h - 16) / 2, left = (1080 - w - 16) / 2;
+    x.fillStyle = "#121214"; x.fillRect(left, top, w + 16, h + 16); x.drawImage(cv, left + 8, top + 8, w, h);
+    // Rapprocher : le bloc du haut descend jusqu'à 34 px de la couverture (au plus 80 px de descente).
+    var dy = o.rapproche ? Math.max(0, Math.min(80, top - finTexte - 34)) : 0;
+    x.drawImage(T, 0, dy);
+    return c;
+  }
+  // Interface Instagram par-dessus, mesurée sur la capture de Will (story 1080 → 1188 px d'écran, haut à 165 px).
+  function insta(c) {
+    var x = c.getContext("2d");
+    var g = x.createLinearGradient(0, 0, 0, 200); g.addColorStop(0, "rgba(0,0,0,.28)"); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(0, 0, 1080, 200);
+    for (var i = 0; i < 10; i++) { x.fillStyle = i < 9 ? "rgba(255,255,255,.95)" : "rgba(255,255,255,.4)"; rr(x, 20 + i * 104.6, 17, 98, 4, 2); x.fill(); }
+    x.fillStyle = "#fff"; x.beginPath(); x.arc(68, 87, 33, 0, 7); x.fill();
+    x.fillStyle = "#c41a2b"; x.font = "900 22px FGStJ"; x.textAlign = "center"; x.fillText("不良", 68, 95);
+    x.fillStyle = "#222"; x.beginPath(); x.arc(97, 113, 15, 0, 7); x.fill(); x.fillStyle = "#fff"; x.fillRect(90, 112, 14, 3); x.fillRect(96, 106, 3, 14);
+    x.textAlign = "left"; x.font = "600 28px FGStI"; x.fillStyle = "#fff"; x.shadowColor = "rgba(0,0,0,.35)"; x.shadowBlur = 6; x.fillText("Your story", 142, 98);
+    x.fillStyle = "rgba(255,255,255,.75)"; x.fillText("9m", 315, 98);
+    x.strokeStyle = "#fff"; x.lineWidth = 4; x.lineCap = "round"; x.beginPath(); x.moveTo(1006, 62); x.lineTo(1052, 108); x.moveTo(1052, 62); x.lineTo(1006, 108); x.stroke();
+    x.shadowBlur = 0;
+    x.font = "600 24px FGStI"; x.fillStyle = "rgba(255,255,255,.55)"; x.fillText("Say something...", 31, 1868);
+    // Zone gênée, en pointillés.
+    x.setLineDash([10, 8]); x.strokeStyle = "rgba(0,229,255,.9)"; x.lineWidth = 3; x.strokeRect(4, 4, 1072, 128); x.strokeRect(4, 1836, 1072, 48); x.setLineDash([]);
+    return c;
+  }
+  var R = { haut: 150, rapproche: 1 };
+  var V = [["Nezumi · avant", "nz", { haut: 150 }], ["Nezumi", "nz", R], ["Nine Peaks", "np", R], ["The Fable", "fb", R], ["Shisei-dō", "sh", R], ["Saigo no Furyō", "sg", R], ["Amateur Vigilante", "av", R]];
+  pol.then(function () { return charger("fonds/rouge.jpg"); }).then(function (fond) {
+    var out = document.getElementById("out");
+    return V.reduce(function (p, v, i) { return p.then(function () { var S = SER[v[1]];
+      return Promise.all([charger(S.cv), Promise.all(S.mos.map(charger))]).then(function (L) {
+        var o = Object.assign({}, v[2], { d: S }); var c = insta(story(o, fond, L[0], L[1])); c.id = "c" + i; var dv = document.createElement("div"); dv.className = "w"; dv.innerHTML = "<b>" + v[0] + "</b>"; dv.appendChild(c); out.appendChild(dv); }); }); }, Promise.resolve());
+  }).then(function () { document.body.dataset.ok = 1; });
+})();
+</script>
+</body>
+</html>
