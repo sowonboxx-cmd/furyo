@@ -231,7 +231,9 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .datecard .ars{display:flex;gap:4px;flex:none}
 .datecard .ar{width:38px;height:38px;border:0;background:var(--s2);color:var(--cr);border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center}
 .datecard .ar:hover{background:#26262c}
-.calbar .today{height:var(--calh);border:0;background:var(--s2);color:var(--cr);border-radius:14px;padding:0 20px;font:700 14px "FGInter";cursor:pointer}
+/* « Aujourd'hui » plus visible (Will, 25/11/2026) : dans l'esprit de l'onglet sélectionné (bleu), en plus doux. */
+.calbar .today{height:var(--calh);border:0;background:rgba(42,111,208,.3);box-shadow:inset 0 0 0 2px #3D85EA;color:#fff;border-radius:14px;padding:0 18px;font:700 14px "FGInter";cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s}
+.calbar .today svg{width:18px;height:18px;color:#7FB0F5;flex:none}.calbar .today:hover{background:rgba(42,111,208,.4)}.calbar .today:active{background:var(--blue)}.calbar .today:active svg{color:#fff}
 /* « Ajouter » : même style sombre que Mois/Semaine, assemblé et compact (Will, 20/10/2026). */
 .calbar .addb{height:var(--calh);border:0;background:var(--s1);color:var(--cr);border-radius:14px;padding:0 18px;font:700 14px "FGInter";cursor:pointer}
 .dtabs{height:var(--calh);display:inline-flex;align-items:center;gap:4px;background:var(--s1);border-radius:14px;padding:0 5px;width:max-content}
@@ -631,7 +633,7 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
         <div class="ars"><button class="ar" id="calprev" aria-label="Précédent">‹</button><button class="ar" id="calnext" aria-label="Suivant">›</button></div>
       </div>
       <div class="calbar-r">
-        <button class="today" id="caltoday" type="button">Aujourd'hui</button>
+        <button class="today" id="caltoday" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="2" fill="currentColor" stroke="none"/></svg>Aujourd'hui</button>
         <div class="dtabs" id="dtabs"></div>
         <button class="addb" id="caladd">+ Ajouter</button>
       </div>
