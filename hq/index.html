@@ -1283,7 +1283,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       '<div class="igbox" id="ppbox"></div></div></div>';
     host.innerHTML = h; host.dataset.k = "prepub"; host.dataset.id = x.id;
     var it = x.story ? { quand: x.story.quand, fait: x.story.fait, err: x.story.err, ignore: x.story.ignore } : null;
-    igUI($("#ppbox"), { jourJ: x.date, jp: true, heure: "19:00", aPost: false, imgs: ppImage(x).then(function (c) { return { story: c }; }), item: it,
+    igUI($("#ppbox"), { id: x.id, jourJ: x.date, jp: true, heure: "19:00", aPost: false, imgs: ppImage(x).then(function (c) { return { story: c }; }), item: it,
       programmer: function (quand) { return ppProgrammer(x, quand).then(function () { calRedessiner(); return { quand: quand.toISOString() }; }); },
       ignorer: function () { return igq({ id: x.id, ignore: true, type: "prepub", titre: x.serie + (x.chapitre ? " · ch. " + x.chapitre : "") }).then(function (item) { x.story = { quand: item.quand, ignore: true }; calRedessiner(); return item; }); },
       annuler: function () { return ppAnnuler(x).then(function () { calRedessiner(); }); } });
@@ -1557,7 +1557,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       if (vide) return;
       var titre = (k === "news" ? "News de la semaine · " : "Prépublication · ") + per;
       var ig = box.querySelector("#hbig");
-      var o = { jourJ: w.jour, heure: k === "news" ? "12:00" : "10:00", aPost: true, aX: true, item: null,
+      var o = { id: id, jourJ: w.jour, heure: k === "news" ? "12:00" : "10:00", aPost: true, aX: true, item: null,
         imgs: Promise.resolve({ post: { _url: r.slides[0] }, story: { _url: r.story } }),
         programmer: function (quand, p, st, x) {
           var urls = [], su = "";
@@ -1662,10 +1662,25 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     h += '</div><div class="iglab">Minutes</div><div class="igmn">' + ["00", "15", "30", "45"].map(function (v) { return '<button data-igcm="' + v + '" aria-pressed="' + (v === mm) + '">' + v + '</button>'; }).join("") + '</div>';
     return h;
   }
+  // Heure proposée par défaut (Will, 25/11/2026) : jamais une heure déjà prise ce jour-là (Instagram / X programmés, news planifiées),
+  // on propose l'heure d'après. Will peut toujours forcer une heure prise.
+  function heuresPrises(jour, sauf) {
+    var p = {};
+    Object.keys(IGQ).forEach(function (k) { var q = IGQ[k]; if (!q || q.ignore || !q.quand || q.id === sauf) return; var d = new Date(q.quand); if (iso(d) === jour) p[d.getHours()] = 1; });
+    NEWS.forEach(function (n) { if (!n.plan || !n.t || !/T\d/.test(n.t) || n.id === sauf) return; var d = new Date(n.t); if (!isNaN(d) && iso(d) === jour) p[d.getHours()] = 1; });
+    return p;
+  }
+  function heureLibre(jour, heure, sauf) {
+    var p = heuresPrises(jour, sauf), h = +heure.slice(0, 2), h0 = h;
+    if (jour === iso(new Date()) && h <= new Date().getHours()) h = Math.min(23, new Date().getHours() + 1);
+    while (p[h] && h < 23) h++;
+    return h === h0 ? heure : ("0" + h).slice(-2) + ":00";
+  }
   function igUI(box, o) {
     // o : { jourJ, heure, aPost, imgs: Promise<{post?, story}>, item, programmer(quand, post, story) → Promise<item>, annuler() → Promise }
     var st = box._st = box._st || { jour: o.jourJ && o.jourJ >= iso(new Date()) && !(o.jp && o.jourJ === iso(new Date(Date.now() + 864e5))) ? o.jourJ : iso(new Date()), heure: o.heure || "19:00", post: !!o.aPost, story: true, x: !!o.aX, tab: o.aPost ? "post" : "story" };
     if (st.jour === iso(new Date()) && +st.heure.slice(0, 2) < new Date().getHours() + 1 && new Date().getHours() < 23) st.heure = ("0" + (new Date().getHours() + 1)).slice(-2) + ":00";
+    if (!st.libre && !o.item) { st.libre = 1; st.heure = heureLibre(st.jour, st.heure, o.id); }
     var it = o.item, fait = it && it.fait && it.fait !== "échec";
     var tabs = o.aPost ? '<div class="igtb"><button data-igtab="post" aria-pressed="' + (st.tab === "post") + '">Post</button><button data-igtab="story" aria-pressed="' + (st.tab === "story") + '">Story</button></div>' : "";
     var car = '<div class="igcar' + (o.aPost ? "" : " un") + '">' + (o.aPost ? '<div class="igsl" data-sl="post"><img data-igz="post" alt=""><span>Post</span></div>' : "") + '<div class="igsl" data-sl="story"><img data-igz="story" alt=""><span>Story</span></div></div>';
@@ -1693,11 +1708,11 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var tb = ev.target.closest("[data-igtab]"); if (tb) { st.tab = tb.dataset.igtab; var sl = box.querySelector('[data-sl="' + st.tab + '"]'); if (sl) sl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" }); box.querySelectorAll("[data-igtab]").forEach(function (x) { x.setAttribute("aria-pressed", x === tb); }); return; }
     var pp = ev.target.closest("[data-igpop]"); if (pp) { var k = pp.dataset.igpop; st.pop = st.pop === k ? "" : k; st.mois = ""; igUI(box, o); return; }
     var gm = ev.target.closest("[data-igm]"); if (gm) { var m = st.mois || st.jour.slice(0, 7), dt = new Date(+m.slice(0, 4), +m.slice(5, 7) - 1 + (+gm.dataset.igm), 1); st.mois = dt.getFullYear() + "-" + ("0" + (dt.getMonth() + 1)).slice(-2); igUI(box, o); return; }
-    var cj = ev.target.closest("[data-igcj]"); if (cj) { st.jour = cj.dataset.igcj; st.pop = ""; igUI(box, o); return; }
-    var ch = ev.target.closest("[data-igch]"); if (ch) { st.heure = ch.dataset.igch + st.heure.slice(2); igUI(box, o); return; }
-    var cm = ev.target.closest("[data-igcm]"); if (cm) { st.heure = st.heure.slice(0, 3) + cm.dataset.igcm; igUI(box, o); return; }
-    var j = ev.target.closest("[data-igj]"); if (j) { st.jour = j.dataset.igj; st.pop = ""; igUI(box, o); return; }
-    var hh = ev.target.closest("[data-igh]"); if (hh) { st.heure = hh.dataset.igh; st.pop = ""; igUI(box, o); return; }
+    var cj = ev.target.closest("[data-igcj]"); if (cj) { st.jour = cj.dataset.igcj; st.pop = ""; if (!st.hMan) st.heure = heureLibre(st.jour, o.heure || "19:00", o.id); igUI(box, o); return; }
+    var ch = ev.target.closest("[data-igch]"); if (ch) { st.hMan = 1; st.heure = ch.dataset.igch + st.heure.slice(2); igUI(box, o); return; }
+    var cm = ev.target.closest("[data-igcm]"); if (cm) { st.hMan = 1; st.heure = st.heure.slice(0, 3) + cm.dataset.igcm; igUI(box, o); return; }
+    var j = ev.target.closest("[data-igj]"); if (j) { st.jour = j.dataset.igj; st.pop = ""; if (!st.hMan) st.heure = heureLibre(st.jour, o.heure || "19:00", o.id); igUI(box, o); return; }
+    var hh = ev.target.closest("[data-igh]"); if (hh) { st.hMan = 1; st.heure = hh.dataset.igh; st.pop = ""; igUI(box, o); return; }
     var q = ev.target.closest("[data-igq]"); if (q) { st[q.dataset.igq] = !st[q.dataset.igq]; igUI(box, o); return; }
     if (ev.target.closest("[data-igskip]")) { o.ignorer().then(function (item) { o.item = item; igUI(box, o); }).catch(function (e) { alert(e.message || "Échec"); }); return; }
     if (ev.target.closest("[data-igannul]")) { o.annuler().then(function () { o.item = null; igUI(box, o); }).catch(function (e) { alert(e.message || "Échec"); }); return; }
@@ -1723,7 +1738,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     var box = $("#igprog"); if (!box) return;
     var th = SORT_THEME;
     // X en plus d'Instagram (Will, 25/11/2026) : le même visuel de sortie, avec le texte de l'onglet Twitter / X.
-    var o = { jourJ: s.date, heure: "09:00", aPost: true, aX: true, imgs: igVisuels(s, th), item: null,
+    var o = { id: s.id, jourJ: s.date, heure: "09:00", aPost: true, aX: true, imgs: igVisuels(s, th), item: null,
       programmer: function (quand, p, st, x) { return igVisuels(s, th).then(function (v) { return Promise.all([p || x ? envoyerJpg(v.post) : "", st ? envoyerJpg(v.story) : ""]); }).then(function (u) {
         return igq({ id: s.id, type: "sortie", titre: sortieLabel(s), quand: quand.toISOString(), legende: (modalCap && modalCap.ig) || sortieLabel(s), post: p && u[0] ? [u[0]] : [], story: u[1] || "",
           x: x && u[0] ? { texte: (modalCap && modalCap.tw) || sortieLabel(s), images: [u[0]] } : null }); }); },
