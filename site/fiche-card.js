@@ -10,7 +10,7 @@
   // Story : pas de logo en haut (Instagram l'affiche déjà), logo blanc dans le bas noir. Post : logo centré en haut.
   var CSS = [
     '.fgc{width:1080px;height:1440px;position:relative;overflow:hidden;font-family:"FGInter",sans-serif;font-weight:500;display:flex;flex-direction:column;box-sizing:border-box;',
-    '  --bg:#F2EFE9;--fg:#0c0c0e;--mut:rgba(12,12,14,.56);--track:rgba(12,12,14,.08);--bulle:#E4DED3;--res:#202024;--pil:#0c0c0e;--pilt:#fff;--bar:#0c0c0e;--bas:#121212;--red:#BC002D;',
+    '  --bg:#F2EFE9;--fg:#0c0c0e;--mut:rgba(12,12,14,.56);--track:rgba(12,12,14,.08);--bulle:#E4DED3;--res:#202024;--pil:#0c0c0e;--pilt:#fff;--bar:#000;--bas:#000;--red:#BC002D;',
     '  background:var(--bg);color:var(--fg);text-align:left;line-height:normal;letter-spacing:normal}',
     '.fgc *{box-sizing:border-box}',
     '.fgc.dark{--bg:#141416;--fg:#F5F5F7;--mut:rgba(245,245,247,.58);--track:rgba(245,245,247,.08);--bulle:#222226;--res:#E2E2E6;--pil:#F2EFE9;--pilt:#0c0c0e;--bar:#000;--bas:#000}',
