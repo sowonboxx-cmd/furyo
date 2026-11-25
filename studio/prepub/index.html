@@ -98,7 +98,7 @@ textarea{width:100%;min-height:120px;background:var(--bg2);color:var(--cr);borde
   function pastille(c, t, x, y, coul, taille) { c.font = "800 " + (taille || 26) + "px FI"; var w = c.measureText(t).width + 36, h = (taille || 26) + 24; c.fillStyle = coul; rr(c, x, y, w, h, 12); c.fill(); c.fillStyle = "#fff"; c.textBaseline = "middle"; c.fillText(t, x + 18, y + h / 2 + 1); c.textBaseline = "alphabetic"; return w; }
   function fleche(c, x, y, w) { c.save(); c.strokeStyle = "#F2EFE9"; c.lineWidth = 8; c.lineCap = "round"; c.lineJoin = "round"; c.beginPath(); c.moveTo(x, y); c.lineTo(x + w, y); c.moveTo(x + w - 20, y - 18); c.lineTo(x + w, y); c.lineTo(x + w - 20, y + 18); c.stroke(); c.restore(); }
   function pied(c, t, n, tot) {
-    c.font = "700 32px FA"; c.textAlign = "center"; c.fillStyle = "#F2EFE9"; var a = t, b = "furyogang.com/prepub";
+    c.font = "700 32px FA"; c.textAlign = "center"; c.fillStyle = "#F2EFE9"; var a = t, b = "furyogang.com";
     var wa = c.measureText(a.toUpperCase() + "  ").width, wb = c.measureText(b.toUpperCase()).width, x0 = (W - wa - wb) / 2;
     c.textAlign = "left"; c.fillText(a.toUpperCase() + "  ", x0, H - 46); c.fillStyle = "#F2C14E"; c.fillText(b.toUpperCase(), x0 + wa, H - 46);
     if (tot > 1) { c.font = "700 26px FA"; c.fillStyle = "#9a968f"; c.textAlign = "right"; c.fillText(n + " / " + tot, W - 48, 76); c.textAlign = "left"; }
@@ -166,12 +166,12 @@ textarea{width:100%;min-height:120px;background:var(--bg2);color:var(--cr);borde
     CH.sort(function (a, b) { return (b.une - a.une) || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0); });
     var vis = CH.filter(function (x) { return !x.cache; });
     var nMag = {}; vis.forEach(function (x) { nMag[magNom(x)] = 1; }); nMag = Object.keys(nMag).length;
-    $("#lead").textContent = "Semaine du " + lun.getDate() + " " + MOIS[lun.getMonth()] + " au " + dim.getDate() + " " + MOIS[dim.getMonth()] + " : " + vis.length + " chapitre" + (vis.length > 1 ? "s" : "") + ", " + PZ.length + " absente" + (PZ.length > 1 ? "s" : "") + ". Même contenu que la page /prepub/.";
+    $("#lead").textContent = "Semaine du " + lun.getDate() + " " + MOIS[lun.getMonth()] + " au " + dim.getDate() + " " + MOIS[dim.getMonth()] + " : " + vis.length + " chapitre" + (vis.length > 1 ? "s" : "") + ", " + PZ.length + " absente" + (PZ.length > 1 ? "s" : "") + ".";
     // Liste des réglages
     $("#ls").innerHTML = CH.map(function (x) { var k = cle(x), r = REG[k] || {}; return '<div class="it' + (r.cache ? " off" : "") + '"><div><b>' + nom(x) + "</b><small>" + magNom(x) + " · " + (x.ch != null ? "ch. " + Math.floor(x.ch) : "nouveau chapitre") + (tagDe(x) ? " · " + tagDe(x) : "") + '</small></div><label><input type="checkbox" data-k="' + k + '" data-r="une"' + (r.une || tagDe(x) ? " checked" : "") + (tagDe(x) ? " disabled" : "") + '>À la une</label><label><input type="checkbox" data-k="' + k + '" data-r="cache"' + (r.cache ? " checked" : "") + ">Retirer</label></div>"; }).join("") || '<p class="lead">Aucun chapitre validé pour cette semaine dans la base Prépublication.</p>';
     // Texte X
     var une = vis.filter(function (x) { return x.une; }).slice(0, 3).map(function (x) { return nom(x) + (x.tag && x.tag !== "À la une" ? " (" + x.tag.toLowerCase() + ")" : ""); });
-    $("#tx").value = "Prépublication de la semaine\nDu " + lun.getDate() + (lun.getMonth() === dim.getMonth() ? "" : " " + MOIS[lun.getMonth()]) + " au " + dim.getDate() + " " + MOIS[dim.getMonth()] + "\n\n" + vis.length + " chapitres dans " + nMag + " magazines japonais" + (une.length ? ", avec " + une.join(", ") : "") + ".\n\nLe détail jour par jour : furyogang.com/prepub";
+    $("#tx").value = "Prépublication de la semaine\nDu " + lun.getDate() + (lun.getMonth() === dim.getMonth() ? "" : " " + MOIS[lun.getMonth()]) + " au " + dim.getDate() + " " + MOIS[dim.getMonth()] + "\n\n" + vis.length + " chapitres dans " + nMag + " magazines japonais" + (une.length ? ", avec " + une.join(", ") : "") + ".";
     // Images
     var pages = [];
     if (vis.length) pages.push({ k: "couv", l: vis });

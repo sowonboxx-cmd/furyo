@@ -14,8 +14,8 @@ const c = (id, nm, kj, fq, cat, st, ds, x = {}) => ({ id, nm, kj, fq, cat, st, d
 // Liste de départ : tout « Faire vivre le site » (liste, En place, Rendez-vous voulus, Idées en plus) + les pages dictées par Will le 27/10.
 const DEPART = [
   // Récap
-  c("qdn", "Quoi de neuf dans le gang", "週報", "h", "recap", "ok", "Le carrousel Instagram de fin de semaine (8 images 3:4), rempli tout seul : Japon, France, actus, À l'écran, nouvelles fiches, le gang, la semaine prochaine. Les catégories vides n'apparaissent pas. Plutôt le dimanche. Aussi en page web.",
-    { pages: ["/recap/semaine/"], assets: [{ nm: "Studio Quoi de neuf (carrousel)", st: "ok", url: "/studio/semaine/" }, { nm: "Page web de la semaine", st: "ok", url: "/recap/semaine/" }], rythme: "Chaque fin de semaine." }),
+  c("qdn", "Quoi de neuf dans le gang", "週報", "h", "recap", "ok", "Le carrousel Instagram de fin de semaine (8 images 3:4), rempli tout seul : Japon, France, actus, À l'écran, nouvelles fiches, le gang, la semaine prochaine. Les catégories vides n'apparaissent pas. Plutôt le dimanche. Seulement sur les réseaux (plus de page web depuis le 25/11/2026).",
+    { pages: [], assets: [{ nm: "Studio Quoi de neuf (carrousel)", st: "ok", url: "/studio/semaine/" }], rythme: "Chaque fin de semaine." }),
   c("recap-mois", "Récap du mois (sorties)", "月報", "m", "recap", "ok", "Le 10 de chaque mois : toutes les sorties du mois précédent, France puis Japon. Carrousel en noir ou crème, et la page publique à partager.",
     { pages: ["/recap/mois/2026-09/"], assets: [{ nm: "Studio Récap du mois", st: "ok", url: "/studio/mois/" }, { nm: "Récap du mois · vidéo (draft)", st: "ko", url: "/studio/mois-video/" }], rythme: "Le 10 de chaque mois." }),
   // Sorties
@@ -88,6 +88,9 @@ async function lire(env) {
   // Interview mangaka : liste de départ des mangakas à contacter (Will, 27/10/2026), ajoutée une fois si absente.
   // Prépublication de la semaine (Will, 24/11/2026) : page /prepub/ et post du dimanche.
   const pp = d.items.find(x => x.id === "prepub-sem"); if (pp && !pp.v3) Object.assign(pp, { v2: 1, v3: 1, nm: "Prépublication de la semaine", st: "ok", fq: "h", ds: "Chaque dimanche : un seul post (X et Instagram) avec tous les chapitres de la semaine qui vient dans les magazines japonais, et la page /prepub/ (toujours la même adresse, contenu renouvelé). Les stories restent au fil de la semaine ; plus de post X par chapitre.", pages: ["/prepub/"], rythme: "Chaque dimanche (samedi, mardi et jeudi : les fiches).", assets: [{ nm: "Page Prépublication de la semaine", st: "ok", url: "/prepub/" }, { nm: "Carrousel du dimanche (studio)", st: "ok", url: "/studio/prepub/" }] });
+  // Plus de pages web pour les récaps de la semaine (Will, 25/11/2026) : tout reste sur les réseaux.
+  if (pp && !pp.v4) Object.assign(pp, { v4: 1, ds: "Chaque dimanche : un seul post (X et Instagram) avec tous les chapitres de la semaine qui vient dans les magazines japonais. Seulement sur les réseaux, plus de page web. Les stories restent au fil de la semaine.", pages: [], assets: (pp.assets || []).filter(a => !/^\/prepub\//.test(a.url || "")) });
+  const qd = d.items.find(x => x.id === "qdn"); if (qd && !qd.v4) Object.assign(qd, { v4: 1, pages: [], assets: (qd.assets || []).filter(a => !/recap\/semaine/.test(a.url || "")), ds: String(qd.ds || "").replace(" Aussi en page web.", " Seulement sur les réseaux.") });
   const itw = d.items.find(x => x.id === "interview"); if (itw && !Array.isArray(itw.contacts)) itw.contacts = CONTACTS;
   return d;
 }

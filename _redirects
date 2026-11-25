@@ -1,3 +1,9 @@
+# Pages retirées du site (Will, 25/11/2026) : récap de la semaine et prépublication de la semaine, gardés seulement sur les réseaux.
+/prepub /japon/ 301
+/prepub/ /japon/ 301
+/recap/semaine /actus/ 301
+/recap/semaine/ /actus/ 301
+/recap/semaine/* /actus/ 301
 # Récaps (Will, 26/10/2026) : /recap/mois/AAAA-MM/ (récap du mois) et /recap/semaine/AAAA-SS/ (Quoi de neuf dans le gang, récap de la semaine).
 /recap/2026-09/ /recap/mois/2026-09/ 301
 /recap/2026-09 /recap/mois/2026-09/ 301

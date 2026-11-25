@@ -101,7 +101,7 @@ button:disabled{opacity:.5;cursor:default}
     <button id="next" aria-label="Semaine suivante">→</button>
     <label><input id="pseudos" type="checkbox" checked style="width:auto;height:auto"> Citer les pseudos du top</label>
     <button class="main" id="dl" disabled>Télécharger les images</button>
-    <a id="web" target="_blank" style="font-size:13px;color:var(--paper-2);text-decoration:underline">Page web de la semaine ↗</a>
+    <a id="web" target="_blank" hidden style="font-size:13px;color:var(--paper-2);text-decoration:underline">Page web de la semaine ↗</a>
     <span id="msg">Chargement…</span>
   </div>
   <details class="choix" id="choix" open><summary>Choisir ce qui est mis en avant</summary><div id="choixC"></div></details>
@@ -416,11 +416,11 @@ button:disabled{opacity:.5;cursor:default}
     if (x.films.length) L.push("🎬 " + x.films.slice(0, 3).map(function (f) { return f.t; }).join(", "));
     if (x.fiches.length) L.push("🆕 +" + x.fiches.length + " fiches : " + x.fiches.slice(0, 4).map(function (f) { return f.t; }).join(", ") + (x.fiches.length > 4 ? "…" : ""));
     if (x.adm && x.adm.membres.nouveaux.length) L.push("👊 Bienvenue aux " + x.adm.membres.nouveaux.length + " nouveaux membres du gang");
-    L.push("", "📖 Tout le détail sur furyogang.com (lien en bio). Inscris-toi pour ta collection et le classement du gang.", "", "#FuryoGang #manga #furyo #mangafr #yankee #mangatok");
+    L.push("", "📖 Inscris-toi sur furyogang.com (lien en bio) pour ta collection et le classement du gang.", "", "#FuryoGang #manga #furyo #mangafr #yankee #mangatok");
     $("#leg").value = L.join("\n").replace("…", "");
     // X : une phrase standard, ce sont les images qui parlent (Will, 02/11/2026). Pas de hashtag sur X.
     var W = anSem(D.du);
-    $("#legx").value = "Quoi de neuf dans le gang ? Le récap de la semaine : les sorties, les chapitres, les nouvelles séries et les news. Tout est là ↓\n\nfuryogang.com/recap/semaine/" + W.an + "-" + String(W.n).padStart(2, "0") + "/";
+    $("#legx").value = "Quoi de neuf dans le gang ? Le récap de la semaine : les sorties, les chapitres, les nouvelles séries et les news. Tout est là ↓";
   }
 
   // ——— Export ———

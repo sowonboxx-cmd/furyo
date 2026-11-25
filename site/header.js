@@ -249,7 +249,6 @@ a("col", "/ma-collection/", '<span class="sh-ma">Ma&nbsp;</span>collection', 1) 
     { t: "Séries", d: "Toutes les fiches séries", u: "/series/", ic: "▦" },
     { t: "Calendrier", d: "Les prochaines sorties", u: "/calendrier/", ic: "31" },
     { t: "Au Japon", d: "Prépublications et magazines japonais", u: "/japon/", ic: "誌", k: "japon magazine magazines prepublication prépublication chapitre" },
-    { t: "Prépublication de la semaine", d: "Les chapitres de la semaine en magazine", u: "/prepub/", ic: "週", k: "prepub prépub prepublication semaine chapitres magazine" },
     { t: "Calendrier Japon", d: "Les sorties au Japon", u: "/calendrier/#japon", ic: "日", k: "japon jp" },
     { t: "Calendrier France", d: "Les sorties en France", u: "/calendrier/#france", ic: "FR", k: "france fr" },
     { t: "Mangakas", d: "Les auteurs et leurs séries", u: "/auteurs/", ic: "筆", k: "auteurs auteur dessinateur scenariste" },
