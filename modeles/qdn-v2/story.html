@@ -42,16 +42,22 @@ function fondMosaique(imgs, rouge) {
   for (var j = 0; j < 80; j++) { var im = imgs[j % imgs.length], gx = -900 + (j % 8) * (cw + 16), gy = -1300 + (j / 8 | 0) * (ch + 16), k = Math.max(cw / im.width, ch / im.height), sw = cw / k, sh = ch / k; x.drawImage(im, (im.width - sw) / 2, (im.height - sh) / 2, sw, sh, gx, gy, cw, ch); }
   x.restore(); return c;
 }
+// D (Will, 25/11/2026) : fond gris manga, post en grand, et en bas logo + où trouver la suite (la story est une image simple, sans lien).
+function cadreBas(post, fond, logo, l1, l2) {
+  var c = cadre(post, fond, 1000, 150), x = c.getContext("2d");
+  var lw = 360, lh = Math.round(logo.height * lw / logo.width); x.drawImage(logo, (1080 - lw) / 2, 1532, lw, lh);
+  x.textAlign = "center"; x.fillStyle = "#F2EFE9"; x.font = "600 34px FGStI"; x.fillText(l1, 540, 1532 + lh + 62);
+  x.fillStyle = "#F2C14E"; x.font = "700 52px FGStA"; if ("letterSpacing" in x) x.letterSpacing = "2px"; x.fillText(l2, 540, 1532 + lh + 128); if ("letterSpacing" in x) x.letterSpacing = "0px";
+  return c;
+}
 var C = function (u) { return /^\//.test(u) ? u : "/api/couv?w=300&u=" + encodeURIComponent(u); };
 fetch("mos.json").then(function (r) { return r.json(); }).then(function (l) {
-  return Promise.all([charger("m/qdn-p1.jpg"), charger("m/pp-p1.jpg"), Promise.all(l.slice(0, 24).map(function (u) { return charger("https://furyogang.com" + C(u)).catch(function () { return null; }); }))]);
+  return Promise.all([charger("m/qdn-p1.jpg"), charger("m/pp-p1.jpg"), charger("/img/social/logo-blanc.png"), Promise.all([new FontFace("FGStA", "url(/fonts/Antonio.ttf)", { weight: "700" }), new FontFace("FGStI", "url(/fonts/Inter.ttf)", { weight: "100 900" }), new FontFace("FGStJ", "url(/fonts/NotoSansJP.ttf)", { weight: "900" })].map(function (f) { return f.load().then(function (y) { document.fonts.add(y); }); })), Promise.all(l.slice(0, 24).map(function (u) { return charger("https://furyogang.com" + C(u)).catch(function () { return null; }); }))]);
 }).then(function (r) {
-  var mos = r[2].filter(Boolean), fr = fondMosaique(mos, true), fn = fondMosaique(mos, false), out = document.getElementById("out"), jobs = [];
-  [["Quoi de neuf", r[0]], ["Prépublication", r[1]]].forEach(function (p) {
-    jobs.push(["A · " + p[0] + " · story actuelle (posé sur le trait jaune)", null, p[1]]);
-    jobs.push(["B · " + p[0] + " · cadre rouge manga", cadre(p[1], fr, 960, 280)]);
-    jobs.push(["C · " + p[0] + " · cadre sombre manga", cadre(p[1], fn, 960, 280)]);
-  });
+  var logo = r[2], mos = r[4].filter(Boolean), fr = fondMosaique(mos, true), fn = fondMosaique(mos, false), out = document.getElementById("out"), jobs = [];
+  jobs.push(["D · News de la semaine", cadreBas(r[0], fn, logo, "Tout le détail des news sur", "FURYOGANG.COM/ACTUS")]);
+  jobs.push(["D · Prépublication", cadreBas(r[1], fn, logo, "Tous les chapitres de la semaine dans notre", "DERNIER POST")]);
+  jobs.push(["D' · Prépublication (variante site)", cadreBas(r[1], fn, logo, "Le planning complet sur", "FURYOGANG.COM/JAPON")]);
   return Promise.all(jobs.map(function (j) { return j[1] ? Promise.resolve([j[0], j[1]]) : FG_STORY.canvas({}, j[2]).then(function (c) { return [j[0], c]; }); })).then(function (L) {
     L.forEach(function (x, i) { var c = insta(x[1]); c.id = "c" + i; var d = document.createElement("div"); d.className = "w"; d.innerHTML = "<b>" + x[0] + "</b>"; d.appendChild(c); out.appendChild(d); });
     document.body.dataset.ok = 1;
