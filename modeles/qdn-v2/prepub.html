@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquette prépublication de la semaine · FuryoGang</title>
+<!-- Will, 25/11/2026 : carrousel « Prépublication de la semaine » (le dimanche), même DA que Quoi de neuf v2 :
+     logo sur bandeau noir en haut, fond rouge en mosaïque de couvertures de séries toutes différentes, chapitres par magazine,
+     2 à 3 images. Exemple complet : semaine du 16 au 22 novembre 2026. -->
+<style>
+@font-face{font-family:A;src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:I;src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+@font-face{font-family:J;src:url(/fonts/NotoSansJP.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#2a2a2e}
+.w{display:inline-block;vertical-align:top;margin:20px}.w>b{display:block;font:800 26px I;color:#fff;margin-bottom:10px}
+.s{position:relative;overflow:hidden;width:1080px;height:1440px;background:#0c0c0e;color:#F2EFE9;font-family:I}
+.hd{position:absolute;left:0;right:0;top:0;height:136px;background:#0c0c0e;z-index:20;display:flex;align-items:center;justify-content:center}.hd img{height:66px}
+.mz{position:absolute;inset:0;overflow:hidden;background:#CB002F}
+.mz .g{position:absolute;left:-260px;top:-300px;width:1600px;display:grid;grid-template-columns:repeat(7,1fr);gap:18px;transform:rotate(-8deg);opacity:.3;mix-blend-mode:multiply}
+.mz .g i{display:block;aspect-ratio:7/10;background:center/cover;filter:grayscale(1) contrast(1.2)}
+.mz::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 60% 45% at 50% 45%,rgba(150,0,30,.45),transparent 75%),linear-gradient(180deg,transparent 55%,rgba(110,0,22,.75))}
+.lab{display:flex;justify-content:center;align-items:center;gap:24px;font:700 34px/1 A;letter-spacing:.3em;text-transform:uppercase}
+.lab span{display:block;padding-top:2px;margin-right:-.3em}.lab i{width:100px;height:2px;background:#fff}.lab b{font:900 32px J;color:#F2C14E;letter-spacing:.1em}
+.t{font:700 100px/.95 A;text-transform:uppercase;text-align:center;text-shadow:0 6px 30px rgba(60,0,10,.6)}
+.mag{display:flex;gap:26px;align-items:flex-start;background:rgba(14,14,16,.72);border-radius:20px;padding:24px}
+.mag .mc{flex:none;width:150px;height:208px;border-radius:6px;background:#111 center/cover;border:5px solid #F2EFE9}
+.mag h5{margin:0;font:700 44px/1 A;text-transform:uppercase;letter-spacing:.02em}
+.mag h5 small{display:block;font:600 22px I;color:#F2C14E;letter-spacing:.06em;margin-top:8px;text-transform:none}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.chip{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 16px 3px;box-sizing:border-box;border-radius:10px;background:#F2EFE9;color:#121214;font:700 31px/1 A;text-transform:uppercase;letter-spacing:.02em}
+.chip i{font-style:normal;color:#CB002F}.chip.c{background:#F2C14E}
+.chip.p{background:transparent;border:2px dashed rgba(242,239,233,.55);color:rgba(242,239,233,.75)}.chip.p i{color:rgba(242,239,233,.75);font:600 20px I;text-transform:none}
+.leg{display:flex;justify-content:center;gap:28px;font:600 22px I;color:#F2EFE9}
+.leg span{display:inline-flex;align-items:center;gap:10px}.leg u{display:inline-block;width:26px;height:18px;border-radius:4px;background:#F2C14E}.leg u.p{background:transparent;border:2px dashed rgba(242,239,233,.7)}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+var C = function (u) { return !u ? "" : /^\//.test(u) ? u : "https://furyogang.com/api/couv?w=400&u=" + encodeURIComponent(u); };
+var MOS = []; // rempli depuis mos.json (couvertures de séries toutes différentes)
+var G = [
+  { m: "Weekly Young Magazine", n: "N°51 · lun. 16", cv: "https://cdn-img.comic-days.com/public/magazine-thumbnail/2551460909530105755-c9eaa5b403621972a9ed2889626e9801?1794359841", ch: [["Golden Drop", "151"]] },
+  { m: "Young King BULL", n: "N°24 · lun. 16", cv: "https://www.shonengahosha.co.jp/images/Book/Book_nTLrZaVqv8HtsBib4kFgJg3JHz5sYud0_1.png?dt=44160720261100", ch: [["Batsu", "35"], ["Donketsu Chapter 2", "135"], ["Gorilla", ""], ["Saikyō Bonno Kyōdai", ""]] },
+  { m: "Weekly Shōnen Champion", n: "N°51 · jeu. 19", cv: "https://images.microcms-assets.io/assets/f1294814109b472fa8746c569da83356/8ca707d6582b42f08f88a05091242582/magazine_cover_6537.jpg", ch: [["WORST Gaiden Guriko", "379"], ["Yuuenchi Baki Gaiden", ""]] },
+  { m: "Champion RED", n: "Janvier 2027 · jeu. 19", cv: "https://images.microcms-assets.io/assets/f1294814109b472fa8746c569da83356/344f1cbb7f3a4b95a71d58eaa0127c9d/magazine_cover_6539.jpg", ch: [["Baki Gaiden Doppo", "", 1], ["Baki Gaiden Shin Chiharu", "p"]] },
+  { m: "Young King", n: "N°24 · ven. 20", cv: "https://www.shonengahosha.co.jp/images/Book/Book_Vh07tAm7p1BrmQbsUfHSf5bnByhgmSgD_1.png?dt=31212620261117", ch: [["BADBOYS", "17"], ["Boxster", "89"], ["Barefaced", "64"], ["Donketsu Gaiden", "p"], ["Smoking Savage", "p"], ["Kimongai Karma", "p"]] },
+  { m: "Goraku", n: "N° du 4/11 déc. · ven. 20", cv: "https://hondana-image.s3.amazonaws.com/book/image/10211442/normal_649988db-c3d6-4706-b97f-1648eb6377b3.jpg", ch: [["Golden Guy", "154"], ["Sangaku Chōjin Matsuoka", "p"]] },
+  { m: "Big Comic Spirits", n: "N°52 · ven. 20", cv: "https://bigcomicbros.net/wp-content/uploads/2026/11/spi2652_thum.jpg", ch: [["Kujô l'implacable", "p"], ["Mogura no Uta", "p"]] },
+  { m: "En ligne", n: "Champion Cross · mer. 18 et ven. 20", cv: "/modeles/story-v2/m/np/Ja-21.jpg", ch: [["Nine Peaks", "205"], ["WORST Gaiden Saburoku Santa", "59"]] }
+];
+var chip = function (c) { return c[1] === "p" ? '<span class="chip p">' + c[0] + " <i>pause</i></span>" : '<span class="chip' + (c[2] ? " c" : "") + '">' + c[0] + (c[1] ? " <i>" + c[1] + "</i>" : "") + "</span>"; };
+var carte = function (g) { return '<div class="mag"><div class="mc" style="background-image:url(' + C(g.cv) + ')"></div><div style="flex:1"><h5>' + g.m + "<small>" + g.n + '</small></h5><div class="chips">' + g.ch.map(chip).join("") + "</div></div></div>"; };
+function page(gs, i, n) {
+  var h = '<div class="mz"><div class="g">'; for (var j = 0; j < 63; j++) h += '<i style="background-image:url(' + C(MOS[(j + i * 21) % MOS.length]) + ')"></i>'; h += "</div></div>";
+  return '<div class="s">' + h + '<div class="hd"><img src="/img/social/logo-blanc.png" alt=""></div>' +
+    '<div style="position:absolute;left:60px;right:60px;top:186px;z-index:3"><div class="lab"><i></i><span>Prépublication</span><b>連載</b><i></i></div>' +
+    '<div class="t" style="margin-top:22px">' + (i ? "La suite" : "16 – 22 novembre") + '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:22px;margin-top:40px">' + gs.map(carte).join("") + "</div></div>" +
+    (i === n - 1 ? '<div class="leg" style="position:absolute;left:0;right:0;bottom:60px;z-index:3"><span><u></u>Pages couleurs</span><span><u class="p"></u>En pause</span><span>le chiffre = n° du chapitre</span></div>' : "") + "</div>";
+}
+fetch("mos.json").then(function (r) { return r.json(); }).then(function (l) {
+  MOS = l;
+  var P = [G.slice(0, 3), G.slice(3, 6), G.slice(6)];
+  document.getElementById("out").innerHTML = P.map(function (gs, i) { return '<div class="w"><b>Page ' + (i + 1) + '</b><div id="s' + i + '">' + page(gs, i, P.length) + "</div></div>"; }).join("");
+  document.fonts.ready.then(function () { setTimeout(function () { document.body.dataset.ok = 1; }, 2500); });
+});
+</script>
+</body>
+</html>
