@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>Maquettes fiche v3 · FuryoGang</title>
+<!-- Will, 25/11/2026 (3e tour) : fiche qui ne vieillit jamais (chiffres seulement pour une série terminée), infos en Inter bien lisible
+     avec « : », pastille « Fiche n° », résumé plus grand (4-5 lignes), story remontée, en bas l'adresse de la fiche, 3 façons de séparer le résumé. -->
+<style>
+@font-face{font-family:"FGAntonio";src:url(/fonts/Antonio.ttf) format("truetype");font-weight:100 700}
+@font-face{font-family:"FGInter";src:url(/fonts/Inter.ttf) format("truetype");font-weight:100 900}
+html,body{margin:0;background:#2a2a2e;font-family:system-ui}
+.w{display:inline-block;vertical-align:top;margin:20px}.w>b{display:block;font:800 22px system-ui;color:#fff;margin-bottom:10px}
+.cadre{position:relative}
+.f{width:1080px;height:1440px;position:relative;overflow:hidden;background:#F2EFE9;color:#0c0c0e;font-family:"FGInter";display:flex;flex-direction:column;--red:#BC002D;--mut:rgba(12,12,14,.56);--track:rgba(12,12,14,.08)}
+.f *{box-sizing:border-box}
+.f.story{height:1920px}
+.f .top{flex:none;background:#0c0c0e;padding:34px 64px;display:flex;align-items:center}
+.f.story .top{padding-top:150px}
+.f .top img{width:250px;display:block}
+.f .main{flex:1;min-height:0;display:flex;flex-direction:column;padding:54px 64px 56px}
+.f.story .main{padding:60px 64px 300px}
+.f .hero{display:flex;gap:46px;align-items:flex-start;flex:none}
+.f .cv{flex:none;width:400px;height:560px;object-fit:cover;border:10px solid #fff;box-shadow:0 24px 60px rgba(0,0,0,.28);display:block;background:#ddd}
+.f .info{flex:1;min-width:0}
+.f .kick{display:inline-flex;align-items:center;height:56px;padding:0 22px 2px;border-radius:6px;background:var(--red);color:#fff;font:700 34px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.08em}
+.f .t{margin:16px 0 0;padding-top:.14em;font:700 96px/1.02 "FGAntonio";text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.f .t.deux{white-space:normal;font-size:74px}
+.f .jp{margin-top:8px;font:700 30px/1.4 "Noto Sans JP","FGInter",sans-serif;color:var(--mut)}
+.f .rows{margin-top:26px;display:flex;flex-direction:column;gap:12px}
+.f .row{display:flex;gap:10px;align-items:baseline;font-size:30px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.f .row span{color:var(--mut);font-weight:600}
+.f .row b{font-weight:700;white-space:normal}
+.f .row.multi{white-space:normal;display:block}
+.f .res{flex:none;margin-top:48px}
+.f .res p{margin:0;font-size:39px;line-height:1.42;font-weight:500;color:#202024}
+.f.story .res p{font-size:42px}
+/* 3 façons de séparer le résumé */
+.f .sep1 h3{margin:0 0 16px;display:flex;align-items:center;gap:20px;font:700 52px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.06em;color:var(--red)}
+.f .sep1 h3::after{content:"";flex:1;height:5px;background:var(--red)}
+.f .sep2{border-top:5px solid #0c0c0e;padding-top:22px}
+.f .sep2 h3{margin:0 0 14px;display:inline-flex;align-items:center;gap:16px;font:700 34px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.14em;color:#0c0c0e}
+.f .sep2 h3 i{font:900 30px "Noto Sans JP",sans-serif;font-style:normal;color:var(--red);letter-spacing:.1em}
+.f .sep3{border-left:10px solid var(--red);padding:6px 0 6px 30px}
+.f .sep3 h3{margin:0 0 12px;font:700 40px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.1em;color:var(--red)}
+.f .chif{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.f .chif div{background:var(--track);border-radius:12px;padding:20px 22px 18px}
+.f .chif span{display:block;font:700 24px/1 "FGInter";letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.f .chif b{display:block;margin-top:10px;font:700 62px/1 "FGAntonio";text-transform:uppercase}
+.f .chif i{display:block;margin-top:8px;font:600 25px/1.2 "FGInter";font-style:normal;color:var(--mut)}
+.f .lien{flex:none;margin-top:auto;padding-top:30px;text-align:center}
+.f .lien small{display:block;font:600 28px "FGInter";color:var(--mut)}
+.f .lien b{display:inline-block;margin-top:10px;font:700 46px/1 "FGAntonio";letter-spacing:.02em;color:#fff;background:#0c0c0e;padding:14px 26px 16px;border-radius:10px}
+.f .lien b em{font-style:normal;color:#F2C14E}
+/* Post : tout doit tenir dans 1440 (résumé 5 lignes au plus) */
+.f.post .main{padding:46px 64px 36px}
+.f.post .cv{width:380px;height:532px}
+.f.post .res{margin-top:38px}
+.f.post .res p{font-size:37px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden}
+.f.story .res p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:6;overflow:hidden}
+.f.post .sep1 h3{font-size:46px;margin-bottom:12px}
+.f.post .chif{margin-top:24px}.f.post .chif div{padding:14px 20px 14px}.f.post .chif b{font-size:52px}
+.f.post .lien{padding-top:18px}.f.post .lien b{font-size:40px;padding:12px 22px 14px}
+/* Interface Instagram */
+.ig{position:absolute;inset:0;z-index:50;pointer-events:none}
+.ig .bars{position:absolute;left:20px;right:20px;top:17px;display:flex;gap:6px}.ig .bars i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.9)}
+.ig .av{position:absolute;left:35px;top:54px;width:66px;height:66px;border-radius:50%;background:#fff;display:grid;place-items:center;font:900 22px sans-serif;color:#c41a2b}
+.ig .nm{position:absolute;left:142px;top:72px;font:600 28px sans-serif;color:#fff}.ig .nm span{opacity:.75;margin-left:22px}
+.ig .x{position:absolute;right:28px;top:58px;font:300 64px/1 sans-serif;color:#fff}
+.ig .say{position:absolute;left:24px;right:150px;top:1828px;height:84px;border:2px solid rgba(12,12,14,.35);border-radius:42px;font:500 28px sans-serif;color:rgba(12,12,14,.55);display:flex;align-items:center;padding-left:34px}
+.ig .hz{position:absolute;right:40px;top:1842px;font:400 48px sans-serif;color:rgba(12,12,14,.6)}
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script>
+var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+var couv = function (u) { return u ? "/api/couv?w=700&u=" + encodeURIComponent(u) : ""; };
+var IG = '<div class="ig"><div class="bars"><i></i><i></i><i></i></div><div class="av">不良</div><div class="nm">furyogang<span>2 h</span></div><div class="x">×</div><div class="say">Envoyer un message…</div><div class="hz">♡</div></div>';
+function auteurs(d) {
+  var r = [], sc = d.scen || "", sup = (sc.match(/\(supervision\s*:\s*([^)]+)\)/i) || [])[1]; sc = sc.replace(/\s*\(supervision[^)]*\)/i, "").trim();
+  if (sc && sc === d.dess) r.push(["Auteur", sc]); else { if (sc) r.push([/,/.test(sc) ? "Scénario" : "Scénario", sc]); if (sup) r.push(["Supervision", sup]); if (d.dess) r.push(["Dessin", d.dess]); }
+  return r;
+}
+// Chiffres seulement quand ils ne bougeront plus : série terminée (Japon / France), première édition.
+function chiffres(d) {
+  var c = [], jpFini = /termin/i.test(d.stJP), frFini = /termin/i.test(d.stFR);
+  if (jpFini && d.tomesJP) c.push(["Au Japon", d.tomesJP + " tomes", d.pubJP]);
+  if (frFini && d.tomesFR) c.push(["En France", d.tomesFR + " tomes", d.pubFR]);
+  if (jpFini) c.push(["Statut", "Terminé", d.y1 + " – " + d.y2]);
+  return c.length ? '<div class="chif" style="grid-template-columns:repeat(' + c.length + ',1fr)">' + c.map(function (x) { return "<div><span>" + x[0] + "</span><b>" + x[1] + "</b><i>" + esc(x[2]) + "</i></div>"; }).join("") + "</div>" : "";
+}
+function card(d, fmt, sep) {
+  var rows = auteurs(d).concat([["Genres", d.genres.slice(0, 3).join(", ")], ["Type", d.type + " · " + d.y1]]);
+  if (!/termin/i.test(d.stJP) && d.pubFR) rows.push(["En France", d.pubFR]);
+  var sepH = sep === 2 ? '<h3>Résumé <i>あらすじ</i></h3>' : "<h3>Résumé</h3>";
+  return '<div class="f ' + fmt + '"><div class="top"><img src="/img/social/logo-blanc.png" alt=""></div><div class="main">' +
+    '<div class="hero"><img class="cv" src="' + couv(d.cover) + '" alt=""><div class="info"><span class="kick">Fiche n°' + String(d.n).padStart(3, "0") + '</span><p class="t">' + esc(d.t) + '</p>' + (d.jp && d.jp.toLowerCase() !== d.t.toLowerCase() ? '<div class="jp">' + esc(d.jp) + '</div>' : "") + '' +
+    '<div class="rows">' + rows.map(function (r) { return '<div class="row"><span>' + r[0] + ' :</span><b>' + esc(r[1]) + "</b></div>"; }).join("") + "</div></div></div>" +
+    '<div class="res sep' + sep + '">' + sepH + "<p>" + esc(d.resume) + "</p></div>" + chiffres(d) +
+    '<div class="lien"><small>La fiche complète, les tomes et l\'extrait</small><b>furyogang.com<em>/series/' + d.slug + "</em></b></div></div></div>";
+}
+var D = {
+  bk: { slug: "bakuon-rettou", t: "Bakuon Rettô", jp: "爆音列島", cover: "https://dvs-cover.kodansha.co.jp/0000029807/aW5eLW011eZptEdwIkp4ddYSl37ju7n8xQIE90MW.jpg", type: "Seinen", genres: ["Bōsōzoku", "Furyō", "Drame"], y1: 2002, y2: 2013, scen: "Tsutomu Takahashi", dess: "Tsutomu Takahashi", stJP: "Terminé", stFR: "Terminé", tomesJP: 18, tomesFR: 18, pubJP: "Kōdansha", pubFR: "Kana", n: 86,
+    resume: "Tokyo, 1980 : un adolescent timide, Takashi, se lie à des camarades passionnés de rodéos à moto et bascule dans l'univers des gangs de bōsōzoku. Un portrait réaliste et sombre de la jeunesse motarde et de sa hiérarchie." },
+  gto: { slug: "gto", t: "GTO", jp: "GTO", cover: "https://media.hachette.fr/imgArticle/PIKA/2015/9782845991002-001-X.jpeg?source=web&v=e22ae6050d33c7bfa1aca78a4ced2b7e", type: "Shōnen", genres: ["Bōsōzoku", "Lycée", "Comédie"], y1: 1997, y2: 2002, scen: "Tōru Fujisawa", dess: "Tōru Fujisawa", stJP: "Terminé", stFR: "Terminé", tomesJP: 25, tomesFR: 25, pubJP: "Kōdansha", pubFR: "Pika", n: 87,
+    resume: "Eikichi Onizuka, 22 ans, ancien chef de bande de motards sans diplôme digne de ce nom, décide de devenir professeur. Affecté à une classe réputée ingérable d'un collège privé de Tokyo, il affronte élèves harceleurs, collègues hostiles et parents démissionnaires avec ses méthodes de voyou, brutales mais sincères." },
+  mk: { slug: "master-keaton", t: "Master Keaton", jp: "MASTERキートン", cover: "https://bdi.dlpdomain.com/album/9782505017646-couv-M480x676.jpg", type: "Seinen", genres: ["Thriller", "Policier", "Drame"], y1: 1988, y2: 1994, scen: "Hokusei Katsushika, Takashi Nagasaki", dess: "Naoki Urasawa", stJP: "Terminé", stFR: "Terminé", tomesJP: 12, tomesFR: 12, pubJP: "Shōgakukan", pubFR: "Kana", n: 88,
+    resume: "Fils d'un Japonais et d'une Anglaise, Taichi Hiraga Keaton est un archéologue diplômé d'Oxford et un ancien instructeur du SAS. Faute de poste universitaire stable, il enquête pour une compagnie d'assurances, aux quatre coins de l'Europe et du monde, entre déduction, savoir historique et techniques de survie." },
+  gd: { slug: "golden-drop", t: "Golden Drop", jp: "ゴールデンドロップ", cover: "https://c.bookwalker.jp/1760786/t_700x780.jpg", type: "Seinen", genres: ["Contrebande", "Drogue", "Gang"], y1: 2023, scen: "Keiichi Tsuha (supervision : Shinya Kusaka, Junpei Kamisato)", dess: "Ryō Kōzuki", stJP: "En cours", stFR: "Non licencié", n: 89,
+    resume: "Dans les bas-fonds d'Okinawa, un jeune trafiquant se retrouve au cœur d'une guerre pour une drogue d'un nouveau genre, convoitée par les gangs, la mafia et la police. (Résumé de test.)" }
+};
+var S = [
+  ["Bakuon Rettô · story · séparateur 1 (titre + trait)", card(D.bk, "story", 1), 1],
+  ["Bakuon Rettô · post · séparateur 1", card(D.bk, "post", 1), 0],
+  ["Bakuon Rettô · post · séparateur 2 (filet noir + あらすじ)", card(D.bk, "post", 2), 0],
+  ["Bakuon Rettô · post · séparateur 3 (barre rouge à gauche)", card(D.bk, "post", 3), 0],
+  ["GTO · post (terminé)", card(D.gto, "post", 1), 0],
+  ["Master Keaton · post (3 auteurs)", card(D.mk, "post", 1), 0],
+  ["Master Keaton · story", card(D.mk, "story", 1), 1],
+  ["Golden Drop · post (en cours : pas de chiffres)", card(D.gd, "post", 1), 0]
+];
+document.getElementById("out").innerHTML = S.map(function (x, i) { return '<div class="w"><b>' + x[0] + '</b><div class="cadre" id="s' + i + '">' + x[1] + (x[2] ? IG : "") + "</div></div>"; }).join("");
+// Titre trop long : réduit, sinon sur deux lignes.
+document.fonts.ready.then(function () {
+  [].forEach.call(document.querySelectorAll(".f .t"), function (t) { for (var s = 96; s >= 72 && t.scrollWidth > t.clientWidth + 1; s -= 2) t.style.fontSize = s + "px"; if (t.scrollWidth > t.clientWidth + 1) t.classList.add("deux"); });
+  setTimeout(function () { document.body.dataset.ok = 1; }, 2500);
+});
+</script>
+</body>
+</html>
