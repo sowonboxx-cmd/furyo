@@ -142,7 +142,7 @@
           n._txt = (reg.txt && reg.txt[n.id]) || coupe(n.accroche || n.texte || "", 210);
           n._hl = (reg.hl && reg.hl[n.id]) || "";
         });
-        return { du: du, au: au, news: news, centre: reg.centre, pastille: reg.pastille };
+        return { du: du, au: au, news: news, centre: reg.centre, pastille: reg.pastille !== 0 }; // date en pastille jaune par défaut (Will, 25/11/2026)
       });
     });
   }
@@ -209,7 +209,7 @@
       var jp = cal.filter(function (x) { return x.pays === "Japon" && dans(x, du, au); }), fr = cal.filter(function (x) { return x.pays === "France" && dans(x, du, au); });
       var vu = {}, proch = cal.filter(function (x) { return dans(x, dec(du, 7), dec(du, 13)); }).filter(function (x) { var k = x.seriesId || x.series; if (vu[k]) return false; vu[k] = 1; return true; });
       proch = proch.filter(function (x) { return x.pays === "France"; }).concat(proch.filter(function (x) { return x.pays !== "France"; })).slice(0, 4).sort(function (a, z) { return a.date < z.date ? -1 : 1; });
-      return { du: du, au: au, jp: jp, fr: fr, proch: proch };
+      return { du: du, au: au, jp: jp, fr: fr, proch: proch, pastille: true };
     });
   }
   // France et Japon alternés (couverture, story) : les deux pays visibles même quand l'un a beaucoup de sorties.
@@ -297,7 +297,7 @@
       var G = {}, ordre = [], SER = {}; r[0].series.forEach(function (x) { SER[x.id] = x; });
       it.sort(function (a, z) { return a.date < z.date ? -1 : a.date > z.date ? 1 : 0; }).forEach(function (x) {
         var enLigne = /en ligne/i.test(x.mag), k = enLigne ? "En ligne" : x.mag;
-        if (!G[k]) { G[k] = { m: enLigne ? "En ligne" : x.mag.replace(/^Weekly /, ""), cv: enLigne ? "" : (x.cover || ""), jours: [], plat: [], ch: [], pz: [], n: (x.issue || "").replace(/^\d{4}年/, "").replace(/^No\./, "N°").replace(/号$/, "") }; ordre.push(k); }
+        if (!G[k]) { G[k] = { m: enLigne ? "En ligne" : x.mag.replace(/^Weekly /, ""), cv: enLigne ? "" : (x.cover || ""), jours: [], plat: [], ch: [], pz: [], n: (x.issue || "").replace(/^\d{4}年/, "").replace(/^No\./, "N°").replace(/号$/, "").replace(/^(\d+)$/, "N°$1") }; ordre.push(k); }
         var g = G[k], j = JC[new Date(x.date + "T12:00:00").getDay()] + " " + jj(x.date);
         if (g.jours.indexOf(j) < 0) g.jours.push(j); if (enLigne) { var pl = x.mag.replace(/ \(en ligne\)/i, ""); if (g.plat.indexOf(pl) < 0) g.plat.push(pl); }
         var se = SER[(x.series || [])[0]], nom = (se && se.inFR && se.fr) || x.entry.split(" · ")[0].replace(/\s*~.*$/, "").replace(/ - .*$/, "");
