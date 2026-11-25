@@ -122,7 +122,9 @@ a.row:hover{border-color:#4a4a52}
     m = m.replace(/\s*\d{4}\s*年?\s*(?:No\.|第)?\s*([\d\/・]+)\s*号?/, function (_, n) { return " n°" + n.replace(/・/g, "-"); });
     return m.replace(/第(\d+)号/, "n°$1").trim();
   };
-  var nom = function (x) { return x.entry.split(" · ")[0]; };
+  // Titre français de la fiche quand il existe (Will, 25/11/2026).
+  var FR = {};
+  var nom = function (x) { return FR[String((x.series || [])[0] || "").replace(/-/g, "")] || x.entry.split(" · ")[0]; };
   var COUL = { "Couleur d'ouverture": "r", "Pages couleur": "r", "En couverture": "r", "Nouvel arc": "", "Nouvelle série": "", "Dernier chapitre": "y", "Chapitre spécial": "y", "Pause annoncée": "gr" };
   var tagsDe = function (x) { var h = (x.hl || []).filter(function (t) { return t !== "Annonce"; }); if (!h.length && (x.hl || []).length) h = ["Annonce"]; return h; };
   var tags = function (l, n) { return l.slice(0, n || 9).map(function (t) { return '<span class="tag ' + (COUL[t] == null ? "y" : COUL[t]) + '">' + esc(t) + "</span>"; }).join(""); };
@@ -133,7 +135,7 @@ a.row:hover{border-color:#4a4a52}
     var sids = []; ((r[0] && r[0].items) || []).forEach(function (x) { var id = String((x.series || [])[0] || "").replace(/-/g, ""); if (x.date >= D1 && x.date <= D7 && id && sids.indexOf(id) < 0) sids.push(id); });
     return (sids.length ? get("/api/recap-semaine?du=" + D1 + "&sids=" + sids.slice(0, 20).join(",")) : Promise.resolve(null)).then(function (d) { r.push((d && d.derniers) || {}); return r; });
   }).then(function (r) {
-    var BY = {}, DER = r[2] || {}; ((r[1] && r[1].items) || []).forEach(function (s) { BY[s.id] = s; });
+    var BY = {}, DER = r[2] || {}; ((r[1] && r[1].items) || []).forEach(function (s) { BY[s.id] = s; if (s.fr) FR[s.id] = s.fr; });
     var ser = function (x) { return BY[String((x.series || [])[0] || "").replace(/-/g, "")] || {}; };
     var href = function (x) { var s = ser(x); return s.slug ? (s.fiche ? "/series/" : "/ma-collection/") + s.slug : ""; };
     // Image : le dernier tome paru, sinon la fiche, sinon le visuel officiel du numéro (série sans tome) — Will, 24/11/2026.

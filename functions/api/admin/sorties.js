@@ -63,7 +63,8 @@ async function ajouterComptes(env, items) {
     const frs = s.editeurs.map(k => editeurs[k]).filter(e => e && /FR/.test(e.type));
     const fr = (pays === "France" && ed && /FR/.test(ed.type)) ? ed : frs[0];
     const aut = s.auteurs.map(k => auteurs[nid(k)]).filter(Boolean);
-    x.serie = { ...s, t: pays === "France" ? s.t : (s.tjp || s.t) };
+    // Titre français dès que la série est éditée en France, même pour un tome japonais (Will, 25/11/2026).
+    x.serie = { ...s, t: pays === "France" || s.tomesFR > 0 ? s.t : (s.tjp || s.t) };
     x.cat = pays === "France" ? "sortie-fr" : "sortie-jp";
     x.titre = `${x.serie.t} T.${String(x.n ?? "").padStart(2, "0")}`;
     x.sortie = x.date;

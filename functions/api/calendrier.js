@@ -40,7 +40,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     for (const r of sRows) {
       const p = r.properties || {};
       series[r.id.replace(/-/g, "")] = {
-        id: r.id.replace(/-/g, ""), t: text(p["SERIES"]), jp: text(p["Titre Original"]), fr: text(p["Titre FR"]),
+        id: r.id.replace(/-/g, ""), t: text(p["SERIES"]), jp: text(p["Titre Original"]), fr: text(p["Titre FR"]), vf: num(p["Tomes FR"]) > 0,
         cover1: text(p["Couverture T1"]), resume: text(p["Résumé"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), auteurs: [text(p["Scénariste"]), text(p["Dessinateur"])].filter((v, i, a) => v && a.indexOf(v) === i).join(" & "), hasVisual: ((p["Visuel principal"] || {}).files || []).length > 0, finiJP: text(p["Statut Japon"]) === "Terminé", tomesJP: num(p["Tomes JP"]), fiche: estVisible(p),
       };
     }
@@ -60,7 +60,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         pays: ed.pays || "", pub: ed.pub || "", format: ed.format || "",
         // Nombre de tomes connu : celui de l'édition, sinon (Japon) celui de la série si elle est terminée.
         nb: ed.nb || (ed.pays === "Japon" && s.finiJP ? s.tomesJP : null),
-        series: s.t || "", seriesId: s.id || "", jp: s.jp || "", fr: s.fr || "", visual: !!s.hasVisual, cover1: s.cover1 || "", resume: s.resume || "", scen: s.scen || "", dess: s.dess || "", auteurs: s.auteurs || "", fiche: s.fiche !== false,
+        // Série éditée en France : titre français partout, même pour les tomes japonais (Will, 25/11/2026, Le Premier Amour de Nezumi).
+        series: (s.vf && s.fr) || s.t || "", seriesId: s.id || "", jp: s.jp || "", fr: s.fr || "", visual: !!s.hasVisual, cover1: s.cover1 || "", resume: s.resume || "", scen: s.scen || "", dess: s.dess || "", auteurs: s.auteurs || "", fiche: s.fiche !== false,
       };
     }).filter(it => it.date && it.seriesId);
     return { items };
