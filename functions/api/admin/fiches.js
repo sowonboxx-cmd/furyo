@@ -11,6 +11,9 @@ const CLE = "hq:fiches-cal-v2"; // v2 : mardi, jeudi, samedi (Will, 25/11/2026)
 // Mardi, jeudi et samedi à 18 h (Will, 25/11/2026) ; jours et heure réglables dans Mangas Database (vue Calendrier).
 const DEFAUT = { jours: [2, 4, 6], depart: "2026-12-01", heure: "18 h" };
 
+// CROWS T.1 (Kana), pages 1 à 5 du chapitre 1 envoyées par Will le 25/11/2026.
+const DEPART_EX = { "3ebb5e1a634f801aa127dbe7bfbe14d6": { pages: [1, 2, 3, 4, 5].map(i => `/img/extraits/crows/${i}.jpg`), fin: "grille" } };
+
 function nettCal(c) {
   c = c || {};
   const jours = Array.isArray(c.jours) ? [...new Set(c.jours.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n <= 6))] : DEFAUT.jours;
@@ -32,6 +35,8 @@ export async function onRequestGet({ request, env }) {
       leg: { ig: text(p["Légende Instagram"]), x: text(p["Légende X"]), tt: text(p["Légende TikTok"]) } };
   }).filter(s => s.num).sort((a, b) => a.num - b.num);
   if (env.STATS) await Promise.all(items.map(async s => { s.extrait = await env.STATS.get("fx:" + s.id, "json").catch(() => null); }));
+  // Pages déjà fournies par Will (posées par Claude), tant qu'il n'en a pas choisi d'autres dans le calendrier.
+  for (const s of items) if (!s.extrait && DEPART_EX[s.id]) s.extrait = DEPART_EX[s.id];
   return json({ ok: true, cal, items });
 }
 
