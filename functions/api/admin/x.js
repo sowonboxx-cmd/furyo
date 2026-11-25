@@ -14,5 +14,5 @@ export async function onRequestPost({ request, env }) {
   const texte = String(b.texte || "").slice(0, 4000), images = (Array.isArray(b.images) ? b.images : []).map(String).filter(u => /^(https:\/\/|\/)\S+$/.test(u)).slice(0, 20);
   if (!texte && !images.length) return json({ error: "rien à publier" }, 400);
   try { return json({ ok: true, ...(await xPost(env, texte, images)) }); }
-  catch (e) { return json({ error: String((e && e.message) || e), status: (e && e.status) || 0 }, 502); }
+  catch (e) { return json({ error: String((e && e.message) || e), status: (e && e.status) || 0 }, 200); } // 200 : un 502 serait remplacé par la page d'erreur de Cloudflare
 }
