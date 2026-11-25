@@ -58,7 +58,9 @@
   // Ligne de sortie ; « Dernier tome. » sur sa propre ligne (rien pour un premier tome).
   function ligneSortie(i, chez) {
     var t = i.tome || {}, d = i.sortie, q = "";
-    var auj = d && d === new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10);
+    // Les sorties sont postées le jour même (programmées) : toujours « Sortie aujourd'hui chez … » (Will, 25/11/2026).
+    // Seule une couverture dévoilée avant la sortie garde sa date.
+    var auj = d && (!/^couv/.test(i.catChoisie || i.cat || "") || d === new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10));
     if (d && !auj) { var o = new Date(d + "T12:00:00"); q = o.toLocaleDateString("fr-FR", Object.assign({ day: "numeric", month: "long" }, o.getFullYear() !== new Date().getFullYear() ? { year: "numeric" } : {})); q = q.replace(/^1 /, "1er "); }
     return (auj ? "Sortie aujourd'hui" : q ? "Sortie le " + q : "Sortie") + (chez || t.pub ? " chez " + (chez || t.pub) : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
   }

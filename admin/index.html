@@ -370,7 +370,7 @@ main{max-width:900px;margin:0 auto;padding:12px 16px 80px}
 <div class="toast" id="toast"></div>
 <script src="/site/fiche-card.js?v=8"></script>
 <script src="/site/tome-card.js?v=5"></script>
-<script src="/site/sortie-post.js?v=17"></script>
+<script src="/site/sortie-post.js?v=18"></script>
 <script src="/site/quickaccess.js?v=22"></script>
 <script src="/site/og-actu.js?v=8"></script>
 <script>
@@ -1032,7 +1032,7 @@ function postX(i, rs){
   const edAt = t.pays === "France" && t.pub && (c.xFR || [])[0] ? "@" + c.xFR[0] : "";
   // Règle simplifiée (Will, 03/10/2026) : le résumé directement, sans « Résumé : », et plus de ligne « Fiche complète ».
   // Couvertures : plus de « Couverture française / japonaise » en tête du post X, directement le titre et le tome (Will, 16/10/2026).
-  const base = `${/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)}${i.titre}\n${ligneSortie(i, edAt)}${rs ? `\n\n${rs}` : ""}\n\n↗ furyogang.com/series/${s.slug}`;
+  const base = `${/^couv/.test(i.catChoisie || i.cat) ? "" : catLigne(i)}${i.titre}\n${ligneSortie(i, edAt)}${rs ? `\n\n${rs}` : ""}`; // jamais de lien sur X (Will, 25/11/2026)
   const hs = choixX(c.x, edAt ? [] : c.xFR, h => poidsX(base + "\n" + h.map(x => "@" + x).join(" · ")) <= 280, c.xMag);
   return base + (hs.length ? "\n" + hs.map(h => "@" + h).join(" · ") : "");
 }
@@ -1211,7 +1211,8 @@ function ligneSortie(i, chez){
   const t = i.tome || {}, d = i.sortie;
   let q = "";
   // Le jour même : « Sortie aujourd'hui chez … » (Will, 09/10/2026).
-  const auj = d && d === new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10);
+  // Postées le jour même (programmées) : toujours « Sortie aujourd'hui » sauf une couverture dévoilée avant (Will, 25/11/2026).
+  const auj = d && (!/^couv/.test(i.catChoisie || i.cat || "") || d === new Date(Date.now() - new Date().getTimezoneOffset() * 60e3).toISOString().slice(0, 10));
   if (d && !auj) { const o = new Date(d + "T12:00:00"); q = o.toLocaleDateString("fr-FR", { day: "numeric", month: "long", ...(o.getFullYear() !== new Date().getFullYear() ? { year: "numeric" } : {}) }); q = q.replace(/^1 /, "1er "); }
   return (auj ? "Sortie aujourd'hui" : q ? `Sortie le ${q}` : "Sortie") + (chez || t.pub ? ` chez ${chez || t.pub}` : "") + "." + (t.flag === "dernier" ? "\nDernier tome." : "");
 }
