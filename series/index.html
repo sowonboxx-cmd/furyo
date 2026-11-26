@@ -1164,7 +1164,10 @@ function renderList(items){
   addEventListener("pageshow", reset); setTimeout(reset, 0);
 }
 if (!slug) {
-  fetch("/api/series").then(r => r.json()).then(j => { LISTE_ADMIN = !!(j && j.apercu); renderList((j && j.items) || []); }).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger les séries.</p>`; });
+  // Liste : 15 s maximum par essai, 3 essais (Notion sature parfois), puis un message clair au lieu d'un squelette sans fin (Will, 26/11/2026).
+  const listeFetch = (n = 0) => Promise.race([fetch("/api/series").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }), new Promise((_, ko) => setTimeout(() => ko(new Error("lent")), 15000))])
+    .catch(e => { if (n >= 2) throw e; return new Promise(ok => setTimeout(ok, 1000 * (n + 1))).then(() => listeFetch(n + 1)); });
+  listeFetch().then(j => { LISTE_ADMIN = !!(j && j.apercu); renderList((j && j.items) || []); }).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">La base met du temps à répondre. <a href="/series/">Réessayer</a></p>`; });
 } else {
   // Aperçu immédiat (titre et couverture connus depuis la liste) pendant le chargement de la fiche.
   try { const pre = JSON.parse(sessionStorage.getItem("fg-pre-" + slug) || "null");
