@@ -38,6 +38,8 @@ async function maj({ request, env }) {
   if (typeof b.coeur === "boolean") props["Prochaine à traiter"] = { checkbox: b.coeur };
   // Promo réseaux faite (post-fiche publié) — back-office uniquement, n'affecte pas le site (Will, 19/10/2026).
   if (typeof b.promo === "boolean") props["Promo"] = { checkbox: b.promo };
+  // Promo réseaux cochée = fiche présentée : elle passe aussi « Sur le site » (Will, 26/11/2026), avec sa date de publication.
+  if (b.promo === true && !STATUTS.includes(b.statut)) { props["Statut"] = { select: { name: PUBLIC } }; props["Date de publication"] = props["Date de publication"] || { date: { start: new Date().toISOString().slice(0, 10) } }; }
   // Date de la promo réseaux (Will, 11/11/2026) : remplie quand on coche, vidée quand on décoche (ou date choisie).
   if (typeof b.promo === "boolean") props["Promo faite le"] = { date: b.promo ? { start: /^\d{4}-\d{2}-\d{2}$/.test(b.promoLe || "") ? b.promoLe : new Date().toISOString().slice(0, 10) } : null };
   // Légendes des réseaux (depuis le Studio « Nouvelle fiche »).
@@ -53,7 +55,7 @@ async function maj({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 400);
   // Le site se met à jour tout de suite : on jette les versions en cache des listes publiques.
   const c = caches.default;
-  await Promise.all(["/api/series?v=5", "/api/series?v=5&admin=1", "/__cache/admin-series-v2", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", "/api/biblio?v=3", "/api/biblio?v=3&id=" + b.id, ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString())))).catch(() => {});
+  await Promise.all(["/api/series?v=6", "/api/series?v=6&admin=1", "/__cache/admin-series-v2", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", "/api/biblio?v=3", "/api/biblio?v=3&id=" + b.id, ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString())))).catch(() => {});
   const p = ((await r.json().catch(() => ({}))).properties) || {};
   const st = ((p["Statut"] || {}).select || {}).name || A_VALIDER;
   return json({ ok: true, statut: st, publier: st === PUBLIC, promo: !!((p["Promo"] || {}).checkbox), promoLe: ((p["Promo faite le"] || {}).date || {}).start || "", date: ((p["Date de publication"] || {}).date || {}).start || "" });
