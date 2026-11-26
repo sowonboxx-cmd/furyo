@@ -10,7 +10,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 12; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 13; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -51,7 +51,7 @@ const DEPART = {
       note: "Annonce des fiches : le post (Instagram + X) et les 3 stories. Programmer à 17 h.",
       visuels: ["/img/annonce/manga-database/post.jpg"],
       stories: ["/img/annonce/manga-database/story-1.jpg", "/img/annonce/manga-database/story-2.jpg", "/img/annonce/manga-database/story-3.jpg"],
-      textes: { ig: "📢 NOUVEAU SUR FURYOGANG : LA MANGA DATABASE 📚\n\nVous pouviez déjà gérer votre collection sur le site. Place maintenant aux fiches 🗂️\n\nFuryoGang devient une vraie base de données des mangas furyō, yakuza et pègre. Des nouvelles fiches chaque semaine, à partir du 1er décembre :\n📖 le résumé\n📚 tous les tomes, au Japon et en France\n📅 les prochaines sorties\n👀 un extrait\n🎬 les adaptations\n\nPremière fiche mardi. Vous devinez laquelle ? 🐦‍⬛\n\n#FuryoGang #manga #furyo #yakuza #mangafr", tw: "Nouveau sur FuryoGang : la Manga Database\nVous pouviez déjà gérer votre collection sur le site. Place maintenant aux fiches.\n\nUne base des mangas furyō, yakuza et pègre : résumé, tomes, sorties, extraits, adaptations. Des nouvelles fiches chaque semaine.\n\nPremière fiche mardi.", tiktok: "" },
+      textes: { ig: "📢 NOUVEAU SUR FURYOGANG : LA MANGA DATABASE 📚\n\nVous pouviez déjà gérer votre collection sur le site. Place maintenant aux fiches 🗂️\n\nFuryoGang devient une vraie base de données des mangas furyō, yakuza et pègre. Des nouvelles fiches chaque semaine, à partir du 1er décembre :\n📖 le résumé\n📚 tous les tomes, au Japon et en France\n📅 les prochaines sorties\n👀 un extrait\n🎬 les adaptations\n\nPremière fiche mardi. Vous devinez laquelle ? 🐦‍⬛\n\n#FuryoGang #manga #furyo #yakuza #mangafr", tw: "La Manga Database · début mardi\n\n▪️ Base de données manga furyō, yakuza, pègre\n▪️ Résumé, tomes, sorties, extraits, adaptations\n▪️ Des nouvelles fiches chaque semaine", tiktok: "" },
     },
     {
       id: "ev-concours", titre: "Concours figurine", type: "concours", date: "2026-10-21", imp: true,
