@@ -334,7 +334,7 @@
         <div class="mdb-stat"><b>${pr}</b><span>promo réseaux faite</span><div class="br"><i style="width:${pr / tot * 100}%;background:var(--bl)"></i></div></div>
         <div class="mdb-stat"><b>${ok}</b><span>fiches complètes ★</span><div class="br"><i style="width:${ok / tot * 100}%;background:var(--amber)"></i></div></div></div>` : "";
     // Tous les tris visibles d'un coup, sans menu déroulant (Will, 26/11/2026), dont le N° de fiche (1, 2, 3…).
-    const tris = [["num", "N° de fiche"], ...TRIS];
+    const tris = [["num", "Ordre de publication"], ...TRIS];
     return st + `<div class="mdb-tools"><input class="mdb-q" id="q" type="search" placeholder="Chercher une série, un titre japonais…" value="${esc(Q)}" autocomplete="off"></div>
       <div class="mdb-fs mdb-ts"><span class="lb">Trier</span>${tris.map(([k, l]) => `<button data-mtri="${k}" aria-pressed="${T === k}">${l}</button>`).join("")}</div>
       <div class="mdb-fs"><span class="lb">Afficher</span>${FILTRES.map(([k, , f]) => `<button data-mf="${k}" aria-pressed="${!Q && F === k}">${LABELS[k] || k} <small>${ITEMS.filter(f).length}</small></button>`).join("")}</div>`;

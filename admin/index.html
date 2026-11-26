@@ -400,16 +400,16 @@ const ordrePub = (a, b) => prio(a) - prio(b) || (prio(a) === 0 ? a.next.d.locale
 const PRIO_L = ["Sortie bientôt", "Coup de cœur", "Prête", "À compléter"];
 // Filtres de la base manga (Will, 19/10/2026) : Hors ligne (ce qu'il reste à faire) · En ligne · Coup de cœur · Tout (toute la base).
 const FILTRES = [
+  ["tout", "Tout", () => true],
   ["horsligne", "Hors ligne", s => !s.publier],
   ["ligne", "En ligne", s => s.publier],
   ["promo", "À promouvoir", s => s.publier && !s.promo],
   ["coeur", HEART.replace("<svg ", '<svg class="hi" ') + "Coup de cœur", s => s.coeur],
-  ["tout", "Tout", () => true],
 ];
 // Tri : A→Z, presque finies d'abord (le moins à faire), ou à travailler d'abord (le plus à faire).
 // « Récemment ajoutées » (Will, 19/10/2026) : les dernières fiches créées dans Notion en premier, pour voir celles à valider.
 // « Presque finies » et « À travailler » retirés (Will, 26/11/2026).
-const TRIS = [["ordre", "Ordre de publication"], ["recent", "Récemment ajoutées"], ["az", "A → Z"]];
+const TRIS = [["ordre", "Priorité de travail"], ["recent", "Récemment ajoutées"], ["az", "A → Z"]];
 // Par défaut : toute la base, triée par N° de fiche puis de A à Z (Will, 26/11/2026).
 let ITEMS = [], F = "tout", Q = "", T = "num";
 const slugify = s => String(s || "").replace(/œ/g, "oe").replace(/Œ/g, "OE").replace(/æ/g, "ae").replace(/Æ/g, "AE").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -441,7 +441,7 @@ async function load(){
   const j = await r.json().catch(() => ({}));
   if (!r.ok) { root.innerHTML = `<p class="empty">${esc(j.error || "Impossible de charger.")}</p>`; return; }
   ITEMS = j.items || [];
-  F = "horsligne"; T = "ordre"; // Toujours « Hors ligne » dans l'ordre de travail en arrivant (Will, 19/10/2026).
+  F = "tout"; T = "num"; // En arrivant : « Tout », dans l'ordre de publication des fiches (N° 1, 2, 3…, puis A → Z) (Will, 26/11/2026).
   shell(); draw();
   // Liste servie depuis le cache : si elle a plus d'une minute, on la relit tout de suite dans Notion et on la remplace
   // (une série ajoutée directement dans Notion apparaît donc dès l'ouverture, Will 08/10/2026).
@@ -1449,7 +1449,7 @@ function captions(i, rs){ FGPost.setCats(VCATS, NEWS_CATS); return FGPost.captio
 function resumeAuto(i){ FGPost.setCats(VCATS, NEWS_CATS); return FGPost.resumeAuto(i); }
 function ajouteMagX(x, i){ return FGPost.ajouteMagX(x, i); }
 </script>
-<script src="/admin/base.js?v=7"></script>
+<script src="/admin/base.js?v=8"></script>
 <script src="/site/refresh.js?v=3" defer></script>
 </body>
 </html>
