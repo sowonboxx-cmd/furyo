@@ -1,6 +1,6 @@
 // GET /api/series : liste des séries « En ligne · public » (colonne Statut), avec la couverture de leur tome 1 (France d'abord).
 import { toutesEditions } from "../../lib/memo.js";
-import { text, num, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
+import { text, num, date, check, rel, list, queryAll, cached, slugify, slugSerie } from "../../lib/notion.js";
 import { filtreVisible, filtreApercu, estVisible } from "../../lib/site.js";
 import { isAdmin, json } from "../../lib/admin.js";
 
@@ -14,10 +14,10 @@ export async function onRequestGet({ env, request, waitUntil }) {
   // Aperçu admin : aussi les séries « Validé · admins ». Version à part dans le cache (sinon 5 s à chaque chargement),
   // vidée dès qu'un statut change depuis le back-office ; jamais gardée par le navigateur.
   if (await isAdmin(request, env)) {
-    const r = await cached(request, waitUntil, "/api/series?v=5&admin=1", 300, async () => ({ apercu: true, ...(await build(env, true, waitUntil)) }));
+    const r = await cached(request, waitUntil, "/api/series?v=6&admin=1", 300, async () => ({ apercu: true, ...(await build(env, true, waitUntil)) }));
     return new Response(r.body, { status: r.status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "private, no-store" } });
   }
-  return cached(request, waitUntil, "/api/series?v=5", 600, () => build(env, false, waitUntil));
+  return cached(request, waitUntil, "/api/series?v=6", 600, () => build(env, false, waitUntil));
 }
 
 async function build(env, admin, waitUntil) {
@@ -48,6 +48,8 @@ async function build(env, admin, waitUntil) {
         // Pays : une édition dans ce pays, ou (France) une licence en cours / terminée / annoncée.
         inFR: (pays[id]?.has("France") || /cours|termin|stopp|annonc/i.test(text(p["Statut France"]))) ? 1 : 0,
         inJP: (pays[id]?.has("Japon") || !!text(p["Statut Japon"])) ? 1 : 0,
+        // Fiche présentée sur les réseaux (« Promo », cochée au moment de la publication) : seule visible dans la Manga Database (Will, 26/11/2026).
+        fiche: check(p["Promo"]) ? 1 : 0, ficheLe: date(p["Promo faite le"]) || "", num: num(p["N° fiche"]),
         fr: text(p["Titre FR"]), ...(admin && !estVisible(p) ? { apercu: 1 } : {}) };
     }).filter(s => s.t).sort((a, b) => (a.fr || a.t).localeCompare(b.fr || b.t, "fr"));
     return { items };

@@ -456,8 +456,7 @@ body{font-size:16px}
 .xt p{margin:0;color:var(--paper-2);font-size:14px}.xt p strong{color:var(--paper)}
 .xa{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
 .xa a{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:12px;background:var(--paper);color:#000;font:700 14px var(--f-body);text-decoration:none}
-.xa .seg{padding:3px}.xa .seg button{height:34px;padding:0 11px;font-size:13px;gap:6px}
-.xa .seg .flag{width:17px;height:12px;border-radius:2px}
+.xa .flag{width:18px;height:12px;border-radius:2px}
 @media (max-width:899px){.xb{grid-template-columns:1fr}.xp{gap:6px}.xt{padding:16px}.xt b{font-size:24px}}
 .xv{position:fixed;inset:0;z-index:65;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;touch-action:pan-y}
 .xv[hidden]{display:none}.xv img{max-height:86vh;max-width:92vw;border-radius:6px;background:#fff}
@@ -515,6 +514,7 @@ body{font-size:16px}
 .tools .chip{height:50px;border-radius:14px;padding:0 16px;font-size:14px}
 @media (max-width:719px){.tools .fl{margin:0 -16px;padding:0 16px;flex:1 1 100%}.tools .chip{height:42px;border-radius:12px;padding:0 13px}.tools .search{flex-basis:100%;height:46px}}
 @media (max-width:719px){.mdb-h{gap:10px 14px}.mdb-h .pct{order:1;margin-left:auto;font-size:30px}.mdb-k{order:2;width:100%;gap:8px 18px}.mdb-k b{font-size:26px}}
+.mdb-v{margin:12px 0 0;max-width:720px;color:var(--paper-2);font-size:15px;line-height:1.55}
 .base{margin-top:4px}.base .sec-h{justify-content:flex-start;align-items:baseline;gap:12px}.base .fcount{display:inline;margin:0;font-size:13px;color:var(--paper-3)}
 .base .grid{gap:24px 16px}@media (min-width:640px){.base .grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
 </style>
@@ -988,7 +988,7 @@ document.addEventListener("click", e => {
     if (!pubJP.length && s.pubJP) pubJP.push(s.pubJP);
     document.querySelector(".panel").innerHTML = panel(s, pubFR, pubJP, eds, ADAPT(s)); return; }
   if (e.target.closest("#sort")) { ASC = !ASC; const y = scrollY; render(); scrollTo(0, y); return; }
-  const b = e.target.closest(".seg button"); if (!b) return;
+  const b = e.target.closest(".seg button[data-p]"); if (!b) return;
   PAYS = b.dataset.p; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b)); renderTomes();
 });
 
@@ -999,12 +999,12 @@ function extraitSec(s, eds){
   const pg = (s.pages || []).slice(0, 5), vf = s.extraitFR, vo = s.extraitJP;
   if (!pg.length && !vf && !vo) return "";
   if (!pg.length) return `<section class="sec" id="x-ex"><div class="sec-h"><h2 class="fx-h2">Extrait</h2></div>${(() => { const sv = TAB; TAB = "ex"; const h = panel(s, [], [], eds, []); TAB = sv; return h; })()}</section>`;
-  const lien = vf || vo, seg = vf && vo ? `<span class="seg" role="group" aria-label="Version"><button type="button" data-xl="${esc(vf)}" aria-pressed="true">${FLAGS.France}VF</button><button type="button" data-xl="${esc(vo)}" aria-pressed="false">${FLAGS.Japon}VO</button></span>` : "";
-  const chez = (vf ? s.pubFR : s.pubJP || "").replace(/\s*\(.*$/, "").split(",")[0];
+  // Un bouton « Lire l'extrait » par version disponible, avec son drapeau (Will, 26/11/2026).
+  const btn = (u, p) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${FLAGS[p]}Lire l'extrait${ARR_X}</a>` : "";
   return `<section class="sec" id="x-ex"><div class="sec-h"><h2 class="fx-h2">Extrait</h2></div><div class="xb">
     <div class="xp">${pg.map((u, i) => `<button type="button" data-xp="${i}" aria-label="Page ${i + 1} en grand"><img src="${esc(u)}" alt="" loading="lazy" decoding="async"></button>`).join("")}</div>
     <div class="xt"><small>Lire le début</small><b>Les premières pages</b><p><strong>${esc(shown(s))}</strong>, chapitre 1. Cliquez sur une page pour zoomer et les faire défiler.</p>
-      ${lien ? `<div class="xa"><a id="xl" href="${esc(lien)}" target="_blank" rel="noopener">Lire l'extrait${!seg && chez ? " chez " + esc(chez) : ""}${ARR_X}</a>${seg}</div>` : ""}</div></div></section>`;
+      ${vf || vo ? `<div class="xa">${btn(vf, "France")}${btn(vo, "Japon")}</div>` : ""}</div></div></section>`;
 }
 function xvShow(i){
   const pg = (DATA.serie.pages || []).slice(0, 5); if (!pg.length) return; XV = (i + pg.length) % pg.length;
@@ -1026,7 +1026,6 @@ function xvClose(){ const v = document.getElementById("xv"); if (v) v.hidden = t
 addEventListener("keydown", e => { const v = document.getElementById("xv"); if (!v || v.hidden) return; if (e.key === "Escape") xvClose(); else if (e.key === "ArrowRight") xvShow(XV + 1); else if (e.key === "ArrowLeft") xvShow(XV - 1); });
 document.addEventListener("click", e => {
   const p = e.target.closest("[data-xp]"); if (p) { xvShow(+p.dataset.xp); return; }
-  const l = e.target.closest("[data-xl]"); if (l) { const a = document.getElementById("xl"); if (a) a.href = l.dataset.xl; l.parentNode.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === l)); }
 });
 // ===== Tomes : 2 lignes par édition (3 sur téléphone), puis « Voir les N tomes » (Will, 26/11/2026).
 const OUVERT = new Set();
@@ -1049,9 +1048,9 @@ addEventListener("resize", () => { clearTimeout(plier.t); plier.t = setTimeout(p
 // ===== Cartes séries (base et « Si vous aimez ») : genres sur une ligne, puis type · année · statut (couleur seule, sans point).
 const stCls = st => /cours/i.test(st) ? "sc-on" : /termin/i.test(st) ? "sc-end" : /abandon|arr[êe]t|stopp/i.test(st) ? "sc-stop" : /pause/i.test(st) ? "sc-pause" : "";
 const typeM = t => String(t || "").replace(/^Shonen$/i, "Shōnen").replace(/^Shojo$/i, "Shōjo").replace("Manwha", "Manhwa");
-function carteSerie(x){
+function carteSerie(x, aPresenter){
   const pre = esc(JSON.stringify({ t: x.fr || x.t, jp: x.jp, c: x.cover })), st = x.stJP || x.stFR || "";
-  return `<li><a class="bc" href="/series/${esc(x.slug)}" data-pre="${pre}"><div class="cv">${x.cover ? `<img src="${couv(x.cover, 360)}" alt="" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((x.jp || x.t).slice(0, 6))}</span>`}${x.apercu ? `<span class="ap">Admins</span>` : ""}</div>
+  return `<li><a class="bc" href="/series/${esc(x.slug)}" data-pre="${pre}"><div class="cv">${x.cover ? `<img src="${couv(x.cover, 360)}" alt="" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((x.jp || x.t).slice(0, 6))}</span>`}${x.apercu ? `<span class="ap">Admins</span>` : aPresenter ? `<span class="ap">À présenter</span>` : ""}</div>
     <span class="t-n">${esc(shown(x))}</span>${(x.genres || []).length ? `<span class="g">${esc(x.genres.slice(0, 3).join(" · "))}</span>` : ""}<span class="m">${esc([typeM(x.type), x.y1].filter(Boolean).join(" · "))}${st ? `${x.type || x.y1 ? " · " : ""}<b class="${stCls(st)}">${esc(cap(st))}</b>` : ""}</span></a></li>`;
 }
 // « Si vous aimez … » : les séries en ligne qui partagent le plus de genres (et le même type).
@@ -1059,13 +1058,14 @@ let SERIES_L = null;
 function simil(s){
   (SERIES_L ? Promise.resolve(SERIES_L) : fetch("/api/series").then(r => r.json()).then(j => (SERIES_L = (j && j.items) || []))).then(l => {
     const g = new Set(s.genres || []);
-    const top = l.filter(x => x.slug !== s.slug && x.id !== s.id).map(x => ({ x, sc: (x.genres || []).filter(v => g.has(v)).length * 2 + (x.type === s.type ? 1 : 0) })).filter(o => o.sc >= 2).sort((a, b) => b.sc - a.sc).slice(0, 6).map(o => o.x);
+    const top = l.filter(x => x.fiche && x.slug !== s.slug && x.id !== s.id).map(x => ({ x, sc: (x.genres || []).filter(v => g.has(v)).length * 2 + (x.type === s.type ? 1 : 0) })).filter(o => o.sc >= 2).sort((a, b) => b.sc - a.sc).slice(0, 6).map(o => o.x);
     const box = document.getElementById("x-sim"); if (!box || !top.length) return;
     document.getElementById("sim").innerHTML = top.map(carteSerie).join(""); box.hidden = false;
   }).catch(() => {});
 }
 // Sans nom de série dans l'adresse : liste de toutes les séries.
 let SVIEW = (() => { try { return localStorage.getItem("series-view") === "list" ? "list" : "grid"; } catch (e) { return "grid"; } })();
+let LISTE_ADMIN = false;
 function renderList(items){
   // Manga Database (Will, 26/11/2026 · maquette H2) : bandeau d'avancement + 3 dernières fiches, recherche et filtres
   // à la même hauteur, puis toute la base encadrée, de A à Z. Remplace l'ancienne liste des séries.
@@ -1075,17 +1075,24 @@ function renderList(items){
   <div class="tools"><input class="search" id="q" type="search" placeholder="Chercher une série, un auteur" aria-label="Chercher une série ou un auteur" autocomplete="off"><div class="fl" id="fl"></div></div>
   <div class="fp" id="fp" hidden></div>
   <section class="sec base"><div class="sec-h"><h2 class="fx-h2">Toute la base</h2><small class="fcount" id="fc"></small></div><ul class="grid" id="sl"></ul></section>`;
+  // Seules les fiches déjà présentées sur les réseaux entrent dans la base (Will, 26/11/2026) ; les admins voient tout,
+  // les autres séries marquées « À présenter ». Les fiches restent ouvertes par leurs liens (recherche, news…).
+  const ADMIN = !!LISTE_ADMIN, presentees = items.filter(x => x.fiche);
+  if (!ADMIN) items = presentees;
   items.forEach(s => { s.type = s.type === "Manwha" ? "Manhwa" : (s.type || ""); s.dec = s.y1 ? Math.floor(s.y1 / 10) * 10 : null; });
-  // Bandeau : avancement de la base et 3 dernières fiches (elles tournent au fil des mises en ligne).
-  fetch("/api/avancement").then(r => r.json()).then(A => {
-    if (!A || !A.total) return; const by = {}; items.forEach(x => by[x.slug] = x);
-    const rec = (A.recentes || []).map(x => by[x.slug] && Object.assign({}, by[x.slug], { date: x.date })).filter(Boolean).slice(0, 3);
+  // Bandeau : avancement de la base (fiches présentées) et 3 dernières fiches (elles tournent au fil des présentations).
+  fetch("/api/avancement").then(r => r.json()).catch(() => ({})).then(A0 => {
+    const total = (A0 && A0.total) || 0, n = presentees.length, sem = presentees.filter(x => x.ficheLe && Date.now() - new Date(x.ficheLe + "T12:00:00") < 7 * 864e5).length;
+    const A = { total, enLigne: n, semaine: sem, reste: Math.max(0, total - n), pct: total ? Math.round(n / total * 1000) / 10 : 0 };
+    const rec = presentees.slice().sort((a, b) => (b.ficheLe || "").localeCompare(a.ficheLe || "") || (b.num || 0) - (a.num || 0)).slice(0, 3).map(x => Object.assign({}, x, { date: x.ficheLe }));
+    const box0 = document.getElementById("mdb");
+    if (!n) { box0.innerHTML = `<div class="mdb-h"><h1>Manga Database</h1></div><p class="mdb-v">Les premières fiches arrivent très bientôt : une nouvelle série furyō, yakuza ou pègre chaque semaine, avec son résumé, ses tomes, un extrait et ses adaptations.</p>`; box0.hidden = false; return; }
     const MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
     const dC = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return `${x.getDate()} ${MC[x.getMonth()]}`; };
     const pct = String(A.pct).replace(".", ",") + " %";
     const k = (n, t, c) => `<span class="k"><b class="${c}">${n}</b>${t}</span>`;
     const box = document.getElementById("mdb");
-    box.innerHTML = `<div class="mdb-h"><h1>Manga Database</h1><div class="mdb-k">${k(A.enLigne, "fiches sur " + A.total, "")}${k("+" + A.semaine, "cette semaine", "bl")}${k(A.reste, "à faire", "or")}</div><b class="pct">${pct}</b></div>
+    box.innerHTML = `<div class="mdb-h"><h1>Manga Database</h1><div class="mdb-k">${k(A.enLigne, (A.enLigne > 1 ? "fiches" : "fiche") + " sur " + A.total, "")}${k("+" + A.semaine, "cette semaine", "bl")}${k(A.reste, "à faire", "or")}</div><b class="pct">${pct}</b></div>
       <div class="mdb-bar"><i style="width:${Math.min(100, A.pct)}%"></i></div>
       ${rec.length ? `<div class="mdb-r">${rec.map(x => { const st = x.stJP || x.stFR || "";
         return `<a class="mdb-c" href="/series/${esc(x.slug)}" data-pre="${esc(JSON.stringify({ t: x.fr || x.t, jp: x.jp, c: x.cover }))}"><span class="cv">${x.cover ? `<img src="${couv(x.cover, 260)}" alt="" loading="lazy">` : ""}</span><span class="mdb-t"><span class="mdb-d">${dC(x.date)}</span><i>Nouveau</i><b>${esc(shown(x))}</b>${(x.genres || []).length ? `<span class="g">${esc(x.genres.slice(0, 3).join(" · "))}</span>` : ""}<span class="m">${esc([typeM(x.type), x.y1].filter(Boolean).join(" · "))}${st ? ` · <b class="${stCls(st)}">${esc(cap(st))}</b>` : ""}</span></span></a>`; }).join("")}</div>` : ""}`;
@@ -1136,8 +1143,9 @@ function renderList(items){
     cur = q;
     const n = slugify(q);
     const list = items.filter(s => keep(s) && (!n || slugify([s.fr, s.t, s.jp, s.scen, s.dess, s.auteurs].join(" ")).includes(n) || (s.jp || "").includes(q))).sort(sorter);
-    document.getElementById("fc").textContent = `${list.length} fiche${list.length > 1 ? "s" : ""} · ${SORTS.find(x => x[0] === SORT)[1]}`;
-    document.getElementById("sl").innerHTML = list.map(carteSerie).join("") || `<li class="empty">Aucune série trouvée.</li>`;
+    document.getElementById("fc").textContent = `${list.length} ${ADMIN ? "série" : "fiche"}${list.length > 1 ? "s" : ""}${ADMIN ? ` · ${presentees.length} présentée${presentees.length > 1 ? "s" : ""}` : ""} · ${SORTS.find(x => x[0] === SORT)[1]}`;
+    document.getElementById("sl").innerHTML = list.map(x => carteSerie(x, ADMIN && !x.fiche)).join("") || `<li class="empty">${items.length ? "Aucune série trouvée." : "Aucune fiche pour l'instant."}</li>`;
+    document.querySelector(".base").hidden = !items.length; document.querySelector(".tools").hidden = !items.length;
   };
   const q = document.getElementById("q");
   drawBar(); draw(""); q.addEventListener("input", e => draw(e.target.value.trim()));
@@ -1156,7 +1164,7 @@ function renderList(items){
   addEventListener("pageshow", reset); setTimeout(reset, 0);
 }
 if (!slug) {
-  fetch("/api/series").then(r => r.json()).then(j => renderList((j && j.items) || [])).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger les séries.</p>`; });
+  fetch("/api/series").then(r => r.json()).then(j => { LISTE_ADMIN = !!(j && j.apercu); renderList((j && j.items) || []); }).catch(() => { document.getElementById("app").innerHTML = `<p class="empty">Impossible de charger les séries.</p>`; });
 } else {
   // Aperçu immédiat (titre et couverture connus depuis la liste) pendant le chargement de la fiche.
   try { const pre = JSON.parse(sessionStorage.getItem("fg-pre-" + slug) || "null");
