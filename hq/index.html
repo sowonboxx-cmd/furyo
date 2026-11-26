@@ -1812,7 +1812,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // tweet avec le lien de la fiche à reposter à la main, programmation Instagram (carrousel + story) et X (post). Images faites ici.
   var FDAT = {}, FIMG = {};
   function libJs(test, src) { return test() ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = function () { ko(new Error("Un gabarit ne se charge pas")); }; document.head.appendChild(sc); }); }
-  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=10").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=6"); }); }
+  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=10").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=7"); }); }
   function fParts(v) { return String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*[,/&]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function ficheData(f) {
     if (FDAT[f.id]) return FDAT[f.id];
