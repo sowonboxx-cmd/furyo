@@ -45,10 +45,6 @@
     '.fx.st{height:1920px}',
     // Page à la largeur de la barre de progression (Will, 26/11/2026), crédits un peu sous la page.
     '.fx.st .fx-top{top:128px}.fx.st .fx-prog{top:250px}',
-    '.fx.st .fx-pw{position:absolute;top:280px;left:50%;transform:translateX(-50%);display:inline-block;line-height:0}',
-    '.fx.st .fx-pw img{display:block;max-width:968px;max-height:1550px}',
-    '.fx.st .fx-cr{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);white-space:nowrap;line-height:1.2;background:rgba(0,0,0,.72);color:rgba(255,255,255,.85);font:600 22px "FGInter";padding:8px 16px;border-radius:8px}',
-    '.fx.st .fx-cr b{color:#fff;font-weight:700;margin-right:8px}',
     // Image de fin en story : 9 tomes s'il y en a au moins 9 (tome 1 en grand, 4 à droite, 4 dessous).
     '.fx.fx-fin.st.n9 .fx-tt{top:225px}.fx.fx-fin.st.n9 .fx-grille{top:510px;left:95px;right:95px}',
     '.fx.st .fx-bas{height:100px;align-items:flex-start;padding-top:0;background:transparent}',
@@ -66,10 +62,7 @@
     var n = d.pages.length, pr = "";
     for (var k = 0; k < n; k++) pr += '<i class="' + (k <= i ? "on" : "") + '"></i>';
     return '<div class="' + cl(d) + '">' + top('<span class="fx-g">Extrait</span>', '<span class="fx-d">' + (i + 1) + "<span> / " + n + "</span></span>") +
-      '<div class="fx-prog">' + pr + "</div>" + (d.story
-        // Story : crédits posés sur la page (Will, 26/11/2026), la page descend jusqu'à la hauteur de l'adresse de la fiche.
-        ? '<div class="fx-pw"><img src="' + esc(d.pages[i]) + '" alt=""><span class="fx-cr"><b>' + esc(d.titre) + "</b>" + esc(d.credit || "") + "</span></div></div>"
-        : '<img class="fx-pg" src="' + esc(d.pages[i]) + '" alt="">' + bas(d) + "</div>");
+      '<div class="fx-prog">' + pr + '</div><img class="fx-pg" src="' + esc(d.pages[i]) + '" alt="">' + bas(d) + "</div>";
   }
   function fan(l) {
     var n = l.length, pos = [], o = { gros: 340, petit: 230, pas: 230, ecart: 40, haut: 80 };
@@ -108,11 +101,6 @@
     var imgs = [].map.call(box.querySelectorAll("img"), function (im) { return im.complete && im.naturalWidth ? null : new Promise(function (ok) { im.onload = im.onerror = ok; }); });
     var opts = { width: 1080, height: h, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, includeQueryParams: true, backgroundColor: "#000" };
     return Promise.all(imgs).then(function () {
-      // Story : page agrandie au maximum dans 968 × 1550 en gardant ses proportions (les crédits suivent son bord bas).
-      [].forEach.call(box.querySelectorAll(".fx-pw img"), function (im) {
-        if (!im.naturalWidth) return; var r = im.naturalWidth / im.naturalHeight, h = Math.min(1550, 968 / r);
-        im.style.width = Math.round(h * r) + "px"; im.style.height = Math.round(h) + "px"; im.style.maxWidth = im.style.maxHeight = "none";
-      });
       var essai = function (n, prev) {
         return htmlToImage.toJpeg(box.firstChild, opts).then(function (u) {
           if (n >= 4 || (prev && Math.abs(u.length - prev.length) < 400 && n >= 2)) return u;
