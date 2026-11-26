@@ -11,7 +11,7 @@ const typ = t => String(t || "").replace(/^Shonen$/, "Shōnen").replace(/^Shojo$
 const nom = s => s.fr || s.t;
 const statut = s => /termin/i.test(s.stJP) ? '<span class="st fi">Terminé</span>' : /abandon|arr[eê]t/i.test(s.stJP) ? '<span class="st" style="color:#ff8a5a">Abandonné</span>' : '<span class="st ec">En cours</span>';
 const carte = s => `<a class="card"><div class="cv"><img src="${couv(s.cover)}" alt="" loading="lazy"></div><b>${esc(nom(s))}</b><span class="g">${esc((s.genres || []).slice(0, 3).join(" · "))}</span><span class="m">${esc(typ(s.type))}${s.y1 ? " · " + s.y1 : ""} · ${statut(s)}</span></a>`;
-Promise.all([fetch("/api/series").then(r => r.json()), fetch("/api/avancement").then(r => r.json()), fetch("/api/serie?s=crows").then(r => r.json())]).then(([S, A, C]) => {
+Promise.all([fetch("/api/series").then(r => r.json()), fetch("/api/avancement").then(r => r.json()), fetch("/api/serie?s=" + (new URLSearchParams(location.search).get("s") || "crows")).then(r => r.json())]).then(([S, A, C]) => {
   const items = S.items.slice().sort((a, b) => nom(a).localeCompare(nom(b), "fr")), by = {}; items.forEach(s => by[s.slug] = s);
   const rec = (A.recentes || []).slice(0, 3).map(x => Object.assign({ date: x.date }, by[x.slug] || {})).filter(x => x.slug);
   const dateC = d => d ? new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "";
@@ -34,30 +34,51 @@ Promise.all([fetch("/api/series").then(r => r.json()), fetch("/api/avancement").
   // m3 : un seul bloc ; barre d'avancement en bandeau tout en haut, chiffres en ligne, puis les 3 fiches.
   if (V === "m3") app.innerHTML = `<div class="mbox" style="padding:0;overflow:hidden"><div style="padding:20px 24px 16px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap"><span class="D" style="font-size:34px">Manga Database</span><span style="color:#cfcfd4"><b style="color:#fff">${A.enLigne}</b> fiches sur ${A.total} · <b style="color:var(--blue)">+${A.semaine}</b> cette semaine · <b style="color:var(--gold)">${A.reste}</b> à faire</span><b class="D" style="margin-left:auto;font-size:26px;color:var(--blue)">${pct}</b></div>
       <div class="bar" style="height:6px;border-radius:0;margin:0 24px;border-radius:4px"><i style="width:${A.pct}%"></i></div><div style="padding:18px 24px 24px"><div class="row3">${rec.map(hc).join("")}</div></div></div>${tools}${grille}`;
-  // ---- Fiche CROWS
-  const s = C.serie, eds = C.editions || [], fr = eds.find(e => e.pays === "France"), pages = [1, 2, 3, 4, 5].map(i => "/img/extraits/crows/" + i + ".jpg");
+  // ---- Fiche (n'importe quelle série : ?s=<slug>, CROWS par défaut)
+  const s = C.serie, eds = C.editions || [], frEd = eds.find(e => e.pays === "France"), jpEd = eds.find(e => e.pays === "Japon");
+  const tit = s.fr || s.t, mac = t => String(t || "").replace(/Shonen/g, "Shōnen").replace(/Shojo/g, "Shōjo");
+  // Pas encore d'extrait choisi pour cette série : pages de CROWS en attendant (maquette).
+  const pages = [1, 2, 3, 4, 5].map(i => "/img/extraits/crows/" + i + ".jpg");
+  const parts = v => String(v || "").split(/\s*,\s*/).filter(Boolean);
+  const dapres = (String(s.scen || "").match(/\(d'après ([^)]+)\)/) || [])[1];
+  const scen = parts(String(s.scen || "").replace(/\s*\(d'après [^)]+\)/, "")), dess = parts(s.dess);
+  const memes = scen.join() === dess.join();
+  const autL = memes ? `<div class="aut">Auteur :<b>${esc(scen.join(", "))}</b></div>` : `<div class="aut">Scénario :<b>${esc(scen.join(", "))}</b></div><div class="aut" style="margin-top:4px">Dessin :<b>${esc(dess.join(", "))}</b></div>`;
+  const dapL = dapres ? `<div class="aut" style="margin-top:4px">D'après :<b>${esc(dapres)}</b></div>` : "";
+  const an = t => (t && t.date ? +t.date.slice(0, 4) : null);
+  const ansFR = frEd ? frEd.tomes.map(an).filter(Boolean) : [], frDebut = ansFR.length ? Math.min(...ansFR) : null, frFin = ansFR.length ? Math.max(...ansFR) : null;
+  const stc = st => /termin/i.test(st) ? "fi2" : /abandon|arr/i.test(st) ? "ab2" : "ec2";
+  const jpTxt = /termin/i.test(s.stJP) ? `Terminé · ${s.y1}${s.y2 && s.y2 !== s.y1 ? "-" + s.y2 : ""}` : s.stJP ? `${s.stJP} · depuis ${s.y1}` : "";
+  const frTxt = /termin/i.test(s.stFR) ? "Terminé" + (frDebut ? " · " + frDebut + (frFin > frDebut ? "-" + frFin : "") : "") : s.stFR && !/non licen/i.test(s.stFR) ? `${s.stFR}${frDebut ? " · depuis " + frDebut : ""}` : "";
+  const nT = n => n + " tome" + (n > 1 ? "s" : "");
+  const tuiles = [jpEd && s.tomesJP ? `<div><b>${FL("jp")}${nT(s.tomesJP)}</b><span class="${stc(s.stJP)}">${esc(jpTxt)}</span></div>` : "", frEd && s.tomesFR ? `<div><b>${FL("fr")}${nT(s.tomesFR)}</b><span class="${stc(s.stFR)}">${esc(frTxt)}</span></div>` : ""].join("");
   const lignes = k => String(s[k] || "").split("\n").filter(Boolean).map(l => ({ t: l.replace(/\s*[(<].*$/, ""), y: (l.match(/\((\d{4})/) || [])[1], d: (l.match(/\(\d{4}, ([^)]*)\)/) || [])[1] || "", img: (l.match(/<https:\/\/furyo\.pages\.dev(\/affiches\/[^>]+)>/) || [])[1], vo: / VO </.test(l), vf: / VF </.test(l), ba: /youtube|dailymotion/.test(l) }));
-  const films = lignes("film"), dramas = lignes("drama"), oav = lignes("oav");
-  const sim = items.filter(x => x.slug !== "crows").map(x => ({ x, sc: (x.genres || []).filter(g => (s.genres || []).includes(g)).length + (x.type === s.type ? 1 : 0) })).sort((a, b) => b.sc - a.sc).slice(0, 6).map(o => o.x);
-  const pills = `<div class="pills"><span class="pb">Shōnen</span><a class="cxw"><i class="k">Univers</i><i class="t">CROWS</i><i class="x">×</i><i class="t">WORST</i><i style="margin-left:8px">${IC.ext}</i></a>${(s.genres || []).map(g => `<span class="pg">${esc(g)}</span>`).join("")}</div>`;
-  const hero = tuiles => `<div class="hero"><div class="actions"><span class="suivre">${IC.heart} Suivre</span><span class="coll">${IC.lib} Collection</span><span class="fno">Fiche n°001</span></div>
-      <div class="cv"><img src="${couv(fr.tomes[0].cover, 600)}"></div><div style="padding-right:150px"><h1>${esc(s.t)}</h1><div class="jp">${esc(s.jp)}</div><div class="aut">Auteur :<b>Hiroshi Takahashi</b></div>
-      ${tuiles ? `<div class="ttile"><div><b>${FL("jp")}26 tomes</b><span class="fi2">Terminé · 1990-1998</span></div><div><b>${FL("fr")}${fr.tomes.length} tomes</b><span class="ec2">En cours · depuis 2025</span></div></div>` : ""}
+  const AD = [["Films", lignes("film")], ["Dramas", lignes("drama")], ["Anime", lignes("anime")], ["OAV", lignes("oav")]].filter(x => x[1].length), nbAd = AD.reduce((n, x) => n + x[1].length, 0);
+  const sim = items.filter(x => x.slug !== s.slug).map(x => ({ x, sc: (x.genres || []).filter(g => (s.genres || []).includes(g)).length + (x.type === s.type ? 1 : 0) })).sort((a, b) => b.sc - a.sc).slice(0, 6).map(o => o.x);
+  const pills = `<div class="pills"><span class="pb">${esc(mac(s.type))}</span>${s.cxw ? `<a class="cxw"><i class="k">Univers</i><i class="t">CROWS</i><i class="x">×</i><i class="t">WORST</i><i style="margin-left:8px">${IC.ext}</i></a>` : ""}${(s.genres || []).map(g => `<span class="pg">${esc(g)}</span>`).join("")}</div>`;
+  const t1 = (frEd || jpEd).tomes.slice().sort((a, b) => a.n - b.n).find(t => t.cover && t.n >= 1) || {};
+  const hero = avec => `<div class="hero"><div class="actions"><span class="suivre">${IC.heart} Suivre</span><span class="coll">${IC.lib} Collection</span><span class="fno">Fiche n°001</span></div>
+      <div class="cv"><img src="${couv(t1.cover, 600)}"></div><div style="padding-right:150px"><h1${tit.length > 18 ? ' style="font-size:58px"' : ""}>${esc(tit)}</h1><div class="jp">${esc(s.jp)}</div>${autL}${dapL}
+      ${avec && tuiles ? `<div class="ttile">${tuiles}</div>` : ""}
       <p class="r">${esc(s.resume)}</p>${pills}</div></div>`;
-  const tabs = `<div class="tabs"><a class="on">Infos</a><a>Extrait</a><a>Adaptations<sup>${films.length + dramas.length + oav.length}</sup></a><a>News<sup>0</sup></a></div>`;
-  const infos = avecTomes => `<div class="infos2"><div><span class="lab">${FL("jp")} Éditeur Japon</span><b>Akita Shoten</b>${avecTomes ? '<span class="tm">26 tomes<em class="fi2">Terminé · 1990-1998</em></span>' : ""}</div>
-      <div><span class="lab">${FL("fr")} Éditeur France</span><b>Kana · Dark Kana</b>${avecTomes ? `<span class="tm">${fr.tomes.length} tomes<em class="ec2">En cours · depuis 2025</em></span>` : ""}</div>
-      <div><span class="lab">Magazine</span><b>Monthly Shōnen Champion</b></div><div><span class="lab">Prépublication</span><b>1990</b></div></div>`;
+  const tabs = `<div class="tabs"><a class="on">Infos</a><a>Extrait</a>${nbAd ? `<a>Adaptations<sup>${nbAd}</sup></a>` : ""}<a>News<sup>0</sup></a></div>`;
+  const prep = s.prepub ? s.prepub.slice(0, 4) : s.y1;
+  const cartes = [jpEd ? `<div><span class="lab">${FL("jp")} Éditeur Japon</span><b>${esc(s.pubJP || jpEd.pub)}</b></div>` : "", frEd ? `<div><span class="lab">${FL("fr")} Éditeur France</span><b>${esc(s.pubFR || frEd.pub)}</b></div>` : "",
+    s.mag ? `<div><span class="lab">Magazine</span><b>${esc(mac(s.mag))}</b></div>` : "", s.mag && prep ? `<div><span class="lab">Prépublication</span><b>${prep}</b></div>` : ""].filter(Boolean);
+  const infos = `<div class="infos2" style="grid-template-columns:repeat(${cartes.length},1fr)">${cartes.join("")}</div>`;
+  const vf = !!(s.extraitFR || frEd), vo = !!(s.extraitJP || jpEd), chez = vf ? (s.pubFR || "").replace(/\s*\(.*/, "") : (s.pubJP || "").replace(/\s*\(.*/, "");
   const extrait = `<div class="sec mbox"><h2 class="s">Extrait <small>Chapitre 1</small></h2><div class="extb"><div class="pg5">${pages.map(p => `<img src="${p}">`).join("")}</div>
-      <div class="txt"><div class="lab">Lire le début</div><b class="D" style="font-size:32px;line-height:1">Les premières pages de CROWS</b><p style="margin:0;color:#cfcfd4;font-size:14px">Cliquez sur une page pour zoomer et les faire défiler.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"><a class="lien">Lire l'extrait ${IC.ext}</a><span class="seg"><span class="on">${FL("fr")} VF</span><span>${FL("jp")} VO</span></span></div></div></div></div>`;
-  const tomes = `<div class="sec tomes"><div class="hd"><h2>Tomes</h2><span class="seg"><span class="on">${FL("fr")} France <small style="opacity:.6">9</small></span><span>${FL("jp")} Japon <small style="opacity:.6">67</small></span></span><span class="chip" style="background:#1b1b1f;padding:10px 12px">${IC.sort}</span></div>
-      <div class="ed"><span class="k">Shinsōban</span><span><b>Kana</b> · Dark Kana · 9 tomes · 2025</span></div>
-      <div class="tg">${fr.tomes.filter(t => t.cover).slice(0, 7).map(t => `<div><div class="cv"><img src="${couv(t.cover, 260)}"></div><b>Tome ${String(t.n).padStart(2, "0")}</b><small>${t.date ? t.date.split("-").reverse().join("/") : ""}</small></div>`).join("")}</div></div>`;
+      <div class="txt"><div class="lab">Lire le début</div><b class="D" style="font-size:32px;line-height:1">Les premières pages</b><p style="margin:0;color:#cfcfd4;font-size:14px"><b style="color:#fff">${esc(tit)}</b>, chapitre 1. Cliquez sur une page pour zoomer et les faire défiler.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"><a class="lien">Lire l'extrait${chez ? " chez " + esc(chez) : ""} ${IC.ext}</a><span class="seg">${vf ? `<span class="on">${FL("fr")} VF</span>` : ""}${vo ? `<span class="${vf ? "" : "on"}">${FL("jp")} VO</span>` : ""}</span></div></div></div></div>`;
+  const edTom = frEd || jpEd, nbJP = eds.filter(e => e.pays === "Japon").reduce((n, e) => n + e.tomes.length, 0);
+  const lib = (edTom.nom || "").split(" — ")[1] || edTom.pub;
+  const tomes = `<div class="sec tomes"><div class="hd"><h2>Tomes</h2><span class="seg">${frEd ? `<span class="on">${FL("fr")} France <small style="opacity:.6">${frEd.tomes.length}</small></span>` : ""}${jpEd ? `<span class="${frEd ? "" : "on"}">${FL("jp")} Japon <small style="opacity:.6">${nbJP}</small></span>` : ""}</span><span class="chip" style="background:#1b1b1f;padding:10px 12px">${IC.sort}</span></div>
+      <div class="ed"><span><b>${esc(lib)}</b> · ${nT(edTom.tomes.length)}</span></div>
+      <div class="tg">${edTom.tomes.slice().sort((a, b) => a.n - b.n).filter(t => t.cover).slice(0, 7).map(t => `<div><div class="cv"><img src="${couv(t.cover, 260)}"></div><b>Tome ${String(t.n).padStart(2, "0")}</b><small>${t.date ? t.date.split("-").reverse().join("/") : ""}</small></div>`).join("")}</div></div>`;
   const adc = a => `<div class="adc"><div class="po">${a.img ? `<img src="${a.img}">` : ""}</div><div><b>${esc(a.t)}</b><p>${esc(a.d.replace(/^au cinéma/, "Au cinéma"))}</p><div class="bt"><span class="yr">${a.y || ""}</span><span class="bts">${a.vo ? `<span>${IC.play} VO</span>` : ""}${a.vf ? `<span>${IC.play} VF</span>` : ""}${!a.vo && a.ba ? `<span>${IC.play} Bande-annonce</span>` : ""}<span class="f">Fiche ${IC.ext}</span></span></div></div></div>`;
-  const adapt = `<div class="sec mbox adb"><h2 class="s">Adaptations <small>${films.length + dramas.length + oav.length} films, dramas et OAV</small></h2><div class="flt"><span class="on">Films<small>${films.length}</small></span><span>Dramas<small>${dramas.length}</small></span><span>OAV<small>${oav.length}</small></span></div><div class="adg">${films.slice(0, 4).map(adc).join("")}</div></div>`;
-  const univ = `<div class="sec uni"><span class="k">Univers</span><b>CROWS × WORST</b><span>CROWS, WORST, QP, Crows Gaiden… toute la saga dans l'ordre chronologique</span><a class="go">Voir l'univers ${IC.fl}</a></div>`;
-  const simil = `<div class="sec mbox"><h2 class="s">Si vous aimez CROWS</h2><div class="grid">${sim.map(carte).join("")}</div></div>`;
-  if (V === "o1") app.innerHTML = hero(true) + tabs + infos(false) + extrait + tomes + adapt + univ + simil;
-  if (V === "o2") app.innerHTML = hero(false) + tabs + infos(true) + extrait + tomes + adapt + univ + simil;
+  const adapt = nbAd ? `<div class="sec mbox adb"><h2 class="s">Adaptations <small>${nbAd} au total</small></h2><div class="flt">${AD.map((x, i) => `<span class="${i ? "" : "on"}">${x[0]}<small>${x[1].length}</small></span>`).join("")}</div><div class="adg">${AD[0][1].slice(0, 4).map(adc).join("")}</div></div>` : "";
+  const univ = s.cxw ? `<div class="sec uni"><span class="k">Univers</span><b>CROWS × WORST</b><span>CROWS, WORST, QP, Crows Gaiden… toute la saga dans l'ordre chronologique</span><a class="go">Voir l'univers ${IC.fl}</a></div>` : "";
+  const simil = `<div class="sec mbox"><h2 class="s">Si vous aimez ${esc(tit)}</h2><div class="grid">${sim.map(carte).join("")}</div></div>`;
+  if (V === "o1") app.innerHTML = hero(true) + tabs + infos + extrait + tomes + adapt + univ + simil;
+  if (V === "o2") app.innerHTML = hero(false) + tabs + infos + extrait + tomes + adapt + univ + simil;
 }).catch(e => { document.getElementById("app").textContent = "Erreur : " + e.message; });
