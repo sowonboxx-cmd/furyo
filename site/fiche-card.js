@@ -112,7 +112,9 @@
     var fini = /termin/i.test(d.stJP || "");
     var rows = auteurs(d).map(function (a) { return '<div class="fgc-row"><span>' + a[0] + ' :</span> <b>' + a[1].map(nom).join(", ") + "</b></div>"; }).join("") +
       ((d.genres || []).length ? '<div class="fgc-row fgc-gen"><span>Genres :</span> <b data-items="' + esc(JSON.stringify(d.genres.slice(0, 3))) + '">' + esc(d.genres.slice(0, 3).join(", ")) + "</b></div>" : "") +
-      (d.type ? '<div class="fgc-row"><span>Type :</span> <b>' + esc(typeJP(d.type) + (!fini && d.y1 ? " · depuis " + d.y1 : "")) + "</b></div>" : "");
+      (d.type ? '<div class="fgc-row"><span>Type :</span> <b>' + esc(typeJP(d.type) + (!d.annee && !fini && d.y1 ? " · depuis " + d.y1 : "")) + "</b></div>" : "") +
+      // Ligne « Année » (essai, Will 26/11/2026) : activée par d.annee.
+      (d.annee && d.y1 ? '<div class="fgc-row"><span>Année :</span> <b>' + esc(fini ? d.y1 + (d.y2 && d.y2 !== d.y1 ? "-" + d.y2 : "") : "Depuis " + d.y1) + "</b></div>" : "");
     var jp = d.jp && String(d.jp).toLowerCase() !== String(d.t || "").toLowerCase() ? '<div class="fgc-jp" lang="ja">' + esc(d.jp) + "</div>" : "";
     return '<div class="fgc ' + theme + " " + fmt + '">' +
       '<div class="fgc-top"><img src="/img/social/logo-blanc.png" alt=""></div>' +

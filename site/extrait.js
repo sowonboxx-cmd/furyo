@@ -3,7 +3,7 @@
 // crédits dans le bandeau noir du bas, sans trait jaune), puis une image de fin qui renvoie vers la fiche :
 //   fin « grille »   : « Chez <éditeur> depuis <année> », tome 1 en grand et les tomes suivants (défaut) ;
 //   fin « eventail » : « La suite dans le tome 1 », tomes en éventail.
-// FG_EXTRAIT.slides(d, prog) → Promise<[dataURL JPEG 1080 × 1440]>
+// FG_EXTRAIT.slides(d, prog) → Promise<[dataURL JPEG 1080 × 1440]> (1080 × 1920 si d.story : stories à la suite)
 // d = { titre, credit, pages:[url], tomes:[url], fin:"grille"|"eventail", sous, slug }
 // Nécessite /site/fiche-card.js (polices) ; charge html-to-image si besoin.
 (function () {
@@ -31,17 +31,26 @@
     '.fx .fx-url b{display:block;margin-top:14px;font:700 64px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.04em;color:#fff}.fx .fx-url b em{font-style:normal;color:#F2C14E}',
     '.fx .fx-grille{position:absolute;left:150px;right:150px;top:430px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;z-index:3}',
     '.fx .fx-grille img{width:100%;aspect-ratio:7/10;object-fit:cover;border:6px solid #F2EFE9;display:block}',
-    '.fx .fx-grille img.un{grid-column:span 2;grid-row:span 2;height:100%}'
+    '.fx .fx-grille img.un{grid-column:span 2;grid-row:span 2;height:100%}',
+    // Format story 9:16 (Will, 26/11/2026) : mêmes images, rien sous les barres d'Instagram (haut et bas).
+    '.fx.st{height:1920px}',
+    '.fx.st .fx-top{top:150px}.fx.st .fx-prog{top:276px}',
+    '.fx.st .fx-pg{top:310px;height:1330px;width:1000px}',
+    '.fx.st .fx-bas{height:250px;align-items:flex-start;padding-top:34px}',
+    '.fx.st .fx-mz{grid-template-rows:repeat(4,1fr)}',
+    '.fx.st .fx-tt{top:400px}.fx.st .fx-fan{top:760px}.fx.st .fx-grille{top:700px}',
+    '.fx.st .fx-url{bottom:330px!important}'
   ].join("\n");
   var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
   var LOGO = '<img src="/img/social/logo-blanc.png" alt="">';
   function top(g, d) { return '<div class="fx-top">' + (g || "") + LOGO + (d || "") + "</div>"; }
   function bas(d) { return '<div class="fx-bas"><b>' + esc(d.titre) + "</b>" + esc(d.credit || "") + "</div>"; }
+  var cl = function (d) { return d.story ? "fx st" : "fx"; };
   function page(d, i) {
     var n = d.pages.length, pr = "";
     for (var k = 0; k < n; k++) pr += '<i class="' + (k <= i ? "on" : "") + '"></i>';
-    return '<div class="fx">' + top('<span class="fx-g">Extrait</span>', '<span class="fx-d">' + (i + 1) + "<span> / " + n + "</span></span>") +
+    return '<div class="' + cl(d) + '">' + top('<span class="fx-g">Extrait</span>', '<span class="fx-d">' + (i + 1) + "<span> / " + n + "</span></span>") +
       '<div class="fx-prog">' + pr + '</div><img class="fx-pg" src="' + esc(d.pages[i]) + '" alt="">' + bas(d) + "</div>";
   }
   function fan(l) {
@@ -54,20 +63,21 @@
     }).join("");
   }
   function fin(d) {
-    var mz = ""; for (var j = 0; j < 12; j++) mz += '<img src="' + esc(d.pages[j % d.pages.length]) + '" alt="">';
+    var mz = ""; for (var j = 0; j < (d.story ? 15 : 12); j++) mz += '<img src="' + esc(d.pages[j % d.pages.length]) + '" alt="">';
     var url = '<div class="fx-url"' + (d.fin === "eventail" ? "" : ' style="bottom:130px"') + '><small>La fiche complète, les tomes et l\'extrait</small><b>furyogang.com<em>/series/' + esc(d.slug) + "</em></b></div>";
     var t = d.tomes.slice(0, 5), corps;
     if (d.fin === "eventail") corps = '<div class="fx-fan">' + fan(t) + "</div>";
     else corps = '<div class="fx-grille">' + t.map(function (u, i) { return '<img' + (i ? "" : ' class="un"') + ' src="' + esc(u) + '" alt="">'; }).join("") + "</div>";
-    return '<div class="fx"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + top() + '<div class="fx-tt"><small>' + esc(d.sous || (d.fin === "eventail" ? "La suite dans le tome 1" : "")) + "</small><h2>" + esc(d.titre) + "</h2></div>" + corps + url + bas(d) + "</div>";
+    return '<div class="' + cl(d) + '"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + top() + '<div class="fx-tt"><small>' + esc(d.sous || (d.fin === "eventail" ? "La suite dans le tome 1" : "")) + "</small><h2>" + esc(d.titre) + "</h2></div>" + corps + url + bas(d) + "</div>";
   }
   function charger(src) { return new Promise(function (ok, ko) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
-  function rendre(html, fcss) {
+  function rendre(html, fcss, h) {
+    h = h || 1440;
     var box = document.createElement("div");
-    box.style.cssText = "position:fixed;left:-20000px;top:0;width:1080px;height:1440px;overflow:hidden;pointer-events:none";
+    box.style.cssText = "position:fixed;left:-20000px;top:0;width:1080px;height:" + h + "px;overflow:hidden;pointer-events:none";
     box.innerHTML = html; document.body.appendChild(box);
     var imgs = [].map.call(box.querySelectorAll("img"), function (im) { return im.complete && im.naturalWidth ? null : new Promise(function (ok) { im.onload = im.onerror = ok; }); });
-    var opts = { width: 1080, height: 1440, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, includeQueryParams: true, backgroundColor: "#000" };
+    var opts = { width: 1080, height: h, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, includeQueryParams: true, backgroundColor: "#000" };
     return Promise.all(imgs).then(function () {
       var essai = function (n, prev) {
         return htmlToImage.toJpeg(box.firstChild, opts).then(function (u) {
@@ -88,7 +98,7 @@
     var out = [];
     return lib.then(function () { return polices; }).then(function (fcss) {
       tmp.remove();
-      return html.reduce(function (p, h, i) { return p.then(function () { if (prog) prog(i + 1, html.length); return rendre(h, fcss).then(function (u) { out.push(u); }); }); }, Promise.resolve());
+      return html.reduce(function (p, h, i) { return p.then(function () { if (prog) prog(i + 1, html.length); return rendre(h, fcss, d.story ? 1920 : 1440).then(function (u) { out.push(u); }); }); }, Promise.resolve());
     }).then(function () { return out; });
   }
   window.FG_EXTRAIT = { slides: slides, page: page, fin: fin };
