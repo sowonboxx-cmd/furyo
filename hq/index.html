@@ -1546,9 +1546,28 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     if (e.visuels && e.visuels.length) h += '<div class="mslab">Visuels <a class="dl" href="' + esc(e.visuels[0]) + '" download>Télécharger</a></div><div class="mvis">' + e.visuels.map(function (u) { return '<a href="' + esc(u) + '" target="_blank" rel="noopener" style="background-image:url(' + esc(u) + ')"></a>'; }).join("") + "</div>";
     if (modalCap && (modalCap.ig || modalCap.tw || modalCap.tiktok)) { modalCap = { ig: modalCap.ig, tw: modalCap.tw, tk: modalCap.tiktok }; h += '<div class="mslab">Légendes à publier</div>' + tabsHTML(modalCap); }
     if (hb) h += '<div id="hebdo" class="hebdo"></div>';
+    // Événement avec visuels prêts à programmer (Will, 26/11/2026) : post (Instagram + X) + stories, dans la même file que les fiches.
+    if (e.prog && (e.visuels || []).length) h += '<div class="mslab">Programmer · Instagram (post + ' + ((e.stories || []).length || 1) + ' stories) et X (post)</div><div class="igbox" id="evig"></div>';
     h += '<div class="macts"><button class="btn2" data-act="edit">Éditer</button><button class="btn2 d" data-act="del">Supprimer</button><span id="calmsg"></span><div class="pubtoggle"><span class="publbl">' + (e.fait ? "Publié" : "À publier") + '</span><span class="chkbig ' + (e.fait ? "on" : "off") + '" data-act="fait" role="button" aria-label="' + (e.fait ? "Publié" : "À publier") + '" title="' + (e.fait ? "Publié — clique pour annuler" : "Clique quand c'est publié") + '">' + CHK_SVG + '</span></div></div>';
     h += "</div></div>"; host.innerHTML = h; host.dataset.k = "ev"; host.dataset.id = e.id;
     if (hb) hebdoOuvrir(e, jour);
+    if (e.prog && (e.visuels || []).length) evProg(e, jour);
+  }
+  function evProg(e, jour) {
+    var box = $("#evig"); if (!box) return;
+    var abs = function (u) { return /^https?:/.test(u) ? u : location.origin.replace(/^http:\/\/localhost(:\d+)?/, "https://furyogang.com") + u; };
+    var post = e.visuels.map(abs), st = (e.stories || []).map(abs), id = "ev-" + e.id;
+    var o = { id: id, jourJ: e.date || jour || "", heure: "17:00", aPost: true, aX: true, item: null,
+      imgs: Promise.resolve({ post: { _url: e.visuels[0] }, story: { _url: (e.stories || e.visuels)[0] } }),
+      programmer: function (quand, p, s, x) {
+        var cap = modalCap || {}, l = [igq({ id: id, type: "annonce", titre: e.titre, quand: quand.toISOString(), legende: cap.ig || e.titre, post: p ? post : [], story: s && st[0] ? st[0] : "", x: x ? { texte: cap.tw || e.titre, images: post } : null })];
+        // Stories suivantes : une minute d'écart chacune, dans l'ordre.
+        if (s) st.slice(1).forEach(function (u, i) { l.push(igq({ id: id + "-s" + (i + 2), type: "annonce", titre: e.titre + " · story " + (i + 2), quand: new Date(quand.getTime() + (i + 1) * 60000).toISOString(), legende: "", post: [], story: u })); });
+        return Promise.all(l).then(function (r) { return r[0]; }); },
+      ignorer: function () { return igq({ id: id, ignore: true, type: "annonce", titre: e.titre }); },
+      annuler: function () { return Promise.all([igq({ id: id, del: true })].concat(st.slice(1).map(function (_, i) { return igq({ id: id + "-s" + (i + 2), del: true }); }))).then(function (r) { return r[0]; }); } };
+    box.innerHTML = '<div class="iglab">Chargement…</div>';
+    fetch("/api/admin/igq?id=" + encodeURIComponent(id), { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (j) { o.item = j.item; }).catch(function () {}).then(function () { if (box.isConnected) igUI(box, o); });
   }
   // ---- Carrousels hebdo (Will, 25/11/2026) : News de la semaine (lundi) et Prépublication de la semaine (dimanche matin). ----
   // Générés ici à partir des vraies données (/site/hebdo.js, modèles validés de la charte) : aperçu, corrections, programmation

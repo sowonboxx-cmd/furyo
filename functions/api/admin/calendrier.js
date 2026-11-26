@@ -10,7 +10,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 10; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 11; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -45,6 +45,14 @@ const DEPART = {
     { id: "ev-qn-mois", titre: "Récap du mois", type: "qn-mois", repeat: "mois", jour: 10, lien: "/studio/mois/", note: "Le 10 de chaque mois : récap des sorties du mois précédent (France + Japon). Choisis la cover en avant et exporte le carrousel directement dans le studio (lien ci-dessous). Visuel noir ou crème." },
     { id: "ev-maj", titre: "Fiches mises à jour — récap", type: "maj", repeat: "jeu", note: "Les séries à aller compléter sur le site." },
     { id: "ev-cxw", titre: "Vidéo Crows×Worst", type: "video", date: "2026-10-20", imp: true, note: "Finir la version 25-30 s (téléphone, bordures) et la publier." },
+    // Annonce de la Manga Database (Will, 26/11/2026) : post (Instagram + X) et 3 stories, programmés depuis l'événement.
+    {
+      id: "ev-annonce-mdb", titre: "Annonce · Manga Database", type: "autre", date: "2026-11-26", imp: true, prog: true,
+      note: "Annonce des fiches : le post (Instagram + X) et les 3 stories. Programmer à 17 h.",
+      visuels: ["/img/annonce/manga-database/post.jpg"],
+      stories: ["/img/annonce/manga-database/story-1.jpg", "/img/annonce/manga-database/story-2.jpg", "/img/annonce/manga-database/story-3.jpg"],
+      textes: { ig: "📢 NOUVEAU SUR FURYOGANG : LA MANGA DATABASE 📚\n\nVous pouviez déjà gérer votre collection sur le site. Place maintenant aux fiches 🗂️\n\nFuryoGang devient une vraie base de données des mangas furyō, yakuza et pègre. Deux nouvelles fiches chaque semaine, à partir du 1er décembre :\n📖 le résumé\n📚 tous les tomes, au Japon et en France\n📅 les prochaines sorties\n👀 un extrait\n🎬 les adaptations\n\nPremière fiche mardi. Vous devinez laquelle ? 🐦‍⬛\n\n#FuryoGang #manga #furyo #yakuza #mangafr", tw: "Nouveau sur FuryoGang : la Manga Database\nVous pouviez déjà gérer votre collection sur le site. Place maintenant aux fiches.\n\nUne base des mangas furyō, yakuza et pègre : résumé, tomes, sorties, extraits, adaptations. Deux nouvelles fiches chaque semaine.\n\nPremière fiche mardi.", tiktok: "" },
+    },
     {
       id: "ev-concours", titre: "Concours figurine", type: "concours", date: "2026-10-21", imp: true,
       note: "Publier le visuel du concours (fiche prête). Lot : figurine Hanaki Guriko, Crows×Worst, édition limitée.",
@@ -62,6 +70,7 @@ function nettEv(e, old) {
   const textes = e.textes && typeof e.textes === "object"
     ? { ig: String(e.textes.ig || "").slice(0, 2000), tw: String(e.textes.tw || "").slice(0, 2000), tiktok: String(e.textes.tiktok || "").slice(0, 2000) }
     : (old.textes || null);
+  const stories = Array.isArray(e.stories) ? e.stories.map(u => String(u || "").slice(0, 300)).filter(Boolean).slice(0, 8) : (old.stories || null);
   const visuels = Array.isArray(e.visuels) ? e.visuels.map(u => String(u || "").slice(0, 300)).filter(Boolean).slice(0, 8) : (old.visuels || null);
   // Jour du mois pour une récurrence mensuelle (1 à 28, défaut 1). Lien direct (studio, page…) ouvert depuis l'événement.
   const jourIn = Number.isInteger(e.jour) && e.jour >= 1 && e.jour <= 28 ? e.jour : null;
@@ -77,7 +86,7 @@ function nettEv(e, old) {
     note: String(e.note != null ? e.note : (old.note || "")).slice(0, 600),
     imp: "imp" in e ? !!e.imp : !!old.imp,
     tirage: String(e.tirage != null ? e.tirage : (old.tirage || "")).slice(0, 80),
-    visuels, textes,
+    visuels, textes, stories, prog: "prog" in e ? !!e.prog : !!old.prog,
     fait: "fait" in e ? !!e.fait : !!old.fait,
   };
 }
