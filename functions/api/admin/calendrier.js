@@ -10,7 +10,7 @@
 // Un événement peut porter : imp (important), tirage (texte), visuels (liste d'URL), textes {ig,tw,tiktok}.
 import { json, isAdmin } from "../../../lib/admin.js";
 const CLE = "hq:calendrier";
-const SEED_V = 13; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
+const SEED_V = 14; // bump → rejoue la migration des rendez-vous de départ (garde les ajouts de Will)
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 // Textes prêts à publier pour le concours figurine (validés avec Will, 18/10).
@@ -43,7 +43,6 @@ const DEPART = {
     { id: "ev-prepub-sem", titre: "Prépublication de la semaine", type: "prepub-sem", repeat: "dim", note: "Chaque dimanche matin : le carrousel des chapitres de la semaine dans les magazines japonais (Instagram + X) et sa story. Tout est prêt dans l'aperçu : relire, programmer." },
     { id: "ev-sorties-sem", titre: "Sorties de la semaine", type: "sorties-sem", repeat: "sam", note: "Chaque samedi : le carrousel des sorties manga de la semaine, Japon et France (Instagram + X) et sa story. Tout est prêt dans l'aperçu : relire, programmer." },
     { id: "ev-qn-mois", titre: "Récap du mois", type: "qn-mois", repeat: "mois", jour: 10, lien: "/studio/mois/", note: "Le 10 de chaque mois : récap des sorties du mois précédent (France + Japon). Choisis la cover en avant et exporte le carrousel directement dans le studio (lien ci-dessous). Visuel noir ou crème." },
-    { id: "ev-maj", titre: "Fiches mises à jour — récap", type: "maj", repeat: "jeu", note: "Les séries à aller compléter sur le site." },
     { id: "ev-cxw", titre: "Vidéo Crows×Worst", type: "video", date: "2026-10-20", imp: true, note: "Finir la version 25-30 s (téléphone, bordures) et la publier." },
     // Annonce de la Manga Database (Will, 26/11/2026) : post (Instagram + X) et 3 stories, programmés depuis l'événement.
     {
@@ -96,6 +95,8 @@ function nettEv(e, old) {
 // rendez-vous manquants et les NOUVEAUX champs (lien, jour) encore absents. Un bump de SEED_V ne doit plus
 // jamais remettre ses déplacements en place.
 function migrer(d) {
+  // « Fiches mises à jour — récap » retiré (Will, 26/11/2026 : plus besoin).
+  d.events = d.events.filter(e => e.id !== "ev-maj");
   const parId = new Map(d.events.map(e => [e.id, e]));
   for (const seed of DEPART.events) {
     const ex = parId.get(seed.id);
