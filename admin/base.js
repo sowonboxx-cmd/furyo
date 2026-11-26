@@ -306,7 +306,7 @@
   const verrou = s => !!(s.num && s.promo);
 
   function liste() {
-    const n = slugify(Q), keep = (FILTRES.find(x => x[0] === F) || FILTRES[FILTRES.length - 1])[2];
+    const n = slugify(Q), keep = (FILTRES.find(x => x[0] === F) || FILTRES[0])[2];
     const L = ITEMS.filter(s => n ? slugify([s.t, s.fr, s.jp].join(" ")).includes(n) || (s.jp || "").includes(Q) : keep(s));
     const reste = s => s.manque.length;
     if (T === "ordre") L.sort(ordrePub);
