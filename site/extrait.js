@@ -4,7 +4,7 @@
 //   fin « grille »   : tome 1 en grand et les tomes suivants (défaut) ; fin « eventail » : tomes en éventail.
 //   Seulement le nom de la série au-dessus, pas d'éditeur ni d'année (le post reste, Will 26/11/2026).
 // FG_EXTRAIT.slides(d, prog) → Promise<[dataURL JPEG 1080 × 1440]> (1080 × 1920 si d.story : stories à la suite)
-// d = { titre, credit, pages:[url], tomes:[url], fin:"grille"|"eventail", sous, slug }
+// d = { titre, jp, credit, pages:[url], tomes:[url], fin:"grille"|"eventail", slug, story }
 // Nécessite /site/fiche-card.js (polices) ; charge html-to-image si besoin.
 (function () {
   var CSS = [
@@ -32,6 +32,15 @@
     '.fx .fx-grille{position:absolute;left:150px;right:150px;top:430px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;z-index:3}',
     '.fx .fx-grille img{width:100%;aspect-ratio:7/10;object-fit:cover;border:6px solid #F2EFE9;display:block}',
     '.fx .fx-grille img.un{grid-column:span 2;grid-row:span 2;height:100%}',
+    // Image de fin : bandes reprises de la fiche (/site/fiche-card.js).
+    '.fx-fin .fx-fb{position:absolute;left:0;right:0;bottom:0;height:178px;background:#000;border-top:8px solid #F2C14E;text-align:center;padding-top:30px;z-index:5}',
+    '.fx-fin .fx-fb img{display:none;width:420px;margin:0 auto 26px}',
+    '.fx-fin .fx-fb small{display:block;font:600 26px "FGInter";color:rgba(255,255,255,.6)}',
+    '.fx-fin .fx-fb b{display:block;white-space:nowrap;margin-top:10px;font:700 44px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.06em;color:#fff}.fx-fin .fx-fb b em{font-style:normal;color:#F2C14E}',
+    '.fx-fin .fx-tt{top:190px}.fx-fin .fx-jp{display:block;margin-top:14px;font:700 46px/1.3 "FGNotoJP","FGInter",sans-serif;color:#F2C14E}',
+    '.fx-fin .fx-grille{top:470px;left:140px;right:140px}.fx-fin .fx-fan{top:500px}',
+    '.fx-fin.st .fx-top{top:0;height:150px}.fx-fin.st .fx-fb{height:380px;padding-top:56px}.fx-fin.st .fx-fb img{display:block}',
+    '.fx-fin.st .fx-tt{top:330px}.fx-fin.st .fx-grille{top:660px;left:60px;right:60px}.fx-fin.st .fx-fan{top:740px}',
     // Format story 9:16 (Will, 26/11/2026) : mêmes images, rien sous les barres d'Instagram (haut et bas).
     '.fx.st{height:1920px}',
     // Crédits juste au-dessus de la barre de réponse d'Instagram (250 px du bas), page agrandie au maximum entre les deux.
@@ -63,13 +72,18 @@
       return '<img src="' + esc(u) + '" style="left:' + Math.round(540 - w / 2 + dd * o.pas + (ad >= 1 ? Math.sign(dd) * o.ecart : 0)) + "px;top:" + (c ? 0 : o.haut) + "px;width:" + w + "px;height:" + h + "px;z-index:" + Math.round(10 - ad * 2) + ";transform:rotate(" + dd * 4 + "deg)" + (c ? "" : ";filter:brightness(.8)") + '">';
     }).join("");
   }
+  // Image de fin (Will, 26/11/2026) : mêmes bandes que l'image de la fiche (haut noir, bas noir à trait jaune avec
+  // « La fiche complète » et l'adresse ; logo dans le bas en story, en haut en post), pas de crédits ;
+  // au milieu le titre, le titre japonais en jaune dessous, et les tomes.
   function fin(d) {
     var mz = ""; for (var j = 0; j < (d.story ? 15 : 12); j++) mz += '<img src="' + esc(d.pages[j % d.pages.length]) + '" alt="">';
-    var url = '<div class="fx-url"' + (d.fin === "eventail" ? "" : ' style="bottom:130px"') + '><small>La fiche complète, les tomes et l\'extrait</small><b>furyogang.com<em>/series/' + esc(d.slug) + "</em></b></div>";
     var t = d.tomes.slice(0, 5), corps;
     if (d.fin === "eventail") corps = '<div class="fx-fan">' + fan(t) + "</div>";
     else corps = '<div class="fx-grille">' + t.map(function (u, i) { return '<img' + (i ? "" : ' class="un"') + ' src="' + esc(u) + '" alt="">'; }).join("") + "</div>";
-    return '<div class="' + cl(d) + '"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + top() + '<div class="fx-tt"><h2>' + esc(d.titre) + "</h2></div>" + corps + url + bas(d) + "</div>";
+    var jp = d.jp && String(d.jp).toLowerCase() !== String(d.titre || "").toLowerCase() ? '<span class="fx-jp" lang="ja">' + esc(d.jp) + "</span>" : "";
+    return '<div class="' + cl(d) + ' fx-fin"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + (d.story ? '<div class="fx-top"></div>' : top()) +
+      '<div class="fx-tt"><h2>' + esc(d.titre) + "</h2>" + jp + "</div>" + corps +
+      '<div class="fx-fb"><img src="/img/social/logo-blanc.png" alt=""><small>La fiche complète</small><b>furyogang.com<em>/series/' + esc(d.slug) + "</em></b></div></div>";
   }
   function charger(src) { return new Promise(function (ok, ko) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
   function rendre(html, fcss, h) {
@@ -81,8 +95,8 @@
     var h2 = box.querySelector(".fx-tt h2");
     if (h2) { h2.style.whiteSpace = "nowrap"; var lh2 = function () { var r = document.createRange(); r.selectNodeContents(h2); return r.getBoundingClientRect().width; }, f2 = 120; while (f2 > 56 && lh2() > 980) { f2 -= 4; h2.style.fontSize = f2 + "px"; } }
     // Adresse : toujours sur une ligne (Will, 26/11/2026).
-    var ub = box.querySelector(".fx-url b");
-    if (ub) { var lg = function () { var r = document.createRange(); r.selectNodeContents(ub); return r.getBoundingClientRect().width; }, fz = 64; while (fz > 30 && lg() > 980) { fz -= 2; ub.style.fontSize = fz + "px"; } }
+    var ub = box.querySelector(".fx-fb b");
+    if (ub) { var lg = function () { var r = document.createRange(); r.selectNodeContents(ub); return r.getBoundingClientRect().width; }, fz = 44; while (fz > 22 && lg() > 980) { fz -= 2; ub.style.fontSize = fz + "px"; } }
     var imgs = [].map.call(box.querySelectorAll("img"), function (im) { return im.complete && im.naturalWidth ? null : new Promise(function (ok) { im.onload = im.onerror = ok; }); });
     var opts = { width: 1080, height: h, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, includeQueryParams: true, backgroundColor: "#000" };
     return Promise.all(imgs).then(function () {
@@ -100,7 +114,7 @@
     var lib = window.htmlToImage ? Promise.resolve() : charger("https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js");
     var tmp = document.createElement("div"); tmp.style.cssText = "position:fixed;left:-20000px;top:0"; document.body.appendChild(tmp);
     // Polices intégrées : celles de la fiche (FG_FICHE.preparer renvoie la feuille @font-face en data URL).
-    var polices = window.FG_FICHE ? FG_FICHE.preparer(tmp, {}) : Promise.resolve(undefined);
+    var polices = window.FG_FICHE ? FG_FICHE.preparer(tmp, { jp: d.jp }) : Promise.resolve(undefined);
     var html = d.pages.map(function (_, i) { return page(d, i); }); if (d.tomes && d.tomes.length) html.push(fin(d));
     var out = [];
     return lib.then(function () { return polices; }).then(function (fcss) {

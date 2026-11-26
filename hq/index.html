@@ -1812,7 +1812,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // tweet avec le lien de la fiche à reposter à la main, programmation Instagram (carrousel + story) et X (post). Images faites ici.
   var FDAT = {}, FIMG = {};
   function libJs(test, src) { return test() ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = function () { ko(new Error("Un gabarit ne se charge pas")); }; document.head.appendChild(sc); }); }
-  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=10").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=4"); }); }
+  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=10").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=5"); }); }
   function fParts(v) { return String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*[,/&]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function ficheData(f) {
     if (FDAT[f.id]) return FDAT[f.id];
@@ -1831,7 +1831,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       var tri = function (l) { var vu = {}; return l.sort(function (a, b) { return (a.n || 999) - (b.n || 999); }).filter(function (t) { if (vu[t.n]) return false; vu[t.n] = 1; return true; }); };
       var tomes = (fr.length ? tri(fr) : tri(jp)).slice(0, 5).map(function (t) { return "/api/couv?w=500&u=" + encodeURIComponent(t.cover); });
       var sous = pFR && d.frDebut ? "Chez " + pFR + " depuis " + d.frDebut : (pJP && s.y1 ? "Chez " + pJP + " depuis " + s.y1 : "");
-      return { j: j, s: s, d: d, ex: { titre: t, credit: credit, tomes: tomes, sous: sous, slug: f.slug } };
+      return { j: j, s: s, d: d, ex: { titre: t, jp: s.jp, credit: credit, tomes: tomes, slug: f.slug } };
     });
     p.catch(function () { delete FDAT[f.id]; }); return p;
   }
@@ -1842,7 +1842,6 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       return FG_FICHE.png(D.d, { theme: "creme", fmt: "post" }).then(function (post) { return FG_FICHE.png(D.d, { theme: "creme", fmt: "story" }).then(function (story) {
         if (!x || !x.pages.length) return { post: post, story: story, slides: [post] };
         var ed = { pages: x.pages, fin: x.fin }; for (var k in D.ex) ed[k] = D.ex[k];
-        if (x.fin === "eventail") ed.sous = "La suite dans le tome 1";
         return FG_EXTRAIT.slides(ed, prog).then(function (l) { return { post: post, story: story, slides: [post].concat(l) }; });
       }); });
     });
