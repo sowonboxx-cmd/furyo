@@ -46,6 +46,7 @@
     // Page à la largeur de la barre de progression (Will, 26/11/2026), crédits un peu sous la page.
     '.fx.st .fx-top{top:128px}.fx.st .fx-prog{top:250px}',
     // Image de fin en story : 9 tomes s'il y en a au moins 9 (tome 1 en grand, 4 à droite, 4 dessous).
+    '.fx.st .fx-pg{top:280px;height:1525px;width:968px}',
     '.fx.fx-fin.st.n9 .fx-tt{top:225px}.fx.fx-fin.st.n9 .fx-grille{top:510px;left:95px;right:95px}',
     '.fx.st .fx-bas{height:100px;align-items:flex-start;padding-top:0;background:transparent}',
     '.fx.st .fx-mz{grid-template-rows:repeat(4,1fr)}',
