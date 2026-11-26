@@ -1,0 +1,49 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Annonce « Manga Database » (Will, 26/11/2026) : DA des carrousels hebdo (bandeau noir + logo, fond rouge sur mosaïque de couvertures, pastille jaune). */
+*{box-sizing:border-box}body{margin:0;background:#111}
+.f{position:relative;width:1080px;height:1440px;overflow:hidden;background:#A8001F;color:#F5F5F7;font-family:Inter,sans-serif;margin-bottom:40px}
+.f.s{height:1920px}
+.mz{position:absolute;inset:-60px;display:grid;grid-template-columns:repeat(7,1fr);gap:14px;transform:rotate(-6deg);opacity:.2;filter:grayscale(1) contrast(1.2)}
+.mz img{width:100%;aspect-ratio:7/10;object-fit:cover;border-radius:10px}
+.vl{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 45%,rgba(168,0,31,.25),rgba(120,0,22,.85))}
+.top{position:absolute;left:0;right:0;top:0;height:132px;background:#000;display:flex;align-items:center;justify-content:center;z-index:3}.top img{height:66px}
+.in{position:absolute;inset:132px 0 0;z-index:2;display:flex;flex-direction:column;align-items:center;padding:56px 64px 0}
+.pill{background:#F2C14E;color:#1a1a1a;font:700 40px/1 Antonio;letter-spacing:.06em;text-transform:uppercase;padding:14px 30px;border-radius:14px}
+h1{margin:26px 0 0;white-space:nowrap;font:700 132px/.9 Antonio;text-transform:uppercase;letter-spacing:.01em;text-align:center}
+.sub{margin-top:18px;font:600 36px Inter;color:#FFE3E9;text-align:center}
+.fan{position:relative;width:100%;height:440px;margin-top:36px}
+.fan img{position:absolute;border:8px solid #F2EFE9;border-radius:6px;object-fit:cover;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.rows{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.s .rows{grid-template-columns:1fr}
+.row{display:flex;align-items:center;gap:22px;background:rgba(40,0,10,.72);border-radius:18px;padding:20px 26px}
+.row i{flex:none;width:60px;height:60px;border-radius:14px;background:#F2C14E;display:grid;place-items:center}.row svg{width:32px;height:32px;stroke:#1a1a1a}
+.row b{font:700 40px/1 Antonio;text-transform:uppercase;display:block}.row span{display:block;margin-top:6px;font:600 22px Inter;color:#FFD5DE}.s .row b{font-size:46px}.s .row span{font-size:26px}
+.bas{position:absolute;left:0;right:0;bottom:0;height:150px;background:#000;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-top:6px solid #F2C14E}
+.bas small{font:600 28px Inter;color:#CFCFD4}.bas b{font:700 54px/1 Antonio;text-transform:uppercase;letter-spacing:.04em}.bas b em{font-style:normal;color:#F2C14E}
+.s .in{padding-top:110px}.s h1{font-size:180px;white-space:normal;text-align:center}.s .big{font:700 110px/.95 Antonio;text-transform:uppercase;text-align:center;margin-top:30px}
+.s .txt{font:600 44px/1.35 Inter;text-align:center;color:#FFE3E9;margin-top:34px;max-width:880px}
+.tags{display:flex;gap:16px;margin-top:46px;flex-wrap:wrap;justify-content:center}.tags span{font:700 46px/1 Antonio;text-transform:uppercase;background:rgba(40,0,10,.75);border:3px solid #F2C14E;color:#fff;padding:18px 28px;border-radius:16px}
+</style></head><body><div id="app"></div>
+<script>
+const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const I = { res: ic('<path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>'), tom: ic('<rect x="3" y="4" width="4" height="16" rx="1"/><rect x="9" y="4" width="4" height="16" rx="1"/><path d="m15 5 3.8-1 3.2 15.5-3.8 1z"/>'), ext: ic('<path d="M3 5h7a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H3z"/><path d="M21 5h-7a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h7z"/>'), ad: ic('<rect x="3" y="6" width="18" height="13" rx="2"/><path d="m10 10 5 2.5-5 2.5z"/><path d="M7 3l3 3M17 3l-3 3"/>') };
+const couv = (u, w) => "/api/couv?w=" + (w || 400) + "&u=" + encodeURIComponent(u);
+fetch("/api/series").then(r => r.json()).then(j => {
+  const by = {}; j.items.forEach(s => by[s.slug] = s);
+  const mz = j.items.filter(s => s.cover && s.slug !== "crows").slice(0, 56).map(s => `<img src="${couv(s.cover, 240)}">`).join("");
+  const fanS = ["rokudenashi-blues", "gangking", "brother-jingi", "sakamoto-days", "hell-dogs"].map(k => by[k]).filter(Boolean);
+  const pos = [[-2, 210, 0.82], [-1, 260, 0.9], [0, 320, 1], [1, 260, 0.9], [2, 210, 0.82]];
+  const ordre = [fanS[0], fanS[1], fanS[2], fanS[3], fanS[4]];
+  const fan = ordre.map((s, i) => { const [d, w] = pos[i], h = Math.round(w * 1.42), c = d === 0; return `<img src="${couv(s.cover, 600)}" style="left:${Math.round(476 - w / 2 + d * 205)}px;top:${c ? 0 : 60}px;width:${w}px;height:${h}px;z-index:${10 - Math.abs(d)};transform:rotate(${d * 5}deg)${c ? "" : ";filter:brightness(.85)"}">`; }).join("");
+  const fond = `<div class="mz">${mz}</div><div class="vl"></div><div class="top"><img src="/img/social/logo-blanc.png"></div>`;
+  const bas = `<div class="bas"><small>Une nouvelle fiche chaque semaine</small><b>furyogang.com<em>/series</em></b></div>`;
+  const rows = [[I.res, "Le résumé", "l'histoire, sans spoiler"], [I.tom, "Tous les tomes", "Japon et France"], [I.ext, "Un extrait", "les premières pages"], [I.ad, "Les adaptations", "films, dramas, animés"]];
+  const post = `<div class="f">${fond}<div class="in"><span class="pill">Nouveau sur FuryoGang</span><h1>Manga Database</h1><div class="sub">Les fiches manga furyō, yakuza et pègre arrivent</div>
+    <div class="fan">${fan}</div><div class="rows">${rows.map(r => `<div class="row"><i>${r[0]}</i><div><b>${r[1]}</b><span>${r[2]}</span></div></div>`).join("")}</div></div>${bas}</div>`;
+  const s1 = `<div class="f s">${fond}<div class="in"><span class="pill">Nouveau sur FuryoGang</span><h1>Manga<br>Database</h1><div class="txt">Les fiches manga arrivent sur le site.</div><div class="fan" style="margin-top:110px;height:480px">${fan}</div></div>${bas}</div>`;
+  const s2 = `<div class="f s">${fond}<div class="in"><span class="pill">La ligne FuryoGang</span><div class="tags"><span>Furyō</span><span>Yakuza</span><span>Pègre</span></div><div class="big" style="margin-top:80px">Au moins une nouvelle fiche chaque semaine</div><div class="rows" style="margin-top:80px">${rows.map(r => `<div class="row"><i>${r[0]}</i><div><b>${r[1]}</b><span>${r[2]}</span></div></div>`).join("")}</div></div>${bas}</div>`;
+  const s3 = `<div class="f s">${fond}<div class="in"><span class="pill">Première fiche</span><div class="big" style="font-size:230px;margin-top:120px">Mardi</div><div class="txt" style="font-size:52px">Une légende du furyō ouvre la base.<br>Vous devinez laquelle ?</div><div class="fan" style="margin-top:90px;height:520px"><img src="${couv(by.crows.cover, 600)}" style="left:316px;top:0;width:320px;height:454px;z-index:5;filter:blur(22px) brightness(.75)"></div></div>${bas}</div>`;
+  document.getElementById("app").innerHTML = post + s1 + s2 + s3;
+});
+</script></body></html>
