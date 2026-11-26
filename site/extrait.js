@@ -47,6 +47,9 @@
     '.fx.st .fx-top{top:128px}.fx.st .fx-prog{top:250px}',
     // Image de fin en story : 9 tomes s'il y en a au moins 9 (tome 1 en grand, 4 à droite, 4 dessous).
     '.fx.st .fx-pg{top:280px;height:1525px;width:968px;object-position:center top}',
+    '.fx.fx-fin .fx-grille.fx-deux{grid-template-columns:repeat(2,1fr);gap:30px;left:120px;right:120px}',
+    '.fx.fx-fin.st .fx-grille.fx-deux{left:80px;right:80px}',
+    '.fx.fx-fin.st.n2 .fx-tt{top:400px}.fx.fx-fin.st.n2 .fx-grille{top:690px}',
     '.fx.fx-fin.st.n9 .fx-tt{top:225px}.fx.fx-fin.st.n9 .fx-grille{top:510px;left:95px;right:95px}',
     '.fx.st .fx-bas{height:100px;align-items:flex-start;padding-top:0;background:transparent}',
     '.fx.st .fx-mz{grid-template-rows:repeat(4,1fr)}',
@@ -81,9 +84,11 @@
     var mz = ""; for (var j = 0; j < (d.story ? 15 : 12); j++) mz += '<img src="' + esc(d.pages[j % d.pages.length]) + '" alt="">';
     var nb = d.nbTomes || (d.story && d.tomes.length >= 9 && d.fin !== "eventail" ? 9 : 5), t = d.tomes.slice(0, nb), corps;
     if (d.fin === "eventail") corps = '<div class="fx-fan">' + fan(t) + "</div>";
+    // 2 tomes seulement : côte à côte, même taille, en grand (Will, 26/11/2026).
+    else if (t.length === 2) corps = '<div class="fx-grille fx-deux">' + t.map(function (u) { return '<img src="' + esc(u) + '" alt="">'; }).join("") + "</div>";
     else corps = '<div class="fx-grille">' + t.map(function (u, i) { return '<img' + (i ? "" : ' class="un"') + ' src="' + esc(u) + '" alt="">'; }).join("") + "</div>";
     var jp = d.jp && String(d.jp).toLowerCase() !== String(d.titre || "").toLowerCase() ? '<span class="fx-jp" lang="ja">' + esc(d.jp) + "</span>" : "";
-    return '<div class="' + cl(d) + ' fx-fin' + (nb === 9 ? " n9" : "") + '"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + (d.story ? '<div class="fx-top"></div>' : top()) +
+    return '<div class="' + cl(d) + ' fx-fin' + (nb === 9 ? " n9" : t.length === 2 ? " n2" : "") + '"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + (d.story ? '<div class="fx-top"></div>' : top()) +
       '<div class="fx-tt"><h2>' + esc(d.titre) + "</h2>" + jp + "</div>" + corps +
       '<div class="fx-fb"><img src="/img/social/logo-blanc.png" alt=""><small>La fiche complète</small><b>furyogang.com<em>/series/' + esc(d.slug) + "</em></b></div></div>";
   }
