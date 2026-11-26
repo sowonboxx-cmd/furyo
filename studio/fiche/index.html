@@ -106,7 +106,8 @@ function caps(d){
   const pays = [d.pubJP ? `🇯🇵 ${d.pubJP}${d.tomesJP ? ` (${d.tomesJP} tomes)` : ""}` : "", (d.pubs || []).length ? `🇫🇷 ${d.pubs.join(", ")}` : "🇫🇷 Pas encore en France"].filter(Boolean).join("\n");
   const tags = [...new Set([tagOf(d.t), "#manga", ...(d.genres || []).flatMap(g => (TAGS[g] || []).map(x => "#" + x)), d.type ? tagOf(d.type).toLowerCase() : "", "#FuryoGang"].filter(Boolean))];
   const membre = MEMBRES_OUVERTS ? "\n👉 Crée ton compte gratuit sur le site pour suivre tes séries." : "";
-  const ig = `🆕 NOUVELLE FICHE · ${d.t.toUpperCase()}${d.jp ? ` (${d.jp})` : ""}
+  const nf = "N°" + String(d.n || 1).padStart(3, "0"); // « Fiche N°… » à la place de « Nouvelle fiche » (Will, 26/11/2026)
+  const ig = `FICHE ${nf} · ${d.t.toUpperCase()}${d.jp ? ` (${d.jp})` : ""}
 
 ${phrases(d.resumeLong || d.resume, 3)}
 
@@ -117,7 +118,7 @@ ${pays}
 📖 Tomes, extraits, adaptations : toutes les infos sur le site FuryoGang.${membre}
 ${mentions(d, "ig") ? "\n📣 " + mentions(d, "ig") + "\n" : ""}
 ${tags.concat(["#mangafr"]).slice(0, 12).join(" ")}`;
-  const tt = `🆕 Nouvelle fiche : ${d.t}${d.jp ? ` (${d.jp})` : ""}
+  const tt = `Fiche ${nf} : ${d.t}${d.jp ? ` (${d.jp})` : ""}
 
 ${phrases(d.resumeLong || d.resume, 3)}
 
@@ -132,7 +133,7 @@ ${tags.concat(["#mangatok", "#mangafr", "#manga"]).filter((v, i, a) => a.indexOf
   const hx = [...new Set((d.genres || []).map(g => tagOf(g)).filter(h => h.length > 1))];
   const h = d.handles || {}, autX = (h.auteurs || []).map(a => a.x), frX = (h.editeurs || []).filter(e => e.type === "Éditeur FR").map(e => e.x);
   const xLen = t => t.replace(url, "x".repeat(23)).length;
-  const xBase = (r, hs, ats) => `Nouvelle fiche : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${ats.length ? "\n" + ats.map(a => "@" + a).join(" · ") : ""}`;
+  const xBase = (r, hs, ats) => `Fiche ${nf} : ${d.t}\n${r}${hs.length ? " " + hs.join(" ") : ""}\n\nFiche complète · Extraits · Trailer\n↗ ${url}${ats.length ? "\n" + ats.map(a => "@" + a).join(" · ") : ""}`;
   const choix = (r, hs) => { const f = [...new Set(frX.filter(Boolean))].slice(0, 1), a = [...new Set(autX.filter(Boolean))].filter(x => !f.includes(x));
     for (let k = a.length; k >= 0; k--) { const l = [...a.slice(0, k), ...f]; if (l.map(x => "@" + x).join(" · ").length <= 42 && xLen(xBase(r, hs, l)) <= 280) return l; }
     return f; };

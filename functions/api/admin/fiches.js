@@ -4,6 +4,7 @@
 //   POST { cal:{jours,depart,heure} } → enregistre les réglages (KV STATS, clé hq:fiches-cal-v2)
 //   POST { extrait:{ id, pages:[url], fin:"grille"|"eventail" } } → pages d'extrait choisies pour le carrousel de la fiche (KV fx:<id>)
 // Chaque item porte aussi son extrait : { pages, fin } ou null.
+import { enteteFiche } from "../../../lib/fiche-leg.js";
 import { json, isAdmin } from "../../../lib/admin.js";
 import { text, num, date, check, rel, queryAll, slugSerie } from "../../../lib/notion.js";
 import { toutesEditions } from "../../../lib/memo.js";
@@ -34,7 +35,7 @@ export async function onRequestGet({ request, env, waitUntil }) {
     return { id: r.id.replace(/-/g, ""), slug: slugSerie(p), t: text(p["Titre FR"]) || text(p["SERIES"]), jp: text(p["Titre Original"]), num: num(p["N° fiche"]),
       promo: check(p["Promo"]), promoLe: date(p["Promo faite le"]), cover: text(p["Couverture T1"]),
       resume: text(p["Résumé image"]) || text(p["Résumé"]),
-      leg: { ig: text(p["Légende Instagram"]), x: text(p["Légende X"]), tt: text(p["Légende TikTok"]) } };
+      leg: { ig: enteteFiche(text(p["Légende Instagram"]), num(p["N° fiche"])), x: enteteFiche(text(p["Légende X"]), num(p["N° fiche"])), tt: enteteFiche(text(p["Légende TikTok"]), num(p["N° fiche"])) } };
   }).filter(s => s.num).sort((a, b) => a.num - b.num);
   // Couverture : « Couverture T1 » de Notion, sinon le plus petit tome des éditions (France avant Japon), comme /api/series
   // (A-BOUT! n'avait pas d'image dans le calendrier, Will 26/11/2026).

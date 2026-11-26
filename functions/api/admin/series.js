@@ -1,5 +1,6 @@
 // GET /api/admin/series : toutes les séries de la base, avec leur avancement et la liste des éléments obligatoires (back-office, connecté seulement).
 // Une fiche n'est jamais déclarée « complète » toute seule : la liste dit ce qui est fait, Will valide.
+import { enteteFiche } from "../../../lib/fiche-leg.js";
 import { tousTomes, toutesEditions } from "../../../lib/memo.js";
 import { text, num, date, check, rel, list, queryAll, slugify, slugSerie, cached } from "../../../lib/notion.js";
 import { json, isAdmin } from "../../../lib/admin.js";
@@ -71,6 +72,8 @@ async function construire(env, waitUntil) {
     // Jamais de hashtag sur X (Will, 29/10/2026) : retirés de la légende et réenregistrés dans Notion.
     { const sx = String(leg.x || "").replace(/(^|[ \t]+)#[\p{L}\p{N}_]+/gmu, "").replace(/[ \t]+$/gm, "").replace(/\n{3,}/g, "\n\n").trim();
       if (sx !== String(leg.x || "").trim()) { leg.x = sx; maj[NOMS.x] = rt(sx); } }
+    // En-tête « FICHE N°… » à la place de « Nouvelle fiche » dès que la série a un numéro (Will, 26/11/2026), réenregistré dans Notion.
+    { const nf = num(p["N° fiche"]); for (const k of ["ig", "tt", "x"]) { const e = enteteFiche(leg[k], nf); if (e !== leg[k]) { leg[k] = e; maj[NOMS[k]] = rt(e); } } }
     if (Object.keys(maj).length) aMettreAJour.push([r.id, maj]);
     return {
       // Date de création de la fiche dans Notion, pour le tri « Récemment ajoutées » (Will, 19/10/2026).
