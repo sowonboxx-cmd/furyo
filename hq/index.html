@@ -323,6 +323,8 @@ h1{font:700 64px/.92 "FGAntonio";text-transform:uppercase;margin:0 0 6px}
 .igign{border-radius:14px;padding:14px 16px;background:#1f1f24;color:#a8a8b2;font:600 14px "FGInter";margin-top:14px}.igign b{color:#e8e8ec}
 .ppr.ign{opacity:.45}.ppk.ig{background:#2a2a30;border-color:#2a2a30;color:#8a8a94}
 .chk.pl{width:auto;height:22px;padding:0 9px 0 6px;border-radius:11px;background:#F08A24;color:#1b1b1f;display:flex;gap:4px;align-items:center}.chk.pl b{font:800 11px "FGInter";white-space:nowrap}
+/* Fiches séries programmées : même pastille, en bleu (Will, 26/11/2026). */
+.chk.pl.fi{background:#2F6FED;color:#fff}
 [data-drag]{cursor:grab}
 .dragging{opacity:.4}
 .wcol.drop-ok,.cell.drop-ok{outline:2px dashed var(--blue);outline-offset:-3px;background:rgba(42,111,208,.14)}
@@ -1233,7 +1235,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
         if (it.kind === "fiche") { var ff = it.f, fq = IGQ["fiche-" + ff.id], fim = ff.cover ? "/api/couv?u=" + encodeURIComponent(ff.cover) + "&w=120" : "";
           return '<button class="rcard" data-k="fiche" data-id="' + esc(ff.id) + '">' + (fim ? '<span class="cov" style="background-image:url(\'' + esc(fim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">新作</span></span>') +
             '<span class="ri"><span class="t">' + esc(ff.t) + '</span><span class="m">Fiche ' + ficheNo(ff) + ' · post + story</span></span>' +
-            (fq && fq.fait && fq.fait !== "échec" ? '<span class="chk on" title="Publiée">' + CHK_SVG + '</span>' : fq && !fq.ignore ? '<span class="chk pl" title="Programmée">' + CHK_SVG + '<b>' + esc(heureCourte(fq.quand)) + '</b></span>' : "") + '</button>'; }
+            (fq && fq.fait && fq.fait !== "échec" ? '<span class="chk on" title="Publiée">' + CHK_SVG + '</span>' : fq && !fq.ignore ? '<span class="chk pl fi" title="Fiche programmée">' + CHK_SVG + '<b>' + esc(heureCourte(fq.quand)) + '</b></span>' : "") + '</button>'; }
         if (it.kind === "prepub") { var px = it.x, pcv = px.visuel || px.cover, pim = pcv ? "/api/couv?u=" + encodeURIComponent(pcv) + "&w=120" : "", pe = ppEtat(px);
           return '<button class="rcard" data-k="prepub" data-id="' + esc(it.id) + '">' + (pim ? '<span class="cov" style="background-image:url(\'' + esc(pim) + '\')"></span>' : '<span class="cov kjc"><span class="wm">FURYOGANG</span><span class="kj" lang="ja">連載</span></span>') +
             '<span class="ri"><span class="t">' + esc(itemTitle(it)) + '</span><span class="m">Story prépublication · ' + esc(px.magazine || "") + '</span></span>' +
