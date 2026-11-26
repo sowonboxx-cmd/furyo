@@ -1812,7 +1812,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // tweet avec le lien de la fiche à reposter à la main, programmation Instagram (carrousel + story) et X (post). Images faites ici.
   var FDAT = {}, FIMG = {};
   function libJs(test, src) { return test() ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = function () { ko(new Error("Un gabarit ne se charge pas")); }; document.head.appendChild(sc); }); }
-  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=10").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=11"); }); }
+  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=11").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=11"); }); }
   function fParts(v) { return String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*[,/&]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function ficheData(f) {
     if (FDAT[f.id]) return FDAT[f.id];
@@ -1829,7 +1829,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       var pFR = fParts(s.pubFR)[0] || "", pJP = fParts(s.pubJP)[0] || "";
       var credit = "© " + aut.join(" / ") + (pJP ? " / " + pJP : "") + (pFR ? " · Édition française " + pFR : "");
       var tri = function (l) { var vu = {}; return l.sort(function (a, b) { return (a.n || 999) - (b.n || 999); }).filter(function (t) { if (vu[t.n]) return false; vu[t.n] = 1; return true; }); };
-      var tomes = (fr.length ? tri(fr) : tri(jp)).slice(0, 9).map(function (t) { return "/api/couv?w=500&u=" + encodeURIComponent(t.cover); });
+      var lt = tri(fr), lj = tri(jp), tomes = (lt.length >= 5 || lt.length >= lj.length ? lt : lj).slice(0, 9).map(function (t) { return "/api/couv?w=500&u=" + encodeURIComponent(t.cover); });
       var sous = pFR && d.frDebut ? "Chez " + pFR + " depuis " + d.frDebut : (pJP && s.y1 ? "Chez " + pJP + " depuis " + s.y1 : "");
       return { j: j, s: s, d: d, ex: { titre: t, jp: s.jp, credit: credit, tomes: tomes, slug: f.slug } };
     });

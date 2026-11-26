@@ -38,7 +38,7 @@
     '.fgc .fgc-row.fgc-gen{white-space:nowrap;overflow:hidden}',
     '.fgc .fgc-res{flex:none;margin-top:38px;background:var(--bulle);border-radius:22px;padding:22px 28px 26px}',
     '.fgc .fgc-res h3{display:inline-block;margin:0 0 16px;background:var(--pil);color:var(--pilt);font:700 32px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.08em;padding:12px 20px 13px;border-radius:12px}',
-    '.fgc .fgc-res p{margin:0;font-size:37px;line-height:1.42;font-weight:500;color:var(--res);max-height:calc(37px * 1.42 * 4 + 2px);overflow:hidden}',
+    '.fgc .fgc-res p{margin:0;white-space:pre-line;font-size:37px;line-height:1.42;font-weight:500;color:var(--res);max-height:calc(37px * 1.42 * 4 + 2px);overflow:hidden}',
     '.fgc.story .fgc-res{margin-top:48px}.fgc.story .fgc-res p{font-size:42px;max-height:calc(42px * 1.42 * 5 + 2px)}',
     '.fgc .fgc-chif{flex:none;display:flex;gap:16px;margin-top:26px}',
     '.fgc .fgc-chif>div{flex:1;display:flex;align-items:center;gap:18px;background:var(--track);border-radius:12px;padding:14px 20px}',
