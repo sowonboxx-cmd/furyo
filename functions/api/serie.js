@@ -122,7 +122,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     };
     // Adaptations de la série d'origine (suite, préquelle, spin-off) : on les affiche aussi sur la fiche.
     // Pages d'extrait (5 pages du chapitre 1), affichées en petit sur la fiche (Will, 26/11/2026).
-    serie.pages = ((await extraitDe(env, id)) || {}).pages || [];
+    serie.pages = ((await extraitDe(env, id, serie.slug)) || {}).pages || [];
     if (!estVisible(p)) serie.apercu = true;
     serie.mere = await serieMere(env.NOTION_TOKEN, p, id, map).catch(() => null);
     const editions = eRows.map(e => {

@@ -6,7 +6,7 @@
 // Chaque item porte aussi son extrait : { pages, fin } ou null.
 import { json, isAdmin } from "../../../lib/admin.js";
 import { text, num, date, check, queryAll, slugSerie } from "../../../lib/notion.js";
-import { DEPART_EX } from "../../../lib/extraits.js";
+import { DEPART_EX, DEPART_EX_SLUG } from "../../../lib/extraits.js";
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const CLE = "hq:fiches-cal-v2"; // v2 : mardi, jeudi, samedi (Will, 25/11/2026)
 // Mardi, jeudi et samedi à 18 h (Will, 25/11/2026) ; jours et heure réglables dans Mangas Database (vue Calendrier).
@@ -36,7 +36,7 @@ export async function onRequestGet({ request, env }) {
   }).filter(s => s.num).sort((a, b) => a.num - b.num);
   if (env.STATS) await Promise.all(items.map(async s => { s.extrait = await env.STATS.get("fx:" + s.id, "json").catch(() => null); }));
   // Pages déjà fournies par Will (posées par Claude), tant qu'il n'en a pas choisi d'autres dans le calendrier.
-  for (const s of items) if (!s.extrait && DEPART_EX[s.id]) s.extrait = DEPART_EX[s.id];
+  for (const s of items) if (!s.extrait && (DEPART_EX[s.id] || DEPART_EX_SLUG[s.slug])) s.extrait = DEPART_EX[s.id] || DEPART_EX_SLUG[s.slug];
   return json({ ok: true, cal, items });
 }
 
