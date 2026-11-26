@@ -8,6 +8,7 @@ const pastilleCxw = p => /^crows\s*x\s*worst$/i.test(text(p["Univers"]).trim())
   && !/^qp\b/i.test(text(p["SERIES"]).trim())
   && !/hommage/i.test(text(p["Relation"]))
   && !CXW_SANS.has(slugify(text(p["SERIES"])));
+import { extraitDe } from "../../lib/extraits.js";
 import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie , akitaLien } from "../../lib/notion.js";
 import { estVisible, estValidee } from "../../lib/site.js";
 import { isAdmin } from "../../lib/admin.js";
@@ -105,7 +106,7 @@ export async function onRequestGet({ env, request, waitUntil }) {
     ]);
     const serie = {
       id: nid(id), slug: slugSerie(p), t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]),
-      resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
+      num: num(p["N° fiche"]), resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
       stJP: text(p["Statut Japon"]), stFR: text(p["Statut France"]), tomesJP: num(p["Tomes JP"]), tomesFR: num(p["Tomes FR"]),
       univers: text(p["Univers"]),
       // Pastille « UNIVERS · CROWS × WORST » : univers CROWS X WORST, sauf la famille QP (série séparée),
@@ -120,6 +121,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         .map(a => ({ cat: slugify(a[0]).replace(/^jeu.*/, "jeux").replace(/^films?$/, "film"), nom: a.length > 2 ? a[1] : "", url: a[a.length - 1] })),
     };
     // Adaptations de la série d'origine (suite, préquelle, spin-off) : on les affiche aussi sur la fiche.
+    // Pages d'extrait (5 pages du chapitre 1), affichées en petit sur la fiche (Will, 26/11/2026).
+    serie.pages = ((await extraitDe(env, id)) || {}).pages || [];
     if (!estVisible(p)) serie.apercu = true;
     serie.mere = await serieMere(env.NOTION_TOKEN, p, id, map).catch(() => null);
     const editions = eRows.map(e => {

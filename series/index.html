@@ -430,6 +430,93 @@ body{font-size:16px}
   .hd-syn .tags .cxw{--h:32px}.hd-syn .tags .cxw .t{font-size:17px}
   .fx-adt{font-size:20.5px}
 }
+
+/* ===== Fiche série v2 (Will, 26/11/2026 · maquettes /modeles/database/v3.html) ===== */
+/* Tomes en tuiles sous l'auteur : Japon d'abord (pays d'origine), puis France. */
+.tt{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tt>div{background:#1C1C1E;border-radius:14px;padding:10px 14px;min-width:0}
+@media (min-width:720px){.tt{gap:10px;margin-top:16px}.tt>div{padding:12px 18px;min-width:190px}}
+.tt b{display:flex;align-items:center;gap:8px;font:700 22px/1 var(--f-display);text-transform:uppercase;letter-spacing:.01em;color:var(--paper)}
+@media (min-width:720px){.tt b{font-size:30px;gap:10px}}
+.tt b .flag{width:18px;height:12px;border-radius:2px}
+.tt span{display:block;margin-top:5px;font-size:12px;font-weight:700;color:var(--paper-2)}
+@media (min-width:720px){.tt span{font-size:13px}}
+.tt .on{color:var(--ok)}.tt .end{color:var(--paper-2)}.tt .pause{color:var(--amber)}.tt .stop{color:#ff8a5a}.tt .soon{color:var(--fr)}
+/* N° de fiche : discret, sous « Collection » (ordinateur seulement). */
+.fno{position:absolute;z-index:2;top:106px;right:24px;font:700 11px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:#77777E;border:1px solid #2E2E33;border-radius:999px;padding:5px 10px}
+@media (max-width:899px){.fno{display:none}}
+/* Extrait : 5 pages en petit + bloc « Lire le début » ; zoom plein écran au clic. */
+.xb{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:stretch}
+.xp{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-content:center}
+.xp button{padding:0;border:0;background:#fff;border-radius:6px;overflow:hidden;cursor:zoom-in;aspect-ratio:1810/2576}
+.xp img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s}.xp button:hover img{transform:scale(1.04)}
+.xt{background:#1C1C1E;border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.xt small{font:700 11.5px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--paper-3)}
+.xt b{font:700 30px/1 var(--f-display);text-transform:uppercase}
+.xt p{margin:0;color:var(--paper-2);font-size:14px}.xt p strong{color:var(--paper)}
+.xa{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
+.xa a{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:12px;background:var(--paper);color:#000;font:700 14px var(--f-body);text-decoration:none}
+.xa .seg{padding:3px}.xa .seg button{height:34px;padding:0 11px;font-size:13px;gap:6px}
+.xa .seg .flag{width:17px;height:12px;border-radius:2px}
+@media (max-width:899px){.xb{grid-template-columns:1fr}.xp{gap:6px}.xt{padding:16px}.xt b{font-size:24px}}
+.xv{position:fixed;inset:0;z-index:65;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;touch-action:pan-y}
+.xv[hidden]{display:none}.xv img{max-height:86vh;max-width:92vw;border-radius:6px;background:#fff}
+.xv button{position:absolute;border:0;background:rgba(255,255,255,.1);color:#fff;width:52px;height:52px;border-radius:26px;display:grid;place-items:center;cursor:pointer}
+.xv button:hover{background:rgba(255,255,255,.2)}.xv svg{width:24px;height:24px}
+.xv .p{left:28px;top:50%;transform:translateY(-50%)}.xv .n{right:28px;top:50%;transform:translateY(-50%)}.xv .x{right:22px;top:calc(env(safe-area-inset-top,0px) + 18px);width:44px;height:44px}
+.xv .c{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font:700 14px var(--f-body);background:rgba(30,30,34,.9);padding:7px 14px;border-radius:20px}
+.xv .cr2{position:absolute;left:28px;bottom:24px;color:#9a9aa2;font:600 13px var(--f-body);max-width:40%}
+@media (max-width:719px){.xv .p,.xv .n{top:auto;bottom:14px;transform:none;width:44px;height:44px}.xv .p{left:14px}.xv .n{right:14px}.xv .cr2{display:none}}
+/* Tomes : 2 lignes par édition, puis « Voir les N tomes ». */
+.grid.fold>li.hid{display:none}
+.more{display:flex;justify-content:center;margin-top:18px}
+.more button{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;border:0;border-radius:12px;background:#2D2D32;color:var(--paper);font:700 14px var(--f-body);cursor:pointer}
+.more button:hover{background:var(--ink-3)}.more svg{width:16px;height:16px;transition:transform .2s}.more button[aria-expanded=true] svg{transform:rotate(180deg)}
+/* Univers : bandeau rouge vif. */
+.uni{display:flex;align-items:center;gap:22px;margin-top:12px;background:linear-gradient(100deg,#D4002F 0%,#8a001f 45%,#000 85%);border-radius:22px;padding:24px 28px;text-decoration:none;color:#fff}
+.uni .k{font:700 12px var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:#ffd5de;background:rgba(0,0,0,.25);padding:6px 10px;border-radius:6px;flex:none}
+.uni b{font:700 44px/1 var(--f-display);text-transform:uppercase;flex:none}.uni .d{color:#ffe3e9;font-size:14.5px}
+.uni .go{margin-left:auto;flex:none;display:inline-flex;gap:8px;align-items:center;background:#fff;color:#111;font:700 14px var(--f-body);padding:11px 16px;border-radius:12px}
+.uni:hover{filter:brightness(1.06)}
+@media (max-width:719px){.uni{flex-wrap:wrap;gap:10px 14px;padding:18px}.uni b{font-size:32px}.uni .go{margin-left:0}}
+/* Cartes séries (base et « Si vous aimez ») : genres sur une ligne, puis type · année · statut en couleur. */
+.bc{display:block;text-decoration:none;min-width:0}
+.bc .cv{background:#1C1C1E}
+.bc .t-n{margin-top:9px;font-size:18px}
+.bc .g{display:block;margin-top:4px;font-size:12.5px;font-weight:600;color:var(--paper-2);white-space:nowrap;overflow:hidden}
+.bc .m{display:block;margin-top:3px;font-size:12px;font-weight:600;color:var(--paper-3);white-space:nowrap;overflow:hidden}
+.bc .m b{font-weight:700}.sc-on{color:var(--ok)}.sc-end{color:var(--paper-2)}.sc-stop{color:#ff8a5a}.sc-pause{color:var(--amber)}
+
+/* ===== Manga Database (liste des séries, Will 26/11/2026 · maquette H2) ===== */
+.mdb{margin-top:14px;background:var(--ink-2);border-radius:22px;padding:20px 22px 22px}
+@media (min-width:720px){.mdb{margin-top:28px;padding:22px 24px 24px}}
+.mdb-h{display:flex;align-items:center;gap:14px 28px;flex-wrap:wrap}
+.mdb-h h1{display:block;-webkit-line-clamp:unset;font-size:30px;flex:none}@media (min-width:720px){.mdb-h h1{font-size:40px}}
+.mdb-k{display:flex;gap:10px 24px;align-items:baseline;flex-wrap:wrap}
+.mdb-k .k{font-size:13.5px;font-weight:600;color:var(--paper-2);white-space:nowrap}.mdb-k b{font:700 30px/1 var(--f-display);color:var(--paper);margin-right:7px}@media (min-width:720px){.mdb-k b{font-size:34px}}
+.mdb-k b.bl{color:var(--blue)}.mdb-k b.or{color:#F2C14E}
+.pct{margin-left:auto;font:700 34px/1 var(--f-display);color:var(--blue)}@media (min-width:720px){.pct{font-size:42px}}
+.mdb-bar{height:8px;border-radius:5px;background:#333338;overflow:hidden;margin:14px 0 18px}.mdb-bar i{display:block;height:100%;border-radius:5px;background:var(--blue)}
+.mdb-r{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:899px){.mdb-r{grid-template-columns:1fr;gap:10px}}
+.mdb-c{position:relative;display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px;background:#1C1C1E;border-radius:16px;padding:12px;text-decoration:none;min-width:0;transition:background .15s}
+.mdb-c:hover{background:#26262A}.mdb-c .cv{border-radius:8px;aspect-ratio:5/7;background:#000}.mdb-c .cv img{width:100%;height:100%;object-fit:cover}
+@media (max-width:899px){.mdb-c{grid-template-columns:72px minmax(0,1fr);gap:12px;padding:10px}}
+.mdb-t{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.mdb-t i{font-style:normal;background:#2F6FE4;color:#fff;font:800 10.5px var(--f-body);letter-spacing:.05em;text-transform:uppercase;padding:3px 7px;border-radius:5px}
+.mdb-t>b{display:block;margin-top:8px;font:700 26px/1 var(--f-display);text-transform:uppercase;letter-spacing:.01em}@media (max-width:899px){.mdb-t>b{font-size:21px;margin-top:6px}}
+.mdb-t .g{display:block;max-width:100%;margin-top:7px;font-size:13px;font-weight:600;color:var(--paper-2);white-space:nowrap;overflow:hidden}
+.mdb-t .m{display:block;margin-top:5px;font-size:12.5px;font-weight:600;color:var(--paper-3)}.mdb-t .m b{font-weight:700}
+.mdb-d{position:absolute;right:14px;top:14px;font:700 11px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--paper-3)}
+/* Recherche et filtres : même hauteur, tout au carré */
+.tools{display:flex;gap:8px;align-items:stretch;margin:16px 0 10px;flex-wrap:wrap}
+.tools .search{flex:1 1 320px;height:50px;margin:0;min-width:0}
+.tools .fl{margin:0;padding:0;flex:0 1 auto;max-width:100%}
+.tools .chip{height:50px;border-radius:14px;padding:0 16px;font-size:14px}
+@media (max-width:719px){.tools .fl{margin:0 -16px;padding:0 16px;flex:1 1 100%}.tools .chip{height:42px;border-radius:12px;padding:0 13px}.tools .search{flex-basis:100%;height:46px}}
+@media (max-width:719px){.mdb-h{gap:10px 14px}.mdb-h .pct{order:1;margin-left:auto;font-size:30px}.mdb-k{order:2;width:100%;gap:8px 18px}.mdb-k b{font-size:26px}}
+.base{margin-top:4px}.base .sec-h{justify-content:flex-start;align-items:baseline;gap:12px}.base .fcount{display:inline;margin:0;font-size:13px;color:var(--paper-3)}
+.base .grid{gap:24px 16px}@media (min-width:640px){.base .grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
 </style>
 </head>
 <body>
@@ -487,6 +574,18 @@ function statut(pays, st){
 // Les années ne s'affichent que pour une série terminée.
 // Sortie en France seulement en prépublication numérique (aucune édition en tomes), ex. chez Piccoma.
 const prepubSeule = (eds, pays) => { const l = eds.filter(e => e.pays === pays); return l.length > 0 && l.every(e => /prépub/i.test(e.format || "") && !e.tomes.length); };
+// Tuile « 26 TOMES · Terminé · 1990-1998 » (Will, 26/11/2026) : même calcul que la ligne, présenté en grand.
+function tuile(pays, s, eds){
+  const h = ligne(pays, s, eds); if (!h) return "";
+  const box = document.createElement("div"); box.innerHTML = h;
+  const b = box.querySelector("b"), st = b ? b.textContent : "", cls = b ? b.className : "";
+  const txt = box.textContent.replace(st, "").replace(/\s*·\s*$/, "").trim();
+  const n = (txt.match(/(\d+) tomes?/) || [])[0] || "";
+  let sous = st.replace(/\s*\((\d{4}(?:-\d{4})?)\)$/, " · $1");
+  // Série en cours : depuis l'année de début (Japon) ou du premier tome français.
+  if (/cours/i.test(st)) { const y = pays === "Japon" ? ((s.prepub || "").slice(0, 4) || s.y1) : ((s.t1FR || "").slice(0, 4) || eds.filter(e => e.pays === pays).flatMap(e => e.tomes).map(t => (t.date || "").slice(0, 4)).filter(Boolean).sort()[0]); if (y) sous += " · depuis " + y; }
+  return `<div><b>${FLAGS[pays] || ""}${esc(n || st)}</b>${n ? `<span class="${cls}">${esc(sous)}</span>` : ""}</div>`;
+}
 function ligne(pays, s, eds){
   const st = pays === "France" ? s.stFR : s.stJP;
   if (!st || /non licenci/i.test(st)) return "";
@@ -630,8 +729,8 @@ function render(){
   if (!pubJP.length && s.pubJP) pubJP.push(s.pubJP);
   const same = s.scen && s.scen === s.dess;
   const ad = ADAPT(s);
-  if (TAB === "ad" && !ad.length) TAB = "syn";
-  if (TAB === "ex" && !s.extraitFR && !s.extraitJP) TAB = "info";
+  // Extrait et Adaptations ont leur propre partie plus bas : leurs onglets y descendent (Will, 26/11/2026).
+  if (TAB === "ad" || TAB === "ex") TAB = "info";
   // Ordinateur : le synopsis est déjà en haut, à côté de la couverture ; les onglets commencent à « Info & Extraits ».
   DESK = matchMedia("(min-width:900px)").matches;
   if (DESK && TAB === "syn") TAB = "info";
@@ -641,18 +740,20 @@ function render(){
   <div class="head">
     ${folBtn()}
     <a class="mcol" href="/ma-collection/${esc(s.slug || slug)}" aria-label="Ouvrir dans Ma collection" title="Ajouter à ma collection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="8.5" y="6" width="4" height="14" rx="1"/><path d="M14.2 7.4l3.7-1.4 4 13.1-3.7 1.4z"/><path d="M2 20.5h20"/></svg><span>Collection</span></a>
+    ${s.num ? `<span class="fno">Fiche n°${String(s.num).padStart(3, "0")}</span>` : ""}
     <div class="main-cv zoom" role="button" aria-label="Voir les couvertures en grand">${mainCover(s, eds)}</div>
     <div>
       <h1 id="ttl" data-jp="${esc(s.jp || "")}">${esc(titre)}</h1>
       ${s.jp ? `<p class="jp" lang="ja">${esc(s.jp)}</p>` : ""}
       <dl class="credits">${same ? `<dt>Auteur :</dt><dd>${authorLink(s.scen)}</dd>` : `${s.scen ? `<dt>Scénario :</dt><dd>${authorLink(s.scen)}</dd>` : ""}${s.dess ? `<dt>Dessin :</dt><dd>${authorLink(s.dess)}</dd>` : ""}`}</dl>
-      <div class="st">${ligne("France", s, eds)}${ligne("Japon", s, eds)}</div>
+      <div class="tt">${tuile("Japon", s, eds)}${tuile("France", s, eds)}</div>
       ${DESK ? `<div class="hd-syn"><p class="resume">${esc(s.resume || "Synopsis à venir.")}</p>${tagsHTML(s)}</div>` : ""}
     </div>
   </div>
   ${tabBar(s, eds, ad)}
   <div class="panel fx-box">${panel(s, pubFR, pubJP, eds, ad)}</div>
-  ${eds.length ? `<div class="band" aria-hidden="true"></div><section class="sec">
+  ${extraitSec(s, eds)}
+  ${eds.length ? `<div class="band" aria-hidden="true"></div><section class="sec" id="x-tomes">
     <div class="sec-h"><h2 class="fx-h2">Tomes</h2>
       <div class="sec-tools">
         ${pays.length > 1 ? `<div class="seg" role="group" aria-label="Pays">${pays.map(p => `<button data-p="${p}" aria-pressed="${p === PAYS}">${FLAGS[p] || ""}${p} <small>${eds.filter(e => e.pays === p).reduce((n, e) => n + e.tomes.length, 0)}</small></button>`).join("")}</div>` : ""}
@@ -662,8 +763,12 @@ function render(){
       </div>
     </div>
     <div id="tomes"></div>
-  </section>` : ""}`;
+  </section>` : ""}
+  ${ad.length ? `<section class="sec" id="x-ad"><div class="sec-h"><h2 class="fx-h2">Adaptations</h2></div><div id="adp">${adPanel(ad, s)}</div></section>` : ""}
+  ${cxwHTML(s) ? `<a class="uni" href="/crows-x-worst/"><span class="k">Univers</span><b>CROWS × WORST</b><span class="d">CROWS, WORST, QP, Crows Gaiden… toute la saga dans l'ordre chronologique</span><span class="go">Voir l'univers<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>` : ""}
+  <section class="sec" id="x-sim" hidden><div class="sec-h"><h2 class="fx-h2">Si vous aimez ${esc(titre)}</h2></div><ul class="grid" id="sim"></ul></section>`;
   if (eds.length) renderTomes();
+  simil(s);
   markCut();
   // Arrivée par un lien #news : on amène l'onglet en haut de l'écran, une seule fois.
   // /series/<nom>#tomes (liens de la carte CROWS x WORST) : on descend directement aux tomes
@@ -680,7 +785,7 @@ function render(){
 // Pastille « Univers CROWS × WORST ↗ » (Will, 21/10/2026) : sur les séries de l'univers, juste après le type, vers la chronologie.
 const CXW_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
 const cxwHTML = s => (s.cxw ?? /^crows\s*x\s*worst$/i.test((s.univers || "").trim())) ? `<a class="cxw" href="/crows-x-worst/" aria-label="Voir l'univers CROWS × WORST"><i class="k">Univers</i><i class="t">CROWS</i><i class="x">×</i><i class="t">WORST</i><i class="ar">${CXW_SVG}</i></a>` : "";
-const tagsHTML = s => s.type || (s.genres || []).length || cxwHTML(s) ? `<div class="tags">${s.type ? `<b>${esc(s.type)}</b>` : ""}${cxwHTML(s)}${(s.genres || []).map(g => `<span>${esc(g)}</span>`).join("")}</div>` : "";
+const tagsHTML = s => s.type || (s.genres || []).length || cxwHTML(s) ? `<div class="tags">${s.type ? `<b>${esc(typeM(s.type))}</b>` : ""}${cxwHTML(s)}${(s.genres || []).map(g => `<span>${esc(g)}</span>`).join("")}</div>` : "";
 let DESK = false;
 matchMedia("(min-width:900px)").addEventListener("change", () => { if (DATA && DATA.serie) render(); });
 // Barre d'onglets : Synopsis (téléphone seulement), Infos, Extraits, Adaptations, News.
@@ -689,7 +794,7 @@ function tabBar(s, eds, ad){
   const T = [
     DESK ? null : ["syn", "Synopsis"],
     ["info", "Infos"],
-    s.extraitFR || s.extraitJP ? ["ex", "Extraits"] : null,
+    (s.pages || []).length || s.extraitFR || s.extraitJP ? ["ex", "Extrait"] : null,
     ad.length ? ["ad", "Adaptations", nAd] : null,
     ["news", "News", (s.news || []).length, (s.news || []).some(n => n.date && (Date.now() - new Date(n.date + "T12:00:00")) < 30 * 864e5)]
   ].filter(Boolean);
@@ -738,7 +843,7 @@ function panel(s, pubFR, pubJP, eds, ad){
   if (TAB === "ad") return adPanel(ad, s);
   const cover = p => { const t = eds.filter(e => e.pays === p).flatMap(e => e.tomes).filter(t => t.cover).sort((a, b) => (a.n ?? 999) - (b.n ?? 999))[0]; return t ? couv(t.cover, 400) : (s.cover1 ? couv(s.cover1, 400) : ""); };
   if (TAB === "ex") {
-    return `<div class="fx-ex">${[["France", s.extraitFR, "Extrait français", "Les premières pages en VF"], ["Japon", s.extraitJP, "Extrait japonais", "試し読み · en VO"]].map(([p, u, l, d]) => u
+    return `<div class="fx-ex">${[["France", s.extraitFR, "Extrait français", "Les premières pages en VF"], ["Japon", s.extraitJP, "Extrait japonais", "試し読み · en VO"]].filter(x => x[1]).map(([p, u, l, d]) => u
       ? `<a class="fx-exb" href="${esc(u)}" target="_blank" rel="noopener">${cover(p) ? `<img src="${esc(cover(p))}" alt="" loading="lazy">` : ""}<span><b>${l}</b><em>${FLAGS[p]}${d}</em></span><i aria-hidden="true"><svg class="arr" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-left:3px"><path d="M8 16 16 8M9.5 8H16v6.5"/></svg></i></a>`
       : `<span class="fx-exb off"><span><b>${l}</b><em>${FLAGS[p]}Non disponible</em></span></span>`).join("")}</div>`;
   }
@@ -747,8 +852,8 @@ function panel(s, pubFR, pubJP, eds, ad){
     const prepub = (dLong(s.prepub) || (s.y1 ? String(s.y1) : "")) + (s.prepubFin ? " → " + dLong(s.prepubFin) : "");
     const frPrepub = prepubSeule(eds, "France");
     const T = [
-      ["France", "Éditeur France", frPrepub ? `Numérique${pubFR.length ? " · " + pubFR.join(", ") : ""}` : (pubFR.join(", ") + (labels.length ? " · " + labels.join(", ") : "")) || "Non licencié"],
       ["Japon", "Éditeur Japon", pubJP.join(", ")],
+      ["France", "Éditeur France", frPrepub ? `Numérique${pubFR.length ? " · " + pubFR.join(", ") : ""}` : (pubFR.join(", ") + (labels.length ? " · " + labels.join(", ") : ""))],
       ["", "Magazine", s.mag],
       ["", "Prépublication", prepub],
     ].filter(t => t[2]);
@@ -861,6 +966,7 @@ function renderTomes(){
       const o = otherByN[t.n]; TL.push({ t, o, pub: e.pub, ed: e.id, ar: ED_AR[e.id] && ED_AR[e.id].m });
       return `<li class="t" data-ti="${TL.length - 1}"><div class="cv">${t.cover ? `<img src="${couv(t.cover, 360)}" alt="${esc(tLab(t))}" loading="lazy" decoding="async" onload="edRatio(this)">${t.dig ? '<span class="dig" title="Couverture de la version numérique">Numérique</span>' : ""}` : `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span><span class="wait">Couverture à venir</span>`}</div>
         <span class="t-n">${esc(tLab(t))}</span><span class="t-d">${esc(dTxt(t))}</span></li>`; }).join("")}</ul>` : `<p class="empty">${/prépub/i.test(e.format || "") ? esc(e.part || "Publiée uniquement en chapitres numériques, sans édition en tomes.") : "Aucun tome renseigné pour l'instant."}</p>`}</section>`).join("") || `<p class="empty">Aucune édition renseignée pour l'instant.</p>`;
+  plier();
   // Couvertures déjà en mémoire : leur « load » peut passer avant la mise en page
   requestAnimationFrame(() => { document.querySelectorAll("#tomes .ed img").forEach(i => { if (i.complete) edRatio(i); }); metaLignes(); });
 }
@@ -874,6 +980,8 @@ document.addEventListener("click", e => {
   // Lecteur YouTube intégré (avec l'adresse du site, que YouTube exige désormais pour lire une vidéo intégrée).
   if (yt) { yt.innerHTML = `<iframe src="https://www.youtube.com/embed/${yt.dataset.yt}?autoplay=1&playsinline=1&rel=0&origin=${encodeURIComponent(location.origin)}" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Bande-annonce"></iframe>`; yt.removeAttribute("data-yt"); return; }
   const tb = e.target.closest(".fx-bar button[data-tab]"), sk = e.target.closest("[data-adk]");
+  if (tb && (tb.dataset.tab === "ex" || tb.dataset.tab === "ad")) { const z = document.getElementById("x-" + tb.dataset.tab); if (z) { const sh = document.getElementById("sh"); scrollTo({ top: z.getBoundingClientRect().top + scrollY - (sh ? sh.offsetHeight : 0) - 12, behavior: "smooth" }); } return; }
+  if (sk) { AD_K = sk.dataset.adk; const a = document.getElementById("adp"); if (a) a.innerHTML = adPanel(ADAPT(DATA.serie), DATA.serie); return; }
   if (tb || sk) { if (tb) { TAB = tb.dataset.tab; document.querySelectorAll(".fx-bar button").forEach(x => x.setAttribute("aria-selected", x === tb)); } else AD_K = sk.dataset.adk;
     const { serie: s, editions: eds } = DATA;
     const pubFR = [...new Set(eds.filter(x => x.pays === "France").map(x => x.pub))], pubJP = [...new Set(eds.filter(x => x.pays === "Japon").map(x => x.pub))];
@@ -883,22 +991,106 @@ document.addEventListener("click", e => {
   const b = e.target.closest(".seg button"); if (!b) return;
   PAYS = b.dataset.p; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b)); renderTomes();
 });
+
+// ===== Extrait (Will, 26/11/2026) : 5 pages en petit, « Lire le début », VF ou VO ; zoom et défilement au clic.
+const ARR_X = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+let XV = 0;
+function extraitSec(s, eds){
+  const pg = (s.pages || []).slice(0, 5), vf = s.extraitFR, vo = s.extraitJP;
+  if (!pg.length && !vf && !vo) return "";
+  if (!pg.length) return `<section class="sec" id="x-ex"><div class="sec-h"><h2 class="fx-h2">Extrait</h2></div>${(() => { const sv = TAB; TAB = "ex"; const h = panel(s, [], [], eds, []); TAB = sv; return h; })()}</section>`;
+  const lien = vf || vo, seg = vf && vo ? `<span class="seg" role="group" aria-label="Version"><button type="button" data-xl="${esc(vf)}" aria-pressed="true">${FLAGS.France}VF</button><button type="button" data-xl="${esc(vo)}" aria-pressed="false">${FLAGS.Japon}VO</button></span>` : "";
+  const chez = (vf ? s.pubFR : s.pubJP || "").replace(/\s*\(.*$/, "").split(",")[0];
+  return `<section class="sec" id="x-ex"><div class="sec-h"><h2 class="fx-h2">Extrait</h2></div><div class="xb">
+    <div class="xp">${pg.map((u, i) => `<button type="button" data-xp="${i}" aria-label="Page ${i + 1} en grand"><img src="${esc(u)}" alt="" loading="lazy" decoding="async"></button>`).join("")}</div>
+    <div class="xt"><small>Lire le début</small><b>Les premières pages</b><p><strong>${esc(shown(s))}</strong>, chapitre 1. Cliquez sur une page pour zoomer et les faire défiler.</p>
+      ${lien ? `<div class="xa"><a id="xl" href="${esc(lien)}" target="_blank" rel="noopener">Lire l'extrait${!seg && chez ? " chez " + esc(chez) : ""}${ARR_X}</a>${seg}</div>` : ""}</div></div></section>`;
+}
+function xvShow(i){
+  const pg = (DATA.serie.pages || []).slice(0, 5); if (!pg.length) return; XV = (i + pg.length) % pg.length;
+  let v = document.getElementById("xv");
+  if (!v) {
+    const ic = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+    document.body.insertAdjacentHTML("beforeend", `<div class="xv" id="xv" hidden role="dialog" aria-modal="true" aria-label="Extrait"><img id="xv-i" alt=""><button class="p" id="xv-p" aria-label="Page précédente">${ic("m15 5-7 7 7 7")}</button><button class="n" id="xv-n" aria-label="Page suivante">${ic("m9 5 7 7-7 7")}</button><button class="x" id="xv-x" aria-label="Fermer">${ic("M6 6l12 12M18 6 6 18")}</button><span class="c" id="xv-c"></span><span class="cr2" id="xv-cr"></span></div>`);
+    v = document.getElementById("xv");
+    v.addEventListener("click", e => { if (e.target.closest("#xv-p")) xvShow(XV - 1); else if (e.target.closest("#xv-n")) xvShow(XV + 1); else if (e.target.closest("#xv-x") || e.target === v) xvClose(); });
+    let sx = null; v.addEventListener("touchstart", e => { sx = e.touches[0].clientX; }, { passive: true });
+    v.addEventListener("touchend", e => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 50) xvShow(XV + (dx < 0 ? 1 : -1)); });
+  }
+  document.getElementById("xv-i").src = pg[XV];
+  document.getElementById("xv-c").textContent = `${XV + 1} / ${pg.length}`;
+  const cr = DATA.serie.credit || {}; document.getElementById("xv-cr").textContent = (shown(DATA.serie) + " " + (cr.fr || cr.jp || "")).trim();
+  if (v.hidden) { v.hidden = false; document.documentElement.style.overflow = "hidden"; }
+}
+function xvClose(){ const v = document.getElementById("xv"); if (v) v.hidden = true; document.documentElement.style.overflow = ""; }
+addEventListener("keydown", e => { const v = document.getElementById("xv"); if (!v || v.hidden) return; if (e.key === "Escape") xvClose(); else if (e.key === "ArrowRight") xvShow(XV + 1); else if (e.key === "ArrowLeft") xvShow(XV - 1); });
+document.addEventListener("click", e => {
+  const p = e.target.closest("[data-xp]"); if (p) { xvShow(+p.dataset.xp); return; }
+  const l = e.target.closest("[data-xl]"); if (l) { const a = document.getElementById("xl"); if (a) a.href = l.dataset.xl; l.parentNode.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === l)); }
+});
+// ===== Tomes : 2 lignes par édition (3 sur téléphone), puis « Voir les N tomes » (Will, 26/11/2026).
+const OUVERT = new Set();
+const CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+function plier(){
+  document.querySelectorAll("#tomes .ed").forEach(ed => {
+    const ul = ed.querySelector("ul.grid"); if (!ul) return; const li = [...ul.children];
+    ed.querySelectorAll(".more").forEach(m => m.remove());
+    const cols = getComputedStyle(ul).gridTemplateColumns.split(" ").length || 3, max = cols * (cols <= 3 ? 3 : 2);
+    if (li.length <= max) { ul.classList.remove("fold"); li.forEach(x => x.classList.remove("hid")); return; }
+    const ouv = OUVERT.has(ed.dataset.ed);
+    ul.classList.add("fold"); li.forEach((x, i) => x.classList.toggle("hid", !ouv && i >= max));
+    ed.insertAdjacentHTML("beforeend", `<div class="more"><button type="button" data-plie="${ed.dataset.ed}" aria-expanded="${ouv}">${ouv ? "Réduire" : `Voir les ${li.length} tomes`}${CHEV}</button></div>`);
+  });
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-plie]"); if (!b) return; const k = b.dataset.plie, ouv = OUVERT.has(k);
+  if (ouv) OUVERT.delete(k); else OUVERT.add(k); const ed = b.closest(".ed"), top = ed.getBoundingClientRect().top; plier();
+  if (ouv) { const sh = document.getElementById("sh"); const y = ed.getBoundingClientRect().top + scrollY - (sh ? sh.offsetHeight : 0) - 60; if (top < 0) scrollTo({ top: y }); } });
+addEventListener("resize", () => { clearTimeout(plier.t); plier.t = setTimeout(plier, 150); });
+// ===== Cartes séries (base et « Si vous aimez ») : genres sur une ligne, puis type · année · statut (couleur seule, sans point).
+const stCls = st => /cours/i.test(st) ? "sc-on" : /termin/i.test(st) ? "sc-end" : /abandon|arr[êe]t|stopp/i.test(st) ? "sc-stop" : /pause/i.test(st) ? "sc-pause" : "";
+const typeM = t => String(t || "").replace(/^Shonen$/i, "Shōnen").replace(/^Shojo$/i, "Shōjo").replace("Manwha", "Manhwa");
+function carteSerie(x){
+  const pre = esc(JSON.stringify({ t: x.fr || x.t, jp: x.jp, c: x.cover })), st = x.stJP || x.stFR || "";
+  return `<li><a class="bc" href="/series/${esc(x.slug)}" data-pre="${pre}"><div class="cv">${x.cover ? `<img src="${couv(x.cover, 360)}" alt="" loading="lazy" decoding="async">` : `<span class="ph" lang="ja">${esc((x.jp || x.t).slice(0, 6))}</span>`}${x.apercu ? `<span class="ap">Admins</span>` : ""}</div>
+    <span class="t-n">${esc(shown(x))}</span>${(x.genres || []).length ? `<span class="g">${esc(x.genres.slice(0, 3).join(" · "))}</span>` : ""}<span class="m">${esc([typeM(x.type), x.y1].filter(Boolean).join(" · "))}${st ? `${x.type || x.y1 ? " · " : ""}<b class="${stCls(st)}">${esc(cap(st))}</b>` : ""}</span></a></li>`;
+}
+// « Si vous aimez … » : les séries en ligne qui partagent le plus de genres (et le même type).
+let SERIES_L = null;
+function simil(s){
+  (SERIES_L ? Promise.resolve(SERIES_L) : fetch("/api/series").then(r => r.json()).then(j => (SERIES_L = (j && j.items) || []))).then(l => {
+    const g = new Set(s.genres || []);
+    const top = l.filter(x => x.slug !== s.slug && x.id !== s.id).map(x => ({ x, sc: (x.genres || []).filter(v => g.has(v)).length * 2 + (x.type === s.type ? 1 : 0) })).filter(o => o.sc >= 2).sort((a, b) => b.sc - a.sc).slice(0, 6).map(o => o.x);
+    const box = document.getElementById("x-sim"); if (!box || !top.length) return;
+    document.getElementById("sim").innerHTML = top.map(carteSerie).join(""); box.hidden = false;
+  }).catch(() => {});
+}
 // Sans nom de série dans l'adresse : liste de toutes les séries.
 let SVIEW = (() => { try { return localStorage.getItem("series-view") === "list" ? "list" : "grid"; } catch (e) { return "grid"; } })();
 function renderList(items){
-  document.title = "Séries manga furyō, yakuza et crime · FuryoGang";
+  // Manga Database (Will, 26/11/2026 · maquette H2) : bandeau d'avancement + 3 dernières fiches, recherche et filtres
+  // à la même hauteur, puis toute la base encadrée, de A à Z. Remplace l'ancienne liste des séries.
+  document.title = "Manga Database · séries furyō, yakuza et crime · FuryoGang";
   document.getElementById("app").innerHTML = `
-  <div class="sbar"><input class="search" id="q" type="search" placeholder="Chercher une série" aria-label="Chercher une série" autocomplete="off">
-    <div class="views" role="group" aria-label="Affichage">
-      <button data-sview="grid" aria-pressed="true" aria-label="Vue grille"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
-      <button data-sview="list" aria-pressed="false" aria-label="Vue liste"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
-    </div></div>
-  <div class="fl" id="fl"></div>
+  <section class="mdb" id="mdb" hidden></section>
+  <div class="tools"><input class="search" id="q" type="search" placeholder="Chercher une série, un auteur" aria-label="Chercher une série ou un auteur" autocomplete="off"><div class="fl" id="fl"></div></div>
   <div class="fp" id="fp" hidden></div>
-  <p class="fcount" id="fc"></p>
-  <ul class="grid" id="sl"></ul>`;
-  // Valeurs proposées : seulement celles présentes dans la base (genres du plus fréquent au plus rare).
+  <section class="sec base"><div class="sec-h"><h2 class="fx-h2">Toute la base</h2><small class="fcount" id="fc"></small></div><ul class="grid" id="sl"></ul></section>`;
   items.forEach(s => { s.type = s.type === "Manwha" ? "Manhwa" : (s.type || ""); s.dec = s.y1 ? Math.floor(s.y1 / 10) * 10 : null; });
+  // Bandeau : avancement de la base et 3 dernières fiches (elles tournent au fil des mises en ligne).
+  fetch("/api/avancement").then(r => r.json()).then(A => {
+    if (!A || !A.total) return; const by = {}; items.forEach(x => by[x.slug] = x);
+    const rec = (A.recentes || []).map(x => by[x.slug] && Object.assign({}, by[x.slug], { date: x.date })).filter(Boolean).slice(0, 3);
+    const MC = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+    const dC = d => { if (!d) return ""; const x = new Date(d + "T12:00:00"); return `${x.getDate()} ${MC[x.getMonth()]}`; };
+    const pct = String(A.pct).replace(".", ",") + " %";
+    const k = (n, t, c) => `<span class="k"><b class="${c}">${n}</b>${t}</span>`;
+    const box = document.getElementById("mdb");
+    box.innerHTML = `<div class="mdb-h"><h1>Manga Database</h1><div class="mdb-k">${k(A.enLigne, "fiches sur " + A.total, "")}${k("+" + A.semaine, "cette semaine", "bl")}${k(A.reste, "à faire", "or")}</div><b class="pct">${pct}</b></div>
+      <div class="mdb-bar"><i style="width:${Math.min(100, A.pct)}%"></i></div>
+      ${rec.length ? `<div class="mdb-r">${rec.map(x => { const st = x.stJP || x.stFR || "";
+        return `<a class="mdb-c" href="/series/${esc(x.slug)}" data-pre="${esc(JSON.stringify({ t: x.fr || x.t, jp: x.jp, c: x.cover }))}"><span class="cv">${x.cover ? `<img src="${couv(x.cover, 260)}" alt="" loading="lazy">` : ""}</span><span class="mdb-t"><span class="mdb-d">${dC(x.date)}</span><i>Nouveau</i><b>${esc(shown(x))}</b>${(x.genres || []).length ? `<span class="g">${esc(x.genres.slice(0, 3).join(" · "))}</span>` : ""}<span class="m">${esc([typeM(x.type), x.y1].filter(Boolean).join(" · "))}${st ? ` · <b class="${stCls(st)}">${esc(cap(st))}</b>` : ""}</span></span></a>`; }).join("")}</div>` : ""}`;
+    box.hidden = false;
+  }).catch(() => {});
   const count = arr => { const m = {}; arr.forEach(v => { if (v) m[v] = (m[v] || 0) + 1; }); return Object.keys(m).sort((a, b) => m[b] - m[a] || a.localeCompare(b, "fr")); };
   const OPTS = {
     type: count(items.map(s => s.type)),
@@ -907,33 +1099,35 @@ function renderList(items){
   };
   const decLabel = d => (+d >= 2000 ? "Années " + d : "Années " + String(d).slice(2));
   const LABEL = { type: "Type", dec: "Année", genre: "Genre" };
-  const F = { pays: "", type: new Set(), dec: new Set(), genre: new Set() };
+  const F = { pays: "", st: "", type: new Set(), dec: new Set(), genre: new Set() };
   let open = "";
   // Tri : alphabétique par défaut, ou par année de parution (début de la série au Japon).
-  const SORTS = [["az", "A → Z"], ["za", "Z → A"], ["new", "Plus récentes"], ["old", "Plus anciennes"]];
+  const SORTS = [["az", "A à Z"], ["za", "Z à A"], ["new", "Plus récentes"], ["old", "Plus anciennes"]];
   let SORT = "az";
-  const name = s => shown(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const name = s => shown(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   const sorter = (a, b) => {
     if (SORT === "za") return name(b).localeCompare(name(a), "fr");
     if (SORT === "new" || SORT === "old") {
-      if (!a.y1 !== !b.y1) return a.y1 ? -1 : 1; // sans année : à la fin
+      if (!a.y1 !== !b.y1) return a.y1 ? -1 : 1;
       if (a.y1 !== b.y1) return SORT === "new" ? b.y1 - a.y1 : a.y1 - b.y1;
     }
     return name(a).localeCompare(name(b), "fr");
   };
   const caret = `<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
-  const nAct = () => (F.pays ? 1 : 0) + F.type.size + F.dec.size + F.genre.size;
+  const nAct = () => (F.pays ? 1 : 0) + (F.st ? 1 : 0) + F.type.size + F.dec.size + F.genre.size;
   const drawBar = () => {
     const pays = [["France", "France"], ["Japon", "Japon"]].map(([k, l]) => `<button class="chip" data-pays="${k}" aria-pressed="${F.pays === k}">${l}</button>`).join("");
-    const sortChip = `<button class="chip" data-open="sort" aria-expanded="${open === "sort"}">${SORT === "az" ? "Trier" : SORTS.find(x => x[0] === SORT)[1]}${caret}</button>`;
+    const sts = [["cours", "En cours"], ["termin", "Terminé"]].map(([k, l]) => `<button class="chip" data-st="${k}" aria-pressed="${F.st === k}">${l}</button>`).join("");
+    const sortChip = `<button class="chip" data-open="sort" aria-expanded="${open === "sort"}">${SORTS.find(x => x[0] === SORT)[1]}${caret}</button>`;
     const menus = sortChip + ["type", "dec", "genre"].filter(k => OPTS[k].length).map(k => `<button class="chip" data-open="${k}" aria-expanded="${open === k}">${LABEL[k]}${F[k].size ? `<span class="n">${F[k].size}</span>` : caret}</button>`).join("");
-    document.getElementById("fl").innerHTML = pays + menus + (nAct() ? `<button class="chip clear" data-clear>Effacer</button>` : "");
+    document.getElementById("fl").innerHTML = pays + sts + menus + (nAct() ? `<button class="chip clear" data-clear>Effacer</button>` : "");
     const fp = document.getElementById("fp");
     fp.hidden = !open;
     fp.innerHTML = open === "sort" ? SORTS.map(([k, l]) => `<button class="chip" data-sort="${k}" aria-pressed="${SORT === k}">${l}</button>`).join("") : open ? OPTS[open].map(v => `<button class="chip" data-k="${open}" data-v="${esc(v)}" aria-pressed="${F[open].has(v)}">${esc(open === "dec" ? decLabel(v) : v)}</button>`).join("") : "";
   };
   // Dans une même catégorie : l'un ou l'autre. Entre catégories : tout doit correspondre.
   const keep = s => (!F.pays || (F.pays === "France" ? s.inFR : s.inJP))
+    && (!F.st || new RegExp(F.st, "i").test(s.stJP || s.stFR || ""))
     && (!F.type.size || F.type.has(s.type))
     && (!F.dec.size || F.dec.has(String(s.dec)))
     && (!F.genre.size || (s.genres || []).some(g => F.genre.has(g)));
@@ -941,35 +1135,24 @@ function renderList(items){
   const draw = q => {
     cur = q;
     const n = slugify(q);
-    const list = items.filter(s => keep(s) && (!n || slugify([s.fr, s.t, s.jp].join(" ")).includes(n) || (s.jp || "").includes(q))).sort(sorter);
-    document.getElementById("fc").textContent = (n || nAct()) ? `${list.length} série${list.length > 1 ? "s" : ""}` : "";
-    document.getElementById("fc").hidden = !(n || nAct());
-    // Grille (par défaut) ou liste, comme dans le calendrier ; le choix est gardé sur l'appareil.
-    const sl = document.getElementById("sl"), lv = SVIEW === "list";
-    sl.className = lv ? "lv" : "grid";
-    document.querySelectorAll("[data-sview]").forEach(b => b.setAttribute("aria-pressed", b.dataset.sview === SVIEW));
-    const pre = s => esc(JSON.stringify({ t: s.fr || s.t, jp: s.jp, c: s.cover }));
-    const ph = s => `<span class="ph" lang="ja">${esc((s.jp || s.t).slice(0, 6))}</span>`;
-    sl.innerHTML = list.map(s => lv
-      ? `<li><a class="row" href="/series/${s.slug}" data-pre="${pre(s)}"><span class="thumb">${s.cover ? `<img src="${couv(s.cover, 200)}" alt="" loading="lazy" decoding="async">` : esc((s.jp || "").slice(0, 5))}</span><div><div class="r-t">${esc(shown(s))}</div>${s.jp ? `<span class="r-jp" lang="ja">${esc(s.jp)}</span>` : ""}
-        <div class="r-meta">${s.type ? `<span class="pill">${esc(s.type)}</span>` : ""}${s.y1 ? `<span class="pill">${s.y1}</span>` : ""}${s.pubFR ? `<span class="pill fr">${esc(s.pubFR.replace(/\s*\([^)]*\)/g, ""))}</span>` : `<span class="pill jp">Inédit en France</span>`}${s.apercu ? `<span class="pill">Aperçu</span>` : ""}</div></div></a></li>`
-      : `<li><a class="t" href="/series/${s.slug}" data-pre="${pre(s)}"><div class="cv">${s.cover ? `<img src="${couv(s.cover, 360)}" alt="" loading="lazy">` : ph(s)}${s.apercu ? `<span class="ap">Admins</span>` : ""}</div>
-      <span class="t-n">${esc(shown(s))}</span>${(SORT === "new" || SORT === "old") && s.y1 ? `<span class="t-d">${s.y1}</span>` : ""}</a></li>`).join("") || `<li class="empty">Aucune série trouvée.</li>`;
+    const list = items.filter(s => keep(s) && (!n || slugify([s.fr, s.t, s.jp, s.scen, s.dess, s.auteurs].join(" ")).includes(n) || (s.jp || "").includes(q))).sort(sorter);
+    document.getElementById("fc").textContent = `${list.length} fiche${list.length > 1 ? "s" : ""} · ${SORTS.find(x => x[0] === SORT)[1]}`;
+    document.getElementById("sl").innerHTML = list.map(carteSerie).join("") || `<li class="empty">Aucune série trouvée.</li>`;
   };
   const q = document.getElementById("q");
-  document.querySelector(".views").addEventListener("click", e => { const b = e.target.closest("[data-sview]"); if (!b) return; SVIEW = b.dataset.sview; try { localStorage.setItem("series-view", SVIEW); } catch (err) {} draw(cur); });
   drawBar(); draw(""); q.addEventListener("input", e => draw(e.target.value.trim()));
   document.getElementById("app").addEventListener("click", e => {
     const b = e.target.closest(".fl .chip, .fp .chip"); if (!b) return;
     if (b.dataset.sort) { SORT = b.dataset.sort; open = ""; }
     else if (b.dataset.pays) F.pays = F.pays === b.dataset.pays ? "" : b.dataset.pays;
+    else if (b.dataset.st) F.st = F.st === b.dataset.st ? "" : b.dataset.st;
     else if (b.dataset.open) open = open === b.dataset.open ? "" : b.dataset.open;
-    else if ("clear" in b.dataset) { F.pays = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; }
+    else if ("clear" in b.dataset) { F.pays = ""; F.st = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; }
     else if (b.dataset.k) { const set = F[b.dataset.k], v = b.dataset.v; set.has(v) ? set.delete(v) : set.add(v); }
     drawBar(); draw(cur);
   });
-  // Au retour sur la liste (bouton précédent), on repart toujours de toutes les séries : recherche vide, aucun filtre.
-  const reset = () => { if (q.value || nAct() || open || SORT !== "az") { q.value = ""; SORT = "az"; F.pays = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; drawBar(); draw(""); } };
+  // Au retour sur la liste (bouton précédent), on repart toujours de toute la base : recherche vide, aucun filtre.
+  const reset = () => { if (q.value || nAct() || open || SORT !== "az") { q.value = ""; SORT = "az"; F.pays = ""; F.st = ""; F.type.clear(); F.dec.clear(); F.genre.clear(); open = ""; drawBar(); draw(""); } };
   addEventListener("pageshow", reset); setTimeout(reset, 0);
 }
 if (!slug) {
