@@ -9,6 +9,7 @@ const pastilleCxw = p => /^crows\s*x\s*worst$/i.test(text(p["Univers"]).trim())
   && !/hommage/i.test(text(p["Relation"]))
   && !CXW_SANS.has(slugify(text(p["SERIES"])));
 import { extraitDe } from "../../lib/extraits.js";
+import { majTomesIndex } from "../../lib/memo.js";
 import { text, num, date, rel, list, queryAll, cached, slugify, slugSerie , akitaLien } from "../../lib/notion.js";
 import { estVisible, estValidee } from "../../lib/site.js";
 import { isAdmin } from "../../lib/admin.js";
@@ -105,6 +106,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
         sorts: [{ property: "Date de sortie", direction: "descending" }], page_size: 12,
       } }).catch(() => []),
     ]);
+    // Tomes frais : reportés dans l'index (couvertures « manquantes » dans le back-office sinon).
+    if (tRows.length && waitUntil) waitUntil(majTomesIndex(env, tRows).catch(() => {}));
     const serie = {
       id: nid(id), slug: slugSerie(p), t: text(p["SERIES"]), fr: text(p["Titre FR"]), jp: text(p["Titre Original"]),
       num: num(p["N° fiche"]), resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]),
