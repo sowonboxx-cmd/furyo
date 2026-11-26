@@ -184,7 +184,7 @@
     return lib.then(function () { return preparer(box, d); }).then(function (fcss) {
       // Safari (iPhone) dessine parfois la première image avant d'avoir intégré les polices et les photos :
       // on recommence jusqu'à ce que le résultat ne change plus (3 à 4 passes au plus).
-      var opts = { width: wh[0], height: wh[1], pixelRatio: 1, fontEmbedCSS: fcss, cacheBust: false };
+      var opts = { width: wh[0], height: wh[1], pixelRatio: 1, fontEmbedCSS: fcss, cacheBust: false, includeQueryParams: true };
       var essai = function (n, prev) {
         return htmlToImage.toPng(box.firstChild, opts).then(function (u) {
           if (n >= 4 || (prev && Math.abs(u.length - prev.length) < 200 && n >= 2)) return u;

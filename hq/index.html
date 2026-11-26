@@ -1812,7 +1812,7 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   // tweet avec le lien de la fiche à reposter à la main, programmation Instagram (carrousel + story) et X (post). Images faites ici.
   var FDAT = {}, FIMG = {};
   function libJs(test, src) { return test() ? Promise.resolve() : new Promise(function (ok, ko) { var sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = function () { ko(new Error("Un gabarit ne se charge pas")); }; document.head.appendChild(sc); }); }
-  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=8").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=1"); }); }
+  function ficheLib() { return libJs(function () { return window.FG_FICHE; }, "/site/fiche-card.js?v=9").then(function () { return libJs(function () { return window.FG_EXTRAIT; }, "/site/extrait.js?v=1"); }); }
   function fParts(v) { return String(v || "").replace(/\s*\([^)]*\)/g, "").split(/\s*[,/&]\s*/).map(function (x) { return x.trim(); }).filter(Boolean); }
   function ficheData(f) {
     if (FDAT[f.id]) return FDAT[f.id];
@@ -1918,8 +1918,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
       var strip = $("#fistrip"); if (!strip) return; strip.innerHTML = '<div class="hbprog">Préparation des images…</div>';
       cur = ficheImages(f, function (i, n) { var pp = strip.querySelector(".hbprog"); if (pp) pp.textContent = "Préparation de l'extrait… " + i + " / " + n; });
       o.imgs = cur.then(function (v) { return { post: { _url: v.post }, story: { _url: v.story } }; });
-      cur.then(function (v) { if (!strip.isConnected) return; $("#fican").textContent = "Carrousel · " + v.slides.length + " image" + (v.slides.length > 1 ? "s" : "") + " + story";
-        strip.innerHTML = v.slides.concat([v.story]).map(function (u, i) { return '<img src="' + u + '" data-fiz="' + i + '" alt="Image ' + (i + 1) + '">'; }).join(""); })
+      cur.then(function (v) { if (!strip.isConnected) return; $("#fican").textContent = "Carrousel Instagram et X · " + v.slides.length + " image" + (v.slides.length > 1 ? "s" : "") + " au format post (3:4) · la dernière image = la story (9:16)";
+        strip.innerHTML = v.slides.concat([v.story]).map(function (u, i) { var st = i === v.slides.length; return '<img src="' + u + '" data-fiz="' + i + '" alt="' + (st ? "Story" : "Image " + (i + 1)) + '"' + (st ? ' title="Story (9:16)" style="outline:3px solid #F2C14E;outline-offset:-3px"' : "") + '>'; }).join(""); })
         .catch(function (er) { if (strip.isConnected) strip.innerHTML = '<div class="igerr">' + esc(er.message || "Images impossibles à préparer") + '</div>'; });
       if (box._o) igUI(box, o);
     };
