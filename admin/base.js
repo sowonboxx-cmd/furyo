@@ -3,7 +3,8 @@
 // Remplace shell() et draw() du back-office ; réutilise ITEMS, F, Q, T, FILTRES, TRIS, ordrePub, prio, pret, imageFiche, toast, copier.
 // Termes (Will, 11/11/2026) : « Sur le site » = la fiche est publique ; « Promo réseaux » = la fiche a été postée sur les réseaux (avec sa date).
 (function () {
-  const VUES = [["liste", "Liste + fiche"], ["vitrine", "Vitrine"], ["tableau", "Tableau"], ["avancement", "Avancement"], ["ordre", "Ordre des fiches"], ["calendrier", "Calendrier"]];
+  // Vue Avancement retirée (Will, 26/11/2026) : la Manga Database du site la remplace.
+  const VUES = [["liste", "Liste + fiche"], ["vitrine", "Vitrine"], ["tableau", "Tableau"], ["ordre", "Ordre des fiches"], ["calendrier", "Calendrier"]];
   const LABELS = { horsligne: "Pas sur le site", ligne: "Sur le site", promo: "Promo réseaux à faire", coeur: "Coups de cœur", tout: "Tout" };
   const M = window.MDB = { vue: "liste", sel: null, open: null, tab: "infos", tx: "resumeImg", lim: 120, mois: null, drag: null };
   try { const v = localStorage.getItem("mdb-vue"); if (v && VUES.some(x => x[0] === v)) M.vue = v; } catch (e) {}
@@ -61,6 +62,18 @@
 .mdb-q{flex:1 1 260px;min-width:0;background:var(--card);border:0;border-radius:14px;padding:12px 16px;outline:none;color:var(--paper);font:16px var(--f-body)}
 .mdb-q::placeholder{color:var(--paper-3)}
 .mdb-tri{-webkit-appearance:none;appearance:none;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23F5F5F7%27 stroke-width=%272.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 14px center/14px 14px;border:0;border-radius:14px;padding:12px 40px 12px 16px;color:var(--paper);font:600 14px var(--f-body);cursor:pointer}/* flèche dessinée, calée à droite du texte (Will, 24/11/2026) */
+.mdb-fs .lb{font:700 11px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--paper-3);align-self:center;margin-right:4px;min-width:62px}
+.mdb-ts{margin-bottom:8px}
+.mdb-next{background:var(--card);border-radius:18px;padding:14px 16px 16px;margin:14px 0 4px}
+.mdb-next .hd{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}.mdb-next .hd b{font:700 22px var(--f-display);text-transform:uppercase}
+.mdb-next .lk{margin-left:auto;border:0;background:#1f1f24;color:var(--paper);border-radius:10px;padding:7px 12px;font:600 13px var(--f-body);cursor:pointer}
+.mdb-next .rw{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+@media(max-width:1100px){.mdb-next .rw{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:640px){.mdb-next .rw{grid-template-columns:1fr 1fr}}
+.mdb-next .it{display:grid;grid-template-columns:46px minmax(0,1fr);gap:10px;align-items:center;text-align:left;border:0;background:#1a1a1e;border-radius:12px;padding:8px;cursor:pointer;color:inherit;min-width:0}
+.mdb-next .it[aria-current=true]{box-shadow:0 0 0 2px var(--paper)}.mdb-next .it:hover{background:#222227}
+.mdb-next .it img,.mdb-next .it .ph{width:46px;aspect-ratio:5/7;object-fit:cover;border-radius:6px;display:block}
+.mdb-next .it span{min-width:0;display:flex;flex-direction:column;gap:2px}.mdb-next small{font:700 11px var(--f-body);color:var(--bl);text-transform:uppercase;letter-spacing:.04em}
+.mdb-next .it b{font:700 16px/1.05 var(--f-display);text-transform:uppercase;white-space:nowrap;overflow:hidden}.mdb-next em{font-style:normal;font-size:11.5px;color:var(--paper-3);white-space:nowrap;overflow:hidden}
 .mdb-fs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .mdb-fs button{border:0;background:var(--card);border-radius:999px;padding:7px 13px;cursor:pointer;font:600 13px var(--f-body);color:var(--paper-2);display:inline-flex;gap:6px;align-items:center}
 .mdb-fs button small{color:var(--paper-3);font-weight:500}
@@ -296,6 +309,7 @@
     const L = ITEMS.filter(s => n ? slugify([s.t, s.fr, s.jp].join(" ")).includes(n) || (s.jp || "").includes(Q) : keep(s));
     const reste = s => s.manque.length;
     if (T === "ordre") L.sort(ordrePub);
+    if (T === "num") L.sort((a, b) => (a.num || 1e9) - (b.num || 1e9) || nomS(a).localeCompare(nomS(b), "fr"));
     if (T === "recent") L.sort((a, b) => (b.cree || "").localeCompare(a.cree || "") || a.t.localeCompare(b.t, "fr"));
     if (T === "az") L.sort((a, b) => nomS(a).localeCompare(nomS(b), "fr"));
     if (T === "peu") L.sort((a, b) => reste(a) - reste(b) || a.t.localeCompare(b.t, "fr"));
@@ -318,16 +332,18 @@
         <div class="mdb-stat"><b>${on}</b><span>sur le site</span><div class="br"><i style="width:${on / tot * 100}%;background:var(--ok)"></i></div></div>
         <div class="mdb-stat"><b>${pr}</b><span>promo réseaux faite</span><div class="br"><i style="width:${pr / tot * 100}%;background:var(--bl)"></i></div></div>
         <div class="mdb-stat"><b>${ok}</b><span>fiches complètes ★</span><div class="br"><i style="width:${ok / tot * 100}%;background:var(--amber)"></i></div></div></div>` : "";
-    return st + `<div class="mdb-tools"><input class="mdb-q" id="q" type="search" placeholder="Chercher une série, un titre japonais…" value="${esc(Q)}" autocomplete="off">
-        <select class="mdb-tri" id="mdb-tri" aria-label="Trier">${TRIS.map(([k, l]) => `<option value="${k}"${T === k ? " selected" : ""}>${l}</option>`).join("")}</select></div>
-      <div class="mdb-fs">${FILTRES.map(([k, , f]) => `<button data-mf="${k}" aria-pressed="${!Q && F === k}">${LABELS[k] || k} <small>${ITEMS.filter(f).length}</small></button>`).join("")}</div>`;
+    // Tous les tris visibles d'un coup, sans menu déroulant (Will, 26/11/2026), dont le N° de fiche (1, 2, 3…).
+    const tris = [["num", "N° de fiche"], ...TRIS];
+    return st + `<div class="mdb-tools"><input class="mdb-q" id="q" type="search" placeholder="Chercher une série, un titre japonais…" value="${esc(Q)}" autocomplete="off"></div>
+      <div class="mdb-fs mdb-ts"><span class="lb">Trier</span>${tris.map(([k, l]) => `<button data-mtri="${k}" aria-pressed="${T === k}">${l}</button>`).join("")}</div>
+      <div class="mdb-fs"><span class="lb">Afficher</span>${FILTRES.map(([k, , f]) => `<button data-mf="${k}" aria-pressed="${!Q && F === k}">${LABELS[k] || k} <small>${ITEMS.filter(f).length}</small></button>`).join("")}</div>`;
   }
 
   // ---------- Fiche détaillée ----------
   const TOMES = {};
   function fiche(s) {
     const tabs = [["infos", "Infos"], ["textes", "Textes"], ["visuels", "Visuels"], ["tomes", "Tomes"]];
-    const T5 = { resumeImg: ["Résumé image", s.resumeImg, I.txt], resume: ["Résumé site", s.resume, I.txt], ig: ["Instagram", s.leg && s.leg.ig, I.ig], tt: ["TikTok", s.leg && s.leg.tt, I.tt], x: ["X", s.leg && s.leg.x, I.xl] };
+    const T5 = { resumeImg: ["Résumé fiche", s.resumeImg, I.txt], resume: ["Résumé site", s.resume, I.txt], ig: ["Instagram", s.leg && s.leg.ig, I.ig], tt: ["TikTok", s.leg && s.leg.tt, I.tt], x: ["X", s.leg && s.leg.x, I.xl] };
     let body = "";
     if (M.tab === "infos") {
       body = `<div class="mdb-pn"><h3>Prête à publier ?</h3><p class="hint">Les éléments ★ obligatoires de la fiche.</p>
@@ -381,7 +397,7 @@
   }
 
   // ---------- Vues ----------
-  const ligneL = (s, i) => `<div class="mdb-sr" data-msel="${s.id}" aria-current="${M.sel === s.id}">${T === "ordre" && !s.publier ? `<span class="rk">${i + 1}</span>` : ""}${img(s, 100)}<span class="x"><b>${esc(nomS(s))}</b><small>${s.publier ? "Sur le site" : "Pas sur le site"}${s.promo ? " · promo " + jj(s.promoLe) : ""} · ★ ${okN(s)}/${s.oblig.length}</small></span>${s.coeur ? `<span class="hrt" aria-pressed="true">${I.heart}</span>` : ""}</div>`;
+  const ligneL = (s, i) => `<div class="mdb-sr" data-msel="${s.id}" aria-current="${M.sel === s.id}">${T === "ordre" && !s.publier ? `<span class="rk">${i + 1}</span>` : T === "num" && s.num ? `<span class="rk">${s.num}</span>` : ""}${img(s, 100)}<span class="x"><b>${esc(nomS(s))}</b><small>${s.publier ? "Sur le site" : "Pas sur le site"}${s.promo ? " · promo " + jj(s.promoLe) : ""} · ★ ${okN(s)}/${s.oblig.length}</small></span>${s.coeur ? `<span class="hrt" aria-pressed="true">${I.heart}</span>` : ""}</div>`;
   const carteA = s => `<div class="mdb-ca" data-mop="${s.id}"><div class="im">${img(s, 320)}<div class="tl">${stSite(s)}${hrt(s)}</div><div class="ov"><span class="num">${nfmt(s.num)}</span><span style="flex:1"></span>${ring(s)}</div></div><h3>${esc(nomS(s))}</h3><div class="jp">${esc(s.jp || "")}</div></div>`;
   const ligneB = s => `<tr data-mop="${s.id}"><td class="num">${nfmt(s.num)}</td><td><span class="who">${img(s, 100)}<span style="min-width:0"><b>${esc(nomS(s))}</b><small class="jp">${esc(s.jp || "")}</small></span></span></td><td>${s.type ? `<span class="pill">${esc(s.type)}</span>` : ""}</td>
     <td><span style="display:flex;align-items:center;gap:8px;min-width:120px">${pbar(s)}<span class="num">${okN(s)}/${s.oblig.length}</span></span></td>
@@ -396,7 +412,7 @@
       const cur = byId(M.sel);
       const etroit = matchMedia("(max-width:980px)").matches;
       if (etroit && M.open) return `<button class="mdb-back" data-mclose>${I.left}Retour à la liste</button>` + fiche(byId(M.open));
-      return outils(false) + `<div class="mdb-split"><div class="mdb-sl" id="mdb-sl">${L.map(ligneL).join("") || `<p class="mdb-vide">Rien ici.</p>`}</div><div class="mdb-det-w" style="min-width:0">${cur ? fiche(cur) : ""}</div></div>`;
+      return prochaines() + outils(false) + `<div class="mdb-split"><div class="mdb-sl" id="mdb-sl">${L.map(ligneL).join("") || `<p class="mdb-vide">Rien ici.</p>`}</div><div class="mdb-det-w" style="min-width:0">${cur ? fiche(cur) : ""}</div></div>`;
     },
     vitrine() {
       const L = liste();
@@ -462,6 +478,13 @@
   };
   function joursTxt() { const n = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"]; const j = CAL.jours.slice().sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7)).map(x => n[x]); return j.length ? j.join(" et ").replace(/^./, c => c.toUpperCase()) : "Aucun jour choisi"; }
   // Planning des fiches : les séries avec un numéro, pas encore postées, dans l'ordre des numéros, sur les prochains jours de publication.
+  // Prochaines fiches (Will, 26/11/2026) : les 6 suivantes du planning, avec leur date, en un coup d'œil ; un clic ouvre la fiche.
+  function prochaines() {
+    const p = planning().file.slice(0, 6); if (!p.length) return "";
+    const jr = d => new Date(d + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+    return `<div class="mdb-next"><div class="hd"><b>Prochaines fiches</b><span class="hint">${joursTxt()} à ${CAL.heure}</span><button class="lk" data-mvue="calendrier">Calendrier</button></div>
+      <div class="rw">${p.map(x => `<button class="it" data-msel="${x.s.id}" aria-current="${M.sel === x.s.id}">${img(x.s, 160)}<span><small>${jr(x.d)}</small><b>${esc(nomS(x.s))}</b><em>${nfmt(x.s.num)}${x.s.manque.length ? ` · ${x.s.manque.length} à compléter` : " · prête"}</em></span></button>`).join("")}</div></div>`;
+  }
   function planning() {
     const file = ITEMS.filter(s => s.num && !s.promo).sort((a, b) => a.num - b.num), out = [], date = {};
     if (!CAL.jours.length) return { file: [], date };
@@ -513,7 +536,7 @@
 
   document.addEventListener("click", async e => {
     if (!e.target.closest(".mdb")) return;
-    const t = e.target.closest("[data-mvue],[data-mf],[data-msel],[data-mop],[data-mclose],[data-mh],[data-mon],[data-mpr],[data-mtab],[data-mtx],[data-msave],[data-mcp],[data-mdl],[data-mnum],[data-mplus],[data-mkb],[data-mfix],[data-munfix],[data-mmv],[data-mmois],[data-mjour]");
+    const t = e.target.closest("[data-mvue],[data-mf],[data-mtri],[data-msel],[data-mop],[data-mclose],[data-mh],[data-mon],[data-mpr],[data-mtab],[data-mtx],[data-msave],[data-mcp],[data-mdl],[data-mnum],[data-mplus],[data-mkb],[data-mfix],[data-munfix],[data-mmv],[data-mmois],[data-mjour]");
     if (!t) return;
     const d = t.dataset;
     if (d.mvue) { M.vue = d.mvue; M.open = null; M.lim = 120; try { localStorage.setItem("mdb-vue", M.vue); } catch (_) {} draw(); scrollTo(0, 0); return; }
@@ -521,6 +544,7 @@
     if (d.mon) { e.stopPropagation(); const s = byId(d.mon); if (await maj(s, { statut: s.publier ? "À valider" : "En ligne · public" }, t)) { toast(s.publier ? "Sur le site, visible par tout le monde ✓" : "Retirée du site"); draw(); } return; }
     if (d.mpr) { e.stopPropagation(); const s = byId(d.mpr); if (await maj(s, { promo: !s.promo }, t)) { toast(s.promo ? "Promo réseaux faite ✓" : "Promo réseaux annulée"); draw(); } return; }
     if (d.mf) { F = d.mf; Q = ""; M.lim = 120; draw(); return; }
+    if (d.mtri) { T = d.mtri; M.lim = 120; draw(); return; }
     if (d.msel) { M.sel = d.msel; M.tab = M.tab || "infos"; if (matchMedia("(max-width:980px)").matches) { M.open = d.msel; scrollTo(0, 0); } draw(); return; }
     if (d.mop) { M.open = d.mop; if (M.vue === "liste") M.sel = d.mop; if (M.vue !== "vitrine") scrollTo(0, 0); draw(); return; }
     if ("mclose" in d) { M.open = null; draw(); return; }

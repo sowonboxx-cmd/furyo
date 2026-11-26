@@ -513,7 +513,7 @@ function row(s){
       <!-- Textes en onglets, chacun affiché en entier (Will, 21/10/2026) -->
       <label>Textes <span class="lg" data-lg></span></label>
       <div class="tx" data-tx>
-        <div class="tx-t" role="tablist">${[["resumeImg", "Résumé image"], ["resume", "Résumé site"], ["ig", "Instagram"], ["tt", "TikTok"], ["x", "X"]].map(([k, n], i) => `<button type="button" role="tab" data-txk="${k}" aria-selected="${i === 0}">${n}</button>`).join("")}</div>
+        <div class="tx-t" role="tablist">${[["resumeImg", "Résumé fiche"], ["resume", "Résumé site"], ["ig", "Instagram"], ["tt", "TikTok"], ["x", "X"]].map(([k, n], i) => `<button type="button" role="tab" data-txk="${k}" aria-selected="${i === 0}">${n}</button>`).join("")}</div>
         <div class="tx-p" data-txp="resumeImg"><textarea data-f="resumeImg" placeholder="${esc(s.resume)}">${esc(s.resumeImg)}</textarea></div>
         <div class="tx-p" data-txp="resume" hidden><textarea data-f="resume" placeholder="Résumé de la série (peut être long)">${esc(s.resume)}</textarea></div>
         ${["ig", "tt", "x"].map(k => `<div class="leg tx-p" data-txp="${k}" hidden><div class="leg-h"><b>${NOMS[k]}</b><span class="n" data-n="${k}"></span><button class="cp" data-cp="${k}" aria-label="Copier la légende ${NOMS[k]}">${ICO_COPY}</button></div><textarea data-f="${k}" placeholder="Pas encore de légende">${esc(s.leg && s.leg[k])}</textarea></div>`).join("")}
@@ -1447,7 +1447,7 @@ function captions(i, rs){ FGPost.setCats(VCATS, NEWS_CATS); return FGPost.captio
 function resumeAuto(i){ FGPost.setCats(VCATS, NEWS_CATS); return FGPost.resumeAuto(i); }
 function ajouteMagX(x, i){ return FGPost.ajouteMagX(x, i); }
 </script>
-<script src="/admin/base.js?v=5"></script>
+<script src="/admin/base.js?v=6"></script>
 <script src="/site/refresh.js?v=3" defer></script>
 </body>
 </html>
