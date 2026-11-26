@@ -456,10 +456,10 @@ body{font-size:16px}
 .xt p{margin:0;color:var(--paper-2);font-size:14px}.xt p strong{color:var(--paper)}
 .xa{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
 .xa a{display:inline-flex;align-items:center;gap:9px;height:42px;padding:0 16px;border-radius:12px;background:#2D2D32;color:#fff;font:700 14px var(--f-body);text-decoration:none}
-.xa .flag{width:20px;height:14px;border-radius:3px}.xa a:hover{background:#38383D}
+.xa .flag{width:20px;height:14px;border-radius:3px}.xa a{flex:1;justify-content:space-between}.xa a.seul{justify-content:center;gap:12px}.xa .l{display:inline-flex;align-items:center;gap:9px}.xa a:hover{background:#38383D}
 @media (max-width:899px){.xb{grid-template-columns:1fr;gap:12px}.xp{gap:6px}
   /* Téléphone : seulement les boutons « Lire l'extrait », sans le texte (Will, 26/11/2026). */
-  .xt{background:none;padding:0}.xt small,.xt b,.xt p{display:none}.xa{margin:0}.xa a{flex:1;justify-content:center}}
+  .xt{background:none;padding:0}.xt small,.xt b,.xt p{display:none}.xa{margin:0}}
 .xv{position:fixed;inset:0;z-index:65;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;touch-action:pan-y}
 .xv[hidden]{display:none}.xv img{max-height:86vh;max-width:92vw;border-radius:6px;background:#fff}
 .xv button{position:absolute;border:0;background:rgba(255,255,255,.1);color:#fff;width:52px;height:52px;border-radius:26px;display:grid;place-items:center;cursor:pointer}
@@ -1003,7 +1003,9 @@ function extraitSec(s, eds){
   if (!pg.length && !vf && !vo) return "";
   if (!pg.length) return `<section class="sec" id="x-ex"><div class="sec-h"><h2 class="fx-h2">Extrait</h2></div>${(() => { const sv = TAB; TAB = "ex"; const h = panel(s, [], [], eds, []); TAB = sv; return h; })()}</section>`;
   // Un bouton « Lire l'extrait » par version disponible, avec son drapeau (Will, 26/11/2026).
-  const btn = (u, p) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${FLAGS[p]}Lire l'extrait${ARR_X}</a>` : "";
+  // Boutons moitié-moitié « Version française / Version japonaise », flèche à droite ; un seul : pleine largeur, centré (Will, 26/11/2026).
+  const seul = !(vf && vo);
+  const btn = (u, p) => u ? `<a class="${seul ? "seul" : ""}" href="${esc(u)}" target="_blank" rel="noopener"><span class="l">${FLAGS[p]}Version ${p === "France" ? "française" : "japonaise"}</span>${ARR_X}</a>` : "";
   return `<section class="sec" id="x-ex"><div class="sec-h"><h2 class="fx-h2">Extrait</h2></div><div class="xb">
     <div class="xp">${pg.map((u, i) => `<button type="button" data-xp="${i}" aria-label="Page ${i + 1} en grand"><img src="${esc(u)}" alt="" loading="lazy" decoding="async"></button>`).join("")}</div>
     <div class="xt"><small>Lire le début</small><b>Les premières pages</b><p><strong>${esc(shown(s))}</strong>, chapitre 1. Cliquez sur une page pour zoomer et les faire défiler.</p>
