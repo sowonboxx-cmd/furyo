@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manga Database · maquettes</title>
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#232326;--card:#000;--card2:#141417;--line:#2c2c32;--paper:#F4F1EA;--mute:#9a9aa2;--red:#BC002D;--blue:#3E7BE0;--gold:#F2C14E}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--paper);font:500 15px/1.45 Inter,sans-serif}
+a{color:inherit;text-decoration:none}.D{font-family:Antonio,sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.nav{height:68px;background:#18181b;border-bottom:1px solid #2a2a2f;display:flex;align-items:center;gap:34px;padding:0 148px}
+.nav img{height:38px}.nav span{font:700 19px Antonio;letter-spacing:.03em;text-transform:uppercase;color:#e9e6df}.nav span.on{color:#fff;box-shadow:inset 0 -3px 0 var(--red);padding-bottom:6px}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 0 60px}
+.lab{font:700 11.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+h2.s{font:700 30px Antonio;text-transform:uppercase;margin:40px 0 14px;display:flex;align-items:baseline;gap:12px}h2.s small{font:500 13px Inter;text-transform:none;color:var(--mute)}
+.bar{height:10px;border-radius:6px;background:#333338;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue);border-radius:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:#000;font:600 14px Inter;color:#e9e6df}.chip.on{background:var(--paper);color:#111}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:22px 18px}
+.cv{position:relative;aspect-ratio:7/10;border-radius:8px;overflow:hidden;background:#111}.cv img{width:100%;height:100%;object-fit:cover;display:block}
+.cv .n{position:absolute;left:8px;top:8px;background:rgba(0,0,0,.8);color:#fff;font:700 12px Inter;padding:3px 7px;border-radius:6px}
+.cv .nv{position:absolute;right:8px;top:8px;background:var(--blue);color:#fff;font:800 11px Inter;letter-spacing:.04em;padding:4px 8px;border-radius:6px;text-transform:uppercase}
+.card b{display:block;margin-top:8px;font:700 19px/1.05 Antonio;text-transform:uppercase}.card small{display:block;color:var(--mute);font-size:12.5px;margin-top:3px}
+.av{display:flex;gap:4px;margin-top:7px}.av i{flex:1;height:4px;border-radius:2px;background:#3a3a40}.av i.on{background:var(--blue)}
+.verrou{filter:grayscale(1) brightness(.45)}.cv .lock{position:absolute;inset:auto 0 0 0;padding:10px;font:700 12px Inter;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.9))}
+.box{background:#000;border-radius:18px;padding:22px 24px}
+svg.ic{width:16px;height:16px;flex:none}
+/* A : vitrine + avancement */
+.hdA{display:grid;grid-template-columns:1fr 330px;gap:18px}
+.hdA .big{font:700 84px/0.9 Antonio}.hdA .big small{font:500 18px Inter;color:#cfcfd4;margin-left:10px}
+.kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}.kpis div{background:#141417;border-radius:12px;padding:12px 14px}.kpis b{display:block;font:700 30px Antonio}.kpis span{font-size:12.5px;color:var(--mute)}
+.tools{display:flex;gap:10px;align-items:center;margin:22px 0 6px}.search{flex:1;background:#000;border-radius:14px;padding:13px 16px;color:var(--mute);display:flex;gap:10px;align-items:center}
+/* B : Manga Database */
+.hero{display:grid;grid-template-columns:300px 1fr;gap:34px;background:#000;border-radius:22px;padding:28px;position:relative;overflow:hidden}
+.hero .fond{position:absolute;inset:0;background-size:cover;background-position:center 30%;opacity:.16;filter:grayscale(1) blur(2px)}
+.hero>*{position:relative}.hero .cv{border-radius:10px}
+.pill{display:inline-block;background:var(--red);color:#fff;font:700 15px Antonio;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:6px}
+.hero h1{font:700 96px/.9 Antonio;text-transform:uppercase;margin:16px 0 4px}.hero .jp{font:700 22px "Noto Sans JP";color:#cfcfd4}
+.hero p.r{font-size:19px;line-height:1.55;color:#ecebe6;max-width:640px;margin:18px 0}
+.facts{display:flex;flex-wrap:wrap;gap:8px}.facts span{background:#1b1b1f;border-radius:999px;padding:7px 13px;font:600 13.5px Inter}
+.cta{display:inline-flex;align-items:center;gap:8px;margin-top:20px;background:var(--paper);color:#111;font:700 15px Inter;padding:12px 18px;border-radius:12px}
+.cpt{display:flex;align-items:center;gap:18px;margin:22px 0 0}.cpt .bar{flex:1}.cpt b{font:700 36px Antonio}.cpt span{color:var(--mute);font-size:14px}
+.lignes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ligne{background:#000;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;min-height:250px;position:relative;overflow:hidden}
+.ligne h3{font:700 34px Antonio;text-transform:uppercase;margin:0}.ligne p{margin:0;color:var(--mute);font-size:13.5px}
+.ligne .pile{display:flex;margin-top:auto}.ligne .pile img{width:82px;aspect-ratio:7/10;object-fit:cover;border-radius:6px;border:3px solid #000;margin-right:-22px}
+.ligne .kj{position:absolute;right:16px;top:10px;font:700 64px "Noto Sans JP";color:rgba(255,255,255,.06)}
+.shelf{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+/* C : fiche */
+.fhero{display:grid;grid-template-columns:330px 1fr;gap:36px;background:#000;border-radius:22px;padding:30px;position:relative;overflow:hidden}
+.fhero .fond{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.12;filter:grayscale(1)}
+.fhero>*{position:relative}.fhero h1{font:700 110px/.88 Antonio;text-transform:uppercase;margin:14px 0 2px}
+.fhero .meta{display:flex;gap:10px;align-items:center;margin-top:6px;color:#cfcfd4}
+.fhero p.r{font-size:20px;line-height:1.55;max-width:660px;margin:20px 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}.stats div{background:#141417;border-radius:12px;padding:12px 14px}.stats b{display:block;font:700 26px Antonio}.stats span{font-size:12.5px;color:var(--mute)}
+.ancres{display:flex;gap:6px;background:#000;border-radius:16px;padding:6px;margin-top:16px;position:sticky;top:0}.ancres a{flex:1;text-align:center;padding:12px;border-radius:12px;font:700 20px Antonio;text-transform:uppercase;color:#9a9aa2}.ancres a.on{background:#2b2b30;color:#fff}
+.ext{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:stretch}
+.pages{display:flex;gap:10px}.pages img{width:20%;aspect-ratio:1810/2576;object-fit:cover;border-radius:6px;background:#fff}
+.ad{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.ad .af{aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:#111;position:relative}.ad .af img{width:100%;height:100%;object-fit:cover}
+.ad .af .y{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.8);font:700 12px Inter;padding:3px 7px;border-radius:6px}
+.ad b{display:block;margin-top:8px;font:700 17px/1.1 Antonio;text-transform:uppercase}.ad small{color:var(--mute);font-size:12px}
+.uni{display:flex;align-items:center;gap:18px;background:linear-gradient(90deg,#3a0010,#000 70%);border-radius:18px;padding:20px 24px}.uni b{font:700 40px Antonio;text-transform:uppercase}
+.tomes{display:grid;grid-template-columns:repeat(9,1fr);gap:12px}.tomes .cv{border-radius:6px}.tomes .cv .n{font-size:11px}
+.ed{display:flex;gap:8px;margin-bottom:14px}
+.note{border:1px dashed #44444a;border-radius:14px;padding:14px 16px;color:var(--mute);font-size:13.5px}
+.tag{display:inline-block;background:#1b1b1f;color:#cfcfd4;border-radius:6px;font:700 11px Inter;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;margin-left:8px;vertical-align:middle}
+</style></head><body>
+<div class="nav"><img src="/img/social/logo-blanc.png" alt=""><span>Actualités</span><span class="on">Séries</span><span>À l'écran</span><span>Calendrier</span><span>Au Japon</span><span>Ma collection</span></div>
+<div class="wrap" id="app">Chargement…</div>
+<script>
+const V = new URLSearchParams(location.search).get("v") || "a";
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const couv = (u, w = 360) => u ? "/api/couv?w=" + w + "&u=" + encodeURIComponent(u) : "";
+const IC = {
+  search: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  fl: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  dn: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m6 9 6 6 6-6"/></svg>',
+  lock: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  play: '<svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>'
+};
+const nom = s => s.fr || s.t;
+const ligne = s => { const g = (s.genres || []).join(" ").toLowerCase(); return /yakuza/.test(g) ? "yakuza" : /crime|underground|pègre|mafia|gang/.test(g) && !/furyō|yankee|lycée/.test(g) ? "pegre" : /furyō|furyo|yankee|bōsōzoku|lycée|combat de rue/.test(g) ? "furyo" : "pegre"; };
+Promise.all([fetch("/api/series").then(r => r.json()), fetch("/api/avancement").then(r => r.json()), fetch("/api/serie?s=crows").then(r => r.json())]).then(([S, A, C]) => {
+  const items = S.items, bySlug = {}; items.forEach(s => bySlug[s.slug] = s);
+  const rang = {}; (A.series || []).forEach(x => rang[x.slug] = x.rang);
+  const recent = (A.recentes || []).map(x => x.slug);
+  const parRang = items.slice().sort((a, b) => (rang[b.slug] || 0) - (rang[a.slug] || 0));
+  const carte = (s, o = {}) => `<a class="card"><div class="cv"><img src="${couv(s.cover)}" alt="" loading="lazy"><span class="n">n°${String(rang[s.slug] || "").padStart(3, "0")}</span>${o.nv ? '<span class="nv">Nouveau</span>' : ""}</div><b>${esc(nom(s))}</b><small>${esc([String(s.type || "").replace(/^Shonen$/, "Shōnen").replace(/^Shojo$/, "Shōjo"), s.y1].filter(Boolean).join(" · "))}</small></a>`;
+  const app = document.getElementById("app");
+  if (V === "a") {
+    const pct = A.pct;
+    app.innerHTML = `
+      <div class="hdA"><div class="box"><div class="lab">Manga Database · fiches en ligne</div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin:8px 0 14px"><div class="big">${A.enLigne}<small>sur ${A.total} séries</small></div><b class="D" style="font-size:40px;color:var(--blue)">${String(pct).replace(".", ",")} %</b></div>
+        <div class="bar"><i style="width:${pct}%"></i></div>
+        <div class="kpis"><div><b>+${A.semaine}</b><span>cette semaine</span></div><div><b>${A.reste}</b><span>encore à faire</span></div><div><b>Chaque semaine</b><span>de nouvelles fiches</span></div></div></div>
+        <div class="box" style="display:flex;flex-direction:column;gap:10px"><div class="lab">Dernière fiche</div>
+          <div style="display:flex;gap:14px"><div class="cv" style="width:110px;flex:none"><img src="${couv(bySlug[recent[0]].cover)}"></div><div><b class="D" style="font-size:30px;line-height:1">${esc(nom(bySlug[recent[0]]))}</b><p style="margin:8px 0 0;color:#cfcfd4;font-size:13.5px">${esc((bySlug[recent[0]].genres || []).slice(0, 3).join(" · "))}</p></div></div>
+          <a class="cta" style="margin-top:auto;justify-content:center">Voir la fiche ${IC.fl}</a></div></div>
+      <div class="tools"><div class="search">${IC.search} Chercher dans la base</div><span class="chip on">Toutes</span><span class="chip">Furyō</span><span class="chip">Yakuza</span><span class="chip">Pègre</span><span class="chip">Trier ${IC.dn}</span><span class="chip">Type ${IC.dn}</span><span class="chip">Année ${IC.dn}</span></div>
+      <h2 class="s">Toute la base <small>${A.enLigne} fiches, les plus récentes d'abord</small></h2>
+      <div class="grid">${parRang.slice(0, 18).map(s => carte(s, { nv: recent.slice(0, 2).includes(s.slug) })).join("")}</div>`;
+  }
+  if (V === "b") {
+    const der = C.serie, pages = [1, 2, 3, 4, 5].map(i => "/img/extraits/crows/" + i + ".jpg");
+    const L = { furyo: { t: "Furyō", kj: "不良", d: "Lycées, bandes, bōsōzoku : la rue avant tout." }, yakuza: { t: "Yakuza", kj: "極道", d: "Clans, honneur, guerres de territoire." }, pegre: { t: "Pègre", kj: "裏社会", d: "Crime, gangs, l'envers de la ville." } };
+    const groupes = { furyo: [], yakuza: [], pegre: [] }; parRang.forEach(s => groupes[ligne(s)].push(s));
+    app.innerHTML = `
+      <div class="hero"><div class="fond" style="background-image:url('${pages[1]}')"></div>
+        <div class="cv"><img src="${couv(((C.editions || []).find(e => e.pays === "France") || { tomes: [{}] }).tomes[0].cover || bySlug.crows.cover, 600)}"></div>
+        <div><span class="pill">Nouvelle fiche · n°001</span><h1>${esc(der.t)}</h1><div class="jp">${esc(der.jp)}</div>
+          <p class="r">${esc(der.resumeImg)}</p>
+          <div class="facts"><span>Hiroshi Takahashi</span><span>Shōnen</span><span>26 tomes · 1990-1998</span><span>Kana · depuis 2025</span><span>5 films · 2 séries TV</span></div>
+          <a class="cta">Ouvrir la fiche ${IC.fl}</a></div></div>
+      <div class="cpt"><b>${A.enLigne}</b><span>fiches dans la base</span><div class="bar"><i style="width:${A.pct}%"></i></div><span>Une nouvelle fiche chaque semaine</span></div>
+      <h2 class="s">Par ligne</h2>
+      <div class="lignes">${Object.keys(L).map(k => `<div class="ligne"><span class="kj">${L[k].kj}</span><h3>${L[k].t}</h3><p>${L[k].d}</p><p style="color:#fff;font-weight:700">${groupes[k].length} fiches</p><div class="pile">${groupes[k].slice(0, 5).map(s => `<img src="${couv(s.cover, 200)}">`).join("")}</div></div>`).join("")}</div>
+      <h2 class="s">Dernières fiches</h2><div class="shelf">${parRang.slice(0, 6).map(s => carte(s, { nv: recent.slice(0, 2).includes(s.slug) })).join("")}</div>
+      <div class="tools" style="margin-top:34px"><div class="search">${IC.search} Chercher dans la base</div><span class="chip on">Toutes</span><span class="chip">En France</span><span class="chip">Terminées</span><span class="chip">Trier ${IC.dn}</span></div>
+      <h2 class="s">Toute la base <small>A à Z</small></h2>
+      <div class="grid">${items.slice(0, 10).map(s => carte(s)).join("")}${["gokusatsudo-gregor", "x", "y"].map((x, i) => `<a class="card"><div class="cv"><img class="verrou" src="${couv(items[20 + i].cover)}"><span class="lock">${IC.lock} Fiche à venir</span></div><b style="color:#77777e">Série à venir</b><small>Bientôt dans la base</small></a>`).join("").slice(0, 0)}</div>`;
+  }
+  if (V === "c") {
+    const s = C.serie, eds = C.editions || [], fr = eds.find(e => e.pays === "France"), pages = [1, 2, 3, 4, 5].map(i => "/img/extraits/crows/" + i + ".jpg");
+    const lignesAd = [].concat(String(s.film || "").split("\n"), String(s.drama || "").split("\n")).filter(Boolean).map(l => ({ t: l.replace(/\s*[(<].*$/, ""), y: (l.match(/\((\d{4})/) || [])[1], tv: /épisodes/.test(l), img: (l.match(/<(https:\/\/furyo\.pages\.dev\/affiches\/[^>]+)>/) || [])[1] }));
+    const sim = items.filter(x => x.slug !== "crows").map(x => ({ x, sc: (x.genres || []).filter(g => (s.genres || []).includes(g)).length + (x.type === s.type ? 1 : 0) })).sort((a, b) => b.sc - a.sc).slice(0, 6).map(o => o.x);
+    app.innerHTML = `
+      <div class="fhero"><div class="fond" style="background-image:url('${pages[2]}')"></div>
+        <div class="cv"><img src="${couv(fr.tomes[0].cover, 700)}"></div>
+        <div><span class="pill">Fiche n°001</span><h1>${esc(s.t)}</h1><div class="meta"><span style="font:700 22px 'Noto Sans JP'">${esc(s.jp)}</span><span>·</span><span>Hiroshi Takahashi</span><span>·</span><span>Shōnen</span></div>
+          <p class="r">${esc(s.resumeImg)}</p>
+          <div class="facts" style="margin-bottom:16px">${(s.genres || []).map(g => `<span>${esc(g)}</span>`).join("")}<span style="background:var(--red)">Univers CROWS × WORST</span></div>
+          <div class="stats"><div><b>26 tomes</b><span>Japon · 1990-1998</span></div><div><b>${fr.tomes.length} tomes</b><span>Kana · depuis 2025</span></div><div><b>${lignesAd.length}</b><span>films et séries TV</span></div><div><b>Extrait</b><span>chapitre 1</span></div></div></div></div>
+      <div class="ancres"><a class="on">L'essentiel</a><a>Extrait</a><a>Adaptations ${lignesAd.length}</a><a>Univers</a><a>Tomes</a><a>News</a></div>
+      <h2 class="s">L'extrait <small>Chapitre 1 · Édition française Kana</small></h2>
+      <div class="ext"><div class="box"><div class="pages">${pages.map(p => `<img src="${p}">`).join("")}</div></div>
+        <div class="box" style="display:flex;flex-direction:column;justify-content:center;gap:10px"><div class="lab">Lire le début</div><b class="D" style="font-size:34px;line-height:1">Les premières pages de ${esc(s.t)}</b><p style="margin:0;color:#cfcfd4">Harumichi Bōya pose le pied à Suzuran. Lisez les 5 premières pages, puis la suite sur le site de Kana.</p><a class="cta" style="align-self:flex-start">Lire l'extrait ${IC.fl}</a></div></div>
+      <h2 class="s">Adaptations <small>${lignesAd.length} films et séries TV</small></h2>
+      <div class="ad">${lignesAd.slice(0, 5).map(a => `<div><div class="af">${a.img ? `<img src="${a.img.replace("https://furyo.pages.dev", "")}">` : ""}<span class="y">${a.y || ""}</span></div><b>${esc(a.t)}</b><small>${a.tv ? "Série TV" : "Film"} ${a.tv ? "" : "· bande-annonce"}</small></div>`).join("")}</div>
+      <h2 class="s">Univers</h2>
+      <div class="uni"><span class="lab" style="color:#fff">Univers</span><b>CROWS × WORST</b><span style="color:#cfcfd4">CROWS, WORST, QP, Crows Gaiden… dans l'ordre chronologique</span><a class="cta" style="margin:0 0 0 auto">Voir l'univers ${IC.fl}</a></div>
+      <h2 class="s">Si vous aimez ${esc(s.t)}</h2><div class="shelf">${sim.map(x => carte(x)).join("")}</div>
+      <h2 class="s">Tomes <small>Pour la collection</small></h2>
+      <div class="ed"><span class="chip on">France · Kana ${fr.tomes.length}</span><span class="chip">Japon · Tankōbon 26</span><span class="chip">Shinsōban 2015</span><span class="chip">Kanzenban</span></div>
+      <div class="tomes">${fr.tomes.filter(t => t.cover).slice(0, 9).map(t => `<div class="cv"><img src="${couv(t.cover, 220)}"><span class="n">T.${t.n}</span></div>`).join("")}</div>`;
+  }
+}).catch(e => { document.getElementById("app").textContent = "Erreur : " + e.message; });
+</script></body></html>
