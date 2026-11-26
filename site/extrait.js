@@ -69,7 +69,7 @@
     var t = d.tomes.slice(0, 5), corps;
     if (d.fin === "eventail") corps = '<div class="fx-fan">' + fan(t) + "</div>";
     else corps = '<div class="fx-grille">' + t.map(function (u, i) { return '<img' + (i ? "" : ' class="un"') + ' src="' + esc(u) + '" alt="">'; }).join("") + "</div>";
-    return '<div class="' + cl(d) + '"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + top() + '<div class="fx-tt"><h2>" + esc(d.titre) + "</h2></div>" + corps + url + bas(d) + "</div>";
+    return '<div class="' + cl(d) + '"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + top() + '<div class="fx-tt"><h2>' + esc(d.titre) + "</h2></div>" + corps + url + bas(d) + "</div>";
   }
   function charger(src) { return new Promise(function (ok, ko) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
   function rendre(html, fcss, h) {
