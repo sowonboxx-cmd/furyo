@@ -34,9 +34,10 @@
     '.fx .fx-grille img.un{grid-column:span 2;grid-row:span 2;height:100%}',
     // Format story 9:16 (Will, 26/11/2026) : mêmes images, rien sous les barres d'Instagram (haut et bas).
     '.fx.st{height:1920px}',
-    '.fx.st .fx-top{top:150px}.fx.st .fx-prog{top:276px}',
-    '.fx.st .fx-pg{top:310px;height:1330px;width:1000px}',
-    '.fx.st .fx-bas{height:250px;align-items:flex-start;padding-top:34px}',
+    // Crédits juste au-dessus de la barre de réponse d'Instagram (250 px du bas), page agrandie au maximum entre les deux.
+    '.fx.st .fx-top{top:128px}.fx.st .fx-prog{top:250px}',
+    '.fx.st .fx-pg{top:278px;height:1352px;width:1040px}',
+    '.fx.st .fx-bas{height:290px;align-items:flex-start;padding-top:8px}',
     '.fx.st .fx-mz{grid-template-rows:repeat(4,1fr)}',
     '.fx.st .fx-tt{top:400px}.fx.st .fx-fan{top:760px}.fx.st .fx-grille{top:700px}',
     '.fx.st .fx-url{bottom:330px!important}'
