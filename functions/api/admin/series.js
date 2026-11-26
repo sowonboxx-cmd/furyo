@@ -83,7 +83,7 @@ async function construire(env, waitUntil) {
       resume: text(p["Résumé"]), resumeImg: text(p["Résumé image"]), num: num(p["N° fiche"]), scen: text(p["Scénariste"]), dess: text(p["Dessinateur"]), genres: list(p["Genre"]), pubFR: list(p["Éditeur Français"]).join(", "),
       sns: reseaux(p, ctx), exFR: extraitFR(p), oblig: oblig.map(([k, ok]) => ({ k, ok })), manque: oblig.filter(o => !o[1]).map(o => o[0]),
       next: proch[id] || null,
-      cover: best[id]?.c || text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), stJP: text(p["Statut Japon"]), stFR,
+      cover: best[id]?.c || text(p["Couverture T1"]), type: text(p["Type"]), y1: num(p["Année Début"]), y2: num(p["Année Fin"]), stJP: text(p["Statut Japon"]), stFR,
     };
   }).filter(s => s.t).sort((a, b) => a.t.localeCompare(b.t, "fr"));
   if (aMettreAJour.length) {

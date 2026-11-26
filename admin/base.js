@@ -385,7 +385,7 @@
         <div style="min-width:0"><h2>${esc(nomS(s))}</h2>${s.jp ? `<div class="hj jp">${esc(s.jp)}</div>` : ""}
           ${s.scen || s.dess ? `<div class="ln">${s.scen && s.dess && s.scen !== s.dess ? `Histoire : <b>${esc(s.scen)}</b> · Dessin : <b>${esc(s.dess)}</b>` : `Auteur : <b>${esc(s.scen || s.dess)}</b>`}</div>` : ""}
           <div class="ln">${FR}<b>${esc(stF)}</b>${s.pubFR ? " · " + esc(s.pubFR) : ""}</div>
-          <div class="ln">${JP}<b>${esc(s.stJP || "—")}</b>${s.y1 ? " · depuis " + s.y1 : ""}</div>
+          <div class="ln">${JP}<b>${esc(s.stJP || "—")}</b>${s.y1 ? " · " + (/termin|stopp/i.test(s.stJP || "") ? s.y1 + (s.y2 && s.y2 !== s.y1 ? "-" + s.y2 : "") : "depuis " + s.y1) : ""}</div>
           ${s.resume ? `<p class="rs">${esc(s.resume)}</p>` : `<p class="rs hint">Pas encore de résumé.</p>`}
           <div class="mdb-tags">${s.type ? `<span class="b">${esc(s.type)}</span>` : ""}${(s.genres || []).slice(0, 5).map(g => `<span>${esc(g)}</span>`).join("")}</div></div>
         <div class="ctl">${hrt(s)}
