@@ -457,7 +457,9 @@ body{font-size:16px}
 .xa{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
 .xa a{display:inline-flex;align-items:center;gap:9px;height:42px;padding:0 16px;border-radius:12px;background:#2D2D32;color:#fff;font:700 14px var(--f-body);text-decoration:none}
 .xa .flag{width:20px;height:14px;border-radius:3px}.xa a:hover{background:#38383D}
-@media (max-width:899px){.xb{grid-template-columns:1fr}.xp{gap:6px}.xt{padding:16px}.xt b{font-size:24px}}
+@media (max-width:899px){.xb{grid-template-columns:1fr;gap:12px}.xp{gap:6px}
+  /* Téléphone : seulement les boutons « Lire l'extrait », sans le texte (Will, 26/11/2026). */
+  .xt{background:none;padding:0}.xt small,.xt b,.xt p{display:none}.xa{margin:0}.xa a{flex:1;justify-content:center}}
 .xv{position:fixed;inset:0;z-index:65;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;touch-action:pan-y}
 .xv[hidden]{display:none}.xv img{max-height:86vh;max-width:92vw;border-radius:6px;background:#fff}
 .xv button{position:absolute;border:0;background:rgba(255,255,255,.1);color:#fff;width:52px;height:52px;border-radius:26px;display:grid;place-items:center;cursor:pointer}
@@ -849,7 +851,8 @@ function panel(s, pubFR, pubJP, eds, ad){
   }
   if (TAB === "info") {
     const labels = [...new Set(eds.filter(e => e.pays === "France" && e.label && e.label !== e.pub).map(e => e.label))];
-    const prepub = (dLong(s.prepub) || (s.y1 ? String(s.y1) : "")) + (s.prepubFin ? " → " + dLong(s.prepubFin) : "");
+    // Prépublication : seulement l'année de début, partout pareil (Will, 26/11/2026 ; les dates précises restent dans Notion).
+    const prepub = (s.prepub || "").slice(0, 4) || (s.y1 ? String(s.y1) : "");
     const frPrepub = prepubSeule(eds, "France");
     const T = [
       ["Japon", "Éditeur Japon", pubJP.join(", ")],
