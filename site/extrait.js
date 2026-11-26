@@ -39,8 +39,8 @@
     '.fx-fin .fx-fb b{display:block;white-space:nowrap;margin-top:10px;font:700 44px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.06em;color:#fff}.fx-fin .fx-fb b em{font-style:normal;color:#F2C14E}',
     '.fx-fin .fx-tt{top:190px}.fx-fin .fx-jp{display:block;margin-top:14px;font:700 46px/1.3 "FGNotoJP","FGInter",sans-serif;color:#F2C14E}',
     '.fx-fin .fx-grille{top:470px;left:140px;right:140px}.fx-fin .fx-fan{top:500px}',
-    '.fx-fin.st .fx-top{top:0;height:150px}.fx-fin.st .fx-fb{height:380px;padding-top:56px}.fx-fin.st .fx-fb img{display:block}',
-    '.fx-fin.st .fx-tt{top:330px}.fx-fin.st .fx-grille{top:660px;left:60px;right:60px}.fx-fin.st .fx-fan{top:740px}',
+    '.fx.fx-fin.st .fx-top{top:0;height:150px}.fx-fin.st .fx-fb{height:380px;padding-top:56px}.fx-fin.st .fx-fb img{display:block}',
+    '.fx.fx-fin.st .fx-tt{top:380px}.fx.fx-fin.st .fx-grille{top:665px;left:60px;right:60px}.fx.fx-fin.st .fx-fan{top:700px}',
     // Format story 9:16 (Will, 26/11/2026) : mêmes images, rien sous les barres d'Instagram (haut et bas).
     '.fx.st{height:1920px}',
     // Crédits juste au-dessus de la barre de réponse d'Instagram (250 px du bas), page agrandie au maximum entre les deux.
