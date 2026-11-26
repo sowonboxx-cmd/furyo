@@ -1,8 +1,8 @@
 // Carrousel « Extrait » d'une fiche série (Will, 25/11/2026, maquettes /modeles/extrait/maquettes.html, mise en page F validée).
 // Après l'image de la fiche : les pages choisies (« EXTRAIT » en jaune, logo au centre, compteur, barre de progression,
 // crédits dans le bandeau noir du bas, sans trait jaune), puis une image de fin qui renvoie vers la fiche :
-//   fin « grille »   : « Chez <éditeur> depuis <année> », tome 1 en grand et les tomes suivants (défaut) ;
-//   fin « eventail » : « La suite dans le tome 1 », tomes en éventail.
+//   fin « grille »   : tome 1 en grand et les tomes suivants (défaut) ; fin « eventail » : tomes en éventail.
+//   Seulement le nom de la série au-dessus, pas d'éditeur ni d'année (le post reste, Will 26/11/2026).
 // FG_EXTRAIT.slides(d, prog) → Promise<[dataURL JPEG 1080 × 1440]> (1080 × 1920 si d.story : stories à la suite)
 // d = { titre, credit, pages:[url], tomes:[url], fin:"grille"|"eventail", sous, slug }
 // Nécessite /site/fiche-card.js (polices) ; charge html-to-image si besoin.
@@ -23,7 +23,7 @@
     '.fx .fx-vl{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 45%,rgba(0,0,0,.2),rgba(0,0,0,.85) 80%)}',
     '.fx .fx-tt{position:absolute;left:0;right:0;top:170px;text-align:center;z-index:3}',
     '.fx .fx-tt small{display:block;font:700 30px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.3em;color:#F2C14E}',
-    '.fx .fx-tt h2{margin:18px 0 0;font:700 120px/.95 "FGAntonio";text-transform:uppercase;color:#fff}',
+    '.fx .fx-tt h2{margin:0;font:700 120px/.95 "FGAntonio";text-transform:uppercase;color:#fff}',
     '.fx .fx-fan{position:absolute;left:0;right:0;top:470px;height:560px;z-index:3}',
     '.fx .fx-fan img{position:absolute;border:8px solid #F2EFE9;object-fit:cover}',
     '.fx .fx-url{position:absolute;left:0;right:0;bottom:150px;text-align:center;z-index:4}',
@@ -69,7 +69,7 @@
     var t = d.tomes.slice(0, 5), corps;
     if (d.fin === "eventail") corps = '<div class="fx-fan">' + fan(t) + "</div>";
     else corps = '<div class="fx-grille">' + t.map(function (u, i) { return '<img' + (i ? "" : ' class="un"') + ' src="' + esc(u) + '" alt="">'; }).join("") + "</div>";
-    return '<div class="' + cl(d) + '"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + top() + '<div class="fx-tt"><small>' + esc(d.sous || (d.fin === "eventail" ? "La suite dans le tome 1" : "")) + "</small><h2>" + esc(d.titre) + "</h2></div>" + corps + url + bas(d) + "</div>";
+    return '<div class="' + cl(d) + '"><div class="fx-mz">' + mz + '</div><div class="fx-vl"></div>' + top() + '<div class="fx-tt"><h2>" + esc(d.titre) + "</h2></div>" + corps + url + bas(d) + "</div>";
   }
   function charger(src) { return new Promise(function (ok, ko) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
   function rendre(html, fcss, h) {
