@@ -984,7 +984,10 @@ document.addEventListener("click", e => { const a = e.target.closest("a[data-pre
 // Notion sature parfois (trop de demandes d'un coup) : on réessaie 3 fois avant d'afficher une erreur (Will, 07/10/2026).
 const serieFetch = (n = 0) => fetch("/api/serie?s=" + encodeURIComponent(slug)).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
   .catch(e => { if (n >= 3) throw e; return new Promise(ok => setTimeout(ok, 1200 * (n + 1))).then(() => serieFetch(n + 1)); });
-if (slug) serieFetch().then(j => {
+// Données déjà dans la page (servies avec elle) : affichage immédiat, puis vérification discrète d'une version plus récente.
+const dejaLa = window.__SERIE && window.__SERIE_SLUG === slug && window.__SERIE.serie ? window.__SERIE : null;
+if (slug && dejaLa) setTimeout(() => serieFetch().then(j => { if (j && j.serie && j.synced !== DATA.synced && JSON.stringify(j.serie) + JSON.stringify(j.editions) !== JSON.stringify(DATA.serie) + JSON.stringify(DATA.editions)) { DATA = j; render(); } }).catch(() => {}), 1500);
+if (slug) (dejaLa ? Promise.resolve(dejaLa) : serieFetch()).then(j => {
   if (!j || j.error || !j.serie) { document.getElementById("app").innerHTML = `<p class="empty">Série introuvable. <a href="/series/">Voir toutes les séries</a></p>`; return; }
   DATA = j; render();
   // Ancienne adresse (titre japonais) : on affiche l'adresse officielle, celle du titre français s'il existe.

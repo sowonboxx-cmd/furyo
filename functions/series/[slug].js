@@ -17,7 +17,8 @@ export async function onRequestGet({ request, env, params }) {
     const api = new URL("/api/serie?s=" + encodeURIComponent(slug), request.url);
     const r = await fetch(api.toString(), { headers: { cookie: "" } });
     if (!r.ok) return page;
-    const { serie, editions } = await r.json();
+    const brut = await r.text();
+    const { serie, editions } = JSON.parse(brut);
     if (!serie) return page;
     const url = `${SITE}/series/${serie.slug || slug}`;
     const seo = { ...seoSerie(serie, editions, url), url };
@@ -25,6 +26,8 @@ export async function onRequestGet({ request, env, params }) {
     if (og) { seo.image = og; seo.carte = "summary_large_image"; }
     const out = new Response(page.body, page);
     out.headers.set("x-seo", encodeURIComponent(JSON.stringify(seo)));
-    return out;
+    // Données de la série déjà dans la page (Will, 26/11/2026 : fiche longue à s'afficher) : la page s'affiche sans attendre un second appel.
+    const sur = brut.replace(/</g, "\\u003c").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
+    return new HTMLRewriter().on("head", { element(el) { el.append(`<script>window.__SERIE=${sur};window.__SERIE_SLUG=${JSON.stringify(slug)};</script>`, { html: true }); } }).transform(out);
   } catch (e) { return page; }
 }
