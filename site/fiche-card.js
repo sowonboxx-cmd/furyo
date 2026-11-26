@@ -50,7 +50,7 @@
     '.fgc.story .fgc-bas{height:380px;padding-top:56px}',
     '.fgc .fgc-bas img{display:none;width:420px;margin:0 auto 26px}.fgc.story .fgc-bas img{display:block}',
     '.fgc .fgc-bas small{display:block;font:600 26px "FGInter";color:rgba(255,255,255,.6)}',
-    '.fgc .fgc-bas b{display:block;margin-top:10px;font:700 44px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.06em;color:#fff}.fgc .fgc-bas b em{font-style:normal;color:#F2C14E}'
+    '.fgc .fgc-bas b{display:block;white-space:nowrap;margin:10px auto 0;max-width:1000px;font:700 44px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.06em;color:#fff}.fgc .fgc-bas b em{font-style:normal;color:#F2C14E}'
   ].join("\n");
   var SIZE = { post: [1080, 1440], story: [1080, 1920] };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
@@ -91,7 +91,10 @@
   // Auteurs : un rôle par ligne, les noms à la suite (un nom n'est jamais coupé, la suite repart à gauche).
   function auteurs(d) {
     var r = [], sc = String(d.scen || ""), sup = (sc.match(/\(supervision\s*:\s*([^)]+)\)/i) || [])[1];
-    sc = sc.replace(/\s*\(supervision[^)]*\)/i, "").replace(/\s*\((original|scénario)\)/gi, "").trim();
+    // « (d'après H. P. Lovecraft) » devient « (H. P. Lovecraft) », collé au nom pour tenir sur une ligne (Will, 26/11/2026).
+    var apres = (sc.match(/\(d['’]apr[eè]s\s*([^)]+)\)/i) || [])[1];
+    sc = sc.replace(/\s*\(supervision[^)]*\)/i, "").replace(/\s*\((original|scénario)\)/gi, "").replace(/\s*\(d['’]apr[eè]s[^)]*\)/i, "").trim();
+    if (apres) { var l = parts(sc); if (l.length) l[l.length - 1] += " (" + apres.trim() + ")"; if (sc === d.dess) { r.push(["Auteur", l]); return r; } r.push(["Scénario", l]); if (sup) r.push(["Supervision", parts(sup)]); if (d.dess) r.push(["Dessin", parts(d.dess)]); return r; }
     if (sc && d.dess && sc === d.dess) r.push(["Auteur", parts(sc)]);
     else { if (sc) r.push(["Scénario", parts(sc)]); if (sup) r.push(["Supervision", parts(sup)]); if (d.dess) r.push(["Dessin", parts(d.dess)]); }
     return r;
@@ -112,9 +115,9 @@
     var fini = /termin/i.test(d.stJP || "");
     var rows = auteurs(d).map(function (a) { return '<div class="fgc-row"><span>' + a[0] + ' :</span> <b>' + a[1].map(nom).join(", ") + "</b></div>"; }).join("") +
       ((d.genres || []).length ? '<div class="fgc-row fgc-gen"><span>Genres :</span> <b data-items="' + esc(JSON.stringify(d.genres.slice(0, 3))) + '">' + esc(d.genres.slice(0, 3).join(", ")) + "</b></div>" : "") +
-      (d.type ? '<div class="fgc-row"><span>Type :</span> <b>' + esc(typeJP(d.type) + (!d.annee && !fini && d.y1 ? " · depuis " + d.y1 : "")) + "</b></div>" : "") +
-      // Ligne « Année » (essai, Will 26/11/2026) : activée par d.annee.
-      (d.annee && d.y1 ? '<div class="fgc-row"><span>Année :</span> <b>' + esc(fini ? d.y1 + (d.y2 && d.y2 !== d.y1 ? "-" + d.y2 : "") : "Depuis " + d.y1) + "</b></div>" : "");
+      (d.type ? '<div class="fgc-row"><span>Type :</span> <b>' + esc(typeJP(d.type)) + "</b></div>" : "") +
+      // Ligne « Année » (Will, 26/11/2026) : « 1990-1998 » si terminé, « 2014- » si en cours.
+      (d.y1 ? '<div class="fgc-row"><span>Année :</span> <b>' + esc(fini ? d.y1 + (d.y2 && d.y2 !== d.y1 ? "-" + d.y2 : "") : d.y1 + "-") + "</b></div>" : "");
     var jp = d.jp && String(d.jp).toLowerCase() !== String(d.t || "").toLowerCase() ? '<div class="fgc-jp" lang="ja">' + esc(d.jp) + "</div>" : "";
     return '<div class="fgc ' + theme + " " + fmt + '">' +
       '<div class="fgc-top"><img src="/img/social/logo-blanc.png" alt=""></div>' +
@@ -154,6 +157,14 @@
       var bb = row.querySelector("b"), items = JSON.parse(bb.dataset.items);
       while (items.length > 1 && row.scrollWidth > row.clientWidth + 1) { items.pop(); bb.textContent = items.join(", "); }
     });
+    // Auteurs : une ligne par rôle si possible ; la police baisse un peu plutôt que de renvoyer le nom à la ligne.
+    [].forEach.call(c.querySelectorAll(".fgc-row:not(.fgc-gen)"), function (row) {
+      var lh = parseFloat(getComputedStyle(row).lineHeight);
+      for (var f = 30; f > 24 && row.offsetHeight > lh * 1.5; f -= 1) { row.style.fontSize = f - 1 + "px"; lh = parseFloat(getComputedStyle(row).lineHeight); }
+    });
+    // Adresse du bas : toujours sur une ligne, la police rétrécit si besoin (Will, 26/11/2026).
+    var ub = c.querySelector(".fgc-bas b");
+    if (ub) for (var fz = 44; fz > 22 && ub.scrollWidth > ub.clientWidth + 1; fz -= 2) ub.style.fontSize = fz - 2 + "px";
     // Résumé : jamais coupé en silence ; s'il dépasse (4 lignes en post, 5 en story), la carte est marquée « trop long ».
     var p = c.querySelector(".fgc-res p");
     if (p) { if (p.scrollHeight > p.clientHeight + 2) c.setAttribute("data-trop", "1"); else c.removeAttribute("data-trop"); }

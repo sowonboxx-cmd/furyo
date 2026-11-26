@@ -28,7 +28,7 @@
     '.fx .fx-fan img{position:absolute;border:8px solid #F2EFE9;object-fit:cover}',
     '.fx .fx-url{position:absolute;left:0;right:0;bottom:150px;text-align:center;z-index:4}',
     '.fx .fx-url small{display:block;font:600 30px "FGInter";color:rgba(255,255,255,.7)}',
-    '.fx .fx-url b{display:block;margin-top:14px;font:700 64px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.04em;color:#fff}.fx .fx-url b em{font-style:normal;color:#F2C14E}',
+    '.fx .fx-url b{display:block;white-space:nowrap;margin-top:14px;font:700 64px/1 "FGAntonio";text-transform:uppercase;letter-spacing:.04em;color:#fff}.fx .fx-url b em{font-style:normal;color:#F2C14E}',
     '.fx .fx-grille{position:absolute;left:150px;right:150px;top:430px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;z-index:3}',
     '.fx .fx-grille img{width:100%;aspect-ratio:7/10;object-fit:cover;border:6px solid #F2EFE9;display:block}',
     '.fx .fx-grille img.un{grid-column:span 2;grid-row:span 2;height:100%}',
@@ -76,6 +76,12 @@
     var box = document.createElement("div");
     box.style.cssText = "position:fixed;left:-20000px;top:0;width:1080px;height:" + h + "px;overflow:hidden;pointer-events:none";
     box.innerHTML = html; document.body.appendChild(box);
+    // Titre de l'image de fin : sur une ligne, la police rétrécit si besoin (sinon il chevauche les tomes).
+    var h2 = box.querySelector(".fx-tt h2");
+    if (h2) { h2.style.whiteSpace = "nowrap"; var lh2 = function () { var r = document.createRange(); r.selectNodeContents(h2); return r.getBoundingClientRect().width; }, f2 = 120; while (f2 > 56 && lh2() > 980) { f2 -= 4; h2.style.fontSize = f2 + "px"; } }
+    // Adresse : toujours sur une ligne (Will, 26/11/2026).
+    var ub = box.querySelector(".fx-url b");
+    if (ub) { var lg = function () { var r = document.createRange(); r.selectNodeContents(ub); return r.getBoundingClientRect().width; }, fz = 64; while (fz > 30 && lg() > 980) { fz -= 2; ub.style.fontSize = fz + "px"; } }
     var imgs = [].map.call(box.querySelectorAll("img"), function (im) { return im.complete && im.naturalWidth ? null : new Promise(function (ok) { im.onload = im.onerror = ok; }); });
     var opts = { width: 1080, height: h, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, includeQueryParams: true, backgroundColor: "#000" };
     return Promise.all(imgs).then(function () {
