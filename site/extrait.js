@@ -77,7 +77,7 @@
   // au milieu le titre, le titre japonais en jaune dessous, et les tomes.
   function fin(d) {
     var mz = ""; for (var j = 0; j < (d.story ? 15 : 12); j++) mz += '<img src="' + esc(d.pages[j % d.pages.length]) + '" alt="">';
-    var t = d.tomes.slice(0, 5), corps;
+    var t = d.tomes.slice(0, d.nbTomes || 5), corps;
     if (d.fin === "eventail") corps = '<div class="fx-fan">' + fan(t) + "</div>";
     else corps = '<div class="fx-grille">' + t.map(function (u, i) { return '<img' + (i ? "" : ' class="un"') + ' src="' + esc(u) + '" alt="">'; }).join("") + "</div>";
     var jp = d.jp && String(d.jp).toLowerCase() !== String(d.titre || "").toLowerCase() ? '<span class="fx-jp" lang="ja">' + esc(d.jp) + "</span>" : "";
