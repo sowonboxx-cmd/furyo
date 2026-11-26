@@ -43,10 +43,10 @@
     '.fx.fx-fin.st .fx-tt{top:320px}.fx.fx-fin.st .fx-grille{top:605px;left:60px;right:60px}.fx.fx-fin.st .fx-fan{top:700px}',
     // Format story 9:16 (Will, 26/11/2026) : mêmes images, rien sous les barres d'Instagram (haut et bas).
     '.fx.st{height:1920px}',
-    // Crédits juste au-dessus de la barre de réponse d'Instagram (250 px du bas), page agrandie au maximum entre les deux.
+    // Page à la largeur de la barre de progression (Will, 26/11/2026), crédits un peu sous la page.
     '.fx.st .fx-top{top:128px}.fx.st .fx-prog{top:250px}',
-    '.fx.st .fx-pg{top:278px;height:1352px;width:1040px}',
-    '.fx.st .fx-bas{height:290px;align-items:flex-start;padding-top:8px}',
+    '.fx.st .fx-pg{top:280px;height:1525px;width:968px}',
+    '.fx.st .fx-bas{height:100px;align-items:flex-start;padding-top:0;background:transparent}',
     '.fx.st .fx-mz{grid-template-rows:repeat(4,1fr)}',
     '.fx.st .fx-tt{top:400px}.fx.st .fx-fan{top:760px}.fx.st .fx-grille{top:700px}',
     '.fx.st .fx-url{bottom:330px!important}'
