@@ -1,0 +1,24 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Antonio:wght@700&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#232325;color:#F5F5F7;font:500 15px Inter;padding:30px}
+.v{background:#000;border-radius:22px;padding:22px;margin-bottom:20px}
+.v>small{display:block;font:700 12px Inter;letter-spacing:.1em;text-transform:uppercase;color:#98989D;margin-bottom:12px}
+.xb{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+.xp{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-content:center}.xp img{width:100%;aspect-ratio:1810/2576;object-fit:cover;border-radius:6px;background:#fff;display:block}
+.xt{background:#1C1C1E;border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.xt small{font:700 11.5px Inter;letter-spacing:.12em;text-transform:uppercase;color:#98989D}.xt b{font:700 30px/1 Antonio;text-transform:uppercase}.xt p{margin:0;color:#CFCFD4;font-size:14px}
+.xa{display:flex;gap:8px;margin-top:4px}
+.xa a{display:inline-flex;align-items:center;gap:9px;height:42px;padding:0 16px;border-radius:12px;background:#2D2D32;color:#fff;font:700 14px Inter;text-decoration:none}
+.flag{width:20px;height:14px;border-radius:3px;display:block;flex:none}svg.ar{width:13px;height:13px}
+.full .xa a{flex:1;justify-content:center}
+.full2 .xa a{flex:1;justify-content:space-between}.full2 .xa a .l{display:inline-flex;gap:9px;align-items:center}
+.stack .xa{flex-direction:column}.stack .xa a{justify-content:space-between}.stack .xa a .l{display:inline-flex;gap:9px;align-items:center}
+</style></head><body><script>
+const FR='<svg class="flag" viewBox="0 0 22 15"><rect width="7.34" height="15" fill="#2F5DA8"/><rect x="7.33" width="7.34" height="15" fill="#F5F5F7"/><rect x="14.66" width="7.34" height="15" fill="#E5483A"/></svg>';
+const JP='<svg class="flag" viewBox="0 0 22 15"><rect width="22" height="15" fill="#F5F5F7"/><circle cx="11" cy="7.5" r="4.2" fill="#E5483A"/></svg>';
+const AR='<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+const P=[1,2,3,4,5].map(i=>'/img/extraits/hell-dogs/'+i+'.jpg');
+const btn=(f,t,k)=>k?`<a href="#"><span class="l">${f}${t}</span>${AR}</a>`:`<a href="#">${f}${t}${AR}</a>`;
+const V=[["","Actuel : boutons à leur taille",0,"Lire l'extrait","Lire l'extrait"],["full","1 · Moitié-moitié, centré",0,"Lire l'extrait","Lire l'extrait"],["full2","2 · Moitié-moitié, flèche à droite",1,"Version française","Version japonaise"],["stack","3 · Empilés, pleine largeur",1,"Lire l'extrait en français","Lire l'extrait en japonais"],["full","4 · Un seul extrait (VO)",0,null,"Lire l'extrait"]];
+document.body.innerHTML=V.map(([c,t,k,a,b])=>`<div class="v ${c}"><small>${t}</small><div class="xb"><div class="xp">${P.map(u=>`<img src="${u}">`).join("")}</div><div class="xt"><small>Lire le début</small><b>Les premières pages</b><p><strong>Hell Dogs</strong>, chapitre 1. Cliquez sur une page pour zoomer et les faire défiler.</p><div class="xa">${a?btn(FR,a,k):""}${btn(JP,b,k)}</div></div></div></div>`).join("");
+</script></body></html>
