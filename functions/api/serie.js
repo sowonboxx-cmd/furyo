@@ -80,7 +80,8 @@ export async function onRequestGet({ env, request, waitUntil }) {
     if (!id) return { error: "introuvable" };
     const row = await page(env.NOTION_TOKEN, id);
     const p = row.properties || {};
-    if (!estVisible(p) && !(admin && estValidee(p))) return { error: "introuvable" };
+    // Admin : toutes les séries, quel que soit leur statut (images de fiche du back-office, Will 26/11/2026).
+    if (!estVisible(p) && !admin) return { error: "introuvable" };
     // Éditions trouvées par la relation côté ÉDITION (Série → cette série) : la relation « Éditions » côté
     // série pouvait être vide et masquait alors tous les tomes (ex. gaiden CROWS×WORST). (Will, 21/10/2026)
     const eRows = await queryAll(env.NOTION_TOKEN, { ...EDITIONS, body: { filter: { property: "Série", relation: { contains: id } } } }).catch(() => []);
