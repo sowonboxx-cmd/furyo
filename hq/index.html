@@ -1835,6 +1835,11 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     });
     p.catch(function () { delete FDAT[f.id]; }); return p;
   }
+  // Stories d'extrait au format 9:16 (pages + image de fin), faites seulement au moment de programmer.
+  function ficheStories(f) {
+    var x = f.extrait; if (!x || !x.pages.length) return Promise.resolve([]);
+    return ficheData(f).then(function (D) { var ed = { pages: x.pages, fin: x.fin, story: true }; for (var k in D.ex) ed[k] = D.ex[k]; return FG_EXTRAIT.slides(ed); });
+  }
   function ficheImages(f, prog) {
     var x = f.extrait || null, cle = f.id + "|" + (x ? x.fin + "|" + x.pages.join(",") : "");
     if (FIMG[cle]) return FIMG[cle];
@@ -1908,10 +1913,17 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
             .then(function () { return st ? envoyerData(v.story).then(function (w) { su = w; }) : null; })
             .then(function () { var titre = "Fiche " + ficheNo(f) + " · " + f.t;
               return igq({ id: id, type: "fiche", titre: titre, quand: quand.toISOString(), legende: modalCap.ig || titre, post: p ? urls : [], story: su,
-                x: x && urls.length ? { texte: modalCap.tw || titre, images: urls } : null }); });
+                x: x && urls.length ? { texte: modalCap.tw || titre, images: urls } : null }).then(function (r0) {
+                // Stories suivantes (Will, 26/11/2026) : les pages d'extrait et l'image de fin au format story, une minute d'écart chacune.
+                if (!st) return r0;
+                return ficheStories(f).then(function (l) {
+                  var i = 0;
+                  return l.reduce(function (pr, u) { return pr.then(function () { var k = ++i + 1; return envoyerData(u).then(function (w) {
+                    return igq({ id: id + "-s" + k, type: "fiche-story", titre: titre + " · story " + k, quand: new Date(quand.getTime() + (k - 1) * 60000).toISOString(), legende: "", post: [], story: w }); }); }); }, Promise.resolve());
+                }).then(function () { return r0; }); }); });
         }); },
       ignorer: function () { return igq({ id: id, ignore: true, type: "fiche", titre: "Fiche " + ficheNo(f) + " · " + f.t }); },
-      annuler: function () { return igq({ id: id, del: true }); } };
+      annuler: function () { var l = [igq({ id: id, del: true })]; for (var k = 2; k <= 10; k++) l.push(igq({ id: id + "-s" + k, del: true }).catch(function () {})); return Promise.all(l).then(function (r) { return r[0]; }); } };
     var box = $("#fiig");
     var images = function () {
       var strip = $("#fistrip"); if (!strip) return; strip.innerHTML = '<div class="hbprog">Préparation des images…</div>';
