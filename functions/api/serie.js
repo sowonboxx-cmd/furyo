@@ -156,7 +156,10 @@ export async function onRequestGet({ env, request, waitUntil }) {
     return { serie, editions };
   };
   // Aperçu admin (après le lancement) : réponse directe, jamais mise dans le cache partagé.
-  if (admin) return new Response(JSON.stringify({ synced: new Date().toISOString(), ...(await build()) }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+  // Admin (Will, 26/11/2026 : fiches très lentes) : version admin gardée à part, servie tout de suite et reconstruite
+  // en arrière-plan dès qu'elle a plus de 20 s ; jamais gardée par le navigateur ni servie au public.
+  if (admin) { const r = await cached(request, waitUntil, "/api/serie?s=" + slug + "&admin=1", 20, build);
+    return new Response(r.body, { status: r.status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "private, no-store" } }); }
   // Avant le lancement, quand l'administrateur ouvre une fiche, on la reconstruit tout de suite et on met à jour
   // le cache de sa région (le cache Cloudflare est propre à chaque centre de données) : il voit toujours la dernière version.
   // Admin : la fiche prête est servie tout de suite et reconstruite en arrière-plan si elle a plus de 30 s (Will, 07/10/2026).

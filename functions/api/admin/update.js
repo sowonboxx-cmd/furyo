@@ -55,7 +55,7 @@ async function maj({ request, env }) {
   if (!r.ok) return json({ error: "Notion a refusé : " + (await r.text()).slice(0, 300) }, 400);
   // Le site se met à jour tout de suite : on jette les versions en cache des listes publiques.
   const c = caches.default;
-  await Promise.all(["/api/series?v=6", "/api/series?v=6&admin=1", "/__cache/admin-series-v2", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", "/api/biblio?v=3", "/api/biblio?v=3&id=" + b.id, ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString())))).catch(() => {});
+  await Promise.all(["/api/series?v=6", "/api/series?v=6&admin=1", "/__cache/admin-series-v2", "/api/avancement", "/api/calendrier", "/api/serie-index", "/api/biblio?v=2", "/api/biblio?v=3", "/api/biblio?v=3&id=" + b.id, ...(/^[a-z0-9-]+$/.test(b.slug || "") ? ["/api/serie?s=" + b.slug, "/api/serie?s=" + b.slug + "&admin=1"] : [])].map(k => c.delete(new Request(new URL(k, request.url).toString())))).catch(() => {});
   const p = ((await r.json().catch(() => ({}))).properties) || {};
   const st = ((p["Statut"] || {}).select || {}).name || A_VALIDER;
   return json({ ok: true, statut: st, publier: st === PUBLIC, promo: !!((p["Promo"] || {}).checkbox), promoLe: ((p["Promo faite le"] || {}).date || {}).start || "", date: ((p["Date de publication"] || {}).date || {}).start || "" });
