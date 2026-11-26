@@ -46,7 +46,7 @@
     // Page à la largeur de la barre de progression (Will, 26/11/2026), crédits un peu sous la page.
     '.fx.st .fx-top{top:128px}.fx.st .fx-prog{top:250px}',
     // Image de fin en story : 9 tomes s'il y en a au moins 9 (tome 1 en grand, 4 à droite, 4 dessous).
-    '.fx.st .fx-pg{top:280px;height:1525px;width:968px}',
+    '.fx.st .fx-pg{top:280px;height:1525px;width:968px;object-position:center top}',
     '.fx.fx-fin.st.n9 .fx-tt{top:225px}.fx.fx-fin.st.n9 .fx-grille{top:510px;left:95px;right:95px}',
     '.fx.st .fx-bas{height:100px;align-items:flex-start;padding-top:0;background:transparent}',
     '.fx.st .fx-mz{grid-template-rows:repeat(4,1fr)}',
@@ -102,6 +102,12 @@
     var imgs = [].map.call(box.querySelectorAll("img"), function (im) { return im.complete && im.naturalWidth ? null : new Promise(function (ok) { im.onload = im.onerror = ok; }); });
     var opts = { width: 1080, height: h, pixelRatio: 1, quality: .92, fontEmbedCSS: fcss, cacheBust: false, includeQueryParams: true, backgroundColor: "#000" };
     return Promise.all(imgs).then(function () {
+      // Story : crédits collés sous la page, quelle que soit sa forme (Will, 26/11/2026).
+      var pg = box.querySelector(".fx.st .fx-pg"), cr = box.querySelector(".fx.st .fx-bas");
+      if (pg && cr && pg.naturalWidth) {
+        var hh = Math.min(1525, 968 * pg.naturalHeight / pg.naturalWidth);
+        cr.style.top = Math.round(280 + hh + 14) + "px"; cr.style.bottom = "auto"; cr.style.height = "auto";
+      }
       var essai = function (n, prev) {
         return htmlToImage.toJpeg(box.firstChild, opts).then(function (u) {
           if (n >= 4 || (prev && Math.abs(u.length - prev.length) < 400 && n >= 2)) return u;
