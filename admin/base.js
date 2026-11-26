@@ -67,8 +67,9 @@
 .mdb-next{background:var(--card);border-radius:18px;padding:14px 16px 16px;margin:14px 0 4px}
 .mdb-next .hd{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}.mdb-next .hd b{font:700 22px var(--f-display);text-transform:uppercase}
 .mdb-next .lk{margin-left:auto;border:0;background:#1f1f24;color:var(--paper);border-radius:10px;padding:7px 12px;font:600 13px var(--f-body);cursor:pointer}
-.mdb-next .rw{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
-@media(max-width:1100px){.mdb-next .rw{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:640px){.mdb-next .rw{grid-template-columns:1fr 1fr}}
+/* Autant de fiches que la largeur en contient, sur une seule ligne ; les suivantes sont cachées. */
+.mdb-next .rw{display:grid;grid-auto-flow:column;grid-auto-columns:190px;grid-template-rows:auto;gap:10px;overflow:hidden}
+.mdb-next .hint strong{color:var(--ok);font-weight:700}.mdb-next .it.ok small{color:var(--ok)}
 .mdb-next .it{display:grid;grid-template-columns:46px minmax(0,1fr);gap:10px;align-items:center;text-align:left;border:0;background:#1a1a1e;border-radius:12px;padding:8px;cursor:pointer;color:inherit;min-width:0}
 .mdb-next .it[aria-current=true]{box-shadow:0 0 0 2px var(--paper)}.mdb-next .it:hover{background:#222227}
 .mdb-next .it img,.mdb-next .it .ph{width:46px;aspect-ratio:5/7;object-fit:cover;border-radius:6px;display:block}
@@ -480,10 +481,14 @@
   // Planning des fiches : les séries avec un numéro, pas encore postées, dans l'ordre des numéros, sur les prochains jours de publication.
   // Prochaines fiches (Will, 26/11/2026) : les 6 suivantes du planning, avec leur date, en un coup d'œil ; un clic ouvre la fiche.
   function prochaines() {
-    const p = planning().file.slice(0, 6); if (!p.length) return "";
-    const jr = d => new Date(d + "T12:00:00Z").toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
-    return `<div class="mdb-next"><div class="hd"><b>Prochaines fiches</b><span class="hint">${joursTxt()} à ${CAL.heure}</span><button class="lk" data-mvue="calendrier">Calendrier</button></div>
-      <div class="rw">${p.map(x => `<button class="it" data-msel="${x.s.id}" aria-current="${M.sel === x.s.id}">${img(x.s, 160)}<span><small>${jr(x.d)}</small><b>${esc(nomS(x.s))}</b><em>${nfmt(x.s.num)}${x.s.manque.length ? ` · ${x.s.manque.length} à compléter` : " · prête"}</em></span></button>`).join("")}</div></div>`;
+    const p = planning().file; if (!p.length) return "";
+    const jr = (d, o) => new Date(d + "T12:00:00Z").toLocaleDateString("fr-FR", Object.assign({ day: "numeric", month: "short", timeZone: "UTC" }, o || { weekday: "short" }));
+    // Prêtes : les fiches complètes qui se suivent depuis la prochaine ; « jusqu'au » = date de la dernière d'entre elles.
+    let k = 0; while (k < p.length && !p[k].s.manque.length) k++;
+    const pretes = p.filter(x => !x.s.manque.length).length;
+    const info = `(${pretes} prête${pretes > 1 ? "s" : ""}${k ? ` · prêt jusqu'au ${jr(p[k - 1].d, {})}` : ""})`;
+    return `<div class="mdb-next"><div class="hd"><b>Prochaines fiches</b><span class="hint">${joursTxt()} à ${CAL.heure} <strong>${info}</strong></span><button class="lk" data-mvue="calendrier">Calendrier</button></div>
+      <div class="rw">${p.map(x => `<button class="it${x.s.manque.length ? "" : " ok"}" data-msel="${x.s.id}" aria-current="${M.sel === x.s.id}">${img(x.s, 160)}<span><small>${jr(x.d)}</small><b>${esc(nomS(x.s))}</b><em>${nfmt(x.s.num)}${x.s.manque.length ? ` · ${x.s.manque.length} à compléter` : " · prête"}</em></span></button>`).join("")}</div></div>`;
   }
   function planning() {
     const file = ITEMS.filter(s => s.num && !s.promo).sort((a, b) => a.num - b.num), out = [], date = {};
