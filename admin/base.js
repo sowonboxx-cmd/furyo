@@ -8,7 +8,7 @@
   const M = window.MDB = { vue: "liste", sel: null, open: null, tab: "infos", tx: "resumeImg", lim: 120, mois: null, drag: null };
   try { const v = localStorage.getItem("mdb-vue"); if (v && VUES.some(x => x[0] === v)) M.vue = v; } catch (e) {}
   // Publication des fiches : jours de la semaine (0 = dimanche) et date de départ. Réglables dans la vue Calendrier.
-  const CAL = { jours: [2, 4, 6], depart: "2026-12-01", heure: "18 h" };
+  const CAL = { jours: [2, 4, 6], depart: "2026-12-01", heure: "18 h", sauf: ["2026-12-24", "2026-12-31"] };
   try { const c = JSON.parse(localStorage.getItem("mdb-cal") || "null"); if (c && Array.isArray(c.jours)) Object.assign(CAL, c); } catch (e) {}
   // Réglages partagés avec le calendrier du QG (Will, 25/11/2026) : la version enregistrée sur le serveur fait foi.
   fetch("/api/admin/fiches", { credentials: "same-origin" }).then(r => r.json()).then(j => { if (j && j.cal) { Object.assign(CAL, j.cal); try { localStorage.setItem("mdb-cal", JSON.stringify(CAL)); } catch (e) {} if (window.draw && document.getElementById("mdb-main")) draw(); } }).catch(() => {});
@@ -193,6 +193,9 @@
 .mdb-ev .cv .tag.dn2{background:var(--bl)}
 .mdb-ev b{font:700 13px/1.1 var(--f-display);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .mdb-day .libre{margin-top:auto;color:#55555A;font-size:11.5px;font-weight:600}
+.mdb-saut{border:0;background:transparent;color:#6E6E75;font:600 10.5px var(--f-body);cursor:pointer;padding:2px 4px;border-radius:5px;opacity:0;transition:opacity .15s}
+.mdb-day:hover .mdb-saut,.mdb-day.saute .mdb-saut{opacity:1}.mdb-saut:hover{color:var(--paper);background:#1d1d22}
+.mdb-day.saute{background:repeating-linear-gradient(135deg,#111114 0 8px,#16161a 8px 16px)}
 @media(max-width:900px){.mdb-cal{grid-template-columns:1fr}.mdb-cal .dn,.mdb-day.vide,.mdb-day.nojour{display:none}.mdb-day{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center}.mdb-day .dt{width:100%}.mdb-ev{flex-direction:row;align-items:center;width:100%}.mdb-ev .cv{width:44px;flex:none}}
 .mdb-leg{display:flex;gap:14px;flex-wrap:wrap;color:var(--paper-3);font-size:12.5px;margin:12px 0 0}
 .mdb-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
@@ -442,8 +445,8 @@
       const decal = (first.getUTCDay() + 6) % 7, auj = now.toISOString().slice(0, 10), cells = [];
       for (let i = 0; i < decal; i++) cells.push(`<div class="mdb-day vide"></div>`);
       for (let d = 1; d <= nb; d++) {
-        const k = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`, wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay(), pj = CAL.jours.includes(wd) && k >= CAL.depart, E = ev[k] || [];
-        cells.push(`<div class="mdb-day${pj ? " pj" : ""}${k === auj ? " auj" : ""}${!pj && !E.length ? " nojour" : ""}"><div class="dt">${d}${pj ? `<small>${CAL.heure}</small>` : ""}</div>
+        const k = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`, wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay(), pj0 = CAL.jours.includes(wd) && k >= CAL.depart, saute = pj0 && (CAL.sauf || []).includes(k), pj = pj0 && !saute, E = ev[k] || [];
+        cells.push(`<div class="mdb-day${pj ? " pj" : ""}${saute ? " saute" : ""}${k === auj ? " auj" : ""}${!pj && !E.length ? " nojour" : ""}"><div class="dt">${d}${pj ? `<small>${CAL.heure}</small>` : ""}${pj0 && k >= auj ? `<button class="mdb-saut" data-msaut="${k}">${saute ? "Rétablir" : "Sauter"}</button>` : ""}</div>${saute ? `<span class="libre">Jour sauté</span>` : ""}
           ${E.map(e => `<div class="mdb-ev" data-mop="${e.s.id}" title="${esc(nomS(e.s))}"><div class="cv">${img(e.s, 220)}<span class="tag${e.fait ? " dn2" : ""}">${e.fait ? "Postée" : nfmt(e.s.num)}</span></div><b>${esc(nomS(e.s))}</b></div>`).join("")}
           ${pj && !E.length ? `<span class="libre">Créneau libre</span>` : ""}</div>`);
       }
@@ -465,7 +468,7 @@
     const auj = new Date().toISOString().slice(0, 10);
     let d = new Date((CAL.depart > auj ? CAL.depart : auj) + "T12:00:00Z");
     for (const s of file) {
-      while (!CAL.jours.includes(d.getUTCDay())) d.setUTCDate(d.getUTCDate() + 1);
+      while (!CAL.jours.includes(d.getUTCDay()) || (CAL.sauf || []).includes(d.toISOString().slice(0, 10))) d.setUTCDate(d.getUTCDate() + 1);
       const k = d.toISOString().slice(0, 10); out.push({ s, d: k }); date[s.id] = k; d.setUTCDate(d.getUTCDate() + 1);
     }
     return { file: out, date };
@@ -539,6 +542,7 @@
     if (d.mmv) { e.stopPropagation(); const libres = ITEMS.filter(i => i.num && !verrou(i)).sort((a, b) => a.num - b.num), i = libres.findIndex(i => i.id === d.mmv), j = i + Number(d.dir);
       if (i < 0 || j < 0 || j >= libres.length) return; await echanger(libres[i], libres[j]); return; }
     if (d.mmois) { const b = M.mois || CAL.depart.slice(0, 7); let [y, m] = b.split("-").map(Number); m += Number(d.mmois); if (m < 1) { m = 12; y--; } if (m > 12) { m = 1; y++; } M.mois = `${y}-${String(m).padStart(2, "0")}`; draw(); return; }
+    if (d.msaut) { const k = d.msaut, l = CAL.sauf || []; CAL.sauf = l.includes(k) ? l.filter(x => x !== k) : l.concat(k).sort(); sauverCal(); draw(); return; }
     if (d.mjour) { const v = +d.mjour; CAL.jours = CAL.jours.includes(v) ? CAL.jours.filter(x => x !== v) : CAL.jours.concat(v); sauverCal(); draw(); return; }
   });
   function sauverCal() { try { localStorage.setItem("mdb-cal", JSON.stringify(CAL)); } catch (e) {}

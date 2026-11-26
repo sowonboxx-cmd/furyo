@@ -9,7 +9,8 @@ import { text, num, date, check, queryAll, slugSerie } from "../../../lib/notion
 const SERIES = { dataSource: "3ebb5e1a-634f-8051-9faf-000be2dabb16", database: "3ebb5e1a634f80f998e3c0fe5b75b6ea" };
 const CLE = "hq:fiches-cal-v2"; // v2 : mardi, jeudi, samedi (Will, 25/11/2026)
 // Mardi, jeudi et samedi à 18 h (Will, 25/11/2026) ; jours et heure réglables dans Mangas Database (vue Calendrier).
-const DEFAUT = { jours: [2, 4, 6], depart: "2026-12-01", heure: "18 h" };
+// Jours sautés (sauf) : 24 et 31 décembre, veilles de fête (Will, 26/11/2026).
+const DEFAUT = { jours: [2, 4, 6], depart: "2026-12-01", heure: "18 h", sauf: ["2026-12-24", "2026-12-31"] };
 
 // CROWS T.1 (Kana), pages 1 à 5 du chapitre 1 envoyées par Will le 25/11/2026.
 const DEPART_EX = { "3ebb5e1a634f801aa127dbe7bfbe14d6": { pages: [1, 2, 3, 4, 5].map(i => `/img/extraits/crows/${i}.jpg`), fin: "grille" } };
@@ -19,7 +20,8 @@ function nettCal(c) {
   const jours = Array.isArray(c.jours) ? [...new Set(c.jours.map(Number).filter(n => Number.isInteger(n) && n >= 0 && n <= 6))] : DEFAUT.jours;
   const depart = /^\d{4}-\d{2}-\d{2}$/.test(c.depart || "") ? c.depart : DEFAUT.depart;
   const heure = /^\d{1,2} h( \d{2})?$/.test(c.heure || "") ? c.heure : DEFAUT.heure;
-  return { jours, depart, heure };
+  const sauf = Array.isArray(c.sauf) ? [...new Set(c.sauf.filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)))].sort().slice(-200) : DEFAUT.sauf;
+  return { jours, depart, heure, sauf };
 }
 async function lireCal(env) { try { return nettCal(JSON.parse((await env.STATS.get(CLE)) || "null") || DEFAUT); } catch (e) { return { ...DEFAUT }; } }
 
