@@ -1273,13 +1273,13 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
     FPLAN = {}; if (!FCAL.jours.length) return;
     // Déjà postée mais programmée d'ici : reste affichée au jour de sa publication.
     FICH.forEach(function (f) { var q = IGQ["fiche-" + f.id]; if (f.promo && q && q.quand && !q.ignore) { var k = jourParis(q.quand); (FPLAN[k] = FPLAN[k] || []).push(f); } });
-    var file = FICH.filter(function (f) { return f.num && !f.promo; }).sort(function (a, b) { return a.num - b.num; });
-    var auj = iso(new Date()), d = new Date((FCAL.depart > auj ? FCAL.depart : auj) + "T12:00:00");
-    file.forEach(function (f) {
-      while (FCAL.jours.indexOf(d.getDay()) < 0 || (FCAL.sauf || []).indexOf(iso(d)) >= 0) d.setDate(d.getDate() + 1);
-      var k = iso(d), q = IGQ["fiche-" + f.id]; d.setDate(d.getDate() + 1);
+    // Le N° de fiche est la place dans le calendrier (N°30 = 30e jour de publication depuis le départ) : un numéro libre laisse un trou.
+    var d = new Date(FCAL.depart + "T12:00:00"), slots = [], max = Math.max(0, ...FICH.map(function (f) { return f.num || 0; }));
+    for (var g = 0; g < 4000 && slots.length < max; g++) { if (FCAL.jours.indexOf(d.getDay()) >= 0 && (FCAL.sauf || []).indexOf(iso(d)) < 0) slots.push(iso(d)); d.setDate(d.getDate() + 1); }
+    FICH.filter(function (f) { return f.num && !f.promo; }).forEach(function (f) {
+      var k = slots[f.num - 1], q = IGQ["fiche-" + f.id];
       if (q && q.quand && !q.ignore) k = jourParis(q.quand);
-      (FPLAN[k] = FPLAN[k] || []).push(f);
+      if (k) (FPLAN[k] = FPLAN[k] || []).push(f);
     });
   }
   function ficheNo(f) { return "n°" + String(f.num).padStart(3, "0"); }

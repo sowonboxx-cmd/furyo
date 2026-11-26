@@ -484,21 +484,24 @@
     const p = planning().file; if (!p.length) return "";
     const jr = (d, o) => new Date(d + "T12:00:00Z").toLocaleDateString("fr-FR", Object.assign({ day: "numeric", month: "short", timeZone: "UTC" }, o || { weekday: "short" }));
     // Prêtes : les fiches complètes qui se suivent depuis la prochaine ; « jusqu'au » = date de la dernière d'entre elles.
-    let k = 0; while (k < p.length && !p[k].s.manque.length) k++;
+    let k = 0; while (k < p.length && !p[k].s.manque.length && (k === 0 || p[k].s.num === p[k - 1].s.num + 1)) k++;
     const pretes = p.filter(x => !x.s.manque.length).length;
     const info = `(${pretes} prête${pretes > 1 ? "s" : ""}${k ? ` · prêt jusqu'au ${jr(p[k - 1].d, {})}` : ""})`;
     return `<div class="mdb-next"><div class="hd"><b>Prochaines fiches</b><span class="hint">${joursTxt()} à ${CAL.heure} <strong>${info}</strong></span><button class="lk" data-mvue="calendrier">Calendrier</button></div>
       <div class="rw">${p.map(x => `<button class="it${x.s.manque.length ? "" : " ok"}" data-msel="${x.s.id}" aria-current="${M.sel === x.s.id}">${img(x.s, 160)}<span><small>${jr(x.d)}</small><b>${esc(nomS(x.s))}</b><em>${nfmt(x.s.num)}${x.s.manque.length ? ` · ${x.s.manque.length} à compléter` : " · prête"}</em></span></button>`).join("")}</div></div>`;
   }
+  // Planning (Will, 26/11/2026) : le N° de fiche EST la place dans le calendrier. N°1 = 1er jour de publication
+  // à partir de la date de départ, N°30 = 30e, etc. ; un numéro libre laisse un créneau libre, rien ne se décale.
+  function creneau(n) {
+    let d = new Date(CAL.depart + "T12:00:00Z"), i = 0;
+    for (let g = 0; g < 4000; g++) { if (CAL.jours.includes(d.getUTCDay()) && !(CAL.sauf || []).includes(d.toISOString().slice(0, 10)) && ++i === n) return d.toISOString().slice(0, 10); d.setUTCDate(d.getUTCDate() + 1); }
+    return "";
+  }
   function planning() {
-    const file = ITEMS.filter(s => s.num && !s.promo).sort((a, b) => a.num - b.num), out = [], date = {};
+    const date = {};
     if (!CAL.jours.length) return { file: [], date };
-    const auj = new Date().toISOString().slice(0, 10);
-    let d = new Date((CAL.depart > auj ? CAL.depart : auj) + "T12:00:00Z");
-    for (const s of file) {
-      while (!CAL.jours.includes(d.getUTCDay()) || (CAL.sauf || []).includes(d.toISOString().slice(0, 10))) d.setUTCDate(d.getUTCDate() + 1);
-      const k = d.toISOString().slice(0, 10); out.push({ s, d: k }); date[s.id] = k; d.setUTCDate(d.getUTCDate() + 1);
-    }
+    const out = ITEMS.filter(s => s.num && !s.promo).sort((a, b) => a.num - b.num).map(s => ({ s, d: creneau(s.num) })).filter(x => x.d);
+    out.forEach(x => { date[x.s.id] = x.d; });
     return { file: out, date };
   }
 
