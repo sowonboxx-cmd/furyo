@@ -1096,6 +1096,8 @@ if (window.FGQuick) FGQuick.mount(document.getElementById("hq-av"));
   function igqPlan(id) { var q = IGQ[id]; return q && !q.fait && !q.ignore ? q : null; }
   function heureCourte(d) { var x = new Date(d); return x.getHours() + " h" + (x.getMinutes() ? " " + ("0" + x.getMinutes()).slice(-2) : ""); }
   function chkBadge(kind, id, on) {
+    // Parti tout seul via la programmation = publié : coche verte sans clic (Will, 27/11/2026).
+    if (!on && IGQ[id] && IGQ[id].fait && IGQ[id].fait !== "échec") on = true;
     var q = !on && igqPlan(id);
     if (!on && IGQ[id] && IGQ[id].ignore) return '<span class="chk ign" data-chk="' + kind + '" data-chkid="' + esc(id) + '" data-chkpl="1" title="Pas publié sur Instagram"><b>Ignorée</b></span>';
     if (q) return '<span class="chk pl" data-chk="' + kind + '" data-chkid="' + esc(id) + '" data-chkpl="1" title="Programmé sur Instagram">' + CHK_SVG + '<b>' + esc(heureCourte(q.quand)) + '</b></span>';
