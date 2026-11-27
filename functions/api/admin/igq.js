@@ -24,7 +24,12 @@ export async function onRequestPost({ request, env }) {
   const b = await request.json().catch(() => ({}));
   if (!b.id) return json({ error: "id manquant" }, 400);
   const k = cle(b.id), cur = await env.STATS.get(k, "json");
-  if (b.del) { if (cur && cur.fait) return json({ error: "déjà parti sur Instagram" }, 400); await env.STATS.delete(k); return json({ ok: true }); }
+  if (b.del) {
+    if (cur && cur.fait) return json({ error: "déjà parti sur Instagram" }, 400);
+    // Marque d'annulation dans R2 (cohérent partout) : la tournée ignore toute programmation créée avant (Will, 27/11/2026).
+    if (env.COUV) await env.COUV.put("igq/" + String(b.id).replace(/[^0-9a-zA-Z_-]/g, "") + "/annule", new Date().toISOString()).catch(() => {});
+    await env.STATS.delete(k); return json({ ok: true });
+  }
   if (cur && cur.fait) return json({ error: "déjà parti sur Instagram" }, 400);
   if (b.ignore) {
     const item = { id: String(b.id), type: String(b.type || "").slice(0, 20), titre: String(b.titre || "").slice(0, 160), ignore: true, quand: new Date().toISOString(), cree: new Date().toISOString() };
